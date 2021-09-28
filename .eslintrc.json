@@ -1,7 +1,8 @@
 {
   "env": {
     "browser": true,
-    "es2021": true
+    "es2021": true,
+    "react-native/react-native": true
   },
   "extends": [
     "plugin:react/recommended",
@@ -15,7 +16,7 @@
     "ecmaVersion": 12,
     "sourceType": "module"
   },
-  "plugins": ["react"],
+  "plugins": ["react", "react-native"],
   "rules": {
     "react/jsx-filename-extension": [
       "warn",
