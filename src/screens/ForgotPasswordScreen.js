@@ -7,6 +7,7 @@ import * as yup from "yup";
 import { phoneRegExp } from "../config/constants";
 
 const errMsg = "Số điện thoại không hợp lệ";
+// Validation schema for form
 const validationSchema = yup.object().shape({
   phoneNumber: yup
     .string()
@@ -18,7 +19,7 @@ const validationSchema = yup.object().shape({
 });
 
 const onSubmit = (data) => {
-  console.log(data);
+  console.log(data); // Test only
 };
 
 const ForgotPasswordScreen = () => {
@@ -35,6 +36,7 @@ const ForgotPasswordScreen = () => {
       <Heading size="lg">Quên mật khẩu</Heading>
       <Text fontSize="lg">Bạn hãy nhập số điện thoại</Text>
       <VStack mt={6} space={2} w="70%">
+        {/* Phone number input field */}
         <Controller
           control={control}
           name="phoneNumber"
@@ -52,11 +54,13 @@ const ForgotPasswordScreen = () => {
             />
           )}
         />
+        {/* Error message view for phone number */}
         {errors.phoneNumber?.message && (
           <Text color="red.500" fontSize="xs" italic>
             {errors.phoneNumber?.message}
           </Text>
         )}
+        {/* Submit button */}
         <Button size="lg" w="100%" onPress={handleSubmit(onSubmit)}>
           Tiếp tục
         </Button>
