@@ -16,13 +16,15 @@
     "ecmaVersion": 12,
     "sourceType": "module"
   },
-  "plugins": ["react", "react-native"],
+  "plugins": ["react", "react-native", "simple-import-sort"],
   "rules": {
     "react/jsx-filename-extension": [
       "warn",
       { "extensions": [".tsx", ".ts", ".js", ".jsx"] }
     ],
     "prettier/prettier": ["error", { "endOfLine": "auto" }],
-    "global-require": ["off", { "extensions": [".js", ".jsx", ".tsx", ".ts"] }]
+    "global-require": ["off", { "extensions": [".js", ".jsx", ".tsx", ".ts"] }],
+    "simple-import-sort/imports": "error",
+    "simple-import-sort/exports": "error"
   }
 }
