@@ -66,8 +66,8 @@ const LoginScreen = () => {
             </Text>
             <VStack flex={1} mt={6} space={1} w={{ base: "70%", md: "50" }}>
               <Controller
-                name="phoneNumber"
                 control={control}
+                name="phoneNumber"
                 render={({ field: { onChange, onBlur, value } }) => (
                   <Input
                     InputLeftElement={
@@ -79,6 +79,7 @@ const LoginScreen = () => {
                       />
                     }
                     placeholder="Số điện thoại"
+                    maxLength={13}
                     size="lg"
                     keyboardType="phone-pad"
                     onBlur={onBlur}
@@ -94,6 +95,7 @@ const LoginScreen = () => {
               )}
               <Controller
                 control={control}
+                name="password"
                 render={({ field: { onChange, onBlur, value } }) => (
                   <Box position="relative" justifyContent="center">
                     <Input
@@ -127,7 +129,6 @@ const LoginScreen = () => {
                     />
                   </Box>
                 )}
-                name="password"
               />
 
               {errors.password?.message && (
