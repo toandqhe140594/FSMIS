@@ -1,14 +1,19 @@
-import { NativeBaseProvider } from "native-base";
+import { extendTheme, NativeBaseProvider } from "native-base";
 import React from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
-import LoginScreen from "./src/screens/LoginScreen";
+import components from "./src/config/components";
+import LogoScreen from "./src/screens/LogoScreen";
 
 export default function App() {
+  const theme = extendTheme({
+    components,
+  });
+
   return (
-    <NativeBaseProvider>
+    <NativeBaseProvider theme={theme}>
       <SafeAreaProvider>
-        <LoginScreen />
+        <LogoScreen />
       </SafeAreaProvider>
     </NativeBaseProvider>
   );
