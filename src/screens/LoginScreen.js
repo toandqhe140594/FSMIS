@@ -78,10 +78,11 @@ const LoginScreen = () => {
                         color="muted.500"
                       />
                     }
-                    placeholder="Số điện thoại"
-                    maxLength={13}
-                    size="lg"
                     keyboardType="phone-pad"
+                    maxLength={13}
+                    paddingLeft={0}
+                    placeholder="Số điện thoại"
+                    size="lg"
                     onBlur={onBlur}
                     onChangeText={onChange}
                     value={value}
@@ -139,9 +140,7 @@ const LoginScreen = () => {
               <Text alignSelf="flex-end" underline>
                 Quên mật khẩu?
               </Text>
-              <Button variant="subtle" onPress={handleSubmit(onSubmit)}>
-                Đăng nhập
-              </Button>
+              <Button onPress={handleSubmit(onSubmit)}>Đăng nhập</Button>
             </VStack>
           </Center>
           <Box justifyContent="flex-end" alignItems="center" mb={6}>
