@@ -44,7 +44,6 @@ const ForgotPasswordScreen = () => {
             <Input
               keyboardType="phone-pad"
               maxLength={13}
-              pl={4}
               placeholder="Số điện thoại"
               size="lg"
               w="100%"
