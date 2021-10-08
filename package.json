@@ -16,6 +16,7 @@
     "expo-constants": "^11.0.1",
     "expo-status-bar": "~1.0.4",
     "formik": "^2.2.9",
+    "moment": "^2.29.1",
     "native-base": "^3.2.1-rc.1",
     "prop-types": "^15.7.2",
     "react": "16.13.1",
