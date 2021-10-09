@@ -23,6 +23,7 @@ import * as yup from "yup";
 
 import { phoneRegExp } from "../config/constants";
 
+// Validation schema for form
 const validationSchema = yup.object().shape({
   phoneNumber: yup
     .string()
