@@ -18,6 +18,7 @@ const validationSchema = yup.object().shape({
     .label("PhoneNumber"),
 });
 
+// Event fire when submit form
 const onSubmit = (data) => {
   console.log(data); // Test only
 };
