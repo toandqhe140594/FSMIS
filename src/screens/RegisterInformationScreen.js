@@ -27,6 +27,10 @@ import moment from "../config/moment";
 const validationSchema = yup.object().shape({
   name: yup.string().required("Họ và tên không thể bỏ trống"),
   gender: yup.number().default(-1),
+  address: yup.string(),
+  cityAddress: yup.number().default(-1),
+  districtAddress: yup.number().default(-1),
+  communeAddress: yup.number().default(-1),
 });
 
 const RegisterInformationScreen = () => {
@@ -42,15 +46,20 @@ const RegisterInformationScreen = () => {
     reValidateMode: "onChange",
     resolver: yupResolver(validationSchema),
   });
+
+  // Submit form event
   const onSubmit = (data) => {
-    console.log(data);
+    console.log(data); // Test only
   };
+
+  // Event fire when another dob date is picked
   const onDateChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
     setShow(Constants.platform === "ios");
     setDate(currentDate);
   };
 
+  // Display picked date in format DD/MM/YYYY
   useEffect(() => {
     if (date) setDisplayedDate(moment(date).format("DD/MM/YYYY").toString());
   }, [date]);
@@ -73,8 +82,6 @@ const RegisterInformationScreen = () => {
           minHeight={Math.round(useWindowDimensions().height)}
           safeArea
         >
-          <Text />
-
           <VStack
             flex={1}
             justifyContent="center"
@@ -89,6 +96,7 @@ const RegisterInformationScreen = () => {
               <Text fontSize="lg">Tạo tài khoản mới</Text>
             </Center>
 
+            {/* Name input field */}
             <Controller
               control={control}
               name="name"
@@ -109,6 +117,7 @@ const RegisterInformationScreen = () => {
               </Text>
             )}
 
+            {/* Date picker field */}
             <TouchableOpacity
               onPress={() => {
                 setShow(true);
@@ -135,6 +144,7 @@ const RegisterInformationScreen = () => {
               </Text>
             )}
 
+            {/* Gender select box */}
             <Controller
               control={control}
               name="gender"
@@ -159,6 +169,7 @@ const RegisterInformationScreen = () => {
               </Text>
             )}
 
+            {/* Address input field */}
             <Controller
               control={control}
               name="address"
@@ -183,6 +194,7 @@ const RegisterInformationScreen = () => {
               )}
             />
 
+            {/* City select box */}
             <Controller
               control={control}
               name="cityAddress"
@@ -201,6 +213,7 @@ const RegisterInformationScreen = () => {
               )}
             />
 
+            {/* District select box */}
             <Controller
               control={control}
               name="districtAddress"
@@ -219,6 +232,7 @@ const RegisterInformationScreen = () => {
               )}
             />
 
+            {/* Commune select box */}
             <Controller
               control={control}
               name="communeAddress"
