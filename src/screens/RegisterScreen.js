@@ -47,10 +47,12 @@ const RegisterScreen = () => {
     reValidateMode: "onChange",
     resolver: yupResolver(validationSchema),
   });
-  const [visible, setVisible] = useState(false);
-  const [visibleConfirmation, setVisibleConfirmation] = useState(false);
+  const [visible, setVisible] = useState(false); // Visible state of password field
+  const [visibleConfirmation, setVisibleConfirmation] = useState(false); // Visible state of password confirmation field
+
+  // Event fire when submit form
   const onSubmit = (data) => {
-    console.log(data);
+    console.log(data); // Test only
   };
 
   return (
@@ -74,6 +76,7 @@ const RegisterScreen = () => {
               <Text fontSize="lg">Tạo tài khoản mới</Text>
             </Center>
 
+            {/* Phone number input field */}
             <Text bold fontSize="md">
               Số điện thoại <Text style={{ color: "red" }}>*</Text>
             </Text>
@@ -107,6 +110,7 @@ const RegisterScreen = () => {
               </Text>
             )}
 
+            {/* Password input field */}
             <Text bold fontSize="md" mt={3}>
               Mật khẩu <Text style={{ color: "red" }}>*</Text>
             </Text>
@@ -153,6 +157,7 @@ const RegisterScreen = () => {
               </Text>
             )}
 
+            {/* Password confirmation input field */}
             <Text bold fontSize="md" mt={3}>
               Nhập lại mật khẩu <Text style={{ color: "red" }}>*</Text>
             </Text>
@@ -203,6 +208,7 @@ const RegisterScreen = () => {
               </Text>
             )}
 
+            {/* Submit button */}
             <Button mt={3} size="lg" onPress={handleSubmit(onSubmit)}>
               Đăng ký
             </Button>
