@@ -66,6 +66,7 @@ const LoginScreen = () => {
               Hãy cùng khám phá với <Text bold>FSMIS</Text>!
             </Text>
             <VStack flex={1} mt={6} space={1} w={{ base: "70%", md: "50" }}>
+              {/* Phone number input field */}
               <Controller
                 control={control}
                 name="phoneNumber"
@@ -95,6 +96,8 @@ const LoginScreen = () => {
                   {errors.phoneNumber?.message}
                 </Text>
               )}
+
+              {/* Password input field */}
               <Controller
                 control={control}
                 name="password"
@@ -132,15 +135,17 @@ const LoginScreen = () => {
                   </Box>
                 )}
               />
-
               {errors.password?.message && (
                 <Text color="red.500" fontSize="xs" italic>
                   {errors.password?.message}
                 </Text>
               )}
+
               <Text alignSelf="flex-end" underline>
                 Quên mật khẩu?
               </Text>
+
+              {/* Submit button */}
               <Button onPress={handleSubmit(onSubmit)}>Đăng nhập</Button>
             </VStack>
           </Center>
