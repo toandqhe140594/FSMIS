@@ -200,15 +200,15 @@ const RegisterInformationScreen = () => {
               name="cityAddress"
               render={({ field: { onChange, onBlur, value } }) => (
                 <Select
-                  accessibilityLabel="Choose Service"
+                  accessibilityLabel="Chọn tỉnh, thành phố"
                   fontSize="md"
                   placeholder="Tỉnh, thành phố"
                   onBlur={onBlur}
                   onChangeText={onChange}
                   value={value}
                 >
-                  <Select.Item label="UX Research" value="ux" />
-                  <Select.Item label="Web Development" value="web" />
+                  <Select.Item label="Hà Nội" value={1} />
+                  <Select.Item label="Hồ Chí Minh" value={2} />
                 </Select>
               )}
             />
@@ -219,15 +219,15 @@ const RegisterInformationScreen = () => {
               name="districtAddress"
               render={({ field: { onChange, onBlur, value } }) => (
                 <Select
-                  accessibilityLabel="Choose Service"
+                  accessibilityLabel="Chọn quận, huyện"
                   fontSize="md"
                   placeholder="Quận, huyện"
                   onBlur={onBlur}
                   onChangeText={onChange}
                   value={value}
                 >
-                  <Select.Item label="UX Research" value="ux" />
-                  <Select.Item label="Web Development" value="web" />
+                  <Select.Item label="Hai Bà Trưng" value={1} />
+                  <Select.Item label="Hoàng Mai" value={2} />
                 </Select>
               )}
             />
@@ -238,24 +238,24 @@ const RegisterInformationScreen = () => {
               name="communeAddress"
               render={({ field: { onChange, onBlur, value } }) => (
                 <Select
-                  accessibilityLabel="Choose Service"
+                  accessibilityLabel="Chọn phường, xã"
                   fontSize="md"
                   placeholder="Phường, xã"
                   onBlur={onBlur}
                   onChangeText={onChange}
                   value={value}
                 >
-                  <Select.Item label="UX Research" value="ux" />
-                  <Select.Item label="Web Development" value="web" />
+                  <Select.Item label="Vĩnh Hưng" value={1} />
+                  <Select.Item label="Thanh Lương" value={2} />
                 </Select>
               )}
             />
 
+            {/* Submit button */}
             <Button mt={3} size="lg" onPress={handleSubmit(onSubmit)}>
               Đăng ký
             </Button>
           </VStack>
-
           <Text mb={6}>
             Bạn chưa có tài khoản? <Text underline>Đăng nhập</Text>
           </Text>
