@@ -78,7 +78,7 @@ const RegisterScreen = () => {
 
             {/* Phone number input field */}
             <Text bold fontSize="md">
-              Số điện thoại <Text style={{ color: "red" }}>*</Text>
+              Số điện thoại <Text color="danger.500">*</Text>
             </Text>
             <Controller
               control={control}
@@ -105,14 +105,14 @@ const RegisterScreen = () => {
               )}
             />
             {errors.phoneNumber?.message && (
-              <Text color="red.500" fontSize="xs" italic>
+              <Text color="error.500" fontSize="xs" italic>
                 {errors.phoneNumber?.message}
               </Text>
             )}
 
             {/* Password input field */}
             <Text bold fontSize="md" mt={3}>
-              Mật khẩu <Text style={{ color: "red" }}>*</Text>
+              Mật khẩu <Text color="danger.500">*</Text>
             </Text>
             <Controller
               control={control}
@@ -152,14 +152,14 @@ const RegisterScreen = () => {
               )}
             />
             {errors.password?.message && (
-              <Text color="red.500" fontSize="xs" italic>
+              <Text color="error.500" fontSize="xs" italic>
                 {errors.password?.message}
               </Text>
             )}
 
             {/* Password confirmation input field */}
             <Text bold fontSize="md" mt={3}>
-              Nhập lại mật khẩu <Text style={{ color: "red" }}>*</Text>
+              Nhập lại mật khẩu <Text color="danger.500">*</Text>
             </Text>
             <Controller
               control={control}
@@ -203,7 +203,7 @@ const RegisterScreen = () => {
               )}
             />
             {errors.passwordConfirmation?.message && (
-              <Text color="red.500" fontSize="xs" italic>
+              <Text color="error.500" fontSize="xs" italic>
                 {errors.passwordConfirmation?.message}
               </Text>
             )}
