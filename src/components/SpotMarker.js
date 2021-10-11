@@ -24,7 +24,7 @@ const SpotMarker = ({ coordinate, fishingSpot }) => {
               ratingCount={5}
               readonly
               showRating={false}
-              startingValue={fishingSpot.rate}
+              startingValue={fishingSpot.rate || 0}
             />
           </Box>
           {fishingSpot.isVerified && (
