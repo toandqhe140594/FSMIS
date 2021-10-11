@@ -5,16 +5,18 @@ import React from "react";
 import { Card } from "react-native-elements";
 import { Rating } from "react-native-ratings";
 
-const SpotCard = ({ address, image, name, rate }) => {
+const SpotCard = ({ address, image, isVerifed, name, rate }) => {
   return (
     <Card containerStyle={{ width: "100%", padding: 0 }}>
       <Card.Image source={{ uri: image }} />
-      <VStack space={1} mt={1} marginLeft={2} marginBottom={1}>
+      <VStack mt={1} mb={1} ml={2} space={1}>
         <Box flexDir="row" alignItems="center">
           <Text bold fontSize="lg" mr={2}>
             {name}
           </Text>
-          <MaterialIcons name="verified" color="blue" size={16} />
+          {isVerifed && (
+            <MaterialIcons name="verified" color="blue" size={16} />
+          )}
         </Box>
         <Box>
           <Rating
@@ -35,11 +37,13 @@ const SpotCard = ({ address, image, name, rate }) => {
 SpotCard.propTypes = {
   address: PropTypes.string.isRequired,
   image: PropTypes.string,
+  isVerifed: PropTypes.bool,
   name: PropTypes.string.isRequired,
   rate: PropTypes.number,
 };
 SpotCard.defaultProps = {
   image: "https://picsum.photos/200",
+  isVerifed: false,
   rate: 0,
 };
 
