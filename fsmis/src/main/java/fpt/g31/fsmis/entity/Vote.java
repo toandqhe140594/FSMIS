@@ -1,0 +1,25 @@
+package fpt.g31.fsmis.entity;
+
+import lombok.*;
+
+import javax.persistence.*;
+
+@Entity
+@Setter
+@Getter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Table(name = "tbl_vote")
+public class Vote {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    public Long id;
+    private VoteType voteType;
+    @ManyToOne
+    @JoinColumn(name = "review_id")
+    private Review review;
+    @ManyToOne
+    @JoinColumn
+    private User user;
+}
