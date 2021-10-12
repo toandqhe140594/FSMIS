@@ -1,36 +1,38 @@
 package fpt.g31.fsmis.entity;
 
-import com.sun.istack.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Entity
-@Data
+@Setter
+@Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "tbl_CheckIn")
+@Table(name = "tbl_check_in")
 public class CheckIn {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "userId")
-    @NotNull
+    @JoinColumn(name = "user_id")
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "fishingSpotId")
-    @NotNull
+    @JoinColumn(name = "fishing_spot_id")
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private FishingSpot fishingSpot;
 
     @NotNull
-    @Column//(name = "checkInTime")
     private LocalDateTime checkInTime;
+
+    @NotNull
+    private Boolean approve;
 }

@@ -23,7 +23,7 @@ public class CheckInService {
         this.fishingSpotRepos = fishingSpotRepos;
     }
 
-    public void UserCheckInFishingSpot(Long userId, Long fishingSpotId) {
+    public CheckIn userCheckInFishingSpot(Long userId, Long fishingSpotId) {
         Optional<User> userOptional = userRepos.findById(userId);
         Optional<FishingSpot> fishingSpotOptional = fishingSpotRepos.findById(fishingSpotId);
         if (userOptional.isPresent() && fishingSpotOptional.isPresent()) {
@@ -31,7 +31,9 @@ public class CheckInService {
             checkIn.setUser(userOptional.get());
             checkIn.setFishingSpot(fishingSpotOptional.get());
             checkIn.setCheckInTime(LocalDateTime.now());
-            checkInRepos.save(checkIn);
+            return checkInRepos.save(checkIn);
+        } else {
+            throw new RuntimeException("UserId/fishingSpotId doesn't exist");
         }
     }
 }
