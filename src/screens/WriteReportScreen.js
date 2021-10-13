@@ -1,37 +1,13 @@
-import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { Text, TextInput, View } from "react-native";
 import { Button, Divider } from "react-native-elements";
-import { SafeAreaView } from "react-native-safe-area-context";
+
+import HeaderTab from "../components/HeaderTab";
 
 const ReportScreen = () => {
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <View
-        style={{
-          height: 40,
-          backgroundColor: "white",
-          flexDirection: "row",
-          justifyContent: "space-between",
-          alignItems: "center",
-          paddingHorizontal: 8,
-        }}
-      >
-        <Ionicons name="arrow-back" size={24} color="black" />
-        <View
-          style={{
-            flex: 1,
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Text style={{ fontWeight: "bold", fontSize: 20, marginRight: 4 }}>
-            Báo cáo vi phạm
-          </Text>
-        </View>
-        <Ionicons name="flag" size={24} color="#fff" />
-      </View>
+    <View style={{ flex: 1 }}>
+      <HeaderTab name="Báo cáo vi phạm" />
       <Divider />
       <View
         style={{
@@ -63,7 +39,7 @@ const ReportScreen = () => {
         </View>
         <Button containerStyle={{ margin: "10%" }} title="Báo cáo" />
       </View>
-    </SafeAreaView>
+    </View>
   );
 };
 
