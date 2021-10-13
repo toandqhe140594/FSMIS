@@ -19,7 +19,7 @@ import {
 } from "react-hook-form";
 import { Overlay } from "react-native-elements";
 
-import SpotCard from "../SpotCard";
+import FLocationCard from "../FLocationCard";
 
 const ListViewOverlay = ({ visible, toggleOverlay }) => {
   const { control, handleSubmit, setValue } = useFormContext();
@@ -191,9 +191,9 @@ const ListViewRoute = () => {
         </Button>
 
         {/* Draft view only */}
-        <SpotCard address="140 Láng hòa lạc" name="Hồ câu Thuần Việt" />
-        <SpotCard address="140 Láng hòa lạc" name="Hồ câu Thuần Việt" />
-        <SpotCard address="140 Láng hòa lạc" name="Hồ câu Thuần Việt" />
+        <FLocationCard address="140 Láng hòa lạc" name="Hồ câu Thuần Việt" />
+        <FLocationCard address="140 Láng hòa lạc" name="Hồ câu Thuần Việt" />
+        <FLocationCard address="140 Láng hòa lạc" name="Hồ câu Thuần Việt" />
       </Box>
       <FormProvider {...methods}>
         <ListViewOverlay visible={visible} toggleOverlay={toggleOverlay} />

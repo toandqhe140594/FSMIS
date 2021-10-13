@@ -10,7 +10,7 @@ import {
 } from "react-hook-form";
 import { Overlay, Slider } from "react-native-elements";
 
-import SpotMapView from "../SpotMapView";
+import SpotMapView from "../FLocationMapView";
 
 const MapViewOverlay = ({ visible, toggleOverlay }) => {
   const { control, handleSubmit, setValue } = useFormContext();
