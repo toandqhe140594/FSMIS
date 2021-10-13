@@ -2,7 +2,6 @@ import { Box, Button, Center, ScrollView } from "native-base";
 import React from "react";
 import { Divider, Text } from "react-native-elements";
 import { Rating } from "react-native-ratings";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 import HeaderTab from "../HeaderTab";
 import ReviewFromAnglerSection from "../ReviewFromAnglerSection";
@@ -10,7 +9,7 @@ import ReviewFromAnglerSection from "../ReviewFromAnglerSection";
 const ReviewListRoute = () => {
   return (
     <ScrollView>
-      <SafeAreaView>
+      <Box>
         <HeaderTab name="Hồ câu thuần việt" isVerified flagable />
         <Divider />
         <Center flex={1} py={3}>
@@ -87,7 +86,7 @@ const ReviewListRoute = () => {
           negativeCount={1}
           rate={5}
         />
-      </SafeAreaView>
+      </Box>
     </ScrollView>
   );
 };

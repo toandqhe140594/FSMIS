@@ -3,11 +3,10 @@ import React from "react";
 import { Text, TextInput, View } from "react-native";
 import { Avatar, Button, Divider } from "react-native-elements";
 import { Rating } from "react-native-ratings";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 const WriteReviewScreen = () => {
   return (
-    <SafeAreaView>
+    <View>
       <View
         style={{
           height: 40,
@@ -90,7 +89,7 @@ const WriteReviewScreen = () => {
         }}
       />
       <Button containerStyle={{ marginHorizontal: "15%" }} title="Đăng" />
-    </SafeAreaView>
+    </View>
   );
 };
 
