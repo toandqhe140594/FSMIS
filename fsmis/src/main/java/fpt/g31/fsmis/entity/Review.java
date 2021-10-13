@@ -30,5 +30,5 @@ public class Review {
 
     @ManyToOne
     @JoinColumn()
-    private FishingSpot fishingSpot;
+    private FishingLocation fishingLocation;
 }

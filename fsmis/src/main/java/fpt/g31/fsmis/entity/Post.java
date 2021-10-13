@@ -26,5 +26,5 @@ public class Post {
     private String type;
 
     @ManyToOne
-    private FishingSpot fishingSpot;
+    private FishingLocation fishingLocation;
 }

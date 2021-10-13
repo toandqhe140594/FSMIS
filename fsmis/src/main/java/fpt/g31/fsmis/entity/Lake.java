@@ -24,7 +24,7 @@ public class Lake {
 
     @ManyToOne
     @JoinColumn
-    private FishingSpot fishingSpot;
+    private FishingLocation fishingLocation;
 
     @ManyToMany
     @JoinTable(
