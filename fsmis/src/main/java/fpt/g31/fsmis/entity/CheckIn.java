@@ -28,7 +28,7 @@ public class CheckIn {
     @JoinColumn(name = "fishing_spot_id")
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    private FishingSpot fishingSpot;
+    private FishingLocation fishingLocation;
 
     @NotNull
     private LocalDateTime checkInTime;

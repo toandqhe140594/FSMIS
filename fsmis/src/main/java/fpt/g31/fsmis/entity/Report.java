@@ -34,5 +34,5 @@ public class Report {
 
     @ManyToOne
     @JoinColumn
-    private FishingSpot fishingSpot;
+    private FishingLocation fishingLocation;
 }

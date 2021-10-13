@@ -41,9 +41,6 @@ public class User {
 
     private boolean active;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    Set<Role> roles;
-
     @JsonIgnore
     @OneToMany(mappedBy = "id", cascade = CascadeType.ALL)
     @EqualsAndHashCode.Exclude
@@ -77,6 +74,6 @@ public class User {
     )
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    private Set<FishingSpot> savedFishingSpots;
+    private Set<FishingLocation> savedFishingLocations;
 
 }

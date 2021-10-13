@@ -2,7 +2,7 @@ package fpt.g31.fsmis.controller;
 
 
 import fpt.g31.fsmis.entity.CheckIn;
-import fpt.g31.fsmis.entity.FishingSpot;
+import fpt.g31.fsmis.entity.FishingLocation;
 import fpt.g31.fsmis.service.CheckInService;
 import fpt.g31.fsmis.service.FishingSpotService;
 import org.springframework.http.HttpStatus;
@@ -23,14 +23,14 @@ public class FishingSpotController {
     }
 
     @GetMapping
-    public ResponseEntity<List<FishingSpot>> getAll() {
-        List<FishingSpot> fishingSpots = fishingSpotService.findAllFishingSpots();
-        return new ResponseEntity<>(fishingSpots, HttpStatus.OK);
+    public ResponseEntity<List<FishingLocation>> getAll() {
+        List<FishingLocation> fishingLocations = fishingSpotService.findAllFishingSpots();
+        return new ResponseEntity<>(fishingLocations, HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<FishingSpot> createFishingSpot(@RequestBody FishingSpot fishingSpot) {
-        return new ResponseEntity<>(fishingSpotService.createFishingSpot(fishingSpot), HttpStatus.OK);
+    public ResponseEntity<FishingLocation> createFishingSpot(@RequestBody FishingLocation fishingLocation) {
+        return new ResponseEntity<>(fishingSpotService.createFishingSpot(fishingLocation), HttpStatus.OK);
     }
 
     @PostMapping(path = "/{spotId}/checkin")

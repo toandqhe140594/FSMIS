@@ -14,7 +14,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Setter
 @Getter
-public class FishingSpot {
+public class FishingLocation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -69,7 +69,7 @@ public class FishingSpot {
     )
     private List<User> employeeList;
 
-    @ManyToMany(mappedBy = "savedFishingSpots")
+    @ManyToMany(mappedBy = "savedFishingLocations")
     private Set<User> savedUser;
 
     @OneToMany(mappedBy = "id", cascade = CascadeType.ALL)

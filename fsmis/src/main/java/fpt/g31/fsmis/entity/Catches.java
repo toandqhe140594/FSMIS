@@ -28,8 +28,4 @@ public class Catches {
     @OneToMany
     @JoinColumn
     private List<CatchesDetail> catchesDetailList;
-
-    @ManyToOne
-    @JoinColumn
-    private FishingMethod fishingMethod;
 }
