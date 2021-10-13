@@ -3,7 +3,7 @@ import React from "react";
 import { Dimensions, StyleSheet } from "react-native";
 import MapView from "react-native-maps";
 
-import SpotMarker from "./SpotMarker";
+import FLocationMarker from "./FLocationMarker";
 
 const styles = StyleSheet.create({
   map: {
@@ -26,7 +26,7 @@ export default function MapViewTest() {
         mapType="standard"
         style={styles.map}
       >
-        <SpotMarker
+        <FLocationMarker
           coordinate={{
             latitude: 21.038793470613445,
             longitude: 105.83590283070224,
@@ -37,14 +37,14 @@ export default function MapViewTest() {
             isVerified: false,
           }}
         />
-        <SpotMarker
+        <FLocationMarker
           coordinate={{
             latitude: 21.03517331108639,
             longitude: 105.85090718809838,
           }}
           fishingSpot={{ name: "Hồ Ngọc Bích", rate: 3.4, isVerified: true }}
         />
-        <SpotMarker
+        <FLocationMarker
           coordinate={{
             latitude: 21.021549290938946,
             longitude: 105.83967943749226,
