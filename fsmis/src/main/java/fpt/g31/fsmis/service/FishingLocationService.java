@@ -3,6 +3,8 @@ package fpt.g31.fsmis.service;
 import fpt.g31.fsmis.dto.FishingLocationDtoInput;
 import fpt.g31.fsmis.entity.FishingLocation;
 import fpt.g31.fsmis.entity.User;
+import fpt.g31.fsmis.exception.FishingLocationNotFoundException;
+import fpt.g31.fsmis.exception.UnauthorizedException;
 import fpt.g31.fsmis.exception.UserNotFoundException;
 import fpt.g31.fsmis.repository.FishingLocationRepos;
 import fpt.g31.fsmis.repository.UserRepos;
@@ -48,15 +50,15 @@ public class FishingLocationService {
     public FishingLocation findById(Long id) {
         Optional<FishingLocation> findFishingSpot = fishingLocationRepos.findById(id);
         if (!findFishingSpot.isPresent()) {
-            throw new ValidationException("Hồ câu không tồn tại");
+            throw new FishingLocationNotFoundException(id);
         }
         return findFishingSpot.get();
     }
 
     public Boolean disableFishingLocation(Long fishingLocationId, Long ownerId) {
         FishingLocation fishingLocation = findById(fishingLocationId);
-        if (fishingLocation.getOwner().getId().equals(ownerId)) {
-            throw new ValidationException("Không có quyền xóa hồ");
+        if (!fishingLocation.getOwner().getId().equals(ownerId)) {
+            throw new UnauthorizedException("Không phải chủ hồ, không có quyền xóa hồ");
         }
         fishingLocation.setActive(false);
         return true;

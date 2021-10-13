@@ -4,7 +4,6 @@ package fpt.g31.fsmis.controller;
 import fpt.g31.fsmis.dto.FishingLocationDtoInput;
 import fpt.g31.fsmis.entity.CheckIn;
 import fpt.g31.fsmis.entity.FishingLocation;
-import fpt.g31.fsmis.exception.UserNotFoundException;
 import fpt.g31.fsmis.service.CheckInService;
 import fpt.g31.fsmis.service.FishingLocationService;
 import org.springframework.http.HttpStatus;
@@ -12,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import javax.validation.ValidationException;
 import java.util.List;
 
 @RestController
@@ -34,24 +32,28 @@ public class FishingLocationController {
 
     @PostMapping
     public ResponseEntity<Object> createFishingLocation(@Valid @RequestBody FishingLocationDtoInput fishingLocationDtoInput) {
-        try {
-            FishingLocation result = fishingLocationService.createFishingLocation(fishingLocationDtoInput);
-            return new ResponseEntity<>(result, HttpStatus.CREATED);
-        } catch (ValidationException e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY);
-        } catch (UserNotFoundException e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return new ResponseEntity<>("Lỗi hệ thống!", HttpStatus.INTERNAL_SERVER_ERROR);
+//        try {
+        FishingLocation result = fishingLocationService.createFishingLocation(fishingLocationDtoInput);
+        return new ResponseEntity<>(result, HttpStatus.CREATED);
+//        } catch (ValidationException e) {
+//            e.printStackTrace();
+//            return new ResponseEntity<>(e.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY);
+//        } catch (UserNotFoundException e) {
+//            e.printStackTrace();
+//            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        return new ResponseEntity<>("Lỗi hệ thống!", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @DeleteMapping
     public Boolean disableFishingLocation(@RequestParam Long fishingLocationId, @RequestParam Long ownerId) {
+//        try {
         return fishingLocationService.disableFishingLocation(fishingLocationId, ownerId);
+//        } catch (UnauthorizedException e) {
+//            e.printStackTrace();
+//        }
     }
 
     @PostMapping(path = "/{spotId}/checkin")
