@@ -1,10 +1,10 @@
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
-import { Box, Button, Center, Menu, Pressable, ScrollView } from "native-base";
+import { Box, Button, Menu, Pressable } from "native-base";
+import PropTypes from "prop-types";
 import React from "react";
 import { StyleSheet } from "react-native";
-import { Avatar, Divider, Text } from "react-native-elements";
+import { Avatar, Text } from "react-native-elements";
 import { Rating } from "react-native-ratings";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 const styles = StyleSheet.create({
   buttonText: { color: "white" },
@@ -127,5 +127,22 @@ const ReviewFromAnglerSection = ({
     </Box>
   );
 };
-
+ReviewFromAnglerSection.propTypes = {
+  content: PropTypes.string.isRequired,
+  date: PropTypes.string.isRequired,
+  isDisabled: PropTypes.bool,
+  isPositive: PropTypes.bool,
+  isNeutral: PropTypes.bool,
+  name: PropTypes.string.isRequired,
+  negativeCount: PropTypes.number,
+  positiveCount: PropTypes.number,
+  rate: PropTypes.number.isRequired,
+};
+ReviewFromAnglerSection.defaultProps = {
+  isDisabled: false,
+  isPositive: false,
+  isNeutral: true,
+  negativeCount: 0,
+  positiveCount: 0,
+};
 export default ReviewFromAnglerSection;

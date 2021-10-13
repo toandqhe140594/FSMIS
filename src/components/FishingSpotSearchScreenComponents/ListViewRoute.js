@@ -191,9 +191,11 @@ const ListViewRoute = () => {
         </Button>
 
         {/* Draft view only */}
-        <FLocationCard address="140 Láng hòa lạc" name="Hồ câu Thuần Việt" />
-        <FLocationCard address="140 Láng hòa lạc" name="Hồ câu Thuần Việt" />
-        <FLocationCard address="140 Láng hòa lạc" name="Hồ câu Thuần Việt" />
+        <VStack mt={3} space={3} w="100%">
+          <FLocationCard address="140 Láng hòa lạc" name="Hồ câu Thuần Việt" />
+          <FLocationCard address="140 Láng hòa lạc" name="Hồ câu Thuần Việt" />
+          <FLocationCard address="140 Láng hòa lạc" name="Hồ câu Thuần Việt" />
+        </VStack>
       </Box>
       <FormProvider {...methods}>
         <ListViewOverlay visible={visible} toggleOverlay={toggleOverlay} />
