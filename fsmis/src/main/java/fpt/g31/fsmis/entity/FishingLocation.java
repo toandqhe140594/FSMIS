@@ -78,4 +78,5 @@ public class FishingLocation {
 
     private LocalDateTime createdDate;
     private LocalDateTime lastEditedDate;
+    private Boolean active;
 }

@@ -49,6 +49,11 @@ public class FishingLocationController {
         return new ResponseEntity<>("Lỗi hệ thống!", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    @DeleteMapping
+    public Boolean disableFishingLocation(@RequestParam Long fishingLocationId, @RequestParam Long ownerId) {
+        return fishingLocationService.disableFishingLocation(fishingLocationId, ownerId);
+    }
+
     @PostMapping(path = "/{spotId}/checkin")
     public ResponseEntity<CheckIn> checkIn(@PathVariable Long spotId, @RequestParam Long userId) {
         return new ResponseEntity<>(checkInService.userCheckInFishingSpot(userId, spotId), HttpStatus.OK);

@@ -53,6 +53,15 @@ public class FishingLocationService {
         return findFishingSpot.get();
     }
 
+    public Boolean disableFishingLocation(Long fishingLocationId, Long ownerId) {
+        FishingLocation fishingLocation = findById(fishingLocationId);
+        if (fishingLocation.getOwner().getId().equals(ownerId)) {
+            throw new ValidationException("Không có quyền xóa hồ");
+        }
+        fishingLocation.setActive(false);
+        return true;
+    }
+
 //    public FishingLocation updateFishingSpot(Long id, FishingLocationDtoInput fishingLocationDtoInput) {
 //        return null;
 //    }
