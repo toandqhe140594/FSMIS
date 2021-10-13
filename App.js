@@ -3,7 +3,7 @@ import React from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import components from "./src/config/components";
-import LogoScreen from "./src/screens/LogoScreen";
+import AnglerCatchReportsHistory from "./src/screens/CatchReportsHistoryDetail";
 
 export default function App() {
   const theme = extendTheme({
@@ -13,7 +13,8 @@ export default function App() {
   return (
     <NativeBaseProvider theme={theme}>
       <SafeAreaProvider>
-        <LogoScreen />
+        {/* <LogoScreen /> */}
+        <AnglerCatchReportsHistory />
       </SafeAreaProvider>
     </NativeBaseProvider>
   );

@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-unresolved
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
 import { Box, Button, Text } from "native-base";
