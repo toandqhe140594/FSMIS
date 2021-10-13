@@ -25,6 +25,8 @@ public class Post {
 
     private String type;
 
+    private Boolean edited;
+
     @ManyToOne
     private FishingLocation fishingLocation;
 }

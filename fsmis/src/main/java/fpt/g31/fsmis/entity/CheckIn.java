@@ -32,7 +32,4 @@ public class CheckIn {
 
     @NotNull
     private LocalDateTime checkInTime;
-
-    @NotNull
-    private Boolean approve;
 }

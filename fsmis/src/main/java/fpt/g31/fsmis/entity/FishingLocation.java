@@ -5,11 +5,12 @@ import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
 @Entity
-@Table(name = "tbl_fishing_spot")
+@Table(name = "tbl_fishing_location")
 @NoArgsConstructor
 @AllArgsConstructor
 @Setter
@@ -74,4 +75,7 @@ public class FishingLocation {
 
     @OneToMany(mappedBy = "id", cascade = CascadeType.ALL)
     private List<Review> reviewList;
+
+    private LocalDateTime createdDate;
+    private LocalDateTime lastEditedDate;
 }
