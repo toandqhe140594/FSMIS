@@ -1,4 +1,5 @@
 import { Box, Image, Text } from "native-base";
+import PropTypes from "prop-types";
 import React from "react";
 
 const FishInformationCard = ({
@@ -18,7 +19,7 @@ const FishInformationCard = ({
         size={90}
         mr={3}
         source={{
-          uri: image || "https://picsum.photos/200",
+          uri: image,
         }}
       />
       <Box flex={1}>
@@ -40,6 +41,26 @@ const FishInformationCard = ({
       </Box>
     </Box>
   );
+};
+
+FishInformationCard.propTypes = {
+  amount: PropTypes.number,
+  currentAmount: PropTypes.number,
+  currentWeight: PropTypes.number,
+  image: PropTypes.string,
+  name: PropTypes.string.isRequired,
+  totalWeight: PropTypes.number,
+  weightRange: PropTypes.string,
+  overview: PropTypes.bool,
+};
+FishInformationCard.defaultProps = {
+  overview: false,
+  image: "https://picsum.photos/200",
+  amount: 0,
+  totalWeight: 0,
+  currentAmount: 0,
+  currentWeight: 0,
+  weightRange: "",
 };
 
 export default FishInformationCard;
