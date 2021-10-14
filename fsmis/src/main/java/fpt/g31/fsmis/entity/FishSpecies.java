@@ -17,4 +17,8 @@ public class FishSpecies {
     private Long id;
 
     private String name;
+
+    private Boolean active;
+
+    private String imageUrl;
 }

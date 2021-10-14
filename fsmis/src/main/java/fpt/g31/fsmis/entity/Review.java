@@ -3,6 +3,7 @@ package fpt.g31.fsmis.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -17,9 +18,10 @@ public class Review {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String content;
+    private Integer score;
     private String description;
-    private String time;
+    private LocalDateTime time;
+    private boolean active;
 
     @ManyToOne
     @JoinColumn

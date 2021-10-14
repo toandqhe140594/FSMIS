@@ -3,7 +3,7 @@ package fpt.g31.fsmis.entity;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @Setter
@@ -17,6 +17,8 @@ public class FishingMethod {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    @ManyToMany(mappedBy = "fishingMethodList")
-    private List<Lake> lakeList;
+    private Boolean active;
+
+    @ManyToMany(mappedBy = "fishingMethodSet")
+    private Set<Lake> lakeSet;
 }

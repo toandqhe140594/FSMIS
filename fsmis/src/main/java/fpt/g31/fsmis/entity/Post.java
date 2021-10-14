@@ -17,13 +17,18 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String title;
-
     private String content;
 
     private LocalDateTime postTime;
 
-    private String type;
+    private PostType postType;
+
+    private Boolean edited;
+
+    private Boolean active;
+    
+    //    image or video
+    private String url;
 
     @ManyToOne
     private FishingLocation fishingLocation;

@@ -25,6 +25,6 @@ public class Ward {
     @ManyToOne
     @JsonIgnore
     @JoinColumn(name = "district_id", nullable = false)
-    private Province userProvince;
+    private District district;
 
 }

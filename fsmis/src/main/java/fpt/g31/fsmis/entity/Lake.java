@@ -1,10 +1,12 @@
 package fpt.g31.fsmis.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Setter
@@ -18,19 +20,28 @@ public class Lake {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    private Float length;
+    private Float width;
     private Float depth;
-    private LocalDateTime lastStockingTime;
-    private Long price;
+    private LocalDateTime lastEditTime;
+    private String price;
+    private Boolean active;
+    private String imageUrl;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn
     private FishingLocation fishingLocation;
 
+    @JsonIgnore
     @ManyToMany
     @JoinTable(
             name = "tbl_lake_fishing_method",
             joinColumns = @JoinColumn(name = "lake_id"),
             inverseJoinColumns = @JoinColumn(name = "fishing_method_id")
     )
-    private List<FishingMethod> fishingMethodList;
+    private Set<FishingMethod> fishingMethodSet;
+
+    @OneToMany(mappedBy = "id")
+    private List<FishInLake> fishInLakeList;
 }
