@@ -1,13 +1,16 @@
+import { HStack } from "native-base";
 import React from "react";
-import { View } from "react-native";
 
 import AddImageButton from "./AddImageButton";
+import InteractiveImageBox from "./InteractiveImageBox";
 
 const AddImageSection = () => {
   return (
-    <View>
+    <HStack justifyContent="space-between" alignItems="center">
+      <InteractiveImageBox />
+      <InteractiveImageBox />
       <AddImageButton />
-    </View>
+    </HStack>
   );
 };
 
