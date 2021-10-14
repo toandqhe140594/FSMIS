@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
     width: "90%",
   },
   selectInput: {
-    width: "75%",
+    width: "100%",
   },
   textArea: {
     borderWidth: 1,
@@ -39,7 +39,7 @@ const AnglerCatchReportScreen = () => {
     <ScrollView>
       <VStack space={3} divider={<Divider />}>
         <Center>
-          <VStack style={styles.sectionWrapper}>
+          <VStack space={2} style={styles.sectionWrapper}>
             {/* AddImageButton */}
             <AddImageSection />
             {/* Textarea input field */}
@@ -59,10 +59,12 @@ const AnglerCatchReportScreen = () => {
             alignItems="center"
             justifyContent="space-between"
           >
-            <Text>Vị trí hồ câu</Text>
+            <Text bold fontSize="md">
+              Vị trí hồ câu
+            </Text>
             {/* Select lake type dropdown field */}
             <Select
-              style={styles.selectInput}
+              w="70%"
               accessibilityLabel="Chọn hồ câu"
               fontSize="md"
               placeholder="Chọn hồ câu"
@@ -75,10 +77,14 @@ const AnglerCatchReportScreen = () => {
 
         <Center>
           <VStack style={styles.sectionWrapper} space={3}>
-            <Text>Thông tin cá</Text>
+            <Text bold fontSize="md">
+              Thông tin cá
+            </Text>
             {/* Catch Report card list */}
             <VStack>
+              {/* Should wrap inside <FlatList> */}
               <CatchReportCard />
+              {/* </FlatList> */}
             </VStack>
             {/* Add catch report card button */}
             <Button style={styles.button} alignSelf="center">
