@@ -23,7 +23,7 @@ public class CheckIn {
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "fishing_spot_id")
+    @JoinColumn(name = "fishing_location_id")
     private FishingLocation fishingLocation;
 
     @NotNull

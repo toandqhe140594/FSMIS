@@ -26,7 +26,7 @@ public class FishingLocationController {
 
     @GetMapping
     public ResponseEntity<List<FishingLocation>> getAll() {
-        List<FishingLocation> fishingLocations = fishingLocationService.findAllFishingSpots();
+        List<FishingLocation> fishingLocations = fishingLocationService.findAllFishingLocations();
         return new ResponseEntity<>(fishingLocations, HttpStatus.OK);
     }
 
@@ -42,8 +42,8 @@ public class FishingLocationController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @PostMapping(path = "/{spotId}/checkin")
-    public ResponseEntity<CheckIn> checkIn(@PathVariable Long spotId, @RequestParam Long userId) {
-        return new ResponseEntity<>(checkInService.userCheckInFishingSpot(userId, spotId), HttpStatus.OK);
+    @PostMapping(path = "/{locationId}/checkin")
+    public ResponseEntity<CheckIn> checkIn(@PathVariable Long locationId, @RequestParam Long userId) {
+        return new ResponseEntity<>(checkInService.userCheckInFishingLocation(userId, locationId), HttpStatus.OK);
     }
 }

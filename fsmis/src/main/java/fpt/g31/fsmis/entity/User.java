@@ -59,13 +59,18 @@ public class User {
     private List<Report> reportList;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "id")
-    private List<Notification> notificationList;
+    @ManyToMany
+    @JoinTable(
+            name = "tbl_user_notification",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "notification_id")
+    )
+    private Set<Notification> notificationSet;
 
     @JsonIgnore
     @ManyToMany
     @JoinTable(
-            name = "user_saved_fishing_locations",
+            name = "tbl_user_saved_fishing_locations",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "fishing_location_id")
     )

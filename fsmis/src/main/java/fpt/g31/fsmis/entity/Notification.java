@@ -3,7 +3,7 @@ package fpt.g31.fsmis.entity;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -11,6 +11,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "tbl_notification")
 public class Notification {
     @Id
     @GeneratedValue
@@ -18,7 +19,6 @@ public class Notification {
 
     private String description;
 
-    @ManyToMany
-    @JoinColumn
-    private List<User> userList;
+    @ManyToMany(mappedBy = "notificationSet")
+    private Set<User> userSet;
 }

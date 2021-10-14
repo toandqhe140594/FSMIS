@@ -31,6 +31,6 @@ public class Review {
     private List<Vote> voteList;
 
     @ManyToOne
-    @JoinColumn(name = "fishing_location_id")
+    @JoinColumn()
     private FishingLocation fishingLocation;
 }

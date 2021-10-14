@@ -72,7 +72,7 @@ public class FishingLocation {
     @OneToMany
     @JoinTable(
             name = "tbl_employee_list",
-            joinColumns = @JoinColumn(name = "fishing_spot_id"),
+            joinColumns = @JoinColumn(name = "fishing_location_id"),
             inverseJoinColumns = @JoinColumn(name = "employee_id")
     )
     private List<User> employeeList;
@@ -82,7 +82,7 @@ public class FishingLocation {
 //    private Set<User> savedUser;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "id", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "id")
     private List<Review> reviewList;
 
     @JsonIgnore

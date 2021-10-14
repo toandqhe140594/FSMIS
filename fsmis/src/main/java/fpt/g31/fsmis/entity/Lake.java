@@ -6,6 +6,7 @@ import lombok.*;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Setter
@@ -39,7 +40,7 @@ public class Lake {
             joinColumns = @JoinColumn(name = "lake_id"),
             inverseJoinColumns = @JoinColumn(name = "fishing_method_id")
     )
-    private List<FishingMethod> fishingMethodList;
+    private Set<FishingMethod> fishingMethodSet;
 
     @OneToMany(mappedBy = "id")
     private List<FishInLake> fishInLakeList;

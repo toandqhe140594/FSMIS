@@ -21,7 +21,7 @@ public class CheckInService {
     private final UserRepos userRepos;
     private final FishingLocationRepos fishingLocationRepos;
 
-    public CheckIn userCheckInFishingSpot(Long userId, Long fishingLocationId) {
+    public CheckIn userCheckInFishingLocation(Long userId, Long fishingLocationId) {
         Optional<User> userOptional = userRepos.findById(userId);
         Optional<FishingLocation> fishingLocationOptional = fishingLocationRepos.findById(fishingLocationId);
         if (userOptional.isPresent() && fishingLocationOptional.isPresent()) {

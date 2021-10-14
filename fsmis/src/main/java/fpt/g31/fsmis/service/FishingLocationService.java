@@ -25,7 +25,7 @@ public class FishingLocationService {
 
     private ModelMapper modelMapper;
 
-    public List<FishingLocation> findAllFishingSpots() {
+    public List<FishingLocation> findAllFishingLocations() {
         return fishingLocationRepos.findAll();
     }
 
@@ -49,11 +49,11 @@ public class FishingLocationService {
     }
 
     public FishingLocation findById(Long id) {
-        Optional<FishingLocation> findFishingSpot = fishingLocationRepos.findById(id);
-        if (!findFishingSpot.isPresent()) {
+        Optional<FishingLocation> findFishingLocation = fishingLocationRepos.findById(id);
+        if (!findFishingLocation.isPresent()) {
             throw new FishingLocationNotFoundException(id);
         }
-        return findFishingSpot.get();
+        return findFishingLocation.get();
     }
 
     public Boolean disableFishingLocation(Long fishingLocationId, Long ownerId) {
@@ -64,8 +64,4 @@ public class FishingLocationService {
         fishingLocation.setActive(false);
         return true;
     }
-
-//    public FishingLocation updateFishingSpot(Long id, FishingLocationDtoInput fishingLocationDtoInput) {
-//        return null;
-//    }
 }
