@@ -4,7 +4,7 @@ import React from "react";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 import components from "./src/config/components";
-import AnglerCatchReportsHistory from "./src/screens/CatchReportsHistoryDetail";
+import RootStackNavigator from "./src/navigations/RootStackNavigator";
 
 export default function App() {
   const theme = extendTheme({
@@ -14,8 +14,11 @@ export default function App() {
   return (
     <NativeBaseProvider theme={theme}>
       <SafeAreaProvider>
-        {/* <LogoScreen /> */}
-        <AnglerCatchReportsHistory />
+        <SafeAreaView flex={1}>
+          <NavigationContainer>
+            <RootStackNavigator />
+          </NavigationContainer>
+        </SafeAreaView>
       </SafeAreaProvider>
     </NativeBaseProvider>
   );

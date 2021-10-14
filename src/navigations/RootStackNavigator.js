@@ -3,6 +3,8 @@ import React from "react";
 import { View } from "react-native";
 
 import * as ROUTE_NAMES from "../config/routeNames";
+// eslint-disable-next-line import/no-unresolved
+import test from "../screens/EventList";
 import FishingLocationOverviewScreen from "../screens/FLocationOverviewScreen";
 import LakeDetailScreen from "../screens/LakeDetailScreen";
 import WriteReportScreen from "../screens/WriteReportScreen";
@@ -21,8 +23,9 @@ const RootStackNavigator = () => {
       screenOptions={{
         headerShown: false,
       }}
-      initialRouteName={ROUTE_NAMES.ANGLER_MAIN}
+      initialRouteName={ROUTE_NAMES.TEST}
     >
+      <RootStack.Screen name={ROUTE_NAMES.TEST} component={test} />
       <RootStack.Screen
         name={ROUTE_NAMES.ANGLER_MAIN}
         component={AnglerMainTabNavigator}

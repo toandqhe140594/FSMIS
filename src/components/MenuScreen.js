@@ -9,9 +9,9 @@ const MenuScreen = ({ menuListItem }) => {
       {menuListItem.map((item) => (
         <View key={item.key}>
           <Button
-            size="sm"
+            size="md"
             variant="ghost"
-            pl="3"
+            pl="4"
             style={{ justifyContent: "flex-start", borderRadius: 0 }}
             colorScheme="light"
           >

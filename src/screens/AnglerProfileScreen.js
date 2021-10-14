@@ -1,8 +1,9 @@
+import { Box, VStack } from "native-base";
 import React from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Box, VStack, Spacer } from "native-base";
-import MenuScreen from "../components/MenuScreen";
+
 import AvatarCard from "../components/AvatarCard";
+import MenuScreen from "../components/MenuScreen";
+
 const AnglerProfileScreen = () => {
   const dummyMenu = [
     { key: "1", id: 1, text: "Quản lý điểm câu" },
@@ -10,26 +11,29 @@ const AnglerProfileScreen = () => {
     { key: "3", id: 2, text: "Quản lý hồ câu" },
   ];
   return (
-    <SafeAreaView>
-      <Box>
-        <VStack
-          _dark={{
-            borderColor: "gray.600",
-          }}
-          borderColor="coolGray.200"
-          pl="4"
-          pr="5"
-          py="2"
-          mb="4"
-        >
-          <AvatarCard avatarSize="xl" name="Thanh" />
-        </VStack>
+    <Box>
+      <VStack
+        _dark={{
+          borderColor: "gray.600",
+        }}
+        borderColor="coolGray.200"
+        pl="4"
+        pr="5"
+        py="2"
+        mb="4"
+      >
+        <AvatarCard
+          avatarSize="xl"
+          name="Thanh"
+          subText="Số lượng lên cần :99"
+        />
+      </VStack>
 
-        <VStack>
-          <MenuScreen menuListItem={dummyMenu} />
-        </VStack>
-      </Box>
-    </SafeAreaView>
+      <VStack>
+        <MenuScreen menuListItem={dummyMenu} />
+      </VStack>
+    </Box>
+  
   );
 };
 

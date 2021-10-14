@@ -5,6 +5,7 @@ import React from "react";
 const FishCard = ({ image, fishType, quantity, totalWeight }) => {
   const defaultWeight = "kg";
   const defaultQuantity = "con";
+
   return (
     <Box flexDirection="row" alignItems="center">
       <Image
