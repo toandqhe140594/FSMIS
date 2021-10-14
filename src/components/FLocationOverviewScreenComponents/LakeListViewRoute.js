@@ -2,7 +2,6 @@ import { Box, VStack } from "native-base";
 import React from "react";
 import { ScrollView } from "react-native";
 import { Divider } from "react-native-elements";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 import HeaderTab from "../HeaderTab";
 import LakeCard from "../LakeCard";
@@ -10,7 +9,7 @@ import LakeCard from "../LakeCard";
 const LakeListViewRoute = () => {
   return (
     <ScrollView>
-      <SafeAreaView>
+      <Box>
         <HeaderTab name="Hồ câu thuần việt" isVerified flagable />
         <Divider />
         <Box mx="7%">
@@ -27,7 +26,7 @@ const LakeListViewRoute = () => {
             />
           </VStack>
         </Box>
-      </SafeAreaView>
+      </Box>
     </ScrollView>
   );
 };
