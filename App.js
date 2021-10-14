@@ -3,7 +3,7 @@ import React from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import components from "./src/config/components";
-import LogoScreen from "./src/screens/LogoScreen";
+import LogoScreen from "./src/screens/AnglerCatchReportScreen";
 
 export default function App() {
   const theme = extendTheme({
