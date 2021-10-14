@@ -1,3 +1,6 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
+/* eslint-disable react/no-unescaped-entities */
 import { Box, FlatList, Text } from "native-base";
 import React from "react";
 
@@ -11,7 +14,7 @@ const dummyMenu = [
   { id: 3, name: "Quản" },
   { id: 4, name: "Quản" },
 ];
-const AnglerCatchReportsHistory = () => {
+const AnglerCatchReportsHistoryScreen = ({ angler }) => {
   return (
     <Box>
       <HeaderTab name="Lịch sử báo cá" />
@@ -35,12 +38,12 @@ const AnglerCatchReportsHistory = () => {
             >
               <PressableCustom paddingX="3" paddingY="1">
                 <Box pl="2">
-                  <AvatarCard avatarSize="md" name={item.name} />
+                  <AvatarCard avatarSize="md" name={angler.name} />
                   <Box mt={2}>
-                    <Text italic>"Ngôi cả sáng"</Text>
+                    <Text italic>{angler.message}</Text>
                     <Text>
                       <Text bold>Đã câu được :</Text>
-                      cá chép, cá quả
+                      {angler.caches}
                     </Text>
                   </Box>
                 </Box>
@@ -53,4 +56,8 @@ const AnglerCatchReportsHistory = () => {
     </Box>
   );
 };
-export default AnglerCatchReportsHistory;
+
+AnglerCatchReportsHistoryScreen.defaultProps = {
+  angler: { name: "Dat", message: "Ngôi cả sáng", caches: " cá chép, cá quả" },
+};
+export default AnglerCatchReportsHistoryScreen;

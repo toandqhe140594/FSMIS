@@ -1,3 +1,5 @@
+/* eslint-disable no-nested-ternary */
+/* eslint-disable react/prop-types */
 import { Box, Pressable } from "native-base";
 import React from "react";
 

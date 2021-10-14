@@ -1,13 +1,12 @@
-import { Ionicons, MaterialIcons } from "@expo/vector-icons";
+/* eslint-disable no-unused-vars */
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import { Box, Image, VStack } from "native-base";
+import { Box } from "native-base";
 import React from "react";
-import { Dimensions, FlatList, StyleSheet } from "react-native";
-import { Badge, Card, Divider, Text } from "react-native-elements";
-
-import HeaderTab from "../components/HeaderTab";
+import { FlatList, StyleSheet } from "react-native";
+import { Divider } from "react-native-elements";
 
 import EventPostCard from "../components/EventPostCard";
+import HeaderTab from "../components/HeaderTab";
 import PressableCustom from "../components/Pressable";
 
 const styles = StyleSheet.create({
@@ -23,6 +22,7 @@ const styles = StyleSheet.create({
 const A = () => {
   return (
     <FlatList
+      // eslint-disable-next-line no-use-before-define
       data={dummyMenu}
       renderItem={({ item }) => (
         <PressableCustom paddingX="1">

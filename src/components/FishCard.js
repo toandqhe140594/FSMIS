@@ -1,7 +1,8 @@
 import { Box, Image, Text } from "native-base";
-import PropTypes from "prop-types";
+// import PropTypes from "prop-types";
 import React from "react";
 
+// eslint-disable-next-line react/prop-types
 const FishCard = ({ image, fishType, quantity, totalWeight }) => {
   const defaultWeight = "kg";
   const defaultQuantity = "con";

@@ -4,7 +4,7 @@ import { View } from "react-native";
 
 import * as ROUTE_NAMES from "../config/routeNames";
 // eslint-disable-next-line import/no-unresolved
-import test from "../screens/EventList";
+import test from "../screens/CachesReportsHistoryDetailScreen";
 import FishingLocationOverviewScreen from "../screens/FLocationOverviewScreen";
 import LakeDetailScreen from "../screens/LakeDetailScreen";
 import WriteReportScreen from "../screens/WriteReportScreen";

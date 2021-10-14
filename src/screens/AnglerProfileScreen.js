@@ -1,10 +1,11 @@
+/* eslint-disable react/destructuring-assignment */
 import { Box, VStack } from "native-base";
 import React from "react";
 
 import AvatarCard from "../components/AvatarCard";
 import MenuScreen from "../components/MenuScreen";
 
-const AnglerProfileScreen = () => {
+const AnglerProfileScreen = (anglerAvatar) => {
   const dummyMenu = [
     { key: "1", id: 1, text: "Quản lý điểm câu" },
     { key: "2", id: 2, text: "Quản lý nhân viên" },
@@ -23,9 +24,9 @@ const AnglerProfileScreen = () => {
         mb="4"
       >
         <AvatarCard
-          avatarSize="xl"
-          name="Thanh"
-          subText="Số lượng lên cần :99"
+          avatarSize={anglerAvatar.avatarSize}
+          name={anglerAvatar.name}
+          subText={anglerAvatar.subText}
         />
       </VStack>
 
@@ -33,8 +34,14 @@ const AnglerProfileScreen = () => {
         <MenuScreen menuListItem={dummyMenu} />
       </VStack>
     </Box>
-  
   );
 };
 
+AnglerProfileScreen.defaultProps = {
+  anglerAvatar: {
+    avatarSize: "xl",
+    name: "Thanh",
+    subText: "Số lượng lên cần :99",
+  },
+};
 export default AnglerProfileScreen;

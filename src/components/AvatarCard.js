@@ -1,17 +1,5 @@
+import { Avatar, Box, HStack, Text, VStack } from "native-base";
 import React from "react";
-
-import {
-  Box,
-  FlatList,
-  Heading,
-  Avatar,
-  HStack,
-  VStack,
-  Text,
-  Spacer,
-  Center,
-  NativeBaseProvider,
-} from "native-base";
 
 // eslint-disable-next-line react/prop-types
 const AvatarCard = ({ avatarSize, name, nameSize, subText }) => {
