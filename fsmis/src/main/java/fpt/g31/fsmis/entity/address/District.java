@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Setter
@@ -30,6 +30,6 @@ public class District {
 
     @JsonIgnore
     @OneToMany(mappedBy = "id", cascade = CascadeType.ALL)
-    private Collection<Ward> wardCollection;
+    private List<Ward> wardList;
 
 }

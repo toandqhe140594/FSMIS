@@ -1,13 +1,16 @@
 package fpt.g31.fsmis.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.*;
+import fpt.g31.fsmis.entity.address.Ward;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name = "tbl_fishing_location")
@@ -33,6 +36,14 @@ public class FishingLocation {
     @NotNull
     private String address;
 
+    @ManyToOne
+    @JoinColumn
+    private Ward ward;
+
+    private String phone;
+
+    private String description;
+
     private String website;
 
     @NotNull
@@ -46,22 +57,18 @@ public class FishingLocation {
 
     @JsonIgnore
     @OneToMany(mappedBy = "id", cascade = CascadeType.ALL)
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
     private List<CheckIn> checkInList;
 
     @JsonIgnore
     @OneToMany(mappedBy = "id", cascade = CascadeType.ALL)
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
     private List<Post> postList;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
     private User owner;
 
+    @JsonIgnore
     @OneToMany
     @JoinTable(
             name = "tbl_employee_list",
@@ -70,13 +77,24 @@ public class FishingLocation {
     )
     private List<User> employeeList;
 
-    @ManyToMany(mappedBy = "savedFishingLocations")
-    private Set<User> savedUser;
+//    @JsonIgnore
+//    @ManyToMany(mappedBy = "savedFishingLocations")
+//    private Set<User> savedUser;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "id", cascade = CascadeType.ALL)
     private List<Review> reviewList;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "id")
+    private List<Lake> lakeList;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "id")
+    private List<Catches> catchesList;
 
     private LocalDateTime createdDate;
     private LocalDateTime lastEditedDate;
     private Boolean active;
+    private Boolean verify;
 }

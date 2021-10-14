@@ -15,10 +15,13 @@ public class Vote {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long id;
+
     private VoteType voteType;
+
     @ManyToOne
-    @JoinColumn(name = "review_id")
+    @JoinColumn
     private Review review;
+
     @ManyToOne
     @JoinColumn
     private User user;

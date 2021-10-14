@@ -20,16 +20,14 @@ public class CheckIn {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
     private User user;
 
     @ManyToOne
     @JoinColumn(name = "fishing_spot_id")
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
     private FishingLocation fishingLocation;
 
     @NotNull
     private LocalDateTime checkInTime;
+
+    private LocalDateTime checkOutTime;
 }

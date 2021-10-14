@@ -17,6 +17,8 @@ public class FishingMethod {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    private Boolean active;
+
     @ManyToMany(mappedBy = "fishingMethodList")
     private List<Lake> lakeList;
 }

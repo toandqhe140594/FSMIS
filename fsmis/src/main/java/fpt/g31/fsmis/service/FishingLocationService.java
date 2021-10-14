@@ -41,6 +41,7 @@ public class FishingLocationService {
             fishingLocation.setCreatedDate(LocalDateTime.now());
             fishingLocation.setLastEditedDate(LocalDateTime.now());
             fishingLocation.setOwner(ownerOptional.get());
+            fishingLocation.setActive(true);
             return fishingLocationRepos.save(fishingLocation);
         } else {
             throw new ValidationException("Thiếu request body");

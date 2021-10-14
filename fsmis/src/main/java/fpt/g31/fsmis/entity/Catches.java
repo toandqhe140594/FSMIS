@@ -20,10 +20,15 @@ public class Catches {
 
     private String description;
     private LocalDateTime time;
+    private Boolean hidden;
 
     @ManyToOne
     @JoinColumn
     private User user;
+
+    @ManyToOne
+    @JoinColumn
+    private FishingLocation fishingLocation;
 
     @OneToMany
     @JoinColumn

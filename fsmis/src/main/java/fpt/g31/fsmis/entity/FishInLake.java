@@ -24,6 +24,8 @@ public class FishInLake {
     @JoinColumn
     private Lake lake;
 
+    private Float maxWeight;
+    private Float minWeight;
     private Integer quantity;
-    private Float weight;
+    private Float totalWeight;
 }

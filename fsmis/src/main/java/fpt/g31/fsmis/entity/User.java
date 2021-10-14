@@ -1,6 +1,7 @@
 package fpt.g31.fsmis.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import fpt.g31.fsmis.entity.address.Ward;
 import lombok.*;
 
 import javax.persistence.*;
@@ -21,15 +22,21 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String username;
+    private String fullName;
 
     private String password;
 
     private String phone;
 
-    private String name;
-
     private LocalDateTime dob;
+
+    @ManyToOne
+    @JoinColumn(name = "ward_id")
+    private Ward ward;
+
+    private String qrString;
+
+    private String avatarUrl = "https://picsum.photos/200";
 
     private boolean gender;
 
@@ -37,37 +44,32 @@ public class User {
 
     @JsonIgnore
     @OneToMany(mappedBy = "id", cascade = CascadeType.ALL)
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
     private List<CheckIn> checkInList;
 
     @JsonIgnore
     @OneToMany(mappedBy = "id", cascade = CascadeType.ALL)
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
     private List<Catches> catchesList;
 
     @JsonIgnore
     @OneToMany(mappedBy = "id", cascade = CascadeType.ALL)
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
     private List<Review> reviewList;
 
     @JsonIgnore
     @OneToMany(mappedBy = "id", cascade = CascadeType.ALL)
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
     private List<Report> reportList;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "id")
+    private List<Notification> notificationList;
 
     @JsonIgnore
     @ManyToMany
     @JoinTable(
-            name = "user_saved_fishing_spots",
+            name = "user_saved_fishing_locations",
             joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "fishing_spot_id")
+            inverseJoinColumns = @JoinColumn(name = "fishing_location_id")
     )
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
     private Set<FishingLocation> savedFishingLocations;
+
 
 }

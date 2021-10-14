@@ -21,13 +21,7 @@ public class FishingLocationDtoInput {
 
     @NotEmpty
     private String address;
-
-//    @NotNull
-//    private Long provinceId;
-//
-//    @NotNull
-//    private Long districtId;
-//
+    
 //    @NotNull
 //    private Long wardId;
 

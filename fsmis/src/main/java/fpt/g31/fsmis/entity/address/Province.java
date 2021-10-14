@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Setter
@@ -25,6 +25,6 @@ public class Province {
 
     @JsonIgnore
     @OneToMany(mappedBy = "id", cascade = CascadeType.ALL)
-    private Collection<District> districtCollection;
+    private List<District> districtList;
 
 }
