@@ -13,8 +13,8 @@ import React from "react";
 // import { Controller, useForm } from "react-hook-form";
 import { ScrollView, StyleSheet, TextInput } from "react-native";
 
-import AddImageSection from "../components/CatchReport/AddImageSection";
 import CatchReportCard from "../components/CatchReport/CatchReportCard";
+import AddImageSection from "../components/common/AddImageSection";
 // import * as yup from "yup";
 
 const styles = StyleSheet.create({
