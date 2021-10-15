@@ -1,8 +1,14 @@
 import { Avatar, Box, HStack, Text, VStack } from "native-base";
+import PropTypes from "prop-types";
 import React from "react";
 
-// eslint-disable-next-line react/prop-types
-const AvatarCard = ({ avatarSize, name, nameSize, subText }) => {
+const AvatarCard = ({
+  avatarSize,
+  nameUser,
+  nameFontSize,
+  subText,
+  subTextFontSize,
+}) => {
   return (
     <Box
       w={{
@@ -25,9 +31,9 @@ const AvatarCard = ({ avatarSize, name, nameSize, subText }) => {
             }}
             color="coolGray.800"
             bold
-            fontSize={nameSize || "md"}
+            fontSize={nameFontSize || "md"}
           >
-            {name}
+            {nameUser}
           </Text>
           {subText && (
             <Text
@@ -35,6 +41,7 @@ const AvatarCard = ({ avatarSize, name, nameSize, subText }) => {
               _dark={{
                 color: "warmGray.200",
               }}
+              fontSize={subTextFontSize || "md"}
             >
               {subText}
             </Text>
@@ -43,5 +50,19 @@ const AvatarCard = ({ avatarSize, name, nameSize, subText }) => {
       </HStack>
     </Box>
   );
+};
+AvatarCard.propTypes = {
+  avatarSize: PropTypes.string,
+  nameUser: PropTypes.string,
+  nameFontSize: PropTypes.string,
+  subText: PropTypes.string,
+  subTextFontSize: PropTypes.string,
+};
+AvatarCard.defaultProps = {
+  avatarSize: "md",
+  nameUser: "Thanh",
+  nameFontSize: "md",
+  subText: null,
+  subTextFontSize: "sm",
 };
 export default AvatarCard;

@@ -1,5 +1,5 @@
-/* eslint-disable react/prop-types */
 import { Box, Text, VStack } from "native-base";
+import PropTypes from "prop-types";
 import React from "react";
 
 const CheckInCard = ({ timeIn, timeOut, ...props }) => {
@@ -22,5 +22,12 @@ const CheckInCard = ({ timeIn, timeOut, ...props }) => {
 CheckInCard.defaultProps = {
   timeIn: "0/0/0",
   timeOut: "0/0/0",
+  children: null,
 };
+CheckInCard.propTypes = {
+  timeIn: PropTypes.string,
+  timeOut: PropTypes.string,
+  children: PropTypes.element,
+};
+
 export default CheckInCard;

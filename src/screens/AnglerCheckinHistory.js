@@ -3,7 +3,7 @@ import React from "react";
 
 import CheckInCard from "../components/CheckInCard";
 import HeaderTab from "../components/HeaderTab";
-import PressableCustom from "../components/Pressable";
+import PressableCustomCard from "../components/PressableCustomCard";
 
 const AnglerCheckInHistory = () => {
   const dummyMenu = [
@@ -33,13 +33,13 @@ const AnglerCheckInHistory = () => {
 
               // keyExtractor={(item.id) => item.index_id.toString()}
             >
-              <PressableCustom paddingX="2" paddingY="1">
+              <PressableCustomCard paddingX="2" paddingY="1">
                 <CheckInCard>
                   <Text bold fontSize="md">
                     {item.name}
                   </Text>
                 </CheckInCard>
-              </PressableCustom>
+              </PressableCustomCard>
             </Box>
           )}
           keyExtractor={(item, index) => index.toString()}

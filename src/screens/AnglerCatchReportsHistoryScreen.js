@@ -6,7 +6,7 @@ import React from "react";
 
 import AvatarCard from "../components/AvatarCard";
 import HeaderTab from "../components/HeaderTab";
-import PressableCustom from "../components/Pressable";
+import PressableCustomCard from "../components/PressableCustomCard";
 
 const dummyMenu = [
   { id: 1, name: "Quản" },
@@ -36,7 +36,7 @@ const AnglerCatchReportsHistoryScreen = ({ angler }) => {
               pb="1"
               // keyExtractor={(item.id) => item.index_id.toString()}
             >
-              <PressableCustom paddingX="3" paddingY="1">
+              <PressableCustomCard paddingX="3" paddingY="1">
                 <Box pl="2">
                   <AvatarCard avatarSize="md" name={angler.name} />
                   <Box mt={2}>
@@ -47,7 +47,7 @@ const AnglerCatchReportsHistoryScreen = ({ angler }) => {
                     </Text>
                   </Box>
                 </Box>
-              </PressableCustom>
+              </PressableCustomCard>
             </Box>
           )}
           keyExtractor={(item, index) => index.toString()}

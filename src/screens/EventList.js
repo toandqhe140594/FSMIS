@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { Box } from "native-base";
 import React from "react";
@@ -7,7 +6,7 @@ import { Divider } from "react-native-elements";
 
 import EventPostCard from "../components/EventPostCard";
 import HeaderTab from "../components/HeaderTab";
-import PressableCustom from "../components/Pressable";
+import PressableCustomCard from "../components/PressableCustomCard";
 
 const styles = StyleSheet.create({
   tabBarStyle: {
@@ -19,34 +18,34 @@ const styles = StyleSheet.create({
     marginTop: 0,
   },
 });
+const dummyMenu = [
+  { id: 1, name: "Hồ thuần việt" },
+  { id: 2, name: "Hồ không thuần việt" },
+  { id: 3, name: "Hồ Quản" },
+];
+
 const A = () => {
   return (
     <FlatList
-      // eslint-disable-next-line no-use-before-define
       data={dummyMenu}
-      renderItem={({ item }) => (
-        <PressableCustom paddingX="1">
+      renderItem={() => (
+        <PressableCustomCard paddingX="1">
           <EventPostCard postStyle="ANGLER_POST" />
-        </PressableCustom>
+        </PressableCustomCard>
       )}
       keyExtractor={(item, index) => index.toString()}
     />
   );
 };
 
-const dummyMenu = [
-  { id: 1, name: "Hồ thuần việt" },
-  { id: 2, name: "Hồ không thuần việt" },
-  { id: 3, name: "Hồ Quản" },
-];
 const FLocationEventRoute = () => {
   return (
     <FlatList
       data={dummyMenu}
-      renderItem={({ item }) => (
-        <PressableCustom paddingX="1">
+      renderItem={() => (
+        <PressableCustomCard paddingX="1">
           <EventPostCard postStyle="LAKE_POST" />
-        </PressableCustom>
+        </PressableCustomCard>
       )}
       keyExtractor={(item, index) => index.toString()}
     />

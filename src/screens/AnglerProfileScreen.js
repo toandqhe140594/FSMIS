@@ -1,16 +1,19 @@
-/* eslint-disable react/destructuring-assignment */
 import { Box, VStack } from "native-base";
 import React from "react";
 
 import AvatarCard from "../components/AvatarCard";
 import MenuScreen from "../components/MenuScreen";
 
-const AnglerProfileScreen = (anglerAvatar) => {
-  const dummyMenu = [
-    { key: "1", id: 1, text: "Quản lý điểm câu" },
-    { key: "2", id: 2, text: "Quản lý nhân viên" },
-    { key: "3", id: 2, text: "Quản lý hồ câu" },
-  ];
+const menuCategory = [
+  { id: 1, title: "Lịch sử Báo cá", icon: "set-meal" },
+  { id: 2, title: "Lịch sử Check-in", icon: "check" },
+  { id: 3, title: "Chỉnh sửa thông tin cá nhân", icon: "person" },
+  { id: 4, title: "Thay đổi số điện thoại", icon: "call" },
+  { id: 5, title: "Thay đổi mật khẩu", icon: "lock" },
+  { id: 6, title: `Chuyển sang "Chế độ Quản lý"`, icon: "av-timer" },
+];
+const logOut = [{ id: 1, title: "Đăng xuất", icon: "exit-to-app" }];
+const AnglerProfileScreen = () => {
   return (
     <Box>
       <VStack
@@ -21,27 +24,20 @@ const AnglerProfileScreen = (anglerAvatar) => {
         pl="4"
         pr="5"
         py="2"
-        mb="4"
       >
         <AvatarCard
-          avatarSize={anglerAvatar.avatarSize}
-          name={anglerAvatar.name}
-          subText={anglerAvatar.subText}
+          avatarSize="xl"
+          nameFontSize="21"
+          subText="Lên cần : 69 lần"
         />
       </VStack>
 
-      <VStack>
-        <MenuScreen menuListItem={dummyMenu} />
+      <VStack mt="4">
+        <MenuScreen menuListItem={menuCategory} />
+        <MenuScreen menuListItem={logOut} />
       </VStack>
     </Box>
   );
 };
 
-AnglerProfileScreen.defaultProps = {
-  anglerAvatar: {
-    avatarSize: "xl",
-    name: "Thanh",
-    subText: "Số lượng lên cần :99",
-  },
-};
 export default AnglerProfileScreen;

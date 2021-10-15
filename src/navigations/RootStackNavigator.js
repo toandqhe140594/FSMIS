@@ -3,10 +3,10 @@ import React from "react";
 import { View } from "react-native";
 
 import * as ROUTE_NAMES from "../config/routeNames";
-// eslint-disable-next-line import/no-unresolved
-import test from "../screens/CachesReportsHistoryDetailScreen";
 import FishingLocationOverviewScreen from "../screens/FLocationOverviewScreen";
 import LakeDetailScreen from "../screens/LakeDetailScreen";
+// eslint-disable-next-line import/no-unresolved
+import test from "../screens/NotificationsScreen";
 import WriteReportScreen from "../screens/WriteReportScreen";
 import WriteReviewScreen from "../screens/WriteReviewScreen";
 import AnglerMainTabNavigator from "./AnglerMainTabNavigator";
