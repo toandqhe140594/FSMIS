@@ -1,6 +1,6 @@
 package fpt.g31.fsmis.service;
 
-import fpt.g31.fsmis.dto.FishingLocationDtoInput;
+import fpt.g31.fsmis.dto.FishingLocationDtoIn;
 import fpt.g31.fsmis.entity.FishingLocation;
 import fpt.g31.fsmis.entity.User;
 import fpt.g31.fsmis.exception.FishingLocationNotFoundException;
@@ -29,15 +29,15 @@ public class FishingLocationService {
         return fishingLocationRepos.findAll();
     }
 
-    public FishingLocation createFishingLocation(FishingLocationDtoInput fishingLocationDtoInput) {
-        if (fishingLocationDtoInput != null) {
+    public FishingLocation createFishingLocation(FishingLocationDtoIn fishingLocationDtoIn) {
+        if (fishingLocationDtoIn != null) {
             FishingLocation fishingLocation;
-            Long ownerId = fishingLocationDtoInput.getOwnerId();
+            Long ownerId = fishingLocationDtoIn.getOwnerId();
             Optional<User> ownerOptional = userRepos.findById(ownerId);
             if (!ownerOptional.isPresent()) {
                 throw new UserNotFoundException(ownerId);
             }
-            fishingLocation = modelMapper.map(fishingLocationDtoInput, FishingLocation.class);
+            fishingLocation = modelMapper.map(fishingLocationDtoIn, FishingLocation.class);
             fishingLocation.setCreatedDate(LocalDateTime.now());
             fishingLocation.setLastEditedDate(LocalDateTime.now());
             fishingLocation.setOwner(ownerOptional.get());

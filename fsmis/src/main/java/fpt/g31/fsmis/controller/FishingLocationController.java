@@ -1,7 +1,7 @@
 package fpt.g31.fsmis.controller;
 
 
-import fpt.g31.fsmis.dto.FishingLocationDtoInput;
+import fpt.g31.fsmis.dto.FishingLocationDtoIn;
 import fpt.g31.fsmis.entity.CheckIn;
 import fpt.g31.fsmis.entity.FishingLocation;
 import fpt.g31.fsmis.service.CheckInService;
@@ -25,19 +25,19 @@ public class FishingLocationController {
     }
 
     @GetMapping
-    public ResponseEntity<List<FishingLocation>> getAll() {
+    public ResponseEntity<Object> getAll() {
         List<FishingLocation> fishingLocations = fishingLocationService.findAllFishingLocations();
         return new ResponseEntity<>(fishingLocations, HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<Object> createFishingLocation(@Valid @RequestBody FishingLocationDtoInput fishingLocationDtoInput) {
-        FishingLocation result = fishingLocationService.createFishingLocation(fishingLocationDtoInput);
+    public ResponseEntity<Object> createFishingLocation(@Valid @RequestBody FishingLocationDtoIn fishingLocationDtoIn) {
+        FishingLocation result = fishingLocationService.createFishingLocation(fishingLocationDtoIn);
         return new ResponseEntity<>(result, HttpStatus.CREATED);
     }
 
     @DeleteMapping
-    public ResponseEntity<Boolean> disableFishingLocation(@RequestParam Long fishingLocationId, @RequestParam Long ownerId) {
+    public ResponseEntity<Object> disableFishingLocation(@RequestParam Long fishingLocationId, @RequestParam Long ownerId) {
         Boolean result = fishingLocationService.disableFishingLocation(fishingLocationId, ownerId);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }

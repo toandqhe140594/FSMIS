@@ -10,7 +10,7 @@ import javax.validation.constraints.NotNull;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class FishingLocationDtoInput {
+public class FishingLocationDtoIn {
     @NotEmpty
     private String name;
 

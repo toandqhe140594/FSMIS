@@ -4,6 +4,7 @@ import fpt.g31.fsmis.exception.FishingLocationNotFoundException;
 import fpt.g31.fsmis.exception.UnauthorizedException;
 import fpt.g31.fsmis.exception.UserNotFoundException;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -39,6 +40,14 @@ public class GlobalAdvice {
     @ExceptionHandler(UnauthorizedException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     String unauthorizedExceptionHandler(UnauthorizedException ex) {
+        ex.printStackTrace();
+        return ex.getMessage();
+    }
+
+    @ResponseBody
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    String methodArgumentNotValidExceptionHandler(UnauthorizedException ex) {
         ex.printStackTrace();
         return ex.getMessage();
     }
