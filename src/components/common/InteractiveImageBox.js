@@ -1,22 +1,23 @@
 import { Box, Image } from "native-base";
+import PropTypes from "prop-types";
 import React from "react";
 import { StyleSheet, TouchableOpacity } from "react-native";
 
 const styles = StyleSheet.create({
   container: {
-    width: 120,
-    height: 120,
+    width: 110,
+    height: 110,
     overflow: "hidden",
   },
 });
 
-const InteractiveImageBox = () => {
+const InteractiveImageBox = ({ image }) => {
   return (
     <TouchableOpacity>
-      <Box style={styles.container}>
+      <Box style={styles.container} mt={1} ml={1}>
         <Image
           source={{
-            uri: "https://wallpaperaccess.com/full/317501.jpg",
+            uri: image,
           }}
           alt="Alternate Text"
           size="xl"
@@ -24,6 +25,10 @@ const InteractiveImageBox = () => {
       </Box>
     </TouchableOpacity>
   );
+};
+
+InteractiveImageBox.propTypes = {
+  image: PropTypes.string.isRequired,
 };
 
 export default InteractiveImageBox;
