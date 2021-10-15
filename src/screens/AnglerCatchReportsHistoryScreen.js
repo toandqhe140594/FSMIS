@@ -1,6 +1,3 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/prop-types */
-/* eslint-disable react/no-unescaped-entities */
 import { Box, FlatList, Text } from "native-base";
 import React from "react";
 

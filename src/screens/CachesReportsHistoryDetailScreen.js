@@ -1,5 +1,3 @@
-/* eslint-disable react/prop-types */
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import { Box, Link, ScrollView, Text, VStack } from "native-base";
 import React from "react";
 import { Image } from "react-native-elements";
