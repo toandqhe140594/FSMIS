@@ -30,6 +30,8 @@ public class User {
 
     private LocalDateTime dob;
 
+    private String address;
+
     @ManyToOne
     @JoinColumn(name = "ward_id")
     private Ward ward;

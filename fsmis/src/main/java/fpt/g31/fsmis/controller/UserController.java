@@ -1,43 +1,54 @@
 package fpt.g31.fsmis.controller;
 
+import fpt.g31.fsmis.dto.UserDtoIn;
+import fpt.g31.fsmis.dto.UserDtoOut;
 import fpt.g31.fsmis.entity.User;
-import fpt.g31.fsmis.service.UserServiceImpl;
+import fpt.g31.fsmis.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
 @RequestMapping(path = "/user")
 public class UserController {
-    UserServiceImpl userServiceImpl;
+    UserService userService;
 
     @Autowired
-    public UserController(UserServiceImpl userServiceImpl) {
-        this.userServiceImpl = userServiceImpl;
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
+    @GetMapping("/all")
+    public List<User> getAll() {
+        return userService.getAllUsers();
     }
 
     @GetMapping
-    public List<User> getAll() {
-        return userServiceImpl.getAllUsers();
+    public ResponseEntity<UserDtoOut> getById(@RequestParam long id) {
+        return new ResponseEntity<>(userService.getUserById(id), HttpStatus.OK);
     }
 
     @PostMapping
-    public User createUser(@RequestBody User newUser) {
-        return userServiceImpl.createUser(newUser);
+    public ResponseEntity<Boolean> createUser(@RequestBody @Valid UserDtoIn userDtoIn) {
+        return new ResponseEntity<>(userService.createUser(userDtoIn), HttpStatus.CREATED);
     }
 
     @PutMapping
-    public User updateUser(@RequestBody User newUser) {
-        return userServiceImpl.updateUser(newUser);
+    public User updateUser(@RequestBody UserDtoIn userDtoIn, @RequestBody long userId) {
+        return userService.updateUser(userDtoIn, userId);
     }
+
 
 //    @PostMapping("/login")
 //    @ApiOperation(value = "${UserController.login}")
 //    @ApiResponses(value = {
 //            @ApiResponse(code = 400, message = "Something went wrong"),
 //            @ApiResponse(code = 422, message = "Invalid phone/password supplied")})
-//    public ResponseEntity<Object> login(@RequestBody UserLoginDto userLoginDto) {
+//    public ResponseEntity<Object> login(@RequestBody UserLoginDtoIn userLoginDto) {
 //        String phone = userLoginDto.getPhone();
 //        String password = userLoginDto.getPassword();
 //        try {
