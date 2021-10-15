@@ -1,13 +1,12 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/prop-types */
 import { Ionicons } from "@expo/vector-icons";
 import { Box, HStack, VStack } from "native-base";
+import PropTypes from "prop-types";
 import React from "react";
 import { Badge, Card, Divider, Text } from "react-native-elements";
 
 import AvatarCard from "./AvatarCard";
 
-const EventPostCard = ({ postStyle, angler, lakePost, ...props }) => {
+const EventPostCard = ({ postStyle, angler, lakePost }) => {
   // Thu gon angler, lakePost thanh 1
   const image = "https://picsum.photos/200";
   return (
@@ -66,5 +65,16 @@ EventPostCard.defaultProps = {
     message:
       "Trắm đen - Chép khủng bồi hồ vip cho ae câu thứ 3-5, Lorem ipsum dolor, sit amet consectetur adipisicing elit",
   },
+  postStyle: "LAKE_POST",
 };
+EventPostCard.propTypes = {
+  angler: PropTypes.objectOf(
+    PropTypes.string,
+    PropTypes.string,
+    PropTypes.string,
+  ),
+  lakePost: PropTypes.objectOf(PropTypes.string, PropTypes.string),
+  postStyle: PropTypes.string,
+};
+
 export default EventPostCard;
