@@ -27,9 +27,6 @@ const styles = StyleSheet.create({
   button: {
     width: "90%",
   },
-  selectInput: {
-    width: "100%",
-  },
   textArea: {
     borderWidth: 1,
     textAlignVertical: "top",
@@ -73,7 +70,7 @@ SelectComponent.propTypes = {
 const MapOverviewBox = () => {
   return (
     <TouchableOpacity>
-      <Box w="90%" h={20} style={{ borderColor: "black", borderWidth: 1 }} />
+      <Box h={20} style={{ borderColor: "black", borderWidth: 1 }} />
     </TouchableOpacity>
   );
 };
@@ -119,11 +116,13 @@ const FLocationEditProfileScreen = () => {
       <HeaderTab />
       <VStack space={3} divider={<Divider />}>
         <Center>
+          {/* Image Picker section */}
           <VStack space={2} style={styles.sectionWrapper}>
             <Text style={{ fontWeight: "bold" }}>
               Ảnh bìa (nhiều nhất là 5)
             </Text>
             <AddImageSection />
+            {/* Input location name */}
             <InputComponent
               label="Tên địa điểm câu"
               placeholder="Nhập tên địa điểm câu"
@@ -135,6 +134,7 @@ const FLocationEditProfileScreen = () => {
             <Text style={{ fontWeight: "bold", fontSize: 16 }}>
               Thông tin liên hệ
             </Text>
+            {/* Information input and select fields */}
             <InputComponent
               label="Số điện thoại"
               placeholder="Nhập số điện thoại"
@@ -160,6 +160,7 @@ const FLocationEditProfileScreen = () => {
         </Center>
 
         <Center>
+          {/* Map component */}
           <VStack space={2} style={styles.sectionWrapper}>
             <Text style={{ fontWeight: "bold", fontSize: 16 }}>Bản đồ</Text>
             <MapOverviewBox />
@@ -167,6 +168,7 @@ const FLocationEditProfileScreen = () => {
         </Center>
 
         <Center>
+          {/* Description textarea */}
           <TextAreaComponent
             compStyles={styles.sectionWrapper}
             label="Mô tả khu hồ"
@@ -177,6 +179,7 @@ const FLocationEditProfileScreen = () => {
         </Center>
 
         <Center>
+          {/* Schedule textarea  */}
           <TextAreaComponent
             compStyles={styles.sectionWrapper}
             label="Thời gian hoạt động"
@@ -187,6 +190,7 @@ const FLocationEditProfileScreen = () => {
         </Center>
 
         <Center>
+          {/* Service textarea */}
           <TextAreaComponent
             compStyles={styles.sectionWrapper}
             label="Dịch vụ"
@@ -197,19 +201,23 @@ const FLocationEditProfileScreen = () => {
         </Center>
 
         <Center>
+          {/* rule textarea */}
           <TextAreaComponent
             compStyles={styles.sectionWrapper}
-            label="Mô tả khu hồ"
-            placeholder="Miêu tả khu hồ của bạn"
+            label="Nội quy"
+            placeholder="Miêu tả nội quy khu hồ"
             numberOfLines={3}
             maxLength={1000}
           />
         </Center>
 
         <Center>
-          <Button w="70%" mb={3}>
-            Lưu thông tin
-          </Button>
+          <VStack style={styles.sectionWrapper} space={3} mb={3}>
+            {/* Submit button */}
+            <Button style={styles.button} alignSelf="center">
+              Gửi và checkout
+            </Button>
+          </VStack>
         </Center>
       </VStack>
     </ScrollView>
