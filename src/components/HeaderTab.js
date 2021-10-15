@@ -29,7 +29,7 @@ const HeaderTab = ({ name, isVerified, flagable }) => {
         <Text bold fontSize="lg" mr={2}>
           {name}
         </Text>
-        {isVerified && <MaterialIcons name="verified" color="blue" size={16} />}
+        {isVerified && <MaterialIcons name="verified" color="blue" size={19} />}
       </Box>
       <Pressable
         onPress={() => {

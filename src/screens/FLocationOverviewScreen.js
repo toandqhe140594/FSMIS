@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-unresolved
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import React from "react";
 

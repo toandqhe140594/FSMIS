@@ -1,17 +1,19 @@
 import { Box, FlatList, Text } from "native-base";
+import PropTypes from "prop-types";
 import React from "react";
 
 import AvatarCard from "../components/AvatarCard";
 import HeaderTab from "../components/HeaderTab";
 import PressableCustomCard from "../components/PressableCustomCard";
 
-const dummyMenu = [
-  { id: 1, name: "Quản" },
-  { id: 2, name: "Quản" },
-  { id: 3, name: "Quản" },
-  { id: 4, name: "Quản" },
-];
 const AnglerCatchReportsHistoryScreen = ({ angler }) => {
+  const dummyMenu = [
+    { id: 1, message: "Ngoi ca sang", caches: "Ro dong, Diec" },
+    { id: 2, message: "Ngoi ca sang", caches: "Ro dong, Diec" },
+    { id: 3, message: "Ngoi ca sang", caches: "Ro dong, Diec" },
+    { id: 4, message: "Ngoi ca sang", caches: "Ro dong, Diec" },
+  ];
+
   return (
     <Box>
       <HeaderTab name="Lịch sử báo cá" />
@@ -35,12 +37,12 @@ const AnglerCatchReportsHistoryScreen = ({ angler }) => {
             >
               <PressableCustomCard paddingX="3" paddingY="1">
                 <Box pl="2">
-                  <AvatarCard avatarSize="md" name={angler.name} />
+                  <AvatarCard avatarSize="md" nameUser={angler.name} />
                   <Box mt={2}>
-                    <Text italic>{angler.message}</Text>
+                    <Text italic>{item.message}</Text>
                     <Text>
                       <Text bold>Đã câu được :</Text>
-                      {angler.caches}
+                      {item.caches}
                     </Text>
                   </Box>
                 </Box>
@@ -55,6 +57,9 @@ const AnglerCatchReportsHistoryScreen = ({ angler }) => {
 };
 
 AnglerCatchReportsHistoryScreen.defaultProps = {
-  angler: { name: "Dat", message: "Ngôi cả sáng", caches: " cá chép, cá quả" },
+  angler: { id: "1", name: "Dat" },
+};
+AnglerCatchReportsHistoryScreen.propTypes = {
+  angler: PropTypes.objectOf(PropTypes.string, PropTypes.string),
 };
 export default AnglerCatchReportsHistoryScreen;
