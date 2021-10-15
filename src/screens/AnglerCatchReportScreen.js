@@ -15,6 +15,7 @@ import { ScrollView, StyleSheet, TextInput } from "react-native";
 
 import CatchReportCard from "../components/CatchReport/CatchReportCard";
 import AddImageSection from "../components/common/AddImageSection";
+import HeaderTab from "../components/HeaderTab";
 // import * as yup from "yup";
 
 const styles = StyleSheet.create({
@@ -37,10 +38,11 @@ const styles = StyleSheet.create({
 const AnglerCatchReportScreen = () => {
   return (
     <ScrollView>
+      <HeaderTab />
       <VStack space={3} divider={<Divider />}>
         <Center>
           <VStack space={2} style={styles.sectionWrapper}>
-            {/* AddImageButton */}
+            {/* Impage picker section */}
             <AddImageSection />
             {/* Textarea input field */}
             <TextInput
@@ -94,7 +96,7 @@ const AnglerCatchReportScreen = () => {
         </Center>
 
         <Center>
-          <VStack style={styles.sectionWrapper} space={3}>
+          <VStack style={styles.sectionWrapper} space={3} mb={3}>
             {/* Public checkbox field */}
             <Checkbox alignItems="flex-start">Công khai thông tin</Checkbox>
             {/* Submit button */}
