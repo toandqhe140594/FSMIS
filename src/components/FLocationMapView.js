@@ -1,25 +1,18 @@
 import { Box } from "native-base";
+import PropTypes from "prop-types";
 import React from "react";
-import { Dimensions, StyleSheet } from "react-native";
 import MapView from "react-native-maps";
 
+import styles from "../config/styles";
 import FLocationMarker from "./FLocationMarker";
 
-const styles = StyleSheet.create({
-  map: {
-    width: Dimensions.get("window").width,
-    height: Dimensions.get("window").height,
-    flex: 1,
-  },
-});
-
-export default function MapViewTest() {
+export default function FLocationMapView({ coordinates }) {
   return (
-    <Box>
+    <Box flex={1}>
       <MapView
         initialRegion={{
-          latitude: 21.038793470613445,
-          longitude: 105.83590283070224,
+          latitude: coordinates.latitude,
+          longitude: coordinates.longitude,
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421,
         }}
@@ -55,3 +48,9 @@ export default function MapViewTest() {
     </Box>
   );
 }
+FLocationMapView.propTypes = {
+  coordinates: PropTypes.shape({
+    latitude: PropTypes.number,
+    longitude: PropTypes.number,
+  }).isRequired,
+};

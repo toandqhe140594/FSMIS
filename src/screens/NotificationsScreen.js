@@ -28,17 +28,19 @@ const NotificationsScreen = () => {
               borderColor="coolGray.200"
             >
               <PressableCustomCard paddingX="2" paddingY="1">
-                <Text style={{ whiteSpace: "nowrap" }} mb={1}>
-                  <Text bold fontSize="md">
-                    {item.name}
-                  </Text>{" "}
-                  đã đăng lên sự kiện
-                  <Text bold fontSize="md">
-                    {" "}
-                    {item.event}
+                <Box pl={5} py={3}>
+                  <Text numberOfLines={1} mb={1}>
+                    <Text bold fontSize="md">
+                      {item.name}
+                    </Text>{" "}
+                    đã đăng lên sự kiện
+                    <Text bold fontSize="md">
+                      {" "}
+                      {item.event}
+                    </Text>
                   </Text>
-                </Text>
-                <Text>{item.time}</Text>
+                  <Text>{item.time}</Text>
+                </Box>
               </PressableCustomCard>
             </Box>
           )}

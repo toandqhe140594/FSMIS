@@ -1,3 +1,4 @@
+import { useNavigation } from "@react-navigation/native";
 import PropTypes from "prop-types";
 import React from "react";
 import { StyleSheet, View } from "react-native";
@@ -18,8 +19,10 @@ const styles = StyleSheet.create({
 });
 
 const MenuScreen = ({ menuTitle, menuListItem }) => {
-  const test = () => {
-    console.log("text");
+  const navigation = useNavigation();
+
+  const navigateToScreen = (route) => {
+    navigation.navigate(route);
   };
 
   return (
@@ -29,8 +32,9 @@ const MenuScreen = ({ menuTitle, menuListItem }) => {
         <ListItem
           key={item.id}
           bottomDivider
-          style={{ backgroundColor: "red" }}
-          onPress={test}
+          onPress={() => {
+            navigateToScreen(item.route);
+          }}
         >
           <Icon name={item.icon} />
           <ListItem.Content style={{ height: 37 }}>

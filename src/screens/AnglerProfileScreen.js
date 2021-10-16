@@ -36,7 +36,12 @@ const menuCategory = [
     icon: "lock",
     route: ROUTE_NAMES.PROFILE_CHANGE_PASSWORD,
   },
-  { id: 6, title: `Chuyển sang "Chế độ Quản lý"`, icon: "av-timer" },
+  {
+    id: 6,
+    title: `Chuyển sang "Chế độ Quản lý"`,
+    icon: "av-timer",
+    route: ROUTE_NAMES.PERSONAL_MANAGE_LOCATION_LIST,
+  },
 ];
 const logOut = [{ id: 1, title: "Đăng xuất", icon: "exit-to-app" }];
 const AnglerProfileScreen = () => {

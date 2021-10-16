@@ -30,8 +30,8 @@ const AnglerCheckInHistory = () => {
                 borderColor: "gray.600",
               }}
               borderColor="coolGray.200"
-
-              // keyExtractor={(item.id) => item.index_id.toString()}
+              py={2}
+              pl={3}
             >
               <PressableCustomCard paddingX="2" paddingY="1">
                 <CheckInCard>
