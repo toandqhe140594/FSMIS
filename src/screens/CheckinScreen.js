@@ -1,11 +1,14 @@
+import { useNavigation } from "@react-navigation/native";
 import { Box, Button, Center, Text } from "native-base";
 import React from "react";
 import QRCode from "react-native-qrcode-svg";
 
 import FLocationCard from "../components/FLocationCard";
+import { goToCatchReportFormScreen } from "../navigations";
 
 // After checkin successful at a location
 const CheckinSuccessScreen = () => {
+  const navigation = useNavigation();
   return (
     <Box
       flex={1}
@@ -26,7 +29,13 @@ const CheckinSuccessScreen = () => {
         />
       </Box>
       <Box w="70%">
-        <Button mb={3} size="lg">
+        <Button
+          mb={3}
+          size="lg"
+          onPress={() => {
+            goToCatchReportFormScreen(navigation);
+          }}
+        >
           Báo kết quả câu
         </Button>
         <Button size="lg">Check out</Button>
@@ -54,7 +63,7 @@ const DefaultQRCodeScreen = () => {
 };
 
 const CheckinScreen = () => {
-  return <DefaultQRCodeScreen />;
+  return <CheckinSuccessScreen />;
 };
 
 export default CheckinScreen;
