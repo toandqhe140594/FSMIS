@@ -22,16 +22,25 @@ const LakeCard = ({ image, listOfFishes, name }) => {
             uri: image,
           }}
         />
-        <Box flex={1} my={3} mr={3}>
+        <Box
+          flex={1}
+          my={3}
+          mr={3}
+          justifyContent={listOfFishes.length > 0 ? "flex-start" : "center"}
+        >
           <Text bold fontSize="md">
             {name}
           </Text>
-          <Text fontSize="sm" noOfLines={2} isTruncated>
-            Các loại cá: {listOfFishes.join(", ")}
-          </Text>
-          <Text underline position="absolute" bottom={0} right={0}>
-            Xem thêm
-          </Text>
+          {listOfFishes.length > 0 && (
+            <>
+              <Text fontSize="sm" noOfLines={2} isTruncated>
+                Các loại cá: {listOfFishes.join(", ")}
+              </Text>
+              <Text underline position="absolute" bottom={0} right={0}>
+                Xem thêm
+              </Text>
+            </>
+          )}
         </Box>
       </Box>
     </Pressable>
@@ -40,10 +49,11 @@ const LakeCard = ({ image, listOfFishes, name }) => {
 LakeCard.propTypes = {
   image: PropTypes.string,
   name: PropTypes.string.isRequired,
-  listOfFishes: PropTypes.arrayOf(PropTypes.string).isRequired,
+  listOfFishes: PropTypes.arrayOf(PropTypes.string),
 };
 LakeCard.defaultProps = {
   image: "https://picsum.photos/200",
+  listOfFishes: [],
 };
 
 export default LakeCard;
