@@ -1,4 +1,4 @@
-package fpt.g31.fsmis.dto;
+package fpt.g31.fsmis.dto.input;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -1,4 +1,4 @@
-package fpt.g31.fsmis.dto;
+package fpt.g31.fsmis.dto.input;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,8 +22,8 @@ public class FishingLocationDtoIn {
     @NotEmpty
     private String address;
     
-//    @NotNull
-//    private Long wardId;
+    @NotNull
+    private Long wardId;
 
     @NotNull
     private Float longitude;

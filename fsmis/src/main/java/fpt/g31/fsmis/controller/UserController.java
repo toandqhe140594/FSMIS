@@ -1,7 +1,7 @@
 package fpt.g31.fsmis.controller;
 
-import fpt.g31.fsmis.dto.UserDtoIn;
-import fpt.g31.fsmis.dto.UserDtoOut;
+import fpt.g31.fsmis.dto.input.UserDtoIn;
+import fpt.g31.fsmis.dto.output.UserDtoOut;
 import fpt.g31.fsmis.entity.User;
 import fpt.g31.fsmis.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "/user")
+@RequestMapping(path = "/api/user")
 public class UserController {
     UserService userService;
 
