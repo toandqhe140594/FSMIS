@@ -42,6 +42,8 @@ public class User {
 
     private boolean gender;
 
+    private boolean status;
+
     private boolean active;
 
     @JsonIgnore
@@ -78,5 +80,6 @@ public class User {
     )
     private Set<FishingLocation> savedFishingLocations;
 
-
+    @ElementCollection(fetch = FetchType.EAGER)
+    Set<Role> roles;
 }
