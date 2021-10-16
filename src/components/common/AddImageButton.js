@@ -39,7 +39,11 @@ const AddImageButton = ({ isDisabled }) => {
 };
 
 AddImageButton.propTypes = {
-  isDisabled: PropTypes.bool.isRequired,
+  isDisabled: PropTypes.bool,
+};
+
+AddImageButton.defaultProps = {
+  isDisabled: false,
 };
 
 export default AddImageButton;

@@ -1,28 +1,25 @@
-import { Box, Image } from "native-base";
+import { Image } from "native-base";
 import PropTypes from "prop-types";
 import React from "react";
 import { StyleSheet, TouchableOpacity } from "react-native";
 
 const styles = StyleSheet.create({
   container: {
-    width: 110,
-    height: 110,
-    overflow: "hidden",
+    width: "100%",
+    height: "100%",
   },
 });
 
 const InteractiveImageBox = ({ image }) => {
   return (
     <TouchableOpacity>
-      <Box style={styles.container} mt={1} ml={1}>
-        <Image
-          source={{
-            uri: image,
-          }}
-          alt="Alternate Text"
-          size="xl"
-        />
-      </Box>
+      <Image
+        style={styles.container}
+        source={{
+          uri: image,
+        }}
+        alt="Alternate Text"
+      />
     </TouchableOpacity>
   );
 };
