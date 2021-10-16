@@ -57,7 +57,7 @@ public class UserService {
         if (userOptional.isPresent()) {
             User user = userOptional.get();
             userDtoOut = modelMapper.map(user, UserDtoOut.class);
-            userDtoOut.setAddressFromWard(Utility.getAddressByWard(user.getWard()));
+            userDtoOut.setAddressFromWard(ServiceUtils.getAddressByWard(user.getWard()));
             return userDtoOut;
         } else {
             throw new UserNotFoundException(id);

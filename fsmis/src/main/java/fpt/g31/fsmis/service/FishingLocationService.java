@@ -72,7 +72,7 @@ public class FishingLocationService {
         }
         FishingLocation location = findFishingLocation.get();
         FishingLocationDtoOut dtoOut = modelMapper.map(location, FishingLocationDtoOut.class);
-        dtoOut.setAddressFromWard(Utility.getAddressByWard(location.getWard()));
+        dtoOut.setAddressFromWard(ServiceUtils.getAddressByWard(location.getWard()));
         return dtoOut;
     }
 }
