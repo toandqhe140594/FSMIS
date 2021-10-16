@@ -20,12 +20,23 @@ const goToFishingLocationOverviewScreen = (navigation, params) => {
 const goToWriteReportScreen = (navigation, params) => {
   navigation.navigate(ROUTE_NAMES.WRITE_REPORT, { ...params });
 };
+
 const goToWriteReviewScreen = (navigation, params) => {
   navigation.navigate(ROUTE_NAMES.WRITE_REVIEW, { ...params });
 };
 
+const goToCatchReportDetailScreen = (navigation, params) => {
+  navigation.navigate(ROUTE_NAMES.CATCHES_REPORT_DETAIL, { ...params });
+};
+
+const goToCatchReportFormScreen = (navigation, params) => {
+  navigation.navigate(ROUTE_NAMES.CATCHES_REPORT_FORM, { ...params });
+};
+
 export {
   goBack,
+  goToCatchReportDetailScreen,
+  goToCatchReportFormScreen,
   goToFishingLocationOverviewScreen,
   goToLakeDetailScreen,
   goToLogoScreen,
