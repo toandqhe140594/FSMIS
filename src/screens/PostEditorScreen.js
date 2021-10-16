@@ -1,12 +1,4 @@
-import {
-  Box,
-  Button,
-  Center,
-  Divider,
-  Input,
-  Select,
-  VStack,
-} from "native-base";
+import { Center, Input, Select, VStack } from "native-base";
 import PropTypes from "prop-types";
 import React, { useState } from "react";
 import { StyleSheet, Text, TextInput, View } from "react-native";
