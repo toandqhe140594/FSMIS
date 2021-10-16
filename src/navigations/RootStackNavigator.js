@@ -3,8 +3,8 @@ import React from "react";
 import { View } from "react-native";
 
 import * as ROUTE_NAMES from "../config/routeNames";
-import test from "../screens/CatchReportsHistoryDetailScreen";
 import FishingLocationOverviewScreen from "../screens/FLocationOverviewScreen";
+import test from "../screens/FManageHomeScreen";
 import LakeDetailScreen from "../screens/LakeDetailScreen";
 import WriteReportScreen from "../screens/WriteReportScreen";
 import WriteReviewScreen from "../screens/WriteReviewScreen";

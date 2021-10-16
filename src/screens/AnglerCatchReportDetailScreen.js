@@ -7,7 +7,7 @@ import AvatarCard from "../components/AvatarCard";
 import FishCard from "../components/FishCard";
 import HeaderTab from "../components/HeaderTab";
 
-const CatchReportsHistoryDetailScreen = ({ catchDetails }) => (
+const AnglerCatchReportDetailScreen = ({ catchDetails }) => (
   <ScrollView>
     <HeaderTab name="Chi Tiết" />
 
@@ -43,7 +43,7 @@ const CatchReportsHistoryDetailScreen = ({ catchDetails }) => (
         </Text>
       </Box>
 
-      <VStack mt="2" space={2}>
+      <VStack mt="4" space={2}>
         <Text italic>{catchDetails.message}</Text>
         <VStack space={1}>
           <FishCard />
@@ -55,14 +55,14 @@ const CatchReportsHistoryDetailScreen = ({ catchDetails }) => (
     </Box>
   </ScrollView>
 );
-CatchReportsHistoryDetailScreen.defaultProps = {
+AnglerCatchReportDetailScreen.defaultProps = {
   catchDetails: {
     lakeName: "Hồ thuần việt",
     message:
       "-Ngồi cả sáng, Lorem ipsum dolor sit amet, consectetur adipisicing elit. Fuga aliquid quam maxime voluptatibus assumenda vero ab eos. Ad maiores dolore explicabo, excepturi eius at quibusdam libero maxime animi deserunt recusandae?",
   },
 };
-CatchReportsHistoryDetailScreen.propTypes = {
+AnglerCatchReportDetailScreen.propTypes = {
   catchDetails: PropTypes.objectOf(PropTypes.string, PropTypes.string),
 };
-export default CatchReportsHistoryDetailScreen;
+export default AnglerCatchReportDetailScreen;

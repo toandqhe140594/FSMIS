@@ -3,8 +3,6 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 import { Icon, ListItem, Text } from "react-native-elements";
 
-import PressableCustomCard from "./PressableCustomCard";
-
 const styles = StyleSheet.create({
   view: {
     marginBottom: 6,
@@ -23,19 +21,23 @@ const MenuScreen = ({ menuTitle, menuListItem }) => {
   const test = () => {
     console.log("text");
   };
+
   return (
     <View style={styles.view}>
       {menuTitle && <Text style={styles.text}> {menuTitle}</Text>}
       {menuListItem.map((item) => (
-        <PressableCustomCard key={item.id}>
-          <ListItem key={item.id} onPress={test} bottomDivider>
-            <Icon name={item.icon} />
-            <ListItem.Content style={{ height: 37 }}>
-              <ListItem.Title>{item.title}</ListItem.Title>
-            </ListItem.Content>
-            <ListItem.Chevron />
-          </ListItem>
-        </PressableCustomCard>
+        <ListItem
+          key={item.id}
+          bottomDivider
+          style={{ backgroundColor: "red" }}
+          onPress={test}
+        >
+          <Icon name={item.icon} />
+          <ListItem.Content style={{ height: 37 }}>
+            <ListItem.Title>{item.title}</ListItem.Title>
+          </ListItem.Content>
+          <ListItem.Chevron />
+        </ListItem>
       ))}
     </View>
   );

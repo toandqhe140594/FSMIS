@@ -23,15 +23,20 @@ const dummyMenu = [
   { id: 2, name: "Hồ không thuần việt" },
   { id: 3, name: "Hồ Quản" },
 ];
-
+const reportHandler = () => {
+  console.log("report");
+};
+const eventIconList = [{ name: "Báo cáo bài viết", onPress: reportHandler }];
 const A = () => {
   return (
     <FlatList
       data={dummyMenu}
       renderItem={() => (
-        <PressableCustomCard paddingX="1">
-          <EventPostCard postStyle="ANGLER_POST" />
-        </PressableCustomCard>
+        <Box backgroundColor="white" my="1">
+          <PressableCustomCard>
+            <EventPostCard postStyle="ANGLER_POST" />
+          </PressableCustomCard>
+        </Box>
       )}
       keyExtractor={(item, index) => index.toString()}
     />
@@ -43,9 +48,9 @@ const FLocationEventRoute = () => {
     <FlatList
       data={dummyMenu}
       renderItem={() => (
-        <PressableCustomCard paddingX="1">
-          <EventPostCard postStyle="LAKE_POST" />
-        </PressableCustomCard>
+        <Box backgroundColor="white" my="1">
+          <EventPostCard postStyle="LAKE_POST" iconEvent={eventIconList} />
+        </Box>
       )}
       keyExtractor={(item, index) => index.toString()}
     />
@@ -60,9 +65,6 @@ const EventListRoute = () => {
       <HeaderTab name="Hồ câu thuần việt" isVerified flagable />
       <Divider />
       <Tab.Navigator
-        sceneContainerStyle={{
-          backgroundColor: "white",
-        }}
         screenOptions={{
           tabBarStyle: styles.tabBarStyle,
           tabBarLabelStyle: styles.tabBarLabelStyle,

@@ -3,9 +3,9 @@ import { Box, Pressable } from "native-base";
 import PropTypes from "prop-types";
 import React from "react";
 
-const PressableCustomCard = ({ paddingX, paddingY, ...props }) => {
+const PressableCustomCard = ({ paddingX, paddingY, onPress, ...props }) => {
   return (
-    <Pressable>
+    <Pressable onPress={onPress}>
       {({ isHovered, isPressed }) => {
         return (
           <Box
@@ -26,12 +26,14 @@ PressableCustomCard.propTypes = {
   paddingX: PropTypes.string,
   paddingY: PropTypes.string,
   children: PropTypes.element,
+  onPress: PropTypes.func,
 };
 
 PressableCustomCard.defaultProps = {
   paddingX: "0",
   paddingY: "0",
   children: null,
+  onPress: () => {},
 };
 
 export default PressableCustomCard;
