@@ -39,7 +39,7 @@ const SelectComponent = ({ label, placeholder, data }) => {
       <Text style={{ fontWeight: "bold" }}>{label}</Text>
       <Select accessibilityLabel={placeholder} placeholder={placeholder}>
         {data.map((item) => (
-          <Select.Item value={item} my={1}>
+          <Select.Item label={item} value={item} my={1}>
             {item}
           </Select.Item>
         ))}
