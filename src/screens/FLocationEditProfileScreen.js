@@ -17,7 +17,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 
-import AddImageSection from "../components/common/AddImageSection";
+import MultiImageSection from "../components/common/MultiImageSection";
 import HeaderTab from "../components/HeaderTab";
 
 const styles = StyleSheet.create({
@@ -121,7 +121,7 @@ const FLocationEditProfileScreen = () => {
             <Text style={{ fontWeight: "bold" }}>
               Ảnh bìa (nhiều nhất là 5)
             </Text>
-            <AddImageSection />
+            <MultiImageSection />
             {/* Input location name */}
             <InputComponent
               label="Tên địa điểm câu"
