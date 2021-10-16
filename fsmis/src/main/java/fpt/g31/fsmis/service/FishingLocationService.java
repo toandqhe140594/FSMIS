@@ -1,6 +1,7 @@
 package fpt.g31.fsmis.service;
 
-import fpt.g31.fsmis.dto.FishingLocationDtoIn;
+import fpt.g31.fsmis.dto.input.FishingLocationDtoIn;
+import fpt.g31.fsmis.dto.output.FishingLocationDtoOut;
 import fpt.g31.fsmis.entity.FishingLocation;
 import fpt.g31.fsmis.entity.User;
 import fpt.g31.fsmis.exception.FishingLocationNotFoundException;
@@ -8,6 +9,7 @@ import fpt.g31.fsmis.exception.UnauthorizedException;
 import fpt.g31.fsmis.exception.UserNotFoundException;
 import fpt.g31.fsmis.repository.FishingLocationRepos;
 import fpt.g31.fsmis.repository.UserRepos;
+import fpt.g31.fsmis.repository.WardRepos;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,7 @@ import java.util.Optional;
 public class FishingLocationService {
     private FishingLocationRepos fishingLocationRepos;
     private UserRepos userRepos;
+    private WardRepos wardRepos;
 
     private ModelMapper modelMapper;
 
@@ -29,7 +32,7 @@ public class FishingLocationService {
         return fishingLocationRepos.findAll();
     }
 
-    public FishingLocation createFishingLocation(FishingLocationDtoIn fishingLocationDtoIn) {
+    public String createFishingLocation(FishingLocationDtoIn fishingLocationDtoIn) {
         if (fishingLocationDtoIn != null) {
             FishingLocation fishingLocation;
             Long ownerId = fishingLocationDtoIn.getOwnerId();
@@ -42,26 +45,34 @@ public class FishingLocationService {
             fishingLocation.setLastEditedDate(LocalDateTime.now());
             fishingLocation.setOwner(ownerOptional.get());
             fishingLocation.setActive(true);
-            return fishingLocationRepos.save(fishingLocation);
+            fishingLocationRepos.save(fishingLocation);
+            return "Tạo hồ câu thành công!";
         } else {
             throw new ValidationException("Thiếu request body");
         }
     }
 
-    public FishingLocation findById(Long id) {
-        Optional<FishingLocation> findFishingLocation = fishingLocationRepos.findById(id);
+    public Boolean disableFishingLocation(Long locationId, Long ownerId) {
+        Optional<FishingLocation> findFishingLocation = fishingLocationRepos.findById(locationId);
         if (!findFishingLocation.isPresent()) {
-            throw new FishingLocationNotFoundException(id);
+            throw new FishingLocationNotFoundException(locationId);
         }
-        return findFishingLocation.get();
-    }
-
-    public Boolean disableFishingLocation(Long fishingLocationId, Long ownerId) {
-        FishingLocation fishingLocation = findById(fishingLocationId);
-        if (!fishingLocation.getOwner().getId().equals(ownerId)) {
+        FishingLocation location = findFishingLocation.get();
+        if (!location.getOwner().getId().equals(ownerId)) {
             throw new UnauthorizedException("Không phải chủ hồ, không có quyền xóa hồ");
         }
-        fishingLocation.setActive(false);
+        location.setActive(false);
         return true;
+    }
+
+    public FishingLocationDtoOut getById(Long locationId) {
+        Optional<FishingLocation> findFishingLocation = fishingLocationRepos.findById(locationId);
+        if (!findFishingLocation.isPresent()) {
+            throw new FishingLocationNotFoundException(locationId);
+        }
+        FishingLocation location = findFishingLocation.get();
+        FishingLocationDtoOut dtoOut = modelMapper.map(location, FishingLocationDtoOut.class);
+        dtoOut.setAddressFromWard(Utility.getAddressByWard(location.getWard()));
+        return dtoOut;
     }
 }

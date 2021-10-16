@@ -1,8 +1,7 @@
 package fpt.g31.fsmis.controller;
 
 
-import fpt.g31.fsmis.dto.FishingLocationDtoIn;
-import fpt.g31.fsmis.entity.CheckIn;
+import fpt.g31.fsmis.dto.input.FishingLocationDtoIn;
 import fpt.g31.fsmis.entity.FishingLocation;
 import fpt.g31.fsmis.service.CheckInService;
 import fpt.g31.fsmis.service.FishingLocationService;
@@ -14,7 +13,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "/location")
+@RequestMapping(path = "/api/location")
 public class FishingLocationController {
     final CheckInService checkInService;
     final FishingLocationService fishingLocationService;
@@ -24,16 +23,20 @@ public class FishingLocationController {
         this.fishingLocationService = fishingLocationService;
     }
 
-    @GetMapping
+    @GetMapping(path = "/all")
     public ResponseEntity<Object> getAll() {
         List<FishingLocation> fishingLocations = fishingLocationService.findAllFishingLocations();
         return new ResponseEntity<>(fishingLocations, HttpStatus.OK);
     }
 
+    @GetMapping
+    public ResponseEntity<Object> getById(@RequestParam Long id) {
+        return new ResponseEntity<>(fishingLocationService.getById(id), HttpStatus.OK);
+    }
+
     @PostMapping
     public ResponseEntity<Object> createFishingLocation(@Valid @RequestBody FishingLocationDtoIn fishingLocationDtoIn) {
-        FishingLocation result = fishingLocationService.createFishingLocation(fishingLocationDtoIn);
-        return new ResponseEntity<>(result, HttpStatus.CREATED);
+        return new ResponseEntity<>(fishingLocationService.createFishingLocation(fishingLocationDtoIn), HttpStatus.CREATED);
     }
 
     @DeleteMapping
@@ -42,8 +45,4 @@ public class FishingLocationController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @PostMapping(path = "/{locationId}/checkin")
-    public ResponseEntity<CheckIn> checkIn(@PathVariable Long locationId, @RequestParam Long userId) {
-        return new ResponseEntity<>(checkInService.userCheckInFishingLocation(userId, locationId), HttpStatus.OK);
-    }
 }

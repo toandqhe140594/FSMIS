@@ -1,7 +1,7 @@
 package fpt.g31.fsmis.service;
 
-import fpt.g31.fsmis.dto.UserDtoIn;
-import fpt.g31.fsmis.dto.UserDtoOut;
+import fpt.g31.fsmis.dto.input.UserDtoIn;
+import fpt.g31.fsmis.dto.output.UserDtoOut;
 import fpt.g31.fsmis.entity.User;
 import fpt.g31.fsmis.exception.UserNotFoundException;
 import fpt.g31.fsmis.repository.UserRepos;
@@ -29,9 +29,9 @@ public class UserService {
         return userRepos.findAll();
     }
 
-    //todo: check if qr string already exist
     public Boolean createUser(UserDtoIn userDtoIn) {
         User user = modelMapper.map(userDtoIn, User.class);
+        //todo: check if qr string already exist
         user.setQrString(UUID.randomUUID().toString());
         user.setActive(true);
         user.setWard(wardRepos.getById(userDtoIn.getWardId()));
@@ -57,12 +57,7 @@ public class UserService {
         if (userOptional.isPresent()) {
             User user = userOptional.get();
             userDtoOut = modelMapper.map(user, UserDtoOut.class);
-            userDtoOut.setWard(user.getWard().getName());
-            userDtoOut.setWardId(user.getWard().getId());
-            userDtoOut.setDistrict(user.getWard().getDistrict().getName());
-            userDtoOut.setDistrictId(user.getWard().getDistrict().getId());
-            userDtoOut.setProvince(user.getWard().getDistrict().getProvince().getName());
-            userDtoOut.setProvinceId(user.getWard().getDistrict().getProvince().getId());
+            userDtoOut.setAddressFromWard(Utility.getAddressByWard(user.getWard()));
             return userDtoOut;
         } else {
             throw new UserNotFoundException(id);
