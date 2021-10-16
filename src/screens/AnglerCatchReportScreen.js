@@ -14,7 +14,7 @@ import React from "react";
 import { ScrollView, StyleSheet, TextInput } from "react-native";
 
 import CatchReportCard from "../components/CatchReport/CatchReportCard";
-import AddImageSection from "../components/common/AddImageSection";
+import MultiImageSection from "../components/common/MultiImageSection";
 import HeaderTab from "../components/HeaderTab";
 // import * as yup from "yup";
 
@@ -43,7 +43,7 @@ const AnglerCatchReportScreen = () => {
         <Center>
           <VStack space={2} style={styles.sectionWrapper}>
             {/* Impage picker section */}
-            <AddImageSection />
+            <MultiImageSection imageLimit={3} />
             {/* Textarea input field */}
             <TextInput
               multiline
