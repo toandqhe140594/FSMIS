@@ -1,3 +1,4 @@
+import { useNavigation } from "@react-navigation/native";
 import { Box, Button, FlatList, HStack, Text, VStack } from "native-base";
 import PropTypes from "prop-types";
 import React from "react";
@@ -5,8 +6,11 @@ import React from "react";
 import AvatarCard from "../components/AvatarCard";
 import HeaderTab from "../components/HeaderTab";
 import PressableCustomCard from "../components/PressableCustomCard";
+import { goToCatchReportVerifyDetailScreen } from "../navigations";
 
 const VerifyCatchReportScreen = ({ angler }) => {
+  const navigation = useNavigation();
+
   const dummyMenu = [
     {
       id: 1,
@@ -55,7 +59,6 @@ const VerifyCatchReportScreen = ({ angler }) => {
               }}
               borderColor="coolGray.200"
               pb="1"
-              // keyExtractor={(item.id) => item.index_id.toString()}
             >
               <PressableCustomCard
                 paddingX="3"
@@ -85,7 +88,13 @@ const VerifyCatchReportScreen = ({ angler }) => {
                     width="33%"
                   >
                     <Button colorScheme="tertiary">Đồng ý</Button>
-                    <Button>Chi tiết</Button>
+                    <Button
+                      onPress={() =>
+                        goToCatchReportVerifyDetailScreen(navigation)
+                      }
+                    >
+                      Chi tiết
+                    </Button>
                   </VStack>
                 </HStack>
               </PressableCustomCard>

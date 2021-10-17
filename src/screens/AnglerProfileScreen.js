@@ -40,7 +40,7 @@ const menuCategory = [
     id: 6,
     title: `Chuyển sang "Chế độ Quản lý"`,
     icon: "av-timer",
-    route: ROUTE_NAMES.PERSONAL_MANAGE_LOCATION_LIST,
+    route: ROUTE_NAMES.MANAGEMENT_MODE,
   },
 ];
 const logOut = [{ id: 1, title: "Đăng xuất", icon: "exit-to-app" }];

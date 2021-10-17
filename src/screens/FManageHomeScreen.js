@@ -15,42 +15,42 @@ const menuCategoryForOwner = [
   {
     id: 2,
     title: "Chỉnh sửa thông tin điểm câu",
-    route: ROUTE_NAMES.FLOCATION_PROFILE_EDIT,
+    route: ROUTE_NAMES.FMANAGE_PROFILE_EDIT,
   },
   {
     id: 3,
     title: "Quản lý hồ câu",
-    route: ROUTE_NAMES.FLOCATION_MANAGE_LAKE,
+    route: ROUTE_NAMES.FMANAGE_LAKE_MANAGEMENT,
   },
   {
     id: 4,
     title: "Quản lý nhân viên",
-    route: ROUTE_NAMES.FLOCATION_MANAGE_STAFF,
+    route: ROUTE_NAMES.FMANAGE_STAFF_MANAGEMENT,
   },
   {
     id: 5,
     title: "Xác nhận báo cá",
-    route: ROUTE_NAMES.FLOCATION_CATCH_VERIFY,
+    route: ROUTE_NAMES.FMANAGE_CATCH_VERIFY,
   },
   {
     id: 6,
     title: `Lịch sử báo cá`,
-    route: ROUTE_NAMES.FLOCATION_CATCH_HISTORY,
+    route: ROUTE_NAMES.FMANAGE_CATCH_HISTORY,
   },
   {
     id: 7,
     title: `Quét mã QR`,
-    route: ROUTE_NAMES.FLOCATION_QR_SCAN,
+    route: ROUTE_NAMES.FMANAGE_QR_SCAN,
   },
   {
     id: 8,
     title: `Lịch sử Check-in`,
-    route: ROUTE_NAMES.FLOCATION_CHECKIN_HISTORY,
+    route: ROUTE_NAMES.FMANAGE_CATCH_HISTORY,
   },
   {
     id: 9,
     title: `Quản lý bài đăng`,
-    route: ROUTE_NAMES.FLOCATION_MANAGE_POST,
+    route: ROUTE_NAMES.FMANAGE_POST_MANAGEMENT,
   },
   {
     id: 10,
@@ -68,32 +68,32 @@ const menuCategoryForStaff = [
   {
     id: 2,
     title: "Xác nhận báo cá",
-    route: ROUTE_NAMES.FLOCATION_CATCH_VERIFY,
+    route: ROUTE_NAMES.FMANAGE_CATCH_VERIFY,
   },
   {
     id: 3,
     title: `Lịch sử báo cá`,
-    route: ROUTE_NAMES.FLOCATION_CATCH_HISTORY,
+    route: ROUTE_NAMES.FMANAGE_CATCH_HISTORY,
   },
   {
     id: 4,
     title: `Quét mã QR`,
-    route: ROUTE_NAMES.FLOCATION_QR_SCAN,
+    route: ROUTE_NAMES.FMANAGE_QR_SCAN,
   },
   {
     id: 5,
     title: `Lịch sử Check-in`,
-    route: ROUTE_NAMES.FLOCATION_CHECKIN_HISTORY,
+    route: ROUTE_NAMES.FMANAGE_CHECKIN_HISTORY,
   },
   {
     id: 6,
     title: `Quản lý bài đăng`,
-    route: ROUTE_NAMES.FLOCATION_MANAGE_POST,
+    route: ROUTE_NAMES.FMANAGE_POST_MANAGEMENT,
   },
 ];
 
 const logOut = [{ id: 1, title: "Đóng cửa hồ" }];
-const FLocationHomeManagementScreen = ({ typeString }) => {
+const FManageHomeScreen = ({ typeString }) => {
   const fishingLocationName = "Hồ Thuần Việt";
   let menuCategory;
 
@@ -117,6 +117,6 @@ const FLocationHomeManagementScreen = ({ typeString }) => {
     </Box>
   );
 };
-FLocationHomeManagementScreen.defaultProps = { typeString: "OWNER" };
-FLocationHomeManagementScreen.propTypes = { typeString: PropTypes.string };
-export default FLocationHomeManagementScreen;
+FManageHomeScreen.defaultProps = { typeString: "OWNER" };
+FManageHomeScreen.propTypes = { typeString: PropTypes.string };
+export default FManageHomeScreen;

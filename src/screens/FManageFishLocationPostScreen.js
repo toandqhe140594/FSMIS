@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+import { useNavigation } from "@react-navigation/native";
+>>>>>>> app-toan
 import { Box } from "native-base";
 import React from "react";
 import { FlatList } from "react-native";
@@ -5,6 +9,10 @@ import { Divider } from "react-native-elements";
 
 import EventPostCard from "../components/EventPostCard";
 import HeaderTab from "../components/HeaderTab";
+<<<<<<< HEAD
+=======
+import { goToPostEditScreen } from "../navigations";
+>>>>>>> app-toan
 
 // const styles = StyleSheet.create({
 //   tabBarStyle: {
@@ -23,8 +31,15 @@ const dummyMenu = [
 ];
 
 const FLocationEventRoute = () => {
+<<<<<<< HEAD
   const editPostHandler = () => {
     console.log("chinh sua bai");
+=======
+  const navigation = useNavigation();
+
+  const editPostHandler = () => {
+    goToPostEditScreen(navigation);
+>>>>>>> app-toan
   };
   const removePostHandler = () => {
     console.log("xoa bai");
@@ -38,7 +53,11 @@ const FLocationEventRoute = () => {
   return (
     <FlatList
       data={dummyMenu}
+<<<<<<< HEAD
       renderItem={() => (
+=======
+      renderItem={({ item }) => (
+>>>>>>> app-toan
         <Box backgroundColor="white" my="1">
           <EventPostCard
             postStyle="LAKE_POST"
@@ -47,12 +66,20 @@ const FLocationEventRoute = () => {
           />
         </Box>
       )}
+<<<<<<< HEAD
       keyExtractor={(item, index) => index.toString()}
+=======
+      keyExtractor={(item) => item.id}
+>>>>>>> app-toan
     />
   );
 };
 
+<<<<<<< HEAD
 const ManageFishLocationPostScreen = () => {
+=======
+const FManageFishLocationPostScreen = () => {
+>>>>>>> app-toan
   return (
     <Box style={{ flex: 1 }}>
       <HeaderTab name="Hồ câu thuần việt" isVerified />
@@ -62,4 +89,8 @@ const ManageFishLocationPostScreen = () => {
   );
 };
 
+<<<<<<< HEAD
 export default ManageFishLocationPostScreen;
+=======
+export default FManageFishLocationPostScreen;
+>>>>>>> app-toan

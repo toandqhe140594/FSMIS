@@ -2,10 +2,10 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React from "react";
 
 import * as ROUTE_NAMES from "../config/routeNames";
+import AnglerCatchReportDetailScreen from "../screens/AnglerCatchReportDetailScreen";
 import AnglerCatchReportScreen from "../screens/AnglerCatchReportScreen";
-import CatchReportsHistoryDetailScreen from "../screens/CatchReportHistoryDetailScreen";
-import ChangePhoneNumberScreen from "../screens/ChangePhoneNumberScreen";
-import EditProfileScreen from "../screens/EditProfileScreen";
+import ChangePhoneNumberScreen from "../screens/AnglerChangePhoneNumberScreen";
+import EditProfileScreen from "../screens/AnglerEditProfileScreen";
 import FishingLocationOverviewScreen from "../screens/FLocationOverviewScreen";
 import FManageHomeScreen from "../screens/FManageHomeScreen";
 import LakeDetailScreen from "../screens/LakeDetailScreen";
@@ -13,6 +13,7 @@ import ResetPasswordScreen from "../screens/ResetPasswordScreen";
 import WriteReportScreen from "../screens/WriteReportScreen";
 import WriteReviewScreen from "../screens/WriteReviewScreen";
 import AnglerMainTabNavigator from "./AnglerMainTabNavigator";
+import FManageNavigator from "./FManageNavigator";
 
 const RootStack = createNativeStackNavigator();
 
@@ -46,7 +47,7 @@ const RootStackNavigator = () => {
       />
       <RootStack.Screen
         name={ROUTE_NAMES.CATCHES_REPORT_DETAIL}
-        component={CatchReportsHistoryDetailScreen}
+        component={AnglerCatchReportDetailScreen}
       />
       <RootStack.Screen
         name={ROUTE_NAMES.PROFILE_CHANGE_INFORMATION}
@@ -61,7 +62,7 @@ const RootStackNavigator = () => {
         component={ResetPasswordScreen}
       />
       {/* <RootStack.Screen
-        name={ROUTE_NAMES.PERSONAL_MANAGE_LOCATION_LIST}
+        name={ROUTE_NAMES.FMANAGE_SELECTOR}
         component={ChangePhoneNumberScreen}
       /> */}
       <RootStack.Screen
@@ -71,6 +72,10 @@ const RootStackNavigator = () => {
       <RootStack.Screen
         name={ROUTE_NAMES.CATCHES_REPORT_FORM}
         component={AnglerCatchReportScreen}
+      />
+      <RootStack.Screen
+        name={ROUTE_NAMES.MANAGEMENT_MODE}
+        component={FManageNavigator}
       />
     </RootStack.Navigator>
   );

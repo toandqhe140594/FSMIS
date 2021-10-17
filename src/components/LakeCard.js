@@ -3,14 +3,20 @@ import { Box, Image, Pressable, Text } from "native-base";
 import PropTypes from "prop-types";
 import React from "react";
 
-import { goToLakeDetailScreen } from "../navigations";
+import { goToLakeDetailScreen, goToLakeEditScreen } from "../navigations";
 
-const LakeCard = ({ image, listOfFishes, name }) => {
+const LakeCard = ({ image, listOfFishes, name, isManaged }) => {
   const navigation = useNavigation();
+
+  const onPress = () => {
+    if (isManaged) goToLakeEditScreen(navigation);
+    else goToLakeDetailScreen(navigation);
+  };
+
   return (
     <Pressable
       onPress={() => {
-        goToLakeDetailScreen(navigation);
+        onPress();
       }}
     >
       <Box borderWidth={1} flexDirection="row">
@@ -50,10 +56,12 @@ LakeCard.propTypes = {
   image: PropTypes.string,
   name: PropTypes.string.isRequired,
   listOfFishes: PropTypes.arrayOf(PropTypes.string),
+  isManaged: PropTypes.bool,
 };
 LakeCard.defaultProps = {
   image: "https://picsum.photos/200",
   listOfFishes: [],
+  isManaged: false,
 };
 
 export default LakeCard;
