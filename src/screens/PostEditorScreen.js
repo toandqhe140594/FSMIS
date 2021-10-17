@@ -1,13 +1,10 @@
-import { Button, Center, Input, Select, VStack } from "native-base";
-import PropTypes from "prop-types";
+import { Box, Button, Center, VStack } from "native-base";
 import React, { useState } from "react";
-import {
-  KeyboardAvoidingView,
-  StyleSheet,
-  Text,
-  TextInput,
-} from "react-native";
+import { StyleSheet } from "react-native";
 
+import InputComponent from "../components/common/InputComponent";
+import SelectComponent from "../components/common/SelectComponent";
+import TextAreaComponent from "../components/common/TextAreaComponent";
 import HeaderTab from "../components/HeaderTab";
 import SingleImageSection from "../components/LakeEditProfile/SingleImageSection";
 
@@ -15,155 +12,54 @@ const styles = StyleSheet.create({
   sectionWrapper: {
     width: "90%",
   },
-  button: {
-    width: "90%",
-  },
-  textArea: {
-    borderWidth: 1,
-    textAlignVertical: "top",
-    padding: 5,
-  },
+  button: {},
   test: {
     borderWidth: 1,
     borderColor: "red",
   },
-  upperContainer: { height: "90%" },
-  bottomContainer: { height: "10%" },
+  test2: {
+    borderWidth: 1,
+    borderColor: "blue",
+  },
 });
 
-const InputComponent = ({ label, placeholder }) => {
-  return (
-    <VStack space={1}>
-      <Text style={{ fontWeight: "bold" }}>{label}</Text>
-      <Input placeholder={placeholder} />
-    </VStack>
-  );
-};
-
-InputComponent.propTypes = {
-  label: PropTypes.string.isRequired,
-  placeholder: PropTypes.string.isRequired,
-};
-const SelectComponent = ({ label, placeholder, data }) => {
-  return (
-    <VStack space={1}>
-      <Text style={{ fontWeight: "bold" }}>{label}</Text>
-      <Select accessibilityLabel={placeholder} placeholder={placeholder}>
-        {data.map((item) => (
-          <Select.Item label={item} value={item} my={1}>
-            {item}
-          </Select.Item>
-        ))}
-      </Select>
-    </VStack>
-  );
-};
-
-SelectComponent.propTypes = {
-  label: PropTypes.string.isRequired,
-  placeholder: PropTypes.string.isRequired,
-  data: PropTypes.arrayOf(PropTypes.string).isRequired,
-};
-const TextAreaComponent = ({
-  label,
-  placeholder,
-  numberOfLines,
-  compStyles,
-}) => {
-  return (
-    <VStack style={compStyles} space={1}>
-      <Text style={{ fontSize: 15, fontWeight: "bold" }}>{label}</Text>
-      <TextInput
-        multiline
-        numberOfLines={numberOfLines}
-        maxLength={1000}
-        placeholder={placeholder}
-        style={styles.textArea}
-      />
-    </VStack>
-  );
-};
-
-TextAreaComponent.propTypes = {
-  label: PropTypes.string.isRequired,
-  placeholder: PropTypes.string.isRequired,
-  numberOfLines: PropTypes.number.isRequired,
-  compStyles: PropTypes.objectOf(PropTypes.string.isRequired),
-};
-
-TextAreaComponent.defaultProps = {
-  compStyles: {},
-};
 const PostEditorScreen = () => {
   const [showImageSection, setShowImageSection] = useState(false);
+
+  const handleValueChange = (value) => {
+    setShowImageSection(value === "Ảnh");
+  };
+
   return (
-    <KeyboardAvoidingView>
-      <VStack style={styles.upperContainer}>
-        <HeaderTab name="Bài đăng" />
-        <VStack space={3}>
-          <Center>
-            <VStack style={styles.sectionWrapper}>
-              <SelectComponent
-                label="Sự kiện"
-                placeholder="Chọn sự kiện"
-                data={["Thông báo", "Bồi cá", "Báo cá"]}
-              />
-            </VStack>
-          </Center>
-
-          <Center>
-            <TextAreaComponent
-              label="Miêu tả"
-              placeholder=""
-              numberOfLines={3}
-              compStyles={styles.sectionWrapper}
-            />
-          </Center>
-
-          <Center>
-            <VStack style={styles.sectionWrapper}>
-              <Text style={{ fontWeight: "bold" }}>Đính kèm</Text>
-              <Select
-                placeholder="Chọn kiểu đính kèm"
-                onValueChange={(itemValue) => {
-                  setShowImageSection(itemValue === "image");
-                }}
-              >
-                <Select.Item label="Ảnh" value="image" my={1} />
-                <Select.Item label="Facebook Video" value="video" my={1} />
-              </Select>
-            </VStack>
-          </Center>
-
-          {showImageSection && (
-            <Center>
-              <VStack style={styles.sectionWrapper}>
-                <SingleImageSection />
-              </VStack>
-            </Center>
-          )}
-
+    <>
+      <HeaderTab name="Bài đăng" />
+      <Center flex={1}>
+        <VStack flex={4} space={2} style={styles.sectionWrapper}>
+          <SelectComponent
+            label="Sự kiện"
+            placeholder="Chọn sự kiện"
+            data={["Thông báo", "Bồi cá", "Báo cá"]}
+          />
+          <TextAreaComponent label="Miêu tả" placeholder="" numberOfLines={3} />
+          <SelectComponent
+            label="Đính kèm"
+            placeholder="Chọn kiểu đính kèm"
+            data={["Ảnh", "Facebook video"]}
+            handleValueChange={handleValueChange}
+          />
+          {showImageSection && <SingleImageSection />}
           {!showImageSection && (
-            <Center>
-              <VStack style={styles.sectionWrapper}>
-                <InputComponent
-                  placeholder="Nhập link vào đây"
-                  label="Đính kèm link"
-                />
-              </VStack>
-            </Center>
+            <InputComponent
+              placeholder="Nhập link vào đây"
+              label="Đính kèm link"
+            />
           )}
         </VStack>
-      </VStack>
-      <Center style={styles.bottomContainer}>
-        <VStack style={styles.sectionWrapper}>
-          {/* Submit button */}
-          <Button style={styles.button} alignSelf="center">
-            Đăng
-          </Button>
-        </VStack>
+        <Box mb={2} style={styles.sectionWrapper}>
+          <Button style={styles.button}>Đăng</Button>
+        </Box>
       </Center>
-    </KeyboardAvoidingView>
+    </>
   );
 };
 
