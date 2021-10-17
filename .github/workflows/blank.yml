@@ -1,0 +1,46 @@
+name: FSMIS_API_CI
+
+on:
+  push:
+    branches: [ api ]
+  pull_request:
+    branches: [ api ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./fsmis
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          java-version: "11"
+          distribution: "adopt"
+      - name: Build with Maven
+        run: |
+          mvn -B clean package
+      - name: Upload file jar
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.FSMIS_HOST }}
+          username: ${{ secrets.FSMIS_USERNAME }}
+          password: ${{ secrets.FSMIS_PASSWORD }}
+          port: ${{ secrets.FSMIS_PORT }}
+          # file want to copy
+          source: "target/yourlure-0.0.1-SNAPSHOT.jar"
+          # the destination of file
+          target: "/home/ubuntu"
+      - name: Start service
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.FSMIS_HOST }}
+          username: ${{ secrets.FSMIS_USERNAME }}
+          password: ${{ secrets.FSMIS_PASSWORD }}
+          port: ${{ secrets.FSMIS_PORT }}
+          script: |
+            sudo systemctl stop fsmis
+            sudo sudo systemctl daemon-reload
+            sudo systemctl start fsmis
