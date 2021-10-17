@@ -20,11 +20,7 @@ import { KeyboardAvoidingView, useWindowDimensions } from "react-native";
 const ChangePhoneNumberScreen = () => {
   return (
     <KeyboardAvoidingView>
-      <Center
-        flex={1}
-        minHeight={Math.round(useWindowDimensions().height)}
-        safeArea
-      >
+      <Center flex={1} minHeight={Math.round(useWindowDimensions().height)}>
         <VStack
           flex={1}
           justifyContent="center"
