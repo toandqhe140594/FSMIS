@@ -33,10 +33,10 @@ const MultiImageSection = ({ imageLimit }) => {
         { justifyContent: imageList.length > 0 ? null : "center" },
       ]}
     >
-      {imageList.map((image, index) => {
+      {imageList.map((image) => {
         return (
           // Test only
-          <Box style={styles.imageContainer} mt={1} ml={1} key={index}>
+          <Box style={styles.imageContainer} mt={1} ml={1}>
             <InteractiveImageBox image={image} />
           </Box>
         );
