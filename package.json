@@ -31,6 +31,7 @@
     "react-dom": "16.13.1",
     "react-hook-form": "^7.17.1",
     "react-native": "https://github.com/expo/react-native/archive/sdk-42.0.0.tar.gz",
+    "react-native-calendar-picker": "^7.1.2",
     "react-native-confirmation-code-field": "^7.1.0",
     "react-native-elements": "^3.4.2",
     "react-native-maps": "^0.28.0",
