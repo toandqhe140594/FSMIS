@@ -19,9 +19,8 @@ const styles = StyleSheet.create({
 });
 
 const imageList = [
-  // "https://wallpaperaccess.com/full/317501.jpg",
-  // "https://wallpaperaccess.com/full/317501.jpg",
-  // "https://wallpaperaccess.com/full/317501.jpg",
+  "https://wallpaperaccess.com/full/317501.jpg",
+  "https://wallpaperaccess.com/full/317501.jpg",
   "https://wallpaperaccess.com/full/317501.jpg",
   "https://wallpaperaccess.com/full/317501.jpg",
 ];
@@ -36,6 +35,7 @@ const MultiImageSection = ({ imageLimit }) => {
     >
       {imageList.map((image) => {
         return (
+          // Test only
           <Box style={styles.imageContainer} mt={1} ml={1}>
             <InteractiveImageBox image={image} />
           </Box>

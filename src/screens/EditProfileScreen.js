@@ -1,5 +1,4 @@
 import { Entypo } from "@expo/vector-icons";
-// import { yupResolver } from "@hookform/resolvers/yup";
 import {
   Avatar,
   Button,
@@ -11,36 +10,25 @@ import {
   VStack,
 } from "native-base";
 import React from "react";
-// import { Controller, useForm } from "react-hook-form";
 import {
   KeyboardAvoidingView,
   ScrollView,
   TouchableOpacity,
   useWindowDimensions,
 } from "react-native";
-// import * as yup from "yup";
 
-// const validationSchema = yup.object().shape({
-//   name: yup.string().required("Họ và tên không thể bỏ trống"),
-//   gender: yup.number().default(-1),
-//   address: yup.string(),
-//   cityAddress: yup.number().default(-1),
-//   districtAddress: yup.number().default(-1),
-//   communeAddress: yup.number().default(-1),
-// });
+import HeaderTab from "../components/HeaderTab";
 
 const EditProfileScreen = () => {
   return (
     <KeyboardAvoidingView>
       <ScrollView>
-        <Center
-          flex={1}
-          minHeight={Math.round(useWindowDimensions().height)}
-          safeArea
-        >
+        <Center flex={1} minHeight={Math.round(useWindowDimensions().height)}>
+          <HeaderTab name="Thông tin cá nhân" />
           <VStack
             flex={1}
             justifyContent="center"
+            mt={3}
             mb={1}
             space={2}
             w={{ base: "70%", md: "50%", lg: "30%" }}

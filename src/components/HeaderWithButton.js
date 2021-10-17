@@ -1,18 +1,18 @@
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import { Box, Divider, Pressable } from "native-base";
+import { Box, Button, Divider, Pressable } from "native-base";
 import PropTypes from "prop-types";
 import React from "react";
 import { Text } from "react-native-elements";
 
 import styles from "../config/styles";
-import { goBack, goToWriteReportScreen } from "../navigations";
+import { goBack } from "../navigations";
 
-const HeaderTab = ({ name, isVerified, flagable }) => {
+const HeaderWithButton = ({ name, isVerified, buttonName, onPress }) => {
   const navigation = useNavigation();
 
   return (
-    <>
+    <Box position="relative" justifyContent="center">
       <Box
         style={{ height: 40 }}
         bg="white"
@@ -40,31 +40,24 @@ const HeaderTab = ({ name, isVerified, flagable }) => {
             />
           )}
         </Box>
-        <Pressable
-          onPress={() => {
-            goToWriteReportScreen(navigation);
-          }}
-        >
-          <Ionicons
-            name="flag"
-            size={24}
-            color={flagable ? "black" : "rgba(0,0,0,0)"}
-          />
-        </Pressable>
+        <Ionicons name="arrow-back" size={24} color="rgba(0,0,0,0)" />
       </Box>
       <Divider />
-    </>
+      <Button position="absolute" right={3} onPress={onPress}>
+        {buttonName}
+      </Button>
+    </Box>
   );
 };
 
-HeaderTab.propTypes = {
+HeaderWithButton.propTypes = {
   name: PropTypes.string.isRequired,
   isVerified: PropTypes.bool,
-  flagable: PropTypes.bool,
+  buttonName: PropTypes.string.isRequired,
+  onPress: PropTypes.func.isRequired,
 };
-HeaderTab.defaultProps = {
+HeaderWithButton.defaultProps = {
   isVerified: false,
-  flagable: false,
 };
 
-export default HeaderTab;
+export default HeaderWithButton;

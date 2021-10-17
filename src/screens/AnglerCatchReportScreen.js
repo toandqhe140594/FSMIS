@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
 const AnglerCatchReportScreen = () => {
   return (
     <ScrollView>
-      <HeaderTab />
+      <HeaderTab name="Báo cá" />
       <VStack space={3} divider={<Divider />}>
         <Center>
           <VStack space={2} style={styles.sectionWrapper}>

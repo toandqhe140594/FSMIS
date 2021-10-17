@@ -10,6 +10,7 @@ import {
 } from "react-hook-form";
 import { Overlay, Slider } from "react-native-elements";
 
+import { DEFAULT_LATLNG } from "../../config/constants";
 import SpotMapView from "../FLocationMapView";
 
 const MapViewOverlay = ({ visible, toggleOverlay }) => {
@@ -138,7 +139,7 @@ const MapViewRoute = () => {
   return (
     <Center flex={1}>
       <ZStack>
-        <SpotMapView />
+        <SpotMapView coordinates={DEFAULT_LATLNG} />
         <Button
           colorScheme="muted"
           position="absolute"
