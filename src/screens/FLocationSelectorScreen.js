@@ -61,12 +61,11 @@ const FlocationSelectorScreen = () => {
         {/* Show the list if it is not empty */}
         {spotExample.length > 0 && (
           <ScrollView style={{ width: "90%", marginBottom: 3 }}>
-            {spotExample.length &&
-              spotExample.map((spot) => (
-                <Box mt={3}>
-                  <SpotCard {...spot} />
-                </Box>
-              ))}
+            {spotExample.map((spot) => (
+              <Box mt={3}>
+                <SpotCard {...spot} />
+              </Box>
+            ))}
           </ScrollView>
         )}
         <AddImageButton />
