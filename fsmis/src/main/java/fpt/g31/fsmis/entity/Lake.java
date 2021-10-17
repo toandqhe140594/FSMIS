@@ -25,7 +25,7 @@ public class Lake {
     private Float depth;
     private LocalDateTime lastEditTime;
     private String price;
-    private Boolean active;
+    private boolean active;
     private String imageUrl;
 
     @JsonIgnore
