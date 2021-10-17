@@ -51,16 +51,24 @@ const spotExample = [
 
 const FlocationSelectorScreen = () => {
   // Center the add button if the list is emtpy
-  // const getEmptyListStyling = () => {};
+  const getEmptyListStyling = () => (spotExample.length ? {} : { flex: 1 });
 
   return (
-    <ScrollView>
+    <>
       <HeaderTab name="Chỉnh sửa bài đăng" />
-      <Center style={{ flex: 1, justifyContent: "Center" }}>
-        <VStack w="90%" />
-        <AddImageButton />
-      </Center>
-    </ScrollView>
+      <ScrollView _contentContainerStyle={getEmptyListStyling()}>
+        <Center style={getEmptyListStyling()}>
+          {spotExample.length > 0 && (
+            <VStack w="90%" space={2} my={2}>
+              {spotExample.map((spot) => (
+                <SpotCard {...spot} />
+              ))}
+            </VStack>
+          )}
+          <AddImageButton />
+        </Center>
+      </ScrollView>
+    </>
   );
 };
 
