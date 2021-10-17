@@ -1,4 +1,4 @@
-import { Box, Center, ScrollView } from "native-base";
+import { Box, Center, ScrollView, VStack } from "native-base";
 import React from "react";
 import {} from "react-native";
 
@@ -51,26 +51,16 @@ const spotExample = [
 
 const FlocationSelectorScreen = () => {
   // Center the add button if the list is emtpy
-  const getEmptyListStyling = () =>
-    spotExample.length === 0 ? { flex: 1, justifyContent: "center" } : {};
+  // const getEmptyListStyling = () => {};
 
   return (
-    <>
-      <HeaderTab name="Chọn hồ câu của bạn" />
-      <Center style={getEmptyListStyling()}>
-        {/* Show the list if it is not empty */}
-        {spotExample.length > 0 && (
-          <ScrollView style={{ width: "90%", marginBottom: 3 }}>
-            {spotExample.map((spot) => (
-              <Box mt={3}>
-                <SpotCard {...spot} />
-              </Box>
-            ))}
-          </ScrollView>
-        )}
+    <ScrollView>
+      <HeaderTab name="Chỉnh sửa bài đăng" />
+      <Center style={{ flex: 1, justifyContent: "Center" }}>
+        <VStack w="90%" />
         <AddImageButton />
       </Center>
-    </>
+    </ScrollView>
   );
 };
 
