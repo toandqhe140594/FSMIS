@@ -26,7 +26,7 @@ const data = [
   },
 ];
 
-const EmployeeManagementScreen = () => {
+const FManageEmployeeManagementScreen = () => {
   const [employeeListData, setEmployeeListData] = useState(data);
   const deleteEmployee = (id) => {
     setEmployeeListData(
@@ -57,4 +57,4 @@ const EmployeeManagementScreen = () => {
   );
 };
 
-export default EmployeeManagementScreen;
+export default FManageEmployeeManagementScreen;

@@ -4,6 +4,8 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 import { Icon, ListItem, Text } from "react-native-elements";
 
+import { goToScreen } from "../navigations";
+
 const styles = StyleSheet.create({
   view: {
     marginBottom: 6,
@@ -22,7 +24,7 @@ const MenuScreen = ({ menuTitle, menuListItem }) => {
   const navigation = useNavigation();
 
   const navigateToScreen = (route) => {
-    navigation.navigate(route);
+    goToScreen(navigation, route);
   };
 
   return (

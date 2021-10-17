@@ -110,10 +110,10 @@ TextAreaComponent.defaultProps = {
   compStyles: {},
 };
 
-const FLocationEditProfileScreen = () => {
+const FManageEditProfileScreen = () => {
   return (
     <ScrollView>
-      <HeaderTab />
+      <HeaderTab name="Chỉnh sửa thông tin" />
       <VStack space={3} divider={<Divider />}>
         <Center>
           {/* Image Picker section */}
@@ -224,4 +224,4 @@ const FLocationEditProfileScreen = () => {
   );
 };
 
-export default FLocationEditProfileScreen;
+export default FManageEditProfileScreen;

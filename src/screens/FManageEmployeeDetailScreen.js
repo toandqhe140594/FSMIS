@@ -4,7 +4,7 @@ import React from "react";
 import EmployeeDetailBox from "../components/EmployeeDetailBox";
 import HeaderTab from "../components/HeaderTab";
 
-const EmployeeDetailScreen = () => {
+const FManageEmployeeDetailScreen = () => {
   return (
     <>
       <HeaderTab name="Quản lý nhân viên" />
@@ -26,4 +26,4 @@ const EmployeeDetailScreen = () => {
   );
 };
 
-export default EmployeeDetailScreen;
+export default FManageEmployeeDetailScreen;
