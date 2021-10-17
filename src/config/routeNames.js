@@ -34,4 +34,13 @@ export const PERSONAL_LOCATION_MANAGE_CHECKIN_LIST =
 export const PERSONAL_LOCATION_MANAGE_POST =
   "Manage Personal Fishing Location Manage Post";
 
+export const FLOCATION_MANAGE_LAKE = "Manage Fishing Location Lake";
+export const FLOCATION_CATCH_VERIFY = "Verify Angler Catch Report ";
+export const FLOCATION_CATCH_HISTORY = "View Fishing LocationCatch History";
+export const FLOCATION_PROFILE_EDIT = "Edit Fishing Location Profile";
+export const FLOCATION_MANAGE_STAFF = "Manage Staff of Fishing Location";
+export const LOCATION_QR_SCAN = "Scan Angler QR Code";
+export const FLOCATION_MANAGE_POST = "Manage Fishing Location Post";
+export const FLOCATION_CLOSE_FISHING_LOCATION = "Delete Fishing Location";
+
 export const TEST = "TEST";

@@ -7,7 +7,7 @@ import AvatarCard from "../components/AvatarCard";
 import HeaderTab from "../components/HeaderTab";
 import PressableCustomCard from "../components/PressableCustomCard";
 
-const AnglerCatchReportsHistoryScreen = ({ angler }) => {
+const FManageCatchReportHistory = ({ angler }) => {
   const dummyMenu = [
     { id: 1, message: "Ngoi ca sang", caches: "Ro dong, Diec" },
     { id: 2, message: "Ngoi ca sang", caches: "Ro dong, Diec" },
@@ -106,10 +106,10 @@ const AnglerCatchReportsHistoryScreen = ({ angler }) => {
   );
 };
 
-AnglerCatchReportsHistoryScreen.defaultProps = {
+FManageCatchReportHistory.defaultProps = {
   angler: { id: "1", name: "Dat" },
 };
-AnglerCatchReportsHistoryScreen.propTypes = {
+FManageCatchReportHistory.propTypes = {
   angler: PropTypes.objectOf(PropTypes.string, PropTypes.string),
 };
-export default AnglerCatchReportsHistoryScreen;
+export default FManageCatchReportHistory;

@@ -7,7 +7,7 @@ import CatchReportsHistoryDetailScreen from "../screens/CatchReportHistoryDetail
 import ChangePhoneNumberScreen from "../screens/ChangePhoneNumberScreen";
 import EditProfileScreen from "../screens/EditProfileScreen";
 import FishingLocationOverviewScreen from "../screens/FLocationOverviewScreen";
-import test from "../screens/FManageHomeScreen";
+import FManageHomeScreen from "../screens/FManageHomeScreen";
 import LakeDetailScreen from "../screens/LakeDetailScreen";
 import ResetPasswordScreen from "../screens/ResetPasswordScreen";
 import WriteReportScreen from "../screens/WriteReportScreen";
@@ -22,9 +22,8 @@ const RootStackNavigator = () => {
       screenOptions={{
         headerShown: false,
       }}
-      initialRouteName={ROUTE_NAMES.TEST}
+      initialRouteName={ROUTE_NAMES.ANGLER_MAIN}
     >
-      <RootStack.Screen name={ROUTE_NAMES.TEST} component={test} />
       <RootStack.Screen
         name={ROUTE_NAMES.ANGLER_MAIN}
         component={AnglerMainTabNavigator}
@@ -61,9 +60,13 @@ const RootStackNavigator = () => {
         name={ROUTE_NAMES.PROFILE_CHANGE_PASSWORD}
         component={ResetPasswordScreen}
       />
-      <RootStack.Screen
+      {/* <RootStack.Screen
         name={ROUTE_NAMES.PERSONAL_MANAGE_LOCATION_LIST}
         component={ChangePhoneNumberScreen}
+      /> */}
+      <RootStack.Screen
+        name={ROUTE_NAMES.PERSONAL_MANAGE_LOCATION_LIST}
+        component={FManageHomeScreen}
       />
       <RootStack.Screen
         name={ROUTE_NAMES.CATCHES_REPORT_FORM}

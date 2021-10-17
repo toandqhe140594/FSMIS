@@ -103,7 +103,7 @@ const FLocationHomeManagementScreen = ({ typeString }) => {
   if (typeString === "STAFF") {
     menuCategory = [...menuCategoryForStaff];
   }
-  console.log(typeString);
+
   return (
     <Box>
       <HeaderTab name={fishingLocationName} isVerified />
