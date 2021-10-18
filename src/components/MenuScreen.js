@@ -33,7 +33,6 @@ const MenuScreen = ({ menuTitle, menuListItem }) => {
       {menuListItem.map((item) => (
         <ListItem
           key={item.id}
-          bottomDivider
           onPress={() => {
             navigateToScreen(item.route);
           }}
