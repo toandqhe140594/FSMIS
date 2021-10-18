@@ -1,6 +1,6 @@
 import { Box } from "native-base";
 import React from "react";
-import { TouchableOpacity } from "react-native";
+import { StyleSheet, TouchableOpacity } from "react-native";
 
 const styles = StyleSheet.create({
   container: { borderColor: "black", borderWidth: 1 },
