@@ -16,7 +16,7 @@ const MAX_LENGTH = 1000;
 
 const TextAreaComponent = ({ label, placeholder, numberOfLines, myStyles }) => {
   return (
-    <Box style={[styles.cotainers, myStyles]}>
+    <Box style={[styles.container, myStyles]}>
       {label.length > 0 && (
         <Text bold mb={2}>
           {label}
