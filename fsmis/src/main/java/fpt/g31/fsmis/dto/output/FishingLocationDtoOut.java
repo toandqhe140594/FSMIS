@@ -21,6 +21,8 @@ public class FishingLocationDtoOut {
     private String service;
     private String timetable;
     private String rule;
+    private String website;
+    private String lastEditedDate;
     private boolean active;
     private boolean verify;
 }
