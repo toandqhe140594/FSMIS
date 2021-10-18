@@ -1,4 +1,4 @@
-import { Box, Center, ScrollView } from "native-base";
+import { Center, ScrollView, VStack } from "native-base";
 import React from "react";
 
 import AddImageButton from "../components/common/AddImageButton";
@@ -55,15 +55,16 @@ const FlocationSelectorScreen = () => {
 
   return (
     <>
-      <ScrollView>
-        <HeaderTab name="Chọn hồ câu của bạn" />
+      <HeaderTab name="Chỉnh sửa bài đăng" />
+      <ScrollView _contentContainerStyle={getEmptyListStyling()}>
         <Center style={getEmptyListStyling()}>
-          {/* Show the list if it is not empty */}
-          {spotExample.map((spot) => (
-            <Box mt={3} w="90%" key={spot.id}>
-              <SpotCard {...spot} isManaged />
-            </Box>
-          ))}
+          {spotExample.length > 0 && (
+            <VStack w="90%" space={2} my={2}>
+              {spotExample.map((spot) => (
+                <SpotCard {...spot} isManaged />
+              ))}
+            </VStack>
+          )}
           <AddImageButton />
         </Center>
       </ScrollView>
