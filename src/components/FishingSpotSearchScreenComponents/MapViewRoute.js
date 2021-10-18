@@ -1,7 +1,9 @@
 import { Ionicons } from "@expo/vector-icons";
+import { useStoreActions, useStoreState } from "easy-peasy";
+import * as Location from "expo-location";
 import { Box, Button, Center, Select, Text, VStack, ZStack } from "native-base";
 import PropTypes from "prop-types";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Controller,
   FormProvider,
@@ -10,24 +12,41 @@ import {
 } from "react-hook-form";
 import { Overlay, Slider } from "react-native-elements";
 
-import { DEFAULT_LATLNG } from "../../config/constants";
-import SpotMapView from "../FLocationMapView";
+import FLocationMapView from "../FLocationMapView";
 
 const MapViewOverlay = ({ visible, toggleOverlay }) => {
-  const { control, handleSubmit, setValue } = useFormContext();
+  const currentLocation = useStoreState(
+    (states) => states.MapSearchModel.currentLocation,
+  );
+  const getLocationListNearby = useStoreActions(
+    (actions) => actions.MapSearchModel.getLocationListNearby,
+  );
+  const { control, handleSubmit, setValue, getValues } = useFormContext();
   const [sliderValue, setSliderValue] = useState(5);
 
   // Reset data in the form
   const resetMapFilter = () => {
     setSliderValue(5);
     setValue("type", -1);
-    setValue("rate", 5);
+    setValue("rate", -1);
   };
 
   // Submit search filter to api then reload list of fishing spot
   const onSubmit = (data) => {
     console.log(data); // Test only
+    getLocationListNearby({
+      latitude: currentLocation.latitude,
+      longitude: currentLocation.longitude,
+      distance: sliderValue,
+      methodId: getValues("type"),
+      minRating: getValues("rate"),
+    });
   };
+
+  useEffect(() => {
+    setValue("type", -1);
+    setValue("rate", -1);
+  }, []);
 
   return (
     <Overlay isVisible={visible} onBackdropPress={toggleOverlay}>
@@ -128,6 +147,16 @@ MapViewOverlay.propTypes = {
 };
 
 const MapViewRoute = () => {
+  const locationList = useStoreState(
+    (states) => states.MapSearchModel.locationList,
+  );
+  const currentLocation = useStoreState(
+    (states) => states.MapSearchModel.currentLocation,
+  );
+  const setCurrentLocation = useStoreActions(
+    (actions) => actions.MapSearchModel.setCurrentLocation,
+  );
+  const [permissionGranted, setPermissionGranted] = useState(false);
   const [visible, setVisible] = useState(false);
   const methods = useForm();
 
@@ -136,29 +165,60 @@ const MapViewRoute = () => {
     setVisible(!visible);
   };
 
+  /**
+   * Check and request access to location service from user
+   * If permission granted, set location to current location of user
+   */
+  useEffect(() => {
+    (async () => {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") return;
+      setPermissionGranted(true);
+      let location = await Location.getLastKnownPositionAsync({});
+      if (!location) location = await Location.getCurrentPositionAsync({});
+      setCurrentLocation(location.coords);
+    })();
+  }, []);
+
   return (
-    <Center flex={1}>
-      <ZStack>
-        <SpotMapView coordinates={DEFAULT_LATLNG} />
-        <Button
-          colorScheme="muted"
-          position="absolute"
-          right={7}
-          top={5}
-          onPress={toggleOverlay}
-        >
-          <Center flexDir="row">
-            <Ionicons name="options" size={24} color="white" />
-            <Text ml={2} color="white">
-              Bộ lọc
-            </Text>
-          </Center>
-        </Button>
-      </ZStack>
-      <FormProvider {...methods}>
-        <MapViewOverlay visible={visible} toggleOverlay={toggleOverlay} />
-      </FormProvider>
-    </Center>
+    <>
+      {currentLocation && (
+        <Center flex={1}>
+          <ZStack>
+            <FLocationMapView
+              coordinates={currentLocation}
+              locationList={locationList}
+            />
+            <Button
+              colorScheme="muted"
+              position="absolute"
+              right={7}
+              top={5}
+              onPress={toggleOverlay}
+            >
+              <Center flexDir="row">
+                <Ionicons name="options" size={24} color="white" />
+                <Text ml={2} color="white">
+                  Bộ lọc
+                </Text>
+              </Center>
+            </Button>
+          </ZStack>
+          <FormProvider {...methods}>
+            <MapViewOverlay visible={visible} toggleOverlay={toggleOverlay} />
+          </FormProvider>
+        </Center>
+      )}
+      {!currentLocation && (
+        <Center flex={1}>
+          <Text textAlign="center" w="80%">
+            {permissionGranted
+              ? "Đang lấy thông tin vị trí"
+              : "Ứng dụng cần quyền truy cập vào vị trí để sử dụng chức năng này"}
+          </Text>
+        </Center>
+      )}
+    </>
   );
 };
 
