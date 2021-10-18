@@ -3,6 +3,7 @@ import React from "react";
 
 import * as ROUTE_NAMES from "../config/routeNames";
 import FManageCatchReportHistory from "../screens/FManageCatchReportHistory";
+import FManageCheckinHistoryScreen from "../screens/FManageCheckinHistory";
 import FManageEditProfileScreen from "../screens/FManageEditProfileScreen";
 import FManageEmployeeAddScreen from "../screens/FManageEmployeeAddScreen";
 import FManageEmployeeDetailScreen from "../screens/FManageEmployeeDetailScreen";
@@ -84,10 +85,10 @@ const ManageNavigator = () => {
         name={ROUTE_NAMES.FMANAGE_CHECKIN_VERIFY}
         component={FManageVerifyCheckinScreen}
       />
-      {/* <ManageStack.Screen
-        name={ROUTE_NAMES.FMANAGE_CHECKIN_VERIFY}
-        component={}
-      /> */}
+      <ManageStack.Screen
+        name={ROUTE_NAMES.FMANAGE_CHECKIN_HISTORY}
+        component={FManageCheckinHistoryScreen}
+      />
       <ManageStack.Screen
         name={ROUTE_NAMES.FMANAGE_POST_MANAGEMENT}
         component={FManageFishLocationPostScreen}
