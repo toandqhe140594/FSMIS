@@ -2,6 +2,7 @@ import { Box, ScrollView, Text, VStack } from "native-base";
 import PropTypes from "prop-types";
 import React from "react";
 import { Image } from "react-native-elements";
+import Swiper from "react-native-swiper";
 
 import AvatarCard from "../components/AvatarCard";
 import FishCard from "../components/FishCard";
@@ -10,13 +11,20 @@ import HeaderTab from "../components/HeaderTab";
 const AnglerCatchReportDetailScreen = ({ catchDetails }) => (
   <ScrollView>
     <HeaderTab name="Chi Tiết" />
-
-    <Image
-      source={{
-        uri: "https://picsum.photos/400",
-      }}
-      style={{ width: "100%", height: 200 }}
-    />
+    <Swiper height="auto">
+      <Image
+        source={{
+          uri: "https://picsum.photos/400",
+        }}
+        style={{ width: "100%", height: 450 }}
+      />
+      <Image
+        source={{
+          uri: "https://picsum.photos/400",
+        }}
+        style={{ width: "100%", height: 450 }}
+      />
+    </Swiper>
     <Box
       _dark={{
         borderColor: "gray.600",
@@ -28,23 +36,24 @@ const AnglerCatchReportDetailScreen = ({ catchDetails }) => (
     >
       <AvatarCard
         avatarSize="lg"
-        name="Ngo"
-        nameSize="lg"
+        nameUser="Ngo"
+        nameFontSize="lg"
         subText="(09:00 01/01/2021)"
       />
       {/* <Text textAlign="right">(09:00 01/01/2021)</Text> */}
 
-      <Box flex="1" flexDirection="row" space={2} mt="4">
-        <Text bold fontSize="lg">
-          Câu tại :{" "}
+      <VStack space={2} my={4}>
+        <Text>
+          <Text bold fontSize="16">
+            Câu tại :{" "}
+          </Text>
+          <Text fontSize="18" underline>
+            {catchDetails.lakeName}
+          </Text>
         </Text>
-        <Text fontSize="lg" underline>
-          {catchDetails.lakeName}
-        </Text>
-      </Box>
-
-      <VStack mt="4" space={2}>
         <Text italic>{catchDetails.message}</Text>
+      </VStack>
+      <VStack mt="4" space={2}>
         <VStack space={1}>
           <FishCard />
           <FishCard />
@@ -59,7 +68,7 @@ AnglerCatchReportDetailScreen.defaultProps = {
   catchDetails: {
     lakeName: "Hồ thuần việt",
     message:
-      "-Ngồi cả sáng, Lorem ipsum dolor sit amet, consectetur adipisicing elit. Fuga aliquid quam maxime voluptatibus assumenda vero ab eos. Ad maiores dolore explicabo, excepturi eius at quibusdam libero maxime animi deserunt recusandae?",
+      " Ngồi cả sáng, Lorem ipsum dolor sit amet, consectetur adipisicing elit. Fuga aliquid quam maxime voluptatibus assumenda vero ab eos. Ad maiores dolore explicabo, excepturi eius at quibusdam libero maxime animi deserunt recusandae?",
   },
 };
 AnglerCatchReportDetailScreen.propTypes = {

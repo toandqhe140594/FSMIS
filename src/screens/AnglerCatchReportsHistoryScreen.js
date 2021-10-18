@@ -27,6 +27,7 @@ const AnglerCatchReportsHistoryScreen = ({ angler }) => {
         }}
       >
         <FlatList
+          pt="0.5"
           data={dummyMenu}
           renderItem={({ item }) => (
             <Box
@@ -35,17 +36,17 @@ const AnglerCatchReportsHistoryScreen = ({ angler }) => {
                 borderColor: "gray.600",
               }}
               borderColor="coolGray.200"
-              pb="1"
+              backgroundColor="white"
+              mb="0.5"
               // keyExtractor={(item.id) => item.index_id.toString()}
             >
               <PressableCustomCard
                 paddingX="3"
-                paddingY="1"
                 onPress={() => {
                   goToCatchReportDetailScreen(navigation);
                 }}
               >
-                <Box pl="2">
+                <Box pl="2" pb="1">
                   <AvatarCard avatarSize="md" nameUser={angler.name} />
                   <Box mt={2}>
                     <Text italic>{item.message}</Text>

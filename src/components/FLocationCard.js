@@ -31,19 +31,19 @@ const SpotCard = ({
     <Pressable onPress={() => onPress()}>
       <Card containerStyle={{ width: "100%", padding: 0, margin: 0 }}>
         <Card.Image source={{ uri: image }} />
-        <VStack mt={1} mb={1} ml={2} space={1}>
-          <Box flexDir="row" alignItems="center">
-            <Text bold fontSize="lg" mr={2}>
-              {name}
-            </Text>
-            {isVerifed && (
-              <MaterialIcons name="verified" color="blue" size={16} />
-            )}
-          </Box>
+        <VStack mt={1.5} mb={2} ml={3} space={1.5}>
           <Box>
+            <Box flexDir="row" alignItems="center">
+              <Text bold fontSize="18" mr={2}>
+                {name}
+              </Text>
+              {isVerifed && (
+                <MaterialIcons name="verified" color="blue" size={16} />
+              )}
+            </Box>
             <Rating
               style={{ alignSelf: "flex-start" }}
-              imageSize={18}
+              imageSize={15}
               ratingCount={5}
               readonly
               showRating={false}

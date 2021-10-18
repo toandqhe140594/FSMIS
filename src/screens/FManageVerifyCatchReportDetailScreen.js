@@ -16,7 +16,7 @@ const VerifyCatchReportDetailScreen = ({ catchDetails }) => (
         source={{
           uri: "https://picsum.photos/400",
         }}
-        style={{ width: "100%", height: 200 }}
+        style={{ width: "100%", height: 450 }}
       />
       <Box
         _dark={{
@@ -29,23 +29,24 @@ const VerifyCatchReportDetailScreen = ({ catchDetails }) => (
       >
         <AvatarCard
           avatarSize="lg"
-          name="Ngo"
+          nameUser="Ngo"
           nameFontSize="lg"
           subText="(09:00 01/01/2021)"
-          subTextFontSize="xs"
         />
         {/* <Text textAlign="right">(09:00 01/01/2021)</Text> */}
 
-        <Box flex="1" flexDirection="row" space={2} mt="4">
-          <Text bold fontSize="md">
-            Câu tại :{" "}
+        <VStack space={2} mb={3} mt={4}>
+          <Text>
+            <Text bold fontSize="16">
+              Câu tại :{" "}
+            </Text>
+            <Text fontSize="18" underline>
+              {catchDetails.lakeName}
+            </Text>
           </Text>
-          <Text fontSize="md" underline>
-            {catchDetails.lakeName}
-          </Text>
-        </Box>
-        <VStack mt="4" space={2}>
           <Text italic>{catchDetails.message}</Text>
+        </VStack>
+        <VStack mt="4" space={2}>
           <VStack space={1}>
             <FishCard />
             <FishCard />
@@ -70,7 +71,7 @@ VerifyCatchReportDetailScreen.defaultProps = {
   catchDetails: {
     lakeName: "Hồ thuần việt",
     message:
-      "-Ngồi cả sáng, Lorem ipsum dolor sit amet, consectetur adipisicing elit. Fuga aliquid quam maxime voluptatibus assumenda vero ab eos. Ad maiores dolore explicabo, excepturi eius at quibusdam libero maxime animi deserunt recusandae?",
+      " Ngồi cả sáng, Lorem ipsum dolor sit amet, consectetur adipisicing elit. Fuga aliquid quam maxime voluptatibus assumenda vero ab eos. Ad maiores dolore explicabo, excepturi eius at quibusdam libero maxime animi deserunt recusandae?",
   },
 };
 VerifyCatchReportDetailScreen.propTypes = {

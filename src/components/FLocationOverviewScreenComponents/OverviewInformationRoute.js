@@ -3,6 +3,7 @@ import { Box, Button, Text } from "native-base";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, ScrollView } from "react-native";
 import { Card, Divider } from "react-native-elements";
+import Swiper from "react-native-swiper";
 
 import HeaderTab from "../HeaderTab";
 
@@ -47,7 +48,16 @@ const OverviewInformationRoute = () => {
             <Box>
               <HeaderTab name={name} isVerified={verify} flagable />
               <Card containerStyle={{ width: "100%", margin: 0, padding: 0 }}>
-                <Card.Image source={{ uri: "https://picsum.photos/200" }} />
+                <Swiper height="auto">
+                  <Card.Image
+                    source={{ uri: "https://picsum.photos/400" }}
+                    style={{ height: 350 }}
+                  />
+                  <Card.Image
+                    source={{ uri: "https://picsum.photos/400" }}
+                    style={{ height: 350 }}
+                  />
+                </Swiper>
                 <Button my={4} mx={10}>
                   Lưu điểm câu
                 </Button>
