@@ -1,19 +1,28 @@
-import { Input, Text, VStack } from "native-base";
+import { Box, Input, Text } from "native-base";
 import PropTypes from "prop-types";
 import React from "react";
 import { StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
   container: {},
-  text: { fontWeight: "bold" },
+  title: { fontWeight: "bold" },
 });
 
-const InputComponent = ({ label, placeholder, myStyles }) => {
+const InputComponent = ({
+  label,
+  placeholder,
+  isTitle,
+  isRequired,
+  myStyles,
+}) => {
   return (
-    <VStack style={[styles.container, myStyles]} space={1}>
-      <Text style={styles.text}>{label}</Text>
+    <Box style={[styles.container, myStyles]}>
+      <Text style={isTitle ? styles.title : null} mb={1}>
+        {label}
+        {isRequired && <Text color="danger.500">*</Text>}
+      </Text>
       <Input placeholder={placeholder} />
-    </VStack>
+    </Box>
   );
 };
 
@@ -21,10 +30,14 @@ InputComponent.propTypes = {
   label: PropTypes.string.isRequired,
   placeholder: PropTypes.string.isRequired,
   myStyles: PropTypes.objectOf(PropTypes.string.isRequired),
+  isRequired: PropTypes.bool,
+  isTitle: PropTypes.bool,
 };
 
 InputComponent.defaultProps = {
   myStyles: {},
+  isRequired: false,
+  isTitle: false,
 };
 
 export default InputComponent;

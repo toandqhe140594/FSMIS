@@ -1,11 +1,11 @@
-import { Select, VStack } from "native-base";
+import { Box, Select, Text } from "native-base";
 import PropTypes from "prop-types";
 import React from "react";
-import { StyleSheet, Text } from "react-native";
+import { StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
   container: {},
-  text: {
+  title: {
     fontWeight: "bold",
   },
 });
@@ -16,13 +16,18 @@ const SelectComponent = ({
   data,
   myStyle,
   handleValueChange,
+  isRequired,
+  isTitle,
 }) => {
   const onValueChange = (value) => {
     handleValueChange(value);
   };
   return (
-    <VStack style={[styles.container, myStyle]} space={1}>
-      <Text style={styles.text}>{label}</Text>
+    <Box style={[styles.container, myStyle]}>
+      <Text style={isTitle ? styles.text : {}} mb={1}>
+        {label}
+        {isRequired && <Text color="danger.500" />}
+      </Text>
       <Select
         accessibilityLabel={placeholder}
         placeholder={placeholder}
@@ -34,7 +39,7 @@ const SelectComponent = ({
           </Select.Item>
         ))}
       </Select>
-    </VStack>
+    </Box>
   );
 };
 
@@ -44,11 +49,15 @@ SelectComponent.propTypes = {
   data: PropTypes.arrayOf(PropTypes.string).isRequired,
   myStyle: PropTypes.objectOf(PropTypes.string.isRequired),
   handleValueChange: PropTypes.func,
+  isRequired: PropTypes.bool,
+  isTitle: PropTypes.bool,
 };
 
 SelectComponent.defaultProps = {
   myStyle: {},
   handleValueChange: () => {},
+  isRequired: false,
+  isTitle: false,
 };
 
 export default SelectComponent;

@@ -1,13 +1,15 @@
-import { HStack, Select } from "native-base";
+import { Box, Select } from "native-base";
 import PropTypes from "prop-types";
 import React from "react";
 import { StyleSheet, Text } from "react-native";
 
 const styles = StyleSheet.create({
   container: {
+    flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
   },
+  title: { fontWeight: "bold", fontSize: 16 },
 });
 
 const COMPACT_SELECT_WIDTH = "60%";
@@ -24,10 +26,9 @@ const InlineSelectComponent = ({
   const getSelectWidth = () =>
     compact ? COMPACT_SELECT_WIDTH : FULL_SELECT_WIDTH;
 
-  const getTitleStyle = () =>
-    isTitle ? { fontWeight: "bold", fontSize: 16 } : null;
+  const getTitleStyle = () => (isTitle ? styles.title : null);
   return (
-    <HStack style={[styles.container, myStyles]}>
+    <Box style={[styles.container, myStyles]}>
       <Text style={getTitleStyle()}>{label}</Text>
       <Select
         w={getSelectWidth()}
@@ -39,7 +40,7 @@ const InlineSelectComponent = ({
           <Select.Item label={item} value={item} />
         ))}
       </Select>
-    </HStack>
+    </Box>
   );
 };
 

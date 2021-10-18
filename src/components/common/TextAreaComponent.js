@@ -1,14 +1,10 @@
-import { VStack } from "native-base";
+import { Box, Text } from "native-base";
 import PropTypes from "prop-types";
 import React from "react";
-import { StyleSheet, Text, TextInput } from "react-native";
+import { StyleSheet, TextInput } from "react-native";
 
 const styles = StyleSheet.create({
   container: {},
-  text: {
-    fontSize: 15,
-    fontWeight: "bold",
-  },
   textArea: {
     borderWidth: 1,
     textAlignVertical: "top",
@@ -20,8 +16,12 @@ const MAX_LENGTH = 1000;
 
 const TextAreaComponent = ({ label, placeholder, numberOfLines, myStyles }) => {
   return (
-    <VStack style={[styles.cotainers, myStyles]} space={1}>
-      {label.length > 0 && <Text style={styles.text}>{label}</Text>}
+    <Box style={[styles.cotainers, myStyles]}>
+      {label.length > 0 && (
+        <Text bold mb={2}>
+          {label}
+        </Text>
+      )}
       <TextInput
         multiline
         numberOfLines={numberOfLines}
@@ -29,7 +29,7 @@ const TextAreaComponent = ({ label, placeholder, numberOfLines, myStyles }) => {
         placeholder={placeholder}
         style={styles.textArea}
       />
-    </VStack>
+    </Box>
   );
 };
 

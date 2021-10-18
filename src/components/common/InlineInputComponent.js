@@ -1,10 +1,11 @@
-import { HStack, Input } from "native-base";
+import { Box, Input } from "native-base";
 import PropTypes from "prop-types";
 import React from "react";
 import { StyleSheet, Text } from "react-native";
 
 const styles = StyleSheet.create({
   container: {
+    flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
   },
@@ -18,10 +19,10 @@ const InlineInputComponent = ({ label, placeholder, myStyles, compact }) => {
     width: compact ? COMPACT_INPUT_WIDTH : FULL_INPUT_WIDTH,
   });
   return (
-    <HStack style={[styles.container, myStyles]}>
+    <Box style={[styles.container, myStyles]}>
       <Text>{label}</Text>
       <Input style={getInputWidth()} placeholder={placeholder} fontSize="sm" />
-    </HStack>
+    </Box>
   );
 };
 
