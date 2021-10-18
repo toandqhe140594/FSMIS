@@ -5,7 +5,7 @@ import { SearchBar } from "react-native-elements";
 import EmployeeDetailBox from "../components/EmployeeDetailBox";
 import HeaderTab from "../components/HeaderTab";
 
-const EmployeeAddScreen = () => {
+const FManageEmployeeAddScreen = () => {
   const [search, setSearch] = useState("");
 
   const updateSearch = (searchKey) => {
@@ -51,4 +51,4 @@ const EmployeeAddScreen = () => {
   );
 };
 
-export default EmployeeAddScreen;
+export default FManageEmployeeAddScreen;

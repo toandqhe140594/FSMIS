@@ -50,12 +50,12 @@ const LakeListManagementScreen = () => {
         <Center w="80%" my={5}>
           <Button>Thêm hồ câu</Button>
         </Center>
-        <Center w="80%">
+        <Center w="80%" h="80%">
           <FlatList
             data={lakeListData}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
-              <LakeCard name={item.name} image={item.image} />
+              <LakeCard name={item.name} image={item.image} isManaged />
             )}
             ItemSeparatorComponent={Separator}
             w="100%"

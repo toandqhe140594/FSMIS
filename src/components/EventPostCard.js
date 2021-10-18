@@ -1,19 +1,25 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Box, HStack, VStack } from "native-base";
+import { Box, HStack, Menu, Pressable, VStack } from "native-base";
 import PropTypes from "prop-types";
 import React from "react";
 import { Badge, Card, Divider, Text } from "react-native-elements";
 
 import AvatarCard from "./AvatarCard";
 
-const EventPostCard = ({ postStyle, angler, lakePost }) => {
+const EventPostCard = ({
+  postStyle,
+  angler,
+  lakePost,
+  iconName,
+  iconEvent,
+}) => {
   // Thu gon angler, lakePost thanh 1
-  const image = "https://picsum.photos/200";
+  const image = "https://picsum.photos/500";
   return (
-    <>
+    <Box mt="1" px="1.4">
       {postStyle === "LAKE_POST" && (
         <>
-          <HStack px="2" mb={3} mt={5} justifyContent="space-between">
+          <HStack px="2" mb={3} mt={4} justifyContent="space-between">
             <Box flexDirection="row" justifyContent="flex-start">
               <Badge
                 badgeStyle={{
@@ -27,11 +33,24 @@ const EventPostCard = ({ postStyle, angler, lakePost }) => {
                 value={lakePost.badge}
               />
             </Box>
-            <Ionicons name="flag" size={20} color="black" />
+
+            <Menu
+              trigger={(triggerProps) => {
+                return (
+                  <Pressable {...triggerProps}>
+                    <Ionicons name={iconName} size={24} color="black" />
+                  </Pressable>
+                );
+              }}
+            >
+              {iconEvent.map((item) => (
+                <Menu.Item onPress={item.onPress}>{item.name}</Menu.Item>
+              ))}
+            </Menu>
           </HStack>
 
-          <VStack pb="1" mb={3}>
-            <Box mb={2} w="100%" px="2">
+          <VStack>
+            <Box mb={2} w="100%" px="2" pl="3">
               <Text>{lakePost.message}</Text>
             </Box>
           </VStack>
@@ -51,11 +70,11 @@ const EventPostCard = ({ postStyle, angler, lakePost }) => {
         </VStack>
       )}
 
-      <VStack pb="1" mb={2}>
-        <Card.Image source={{ uri: `${image}` }} />
+      <VStack pb={1}>
+        <Card.Image source={{ uri: `${image}` }} style={{ height: 300 }} />
       </VStack>
       <Divider />
-    </>
+    </Box>
   );
 };
 EventPostCard.defaultProps = {
@@ -66,6 +85,8 @@ EventPostCard.defaultProps = {
       "Trắm đen - Chép khủng bồi hồ vip cho ae câu thứ 3-5, Lorem ipsum dolor, sit amet consectetur adipisicing elit",
   },
   postStyle: "LAKE_POST",
+  iconName: "flag",
+  iconEvent: [],
 };
 EventPostCard.propTypes = {
   angler: PropTypes.objectOf(
@@ -75,6 +96,10 @@ EventPostCard.propTypes = {
   ),
   lakePost: PropTypes.objectOf(PropTypes.string, PropTypes.string),
   postStyle: PropTypes.string,
+  iconName: PropTypes.string,
+  iconEvent: PropTypes.arrayOf(
+    PropTypes.objectOf(PropTypes.string, PropTypes.func),
+  ),
 };
 
 export default EventPostCard;

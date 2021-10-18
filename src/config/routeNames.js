@@ -13,23 +13,26 @@ export const PROFILE_CHANGE_PASSWORD = "Change Profile Password";
 export const PROFILE_CATCHES_REPORT_HISTORY = "View Personal Catches Reports";
 export const PROFILE_CHECKIN_REPORT_HISTORY = "View Personal Checkin History";
 export const PROFILE_MAIN = "Personal Profile";
-export const PERSONAL_MANAGE_LOCATION_LIST =
-  "Manage Personal Fishing Location List";
-export const PERSONAL_MANAGE_LOCATION_MAIN =
-  "Manage Personal Fishing Location Main Screen";
-export const PERSONAL_LOCATION_MANAGE_INFORMATION =
-  "Manage Personal Fishing Location Information";
-export const PERSONAL_LOCATION_MANAGE_LAKE_LIST =
-  "Manage Personal Fishing Location Lakes";
-export const PERSONAL_LOCATION_MANAGE_EMPLOYEES =
-  "Manage Personal Fishing Location Employees";
-export const PERSONAL_LOCATION_MANAGE_CATCH_REPORT_VERIFICATION =
-  "Manage Personal Fishing Location Verify Catch Report";
-export const PERSONAL_LOCATION_MANAGE_CATCH_REPORT_LIST =
-  "Manage Personal Fishing Location Catch Report List";
-export const PERSONAL_LOCATION_SCAN_QRCODE =
-  "Manage Personal Fishing Location Scan QR Code";
-export const PERSONAL_LOCATION_MANAGE_CHECKIN_LIST =
-  "Manage Personal Fishing Location Manage Checkin List";
-export const PERSONAL_LOCATION_MANAGE_POST =
-  "Manage Personal Fishing Location Manage Post";
+
+export const MANAGEMENT_MODE = "Change to management mode";
+
+export const FMANAGE_LAKE_MANAGEMENT = "FManage Lake List";
+export const FMANAGE_LAKE_EDIT = "FManage Edit Lake";
+export const FMANAGE_CATCH_HISTORY = "FManage Catch History";
+export const FMANAGE_CATCH_VERIFY = "FManage Verify Catch Report";
+export const FMANAGE_CATCH_DETAIL = "FManage Detail Catch Report";
+export const FMANAGE_SELECTOR = "FManage Select Fishing Location";
+export const FMANAGE_PROFILE_EDIT = "FManage Edit Fishing Location";
+export const FMANAGE_MAIN = "FManage Fishing Location Management Screen";
+export const FMANAGE_STAFF_MANAGEMENT = "FManage Staff List";
+export const FMANAGE_STAFF_ADD = "FManage Add Staff";
+export const FMANAGE_STAFF_DETAIL = "FManage Staff Detail";
+export const FMANAGE_POST_MANAGEMENT = "FManage Post List Of Fishing Location";
+export const FMANAGE_POST_EDIT = "FManage Edit Post";
+
+export const FMANAGE_LOCATION_PICK = "FManage Pick Location On Map";
+export const FMANAGE_CHECKIN_HISTORY = "FManage Checkin List";
+export const FMANAGE_CHECKIN_VERIFY = "FManage Verify Checkin";
+export const FMANAGE_QR_SCAN = "FManage Scan QR Code";
+
+export const FLOCATION_CLOSE_FISHING_LOCATION = "Delete Fishing Location";

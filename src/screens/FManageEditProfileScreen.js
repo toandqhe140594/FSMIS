@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const FLocationEditProfileScreen = () => {
+const FManageEditProfileScreen = () => {
   return (
     <>
       <HeaderTab name="Thông tin điểm câu" />
@@ -136,4 +136,4 @@ const FLocationEditProfileScreen = () => {
   );
 };
 
-export default FLocationEditProfileScreen;
+export default FManageEditProfileScreen;

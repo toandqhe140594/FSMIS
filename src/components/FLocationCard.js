@@ -6,16 +6,21 @@ import React from "react";
 import { Card } from "react-native-elements";
 import { Rating } from "react-native-ratings";
 
-import { goToFishingLocationOverviewScreen } from "../navigations";
+import {
+  goToFishingLocationOverviewScreen,
+  goToFManageMainScreen,
+} from "../navigations";
 
-const SpotCard = ({ address, image, isVerifed, name, rate }) => {
+const SpotCard = ({ address, image, isVerifed, name, rate, isManaged }) => {
   const navigation = useNavigation();
+
+  const onPress = () => {
+    if (isManaged) goToFManageMainScreen(navigation);
+    else goToFishingLocationOverviewScreen(navigation);
+  };
+
   return (
-    <Pressable
-      onPress={() => {
-        goToFishingLocationOverviewScreen(navigation);
-      }}
-    >
+    <Pressable onPress={() => onPress()}>
       <Card containerStyle={{ width: "100%", padding: 0, margin: 0 }}>
         <Card.Image source={{ uri: image }} />
         <VStack mt={1} mb={1} ml={2} space={1}>
@@ -50,11 +55,13 @@ SpotCard.propTypes = {
   isVerifed: PropTypes.bool,
   name: PropTypes.string.isRequired,
   rate: PropTypes.number,
+  isManaged: PropTypes.bool,
 };
 SpotCard.defaultProps = {
   image: "https://picsum.photos/200",
   isVerifed: false,
   rate: 0,
+  isManaged: false,
 };
 
 export default SpotCard;
