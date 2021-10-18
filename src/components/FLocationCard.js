@@ -11,12 +11,20 @@ import {
   goToFManageMainScreen,
 } from "../navigations";
 
-const SpotCard = ({ address, image, isVerifed, name, rate, isManaged }) => {
+const SpotCard = ({
+  id = 1,
+  address,
+  image,
+  isVerifed,
+  name,
+  rate,
+  isManaged,
+}) => {
   const navigation = useNavigation();
 
   const onPress = () => {
-    if (isManaged) goToFManageMainScreen(navigation);
-    else goToFishingLocationOverviewScreen(navigation);
+    if (isManaged) goToFManageMainScreen(navigation, { id });
+    else goToFishingLocationOverviewScreen(navigation, { id });
   };
 
   return (
@@ -56,12 +64,14 @@ SpotCard.propTypes = {
   name: PropTypes.string.isRequired,
   rate: PropTypes.number,
   isManaged: PropTypes.bool,
+  id: PropTypes.number,
 };
 SpotCard.defaultProps = {
   image: "https://picsum.photos/200",
   isVerifed: false,
   rate: 0,
   isManaged: false,
+  id: 1,
 };
 
 export default SpotCard;
