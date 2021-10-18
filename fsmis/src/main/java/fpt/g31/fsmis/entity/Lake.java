@@ -18,14 +18,24 @@ import java.util.Set;
 public class Lake {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private Long id;
+
     private String name;
+
     private Float length;
+
     private Float width;
+
     private Float depth;
+
     private LocalDateTime lastEditTime;
+
+    @Column(columnDefinition = "TEXT")
     private String price;
+
     private boolean active;
+
     private String imageUrl;
 
     @JsonIgnore

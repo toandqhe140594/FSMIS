@@ -18,8 +18,11 @@ public class Catches {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(columnDefinition = "TEXT")
     private String description;
+
     private LocalDateTime time;
+    
     private Boolean hidden;
 
     @ManyToOne

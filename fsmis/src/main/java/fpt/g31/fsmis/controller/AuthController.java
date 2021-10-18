@@ -1,9 +1,10 @@
 package fpt.g31.fsmis.controller;
 
-import fpt.g31.fsmis.dto.input.LoginDtoIn;
+import fpt.g31.fsmis.dto.input.AuthDtoIn;
 import fpt.g31.fsmis.dto.input.RegistrationDtoIn;
-import fpt.g31.fsmis.dto.output.AuthTokenDtoOut;
+import fpt.g31.fsmis.dto.input.ValidateOtpDtoIn;
 import fpt.g31.fsmis.service.AuthService;
+import fpt.g31.fsmis.service.TwilioOtpService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,25 +16,36 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthService authService;
+    private final TwilioOtpService twilioOtpService;
 
-    // UC-01: Login
     @PostMapping("/login")
-    public ResponseEntity<Object> login(@RequestBody LoginDtoIn loginDtoIn) {
-        AuthTokenDtoOut authTokenDtoOut = authService.login(loginDtoIn);
-        return new ResponseEntity<>(authTokenDtoOut, HttpStatus.OK);
+    public ResponseEntity<Object> login(@RequestBody AuthDtoIn authDtoIn) {
+        return new ResponseEntity<>(authService.login(authDtoIn), HttpStatus.OK);
     }
 
-    // UC-02: Register
     @PostMapping("/register")
     public ResponseEntity<Object> register(@RequestBody RegistrationDtoIn registrationDtoIn) {
-        authService.register(registrationDtoIn);
-        return new ResponseEntity<>("Đăng ký thành công", HttpStatus.OK);
+        return new ResponseEntity<>(authService.register(registrationDtoIn), HttpStatus.OK);
     }
 
-    // Send OTP Register
-    @PostMapping("/OTP")
-    public ResponseEntity<Object> sendOTP(@RequestBody String phone) {
+    @PostMapping("/forgot")
+    public ResponseEntity<Object> changeForgotPassword(@RequestBody AuthDtoIn authDtoIn) {
+        return new ResponseEntity<>(authService.changeForgotPassword(authDtoIn), HttpStatus.OK);
+    }
 
-        return new ResponseEntity<>("Hello!", HttpStatus.OK);
+    @PostMapping("/otp/register")
+    public ResponseEntity<Object> sendOtpRegister(@RequestParam String phone) {
+        return new ResponseEntity<>(twilioOtpService.sendOtpForNonExistedUser(phone), HttpStatus.OK);
+    }
+
+    @PostMapping("/otp/forgot")
+    public ResponseEntity<Object> sendOtpForgotPassword(@RequestParam String phone) {
+        return new ResponseEntity<>(twilioOtpService.sendOtpForExistedUser(phone), HttpStatus.OK);
+    }
+
+    // OTP: Validate OTP
+    @PostMapping("/otp/validate")
+    public ResponseEntity<Object> validateOtp(@RequestBody ValidateOtpDtoIn validateOtpDtoIn) {
+        return new ResponseEntity<>(twilioOtpService.validateOtp(validateOtpDtoIn), HttpStatus.OK);
     }
 }

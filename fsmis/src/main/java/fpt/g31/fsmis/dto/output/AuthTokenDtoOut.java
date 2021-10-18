@@ -11,6 +11,9 @@ import javax.validation.constraints.NotEmpty;
 public class AuthTokenDtoOut {
 
     @NotEmpty
+    private Long id;
+
+    @NotEmpty
     private String authToken;
 
     @NotEmpty

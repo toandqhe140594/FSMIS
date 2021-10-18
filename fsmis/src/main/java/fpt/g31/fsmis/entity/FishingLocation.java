@@ -42,17 +42,21 @@ public class FishingLocation {
 
     private String phone;
 
+    @Column(columnDefinition = "TEXT")
     private String description;
 
     private String website;
 
     @NotNull
+    @Column(columnDefinition = "TEXT")
     private String service;
 
     @NotNull
+    @Column(columnDefinition = "TEXT")
     private String timetable;
 
     @NotNull
+    @Column(columnDefinition = "TEXT")
     private String rule;
 
     @JsonIgnore

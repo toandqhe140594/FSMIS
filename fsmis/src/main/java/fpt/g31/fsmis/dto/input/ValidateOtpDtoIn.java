@@ -1,6 +1,5 @@
 package fpt.g31.fsmis.dto.input;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,9 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginDtoIn {
-
+public class ValidateOtpDtoIn {
+    
     private String phone;
-
-    private String password;
+    private String otp;
 }

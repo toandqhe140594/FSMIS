@@ -1,6 +1,6 @@
 package fpt.g31.fsmis.service;
 
-import fpt.g31.fsmis.dto.input.LoginDtoIn;
+import fpt.g31.fsmis.dto.input.AuthDtoIn;
 import fpt.g31.fsmis.dto.input.RegistrationDtoIn;
 import fpt.g31.fsmis.dto.output.AuthTokenDtoOut;
 import fpt.g31.fsmis.entity.Role;
@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.UUID;
+import javax.validation.ValidationException;
 
 @Service
 @AllArgsConstructor
@@ -31,7 +32,10 @@ public class AuthService {
     private final JwtProvider jwtProvider;
 
     @Transactional
-    public void register(RegistrationDtoIn registrationDtoIn) {
+    public String register(RegistrationDtoIn registrationDtoIn) {
+        if(userRepos.existsByPhone(registrationDtoIn.getPhone())) {
+            throw new ValidationException("Số điện thoại này đã tồn tại trong hệ thống");
+        }
         User user = User.builder()
                 .fullName(registrationDtoIn.getFullName())
                 .password(passwordEncoder.encode(registrationDtoIn.getPassword()))
@@ -47,19 +51,28 @@ public class AuthService {
                 .roles(Collections.singleton(Role.ROLE_USER))
                 .build();
         userRepos.save(user);
+        return "Đăng ký thành công";
     }
 
-    public AuthTokenDtoOut login(LoginDtoIn loginDtoIn) {
+    public AuthTokenDtoOut login(AuthDtoIn authDtoIn) {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                loginDtoIn.getPhone(), loginDtoIn.getPassword()
+                authDtoIn.getPhone(), authDtoIn.getPassword()
         ));
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         String token = jwtProvider.generateJwtToken(authentication);
         return AuthTokenDtoOut.builder()
+                .id(userRepos.findByPhone(authDtoIn.getPhone()).getId())
                 .authToken(token)
-                .phone(loginDtoIn.getPhone())
+                .phone(authDtoIn.getPhone())
                 .roles(authentication.getAuthorities().iterator().next().toString())
                 .build();
+    }
+
+    public String changeForgotPassword(AuthDtoIn authDtoIn) {
+        User user = userRepos.findByPhone(authDtoIn.getPhone());
+        user.setPassword(passwordEncoder.encode(authDtoIn.getPassword()));
+        userRepos.save(user);
+        return "Đổi mật khẩu thành công";
     }
 }

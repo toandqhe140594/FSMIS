@@ -9,5 +9,7 @@ public interface UserRepos extends JpaRepository<User, Long> {
 
     User findByPhone(String phone);
 
+    boolean existsByPhone(String phone);
+
     Optional<User> findByQrString(String qrString);
 }
