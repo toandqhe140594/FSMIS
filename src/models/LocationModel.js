@@ -26,11 +26,15 @@ const model = {
     active: true,
     verify: false,
   },
+  lakeList: [],
   setCurrentId: action((state, payload) => {
     state.currentId = payload;
   }),
   setLocationOverview: action((state, payload) => {
     state.locationOverview = payload;
+  }),
+  setLakeList: action((state, payload) => {
+    state.lakeList = payload;
   }),
   getLocationOverview: thunk(async (actions, payload, { getState }) => {
     const { data } = await http.get(`location/${getState().currentId}`);
