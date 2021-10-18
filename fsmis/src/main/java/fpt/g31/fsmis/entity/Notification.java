@@ -17,6 +17,7 @@ public class Notification {
     @GeneratedValue
     private Long id;
 
+    @Column(columnDefinition = "TEXT")
     private String description;
 
     @ManyToMany(mappedBy = "notificationSet")

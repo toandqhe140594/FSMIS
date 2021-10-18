@@ -36,6 +36,7 @@ public class Lake {
 
     private boolean active;
 
+    @Column(columnDefinition = "TEXT")
     private String imageUrl;
 
     @JsonIgnore

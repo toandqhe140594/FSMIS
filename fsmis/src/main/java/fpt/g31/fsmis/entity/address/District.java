@@ -1,6 +1,7 @@
 package fpt.g31.fsmis.entity.address;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.lang.Nullable;
 import lombok.*;
 
 import javax.persistence.*;
@@ -19,8 +20,10 @@ public class District {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @Nullable
     private String name;
 
+    @Nullable
     private String type;
 
     @ManyToOne

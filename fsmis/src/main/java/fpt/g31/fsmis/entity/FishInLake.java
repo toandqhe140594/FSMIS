@@ -12,6 +12,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Table(name = "tbl_fishes_in_lake")
 public class FishInLake {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,7 +26,10 @@ public class FishInLake {
     private Lake lake;
 
     private Float maxWeight;
+
     private Float minWeight;
+
     private Integer quantity;
+    
     private Float totalWeight;
 }

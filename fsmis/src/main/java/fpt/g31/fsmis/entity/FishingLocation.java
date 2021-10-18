@@ -40,6 +40,7 @@ public class FishingLocation {
     @JoinColumn
     private Ward ward;
 
+    @NotNull
     private String phone;
 
     @Column(columnDefinition = "TEXT")
@@ -59,6 +60,17 @@ public class FishingLocation {
     @Column(columnDefinition = "TEXT")
     private String rule;
 
+    @Column(columnDefinition = "TEXT")
+    private String imageUrl;
+
+    private LocalDateTime createdDate;
+
+    private LocalDateTime lastEditedDate;
+
+    private Boolean active;
+
+    private Boolean verify;
+
     @JsonIgnore
     @OneToMany(mappedBy = "id", cascade = CascadeType.ALL)
     private List<CheckIn> checkInList;
@@ -74,16 +86,9 @@ public class FishingLocation {
 
     @JsonIgnore
     @OneToMany
-    @JoinTable(
-            name = "tbl_employee_list",
-            joinColumns = @JoinColumn(name = "fishing_location_id"),
-            inverseJoinColumns = @JoinColumn(name = "employee_id")
-    )
+    @JoinTable(name = "tbl_employee_list", joinColumns = @JoinColumn(name = "fishing_location_id"),
+            inverseJoinColumns = @JoinColumn(name = "employee_id"))
     private List<User> employeeList;
-
-//    @JsonIgnore
-//    @ManyToMany(mappedBy = "savedFishingLocations")
-//    private Set<User> savedUser;
 
     @JsonIgnore
     @OneToMany(mappedBy = "id")
@@ -96,9 +101,4 @@ public class FishingLocation {
     @JsonIgnore
     @OneToMany(mappedBy = "id")
     private List<Catches> catchesList;
-
-    private LocalDateTime createdDate;
-    private LocalDateTime lastEditedDate;
-    private Boolean active;
-    private Boolean verify;
 }

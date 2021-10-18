@@ -3,6 +3,7 @@ package fpt.g31.fsmis.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Entity
@@ -17,17 +18,20 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(columnDefinition = "TEXT")
     private String content;
 
+    @NotNull
     private LocalDateTime postTime;
 
+    @NotNull
     private PostType postType;
 
     private Boolean edited;
 
     private Boolean active;
     
-    //    image or video
+    @Column(columnDefinition = "TEXT")
     private String url;
 
     @ManyToOne

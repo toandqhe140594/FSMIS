@@ -3,6 +3,8 @@ package fpt.g31.fsmis.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import org.springframework.lang.Nullable;
 
 @Entity
 @Setter
@@ -12,12 +14,15 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Table(name = "tbl_catches_detail")
 public class CatchesDetail {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull
     private Integer quantity;
 
+    @NotNull
     private Float weight;
 
     @OneToOne

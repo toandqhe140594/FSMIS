@@ -3,6 +3,7 @@ package fpt.g31.fsmis.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -19,8 +20,13 @@ public class Review {
     private Long id;
 
     private Integer score;
+
+    @Column(columnDefinition = "TEXT")
     private String description;
+
+    @NotNull
     private LocalDateTime time;
+
     private boolean active;
 
     @ManyToOne

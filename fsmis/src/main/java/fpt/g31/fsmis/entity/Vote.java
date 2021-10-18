@@ -12,6 +12,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Table(name = "tbl_vote")
 public class Vote {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long id;
