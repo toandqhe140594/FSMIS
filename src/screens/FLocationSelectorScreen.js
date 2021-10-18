@@ -1,4 +1,4 @@
-import { Box, Center, ScrollView, VStack } from "native-base";
+import { Center, ScrollView, VStack } from "native-base";
 import React from "react";
 import {} from "react-native";
 
