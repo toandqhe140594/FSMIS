@@ -14,4 +14,6 @@ public class LocationPinDtoOut {
     private String name;
     private boolean verify;
     private Float rating;
+    private Float longitude;
+    private Float latitude;
 }
