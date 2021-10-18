@@ -1,15 +1,9 @@
-import {
-  Box,
-  Button,
-  Checkbox,
-  HStack,
-  Input,
-  Select,
-  Text,
-  VStack,
-} from "native-base";
+import { Button, Checkbox, HStack, VStack } from "native-base";
 import React from "react";
-import { StyleSheet } from "react-native";
+import { StyleSheet, Text } from "react-native";
+
+import InlineInputComponent from "../common/InlineInputComponent";
+import InlineSelectComponent from "../common/InlineSelectComponent";
 
 const styles = StyleSheet.create({
   cardWrapper: {
@@ -19,16 +13,6 @@ const styles = StyleSheet.create({
   rowWrapper: {
     justifyContent: "space-between",
     alignItems: "center",
-  },
-  inputWrapper: {
-    width: "60%",
-  },
-  textWrapper: {
-    width: "40%",
-  },
-  input: {
-    height: 40,
-    fontSize: 14,
   },
 });
 
@@ -40,42 +24,24 @@ const CatchReportCard = () => {
       space={2}
       style={styles.cardWrapper}
     >
-      <HStack style={styles.rowWrapper}>
-        <Box>
-          <Text fontSize="sm">Chọn loài cá</Text>
-        </Box>
-        <Box style={styles.inputWrapper}>
-          <Select
-            style={styles.input}
-            accessibilityLabel="Chọn hồ câu"
-            placeholder="Chọn hồ câu"
-          >
-            <Select.Item label="Cá diếc" value={1} />
-            <Select.Item label="Cá chép" value={2} />
-          </Select>
-        </Box>
-      </HStack>
-      <HStack style={styles.rowWrapper}>
-        <Box style={styles.textWrapper}>
-          <Text>Số lượng (con)</Text>
-        </Box>
-        <Box style={styles.inputWrapper}>
-          <Input style={styles.input} placeholder="Nhập số lượng con" />
-        </Box>
-      </HStack>
-      <HStack style={styles.rowWrapper}>
-        <Box style={styles.textWrapper}>
-          <Text>Tổng cân nặng (kg)</Text>
-        </Box>
-        <Box style={styles.inputWrapper}>
-          <Input style={styles.input} placeholder="Nhập tổng cân nặng" />
-        </Box>
-      </HStack>
+      <InlineSelectComponent
+        label="Chọn loài cá"
+        placeholder="Nhấp để chọn cá"
+        compact
+      />
+      <InlineInputComponent
+        label="Số lượng (con)"
+        placeholder="Nhập số lượng con"
+        compact
+      />
+      <InlineInputComponent
+        label="Tổng cân nặng (kg)"
+        placeholder="Nhập tổng cân nặng"
+        compact
+      />
       <HStack style={styles.rowWrapper}>
         <Checkbox>
-          <Text fontSize={14} ml={2}>
-            Giao lại cho chủ hồ
-          </Text>
+          <Text style={{ marginLeft: 10 }}>Giao lại cho chủ hồ</Text>
         </Checkbox>
         <Button w="40%">Xoá</Button>
       </HStack>

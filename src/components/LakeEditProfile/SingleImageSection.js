@@ -1,4 +1,5 @@
 import { Box, Flex } from "native-base";
+import PropTypes from "prop-types";
 import React from "react";
 import { StyleSheet } from "react-native";
 
@@ -19,9 +20,9 @@ const styles = StyleSheet.create({
 // const image = "https://wallpaperaccess.com/full/317501.jpg";
 const image = "";
 
-const SingleImageSection = () => {
+const SingleImageSection = ({ myStyles }) => {
   return (
-    <Flex style={[styles.container]}>
+    <Flex style={[styles.container, myStyles]}>
       {image && (
         <Box style={styles.imageContainer}>
           <InteractiveImageBox image={image} />
@@ -30,6 +31,14 @@ const SingleImageSection = () => {
       {!image && <AddImageButton />}
     </Flex>
   );
+};
+
+SingleImageSection.propTypes = {
+  myStyles: PropTypes.objectOf(PropTypes.string.isRequired),
+};
+
+SingleImageSection.defaultProps = {
+  myStyles: {},
 };
 
 export default SingleImageSection;

@@ -21,7 +21,7 @@ const MAX_LENGTH = 1000;
 const TextAreaComponent = ({ label, placeholder, numberOfLines, myStyles }) => {
   return (
     <VStack style={[styles.cotainers, myStyles]} space={1}>
-      <Text style={styles.text}>{label}</Text>
+      {label.length > 0 && <Text style={styles.text}>{label}</Text>}
       <TextInput
         multiline
         numberOfLines={numberOfLines}
@@ -34,13 +34,14 @@ const TextAreaComponent = ({ label, placeholder, numberOfLines, myStyles }) => {
 };
 
 TextAreaComponent.propTypes = {
-  label: PropTypes.string.isRequired,
+  label: PropTypes.string,
   placeholder: PropTypes.string.isRequired,
   numberOfLines: PropTypes.number.isRequired,
   myStyles: PropTypes.objectOf(PropTypes.string.isRequired),
 };
 
 TextAreaComponent.defaultProps = {
+  label: "",
   myStyles: {},
 };
 
