@@ -10,15 +10,25 @@ const styles = StyleSheet.create({
     textAlignVertical: "top",
     padding: 5,
   },
+  title: {
+    fontWeight: "bold",
+    fontSize: 16,
+  },
 });
 
 const MAX_LENGTH = 1000;
 
-const TextAreaComponent = ({ label, placeholder, numberOfLines, myStyles }) => {
+const TextAreaComponent = ({
+  label,
+  placeholder,
+  numberOfLines,
+  isTitle,
+  myStyles,
+}) => {
   return (
     <Box style={[styles.container, myStyles]}>
       {label.length > 0 && (
-        <Text bold mb={2}>
+        <Text style={isTitle ? styles.title : null} mb={2}>
           {label}
         </Text>
       )}
@@ -38,11 +48,13 @@ TextAreaComponent.propTypes = {
   placeholder: PropTypes.string.isRequired,
   numberOfLines: PropTypes.number.isRequired,
   myStyles: PropTypes.objectOf(PropTypes.string.isRequired),
+  isTitle: PropTypes.bool,
 };
 
 TextAreaComponent.defaultProps = {
   label: "",
   myStyles: {},
+  isTitle: false,
 };
 
 export default TextAreaComponent;

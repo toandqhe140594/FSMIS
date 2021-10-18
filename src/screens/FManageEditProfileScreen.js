@@ -1,6 +1,6 @@
-import { Box, Button, Center, Divider, VStack } from "native-base";
+import { Box, Button, Center, Divider, Stack, Text, VStack } from "native-base";
 import React from "react";
-import { ScrollView, StyleSheet, Text } from "react-native";
+import { ScrollView, StyleSheet } from "react-native";
 
 import InputComponent from "../components/common/InputComponent";
 import MultiImageSection from "../components/common/MultiImageSection";
@@ -16,11 +16,6 @@ const styles = StyleSheet.create({
   button: {
     width: "90%",
   },
-  textArea: {
-    borderWidth: 1,
-    textAlignVertical: "top",
-    padding: 5,
-  },
 });
 
 const FManageEditProfileScreen = () => {
@@ -31,21 +26,22 @@ const FManageEditProfileScreen = () => {
         <VStack space={3} divider={<Divider />}>
           <Center>
             {/* Image Picker section */}
-            <VStack space={2} style={styles.sectionWrapper}>
-              <Text style={{ fontWeight: "bold" }}>
+            <Stack space={2} style={styles.sectionWrapper}>
+              <Text bold fontSize="md" mt={2}>
                 Ảnh bìa (nhiều nhất là 5)
               </Text>
               <MultiImageSection />
               {/* Input location name */}
               <InputComponent
+                isTitle
                 label="Tên địa điểm câu"
                 placeholder="Nhập tên địa điểm câu"
               />
-            </VStack>
+            </Stack>
           </Center>
           <Center>
             <VStack space={2} style={styles.sectionWrapper}>
-              <Text style={{ fontWeight: "bold", fontSize: 16 }}>
+              <Text fontSize="md" bold>
                 Thông tin liên hệ
               </Text>
               {/* Information input and select fields */}
@@ -75,10 +71,12 @@ const FManageEditProfileScreen = () => {
 
           <Center>
             {/* Map component */}
-            <VStack space={2} style={styles.sectionWrapper}>
-              <Text style={{ fontWeight: "bold", fontSize: 16 }}>Bản đồ</Text>
+            <Box style={styles.sectionWrapper}>
+              <Text bold fontSize="md" mb={2}>
+                Bản đồ
+              </Text>
               <MapOverviewBox />
-            </VStack>
+            </Box>
           </Center>
 
           <Center>
@@ -86,6 +84,7 @@ const FManageEditProfileScreen = () => {
             <TextAreaComponent
               myStyles={styles.sectionWrapper}
               label="Mô tả khu hồ"
+              isTitle
               placeholder="Miêu tả khu hồ của bạn"
               numberOfLines={6}
             />
@@ -96,9 +95,9 @@ const FManageEditProfileScreen = () => {
             <TextAreaComponent
               myStyles={styles.sectionWrapper}
               label="Thời gian hoạt động"
+              isTitle
               placeholder="Miêu tả thời gian hoạt động của khu hồ"
               numberOfLines={3}
-              maxLength={1000}
             />
           </Center>
 
@@ -107,6 +106,7 @@ const FManageEditProfileScreen = () => {
             <TextAreaComponent
               myStyles={styles.sectionWrapper}
               label="Dịch vụ"
+              isTitle
               placeholder="Miêu tả dịch vụ khu hồ"
               numberOfLines={3}
             />
@@ -117,13 +117,14 @@ const FManageEditProfileScreen = () => {
             <TextAreaComponent
               myStyles={styles.sectionWrapper}
               label="Nội quy"
+              isTitle
               placeholder="Miêu tả nội quy khu hồ"
               numberOfLines={3}
             />
           </Center>
 
           <Center>
-            <Box style={styles.sectionWrapper} space={3} mb={3}>
+            <Box style={styles.sectionWrapper} mb={5}>
               {/* Submit button */}
               <Button style={styles.button} alignSelf="center">
                 Gửi và checkout

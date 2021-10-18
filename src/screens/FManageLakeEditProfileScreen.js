@@ -1,6 +1,15 @@
-import { Button, Center, Divider, ScrollView, VStack } from "native-base";
+import {
+  Box,
+  Button,
+  Center,
+  Divider,
+  ScrollView,
+  Stack,
+  Text,
+  VStack,
+} from "native-base";
 import React from "react";
-import { StyleSheet, Text } from "react-native";
+import { StyleSheet } from "react-native";
 
 import InlineInputComponent from "../components/common/InlineInputComponent";
 import InputComponent from "../components/common/InputComponent";
@@ -16,11 +25,6 @@ const styles = StyleSheet.create({
   },
   button: {
     width: "90%",
-  },
-  textArea: {
-    borderWidth: 1,
-    textAlignVertical: "top",
-    padding: 5,
   },
 });
 
@@ -39,13 +43,14 @@ const LakeEditProfileScreen = () => {
             <InputComponent
               myStyles={styles.sectionWrapper}
               label="Tên hồ câu"
+              isTitle
               placeholder="Nhập tên hồ câu"
             />
           </Center>
 
           <Center>
             <VStack style={styles.sectionWrapper}>
-              <Text style={{ fontWeight: "bold", fontSize: 14 }}>
+              <Text fontSize="md" bold mb={2}>
                 Loại hình câu
               </Text>
               <CheckboxSelectorComponent />
@@ -56,14 +61,17 @@ const LakeEditProfileScreen = () => {
             <TextAreaComponent
               myStyles={styles.sectionWrapper}
               label="Giá vé"
+              isTitle
               placeholder="Miêu tả giá vé hồ"
               numberOfLines={3}
             />
           </Center>
 
           <Center>
-            <VStack space={1} style={styles.sectionWrapper}>
-              <Text style={{ fontWeight: "bold" }}>Thông số</Text>
+            <VStack space={2} style={styles.sectionWrapper}>
+              <Text fontSize="md" bold>
+                Thông số
+              </Text>
               <InlineInputComponent
                 label="Chiều dài (m)"
                 placeholder="Nhập chiều dài hồ"
@@ -80,20 +88,22 @@ const LakeEditProfileScreen = () => {
           </Center>
 
           <Center>
-            <VStack space={3} style={styles.sectionWrapper}>
-              <Text style={{ fontWeight: "bold" }}>Các loại cá</Text>
-              <VStack>
+            <Stack space={2} style={styles.sectionWrapper}>
+              <Text fontSize="md" bold>
+                Các loại cá
+              </Text>
+              <VStack mb={1}>
                 <AddFishCard />
               </VStack>
               <Button style={styles.button} alignSelf="center">
                 Thêm loại cá
               </Button>
-            </VStack>
+            </Stack>
           </Center>
           <Center>
-            <VStack style={styles.sectionWrapper} space={2} mb={3}>
+            <Box style={styles.sectionWrapper} mb={5}>
               {/* Submit button */}
-              <Button style={styles.button} alignSelf="center">
+              <Button style={styles.button} alignSelf="center" mb={2}>
                 Lưu thông tin hồ câu
               </Button>
               <Button
@@ -103,7 +113,7 @@ const LakeEditProfileScreen = () => {
               >
                 Xoá hồ câu
               </Button>
-            </VStack>
+            </Box>
           </Center>
         </VStack>
       </ScrollView>

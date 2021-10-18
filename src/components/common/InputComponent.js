@@ -5,7 +5,7 @@ import { StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
   container: {},
-  title: { fontWeight: "bold" },
+  title: { fontWeight: "bold", fontSize: 16 },
 });
 
 const InputComponent = ({

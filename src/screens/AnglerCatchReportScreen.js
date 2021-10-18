@@ -1,5 +1,14 @@
 // import { yupResolver } from "@hookform/resolvers/yup";
-import { Button, Center, Checkbox, Divider, Text, VStack } from "native-base";
+import {
+  Box,
+  Button,
+  Center,
+  Checkbox,
+  Divider,
+  Stack,
+  Text,
+  VStack,
+} from "native-base";
 import React from "react";
 // import { Controller, useForm } from "react-hook-form";
 import { ScrollView, StyleSheet } from "react-native";
@@ -27,7 +36,7 @@ const AnglerCatchReportScreen = () => {
       <ScrollView>
         <VStack space={3} divider={<Divider />}>
           <Center>
-            <VStack space={2} style={styles.sectionWrapper}>
+            <Stack space={2} style={styles.sectionWrapper}>
               {/* Impage picker section */}
               <MultiImageSection imageLimit={3} />
               {/* Textarea input field */}
@@ -35,7 +44,7 @@ const AnglerCatchReportScreen = () => {
                 placeholder="Mô tả ngày câu của bạn"
                 numberOfLines={6}
               />
-            </VStack>
+            </Stack>
           </Center>
 
           <Center>
@@ -49,30 +58,32 @@ const AnglerCatchReportScreen = () => {
           </Center>
 
           <Center>
-            <VStack style={styles.sectionWrapper} space={3}>
+            <Stack style={styles.sectionWrapper} space={2}>
               <Text bold fontSize="md">
                 Thông tin cá
               </Text>
               {/* Catch Report card list */}
-              <VStack>
+              <VStack mb={1}>
                 <CatchReportCard />
               </VStack>
               {/* Add catch report card button */}
               <Button style={styles.button} alignSelf="center">
                 Thêm loại cá
               </Button>
-            </VStack>
+            </Stack>
           </Center>
 
           <Center>
-            <VStack style={styles.sectionWrapper} space={3} mb={3}>
+            <Box style={styles.sectionWrapper} mb={5}>
               {/* Public checkbox field */}
-              <Checkbox alignItems="flex-start">Công khai thông tin</Checkbox>
+              <Checkbox mb={1} alignItems="flex-start">
+                Công khai thông tin
+              </Checkbox>
               {/* Submit button */}
               <Button style={styles.button} alignSelf="center">
                 Gửi và checkout
               </Button>
-            </VStack>
+            </Box>
           </Center>
         </VStack>
       </ScrollView>
