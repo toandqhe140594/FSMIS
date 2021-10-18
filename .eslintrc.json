@@ -23,6 +23,7 @@
       { "extensions": [".tsx", ".ts", ".js", ".jsx"] }
     ],
     "react/jsx-props-no-spreading": "off",
+    "no-param-reassign": "off",
     "prettier/prettier": ["error", { "endOfLine": "auto" }],
     "global-require": ["off", { "extensions": [".js", ".jsx", ".tsx", ".ts"] }],
     "simple-import-sort/imports": "error",
