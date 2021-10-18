@@ -41,8 +41,7 @@ public class FishingLocationController {
 
     @DeleteMapping
     public ResponseEntity<Object> disableFishingLocation(@RequestParam Long fishingLocationId, @RequestParam Long ownerId) {
-        Boolean result = fishingLocationService.disableFishingLocation(fishingLocationId, ownerId);
-        return new ResponseEntity<>(result, HttpStatus.OK);
+        return new ResponseEntity<>(fishingLocationService.disableFishingLocation(fishingLocationId, ownerId), HttpStatus.OK);
     }
 
     @PostMapping("/{locationId}/lake")
@@ -50,4 +49,10 @@ public class FishingLocationController {
         return new ResponseEntity<>(lakeService.createLake(lakeDtoIn, locationId), HttpStatus.CREATED);
     }
 
+    @GetMapping("/nearby")
+    public ResponseEntity<Object> getNearBy(@RequestParam Float latitude, @RequestParam Float longitude,
+                                            @RequestParam Integer distance, @RequestParam Long methodId,
+                                            @RequestParam Integer minRating){
+        return new ResponseEntity<>(fishingLocationService.getNearBy(longitude, latitude, distance, methodId, minRating), HttpStatus.OK);
+    }
 }

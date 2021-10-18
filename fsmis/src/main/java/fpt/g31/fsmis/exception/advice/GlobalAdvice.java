@@ -39,7 +39,7 @@ public class GlobalAdvice {
     @ResponseBody
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    String methodArgumentNotValidExceptionHandler(UnauthorizedException ex) {
+    String methodArgumentNotValidExceptionHandler(MethodArgumentNotValidException ex) {
         ex.printStackTrace();
         return ex.getMessage();
     }

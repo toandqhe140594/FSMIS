@@ -2,6 +2,7 @@ package fpt.g31.fsmis.service;
 
 import fpt.g31.fsmis.dto.input.FishingLocationDtoIn;
 import fpt.g31.fsmis.dto.output.FishingLocationDtoOut;
+import fpt.g31.fsmis.dto.output.LocationPinDtoOut;
 import fpt.g31.fsmis.entity.FishingLocation;
 import fpt.g31.fsmis.entity.User;
 import fpt.g31.fsmis.exception.FishingLocationNotFoundException;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import javax.validation.ValidationException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -74,5 +76,14 @@ public class FishingLocationService {
         FishingLocationDtoOut dtoOut = modelMapper.map(location, FishingLocationDtoOut.class);
         dtoOut.setAddressFromWard(ServiceUtils.getAddressByWard(location.getWard()));
         return dtoOut;
+    }
+
+    public List<LocationPinDtoOut> getNearBy(Float longitude, Float latitude, Integer distance, Long methodId, Integer minRating) {
+        List<FishingLocation> fishingLocationList = fishingLocationRepos.getNearByLocation(longitude, latitude, distance, methodId, minRating);
+        List<LocationPinDtoOut> locationPinDtoOutList = new ArrayList<>();
+        for (FishingLocation fishingLocation: fishingLocationList) {
+            locationPinDtoOutList.add(modelMapper.map(fishingLocation, LocationPinDtoOut.class));
+        }
+        return locationPinDtoOutList;
     }
 }
