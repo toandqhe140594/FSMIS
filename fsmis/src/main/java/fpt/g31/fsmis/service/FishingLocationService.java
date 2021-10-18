@@ -16,6 +16,7 @@ import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -69,6 +70,8 @@ public class FishingLocationService {
         }
         FishingLocation location = findFishingLocation.get();
         FishingLocationDtoOut dtoOut = modelMapper.map(location, FishingLocationDtoOut.class);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        dtoOut.setLastEditedDate(location.getLastEditedDate().format(formatter));
         dtoOut.setAddressFromWard(ServiceUtils.getAddressByWard(location.getWard()));
         return dtoOut;
     }
