@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Data
 @Builder
@@ -27,4 +28,6 @@ public class LakeDtoIn {
     private String imageUrl;
     @NotNull
     private Long ownerId;
+    @NotNull
+    private List<FishInLakeDtoIn> fishInLakeList;
 }
