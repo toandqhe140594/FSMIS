@@ -1,14 +1,29 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import React from "react";
+import { useRoute } from "@react-navigation/native";
+import { useStoreActions } from "easy-peasy";
+import React, { useEffect } from "react";
 
 import EventListRoute from "../components/FLocationOverviewScreenComponents/EventListRoute";
 import LakeListViewRoute from "../components/FLocationOverviewScreenComponents/LakeListViewRoute";
 import OverviewInformationRoute from "../components/FLocationOverviewScreenComponents/OverviewInformationRoute";
 import ReviewListRoute from "../components/FLocationOverviewScreenComponents/ReviewListRoute";
+import LocationModel from "../models/LocationModel";
+import store from "../utilities/Store";
+
+store.addModel("LocationModel", LocationModel);
 
 const Tab = createBottomTabNavigator();
 
 const FishingSpotDetailScreen = () => {
+  const route = useRoute();
+  const setCurrentId = useStoreActions(
+    (actions) => actions.LocationModel.setCurrentId,
+  );
+
+  useEffect(() => {
+    if (route.params.id) setCurrentId(route.params.id);
+  }, []);
+
   return (
     <Tab.Navigator
       sceneContainerStyle={{ backgroundColor: "white" }}
