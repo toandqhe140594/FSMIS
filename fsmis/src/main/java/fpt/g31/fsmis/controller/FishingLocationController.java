@@ -29,9 +29,9 @@ public class FishingLocationController {
         return new ResponseEntity<>(fishingLocations, HttpStatus.OK);
     }
 
-    @GetMapping
-    public ResponseEntity<Object> getById(@RequestParam Long id) {
-        return new ResponseEntity<>(fishingLocationService.getById(id), HttpStatus.OK);
+    @GetMapping(path = "/{locationId}")
+    public ResponseEntity<Object> getById(@PathVariable Long locationId) {
+        return new ResponseEntity<>(fishingLocationService.getById(locationId), HttpStatus.OK);
     }
 
     @PostMapping
