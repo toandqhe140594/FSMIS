@@ -7,6 +7,7 @@ const styles = StyleSheet.create({
   container: {},
   title: {
     fontWeight: "bold",
+    fontSize: 16,
   },
 });
 
@@ -16,7 +17,7 @@ const SelectComponent = ({
   data,
   myStyle,
   handleValueChange,
-  isRequired,
+  hasAsterisk,
   isTitle,
 }) => {
   const onValueChange = (value) => {
@@ -24,14 +25,15 @@ const SelectComponent = ({
   };
   return (
     <Box style={[styles.container, myStyle]}>
-      <Text style={isTitle ? styles.text : {}} mb={1}>
+      <Text style={isTitle ? styles.title : {}} mb={1}>
         {label}
-        {isRequired && <Text color="danger.500" />}
+        {hasAsterisk && <Text color="danger.500" />}
       </Text>
       <Select
         accessibilityLabel={placeholder}
         placeholder={placeholder}
         onValueChange={onValueChange}
+        fontSize="md"
       >
         {data.map((item) => (
           <Select.Item label={item} value={item} my={1}>
@@ -49,14 +51,14 @@ SelectComponent.propTypes = {
   data: PropTypes.arrayOf(PropTypes.string).isRequired,
   myStyle: PropTypes.objectOf(PropTypes.string.isRequired),
   handleValueChange: PropTypes.func,
-  isRequired: PropTypes.bool,
+  hasAsterisk: PropTypes.bool,
   isTitle: PropTypes.bool,
 };
 
 SelectComponent.defaultProps = {
   myStyle: {},
   handleValueChange: () => {},
-  isRequired: false,
+  hasAsterisk: false,
   isTitle: false,
 };
 
