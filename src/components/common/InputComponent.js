@@ -16,6 +16,10 @@ const InputComponent = ({
   myStyles,
   type,
   leftIcon,
+  error,
+  handleOnBlur,
+  handleOnChange,
+  value,
 }) => {
   return (
     <Box style={[styles.container, myStyles]}>
@@ -25,11 +29,18 @@ const InputComponent = ({
       </Text>
       <Input
         InputLeftElement={leftIcon}
-        paddingLeft={leftIcon}
         type={type}
         placeholder={placeholder}
         fontSize="md"
+        value={value}
+        onBlur={handleOnBlur}
+        onChangeText={handleOnChange}
       />
+      {error?.message && (
+        <Text color="red.500" fontSize="xs" italic>
+          {error?.message}
+        </Text>
+      )}
     </Box>
   );
 };
@@ -42,6 +53,10 @@ InputComponent.propTypes = {
   isTitle: PropTypes.bool,
   type: PropTypes.string,
   leftIcon: PropTypes.element,
+  error: PropTypes.objectOf(PropTypes.string.isRequired),
+  value: PropTypes.string,
+  handleOnBlur: PropTypes.func,
+  handleOnChange: PropTypes.func,
 };
 
 InputComponent.defaultProps = {
@@ -50,6 +65,10 @@ InputComponent.defaultProps = {
   isTitle: false,
   type: "text",
   leftIcon: <></>,
+  error: {},
+  value: "",
+  handleOnBlur: () => {},
+  handleOnChange: () => {},
 };
 
 export default InputComponent;

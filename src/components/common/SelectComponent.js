@@ -16,12 +16,15 @@ const SelectComponent = ({
   placeholder,
   data,
   myStyle,
-  handleValueChange,
+  handleOnChange,
   hasAsterisk,
   isTitle,
+  error,
+  value,
+  handleOnBlur,
 }) => {
-  const onValueChange = (value) => {
-    handleValueChange(value);
+  const onValueChange = (val) => {
+    handleOnChange(val);
   };
   return (
     <Box style={[styles.container, myStyle]}>
@@ -33,14 +36,21 @@ const SelectComponent = ({
         accessibilityLabel={placeholder}
         placeholder={placeholder}
         onValueChange={onValueChange}
+        onBlur={handleOnBlur}
+        selectedValue={value}
         fontSize="md"
       >
         {data.map((item) => (
-          <Select.Item label={item} value={item} my={1}>
-            {item}
+          <Select.Item label={item.label} value={item.val} my={1}>
+            {item.label}
           </Select.Item>
         ))}
       </Select>
+      {error.message && (
+        <Text color="red.500" fontSize="xs" italic>
+          {error.message}
+        </Text>
+      )}
     </Box>
   );
 };
@@ -48,18 +58,24 @@ const SelectComponent = ({
 SelectComponent.propTypes = {
   label: PropTypes.string.isRequired,
   placeholder: PropTypes.string.isRequired,
-  data: PropTypes.arrayOf(PropTypes.string).isRequired,
+  data: PropTypes.arrayOf(PropTypes.object).isRequired,
   myStyle: PropTypes.objectOf(PropTypes.string.isRequired),
-  handleValueChange: PropTypes.func,
+  handleOnChange: PropTypes.func,
   hasAsterisk: PropTypes.bool,
   isTitle: PropTypes.bool,
+  error: PropTypes.objectOf(PropTypes.string.isRequired),
+  value: PropTypes.string,
+  handleOnBlur: PropTypes.func,
 };
 
 SelectComponent.defaultProps = {
   myStyle: {},
-  handleValueChange: () => {},
+  handleOnChange: () => {},
   hasAsterisk: false,
   isTitle: false,
+  error: {},
+  value: "",
+  handleOnBlur: () => {},
 };
 
 export default SelectComponent;
