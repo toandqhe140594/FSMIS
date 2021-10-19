@@ -5,12 +5,12 @@ import React from "react";
 
 import { goToLakeDetailScreen, goToLakeEditScreen } from "../navigations";
 
-const LakeCard = ({ image, listOfFishes, name, isManaged }) => {
+const LakeCard = ({ id, image, listOfFishes, name, isManaged }) => {
   const navigation = useNavigation();
 
   const onPress = () => {
     if (isManaged) goToLakeEditScreen(navigation);
-    else goToLakeDetailScreen(navigation);
+    else goToLakeDetailScreen(navigation, { id });
   };
 
   return (
@@ -57,11 +57,13 @@ LakeCard.propTypes = {
   name: PropTypes.string.isRequired,
   listOfFishes: PropTypes.arrayOf(PropTypes.string),
   isManaged: PropTypes.bool,
+  id: PropTypes.number,
 };
 LakeCard.defaultProps = {
   image: "https://picsum.photos/200",
   listOfFishes: [],
   isManaged: false,
+  id: 1,
 };
 
 export default LakeCard;

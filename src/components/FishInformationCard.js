@@ -21,6 +21,7 @@ const FishInformationCard = ({
         source={{
           uri: image,
         }}
+        resizeMode="contain"
       />
       <Box flex={1}>
         <Text bold fontSize="md">

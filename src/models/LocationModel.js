@@ -28,6 +28,7 @@ const model = {
     verify: false,
   },
   lakeList: [],
+  lakeDetail: {},
   setCurrentId: action((state, payload) => {
     state.currentId = payload;
   }),
@@ -39,6 +40,9 @@ const model = {
   }),
   setLakeList: action((state, payload) => {
     state.lakeList = payload;
+  }),
+  setLakeDetail: action((state, payload) => {
+    state.lakeDetail = payload;
   }),
   getLocationOverview: thunk(async (actions, payload, { getState }) => {
     const { data } = await http.get(`location/${getState().currentId}`);
@@ -69,6 +73,12 @@ const model = {
   getLakeListByLocationId: thunk(async (actions, payload) => {
     const { data } = await http.get(`location/${payload.id}/lake/all`);
     actions.setLakeList(data);
+  }),
+  getLakeDetailByLakeId: thunk(async (actions, payload, { getState }) => {
+    const { data } = await http.get(
+      `location/${getState().currentId}/lake/${payload.id}`,
+    );
+    actions.setLakeDetail(data);
   }),
 };
 export default model;
