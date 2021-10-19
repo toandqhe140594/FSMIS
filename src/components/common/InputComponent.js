@@ -18,9 +18,12 @@ const InputComponent = ({
   myStyles,
   type,
   leftIcon,
-  fieldName,
+  controllerName,
 }) => {
-  const { control } = useFormContext();
+  const {
+    control,
+    formState: { errors },
+  } = useFormContext();
   return (
     <Box style={[styles.container, myStyles]}>
       <Text style={[styles.text, isTitle ? styles.bold : null]} mb={1}>
@@ -29,7 +32,7 @@ const InputComponent = ({
       </Text>
       <Controller
         control={control}
-        name={fieldName}
+        name={controllerName}
         render={({ field: { onChange, onBlur, value } }) => (
           <Input
             InputLeftElement={leftIcon}
@@ -42,6 +45,11 @@ const InputComponent = ({
           />
         )}
       />
+      {errors[controllerName]?.message && (
+        <Text color="red.500" fontSize="xs" italic>
+          {errors[controllerName]?.message}
+        </Text>
+      )}
     </Box>
   );
 };
@@ -54,7 +62,7 @@ InputComponent.propTypes = {
   isTitle: PropTypes.bool,
   type: PropTypes.string,
   leftIcon: PropTypes.element,
-  fieldName: PropTypes.string.isRequired,
+  controllerName: PropTypes.string.isRequired,
 };
 
 InputComponent.defaultProps = {
