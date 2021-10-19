@@ -2,6 +2,8 @@ package fpt.g31.fsmis.service;
 
 import fpt.g31.fsmis.dto.input.FishInLakeDtoIn;
 import fpt.g31.fsmis.dto.input.LakeDtoIn;
+import fpt.g31.fsmis.dto.output.FishDtoOut;
+import fpt.g31.fsmis.dto.output.LakeDtoOut;
 import fpt.g31.fsmis.entity.FishInLake;
 import fpt.g31.fsmis.entity.FishingLocation;
 import fpt.g31.fsmis.entity.Lake;
@@ -16,6 +18,8 @@ import org.springframework.stereotype.Service;
 
 import javax.validation.ValidationException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -70,5 +74,38 @@ public class LakeService {
             fishInLakeRepos.save(fishInLake);
         }
         return "Tạo hồ con thành công!";
+    }
+
+    public LakeDtoOut getLakeById(Long locationId, long lakeId) {
+        Lake lake = lakeRepos.getById(lakeId);
+        if(lake.getFishingLocation().getId().equals(locationId) && !lake.isActive()) {
+            throw new ValidationException("Hồ này không tồn tại");
+        }
+        List<FishInLake> fishesInLake = fishInLakeRepos.findByLakeId(lakeId);
+        List<FishDtoOut> fishes = new ArrayList<>();
+        for(FishInLake fishInLake : fishesInLake) {
+            FishDtoOut fish = FishDtoOut.builder()
+                    .id(fishInLake.getFishSpecies().getId())
+                    .name(fishInLake.getFishSpecies().getName())
+                    .imageUrl(fishInLake.getFishSpecies().getImageUrl())
+                    .maxWeight(fishInLake.getMaxWeight())
+                    .minWeight(fishInLake.getMinWeight())
+                    .quantity(fishInLake.getQuantity())
+                    .totalWeight(fishInLake.getTotalWeight())
+                    .build();
+            fishes.add(fish);
+        }
+
+        return LakeDtoOut.builder()
+                .id(lake.getId())
+                .name(lake.getName())
+                .length(lake.getLength())
+                .width(lake.getWidth())
+                .depth(lake.getDepth())
+                .lastEditTime(lake.getLastEditTime())
+                .price(lake.getPrice())
+                .imageUrl(lake.getImageUrl())
+                .fishInLake(fishes)
+                .build();
     }
 }
