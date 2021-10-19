@@ -7,6 +7,7 @@ import fpt.g31.fsmis.entity.FishingLocation;
 import fpt.g31.fsmis.service.CheckInService;
 import fpt.g31.fsmis.service.FishingLocationService;
 import fpt.g31.fsmis.service.LakeService;
+import fpt.g31.fsmis.service.PostService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,7 @@ public class FishingLocationController {
     final CheckInService checkInService;
     final FishingLocationService fishingLocationService;
     final LakeService lakeService;
+    final PostService postService;
 
     @GetMapping(path = "/all")
     public ResponseEntity<Object> getAll() {
@@ -64,5 +66,10 @@ public class FishingLocationController {
     @GetMapping("/{locationId}/lake/all")
     public ResponseEntity<Object> getAllLakeByLocationId(@PathVariable Long locationId){
         return new ResponseEntity<>(lakeService.getAllByLocationId(locationId), HttpStatus.OK);
+    }
+
+    @GetMapping("/{locationId}/post")
+    public ResponseEntity<Object> getPostListByLocationId(@PathVariable Long locationId, @RequestParam Integer page){
+        return new ResponseEntity<>(postService.getPostByLocationId(locationId, page), HttpStatus.OK);
     }
 }
