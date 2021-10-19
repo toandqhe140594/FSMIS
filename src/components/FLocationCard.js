@@ -11,15 +11,7 @@ import {
   goToFManageMainScreen,
 } from "../navigations";
 
-const SpotCard = ({
-  id = 1,
-  address,
-  image,
-  isVerifed,
-  name,
-  rate,
-  isManaged,
-}) => {
+const SpotCard = ({ id, address, image, isVerifed, name, rate, isManaged }) => {
   const navigation = useNavigation();
 
   const onPress = () => {
