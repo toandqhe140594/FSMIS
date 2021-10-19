@@ -25,11 +25,18 @@ public class Catches {
     @Column(columnDefinition = "TEXT")
     private String description;
 
+    @Nullable
+    @Column(columnDefinition = "TEXT")
+    private String imageUrl;
+
     @NotNull
     private LocalDateTime time;
 
     @NotNull
     private Boolean hidden;
+
+    @NotNull
+    private Boolean approved;
 
     @ManyToOne
     @JoinColumn

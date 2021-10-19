@@ -3,6 +3,8 @@ package fpt.g31.fsmis.service;
 import fpt.g31.fsmis.dto.LakeOverviewDtoOut;
 import fpt.g31.fsmis.dto.input.FishInLakeDtoIn;
 import fpt.g31.fsmis.dto.input.LakeDtoIn;
+import fpt.g31.fsmis.dto.output.FishDtoOut;
+import fpt.g31.fsmis.dto.output.LakeDtoOut;
 import fpt.g31.fsmis.entity.FishInLake;
 import fpt.g31.fsmis.entity.FishingLocation;
 import fpt.g31.fsmis.entity.Lake;
@@ -73,6 +75,39 @@ public class LakeService {
         return "Tạo hồ con thành công!";
     }
 
+    public LakeDtoOut getLakeById(Long locationId, long lakeId) {
+        Lake lake = lakeRepos.getById(lakeId);
+        if(lake.getFishingLocation().getId().equals(locationId) && !lake.isActive()) {
+            throw new ValidationException("Hồ này không tồn tại");
+        }
+        List<FishInLake> fishesInLake = fishInLakeRepos.findByLakeId(lakeId);
+        List<FishDtoOut> fishes = new ArrayList<>();
+        for(FishInLake fishInLake : fishesInLake) {
+            FishDtoOut fish = FishDtoOut.builder()
+                    .id(fishInLake.getFishSpecies().getId())
+                    .name(fishInLake.getFishSpecies().getName())
+                    .imageUrl(fishInLake.getFishSpecies().getImageUrl())
+                    .maxWeight(fishInLake.getMaxWeight())
+                    .minWeight(fishInLake.getMinWeight())
+                    .quantity(fishInLake.getQuantity())
+                    .totalWeight(fishInLake.getTotalWeight())
+                    .build();
+            fishes.add(fish);
+        }
+
+        return LakeDtoOut.builder()
+                .id(lake.getId())
+                .name(lake.getName())
+                .length(lake.getLength())
+                .width(lake.getWidth())
+                .depth(lake.getDepth())
+                .lastEditTime(lake.getLastEditTime())
+                .price(lake.getPrice())
+                .imageUrl(lake.getImageUrl())
+                .fishInLake(fishes)
+                .build();
+    }
+  
     public List<LakeOverviewDtoOut> getAllByLocationId(Long locationId) {
         Optional<FishingLocation> fishingLocationOptional = fishingLocationRepos.findById(locationId);
         if (!fishingLocationOptional.isPresent() || Boolean.FALSE.equals(fishingLocationOptional.get().getActive())){

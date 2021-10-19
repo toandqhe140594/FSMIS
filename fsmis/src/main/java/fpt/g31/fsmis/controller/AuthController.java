@@ -18,32 +18,37 @@ public class AuthController {
     private final AuthService authService;
     private final TwilioOtpService twilioOtpService;
 
+    // UC-01: Login
     @PostMapping("/login")
     public ResponseEntity<Object> login(@RequestBody AuthDtoIn authDtoIn) {
         return new ResponseEntity<>(authService.login(authDtoIn), HttpStatus.OK);
     }
 
+    // UC-02: Register
     @PostMapping("/register")
     public ResponseEntity<Object> register(@RequestBody RegistrationDtoIn registrationDtoIn) {
         return new ResponseEntity<>(authService.register(registrationDtoIn), HttpStatus.CREATED);
     }
 
+    // UC-03: Forgot Password
     @PostMapping("/forgot")
     public ResponseEntity<Object> changeForgotPassword(@RequestBody AuthDtoIn authDtoIn) {
         return new ResponseEntity<>(authService.changeForgotPassword(authDtoIn), HttpStatus.OK);
     }
 
+    // UC-02.1: Send OTP for Register
     @PostMapping("/otp/register")
     public ResponseEntity<Object> sendOtpRegister(@RequestParam String phone) {
         return new ResponseEntity<>(twilioOtpService.sendOtpForNonExistedUser(phone), HttpStatus.OK);
     }
 
+    // UC-03.1: Send OTP for Forgot Password
     @PostMapping("/otp/forgot")
     public ResponseEntity<Object> sendOtpForgotPassword(@RequestParam String phone) {
         return new ResponseEntity<>(twilioOtpService.sendOtpForExistedUser(phone), HttpStatus.OK);
     }
 
-    // OTP: Validate OTP
+    // UC-02.2, UC-03.3: Validate OTP
     @PostMapping("/otp/validate")
     public ResponseEntity<Object> validateOtp(@RequestBody ValidateOtpDtoIn validateOtpDtoIn) {
         return new ResponseEntity<>(twilioOtpService.validateOtp(validateOtpDtoIn), HttpStatus.OK);
