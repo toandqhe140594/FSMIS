@@ -4,6 +4,7 @@ import http from "../utilities/Http";
 
 const model = {
   currentId: 1,
+  locationShortInformation: {},
   locationOverview: {
     id: 1,
     name: "placeholderdata",
@@ -30,6 +31,9 @@ const model = {
   setCurrentId: action((state, payload) => {
     state.currentId = payload;
   }),
+  setLocationShortInformation: action((state, payload) => {
+    state.locationShortInformation = payload;
+  }),
   setLocationOverview: action((state, payload) => {
     state.locationOverview = payload;
   }),
@@ -39,10 +43,32 @@ const model = {
   getLocationOverview: thunk(async (actions, payload, { getState }) => {
     const { data } = await http.get(`location/${getState().currentId}`);
     actions.setLocationOverview(data);
+    actions.setLocationShortInformation({
+      name: data.name,
+      isVerified: data.verify,
+      id: data.id,
+      type: "location",
+    });
   }),
   getLocationOverviewById: thunk(async (actions, payload) => {
     const { data } = await http.get(`location/${payload.id}`);
     actions.setLocationOverview(data);
+    actions.setLocationShortInformation({
+      name: data.name,
+      isVerified: data.verify,
+      id: data.id,
+      type: "location",
+    });
+  }),
+  getLakeList: thunk(async (actions, payload, { getState }) => {
+    const { data } = await http.get(
+      `location/${getState().currentId}/lake/all`,
+    );
+    actions.setLakeList(data);
+  }),
+  getLakeListByLocationId: thunk(async (actions, payload) => {
+    const { data } = await http.get(`location/${payload.id}/lake/all`);
+    actions.setLakeList(data);
   }),
 };
 export default model;
