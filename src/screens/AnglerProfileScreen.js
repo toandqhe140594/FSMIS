@@ -1,4 +1,4 @@
-import { Box, VStack } from "native-base";
+import { Box, ScrollView, VStack } from "native-base";
 import React from "react";
 
 import AvatarCard from "../components/AvatarCard";
@@ -62,11 +62,12 @@ const AnglerProfileScreen = () => {
           subText="Lên cần : 69 lần"
         />
       </VStack>
-
-      <VStack mt="4">
-        <MenuScreen menuListItem={menuCategory} />
-        <MenuScreen menuListItem={logOut} />
-      </VStack>
+      <ScrollView maxHeight="80%">
+        <VStack mt="4">
+          <MenuScreen menuListItem={menuCategory} />
+          <MenuScreen menuListItem={logOut} />
+        </VStack>
+      </ScrollView>
     </Box>
   );
 };

@@ -42,7 +42,7 @@ const VerifyCatchReportScreen = ({ angler }) => {
   };
   return (
     <Box>
-      <HeaderTab name="Lịch sử báo cá" />
+      <HeaderTab name="Xác báo cá" />
       <Box
         w={{
           base: "100%",
@@ -50,15 +50,17 @@ const VerifyCatchReportScreen = ({ angler }) => {
         }}
       >
         <FlatList
+          pt="0.5"
           data={dummyMenu}
           renderItem={({ item }) => (
             <Box
               borderBottomWidth="1"
+              backgroundColor="white"
               _dark={{
                 borderColor: "gray.600",
               }}
               borderColor="coolGray.200"
-              pb="1"
+              mb="0.5"
             >
               <PressableCustomCard
                 paddingX="3"

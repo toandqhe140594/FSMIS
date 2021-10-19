@@ -5,7 +5,7 @@ import FLocationCard from "../components/FLocationCard";
 
 const FLocationSaveScreen = () => {
   return (
-    <ScrollView>
+    <ScrollView mt={2} maxHeight="99%">
       <Box
         flex={1}
         alignItems="center"
