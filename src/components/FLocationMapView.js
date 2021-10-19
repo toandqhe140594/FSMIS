@@ -18,6 +18,7 @@ export default function FLocationMapView({ coordinates, locationList }) {
         }}
         mapType="standard"
         style={styles.map}
+        showsUserLocation
       >
         {locationList.map((location) => (
           <FLocationMarker
