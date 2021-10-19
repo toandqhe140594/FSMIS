@@ -17,13 +17,19 @@ const FLocationSaveScreen = () => {
             address="140 Láng hòa lạc"
             name="Hồ câu Thuần Việt"
             rate={5}
+            id={1}
           />
           <FLocationCard
             address="140 Láng hòa lạc"
             name="Hồ câu Thuần Việt"
             rate={3.5}
+            id={2}
           />
-          <FLocationCard address="140 Láng hòa lạc" name="Hồ câu Thuần Việt" />
+          <FLocationCard
+            address="140 Láng hòa lạc"
+            name="Hồ câu Thuần Việt"
+            id={9}
+          />
         </VStack>
       </Box>
     </ScrollView>
