@@ -1,4 +1,4 @@
-import { useStoreActions, useStoreState } from "easy-peasy";
+import { useStoreState } from "easy-peasy";
 import { Box, Button, Text } from "native-base";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, ScrollView } from "react-native";
@@ -12,9 +12,7 @@ const OverviewInformationRoute = () => {
   const locationOverview = useStoreState(
     (states) => states.LocationModel.locationOverview,
   );
-  const getLocationOverview = useStoreActions(
-    (actions) => actions.LocationModel.getLocationOverview,
-  );
+
   const {
     name,
     verify,
@@ -47,14 +45,8 @@ const OverviewInformationRoute = () => {
               <HeaderTab name={name} isVerified={verify} flagable />
               <Card containerStyle={{ width: "100%", margin: 0, padding: 0 }}>
                 <Swiper height="auto">
-                  <Card.Image
-                    source={{ uri: "https://picsum.photos/400" }}
-                    style={{ height: 350 }}
-                  />
-                  <Card.Image
-                    source={{ uri: "https://picsum.photos/400" }}
-                    style={{ height: 350 }}
-                  />
+                  <Card.Image source={{ uri: "https://picsum.photos/400" }} />
+                  <Card.Image source={{ uri: "https://picsum.photos/400" }} />
                 </Swiper>
                 <Button my={4} mx={10}>
                   Lưu điểm câu
