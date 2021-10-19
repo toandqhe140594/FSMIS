@@ -2,17 +2,17 @@ import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import React from "react";
 
-import EventListRoute from "../components/FLocationOverviewScreenComponents/EventListRoute";
-import CheckinScreen from "../screens/CheckinScreen";
+import CheckinScreen from "../screens/AnglerCheckinScreen";
 import FLocationSaveScreen from "../screens/FLocationSaveScreen";
 import FishingLocationSearchScreen from "../screens/FLocationSearchScreen";
+import NotificationsScreen from "../screens/NotificationsScreen";
+import ProfileNavigator from "./NestedProfileNavigator";
 
 const Tab = createBottomTabNavigator();
 const AnglerMainNavigator = () => {
   return (
     <Tab.Navigator
       initialRouteName="Báo cá"
-      sceneContainerStyle={{ backgroundColor: "white" }}
       screenOptions={{
         tabBarLabelPosition: "below-icon",
         headerShown: false,
@@ -65,7 +65,7 @@ const AnglerMainNavigator = () => {
             );
           },
         }}
-        component={EventListRoute}
+        component={NotificationsScreen}
       />
       <Tab.Screen
         name="Cá nhân"
@@ -76,7 +76,7 @@ const AnglerMainNavigator = () => {
             );
           },
         }}
-        component={EventListRoute}
+        component={ProfileNavigator}
       />
     </Tab.Navigator>
   );

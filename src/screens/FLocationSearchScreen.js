@@ -4,6 +4,10 @@ import { StyleSheet } from "react-native";
 
 import ListViewRoute from "../components/FishingSpotSearchScreenComponents/ListViewRoute";
 import MapViewRoute from "../components/FishingSpotSearchScreenComponents/MapViewRoute";
+import MapSearchModel from "../models/MapSearchModel";
+import store from "../utilities/Store";
+
+store.addModel("MapSearchModel", MapSearchModel);
 
 const Tab = createMaterialTopTabNavigator();
 const styles = StyleSheet.create({

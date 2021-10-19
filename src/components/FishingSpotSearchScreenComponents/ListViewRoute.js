@@ -1,4 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
+import { useStoreState } from "easy-peasy";
 import {
   Box,
   Button,
@@ -166,6 +167,9 @@ ListViewOverlay.propTypes = {
 };
 
 const ListViewRoute = () => {
+  const advancedLocationList = useStoreState(
+    (states) => states.MapSearchModel.advancedLocationList,
+  );
   const [visible, setVisible] = useState(false);
   const methods = useForm();
 
@@ -192,9 +196,17 @@ const ListViewRoute = () => {
 
         {/* Draft view only */}
         <VStack mt={3} space={3} w="100%">
-          <FLocationCard address="140 Láng hòa lạc" name="Hồ câu Thuần Việt" />
-          <FLocationCard address="140 Láng hòa lạc" name="Hồ câu Thuần Việt" />
-          <FLocationCard address="140 Láng hòa lạc" name="Hồ câu Thuần Việt" />
+          {advancedLocationList.map((location) => (
+            <FLocationCard
+              id={location.id}
+              address={location.address}
+              name={location.name}
+              rate={location.rate}
+              isVerifed={location.isVerifed}
+              image={location.mainImage}
+              key={location.id}
+            />
+          ))}
         </VStack>
       </Box>
       <FormProvider {...methods}>

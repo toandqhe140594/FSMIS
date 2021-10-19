@@ -3,14 +3,20 @@ import { Box, Image, Pressable, Text } from "native-base";
 import PropTypes from "prop-types";
 import React from "react";
 
-import { goToLakeDetailScreen } from "../navigations";
+import { goToLakeDetailScreen, goToLakeEditScreen } from "../navigations";
 
-const LakeCard = ({ image, listOfFishes, name }) => {
+const LakeCard = ({ image, listOfFishes, name, isManaged }) => {
   const navigation = useNavigation();
+
+  const onPress = () => {
+    if (isManaged) goToLakeEditScreen(navigation);
+    else goToLakeDetailScreen(navigation);
+  };
+
   return (
     <Pressable
       onPress={() => {
-        goToLakeDetailScreen(navigation);
+        onPress();
       }}
     >
       <Box borderWidth={1} flexDirection="row">
@@ -22,16 +28,25 @@ const LakeCard = ({ image, listOfFishes, name }) => {
             uri: image,
           }}
         />
-        <Box flex={1} my={3} mr={3}>
+        <Box
+          flex={1}
+          my={3}
+          mr={3}
+          justifyContent={listOfFishes.length > 0 ? "flex-start" : "center"}
+        >
           <Text bold fontSize="md">
             {name}
           </Text>
-          <Text fontSize="sm" noOfLines={2} isTruncated>
-            Các loại cá: {listOfFishes.join(", ")}
-          </Text>
-          <Text underline position="absolute" bottom={0} right={0}>
-            Xem thêm
-          </Text>
+          {listOfFishes.length > 0 && (
+            <>
+              <Text fontSize="sm" noOfLines={2} isTruncated>
+                Các loại cá: {listOfFishes.join(", ")}
+              </Text>
+              <Text underline position="absolute" bottom={0} right={0}>
+                Xem thêm
+              </Text>
+            </>
+          )}
         </Box>
       </Box>
     </Pressable>
@@ -40,10 +55,13 @@ const LakeCard = ({ image, listOfFishes, name }) => {
 LakeCard.propTypes = {
   image: PropTypes.string,
   name: PropTypes.string.isRequired,
-  listOfFishes: PropTypes.arrayOf(PropTypes.string).isRequired,
+  listOfFishes: PropTypes.arrayOf(PropTypes.string),
+  isManaged: PropTypes.bool,
 };
 LakeCard.defaultProps = {
   image: "https://picsum.photos/200",
+  listOfFishes: [],
+  isManaged: false,
 };
 
 export default LakeCard;
