@@ -1,11 +1,13 @@
 import { Box, Input, Text } from "native-base";
 import PropTypes from "prop-types";
 import React from "react";
+import { Controller, useFormContext } from "react-hook-form";
 import { StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
   container: {},
-  title: { fontWeight: "bold", fontSize: 16 },
+  bold: { fontWeight: "bold" },
+  text: { fontSize: 16 },
 });
 
 const InputComponent = ({
@@ -16,31 +18,30 @@ const InputComponent = ({
   myStyles,
   type,
   leftIcon,
-  error,
-  handleOnBlur,
-  handleOnChange,
-  value,
+  fieldName,
 }) => {
+  const { control } = useFormContext();
   return (
     <Box style={[styles.container, myStyles]}>
-      <Text style={isTitle ? styles.title : null} mb={1}>
+      <Text style={[styles.text, isTitle ? styles.bold : null]} mb={1}>
         {label}
         {hasAsterisk && <Text color="danger.500">*</Text>}
       </Text>
-      <Input
-        InputLeftElement={leftIcon}
-        type={type}
-        placeholder={placeholder}
-        fontSize="md"
-        value={value}
-        onBlur={handleOnBlur}
-        onChangeText={handleOnChange}
+      <Controller
+        control={control}
+        name={fieldName}
+        render={({ field: { onChange, onBlur, value } }) => (
+          <Input
+            InputLeftElement={leftIcon}
+            type={type}
+            placeholder={placeholder}
+            onChangeText={onChange}
+            onBlur={onBlur}
+            value={value}
+            fontSize="md"
+          />
+        )}
       />
-      {error?.message && (
-        <Text color="red.500" fontSize="xs" italic>
-          {error?.message}
-        </Text>
-      )}
     </Box>
   );
 };
@@ -53,10 +54,7 @@ InputComponent.propTypes = {
   isTitle: PropTypes.bool,
   type: PropTypes.string,
   leftIcon: PropTypes.element,
-  error: PropTypes.objectOf(PropTypes.string.isRequired),
-  value: PropTypes.string,
-  handleOnBlur: PropTypes.func,
-  handleOnChange: PropTypes.func,
+  fieldName: PropTypes.string.isRequired,
 };
 
 InputComponent.defaultProps = {
@@ -65,10 +63,6 @@ InputComponent.defaultProps = {
   isTitle: false,
   type: "text",
   leftIcon: <></>,
-  error: {},
-  value: "",
-  handleOnBlur: () => {},
-  handleOnChange: () => {},
 };
 
 export default InputComponent;
