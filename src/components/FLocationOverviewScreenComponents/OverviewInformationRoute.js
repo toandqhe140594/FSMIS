@@ -3,6 +3,7 @@ import { Box, Button, Text } from "native-base";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, ScrollView } from "react-native";
 import { Card, Divider } from "react-native-elements";
+import MapView, { Marker } from "react-native-maps";
 import Swiper from "react-native-swiper";
 
 import HeaderTab from "../HeaderTab";
@@ -24,6 +25,8 @@ const OverviewInformationRoute = () => {
     timetable,
     website,
     lastEditedDate,
+    longitude,
+    latitude,
   } = locationOverview;
 
   const serviceArr = service.split("\n");
@@ -80,7 +83,18 @@ const OverviewInformationRoute = () => {
                   Bản đồ
                 </Text>
                 <Box m={3}>
-                  <Card.Image source={{ uri: "https://picsum.photos/200" }} />
+                  <MapView
+                    initialRegion={{
+                      latitude,
+                      longitude,
+                      latitudeDelta: 0.0922,
+                      longitudeDelta: 0.0421,
+                    }}
+                    style={{ height: 150, width: "100%" }}
+                    liteMode
+                  >
+                    <Marker coordinate={{ latitude, longitude }} />
+                  </MapView>
                 </Box>
                 <Divider />
                 <Box m={3}>
