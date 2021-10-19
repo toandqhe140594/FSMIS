@@ -57,14 +57,11 @@ const styles = StyleSheet.create({
 
 const FManageEditProfileScreen = () => {
   const methods = useForm({
-    mode: "onChange",
+    mode: "onSubmit",
     reValidateMode: "onChange",
     resolver: yupResolver(validationSchema),
   });
-  const {
-    handleSubmit,
-    formState: { errors },
-  } = methods;
+  const { handleSubmit } = methods;
   const onSubmit = (data) => {
     console.log(data);
   };
@@ -87,13 +84,8 @@ const FManageEditProfileScreen = () => {
                   label="Tên địa điểm câu"
                   hasAsterisk
                   placeholder="Nhập tên địa điểm câu"
-                  fieldName="fName"
+                  controllerName="fName"
                 />
-                {errors.fName?.message && (
-                  <Text color="danger.500" fontSize="xs" italic>
-                    {errors.fName?.message}
-                  </Text>
-                )}
               </Stack>
             </Center>
             <Center>
@@ -106,66 +98,45 @@ const FManageEditProfileScreen = () => {
                   label="Số điện thoại"
                   placeholder="Nhập số điện thoại"
                   hasAsterisk
-                  fieldName="fPhone"
+                  controllerName="fPhone"
                 />
-                {errors.fPhone?.message && (
-                  <Text color="danger.500" fontSize="xs" italic>
-                    {errors.fPhone?.message}
-                  </Text>
-                )}
+
                 <InputComponent
                   label="Website"
                   placeholder="Nhập website/facebook"
-                  fieldName="fWebsite"
+                  controllerName="fWebsite"
                 />
 
                 <InputComponent
                   label="Địa chỉ"
                   placeholder="Nhập địa chỉ"
                   hasAsterisk
-                  fieldName="fAddress"
+                  controllerName="fAddress"
                 />
-                {errors.fAddress?.message && (
-                  <Text color="danger.500" fontSize="xs" italic>
-                    {errors.fAddress?.message}
-                  </Text>
-                )}
+
                 <SelectComponent
                   placeholder="Chọn tỉnh/thành phố"
                   label="Tỉnh/Thành phố"
                   hasAsterisk
-                  fieldName="fCityAddress"
+                  controllerName="fCityAddress"
                   data={cityData}
                 />
-                {errors.fCityAddress?.message && (
-                  <Text color="danger.500" fontSize="xs" italic>
-                    {errors.fCityAddress?.message}
-                  </Text>
-                )}
+
                 <SelectComponent
                   placeholder="Chọn quận/huyện"
                   label="Quận/Huyện"
                   hasAsterisk
-                  fieldName="fDistrictAddress"
+                  controllerName="fDistrictAddress"
                   data={districtData}
                 />
-                {errors.fDistrictAddress?.message && (
-                  <Text color="danger.500" fontSize="xs" italic>
-                    {errors.fDistrictAddress?.message}
-                  </Text>
-                )}
+
                 <SelectComponent
                   label="Phường/Xã"
                   placeholder="Chọn phường/xã"
                   hasAsterisk
-                  fieldName="fCommuneAddress"
+                  controllerName="fCommuneAddress"
                   data={communeData}
                 />
-                {errors.fCommuneAddress?.message && (
-                  <Text color="danger.500" fontSize="xs" italic>
-                    {errors.fCommuneAddress?.message}
-                  </Text>
-                )}
               </VStack>
             </Center>
 
