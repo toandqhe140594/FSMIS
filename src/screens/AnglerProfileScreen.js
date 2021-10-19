@@ -1,6 +1,6 @@
+
 import { Box, ScrollView, VStack } from "native-base";
 import React from "react";
-
 import AvatarCard from "../components/AvatarCard";
 import MenuScreen from "../components/MenuScreen";
 import * as ROUTE_NAMES from "../config/routeNames";

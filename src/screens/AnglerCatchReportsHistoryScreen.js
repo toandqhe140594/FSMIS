@@ -1,4 +1,5 @@
 import { useNavigation } from "@react-navigation/native";
+import { useStoreState } from "easy-peasy";
 import { Box, FlatList, Text } from "native-base";
 import PropTypes from "prop-types";
 import React from "react";
@@ -8,7 +9,11 @@ import HeaderTab from "../components/HeaderTab";
 import PressableCustomCard from "../components/PressableCustomCard";
 import { goToCatchReportDetailScreen } from "../navigations";
 
-const AnglerCatchReportsHistoryScreen = ({ angler }) => {
+const AnglerCatchReportsHistoryScreen = () => {
+  const catchReportHistoryList = useStoreState(
+    (state) => state.ProfileModel.catchReportHistoryList,
+  );
+  console.log(`catchReportHistoryList`, catchReportHistoryList);
   const navigation = useNavigation();
   const dummyMenu = [
     { id: 1, message: "Ngoi ca sang", caches: "Ro dong, Diec" },
@@ -28,7 +33,7 @@ const AnglerCatchReportsHistoryScreen = ({ angler }) => {
       >
         <FlatList
           pt="0.5"
-          data={dummyMenu}
+          data={catchReportHistoryList}
           renderItem={({ item }) => (
             <Box
               borderBottomWidth="1"
@@ -47,12 +52,12 @@ const AnglerCatchReportsHistoryScreen = ({ angler }) => {
                 }}
               >
                 <Box pl="2" pb="1">
-                  <AvatarCard avatarSize="md" nameUser={angler.name} />
+                  <AvatarCard avatarSize="md" nameUser={item.name} />
                   <Box mt={2}>
                     <Text italic>{item.message}</Text>
                     <Text>
                       <Text bold>Đã câu được :</Text>
-                      {item.caches}
+                      {item.catch}
                     </Text>
                   </Box>
                 </Box>
@@ -66,10 +71,10 @@ const AnglerCatchReportsHistoryScreen = ({ angler }) => {
   );
 };
 
-AnglerCatchReportsHistoryScreen.defaultProps = {
-  angler: { id: "1", name: "Dat" },
-};
-AnglerCatchReportsHistoryScreen.propTypes = {
-  angler: PropTypes.objectOf(PropTypes.string, PropTypes.string),
-};
+// AnglerCatchReportsHistoryScreen.defaultProps = {
+//   angler: { id: "1", name: "Dat" },
+// };
+// AnglerCatchReportsHistoryScreen.propTypes = {
+//   angler: PropTypes.objectOf(PropTypes.string, PropTypes.string),
+// };
 export default AnglerCatchReportsHistoryScreen;
