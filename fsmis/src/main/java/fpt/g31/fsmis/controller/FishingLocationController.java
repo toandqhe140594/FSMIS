@@ -55,4 +55,9 @@ public class FishingLocationController {
                                             @RequestParam Integer minRating){
         return new ResponseEntity<>(fishingLocationService.getNearBy(longitude, latitude, distance, methodId, minRating), HttpStatus.OK);
     }
+
+    @GetMapping("/{locationId}/lake/all")
+    public ResponseEntity<Object> getAllLakeByLocationId(@PathVariable Long locationId){
+        return new ResponseEntity<>(lakeService.getAllByLocationId(locationId), HttpStatus.OK);
+    }
 }

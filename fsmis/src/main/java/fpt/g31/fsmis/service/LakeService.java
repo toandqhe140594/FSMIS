@@ -1,5 +1,6 @@
 package fpt.g31.fsmis.service;
 
+import fpt.g31.fsmis.dto.LakeOverviewDtoOut;
 import fpt.g31.fsmis.dto.input.FishInLakeDtoIn;
 import fpt.g31.fsmis.dto.input.LakeDtoIn;
 import fpt.g31.fsmis.entity.FishInLake;
@@ -16,6 +17,8 @@ import org.springframework.stereotype.Service;
 
 import javax.validation.ValidationException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -39,8 +42,6 @@ public class LakeService {
         int row = 0;
         for (FishInLakeDtoIn fishInLakeDtoIn : lakeDtoIn.getFishInLakeList()) {
             row++;
-//            FishSpecies fishSpecies = fishSpeciesRepos.findById(fishInLakeDtoIn.getFishSpeciesId())
-//                    .orElseThrow(() -> new NotFoundException("Không tìm thấy loài cá này!"));
             if (!fishSpeciesRepos.existsById(fishInLakeDtoIn.getFishSpeciesId())) {
                 throw new NotFoundException("Không tìm thấy loài cá này!, dòng " + row);
             }
@@ -70,5 +71,25 @@ public class LakeService {
             fishInLakeRepos.save(fishInLake);
         }
         return "Tạo hồ con thành công!";
+    }
+
+    public List<LakeOverviewDtoOut> getAllByLocationId(Long locationId) {
+        Optional<FishingLocation> fishingLocationOptional = fishingLocationRepos.findById(locationId);
+        if (!fishingLocationOptional.isPresent() || Boolean.FALSE.equals(fishingLocationOptional.get().getActive())){
+            throw new NotFoundException("Không tìm thấy khu hồ!");
+        }
+        List<Lake> lakeList = lakeRepos.findByFishingLocationId(locationId);
+        List<LakeOverviewDtoOut> lakeOverviewDtoOutList = new ArrayList<>();
+        for (Lake lake: lakeList) {
+            LakeOverviewDtoOut lakeOverviewDtoOut = modelMapper.map(lake, LakeOverviewDtoOut.class);
+            lakeOverviewDtoOut.setImage(lake.getImageUrl());
+            List<String> fishList = new ArrayList<>();
+            for (FishInLake fishInLake: fishInLakeRepos.findByLakeId(lake.getId())){
+                fishList.add(fishInLake.getFishSpecies().getName());
+            }
+            lakeOverviewDtoOut.setFishList(fishList);
+            lakeOverviewDtoOutList.add(lakeOverviewDtoOut);
+        }
+        return lakeOverviewDtoOutList;
     }
 }
