@@ -21,7 +21,7 @@ const MapViewOverlay = ({ visible, toggleOverlay }) => {
   const getLocationListNearby = useStoreActions(
     (actions) => actions.MapSearchModel.getLocationListNearby,
   );
-  const { control, handleSubmit, setValue, getValues } = useFormContext();
+  const { control, handleSubmit, setValue } = useFormContext();
   const [sliderValue, setSliderValue] = useState(5);
 
   // Reset data in the form
@@ -33,14 +33,14 @@ const MapViewOverlay = ({ visible, toggleOverlay }) => {
 
   // Submit search filter to api then reload list of fishing spot
   const onSubmit = (data) => {
-    console.log(data); // Test only
     getLocationListNearby({
       latitude: currentLocation.latitude,
       longitude: currentLocation.longitude,
       distance: sliderValue,
-      methodId: getValues("type"),
-      minRating: getValues("rate"),
+      methodId: data.rate,
+      minRating: data.type,
     });
+    toggleOverlay();
   };
 
   useEffect(() => {

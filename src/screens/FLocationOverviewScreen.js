@@ -19,9 +19,16 @@ const FishingSpotDetailScreen = () => {
   const setCurrentId = useStoreActions(
     (actions) => actions.LocationModel.setCurrentId,
   );
+  const getLocationOverviewById = useStoreActions(
+    (actions) => actions.LocationModel.getLocationOverviewById,
+  );
 
   useEffect(() => {
-    if (route.params.id) setCurrentId(route.params.id);
+    if (route.params) {
+      const { id } = route.params;
+      setCurrentId(id);
+      getLocationOverviewById({ id });
+    }
   }, []);
 
   return (

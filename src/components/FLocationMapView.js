@@ -27,8 +27,9 @@ export default function FLocationMapView({ coordinates, locationList }) {
             }}
             fishingSpot={{
               name: location.name,
-              rate: location.rate,
-              isVerified: location.isVerified,
+              rate: location.rating,
+              isVerified: location.verify,
+              id: location.id,
             }}
             key={location.id}
           />

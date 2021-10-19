@@ -1,13 +1,22 @@
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 import { Box, Center, Text } from "native-base";
 import PropTypes from "prop-types";
 import React from "react";
 import { Marker } from "react-native-maps";
 import { Rating } from "react-native-ratings";
 
+import { goToFishingLocationOverviewScreen } from "../navigations";
+
 const SpotMarker = ({ coordinate, fishingSpot }) => {
+  const navigation = useNavigation();
   return (
-    <Marker coordinate={coordinate}>
+    <Marker
+      coordinate={coordinate}
+      onPress={() => {
+        goToFishingLocationOverviewScreen(navigation, { id: fishingSpot.id });
+      }}
+    >
       <Center>
         <Box
           bg="white"
@@ -48,6 +57,7 @@ SpotMarker.propTypes = {
     name: PropTypes.string,
     rate: PropTypes.number,
     isVerified: PropTypes.bool,
+    id: PropTypes.number,
   }).isRequired,
 };
 

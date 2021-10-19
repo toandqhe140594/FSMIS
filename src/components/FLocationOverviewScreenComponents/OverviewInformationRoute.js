@@ -23,13 +23,11 @@ const OverviewInformationRoute = () => {
     rule,
     service,
     timetable,
+    website,
+    lastEditedDate,
   } = locationOverview;
 
   const serviceArr = service.split("\n");
-
-  useEffect(() => {
-    getLocationOverview();
-  }, []);
 
   useEffect(() => {
     if (locationOverview) setLoading(false);
@@ -66,11 +64,12 @@ const OverviewInformationRoute = () => {
                       <Text underline>{phone}</Text>
                     </Text>
                     <Text>
-                      <Text bold>Website </Text>
-                      <Text underline>https://www.facebook.com/</Text>
+                      <Text bold>Website: </Text>
+                      <Text underline>{website}</Text>
                     </Text>
                     <Text>
-                      <Text bold>Cập nhật lần cuối: </Text>01/10/2021
+                      <Text bold>Cập nhật lần cuối: </Text>
+                      {lastEditedDate}
                     </Text>
                   </Box>
                 </Box>

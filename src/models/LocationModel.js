@@ -38,7 +38,6 @@ const model = {
   }),
   getLocationOverview: thunk(async (actions, payload, { getState }) => {
     const { data } = await http.get(`location/${getState().currentId}`);
-    console.log("get overview data success"); // Test only
     actions.setLocationOverview(data);
   }),
   getLocationOverviewById: thunk(async (actions, payload) => {
