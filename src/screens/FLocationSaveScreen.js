@@ -1,9 +1,14 @@
+import { useStoreState } from "easy-peasy";
 import { Box, ScrollView, VStack } from "native-base";
 import React from "react";
 
 import FLocationCard from "../components/FLocationCard";
 
 const FLocationSaveScreen = () => {
+  const savedLocationList = useStoreState(
+    (states) => states.ProfileModel.savedLocationList,
+  );
+
   return (
     <ScrollView mt={2} maxHeight="99%">
       <Box
@@ -13,23 +18,16 @@ const FLocationSaveScreen = () => {
         alignSelf="center"
       >
         <VStack w="100%" space={3}>
-          <FLocationCard
-            address="140 Láng hòa lạc"
-            name="Hồ câu Thuần Việt"
-            rate={5}
-            id={1}
-          />
-          <FLocationCard
-            address="140 Láng hòa lạc"
-            name="Hồ câu Thuần Việt"
-            rate={3.5}
-            id={2}
-          />
-          <FLocationCard
-            address="140 Láng hòa lạc"
-            name="Hồ câu Thuần Việt"
-            id={9}
-          />
+          {savedLocationList &&
+            savedLocationList.map((location) => (
+              <FLocationCard
+                id={location.id}
+                address={location.address}
+                name={location.name}
+                rate={location.rate}
+                key={location.id}
+              />
+            ))}
         </VStack>
       </Box>
     </ScrollView>
