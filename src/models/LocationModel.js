@@ -4,6 +4,7 @@ import http from "../utilities/Http";
 
 const model = {
   currentId: 1,
+  locationPostPageNumber: 0,
   locationShortInformation: {},
   locationOverview: {
     id: 1,
@@ -29,8 +30,23 @@ const model = {
   },
   lakeList: [],
   lakeDetail: {},
+  locationPostList: [
+    {
+      id: 1,
+      name: "Hồ thuần việt",
+      content: "Trắm đen - Chép khủng bồi hồ vip cho ae câu thứ 3-5",
+      postTime: "2021-10-16T17:03:43.618",
+      postType: "STOCKING",
+      url: "https://a-static.besthdwallpaper.com/2021-yae-miko-electro-character-genshin-impact-anime-video-game-hinh-nen-2880x1620-74983_52.jpg",
+      edited: true,
+      active: true,
+    },
+  ],
   setCurrentId: action((state, payload) => {
     state.currentId = payload;
+  }),
+  setLocationPostPageNumber: action((state, payload) => {
+    state.locationPostPageNumber = payload;
   }),
   setLocationShortInformation: action((state, payload) => {
     state.locationShortInformation = payload;
@@ -43,6 +59,10 @@ const model = {
   }),
   setLakeDetail: action((state, payload) => {
     state.lakeDetail = payload;
+  }),
+  setLocationPostList: action((state, payload) => {
+    if (payload.status === "Overwrite") state.locationPostList = payload.data;
+    else state.locationPostList = [...state.locationPostList, ...payload.data];
   }),
   getLocationOverview: thunk(async (actions, payload, { getState }) => {
     const { data } = await http.get(`location/${getState().currentId}`);
@@ -79,6 +99,16 @@ const model = {
       `location/${getState().currentId}/lake/${payload.id}`,
     );
     actions.setLakeDetail(data);
+  }),
+  getLocationPostListByPage: thunk(async (actions, payload, { getState }) => {
+    const { page } = payload;
+    const { data } = await http.get(`location/${getState().currentId}/post`, {
+      params: { page },
+    });
+    actions.setLocationPostList({
+      data,
+      status: page === 0 ? "Overwrite" : "Append",
+    });
   }),
 };
 export default model;
