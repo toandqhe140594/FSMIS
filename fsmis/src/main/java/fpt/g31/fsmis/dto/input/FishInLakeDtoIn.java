@@ -12,13 +12,17 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @Builder
 public class FishInLakeDtoIn {
+
     @NotNull
     private Long fishSpeciesId;
+
     @NotNull
     private Float maxWeight;
+
     @NotNull
     private Float minWeight;
-    
+
     private Integer quantity;
+
     private Float totalWeight;
 }

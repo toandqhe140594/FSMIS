@@ -2,6 +2,7 @@ package fpt.g31.fsmis.exception.advice;
 
 import fpt.g31.fsmis.exception.NotFoundException;
 import fpt.g31.fsmis.exception.UnauthorizedException;
+import javax.validation.ValidationException;
 import com.twilio.exception.ApiException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -46,19 +47,25 @@ public class GlobalAdvice {
     }
 
     @ResponseBody
+    @ExceptionHandler(ApiException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    String apiExceptionHandler(ApiException ex) {
+        ex.printStackTrace();
+        return ex.getMessage();
+    }
+
+    @ResponseBody
+    @ExceptionHandler(ValidationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    String validationExceptionHandler(ValidationException ex) {
+        ex.printStackTrace();
+        return ex.getMessage();
+    }
+
+    @ResponseBody
     @ExceptionHandler(BadCredentialsException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     String usernameNotFoundExceptionHandler(BadCredentialsException ex) {
         return "Số điện thoại hoặc mật khẩu không đúng";
     }
-
-    @ResponseBody
-    @ExceptionHandler(ApiException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    String ApiExceptionHandler(ApiException ex) {
-        ex.printStackTrace();
-        return ex.getMessage();
-        // return "Số điện thoại này không tồn tại";
-    }
-
 }

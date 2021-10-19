@@ -4,7 +4,6 @@ import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import org.springframework.lang.Nullable;
 
 @Entity
 @Setter

@@ -55,18 +55,26 @@ public class AuthService {
     }
 
     public AuthTokenDtoOut login(AuthDtoIn authDtoIn) {
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                authDtoIn.getPhone(), authDtoIn.getPassword()
-        ));
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        String token = jwtProvider.generateJwtToken(authentication);
-        return AuthTokenDtoOut.builder()
-                .id(userRepos.findByPhone(authDtoIn.getPhone()).getId())
-                .authToken(token)
-                .phone(authDtoIn.getPhone())
-                .roles(authentication.getAuthorities().iterator().next().toString())
-                .build();
+    Authentication authentication = authenticationManager.authenticate(
+            new UsernamePasswordAuthenticationToken(authDtoIn.getPhone(), authDtoIn.getPassword()));
+    SecurityContextHolder.getContext().setAuthentication(authentication);
+    User user = userRepos.findByPhone(authDtoIn.getPhone());
+    if (!user.isActive()) {
+        throw new ValidationException("Tài khoản này đã bị vô hiệu hóa");
+    }
+    String token = jwtProvider.generateJwtToken(authentication);
+    return AuthTokenDtoOut.builder()
+            .authToken(token)
+            .id(user.getId())
+            .fullName(user.getFullName())
+            .phone(user.getPhone())
+            .dob(user.getDob())
+            .qrString(user.getQrString())
+            .avatarUrl(user.getAvatarUrl())
+            .gender(user.isGender())
+            .status(user.isStatus())
+            .roles(authentication.getAuthorities().iterator().next().toString())
+            .build();
     }
 
     public String changeForgotPassword(AuthDtoIn authDtoIn) {
