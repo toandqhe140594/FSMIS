@@ -3,8 +3,8 @@ import PropTypes from "prop-types";
 import React from "react";
 import { StyleSheet } from "react-native";
 
-import AddImageButton from "../common/AddImageButton";
-import InteractiveImageBox from "../common/InteractiveImageBox";
+import AddImageButton from "./AddImageButton";
+import InteractiveImageBox from "./InteractiveImageBox";
 
 const styles = StyleSheet.create({
   container: {
