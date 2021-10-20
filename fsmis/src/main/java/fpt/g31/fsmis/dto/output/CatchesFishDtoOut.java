@@ -12,7 +12,10 @@ import lombok.NoArgsConstructor;
 public class CatchesFishDtoOut {
 
     private String name;
+
     private String image;
+
     private Integer quantity;
+
     private Float weight;
 }

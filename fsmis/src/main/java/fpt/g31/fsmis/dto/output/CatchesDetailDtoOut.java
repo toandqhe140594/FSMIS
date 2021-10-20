@@ -8,17 +8,25 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CatchDetailsDtoOut{
+public class CatchesDetailDtoOut{
 
-    private Long id;
+    private Long userId;
+    
+    private String userFullName;
+
+    private String avatar;
+
+    private Long locationId;
+    
+    private String locationName;
+
+    private Long catchId;
 
     private String description;
 
     private List<String> images;
 
     private String time;
-
-    private FishingLocationIdNameDtoOut fishingLocation;
 
     private List<CatchesFishDtoOut> fishes;
 }

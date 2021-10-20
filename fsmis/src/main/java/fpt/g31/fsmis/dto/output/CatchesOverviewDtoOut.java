@@ -13,13 +13,21 @@ import java.util.List;
 @NoArgsConstructor
 public class CatchesOverviewDtoOut {
 
-    private Long id;
+    private Long userId;
+
+    private String userFullName;
+
+    private String avatar;
+
+    private Long locationId;
+    
+    private String locationName;
+
+    private Long catchId;
 
     private String description;
 
     private List<String> images;
 
     private String time;
-
-    private FishingLocationIdNameDtoOut fishingLocation;
 }

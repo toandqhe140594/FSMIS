@@ -3,8 +3,10 @@ package fpt.g31.fsmis.service;
 import fpt.g31.fsmis.dto.input.UserDtoIn;
 import fpt.g31.fsmis.dto.output.*;
 import fpt.g31.fsmis.entity.Catches;
+import fpt.g31.fsmis.entity.CatchesDetail;
 import fpt.g31.fsmis.entity.User;
 import fpt.g31.fsmis.exception.UserNotFoundException;
+import fpt.g31.fsmis.repository.CatchesDetailRepos;
 import fpt.g31.fsmis.repository.CatchesRepos;
 import fpt.g31.fsmis.repository.UserRepos;
 import fpt.g31.fsmis.security.JwtFilter;
@@ -25,6 +27,7 @@ public class UserService {
 
     private final UserRepos userRepos;
     private final CatchesRepos catchesRepos;
+    private final CatchesDetailRepos catchesDetailRepos;
     private final ModelMapper modelMapper;
     private final JwtProvider jwtProvider;
     private final JwtFilter jwtFilter;
@@ -43,38 +46,47 @@ public class UserService {
         List<CatchesOverviewDtoOut> catchesOverviewDtoOut = new ArrayList<>();
         for(Catches catchItem : catches) {
             CatchesOverviewDtoOut item = CatchesOverviewDtoOut.builder()
-                    .id(catchItem.getId())
+                    .userId(user.getId())
+                    .userFullName(user.getFullName())
+                    .locationId(catchItem.getFishingLocation().getId())
+                    .locationName(catchItem.getFishingLocation().getName())
+                    .catchId(catchItem.getId())
                     .description(catchItem.getDescription())
                     .images(ServiceUtils.splitString(catchItem.getImageUrl()))
                     .time(ServiceUtils.convertDateToString(catchItem.getTime()))
-                    .fishingLocation(FishingLocationIdNameDtoOut.builder()
-                            .id(catchItem.getFishingLocation().getId())
-                            .name(catchItem.getFishingLocation().getName())
-                            .build())
                     .build();
             catchesOverviewDtoOut.add(item);
         }
         return catchesOverviewDtoOut;
     }
 
-    public CatchDetailsDtoOut getPersonalCatchDetails(HttpServletRequest request, Long catchId) {
+    public CatchesDetailDtoOut getPersonalCatchDetails(HttpServletRequest request, Long catchesId) {
         User user = getUserFromToken(request);
-        Catches catches = catchesRepos.getById(catchId);
+        Catches catches = catchesRepos.getById(catchesId);
+        List<CatchesDetail> catchesDetails = catches.getCatchesDetailList();
+        List<CatchesFishDtoOut> catchesFishDtoOutList = new ArrayList<>();
+        for (CatchesDetail item : catchesDetails) {
+            CatchesFishDtoOut build = CatchesFishDtoOut.builder()
+                    .name(item.getFishSpecies().getName())
+                    .image(item.getFishSpecies().getImageUrl())
+                    .quantity(item.getQuantity())
+                    .weight(item.getWeight())
+                    .build();
+            catchesFishDtoOutList.add(build);
+        }
 
-//        List<>
-//
-//        CatchDetailsDtoOut.builder()
-//                .id(catches.getId())
-//                .description(catches.getDescription())
-//                .images(ServiceUtils.splitString(catches.getImageUrl()))
-//                .time(ServiceUtils.convertDateToString(catches.getTime()))
-//                .fishingLocation(FishingLocationIdNameDtoOut.builder()
-//                        .id(catches.getFishingLocation().getId())
-//                        .name(catches.getFishingLocation().getName())
-//                        .build())
-//                .
-//                .build();
-        return null;
+         CatchesDetailDtoOut output = CatchesDetailDtoOut.builder()
+                 .userId(user.getId())
+                 .userFullName(user.getFullName())
+                 .locationId(catches.getFishingLocation().getId())
+                 .locationName(catches.getFishingLocation().getName())
+                 .catchId(catches.getId())
+                 .description(catches.getDescription())
+                 .images(ServiceUtils.splitString(catches.getImageUrl()))
+                 .time(ServiceUtils.convertDateToString(catches.getTime()))
+                 .fishes(catchesFishDtoOutList)
+                 .build();
+        return output;
     }
 
     public List<User> getAllUsers() {
