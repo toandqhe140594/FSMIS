@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PostDtoOut {
+    private Long id;
     private String content;
     private String postTime;
     private String postType;
