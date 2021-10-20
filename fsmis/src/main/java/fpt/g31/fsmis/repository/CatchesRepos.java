@@ -8,4 +8,5 @@ import java.util.List;
 public interface CatchesRepos extends JpaRepository<Catches, Long> {
 
     List<Catches> findByUserId(Long id);
+
 }
