@@ -1,6 +1,8 @@
-import { Avatar, Box, HStack, Text, VStack } from "native-base";
+import { Avatar, Box, HStack, Pressable, Text, VStack } from "native-base";
 import PropTypes from "prop-types";
 import React from "react";
+
+import PressableCustomCard from "./PressableCustomCard";
 
 const AvatarCard = ({
   avatarSize,
@@ -8,47 +10,51 @@ const AvatarCard = ({
   nameFontSize,
   subText,
   subTextFontSize,
+  image,
+  onPress,
 }) => {
   return (
-    <Box
-      w={{
-        base: "100%",
-        md: "25%",
-      }}
-      mt={4}
-    >
-      <HStack space={3} alignItems="center">
-        <Avatar
-          size={avatarSize}
-          source={{
-            uri: "https://pbs.twimg.com/profile_images/1369921787568422915/hoyvrUpc_400x400.jpg",
-          }}
-        />
-        <VStack ml={1}>
-          <Text
-            _dark={{
-              color: "warmGray.50",
+    <PressableCustomCard onPress={onPress}>
+      <Box
+        w={{
+          base: "100%",
+          md: "25%",
+        }}
+        my={2}
+      >
+        <HStack space={3} alignItems="center">
+          <Avatar
+            size={avatarSize}
+            source={{
+              uri: image,
             }}
-            color="coolGray.800"
-            bold
-            fontSize={nameFontSize || "md"}
-          >
-            {nameUser}
-          </Text>
-          {subText && (
+          />
+          <VStack ml={1}>
             <Text
-              color="coolGray.600"
               _dark={{
-                color: "warmGray.200",
+                color: "warmGray.50",
               }}
-              fontSize={subTextFontSize || "md"}
+              color="coolGray.800"
+              bold
+              fontSize={nameFontSize || "md"}
             >
-              {subText}
+              {nameUser}
             </Text>
-          )}
-        </VStack>
-      </HStack>
-    </Box>
+            {subText && (
+              <Text
+                color="coolGray.600"
+                _dark={{
+                  color: "warmGray.200",
+                }}
+                fontSize={subTextFontSize || "md"}
+              >
+                {subText}
+              </Text>
+            )}
+          </VStack>
+        </HStack>
+      </Box>
+    </PressableCustomCard>
   );
 };
 AvatarCard.propTypes = {
@@ -57,6 +63,8 @@ AvatarCard.propTypes = {
   nameFontSize: PropTypes.string,
   subText: PropTypes.string,
   subTextFontSize: PropTypes.string,
+  image: PropTypes.string,
+  onPress: PropTypes.func,
 };
 AvatarCard.defaultProps = {
   avatarSize: "md",
@@ -64,5 +72,8 @@ AvatarCard.defaultProps = {
   nameFontSize: "md",
   subText: null,
   subTextFontSize: "sm",
+  image:
+    "https://pbs.twimg.com/profile_images/1369921787568422915/hoyvrUpc_400x400.jpg",
+  onPress: () => {},
 };
 export default AvatarCard;
