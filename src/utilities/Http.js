@@ -6,6 +6,8 @@ const http = axios.create({
   timeout: 5000,
   headers: {
     "Content-Type": "application/json",
+    Authorization:
+      "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIwOTYzMzcyNzI3IiwiaWF0IjoxNjM0NzAxMTkxLCJleHAiOjE2MzQ3ODc1OTF9.1tjdZKLGctxorCXi3NOAkZVN6FhLVvCRoGdpNxqQh1U",
   },
 });
 
