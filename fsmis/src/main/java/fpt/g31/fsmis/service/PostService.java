@@ -8,6 +8,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +23,8 @@ public class PostService {
         for (Post post :
                 postList) {
             PostDtoOut postDtoOut = modelMapper.map(post, PostDtoOut.class);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            postDtoOut.setPostTime(post.getPostTime().format(formatter));
             postDtoOutList.add(postDtoOut);
         }
         return postDtoOutList;
