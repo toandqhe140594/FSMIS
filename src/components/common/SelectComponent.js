@@ -17,9 +17,12 @@ const SelectComponent = ({
   myStyle,
   hasAsterisk,
   isTitle,
-  fieldName,
+  controllerName,
 }) => {
-  const { control } = useFormContext();
+  const {
+    control,
+    formState: { errors },
+  } = useFormContext();
   return (
     <Box style={[styles.container, myStyle]}>
       <Text style={[styles.text, isTitle ? styles.bold : null]} mb={1}>
@@ -28,7 +31,7 @@ const SelectComponent = ({
       </Text>
       <Controller
         control={control}
-        name={fieldName}
+        name={controllerName}
         render={({ field: { onChange, value } }) => (
           <Select
             accessibilityLabel={placeholder}
@@ -48,6 +51,11 @@ const SelectComponent = ({
           </Select>
         )}
       />
+      {errors[controllerName]?.message && (
+        <Text color="red.500" fontSize="xs" italic>
+          {errors[controllerName]?.message}
+        </Text>
+      )}
     </Box>
   );
 };
@@ -60,7 +68,7 @@ SelectComponent.propTypes = {
   hasAsterisk: PropTypes.bool,
   isTitle: PropTypes.bool,
   // handleOnChange: PropTypes.func,
-  fieldName: PropTypes.string.isRequired,
+  controllerName: PropTypes.string.isRequired,
 };
 
 SelectComponent.defaultProps = {
