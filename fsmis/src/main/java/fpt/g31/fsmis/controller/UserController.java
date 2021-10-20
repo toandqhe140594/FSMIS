@@ -11,26 +11,45 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 
 @RestController
-@RequestMapping(path = "/api/user")
+@RequestMapping(path = "/api/personal")
 @AllArgsConstructor
 public class UserController {
     private UserService userService;
 
-    @GetMapping("/all")
-    public List<User> getAll() {
-        return userService.getAllUsers();
+    @GetMapping()
+    public ResponseEntity<Object> getPersonalInformation(HttpServletRequest request) {
+        return new ResponseEntity<>(userService.getPersonalInformation(request), HttpStatus.OK);
     }
 
-    // ADMIN
-    @GetMapping
-    public ResponseEntity<UserDtoOut> getUserById(@RequestParam long id) {
-        return new ResponseEntity<>(userService.getUserById(id), HttpStatus.OK);
+    // @GetMapping("/status")
+
+    // @GetMapping("/notification")
+
+    // @PostMapping("/edit")
+
+    // @PostMapping("/changepassword")
+
+    // @PostMapping("/changephone")
+
+    // @PostMapping("/changephone/otp")
+
+    @GetMapping("/catch")
+    public ResponseEntity<Object> getPersonalCatchList(HttpServletRequest request) {
+        return new ResponseEntity<>(userService.getPersonalCatchList(request), HttpStatus.OK);
     }
 
-    @PutMapping
-    public User updateUser(@RequestBody UserDtoIn userDtoIn, @RequestBody long userId) {
-        return userService.updateUser(userDtoIn, userId);
+    @GetMapping("/catch/{catchId}")
+    public ResponseEntity<Object> getPersonalCatchDetails(HttpServletRequest request, @PathVariable Long catchId) {
+        return new ResponseEntity<>(userService.getPersonalCatchDetails(request, catchId), HttpStatus.OK);
     }
+
+    // @GetMapping("/save")
+    // public ResponseEntity<Object> getSavedFishingLocation(HttpServletRequest request) {
+    //     return new ResponseEntity<>(null, HttpStatus.OK)
+    // }
+
+    // @GetMapping("/checkin")
 }

@@ -35,20 +35,23 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         // Entry point
-//        http.authorizeRequests()
-//                .antMatchers("/api/auth/**").permitAll()
-//                .antMatchers("/api/address/**").permitAll()
-//                .antMatchers("/api/location/**").permitAll()
-//                .antMatchers("/api/checkin/**").permitAll()
-//                .antMatchers("/api/species/**").permitAll()
-//                .antMatchers("/v2/api-docs",
-//                        "/configuration/ui",
-//                        "/swagger-resources/**",
-//                        "/configuration/security",
-//                        "/swagger-ui.html",
-//                        "/webjars/**").permitAll()
-//                .anyRequest().authenticated();
-        http.authorizeRequests().anyRequest().permitAll();
+       http.authorizeRequests()
+               .antMatchers("/api/auth/**").permitAll()
+               .antMatchers("/api/address/**").permitAll()
+               .antMatchers("/api/location/**").permitAll()
+               .antMatchers("/api/checkin/**").permitAll()
+               .antMatchers("/api/species/**").permitAll()
+               .antMatchers("/v2/api-docs",
+                       "/configuration/ui",
+                       "/swagger-resources/**",
+                       "/configuration/security",
+                       "/swagger-ui.html",
+                       "/webjars/**").permitAll()
+               .anyRequest().authenticated();
+
+        // http.authorizeRequests().anyRequest().permitAll();
+
+        // JwtFilter
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
