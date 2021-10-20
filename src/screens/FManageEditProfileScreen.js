@@ -32,18 +32,13 @@ const validationSchema = yup.object().shape({
   fPhone: yup.string().required("Số điện thoại không dược bỏ trống"),
   fWebsite: yup.string(),
   fAddress: yup.string().required("Địa chỉ không được để trống"),
-  fCityAddress: yup
-    .number()
-    .default(-1)
-    .required("Tỉnh/Thành phố không được để trống"),
-  fDistrictAddress: yup
-    .number()
-    .default(-1)
-    .required("Quận/Huyện không được để trống"),
-  fCommuneAddress: yup
-    .number()
-    .default(-1)
-    .required("Phường/xã không được để trống"),
+  fCityAddress: yup.number().required("Tỉnh/Thành phố không được để trống"),
+  fDistrictAddress: yup.number().required("Quận/Huyện không được để trống"),
+  fCommuneAddress: yup.number().required("Phường/xã không được để trống"),
+  fDescription: yup.string().required("Hãy viết một vài điều về địa điểm"),
+  fRules: yup.string(),
+  fServices: yup.string(),
+  fSchedule: yup.string().required("Hãy nêu rõ lịch biểu của hồ"),
 });
 
 const styles = StyleSheet.create({
@@ -57,7 +52,7 @@ const styles = StyleSheet.create({
 
 const FManageEditProfileScreen = () => {
   const methods = useForm({
-    mode: "onSubmit",
+    mode: "onChange",
     reValidateMode: "onChange",
     resolver: yupResolver(validationSchema),
   });
@@ -158,6 +153,7 @@ const FManageEditProfileScreen = () => {
                 isTitle
                 placeholder="Miêu tả khu hồ của bạn"
                 numberOfLines={6}
+                controllerName="fDescription"
               />
             </Center>
 
@@ -169,6 +165,7 @@ const FManageEditProfileScreen = () => {
                 isTitle
                 placeholder="Miêu tả thời gian hoạt động của khu hồ"
                 numberOfLines={3}
+                controllerName="fSchedule"
               />
             </Center>
 
@@ -180,17 +177,19 @@ const FManageEditProfileScreen = () => {
                 isTitle
                 placeholder="Miêu tả dịch vụ khu hồ"
                 numberOfLines={3}
+                controllerName="fService"
               />
             </Center>
 
             <Center>
-              {/* rule textarea */}
+              {/* rules textarea */}
               <TextAreaComponent
                 myStyles={styles.sectionWrapper}
                 label="Nội quy"
                 isTitle
                 placeholder="Miêu tả nội quy khu hồ"
                 numberOfLines={3}
+                controllerName="fRules"
               />
             </Center>
 
