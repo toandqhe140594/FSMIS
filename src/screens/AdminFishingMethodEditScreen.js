@@ -28,7 +28,7 @@ const AdminFishingMethodEditScreen = () => {
 
   return (
     <>
-      <HeaderTab name="Quản lý tài khoản" />
+      <HeaderTab name="Quản lý loại hình câu" />
       <Box flex={1} alignItems="center" justifyContent="flex-start">
         <Center w="80%" mt={10}>
           {/* Fishing method name input field */}
