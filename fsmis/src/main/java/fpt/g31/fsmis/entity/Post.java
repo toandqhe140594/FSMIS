@@ -27,9 +27,9 @@ public class Post {
     @NotNull
     private PostType postType;
 
-    private Boolean edited;
+    private boolean edited;
 
-    private Boolean active;
+    private boolean active;
     
     @Column(columnDefinition = "TEXT")
     private String url;

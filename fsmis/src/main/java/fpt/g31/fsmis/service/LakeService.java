@@ -1,6 +1,6 @@
 package fpt.g31.fsmis.service;
 
-import fpt.g31.fsmis.dto.LakeOverviewDtoOut;
+import fpt.g31.fsmis.dto.output.LakeOverviewDtoOut;
 import fpt.g31.fsmis.dto.input.FishInLakeDtoIn;
 import fpt.g31.fsmis.dto.input.LakeDtoIn;
 import fpt.g31.fsmis.dto.output.FishDtoOut;
