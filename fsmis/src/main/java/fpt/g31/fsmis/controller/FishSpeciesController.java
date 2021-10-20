@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 @AllArgsConstructor
 @RequestMapping("/api/species")
 public class FishSpeciesController {
-    FishSpeciesService fishSpeciesService;
+    private FishSpeciesService fishSpeciesService;
 
     @GetMapping("/all")
     public ResponseEntity<Object> getAllSpecies(){

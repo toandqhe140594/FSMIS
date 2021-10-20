@@ -5,14 +5,12 @@ import fpt.g31.fsmis.entity.address.Ward;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public class ServiceUtils {
 
-    private static final String DATE_FORMAT = "dd-MM-yyyy HH:mm:ss";
+    private static final String DATE_FORMAT = "dd/MM/yyyy HH:mm:ss";
 
     private ServiceUtils() {
         throw new IllegalStateException("Utility class");

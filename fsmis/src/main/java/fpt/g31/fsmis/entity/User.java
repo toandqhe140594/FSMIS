@@ -38,7 +38,8 @@ public class User {
 
     private String qrString;
 
-    private String avatarUrl = "https://picsum.photos/200";
+    @Column(columnDefinition = "TEXT")
+    private String avatarUrl;
 
     private boolean gender;
 

@@ -1,14 +1,15 @@
 package fpt.g31.fsmis.service;
 
+import fpt.g31.fsmis.dto.input.PersonalInfoDtoIn;
 import fpt.g31.fsmis.dto.input.UserDtoIn;
 import fpt.g31.fsmis.dto.output.*;
 import fpt.g31.fsmis.entity.Catches;
 import fpt.g31.fsmis.entity.CatchesDetail;
 import fpt.g31.fsmis.entity.User;
 import fpt.g31.fsmis.exception.UserNotFoundException;
-import fpt.g31.fsmis.repository.CatchesDetailRepos;
 import fpt.g31.fsmis.repository.CatchesRepos;
 import fpt.g31.fsmis.repository.UserRepos;
+import fpt.g31.fsmis.repository.WardRepos;
 import fpt.g31.fsmis.security.JwtFilter;
 import fpt.g31.fsmis.security.JwtProvider;
 import lombok.AllArgsConstructor;
@@ -27,24 +28,36 @@ public class UserService {
 
     private final UserRepos userRepos;
     private final CatchesRepos catchesRepos;
-    private final CatchesDetailRepos catchesDetailRepos;
+    private final WardRepos wardRepos;
     private final ModelMapper modelMapper;
     private final JwtProvider jwtProvider;
     private final JwtFilter jwtFilter;
 
-    public PersonalInformationDtoOut getPersonalInformation(HttpServletRequest request) {
+    public PersonalInfoDtoOut getPersonalInformation(HttpServletRequest request) {
         User user = getUserFromToken(request);
-        PersonalInformationDtoOut personalInformationDtoOut =
-                modelMapper.map(user, PersonalInformationDtoOut.class);
+        PersonalInfoDtoOut personalInformationDtoOut =
+                modelMapper.map(user, PersonalInfoDtoOut.class);
         personalInformationDtoOut.setAddressFromWard(ServiceUtils.getAddressByWard(user.getWard()));
         return personalInformationDtoOut;
+    }
+
+    public String savePersonalInformation(HttpServletRequest request, PersonalInfoDtoIn personalInfoDtoIn) {
+        User user = getUserFromToken(request);
+        user.setAvatarUrl(personalInfoDtoIn.getAvatarUrl());
+        user.setFullName(personalInfoDtoIn.getFullName());
+        user.setDob(ServiceUtils.convertStringToDate(personalInfoDtoIn.getDob()));
+        user.setGender(personalInfoDtoIn.getGender());
+        user.setAddress(personalInfoDtoIn.getAddress());
+        user.setWard(wardRepos.getById(personalInfoDtoIn.getWardId()));
+        userRepos.save(user);
+        return "Thay đổi thành công";
     }
 
     public List<CatchesOverviewDtoOut> getPersonalCatchList(HttpServletRequest request) {
         User user = getUserFromToken(request);
         List<Catches> catches = catchesRepos.findByUserId(user.getId());
         List<CatchesOverviewDtoOut> catchesOverviewDtoOut = new ArrayList<>();
-        for(Catches catchItem : catches) {
+        for (Catches catchItem : catches) {
             CatchesOverviewDtoOut item = CatchesOverviewDtoOut.builder()
                     .userId(user.getId())
                     .userFullName(user.getFullName())
@@ -75,19 +88,21 @@ public class UserService {
             catchesFishDtoOutList.add(build);
         }
 
-         CatchesDetailDtoOut output = CatchesDetailDtoOut.builder()
-                 .userId(user.getId())
-                 .userFullName(user.getFullName())
-                 .locationId(catches.getFishingLocation().getId())
-                 .locationName(catches.getFishingLocation().getName())
-                 .catchId(catches.getId())
-                 .description(catches.getDescription())
-                 .images(ServiceUtils.splitString(catches.getImageUrl()))
-                 .time(ServiceUtils.convertDateToString(catches.getTime()))
-                 .fishes(catchesFishDtoOutList)
-                 .build();
+        CatchesDetailDtoOut output = CatchesDetailDtoOut.builder()
+                .userId(user.getId())
+                .userFullName(user.getFullName())
+                .locationId(catches.getFishingLocation().getId())
+                .locationName(catches.getFishingLocation().getName())
+                .catchId(catches.getId())
+                .description(catches.getDescription())
+                .images(ServiceUtils.splitString(catches.getImageUrl()))
+                .time(ServiceUtils.convertDateToString(catches.getTime()))
+                .fishes(catchesFishDtoOutList)
+                .build();
         return output;
     }
+
+
 
     public List<User> getAllUsers() {
         return userRepos.findAll();
