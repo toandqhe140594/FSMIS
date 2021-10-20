@@ -73,12 +73,13 @@ const LakeDetailScreen = () => {
               <Text bold fontSize="md">
                 Giá vé
               </Text>
-              {price.split("\n").map((item) => (
-                <Box flexDirection="row" key={item}>
-                  &#8226;
-                  <Text>{item}</Text>
-                </Box>
-              ))}
+              {price &&
+                price.split("\n").map((item) => (
+                  <Box flexDirection="row" key={item}>
+                    &#8226;
+                    <Text>{item}</Text>
+                  </Box>
+                ))}
             </Box>
             <Divider />
             <Box m={3}>
