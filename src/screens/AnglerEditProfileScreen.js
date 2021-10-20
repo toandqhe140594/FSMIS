@@ -1,9 +1,18 @@
 import { Entypo } from "@expo/vector-icons";
 import { yupResolver } from "@hookform/resolvers/yup";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { Avatar, Button, Center, Icon, Input, Text, VStack } from "native-base";
+import {
+  Avatar,
+  Box,
+  Button,
+  Center,
+  Icon,
+  Input,
+  Text,
+  VStack,
+} from "native-base";
 import React, { useEffect, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 import {
   KeyboardAvoidingView,
   ScrollView,
@@ -18,12 +27,12 @@ import HeaderTab from "../components/HeaderTab";
 import moment from "../config/moment";
 
 const validationSchema = yup.object().shape({
-  name: yup.string().required("Họ và tên không thể bỏ trống"),
-  gender: yup.number().default(-1),
-  address: yup.string(),
-  cityAddress: yup.number().default(-1),
-  districtAddress: yup.number().default(-1),
-  communeAddress: yup.number().default(-1),
+  aName: yup.string().required("Họ và tên không thể bỏ trống"),
+  aGender: yup.number().default(-1),
+  aAddress: yup.string(),
+  aCityAddress: yup.number(),
+  aDistrictAddress: yup.number(),
+  aCommuneAddress: yup.number(),
 });
 
 const genderData = [
@@ -56,18 +65,16 @@ const EditProfileScreen = () => {
     reValidateMode: "onChange",
     resolver: yupResolver(validationSchema),
   });
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = methods;
+  const { handleSubmit } = methods;
 
   const onSubmit = (data) => {
     console.log(data); // Test submit
   };
 
   useEffect(() => {
-    if (date) setFormattedDate(moment(date).format("DD/MM/YYYY").toString());
+    if (date) {
+      setFormattedDate(moment(date).format("DD/MM/YYYY").toString());
+    }
   }, [date]);
 
   const onDateChange = (e, selectedDate) => {
@@ -88,156 +95,109 @@ const EditProfileScreen = () => {
             onChange={onDateChange}
           />
         )}
+
         <Center flex={1} minHeight={Math.round(useWindowDimensions().height)}>
           <HeaderTab name="Thông tin cá nhân" />
-          <VStack
-            flex={1}
-            justifyContent="center"
-            mt={3}
-            mb={5}
-            space={4}
-            w={{ base: "70%", md: "50%", lg: "30%" }}
-          >
-            {/* Avatar image */}
-            <Center mb={2}>
-              <Avatar
-                bg="pink.600"
-                size="2xl"
-                source={{
-                  uri: "https://pbs.twimg.com/profile_images/1177303899243343872/B0sUJIH0_400x400.jpg",
-                }}
-              />
-            </Center>
-            <Controller
-              control={control}
-              name="name"
-              render={({ field: { onChange, onBlur, value } }) => (
-                <InputComponent
-                  label="Họ và tên"
-                  isTitle
-                  placeholder="Thay đổi họ và tên"
-                  type="text"
-                  hasAsterisk
-                  error={errors.name}
-                  handleOnBlur={onBlur}
-                  handleOnChange={onChange}
-                  value={value}
+          <FormProvider {...methods}>
+            <VStack
+              flex={1}
+              justifyContent="center"
+              mt={3}
+              mb={5}
+              space={4}
+              w={{ base: "70%", md: "50%", lg: "30%" }}
+            >
+              {/* Avatar image */}
+              <Center mb={2}>
+                <Avatar
+                  bg="pink.600"
+                  size="2xl"
+                  source={{
+                    uri: "https://pbs.twimg.com/profile_images/1177303899243343872/B0sUJIH0_400x400.jpg",
+                  }}
                 />
-              )}
-            />
+              </Center>
+              <InputComponent
+                label="Họ và tên"
+                isTitle
+                placeholder="Nhập họ và tên"
+                type="text"
+                hasAsterisk
+                controllerName="aName"
+              />
 
-            {/* Date picker field */}
-            <Text bold fontSize="md">
-              Ngày sinh
-            </Text>
-            <TouchableOpacity onPress={() => setShowDatePicker(true)}>
-              <Input
-                InputRightElement={
-                  <Icon
-                    as={<Entypo name="calendar" />}
-                    size={5}
-                    mr={1}
-                    color="muted.500"
+              {/* Date picker field */}
+              <Box>
+                <Text bold fontSize="md" mb={1}>
+                  Ngày sinh
+                </Text>
+                <TouchableOpacity onPress={() => setShowDatePicker(true)}>
+                  <Input
+                    InputRightElement={
+                      <Icon
+                        as={<Entypo name="calendar" />}
+                        size={5}
+                        mr={1}
+                        color="muted.500"
+                      />
+                    }
+                    placeholder="Chọn ngày sinh"
+                    size="lg"
+                    value={formattedDate ? formattedDate.toString() : ""}
+                    isDisabled
                   />
-                }
-                placeholder="Ngày sinh*"
-                size="lg"
-                value={formattedDate ? formattedDate.toString() : ""}
-                isDisabled
+                </TouchableOpacity>
+              </Box>
+
+              {/* Gender select box */}
+              <SelectComponent
+                label="Giới tính"
+                isTitle
+                placeholder="Chọn giới tính"
+                data={genderData}
+                controllerName="aGender"
               />
-            </TouchableOpacity>
 
-            {/* Gender select box */}
-            <Controller
-              control={control}
-              name="gender"
-              render={({ field: { onChange, onBlur, value } }) => (
-                <SelectComponent
-                  label="Giới tính"
-                  isTitle
-                  hasAsterisk
-                  placeholder="Chọn giới tính"
-                  data={genderData}
-                  error={errors.gender}
-                  value={value}
-                  handleOnBlur={onBlur}
-                  handleOnChange={onChange}
-                />
-              )}
-            />
+              {/* Address input field */}
+              <InputComponent
+                label="Địa chỉ"
+                isTitle
+                placeholder="Nhập địa chỉ thường trú"
+                controllerName="aAddress"
+              />
 
-            {/* Address input field */}
-            <Controller
-              control={control}
-              name="address"
-              render={({ field: { onChange, onBlur, value } }) => (
-                <InputComponent
-                  label="Địa chỉ"
-                  isTitle
-                  placeholder="Nhập địa chỉ thường trú"
-                  handleOnBlur={onBlur}
-                  handleOnChange={onChange}
-                  value={value}
-                />
-              )}
-            />
+              {/* City select box */}
+              <SelectComponent
+                label="Tỉnh/Thành phố"
+                isTitle
+                placeholder="Chọn tỉnh/thành phố"
+                data={cityData}
+                controllerName="aCityAddress"
+              />
 
-            {/* City select box */}
-            <Controller
-              control={control}
-              name="cityAddress"
-              render={({ field: { onChange, onBlur, value } }) => (
-                <SelectComponent
-                  label="Tỉnh/Thành phố"
-                  isTitle
-                  placeholder="Chọn tỉnh/thành phố"
-                  data={cityData}
-                  handleOnChange={onChange}
-                  handleOnBlur={onBlur}
-                  value={value}
-                />
-              )}
-            />
+              {/* District select box */}
+              <SelectComponent
+                label="Quận/Huyện"
+                isTitle
+                placeholder="Chọn quận/huyện"
+                data={districtData}
+                controllerName="aDistrictAddress"
+              />
 
-            {/* District select box */}
-            <Controller
-              control={control}
-              name="districtAddress"
-              render={({ field: { onChange, onBlur, value } }) => (
-                <SelectComponent
-                  label="Quận/Huyện"
-                  isTitle
-                  placeholder="Chọn quận/huyện"
-                  data={districtData}
-                  handleOnChange={onChange}
-                  handleOnBlur={onBlur}
-                  value={value}
-                />
-              )}
-            />
-
-            {/* Commune select box */}
-            <Controller
-              control={control}
-              name="communeAddress"
-              render={({ field: { onChange, onBlur, value } }) => (
-                <SelectComponent
-                  label="Phường/Xã"
-                  isTitle
-                  placeholder="Chọn phường/xã"
-                  data={communeData}
-                  handleOnChange={onChange}
-                  handleOnBlur={onBlur}
-                  value={value}
-                />
-              )}
-            />
-
-            {/* Save changes button */}
-            <Button mt={2} size="lg" onPress={handleSubmit(onSubmit)}>
-              Lưu thay đổi
-            </Button>
-          </VStack>
+              {/* Commune select box */}
+              <SelectComponent
+                label="Phường/Xã"
+                isTitle
+                placeholder="Chọn phường/xã"
+                data={communeData}
+                controllerName="aCommuneAddress"
+              />
+              {/* Save changes button */}
+              <Button mt={2} size="lg" onPress={handleSubmit(onSubmit)}>
+                Lưu thay đổi
+              </Button>
+            </VStack>
+          </FormProvider>
         </Center>
       </ScrollView>
     </KeyboardAvoidingView>
