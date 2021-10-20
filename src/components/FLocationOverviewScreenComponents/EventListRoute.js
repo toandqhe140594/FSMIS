@@ -77,13 +77,14 @@ const FLocationEventRoute = () => {
                 postStyle="LAKE_POST"
                 edited={item.edited}
                 postTime={item.postTime}
+                id={item.id}
               />
             </PressableCustomCard>
           )}
           onEndReached={() => {
             loadMoreLakePostData();
           }}
-          keyExtractor={(item, index) => index.toString()}
+          keyExtractor={(item) => item.id.toString()}
         />
       )}
     </>

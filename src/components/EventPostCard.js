@@ -16,6 +16,7 @@ const EventPostCard = ({
   image,
   edited,
   postTime,
+  id,
 }) => {
   // Thu gon angler, lakePost thanh 1
   return (
@@ -99,6 +100,7 @@ EventPostCard.propTypes = {
   image: PropTypes.string,
   edited: PropTypes.bool,
   postTime: PropTypes.string,
+  id: PropTypes.number.isRequired,
 };
 
 EventPostCard.defaultProps = {
