@@ -105,10 +105,11 @@ const model = {
     const { data } = await http.get(`location/${getState().currentId}/post`, {
       params: { page },
     });
-    actions.setLocationPostList({
-      data,
-      status: page === 0 ? "Overwrite" : "Append",
-    });
+    if (data.length > 0)
+      actions.setLocationPostList({
+        data,
+        status: page === 0 ? "Overwrite" : "Append",
+      });
   }),
 };
 export default model;

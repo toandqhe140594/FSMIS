@@ -60,14 +60,18 @@ const FLocationEventRoute = () => {
     getLocationPostListByPage({ page: lakePostPage });
     setLakePostPage(lakePostPage + 1);
   };
-
   return (
     <>
       {locationPostList.length > 0 && (
         <FlatList
           data={locationPostList}
           renderItem={({ item }) => (
-            <PressableCustomCard paddingX="1">
+            <PressableCustomCard
+              paddingX="1"
+              onPress={() => {
+                console.log(item.id);
+              }}
+            >
               <EventPostCard
                 lakePost={{
                   badge: item.postType === "STOCKING" ? "Bồi cá" : "Thông báo",
