@@ -36,3 +36,25 @@ export const FMANAGE_CHECKIN_VERIFY = "FManage Verify Checkin";
 export const FMANAGE_QR_SCAN = "FManage Scan QR Code";
 
 export const FLOCATION_CLOSE_FISHING_LOCATION = "Delete Fishing Location";
+
+export const ADMIN_MAIN = "Admin Management Main Screen";
+export const ADMIN_ACCOUNT_MANAGEMENT = "Admin Account Management Screen";
+export const ADMIN_ACCOUNT_MANAGEMENT_DETAIL =
+  "Admin Account Management Detail Screen";
+export const ADMIN_LOCATION_MANAGEMENT =
+  "Admin Fishing Location Management Screen";
+export const ADMIN_LOCATION_MANAGEMENT_OVERVIEW =
+  "Admin Fishing Location Management Overview Screen";
+export const ADMIN_REPORT_MANAGEMENT = "Admin Report Management Screen";
+export const ADMIN_REPORT_MANAGEMENT_LOCATION_DETAIL =
+  "Admin Report Location Detail Screen";
+export const ADMIN_REPORT_MANAGEMENT_REVIEW_DETAIL =
+  "Admin Report Review Detail Screen";
+export const ADMIN_REPORT_MANAGEMENT_POST_DETAIL =
+  "Admin Report Post Detail Screen";
+export const ADMIN_FISH_MANAGEMENT = "Admin Fish Management Screen";
+export const ADMIN_FISH_MANAGEMENT_EDIT = "Admin Fish Management Edit Screen";
+export const ADMIN_FISHING_METHOD_MANAGEMENT =
+  "Admin Fishing Method Management Screen";
+export const ADMIN_FISHING_METHOD_MANAGEMENT_EDIT =
+  "Admin Fishing Method Management Edit Screen";
