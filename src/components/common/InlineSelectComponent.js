@@ -22,6 +22,8 @@ const InlineSelectComponent = ({
   myStyles,
   compact,
   isTitle,
+  value,
+  handleOnChange,
 }) => {
   const getSelectWidth = () =>
     compact ? COMPACT_SELECT_WIDTH : FULL_SELECT_WIDTH;
@@ -35,6 +37,8 @@ const InlineSelectComponent = ({
         accessibilityLabel={placeholder}
         placeholder={placeholder}
         fontSize="sm"
+        selectedValue={value}
+        onValueChange={handleOnChange}
       >
         {data.map((item) => (
           <Select.Item label={item} value={item} />
@@ -51,6 +55,8 @@ InlineSelectComponent.propTypes = {
   compact: PropTypes.bool,
   myStyles: PropTypes.objectOf(PropTypes.string.isRequired),
   isTitle: PropTypes.bool,
+  handleOnChange: PropTypes.func,
+  value: PropTypes.string,
 };
 
 InlineSelectComponent.defaultProps = {
@@ -58,5 +64,7 @@ InlineSelectComponent.defaultProps = {
   myStyles: {},
   compact: false,
   isTitle: false,
+  handleOnChange: () => {},
+  value: "",
 };
 export default InlineSelectComponent;
