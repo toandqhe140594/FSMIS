@@ -1,39 +1,31 @@
 import { Checkbox, Select } from "native-base";
-import React, { useState } from "react";
+import PropTypes from "prop-types";
+import React from "react";
 
-const fishingMethods = ["Câu đài", "Câu đơn", "Câu lục"];
-
-const CheckboxSelectorComponent = () => {
-  const [groupValue, setGroupValue] = useState([]);
-
-  /* Concat strings from selected checkbox value */
-  const getSelectedGroupValue = () => {
-    if (groupValue.length === 0) return "Chọn loại hình câu";
-    const arrayString = groupValue.reduce(
-      (accumulator, currentValue) => `${accumulator}, ${currentValue}`,
-    );
-    return `${arrayString}`;
-  };
-
+const CheckboxSelectorComponent = ({
+  groupValue,
+  placeholder,
+  handleOnSelect,
+  data,
+}) => {
   return (
     <Select
       accessibilityLabel="Chọn loại hình câu"
-      placeholder={getSelectedGroupValue()}
+      placeholder={placeholder}
+      fontSize="md"
     >
       <Select.Item
         label={
           <Checkbox.Group
             colorScheme="green"
             defaultValue={groupValue}
-            onChange={(values) => {
-              setGroupValue(values || []);
-            }}
+            onChange={handleOnSelect}
             alignItems="flex-start"
           >
             {/* Display list of checkbox options */}
-            {fishingMethods.map((method) => (
-              <Checkbox value={method} my={1}>
-                {method}
+            {data.map((item) => (
+              <Checkbox value={item} my={1}>
+                {item}
               </Checkbox>
             ))}
           </Checkbox.Group>
@@ -41,6 +33,20 @@ const CheckboxSelectorComponent = () => {
       />
     </Select>
   );
+};
+
+CheckboxSelectorComponent.propTypes = {
+  handleOnSelect: PropTypes.func,
+  placeholder: PropTypes.string,
+  groupValue: PropTypes.arrayOf(PropTypes.string),
+  data: PropTypes.arrayOf(PropTypes.string),
+};
+
+CheckboxSelectorComponent.defaultProps = {
+  groupValue: [],
+  data: [],
+  handleOnSelect: () => {},
+  placeholder: "",
 };
 
 export default CheckboxSelectorComponent;
