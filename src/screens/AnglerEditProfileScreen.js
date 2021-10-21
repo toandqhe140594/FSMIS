@@ -1,4 +1,5 @@
 import { Entypo } from "@expo/vector-icons";
+import { useStoreState } from "easy-peasy";
 import {
   Avatar,
   Button,
@@ -20,6 +21,18 @@ import {
 import HeaderTab from "../components/HeaderTab";
 
 const EditProfileScreen = () => {
+  const userInfo = useStoreState((state) => state.ProfileModel.userInfo);
+  const checkGender = (state) => {
+    if (state === null) {
+      return "Không muốn nói";
+    }
+    if (state) {
+      return "Nam";
+    }
+    return "Nữ";
+  };
+  // const [ward, wardId, district, districtId, province, provinceId] =
+  //   userInfo.addressFromWard;
   return (
     <KeyboardAvoidingView>
       <ScrollView>
@@ -47,7 +60,7 @@ const EditProfileScreen = () => {
             <Text bold fontSize="md" mt={3}>
               Họ và tên<Text color="danger.500">*</Text>
             </Text>
-            <Input placeholder="Họ và tên*" size="lg" type="text" />
+            <Input placeholder={userInfo.fullName} size="lg" type="text" />
 
             {/* Date picker field */}
             <Text bold fontSize="md" mt={3}>
@@ -63,7 +76,7 @@ const EditProfileScreen = () => {
                     color="muted.500"
                   />
                 }
-                placeholder="Ngày sinh*"
+                placeholder={userInfo.dob}
                 size="lg"
                 isDisabled
               />
@@ -76,7 +89,7 @@ const EditProfileScreen = () => {
             <Select
               accessibilityLabel="Chọn giới tính"
               fontSize="md"
-              placeholder="Giới tính"
+              placeholder={checkGender(userInfo.gender)}
             >
               {/* Hard code this place */}
               <Select.Item label="Nam" value={1} />
@@ -98,7 +111,7 @@ const EditProfileScreen = () => {
                 />
               }
               paddingLeft={0}
-              placeholder="Địa chỉ"
+              placeholder={userInfo.address}
               size="lg"
               type="text"
             />
@@ -110,7 +123,7 @@ const EditProfileScreen = () => {
             <Select
               accessibilityLabel="Chọn tỉnh, thành phố"
               fontSize="md"
-              placeholder="Tỉnh, thành phố"
+              placeholder={userInfo.addressFromWard.province}
             >
               {/* Hard code this place */}
               <Select.Item label="Hà Nội" value={1} />
@@ -124,7 +137,7 @@ const EditProfileScreen = () => {
             <Select
               accessibilityLabel="Chọn quận, huyện"
               fontSize="md"
-              placeholder="Quận, huyện"
+              placeholder={userInfo.addressFromWard.district}
             >
               {/* Hard code this place */}
               <Select.Item label="Hai Bà Trưng" value={1} />
@@ -138,7 +151,7 @@ const EditProfileScreen = () => {
             <Select
               accessibilityLabel="Chọn phường, xã"
               fontSize="md"
-              placeholder="Phường, xã"
+              placeholder={userInfo.addressFromWard.ward}
             >
               {/* Hard code this place */}
               <Select.Item label="Vĩnh Hưng" value={1} />

@@ -65,8 +65,15 @@ const model = {
     ],
   },
 
+  setUserInfo: action((state, payload) => {
+    state.userInfo = payload;
+  }),
+  getUserInfo: thunk(async (actions) => {
+    const { data } = await http.get(`personal`);
+    actions.setUserInfo(data);
+  }),
   setCatchReportHistory: action((state, payload) => {
-    state.catchReportHistory = [state.catchReportHistory, ...payload];
+    state.catchReportHistory = state.catchReportHistory.concat(payload);
   }),
   getCatchReportHistory: thunk(async (actions) => {
     const { data } = await http.get(`personal/catch`);

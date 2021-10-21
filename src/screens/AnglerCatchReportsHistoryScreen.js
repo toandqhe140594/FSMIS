@@ -18,7 +18,7 @@ const AnglerCatchReportsHistoryScreen = () => {
 
   useEffect(() => {
     getCatchReportHistory();
-  }, [catchReportHistory]);
+  }, [catchReportHistory, getCatchReportHistory]);
 
   const navigation = useNavigation();
   console.log(catchReportHistory);
