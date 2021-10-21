@@ -1,8 +1,11 @@
+import "react-native-get-random-values";
+
 import { Box, Select, Text } from "native-base";
 import PropTypes from "prop-types";
 import React from "react";
 import { Controller, useFormContext } from "react-hook-form";
 import { StyleSheet } from "react-native";
+import { v4 as uuidv4 } from "uuid";
 
 const styles = StyleSheet.create({
   bold: { fontWeight: "bold" },
@@ -35,15 +38,17 @@ const SelectComponent = ({
           <Select
             accessibilityLabel={placeholder}
             placeholder={placeholder}
-            onValueChange={(v) => {
-              // handleOnChange(v);
-              onChange(v);
-            }}
+            onValueChange={onChange}
             selectedValue={value}
             fontSize="md"
           >
             {data.map((item) => (
-              <Select.Item label={item.label} value={item.val} my={1}>
+              <Select.Item
+                key={uuidv4()}
+                label={item.label}
+                value={item.val}
+                my={1}
+              >
                 {item.label}
               </Select.Item>
             ))}
