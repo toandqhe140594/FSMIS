@@ -1,11 +1,15 @@
+import { useStoreActions } from "easy-peasy";
 import { Box, ScrollView, VStack } from "native-base";
 import PropTypes from "prop-types";
-import React from "react";
+import React, { useEffect } from "react";
 
 import HeaderTab from "../components/HeaderTab";
 import MenuScreen from "../components/MenuScreen";
 import * as ROUTE_NAMES from "../config/routeNames";
+import LocationModel from "../models/LocationModel";
+import store from "../utilities/Store";
 
+store.addModel("LocationModel", LocationModel);
 
 const menuCategoryForOwner = [
   {
@@ -136,13 +140,23 @@ const menuCategoryForStaff = [
 const FManageHomeScreen = ({ typeString }) => {
   const fishingLocationName = "Hồ Thuần Việt";
   let menuCategory;
-
   if (typeString === "OWNER") {
     menuCategory = [...menuCategoryForOwner];
   }
   if (typeString === "STAFF") {
     menuCategory = [...menuCategoryForStaff];
   }
+  const setCurrentId = useStoreActions(
+    (actions) => actions.LocationModel.setCurrentId,
+  );
+  const getLocationOverviewById = useStoreActions(
+    (actions) => actions.LocationModel.getLocationOverviewById,
+  );
+
+  useEffect(() => {
+    setCurrentId("1");
+    getLocationOverviewById({ id: "1" });
+  }, []);
 
   return (
     <Box>

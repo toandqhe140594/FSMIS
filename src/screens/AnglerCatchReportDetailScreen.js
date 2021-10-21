@@ -1,7 +1,7 @@
-
+import { useRoute } from "@react-navigation/native";
+import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, ScrollView, Text, VStack } from "native-base";
-import PropTypes from "prop-types";
-import React from "react";
+import React, { useEffect } from "react";
 import { Image } from "react-native-elements";
 import Swiper from "react-native-swiper";
 
@@ -9,70 +9,89 @@ import AvatarCard from "../components/AvatarCard";
 import FishCard from "../components/FishCard";
 import HeaderTab from "../components/HeaderTab";
 
-const AnglerCatchReportDetailScreen = ({ catchDetails }) => (
-  <ScrollView>
-    <HeaderTab name="Chi Tiết" />
-    <Swiper height="auto">
-      <Image
-        source={{
-          uri: "https://picsum.photos/400",
-        }}
-        style={{ width: "100%", height: 450 }}
-      />
-      <Image
-        source={{
-          uri: "https://picsum.photos/400",
-        }}
-        style={{ width: "100%", height: 450 }}
-      />
-    </Swiper>
-    <Box
-      _dark={{
-        borderColor: "gray.600",
-      }}
-      borderColor="coolGray.200"
-      pl="4"
-      pr="4"
-      py="2"
-    >
-      <AvatarCard
-        avatarSize="lg"
-        nameUser="Ngo"
-        nameFontSize="lg"
-        subText="(09:00 01/01/2021)"
-      />
-      {/* <Text textAlign="right">(09:00 01/01/2021)</Text> */}
+const AnglerCatchReportDetailScreen = () => {
+  const route = useRoute();
+  const getCatchReportDetailById = useStoreActions(
+    (actions) => actions.ProfileModel.getCatchReportDetailById,
+  );
 
-      <VStack space={2} my={4}>
-        <Text>
-          <Text bold fontSize="16">
-            Câu tại :{" "}
+  const catchDetails = useStoreState(
+    (state) => state.ProfileModel.catchReportDetail,
+  );
+  useEffect(() => {
+    if (route.params) {
+      const { id } = route.params;
+      getCatchReportDetailById({ id });
+    }
+  }, [catchDetails]);
+  return (
+    <ScrollView>
+      <HeaderTab name="Chi Tiết" />
+      <Swiper height="auto" loadMinimal>
+        {catchDetails.images !== undefined ? (
+          catchDetails.images.map((imageUri) => (
+            <Image
+              key={imageUri}
+              source={{
+                uri: imageUri,
+              }}
+              style={{ width: "100%", height: 450 }}
+            />
+          ))
+        ) : (
+          <Image
+            key="1"
+            source={{
+              uri: "https://everythingisviral.com/wp-content/uploads/2020/10/polite-cat.png",
+            }}
+            style={{ width: "100%", height: 450 }}
+          />
+        )}
+      </Swiper>
+      <Box
+        _dark={{
+          borderColor: "gray.600",
+        }}
+        borderColor="coolGray.200"
+        pl="4"
+        pr="4"
+        py="2"
+      >
+        <AvatarCard
+          avatarSize="lg"
+          nameUser={catchDetails.userFullName}
+          nameFontSize="lg"
+          subText={catchDetails.time}
+        />
+
+        <VStack space={2} my={4}>
+          <Text>
+            <Text bold fontSize="16">
+              Câu tại :{" "}
+            </Text>
+            <Text fontSize="18" underline>
+              {catchDetails.locationName}
+            </Text>
           </Text>
-          <Text fontSize="18" underline>
-            {catchDetails.lakeName}
-          </Text>
-        </Text>
-        <Text italic>{catchDetails.message}</Text>
-      </VStack>
-      <VStack mt="4" space={2}>
-        <VStack space={1}>
-          <FishCard />
-          <FishCard />
-          <FishCard />
-          <FishCard />
+          <Text italic>{catchDetails.description}</Text>
         </VStack>
-      </VStack>
-    </Box>
-  </ScrollView>
-);
-AnglerCatchReportDetailScreen.defaultProps = {
-  catchDetails: {
-    lakeName: "Hồ thuần việt",
-    message:
-      " Ngồi cả sáng, Lorem ipsum dolor sit amet, consectetur adipisicing elit. Fuga aliquid quam maxime voluptatibus assumenda vero ab eos. Ad maiores dolore explicabo, excepturi eius at quibusdam libero maxime animi deserunt recusandae?",
-  },
+        <VStack mt="4" space={2}>
+          <VStack space={1}>
+            {catchDetails.fishes !== undefined &&
+              catchDetails.fishes.map((item) => (
+                <FishCard
+                  image={item.image}
+                  key={item.name}
+                  fishType={item.name.toString()}
+                  quantity={item.quantity.toString()}
+                  totalWeight={item.weight.toString()}
+                />
+              ))}
+          </VStack>
+        </VStack>
+      </Box>
+    </ScrollView>
+  );
 };
-AnglerCatchReportDetailScreen.propTypes = {
-  catchDetails: PropTypes.objectOf(PropTypes.string, PropTypes.string),
-};
+
 export default AnglerCatchReportDetailScreen;

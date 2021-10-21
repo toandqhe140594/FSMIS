@@ -1,8 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
-import { useStoreState } from "easy-peasy";
+import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, FlatList, Text } from "native-base";
-import PropTypes from "prop-types";
-import React from "react";
+import React, { useEffect } from "react";
 
 import AvatarCard from "../components/AvatarCard";
 import HeaderTab from "../components/HeaderTab";
@@ -10,17 +9,16 @@ import PressableCustomCard from "../components/PressableCustomCard";
 import { goToCatchReportDetailScreen } from "../navigations";
 
 const AnglerCatchReportsHistoryScreen = () => {
-  const catchReportHistoryList = useStoreState(
-    (state) => state.ProfileModel.catchReportHistoryList,
+  const getCatchReportHistory = useStoreActions(
+    (state) => state.ProfileModel.getCatchReportHistory,
   );
-  console.log(`catchReportHistoryList`, catchReportHistoryList);
+  useEffect(() => {
+    getCatchReportHistory();
+  }, []);
+  const catchReportHistory = useStoreState(
+    (state) => state.ProfileModel.catchReportHistory,
+  );
   const navigation = useNavigation();
-  const dummyMenu = [
-    { id: 1, message: "Ngoi ca sang", caches: "Ro dong, Diec" },
-    { id: 2, message: "Ngoi ca sang", caches: "Ro dong, Diec" },
-    { id: 3, message: "Ngoi ca sang", caches: "Ro dong, Diec" },
-    { id: 4, message: "Ngoi ca sang", caches: "Ro dong, Diec" },
-  ];
 
   return (
     <Box>
@@ -33,7 +31,7 @@ const AnglerCatchReportsHistoryScreen = () => {
       >
         <FlatList
           pt="0.5"
-          data={catchReportHistoryList}
+          data={catchReportHistory}
           renderItem={({ item }) => (
             <Box
               borderBottomWidth="1"
@@ -48,17 +46,17 @@ const AnglerCatchReportsHistoryScreen = () => {
               <PressableCustomCard
                 paddingX="3"
                 onPress={() => {
-                  goToCatchReportDetailScreen(navigation);
+                  goToCatchReportDetailScreen(navigation, { id: item.catchId });
                 }}
               >
                 <Box pl="2" pb="1">
-                  <AvatarCard avatarSize="md" nameUser={item.name} />
+                  <AvatarCard
+                    avatarSize="md"
+                    nameUser={item.userFullName}
+                    subText={item.locationName}
+                  />
                   <Box mt={2}>
-                    <Text italic>{item.message}</Text>
-                    <Text>
-                      <Text bold>Đã câu được :</Text>
-                      {item.catch}
-                    </Text>
+                    <Text italic>{item.description}</Text>
                   </Box>
                 </Box>
               </PressableCustomCard>
@@ -71,10 +69,4 @@ const AnglerCatchReportsHistoryScreen = () => {
   );
 };
 
-// AnglerCatchReportsHistoryScreen.defaultProps = {
-//   angler: { id: "1", name: "Dat" },
-// };
-// AnglerCatchReportsHistoryScreen.propTypes = {
-//   angler: PropTypes.objectOf(PropTypes.string, PropTypes.string),
-// };
 export default AnglerCatchReportsHistoryScreen;

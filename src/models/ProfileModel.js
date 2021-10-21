@@ -3,6 +3,15 @@ import { action, thunk } from "easy-peasy";
 import http from "../utilities/Http";
 
 const model = {
+  userInfo: {
+    id: "1",
+    name: "dat",
+    gender: "male",
+    address: "ha dong-ha noi",
+    city: "Ha Noi",
+    district: "Ha Dong",
+    wards: "none",
+  },
   savedLocationList: [
     {
       address: "140 Láng hòa lạc",
@@ -26,39 +35,59 @@ const model = {
       image: "https://picsum.photos/500",
     },
   ],
-  catchReportHistoryList: [
-    {
-      id: "1",
-      name: "Đạt căng cực",
-      message: "Ngồi cả sáng",
-      catch: "Ro dong, Diec",
-    },
-    {
-      id: "2",
-      name: "Đạt căng cực",
-      message: "Ngồi cả sáng",
-      catch: "Diec",
-    },
-  ],
+  catchReportHistory: [],
   checkInHistoryList: [
     {
       id: "1",
       timeIn: "0/0/0",
       timeOut: "0/0/0",
+      location: "Ho thuan viet",
     },
     {
       id: "1",
       timeIn: "0/0/0",
       timeOut: "0/0/0",
+      location: "Ho thuan viet",
     },
   ],
-  
+  catchReportDetail: {
+    userId: "1",
+    message: "Ngồi cả sáng",
+    location: "Ho thuan viet",
+    listImages: [
+      "https://i.pinimg.com/originals/c4/6f/e1/c46fe1237fa5a04a2a2d6f127f191412.jpg",
+      "https://everythingisviral.com/wp-content/uploads/2020/10/polite-cat.png",
+    ],
+    listCatch: [
+      { id: "1", fishType: "Chep", quantity: "4", totalWeight: "8" },
+      { id: "2", fishType: "Ro", quantity: "15", totalWeight: "1" },
+      { id: "3", fishType: "Lang", quantity: "1", totalWeight: "8" },
+    ],
+  },
 
-  setCatchReportHistoryList: action((state, payload) => {
+  setCatchReportHistory: action((state, payload) => {
+    state.catchReportHistory = [...state.catchReportHistory, ...payload];
+  }),
+  getCatchReportHistory: thunk(async (actions) => {
+    const { data } = await http.get(`personal/catch`);
+    actions.setCatchReportHistory(data);
+  }),
+
+  setCheckInHistoryList: action((state, payload) => {
     state.catchReportHistory = [
       ...state.catchReportHistoryList,
       ...payload.data,
     ];
+  }),
+  getCheckInHistoryList: action((state, payload) => {}),
+
+  setCatchReportDetail: action((state, payload) => {
+    state.catchReportDetail = payload;
+  }),
+  getCatchReportDetailById: thunk(async (actions, payload) => {
+    const { data } = await http.get(`personal/catch/${payload.id}`);
+
+    actions.setCatchReportDetail(data);
   }),
 
   setSavedLocationList: action((state, payload) => {
