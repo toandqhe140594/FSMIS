@@ -64,7 +64,7 @@ public class UserController {
     }
 
     @GetMapping("/checkin")
-    public ResponseEntity<Object> getCheckInHistory(HttpServletRequest request) {
-        return new ResponseEntity<>(userService.getCheckInHistory(request), HttpStatus.OK);
+    public ResponseEntity<Object> getCheckInHistory(HttpServletRequest request, @RequestParam(defaultValue = "1") int pageNo) {
+        return new ResponseEntity<>(userService.getCheckInHistory(request, pageNo), HttpStatus.OK);
     }
 }
