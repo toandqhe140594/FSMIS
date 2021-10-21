@@ -81,13 +81,18 @@ const Store = createStore({
     } catch (e) {
       actions.setErrorMessage(e);
     }
+    // If there was an authentication on the device
     if (authToken) {
       const { exp } = jwtDecode(authToken);
       const isExpire = Date.now() >= exp * 1000;
-      if (!isExpire) dispatch({ type: "RETRIEVE_TOKEN", authToken });
-      setAuthToken(authToken);
-      return;
+      // If the token has not yet expired
+      if (!isExpire) {
+        dispatch({ type: "RETRIEVE_TOKEN", authToken });
+        setAuthToken(authToken);
+        return;
+      }
     }
+    // If there was not an authentication or the token had expired
     dispatch({ type: "LOGOUT" });
   }),
 });
