@@ -1,5 +1,6 @@
 import { MaterialIcons } from "@expo/vector-icons";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useStoreActions } from "easy-peasy";
 import {
   Box,
   Button,
@@ -17,6 +18,7 @@ import { Controller, useForm } from "react-hook-form";
 import {
   KeyboardAvoidingView,
   ScrollView,
+  StatusBar,
   useWindowDimensions,
 } from "react-native";
 import * as yup from "yup";
@@ -44,15 +46,25 @@ const LoginScreen = () => {
   } = useForm({
     resolver: yupResolver(validationSchema),
   });
+
+  const login = useStoreActions((actions) => actions.login);
+
   const [visible, setVisible] = useState(false);
+
   const onSubmit = (data) => {
     console.log(data);
+    login({ phone: data.phone, password: data.password });
   };
 
   return (
     <KeyboardAvoidingView>
       <ScrollView>
-        <Box flex={1} minHeight={Math.round(useWindowDimensions().height)}>
+        <Box
+          flex={1}
+          minHeight={Math.round(
+            useWindowDimensions().height - StatusBar.currentHeight,
+          )}
+        >
           <Center flex={1}>
             <Image
               source={require("../assets/images/logo.png")}
