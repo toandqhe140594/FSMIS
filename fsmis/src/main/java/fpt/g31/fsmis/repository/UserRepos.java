@@ -1,6 +1,8 @@
 package fpt.g31.fsmis.repository;
 
+import fpt.g31.fsmis.entity.FishingLocation;
 import fpt.g31.fsmis.entity.User;
+import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

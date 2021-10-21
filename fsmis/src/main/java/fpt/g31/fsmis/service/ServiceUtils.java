@@ -27,6 +27,13 @@ public class ServiceUtils {
         return result;
     }
 
+    public static String getAddress(String address, Ward ward) {
+        return address + ", "
+                + ward.getName() + ", "
+                + ward.getDistrict().getName() + ", "
+                + ward.getDistrict().getProvince().getName();
+    }
+
     public static String convertDateToString(LocalDateTime date) {
         return date.format(DateTimeFormatter.ofPattern(DATE_FORMAT));
     }
