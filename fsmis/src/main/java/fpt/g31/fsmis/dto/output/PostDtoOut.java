@@ -16,5 +16,4 @@ public class PostDtoOut {
     private String postType;
     private String url;
     private boolean edited;
-    private boolean active;
 }

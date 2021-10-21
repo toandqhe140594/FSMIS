@@ -68,8 +68,10 @@ public class FishingLocationController {
         return new ResponseEntity<>(lakeService.getAllByLocationId(locationId), HttpStatus.OK);
     }
 
+    // POST
+
     @GetMapping("/{locationId}/post")
-    public ResponseEntity<Object> getPostListByLocationId(@PathVariable Long locationId, @RequestParam Integer page){
-        return new ResponseEntity<>(postService.getPostByLocationId(locationId, page), HttpStatus.OK);
+    public ResponseEntity<Object> getPostListByLocationId(@PathVariable Long locationId, @RequestParam(defaultValue = "1") Integer pageNo){
+        return new ResponseEntity<>(postService.getPostByLocationId(locationId, pageNo), HttpStatus.OK);
     }
 }
