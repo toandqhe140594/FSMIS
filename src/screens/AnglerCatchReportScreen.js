@@ -24,7 +24,7 @@ import TextAreaComponent from "../components/common/TextAreaComponent";
 import HeaderTab from "../components/HeaderTab";
 
 const validationSchema = yup.object().shape({
-  aCaption: yup.string().required("Họ và tên không thể bỏ trống"),
+  aCaption: yup.string().required("Hãy viết suy nghĩ của bạn về ngày câu"),
   aLakeType: yup.number().required("Loại hồ không được để trống"),
   isPublic: yup.bool(),
 });
@@ -144,7 +144,7 @@ const AnglerCatchReportScreen = () => {
                     <Checkbox
                       mb={1}
                       alignItems="flex-start"
-                      isChecked={value}
+                      value={value}
                       onChange={onChange}
                     >
                       Công khai thông tin
