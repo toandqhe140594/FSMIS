@@ -13,7 +13,7 @@ import {
   Text,
   VStack,
 } from "native-base";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import {
   KeyboardAvoidingView,
@@ -42,6 +42,7 @@ const LoginScreen = () => {
   const {
     control,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(validationSchema),
@@ -51,9 +52,14 @@ const LoginScreen = () => {
 
   const [visible, setVisible] = useState(false);
 
+  useEffect(() => {
+    setValue("phoneNumber", "0963372727");
+    setValue("password", "Asdf2k@!");
+  }, []);
+
   const onSubmit = (data) => {
     console.log(data);
-    login({ phone: data.phone, password: data.password });
+    login({ phone: data.phoneNumber, password: data.password });
   };
 
   return (
