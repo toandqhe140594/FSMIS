@@ -11,7 +11,16 @@ import {
   goToFManageMainScreen,
 } from "../navigations";
 
-const SpotCard = ({ id, address, image, isVerifed, name, rate, isManaged }) => {
+const SpotCard = ({
+  id,
+  address,
+  image,
+  isVerifed,
+  name,
+  rate,
+  isManaged,
+  showImage,
+}) => {
   const navigation = useNavigation();
 
   const onPress = () => {
@@ -22,7 +31,7 @@ const SpotCard = ({ id, address, image, isVerifed, name, rate, isManaged }) => {
   return (
     <Pressable onPress={() => onPress()}>
       <Card containerStyle={{ width: "100%", padding: 0, margin: 0 }}>
-        <Card.Image source={{ uri: image }} />
+        {showImage && <Card.Image source={{ uri: image }} />}
         <VStack mt={1.5} mb={2} ml={3} space={1.5}>
           <Box>
             <Box flexDir="row" alignItems="center">
@@ -57,6 +66,7 @@ SpotCard.propTypes = {
   rate: PropTypes.number,
   isManaged: PropTypes.bool,
   id: PropTypes.number,
+  showImage: PropTypes.bool,
 };
 SpotCard.defaultProps = {
   image: "https://picsum.photos/200",
@@ -64,6 +74,7 @@ SpotCard.defaultProps = {
   rate: 0,
   isManaged: false,
   id: 1,
+  showImage: true,
 };
 
 export default SpotCard;
