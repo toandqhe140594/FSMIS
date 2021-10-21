@@ -26,13 +26,15 @@ const cityData = [
 ];
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
+  container: {
+    flex: 1,
+  },
   wrapper: { width: "90%" },
   buttonWrapper: {
+    flex: 1,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginTop: 200,
   },
 });
 
@@ -41,12 +43,15 @@ const AnglerAdvanceSearchScreen = () => {
   const [selectedMethods, setSelectedMethods] = useState("");
   const [fishTypes, setFishTypes] = useState([]);
   const [selectedTypes, setSelectedTypes] = useState("");
-  const methods = useForm();
+  const methods = useForm({ mode: "onChange", reValidateMode: "onChange" });
   const handleOnSelectMethods = (values) => {
     setFishingMethods(values || []);
   };
   const handleOnSelectTypes = (values) => {
     setFishTypes(values || []);
+  };
+  const onSubmit = (date) => {
+    console.log(data);
   };
   useEffect(() => {
     if (fishingMethods.length === 0)
@@ -72,8 +77,8 @@ const AnglerAdvanceSearchScreen = () => {
       <HeaderTab name="Tìm kiếm nâng cao" />
       <View style={[styles.container]}>
         <FormProvider {...methods}>
-          <Center flex={1}>
-            <VStack space={2} style={styles.wrapper}>
+          <Center flex={9}>
+            <VStack flex={8} space={2} style={[styles.wrapper]}>
               <InputComponent
                 label="Từ khoá tìm kiếm"
                 placeholder="Nhập số điện thoại, tên hồ câu"
@@ -105,11 +110,13 @@ const AnglerAdvanceSearchScreen = () => {
                 data={ratingData}
                 controllerName="rating"
               />
-              <View style={[styles.buttonWrapper]}>
-                <Button style={{ width: "40%" }}>Xoá bộ lọc</Button>
-                <Button style={{ width: "40%" }}>Tìm kiếm</Button>
-              </View>
             </VStack>
+            <View style={[styles.wrapper, styles.buttonWrapper]}>
+              <Button variant="outline" style={{ width: "45%" }}>
+                Xoá bộ lọc
+              </Button>
+              <Button style={{ width: "45%" }}>Tìm kiếm</Button>
+            </View>
           </Center>
         </FormProvider>
       </View>
