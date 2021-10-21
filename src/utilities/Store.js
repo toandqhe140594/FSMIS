@@ -84,12 +84,11 @@ const Store = createStore({
     if (authToken) {
       const { exp } = jwtDecode(authToken);
       const isExpire = Date.now() >= exp * 1000;
-      if (isExpire) dispatch({ type: "LOGOUT" });
-      else {
-        dispatch({ type: "RETRIEVE_TOKEN", authToken });
-        setAuthToken(authToken);
-      }
+      if (!isExpire) dispatch({ type: "RETRIEVE_TOKEN", authToken });
+      setAuthToken(authToken);
+      return;
     }
+    dispatch({ type: "LOGOUT" });
   }),
 });
 
