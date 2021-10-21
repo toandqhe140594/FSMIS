@@ -3,12 +3,6 @@ import PropTypes from "prop-types";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 
-// const itemKey = 0;
-// const generateKey = () => {
-//   itemKey += 1;
-//   return itemKey;
-// };
-
 const styles = StyleSheet.create({
   error: {},
   bold: { fontWeight: "bold" },
