@@ -45,7 +45,6 @@ const AddFishCard = ({ id, deleteCard, updateCard }) => {
       style={styles.cardWrapper}
     >
       <InlineSelectComponent
-        compact
         label="Loại cá"
         placeholder="Chọn loại cá"
         data={["Cá diếc", " Cá chép"]}
@@ -53,31 +52,24 @@ const AddFishCard = ({ id, deleteCard, updateCard }) => {
         handleOnChange={setFish}
       />
       <InlineInputComponent
-        compact
         label="Biểu"
         placeholder="Miêu tả biểu cá"
         value={weightDescription}
         handleOnChange={setWeightDescription}
       />
       <InlineInputComponent
-        compact
         label="Số lượng (con)"
         placeholder="Nhập số lượng con"
         value={amount}
         handleOnChange={setAmount}
       />
       <InlineInputComponent
-        compact
         label="Tổng cân nặng (kg)"
         placeholder="Nhập tổng cân nặng"
         value={totalWeight}
         handleOnChange={setTotalWeight}
       />
-      <Button
-        w="40%"
-        style={{ alignSelf: "flex-end" }}
-        onPress={() => deleteCard(id)}
-      >
+      <Button w="40%" alignSelf="flex-end" onPress={() => deleteCard(id)}>
         Xoá
       </Button>
     </VStack>

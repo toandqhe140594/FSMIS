@@ -12,7 +12,6 @@ const styles = StyleSheet.create({
 });
 
 const COMPACT_INPUT_WIDTH = "60%";
-const FULL_INPUT_WIDTH = "70%";
 
 const InlineInputComponent = ({
   label,
@@ -20,16 +19,12 @@ const InlineInputComponent = ({
   myStyles,
   value,
   handleOnChange,
-  compact,
 }) => {
-  const getInputWidth = () => ({
-    width: compact ? COMPACT_INPUT_WIDTH : FULL_INPUT_WIDTH,
-  });
   return (
     <Box style={[styles.container, myStyles]}>
       <Text>{label}</Text>
       <Input
-        style={getInputWidth()}
+        w={COMPACT_INPUT_WIDTH}
         placeholder={placeholder}
         fontSize="sm"
         value={value}
@@ -43,14 +38,12 @@ InlineInputComponent.propTypes = {
   label: PropTypes.string.isRequired,
   placeholder: PropTypes.string.isRequired,
   myStyles: PropTypes.objectOf(PropTypes.object.isRequired),
-  compact: PropTypes.bool,
   value: PropTypes.string,
   handleOnChange: PropTypes.func,
 };
 
 InlineInputComponent.defaultProps = {
   myStyles: {},
-  compact: false,
   value: "",
   handleOnChange: () => {},
 };

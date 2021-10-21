@@ -47,21 +47,18 @@ const CatchReportCard = ({ id, deleteCard, updateCard }) => {
         label="Chọn loài cá"
         placeholder="Nhấp để chọn cá"
         data={["Cá diếc", "Cá chép"]}
-        compact
         value={fishType}
         handleOnChange={setFishType}
       />
       <InlineInputComponent
         label="Số lượng (con)"
         placeholder="Nhập số lượng con"
-        compact
         value={catches}
         handleOnChange={setCatches}
       />
       <InlineInputComponent
         label="Tổng cân nặng (kg)"
         placeholder="Nhập tổng cân nặng"
-        compact
         value={totalWeight}
         handleOnChange={setTotalWeight}
       />

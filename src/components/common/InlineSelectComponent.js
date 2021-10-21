@@ -13,27 +13,22 @@ const styles = StyleSheet.create({
 });
 
 const COMPACT_SELECT_WIDTH = "60%";
-const FULL_SELECT_WIDTH = "70%";
 
 const InlineSelectComponent = ({
   label,
   placeholder,
   data,
   myStyles,
-  compact,
   isTitle,
   value,
   handleOnChange,
 }) => {
-  const getSelectWidth = () =>
-    compact ? COMPACT_SELECT_WIDTH : FULL_SELECT_WIDTH;
-
   const getTitleStyle = () => (isTitle ? styles.title : null);
   return (
     <Box style={[styles.container, myStyles]}>
       <Text style={getTitleStyle()}>{label}</Text>
       <Select
-        w={getSelectWidth()}
+        w={COMPACT_SELECT_WIDTH}
         accessibilityLabel={placeholder}
         placeholder={placeholder}
         fontSize="sm"
@@ -52,7 +47,6 @@ InlineSelectComponent.propTypes = {
   label: PropTypes.string.isRequired,
   data: PropTypes.arrayOf(PropTypes.string.isRequired),
   placeholder: PropTypes.string.isRequired,
-  compact: PropTypes.bool,
   myStyles: PropTypes.objectOf(PropTypes.string.isRequired),
   isTitle: PropTypes.bool,
   handleOnChange: PropTypes.func,
@@ -62,7 +56,6 @@ InlineSelectComponent.propTypes = {
 InlineSelectComponent.defaultProps = {
   data: [],
   myStyles: {},
-  compact: false,
   isTitle: false,
   handleOnChange: () => {},
   value: "",
