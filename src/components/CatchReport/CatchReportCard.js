@@ -15,6 +15,7 @@ const styles = StyleSheet.create({
   rowWrapper: {
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "center",
   },
 });
 
