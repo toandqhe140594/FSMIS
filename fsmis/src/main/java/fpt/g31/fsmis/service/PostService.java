@@ -1,14 +1,15 @@
 package fpt.g31.fsmis.service;
 
+import fpt.g31.fsmis.dto.output.PaginationDtoOut;
 import fpt.g31.fsmis.dto.output.PostDtoOut;
 import fpt.g31.fsmis.entity.Post;
 import fpt.g31.fsmis.repository.PostRepos;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,16 +18,20 @@ import java.util.List;
 public class PostService {
     PostRepos postRepos;
     ModelMapper modelMapper;
-    public List<PostDtoOut> getPostByLocationId(Long locationId, Integer page){
-        List<Post> postList = postRepos.findByFishingLocationId(locationId, PageRequest.of(page, 2));
-        List<PostDtoOut> postDtoOutList = new ArrayList<>();
-        for (Post post :
-                postList) {
-            PostDtoOut postDtoOut = modelMapper.map(post, PostDtoOut.class);
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            postDtoOut.setPostTime(post.getPostTime().format(formatter));
-            postDtoOutList.add(postDtoOut);
+
+
+    public PaginationDtoOut getPostByLocationId(Long locationId, Integer pageNo) {
+        Page<Post> postList = postRepos.findByFishingLocationIdOrderByPostTimeDesc(locationId, PageRequest.of(pageNo - 1, 10));
+        List<PostDtoOut> output = new ArrayList<>();
+        for (Post post : postList) {
+            PostDtoOut item = modelMapper.map(post, PostDtoOut.class);
+            item.setPostTime(ServiceUtils.convertDateToString(post.getPostTime()));
+            output.add(item);
         }
-        return postDtoOutList;
+        return PaginationDtoOut.builder()
+                .totalPage(postList.getTotalPages())
+                .pageNo(pageNo)
+                .items(output)
+                .build();
     }
 }
