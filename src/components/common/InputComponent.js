@@ -62,7 +62,7 @@ InputComponent.propTypes = {
   isTitle: PropTypes.bool,
   type: PropTypes.string,
   leftIcon: PropTypes.element,
-  controllerName: PropTypes.string.isRequired,
+  controllerName: PropTypes.string,
 };
 
 InputComponent.defaultProps = {
@@ -71,6 +71,7 @@ InputComponent.defaultProps = {
   isTitle: false,
   type: "text",
   leftIcon: <></>,
+  controllerName: "",
 };
 
 export default InputComponent;
