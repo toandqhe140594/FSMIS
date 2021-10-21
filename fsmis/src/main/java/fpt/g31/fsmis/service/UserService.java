@@ -71,7 +71,7 @@ public class UserService {
 
     public PaginationDtoOut getPersonalCatchList(HttpServletRequest request, int pageNo) {
         User user = jwtFilter.getUserFromToken(request);
-        Page<Catches> catches = catchesRepos.findByUserId(user.getId(), PageRequest.of(pageNo - 1, 1));
+        Page<Catches> catches = catchesRepos.findByUserId(user.getId(), PageRequest.of(pageNo - 1, 10));
         List<CatchesOverviewNoImageDtoOut> catchesOverviewDtoOut = new ArrayList<>();
         for (Catches catchItem : catches) {
             CatchesOverviewNoImageDtoOut item = CatchesOverviewNoImageDtoOut.builder()
@@ -155,9 +155,9 @@ public class UserService {
                 .build();
     }
 
-    public List<CheckInHistoryPersonalDtoOut> getCheckInHistory(HttpServletRequest request) {
+    public PaginationDtoOut getCheckInHistory(HttpServletRequest request, int pageNo) {
         User user = jwtFilter.getUserFromToken(request);
-        List<CheckIn> checkInList = checkInRepos.findByUserIdOrderByCheckInTimeDesc(user.getId());
+        Page<CheckIn> checkInList = checkInRepos.findByUserIdOrderByCheckInTimeDesc(user.getId(), PageRequest.of(pageNo-1, 10));
         List<CheckInHistoryPersonalDtoOut> output = new ArrayList<>();
         for (CheckIn checkIn : checkInList) {
             CheckInHistoryPersonalDtoOut item = CheckInHistoryPersonalDtoOut.builder()
@@ -171,6 +171,10 @@ public class UserService {
                     .build();
             output.add(item);
         }
-        return output;
+        return PaginationDtoOut.builder()
+                .totalPage(checkInList.getTotalPages())
+                .pageNo(pageNo)
+                .items(output)
+                .build();
     }
 }
