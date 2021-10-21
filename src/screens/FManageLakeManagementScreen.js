@@ -3,10 +3,7 @@ import React, { useState } from "react";
 
 import HeaderTab from "../components/HeaderTab";
 import LakeCard from "../components/LakeCard";
-import LocationModel from "../models/LocationModel";
-import store from "../utilities/Store";
 
-store.addModel("LocationModel", LocationModel);
 const data = [
   {
     id: "1",

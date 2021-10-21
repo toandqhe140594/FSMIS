@@ -1,6 +1,5 @@
-import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, ScrollView, VStack } from "native-base";
-import React, { useEffect } from "react";
+import React from "react";
 
 import AvatarCard from "../components/AvatarCard";
 import MenuScreen from "../components/MenuScreen";
