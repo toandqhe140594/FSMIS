@@ -29,11 +29,12 @@ const CatchReportRoute = () => {
   return (
     <FlatList
       data={dummyMenu}
-      renderItem={() => (
+      renderItem={({ item }) => (
         <PressableCustomCard paddingX="1">
           <EventPostCard
             postStyle="ANGLER_POST"
             image="https://picsum.photos/500"
+            id={item.id}
           />
         </PressableCustomCard>
       )}
@@ -43,7 +44,7 @@ const CatchReportRoute = () => {
 };
 
 const FLocationEventRoute = () => {
-  const [lakePostPage, setLakePostPage] = useState(0);
+  const [lakePostPage, setLakePostPage] = useState(1);
   const locationPostList = useStoreState(
     (states) => states.LocationModel.locationPostList,
   );
@@ -52,12 +53,12 @@ const FLocationEventRoute = () => {
   );
 
   useEffect(() => {
-    getLocationPostListByPage({ page: lakePostPage });
+    getLocationPostListByPage({ pageNo: lakePostPage });
     setLakePostPage(lakePostPage + 1);
   }, []);
 
   const loadMoreLakePostData = () => {
-    getLocationPostListByPage({ page: lakePostPage });
+    getLocationPostListByPage({ pageNo: lakePostPage });
     setLakePostPage(lakePostPage + 1);
   };
   return (

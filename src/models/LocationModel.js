@@ -42,6 +42,7 @@ const model = {
       active: true,
     },
   ],
+  totalPostPage: 1,
   setCurrentId: action((state, payload) => {
     state.currentId = payload;
   }),
@@ -63,6 +64,9 @@ const model = {
   setLocationPostList: action((state, payload) => {
     if (payload.status === "Overwrite") state.locationPostList = payload.data;
     else state.locationPostList = [...state.locationPostList, ...payload.data];
+  }),
+  setTotalPostPage: action((state, payload) => {
+    state.totalPostPage = payload;
   }),
   getLocationOverview: thunk(async (actions, payload, { getState }) => {
     const { data } = await http.get(`location/${getState().currentId}`);
@@ -101,14 +105,17 @@ const model = {
     actions.setLakeDetail(data);
   }),
   getLocationPostListByPage: thunk(async (actions, payload, { getState }) => {
-    const { page } = payload;
-    const { data } = await http.get(`location/${getState().currentId}/post`, {
-      params: { page },
+    const { pageNo } = payload;
+    const { currentId, totalPostPage } = getState();
+    if (pageNo > totalPostPage || pageNo <= 0) return;
+    const { data } = await http.get(`location/${currentId}/post`, {
+      params: { pageNo },
     });
-    if (data.length > 0)
+    actions.setTotalPostPage(data.totalPage);
+    if (data.items.length > 0)
       actions.setLocationPostList({
-        data,
-        status: page === 0 ? "Overwrite" : "Append",
+        data: data.items,
+        status: pageNo === 1 ? "Overwrite" : "Append",
       });
   }),
 };
