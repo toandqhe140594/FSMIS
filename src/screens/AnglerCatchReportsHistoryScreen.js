@@ -12,14 +12,16 @@ const AnglerCatchReportsHistoryScreen = () => {
   const getCatchReportHistory = useStoreActions(
     (state) => state.ProfileModel.getCatchReportHistory,
   );
-  useEffect(() => {
-    getCatchReportHistory();
-  }, []);
   const catchReportHistory = useStoreState(
     (state) => state.ProfileModel.catchReportHistory,
   );
-  const navigation = useNavigation();
 
+  useEffect(() => {
+    getCatchReportHistory();
+  }, [catchReportHistory]);
+
+  const navigation = useNavigation();
+  console.log(catchReportHistory);
   return (
     <Box>
       <HeaderTab name="Lịch sử báo cá" />
@@ -29,41 +31,45 @@ const AnglerCatchReportsHistoryScreen = () => {
           md: "25%",
         }}
       >
-        <FlatList
-          pt="0.5"
-          data={catchReportHistory}
-          renderItem={({ item }) => (
-            <Box
-              borderBottomWidth="1"
-              _dark={{
-                borderColor: "gray.600",
-              }}
-              borderColor="coolGray.200"
-              backgroundColor="white"
-              mb="0.5"
-              // keyExtractor={(item.id) => item.index_id.toString()}
-            >
-              <PressableCustomCard
-                paddingX="3"
-                onPress={() => {
-                  goToCatchReportDetailScreen(navigation, { id: item.catchId });
+        {catchReportHistory.length !== 0 && (
+          <FlatList
+            pt="0.5"
+            data={catchReportHistory}
+            renderItem={({ item }) => (
+              <Box
+                borderBottomWidth="1"
+                _dark={{
+                  borderColor: "gray.600",
                 }}
+                borderColor="coolGray.200"
+                backgroundColor="white"
+                mb="0.5"
+                // keyExtractor={(item.id) => item.index_id.toString()}
               >
-                <Box pl="2" pb="1">
-                  <AvatarCard
-                    avatarSize="md"
-                    nameUser={item.userFullName}
-                    subText={item.locationName}
-                  />
-                  <Box mt={2}>
-                    <Text italic>{item.description}</Text>
+                <PressableCustomCard
+                  paddingX="3"
+                  onPress={() => {
+                    goToCatchReportDetailScreen(navigation, {
+                      id: item.catchId,
+                    });
+                  }}
+                >
+                  <Box pl="2" pb="1">
+                    <AvatarCard
+                      avatarSize="md"
+                      nameUser={item.userFullName}
+                      subText={item.locationName}
+                    />
+                    <Box mt={2}>
+                      <Text italic>{item.description}</Text>
+                    </Box>
                   </Box>
-                </Box>
-              </PressableCustomCard>
-            </Box>
-          )}
-          keyExtractor={(item, index) => index.toString()}
-        />
+                </PressableCustomCard>
+              </Box>
+            )}
+            keyExtractor={(item, index) => index.toString()}
+          />
+        )}
       </Box>
     </Box>
   );

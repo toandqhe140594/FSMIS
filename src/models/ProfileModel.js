@@ -66,7 +66,7 @@ const model = {
   },
 
   setCatchReportHistory: action((state, payload) => {
-    state.catchReportHistory = [...state.catchReportHistory, ...payload];
+    state.catchReportHistory = [state.catchReportHistory, ...payload];
   }),
   getCatchReportHistory: thunk(async (actions) => {
     const { data } = await http.get(`personal/catch`);
