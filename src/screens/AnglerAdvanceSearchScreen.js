@@ -30,8 +30,9 @@ const styles = StyleSheet.create({
   wrapper: { width: "90%" },
   buttonWrapper: {
     flexDirection: "row",
-    justifyContent: "space-around",
+    justifyContent: "space-between",
     alignItems: "center",
+    marginTop: 200,
   },
 });
 
@@ -69,7 +70,7 @@ const AnglerAdvanceSearchScreen = () => {
   return (
     <>
       <HeaderTab name="Tìm kiếm nâng cao" />
-      <View style={[styles.container, { borderWidth: 1 }]}>
+      <View style={[styles.container]}>
         <FormProvider {...methods}>
           <Center flex={1}>
             <VStack space={2} style={styles.wrapper}>
@@ -104,7 +105,7 @@ const AnglerAdvanceSearchScreen = () => {
                 data={ratingData}
                 controllerName="rating"
               />
-              <View style={[styles.buttonWrapper, { borderWidth: 1 }]}>
+              <View style={[styles.buttonWrapper]}>
                 <Button style={{ width: "40%" }}>Xoá bộ lọc</Button>
                 <Button style={{ width: "40%" }}>Tìm kiếm</Button>
               </View>
