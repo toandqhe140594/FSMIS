@@ -25,6 +25,7 @@
     "expo-secure-store": "^10.2.0",
     "expo-status-bar": "~1.0.4",
     "formik": "^2.2.9",
+    "jwt-decode": "^3.1.2",
     "moment": "^2.29.1",
     "native-base": "^3.2.1-rc.1",
     "prop-types": "^15.7.2",
