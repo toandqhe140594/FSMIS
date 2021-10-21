@@ -105,17 +105,18 @@ const LakeDetailScreen = () => {
                 Các loại cá
               </Text>
               <VStack space={2}>
-                {fishInLake.map((fish) => (
-                  <FishInformationCard
-                    currentAmount={fish.quantity}
-                    currentWeight={fish.totalWeight}
-                    image={fish.imageUrl}
-                    name={fish.name}
-                    overview
-                    weightRange={`${fish.minWeight}-${fish.maxWeight}`}
-                    key={fish.id}
-                  />
-                ))}
+                {fishInLake &&
+                  fishInLake.map((fish) => (
+                    <FishInformationCard
+                      currentAmount={fish.quantity}
+                      currentWeight={fish.totalWeight}
+                      image={fish.imageUrl}
+                      name={fish.name}
+                      overview
+                      weightRange={`${fish.minWeight}-${fish.maxWeight}`}
+                      key={fish.id}
+                    />
+                  ))}
               </VStack>
             </Box>
           </Card>
