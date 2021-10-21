@@ -52,13 +52,14 @@ const LoginScreen = () => {
 
   const [visible, setVisible] = useState(false);
 
+  // Development only
   useEffect(() => {
     setValue("phoneNumber", "0963372727");
     setValue("password", "Asdf2k@!");
   }, []);
 
   const onSubmit = (data) => {
-    console.log(data);
+    console.log(data); // Test only
     login({ phone: data.phoneNumber, password: data.password });
   };
 
