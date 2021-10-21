@@ -5,7 +5,6 @@ import { Controller, useFormContext } from "react-hook-form";
 import { StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
-  container: {},
   bold: { fontWeight: "bold" },
   text: { fontSize: 16 },
 });
@@ -24,7 +23,7 @@ const SelectComponent = ({
     formState: { errors },
   } = useFormContext();
   return (
-    <Box style={[styles.container, myStyle]}>
+    <Box style={myStyle}>
       <Text style={[styles.text, isTitle ? styles.bold : null]} mb={1}>
         {label}
         {hasAsterisk && <Text color="danger.500">*</Text>}
