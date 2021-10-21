@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class PersonalInformationDtoOut {
+public class PersonalInfoDtoOut {
 
     private Long id;
 

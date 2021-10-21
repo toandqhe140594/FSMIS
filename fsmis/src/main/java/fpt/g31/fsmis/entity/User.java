@@ -38,7 +38,8 @@ public class User {
 
     private String qrString;
 
-    private String avatarUrl = "https://picsum.photos/200";
+    @Column(columnDefinition = "TEXT")
+    private String avatarUrl;
 
     private boolean gender;
 
@@ -69,7 +70,7 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "notification_id")
     )
-    private Set<Notification> notificationSet;
+    private List<Notification> notificationSet;
 
     @JsonIgnore
     @ManyToMany
@@ -78,8 +79,8 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "fishing_location_id")
     )
-    private Set<FishingLocation> savedFishingLocations;
+    private List<FishingLocation> savedFishingLocations;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    Set<Role> roles;
+    private Set<Role> roles;
 }

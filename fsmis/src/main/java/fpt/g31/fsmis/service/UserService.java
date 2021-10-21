@@ -1,23 +1,21 @@
 package fpt.g31.fsmis.service;
 
-import fpt.g31.fsmis.dto.input.UserDtoIn;
+import fpt.g31.fsmis.dto.input.ChangePasswordDtoIn;
+import fpt.g31.fsmis.dto.input.PersonalInfoDtoIn;
 import fpt.g31.fsmis.dto.output.*;
-import fpt.g31.fsmis.entity.Catches;
-import fpt.g31.fsmis.entity.CatchesDetail;
-import fpt.g31.fsmis.entity.User;
-import fpt.g31.fsmis.exception.UserNotFoundException;
-import fpt.g31.fsmis.repository.CatchesDetailRepos;
-import fpt.g31.fsmis.repository.CatchesRepos;
-import fpt.g31.fsmis.repository.UserRepos;
+import fpt.g31.fsmis.entity.*;
+import fpt.g31.fsmis.repository.*;
 import fpt.g31.fsmis.security.JwtFilter;
-import fpt.g31.fsmis.security.JwtProvider;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ValidationException;
 
@@ -27,27 +25,59 @@ public class UserService {
 
     private final UserRepos userRepos;
     private final CatchesRepos catchesRepos;
-    private final CatchesDetailRepos catchesDetailRepos;
+    private final ReviewRepos reviewRepos;
+    private final CheckInRepos checkInRepos;
+    private final WardRepos wardRepos;
     private final ModelMapper modelMapper;
-    private final JwtProvider jwtProvider;
     private final JwtFilter jwtFilter;
+    private final PasswordEncoder passwordEncoder;
 
-    public PersonalInformationDtoOut getPersonalInformation(HttpServletRequest request) {
-        User user = getUserFromToken(request);
-        PersonalInformationDtoOut personalInformationDtoOut =
-                modelMapper.map(user, PersonalInformationDtoOut.class);
+    public PersonalInfoDtoOut getPersonalInformation(HttpServletRequest request) {
+        User user = jwtFilter.getUserFromToken(request);
+        PersonalInfoDtoOut personalInformationDtoOut =
+                modelMapper.map(user, PersonalInfoDtoOut.class);
         personalInformationDtoOut.setAddressFromWard(ServiceUtils.getAddressByWard(user.getWard()));
         return personalInformationDtoOut;
     }
 
-    public List<CatchesOverviewDtoOut> getPersonalCatchList(HttpServletRequest request) {
-        User user = getUserFromToken(request);
-        List<Catches> catches = catchesRepos.findByUserId(user.getId());
-        List<CatchesOverviewDtoOut> catchesOverviewDtoOut = new ArrayList<>();
-        for(Catches catchItem : catches) {
-            CatchesOverviewDtoOut item = CatchesOverviewDtoOut.builder()
+    public String savePersonalInformation(HttpServletRequest request, PersonalInfoDtoIn personalInfoDtoIn) {
+        User user = jwtFilter.getUserFromToken(request);
+        user.setAvatarUrl(personalInfoDtoIn.getAvatarUrl());
+        user.setFullName(personalInfoDtoIn.getFullName());
+        user.setDob(ServiceUtils.convertStringToDate(personalInfoDtoIn.getDob()));
+        user.setGender(personalInfoDtoIn.getGender());
+        user.setAddress(personalInfoDtoIn.getAddress());
+        user.setWard(wardRepos.getById(personalInfoDtoIn.getWardId()));
+        userRepos.save(user);
+        return "Thay đổi thông tin thành công";
+    }
+
+    public String changePassword(HttpServletRequest request, ChangePasswordDtoIn changePasswordDtoIn) {
+        User user = jwtFilter.getUserFromToken(request);
+        if (!passwordEncoder.matches(changePasswordDtoIn.getOldPassword(), user.getPassword())) {
+            throw new ValidationException("Mật khẩu không đúng");
+        }
+        user.setPassword(passwordEncoder.encode(changePasswordDtoIn.getNewPassword()));
+        userRepos.save(user);
+        return "Thay đổi mật khẩu thành công";
+    }
+
+    public String changePhone(HttpServletRequest request, String newPhone) {
+        User user = jwtFilter.getUserFromToken(request);
+        user.setPhone(newPhone);
+        userRepos.save(user);
+        return "Thay đổi số điện thoại thành công";
+    }
+
+    public PaginationDtoOut getPersonalCatchList(HttpServletRequest request, int pageNo) {
+        User user = jwtFilter.getUserFromToken(request);
+        Page<Catches> catches = catchesRepos.findByUserId(user.getId(), PageRequest.of(pageNo - 1, 1));
+        List<CatchesOverviewNoImageDtoOut> catchesOverviewDtoOut = new ArrayList<>();
+        for (Catches catchItem : catches) {
+            CatchesOverviewNoImageDtoOut item = CatchesOverviewNoImageDtoOut.builder()
                     .userId(user.getId())
                     .userFullName(user.getFullName())
+                    .avatar(user.getAvatarUrl())
                     .locationId(catchItem.getFishingLocation().getId())
                     .locationName(catchItem.getFishingLocation().getName())
                     .catchId(catchItem.getId())
@@ -57,11 +87,15 @@ public class UserService {
                     .build();
             catchesOverviewDtoOut.add(item);
         }
-        return catchesOverviewDtoOut;
+        return PaginationDtoOut.builder()
+                .totalPage(catches.getTotalPages())
+                .pageNo(pageNo)
+                .items(catchesOverviewDtoOut)
+                .build();
     }
 
     public CatchesDetailDtoOut getPersonalCatchDetails(HttpServletRequest request, Long catchesId) {
-        User user = getUserFromToken(request);
+        User user = jwtFilter.getUserFromToken(request);
         Catches catches = catchesRepos.getById(catchesId);
         List<CatchesDetail> catchesDetails = catches.getCatchesDetailList();
         List<CatchesFishDtoOut> catchesFishDtoOutList = new ArrayList<>();
@@ -75,55 +109,68 @@ public class UserService {
             catchesFishDtoOutList.add(build);
         }
 
-         CatchesDetailDtoOut output = CatchesDetailDtoOut.builder()
-                 .userId(user.getId())
-                 .userFullName(user.getFullName())
-                 .locationId(catches.getFishingLocation().getId())
-                 .locationName(catches.getFishingLocation().getName())
-                 .catchId(catches.getId())
-                 .description(catches.getDescription())
-                 .images(ServiceUtils.splitString(catches.getImageUrl()))
-                 .time(ServiceUtils.convertDateToString(catches.getTime()))
-                 .fishes(catchesFishDtoOutList)
-                 .build();
+        CatchesDetailDtoOut output = CatchesDetailDtoOut.builder()
+                .userId(user.getId())
+                .userFullName(user.getFullName())
+                .avatar(user.getAvatarUrl())
+                .locationId(catches.getFishingLocation().getId())
+                .locationName(catches.getFishingLocation().getName())
+                .catchId(catches.getId())
+                .description(catches.getDescription())
+                .images(ServiceUtils.splitString(catches.getImageUrl()))
+                .time(ServiceUtils.convertDateToString(catches.getTime()))
+                .fishes(catchesFishDtoOutList)
+                .build();
         return output;
     }
 
-    public List<User> getAllUsers() {
-        return userRepos.findAll();
+    public PaginationDtoOut getSavedFishingLocation(HttpServletRequest request, int pageNo) {
+        User user = jwtFilter.getUserFromToken(request);
+
+        // CUSTOM PAGINATION
+        List<FishingLocation> saved = user.getSavedFishingLocations();
+        PageRequest pageRequest = PageRequest.of(pageNo - 1, 10);
+        int total = saved.size();
+        int start = (int) pageRequest.getOffset();
+        int end = Math.min((start + pageRequest.getPageSize()), total);
+        Page<FishingLocation> savedFishingLocations = new PageImpl<>(saved.subList(start, end), pageRequest, total);
+
+        List<FishingLocationItemDtoOut> output = new ArrayList<>();
+        for (FishingLocation fishingLocation : savedFishingLocations) {
+            FishingLocationItemDtoOut item = FishingLocationItemDtoOut.builder()
+                    .id(fishingLocation.getId())
+                    .name(fishingLocation.getName())
+                    .image(ServiceUtils.splitString(fishingLocation.getImageUrl()).get(0))
+                    .verify(fishingLocation.getVerify())
+                    .score(reviewRepos.getAverageScoreByFishingLocationId(fishingLocation.getId()))
+                    .address(ServiceUtils.getAddress(fishingLocation.getAddress(), fishingLocation.getWard()))
+                    .build();
+            output.add(item);
+        }
+
+        return PaginationDtoOut.builder()
+                .totalPage(savedFishingLocations.getTotalPages())
+                .pageNo(pageNo)
+                .items(output)
+                .build();
     }
 
-    public User updateUser(UserDtoIn userDtoIn, long userId) {
-        Optional<User> userOptionalById = userRepos.findById(userId);
-        if (userOptionalById.isPresent()) {
-            User user = userOptionalById.get();
-            User newUser = modelMapper.map(userDtoIn, User.class);
-            modelMapper.map(newUser, user);
-            return userRepos.save(user);
-        } else {
-            throw new UserNotFoundException(userId);
+    public List<CheckInHistoryPersonalDtoOut> getCheckInHistory(HttpServletRequest request) {
+        User user = jwtFilter.getUserFromToken(request);
+        List<CheckIn> checkInList = checkInRepos.findByUserIdOrderByCheckInTimeDesc(user.getId());
+        List<CheckInHistoryPersonalDtoOut> output = new ArrayList<>();
+        for (CheckIn checkIn : checkInList) {
+            CheckInHistoryPersonalDtoOut item = CheckInHistoryPersonalDtoOut.builder()
+                    .id(checkIn.getId())
+                    .locationId(checkIn.getFishingLocation().getId())
+                    .locationName(checkIn.getFishingLocation().getName())
+                    .checkInTime(ServiceUtils.convertDateToString(checkIn.getCheckInTime()))
+                    .checkOutTime(checkIn.getCheckOutTime() == null
+                            ? "Bạn chưa check-out"
+                            : ServiceUtils.convertDateToString(checkIn.getCheckOutTime()))
+                    .build();
+            output.add(item);
         }
-    }
-
-    public UserDtoOut getUserById(long id) {
-        Optional<User> userOptional = userRepos.findById(id);
-        UserDtoOut userDtoOut;
-        if (userOptional.isPresent()) {
-            User user = userOptional.get();
-            userDtoOut = modelMapper.map(user, UserDtoOut.class);
-            userDtoOut.setAddressFromWard(ServiceUtils.getAddressByWard(user.getWard()));
-            return userDtoOut;
-        } else {
-            throw new UserNotFoundException(id);
-        }
-    }
-
-    private User getUserFromToken(HttpServletRequest request) {
-        String phone = jwtProvider.getPhoneFromJwtToken(jwtFilter.getJwtTokenFromRequest(request));
-        User user = userRepos.findByPhone(phone);
-        if (user == null) {
-            throw new ValidationException("Người dùng không tồn tại");
-        }
-        return user;
+        return output;
     }
 }

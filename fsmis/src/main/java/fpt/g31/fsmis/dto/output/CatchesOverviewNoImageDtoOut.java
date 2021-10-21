@@ -11,7 +11,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CatchesOverviewDtoOut {
+public class CatchesOverviewNoImageDtoOut {
 
     private Long userId;
 
@@ -30,4 +30,6 @@ public class CatchesOverviewDtoOut {
     private List<String> images;
 
     private String time;
+
+    private List<String> fishes;
 }

@@ -1,5 +1,7 @@
 package fpt.g31.fsmis.security;
 
+import fpt.g31.fsmis.entity.User;
+import fpt.g31.fsmis.repository.UserRepos;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,6 +16,7 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.ValidationException;
 import java.io.IOException;
 
 @Component
@@ -22,6 +25,8 @@ public class JwtFilter extends OncePerRequestFilter {
 
     private JwtProvider jwtProvider;
     private UserDetailsService userDetailsService;
+
+    private UserRepos userRepos;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
@@ -46,5 +51,14 @@ public class JwtFilter extends OncePerRequestFilter {
             return bearerToken.substring(7);
         }
         return bearerToken;
+    }
+
+    public User getUserFromToken(HttpServletRequest request) {
+        String phone = jwtProvider.getPhoneFromJwtToken(getJwtTokenFromRequest(request));
+        User user = userRepos.findByPhone(phone);
+        if (user == null) {
+            throw new ValidationException("Người dùng không tồn tại");
+        }
+        return user;
     }
 }
