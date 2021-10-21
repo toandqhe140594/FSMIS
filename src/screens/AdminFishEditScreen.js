@@ -29,7 +29,7 @@ const AdminFishEditScreen = () => {
 
   return (
     <>
-      <HeaderTab name="Quản lý tài khoản" />
+      <HeaderTab name="Quản lý loại cá" />
       <Box flex={1} alignItems="center" justifyContent="flex-start">
         <Center w="80%">
           <Avatar

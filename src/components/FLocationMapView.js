@@ -16,6 +16,7 @@ export default function FLocationMapView({ coordinates, locationList }) {
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421,
         }}
+        provider={MapView.PROVIDER_GOOGLE}
         mapType="standard"
         style={styles.map}
         showsUserLocation

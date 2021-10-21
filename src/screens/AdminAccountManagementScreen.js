@@ -39,7 +39,7 @@ const AdminAccountManagementScreen = () => {
 
   return (
     <>
-      <HeaderTab name="Quản lý các tài khoản" />
+      <HeaderTab name="Quản lý tài khoản" />
       <Center flex={1} alignItems="center">
         <Box w="100%" alignItems="center" flex={1}>
           <SearchBar
