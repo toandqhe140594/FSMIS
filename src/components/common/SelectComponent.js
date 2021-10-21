@@ -1,11 +1,14 @@
-import "react-native-get-random-values";
-
 import { Box, Select, Text } from "native-base";
 import PropTypes from "prop-types";
 import React from "react";
 import { Controller, useFormContext } from "react-hook-form";
 import { StyleSheet } from "react-native";
-import { v4 as uuidv4 } from "uuid";
+
+let itemKey = 0;
+const generateKey = () => {
+  itemKey += 1;
+  return itemKey;
+};
 
 const styles = StyleSheet.create({
   bold: { fontWeight: "bold" },
@@ -44,7 +47,7 @@ const SelectComponent = ({
           >
             {data.map((item) => (
               <Select.Item
-                key={uuidv4()}
+                key={generateKey()}
                 label={item.label}
                 value={item.val}
                 my={1}
@@ -67,7 +70,7 @@ const SelectComponent = ({
 SelectComponent.propTypes = {
   label: PropTypes.string.isRequired,
   placeholder: PropTypes.string.isRequired,
-  data: PropTypes.arrayOf(PropTypes.object).isRequired,
+  data: PropTypes.arrayOf(PropTypes.object),
   myStyle: PropTypes.objectOf(PropTypes.string.isRequired),
   hasAsterisk: PropTypes.bool,
   isTitle: PropTypes.bool,
@@ -79,6 +82,7 @@ SelectComponent.defaultProps = {
   myStyle: {},
   hasAsterisk: false,
   isTitle: false,
+  data: [],
   // handleOnChange: () => {},
 };
 

@@ -1,10 +1,13 @@
-import "react-native-get-random-values";
-
 import { Box, Select } from "native-base";
 import PropTypes from "prop-types";
 import React from "react";
 import { StyleSheet, Text } from "react-native";
-import { v4 as uuidv4 } from "uuid";
+
+let itemKey = 0;
+const generateKey = () => {
+  itemKey += 1;
+  return itemKey;
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -39,7 +42,7 @@ const InlineSelectComponent = ({
         onValueChange={handleOnChange}
       >
         {data.map((item) => (
-          <Select.Item key={uuidv4()} label={item} value={item} />
+          <Select.Item key={generateKey()} label={item} value={item} />
         ))}
       </Select>
     </Box>
