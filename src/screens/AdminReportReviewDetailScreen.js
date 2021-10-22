@@ -1,10 +1,10 @@
 import { Box, Divider, FlatList, ScrollView, Text, VStack } from "native-base";
 import React from "react";
-import { StyleSheet } from "react-native";
 
 import AdminReport from "../components/AdminReport";
 import AvatarCard from "../components/AvatarCard";
 import ReviewFromAnglerSection from "../components/ReviewFromAnglerSection";
+import styles from "../config/styles";
 
 const reportData = [
   { userName: "Cưởng", content: "Hồ thả lân ,tôi đã căng" },
@@ -69,22 +69,7 @@ const reportData = [
       "Hồ vẫn thả lân ,tôi lại căng  Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis quam nihil vel adipisci facere? Cupiditate fugit ratione facilis atque ullam minus provident, velit quia, dolor corporis, laborum ipsa laboriosam doloribus. ",
   },
 ];
-const styles = StyleSheet.create({
-  text: {
-    paddingLeft: 8,
-    paddingRight: 8,
-  },
-  buttonStyle: {
-    backgroundColor: "#fc454e",
-    width: 200,
-    height: 50,
-    justifyContent: "center",
-    alignItems: "center",
-    alignSelf: "center",
-    position: "absolute",
-    bottom: 20,
-  },
-});
+
 const AdminReportReviewDetailScreen = () => {
   return (
     <AdminReport>
@@ -99,16 +84,16 @@ const AdminReportReviewDetailScreen = () => {
             rate={5}
           />
           <Divider />
-          <Box style={styles.text}>
+          <Box style={styles.textContentType}>
             <Text bold>Diem cau </Text>
             <Text>Thuan Viet</Text>
           </Box>
           <Divider />
-          <Text style={styles.text}>
+          <Text style={styles.textContentType}>
             <Text bold>Thời gian báo cáo :</Text> 0/0/0
           </Text>
           <Divider />
-          <Text bold style={styles.text}>
+          <Text bold style={styles.textContentType}>
             Danh sách báo cáo :
           </Text>
           <FlatList
@@ -130,7 +115,7 @@ const AdminReportReviewDetailScreen = () => {
               >
                 <AvatarCard avatarSize="md" nameUser={item.userName} />
                 <Box mt={2}>
-                  <Text italic style={styles.text}>
+                  <Text italic style={styles.textContentType}>
                     {item.content}
                   </Text>
                 </Box>

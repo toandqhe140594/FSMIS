@@ -1,16 +1,10 @@
 import { Box, Divider, FlatList, ScrollView, Text, VStack } from "native-base";
 import React from "react";
-import { StyleSheet } from "react-native";
 
 import AdminReport from "../components/AdminReport";
 import AvatarCard from "../components/AvatarCard";
+import styles from "../config/styles";
 
-const styles = StyleSheet.create({
-  text: {
-    paddingLeft: 8,
-    paddingRight: 8,
-  },
-});
 const AdminFLocationReportDetailScreen = () => {
   const reportData = [
     { userName: "Cưởng", content: "Hồ thả lân ,tôi đã căng" },
@@ -79,16 +73,16 @@ const AdminFLocationReportDetailScreen = () => {
     <AdminReport>
       <ScrollView>
         <VStack space={3} mt={4} px={3}>
-          <Box style={styles.text}>
+          <Box style={styles.textContentType}>
             <Text bold>Điểm câu bị báo cáo</Text>
             <Text>"Hồ thuần việt"</Text>
           </Box>
           <Divider />
-          <Text style={styles.text}>
+          <Text style={styles.textContentType}>
             <Text bold>Thời gian báo cáo :</Text> 0/0/0
           </Text>
           <Divider />
-          <Text bold style={styles.text}>
+          <Text bold style={styles.textContentType}>
             Danh sách báo cáo :
           </Text>
 
@@ -111,7 +105,7 @@ const AdminFLocationReportDetailScreen = () => {
               >
                 <AvatarCard avatarSize="md" nameUser={item.userName} />
                 <Box mt={2}>
-                  <Text italic style={styles.text}>
+                  <Text italic style={styles.textContentType}>
                     {item.content}
                   </Text>
                 </Box>
