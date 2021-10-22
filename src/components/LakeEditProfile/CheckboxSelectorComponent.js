@@ -4,11 +4,18 @@ import React, { useEffect, useState } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 import { StyleSheet, Text, View } from "react-native";
 
+let itemKey = 0;
+const generateKey = () => {
+  itemKey += 1;
+  return itemKey;
+};
+
 const styles = StyleSheet.create({
   error: { color: "#f43f5e", fontSize: 12, fontStyle: "italic" },
   bold: { fontWeight: "bold" },
   text: { fontSize: 16, marginBottom: 4 },
 });
+
 const CheckboxSelectorComponent = ({
   label,
   isTitle,
@@ -53,7 +60,7 @@ const CheckboxSelectorComponent = ({
                   >
                     {/* Display list of checkbox options */}
                     {data.map((item) => (
-                      <Checkbox value={item} my={1}>
+                      <Checkbox key={generateKey()} value={item} my={1}>
                         {item}
                       </Checkbox>
                     ))}
