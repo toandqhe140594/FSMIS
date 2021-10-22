@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import javax.validation.ValidationException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +22,9 @@ public class PostService {
 
 
     public PaginationDtoOut getPostByLocationId(Long locationId, Integer pageNo) {
+        if(pageNo <= 0) {
+            throw new ValidationException("Số trang phải lớn hơn 0");
+        }
         Page<Post> postList = postRepos.findByFishingLocationIdOrderByPostTimeDesc(locationId, PageRequest.of(pageNo - 1, 10));
         List<PostDtoOut> output = new ArrayList<>();
         for (Post post : postList) {
