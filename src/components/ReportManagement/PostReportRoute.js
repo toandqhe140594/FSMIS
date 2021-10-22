@@ -43,7 +43,7 @@ const renderItem = ({ item }) => <ReviewReportCard {...item} />;
 
 const PostReportRoute = () => {
   const [filter, setFilter] = useState("");
-  const [reportList, setReportList] = useState([]);
+  const [reportList, setReportList] = useState(APIList);
   useEffect(() => {
     const getFilteredList = () => {
       switch (filter) {
