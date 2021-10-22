@@ -9,6 +9,8 @@ import PressableCustomCard from "../components/PressableCustomCard";
 import { goToCatchReportDetailScreen } from "../navigations";
 
 const AnglerCatchReportsHistoryScreen = () => {
+  const navigation = useNavigation();
+
   const getCatchReportHistory = useStoreActions(
     (actions) => actions.ProfileModel.getCatchReportHistory,
   );
@@ -22,8 +24,6 @@ const AnglerCatchReportsHistoryScreen = () => {
     // If the current page = 1 aka the list is empty then call api to init the list
     if (catchHistoryCurrentPage === 1) getCatchReportHistory();
   }, []);
-
-  const navigation = useNavigation();
 
   return (
     <Box>
