@@ -83,7 +83,7 @@ const AdminReportEventPostScreen = () => {
             <Text bold>Thời gian báo cáo :</Text> 0/0/0
           </Text>
           <Divider />
-          <EventPostCard />
+          <EventPostCard id={1} />
           <Text bold style={styles.textContentType}>
             Danh sách báo cáo :
           </Text>
