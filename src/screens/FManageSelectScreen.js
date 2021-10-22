@@ -7,7 +7,7 @@ import HeaderTab from "../components/HeaderTab";
 
 const spotExample = [
   {
-    id: "spot1",
+    id: 1,
     address: "Hưng Yên",
     image: "https://wallpaperaccess.com/full/317501.jpg",
     isVerifed: true,
@@ -15,7 +15,7 @@ const spotExample = [
     rate: 4,
   },
   {
-    id: "spot2",
+    id: 2,
     address: "Hưng Yên",
     image: "https://wallpaperaccess.com/full/317501.jpg",
     isVerifed: true,
@@ -23,7 +23,7 @@ const spotExample = [
     rate: 4,
   },
   {
-    id: "spot3",
+    id: 3,
     address: "Hưng Yên",
     image: "https://wallpaperaccess.com/full/317501.jpg",
     isVerifed: true,
@@ -31,7 +31,7 @@ const spotExample = [
     rate: 4,
   },
   {
-    id: "spot4",
+    id: 4,
     address: "Hưng Yên",
     image: "https://wallpaperaccess.com/full/317501.jpg",
     isVerifed: true,
@@ -39,7 +39,7 @@ const spotExample = [
     rate: 4,
   },
   {
-    id: "spot5",
+    id: 5,
     address: "Hưng Yên",
     image: "https://wallpaperaccess.com/full/317501.jpg",
     isVerifed: true,
@@ -64,7 +64,7 @@ const FlocationSelectorScreen = () => {
           {spotExample.length > 0 && (
             <VStack w="90%" space={2} my={2}>
               {spotExample.map((spot) => (
-                <SpotCard {...spot} isManaged />
+                <SpotCard {...spot} isManaged key={spot.id} />
               ))}
             </VStack>
           )}
