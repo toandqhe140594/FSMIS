@@ -59,7 +59,7 @@ const OverviewInformationRoute = () => {
                   <Text bold ml={3} fontSize="md">
                     Thông tin liên hệ
                   </Text>
-                  <Box my={2} ml={8}>
+                  <Box my={2} ml={8} mr={2}>
                     <Text>
                       <Text bold>Địa chỉ: </Text>
                       {address}
