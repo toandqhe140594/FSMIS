@@ -1,4 +1,4 @@
-import { useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, ScrollView, Text, VStack } from "native-base";
 import React, { useEffect } from "react";
@@ -8,9 +8,11 @@ import Swiper from "react-native-swiper";
 import AvatarCard from "../components/AvatarCard";
 import FishCard from "../components/FishCard";
 import HeaderTab from "../components/HeaderTab";
+import { goToFishingLocationOverviewScreen } from "../navigations";
 
 const AnglerCatchReportDetailScreen = () => {
   const route = useRoute();
+  const navigation = useNavigation();
   const getCatchReportDetailById = useStoreActions(
     (actions) => actions.ProfileModel.getCatchReportDetailById,
   );
@@ -18,12 +20,20 @@ const AnglerCatchReportDetailScreen = () => {
   const catchDetails = useStoreState(
     (state) => state.ProfileModel.catchReportDetail,
   );
+
   useEffect(() => {
     if (route.params) {
       const { id } = route.params;
       getCatchReportDetailById({ id });
     }
   }, [catchDetails]);
+
+  const openLocationOverviewScreen = () => {
+    goToFishingLocationOverviewScreen(navigation, {
+      id: catchDetails.locationId,
+    });
+  };
+
   return (
     <ScrollView>
       <HeaderTab name="Chi Tiết" />
@@ -69,7 +79,13 @@ const AnglerCatchReportDetailScreen = () => {
             <Text bold fontSize="16">
               Câu tại :{" "}
             </Text>
-            <Text fontSize="18" underline>
+            <Text
+              fontSize="18"
+              underline
+              onPress={() => {
+                openLocationOverviewScreen();
+              }}
+            >
               {catchDetails.locationName}
             </Text>
           </Text>
