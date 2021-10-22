@@ -47,7 +47,7 @@ const LakeDetailScreen = () => {
       )}
       {!loading && (
         <Box>
-          <HeaderTab name={name && name} id={id} />
+          {name && <HeaderTab name={name} id={id} />}
           <Card containerStyle={{ width: "100%", margin: 0, padding: 0 }}>
             <Card.Image source={{ uri: imageUrl }} />
             <Divider />
