@@ -1,168 +1,203 @@
 import { Entypo } from "@expo/vector-icons";
-import { useStoreState } from "easy-peasy";
+import { yupResolver } from "@hookform/resolvers/yup";
+import DateTimePicker from "@react-native-community/datetimepicker";
 import {
   Avatar,
+  Box,
   Button,
   Center,
   Icon,
   Input,
-  Select,
   Text,
   VStack,
 } from "native-base";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { FormProvider, useForm } from "react-hook-form";
 import {
   KeyboardAvoidingView,
   ScrollView,
   TouchableOpacity,
   useWindowDimensions,
 } from "react-native";
+import * as yup from "yup";
 
+import InputComponent from "../components/common/InputComponent";
+import SelectComponent from "../components/common/SelectComponent";
 import HeaderTab from "../components/HeaderTab";
+import moment from "../config/moment";
+
+const validationSchema = yup.object().shape({
+  aName: yup.string().required("Họ và tên không thể bỏ trống"),
+  aGender: yup.number().default(-1),
+  aAddress: yup.string(),
+  aCityAddress: yup.number(),
+  aDistrictAddress: yup.number(),
+  aCommuneAddress: yup.number(),
+});
+
+const genderData = [
+  { label: "Nam", val: 1 },
+  { label: "Nữ", val: 0 },
+  { label: "Không muốn nói", val: -1 },
+];
+
+const cityData = [
+  { label: "Hà Nội", val: 1 },
+  { label: "Hồ Chí Minh", val: 2 },
+];
+
+const districtData = [
+  { label: "Hai Bà Trưng", val: 1 },
+  { label: "Hoàng Mai", val: 2 },
+];
+
+const communeData = [
+  { label: "Vĩnh Hưng", val: 1 },
+  { label: "Thanh Lương", val: 2 },
+];
 
 const EditProfileScreen = () => {
-  const userInfo = useStoreState((state) => state.ProfileModel.userInfo);
-  const checkGender = (state) => {
-    if (state === null) {
-      return "Không muốn nói";
-    }
-    if (state) {
-      return "Nam";
-    }
-    return "Nữ";
+  const [date, setDate] = useState(null);
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [formattedDate, setFormattedDate] = useState("");
+  const methods = useForm({
+    mode: "onChange",
+    reValidateMode: "onChange",
+    resolver: yupResolver(validationSchema),
+  });
+  const { handleSubmit } = methods;
+
+  const onSubmit = (data) => {
+    console.log(data); // Test submit
   };
-  // const [ward, wardId, district, districtId, province, provinceId] =
-  //   userInfo.addressFromWard;
+
+  useEffect(() => {
+    if (date) {
+      setFormattedDate(moment(date).format("DD/MM/YYYY").toString());
+    }
+  }, [date]);
+
+  const onDateChange = (e, selectedDate) => {
+    const currentDate = selectedDate || date;
+    setShowDatePicker(false);
+    setDate(currentDate);
+  };
+
   return (
     <KeyboardAvoidingView>
       <ScrollView>
+        {showDatePicker && (
+          <DateTimePicker
+            display="default"
+            is24Hour
+            mode="date"
+            value={date || new Date()}
+            onChange={onDateChange}
+          />
+        )}
+
         <Center flex={1} minHeight={Math.round(useWindowDimensions().height)}>
           <HeaderTab name="Thông tin cá nhân" />
-          <VStack
-            flex={1}
-            justifyContent="center"
-            mt={3}
-            mb={1}
-            space={2}
-            w={{ base: "70%", md: "50%", lg: "30%" }}
-          >
-            {/* Avatar image */}
-            <Center mb={2}>
-              <Avatar
-                bg="pink.600"
-                size="2xl"
-                source={{
-                  uri: "https://pbs.twimg.com/profile_images/1177303899243343872/B0sUJIH0_400x400.jpg",
-                }}
-              />
-            </Center>
-            {/* Name input field */}
-            <Text bold fontSize="md" mt={3}>
-              Họ và tên<Text color="danger.500">*</Text>
-            </Text>
-            <Input placeholder={userInfo.fullName} size="lg" type="text" />
-
-            {/* Date picker field */}
-            <Text bold fontSize="md" mt={3}>
-              Ngày sinh<Text color="danger.500">*</Text>
-            </Text>
-            <TouchableOpacity>
-              <Input
-                InputRightElement={
-                  <Icon
-                    as={<Entypo name="calendar" />}
-                    size={5}
-                    mr={1}
-                    color="muted.500"
-                  />
-                }
-                placeholder={userInfo.dob}
-                size="lg"
-                isDisabled
-              />
-            </TouchableOpacity>
-
-            {/* Gender select box */}
-            <Text bold fontSize="md" mt={3}>
-              Giới tính<Text color="danger.500">*</Text>
-            </Text>
-            <Select
-              accessibilityLabel="Chọn giới tính"
-              fontSize="md"
-              placeholder={checkGender(userInfo.gender)}
+          <FormProvider {...methods}>
+            <VStack
+              flex={1}
+              justifyContent="center"
+              mt={3}
+              mb={5}
+              space={4}
+              w={{ base: "70%", md: "50%", lg: "30%" }}
             >
-              {/* Hard code this place */}
-              <Select.Item label="Nam" value={1} />
-              <Select.Item label="Nữ" value={0} />
-              <Select.Item label="Không muốn nói" value={-1} />
-            </Select>
-
-            {/* Address input field */}
-            <Text bold fontSize="md" mt={3}>
-              Địa chỉ
-            </Text>
-            <Input
-              InputLeftElement={
-                <Icon
-                  as={<Entypo name="address" />}
-                  size={5}
-                  ml={3}
-                  color="muted.500"
+              {/* Avatar image */}
+              <Center mb={2}>
+                <Avatar
+                  bg="pink.600"
+                  size="2xl"
+                  source={{
+                    uri: "https://pbs.twimg.com/profile_images/1177303899243343872/B0sUJIH0_400x400.jpg",
+                  }}
                 />
-              }
-              paddingLeft={0}
-              placeholder={userInfo.address}
-              size="lg"
-              type="text"
-            />
+              </Center>
+              <InputComponent
+                label="Họ và tên"
+                isTitle
+                placeholder="Nhập họ và tên"
+                type="text"
+                hasAsterisk
+                controllerName="aName"
+              />
 
-            {/* City select box */}
-            <Text bold fontSize="md" mt={3}>
-              Tỉnh/ Thành phố
-            </Text>
-            <Select
-              accessibilityLabel="Chọn tỉnh, thành phố"
-              fontSize="md"
-              placeholder={userInfo.addressFromWard.province}
-            >
-              {/* Hard code this place */}
-              <Select.Item label="Hà Nội" value={1} />
-              <Select.Item label="Hồ Chí Minh" value={2} />
-            </Select>
+              {/* Date picker field */}
+              <Box>
+                <Text bold fontSize="md" mb={1}>
+                  Ngày sinh
+                </Text>
+                <TouchableOpacity onPress={() => setShowDatePicker(true)}>
+                  <Input
+                    InputRightElement={
+                      <Icon
+                        as={<Entypo name="calendar" />}
+                        size={5}
+                        mr={1}
+                        color="muted.500"
+                      />
+                    }
+                    placeholder="Chọn ngày sinh"
+                    size="lg"
+                    value={formattedDate ? formattedDate.toString() : ""}
+                    isDisabled
+                  />
+                </TouchableOpacity>
+              </Box>
 
-            {/* District select box */}
-            <Text bold fontSize="md" mt={3}>
-              Quận/huyện
-            </Text>
-            <Select
-              accessibilityLabel="Chọn quận, huyện"
-              fontSize="md"
-              placeholder={userInfo.addressFromWard.district}
-            >
-              {/* Hard code this place */}
-              <Select.Item label="Hai Bà Trưng" value={1} />
-              <Select.Item label="Hoàng Mai" value={2} />
-            </Select>
+              {/* Gender select box */}
+              <SelectComponent
+                label="Giới tính"
+                isTitle
+                placeholder="Chọn giới tính"
+                data={genderData}
+                controllerName="aGender"
+              />
 
-            {/* Commune select box */}
-            <Text bold fontSize="md" mt={3}>
-              Phường/xã
-            </Text>
-            <Select
-              accessibilityLabel="Chọn phường, xã"
-              fontSize="md"
-              placeholder={userInfo.addressFromWard.ward}
-            >
-              {/* Hard code this place */}
-              <Select.Item label="Vĩnh Hưng" value={1} />
-              <Select.Item label="Thanh Lương" value={2} />
-            </Select>
+              {/* Address input field */}
+              <InputComponent
+                label="Địa chỉ"
+                isTitle
+                placeholder="Nhập địa chỉ thường trú"
+                controllerName="aAddress"
+              />
 
-            {/* Save changes button */}
-            <Button mt={3} size="lg">
-              Lưu thay đổi
-            </Button>
-          </VStack>
+              {/* City select box */}
+              <SelectComponent
+                label="Tỉnh/Thành phố"
+                isTitle
+                placeholder="Chọn tỉnh/thành phố"
+                data={cityData}
+                controllerName="aCityAddress"
+              />
+
+              {/* District select box */}
+              <SelectComponent
+                label="Quận/Huyện"
+                isTitle
+                placeholder="Chọn quận/huyện"
+                data={districtData}
+                controllerName="aDistrictAddress"
+              />
+
+              {/* Commune select box */}
+              <SelectComponent
+                label="Phường/Xã"
+                isTitle
+                placeholder="Chọn phường/xã"
+                data={communeData}
+                controllerName="aCommuneAddress"
+              />
+              {/* Save changes button */}
+              <Button mt={2} size="lg" onPress={handleSubmit(onSubmit)}>
+                Lưu thay đổi
+              </Button>
+            </VStack>
+          </FormProvider>
         </Center>
       </ScrollView>
     </KeyboardAvoidingView>

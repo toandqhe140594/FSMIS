@@ -36,6 +36,7 @@
     "react-native-calendar-picker": "^7.1.2",
     "react-native-confirmation-code-field": "^7.1.0",
     "react-native-elements": "^3.4.2",
+    "react-native-get-random-values": "^1.7.0",
     "react-native-maps": "^0.28.0",
     "react-native-pager-view": "5.0.12",
     "react-native-qrcode-svg": "^6.1.1",
@@ -48,10 +49,12 @@
     "react-native-web": "~0.13.12",
     "styled-components": "^5.3.1",
     "styled-system": "^5.1.5",
+    "uuid": "^8.3.2",
     "yup": "^0.32.9"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0",
+    "@types/uuid": "^8.3.1",
     "eslint": "^7.32.0",
     "eslint-config-airbnb": "^18.2.1",
     "eslint-config-prettier": "^8.3.0",
