@@ -63,6 +63,14 @@ const APIList = [
   },
 ];
 
+const renderItem = ({ item }) => (
+  <View style={styles.card}>
+    <Pressable onPress={() => {}}>
+      <FLocationCard {...item} showImage={false} />
+    </Pressable>
+  </View>
+);
+
 const AdminFlocationManagementScreen = () => {
   const [fLocationList, setFLocationList] = useState(APIList);
   const [filter, setFilter] = useState("Tất cả");
@@ -82,13 +90,6 @@ const AdminFlocationManagementScreen = () => {
     };
     setFLocationList(getFilteredList());
   }, [filter]);
-  const renderItem = ({ item }) => (
-    <View style={styles.card}>
-      <Pressable onPress={() => {}}>
-        <FLocationCard {...item} showImage={false} />
-      </Pressable>
-    </View>
-  );
   return (
     <>
       <HeaderTab name="Quản lý xác thực Điểm câu" />
