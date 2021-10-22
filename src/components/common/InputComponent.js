@@ -1,13 +1,15 @@
-import { Box, Input, Text } from "native-base";
+import { Input } from "native-base";
 import PropTypes from "prop-types";
 import React from "react";
 import { Controller, useFormContext } from "react-hook-form";
-import { StyleSheet } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
+import { style } from "styled-system";
 
 const styles = StyleSheet.create({
-  container: {},
+  error: { color: "#f43f5e", fontSize: 12, fontStyle: "italic" },
+  asterisk: { color: "#f43f5e", fontSize: 16 },
   bold: { fontWeight: "bold" },
-  text: { fontSize: 16 },
+  text: { fontSize: 16, marginBottom: 4 },
 });
 
 const InputComponent = ({
@@ -25,10 +27,10 @@ const InputComponent = ({
     formState: { errors },
   } = useFormContext();
   return (
-    <Box style={[styles.container, myStyles]}>
-      <Text style={[styles.text, isTitle ? styles.bold : null]} mb={1}>
+    <View style={myStyles}>
+      <Text style={[styles.text, isTitle ? styles.bold : null]}>
         {label}
-        {hasAsterisk && <Text color="danger.500">*</Text>}
+        {hasAsterisk && <Text style={style.asterisk}>*</Text>}
       </Text>
       <Controller
         control={control}
@@ -46,11 +48,9 @@ const InputComponent = ({
         )}
       />
       {errors[controllerName]?.message && (
-        <Text color="red.500" fontSize="xs" italic>
-          {errors[controllerName]?.message}
-        </Text>
+        <Text style={styles.error}>{errors[controllerName]?.message}</Text>
       )}
-    </Box>
+    </View>
   );
 };
 

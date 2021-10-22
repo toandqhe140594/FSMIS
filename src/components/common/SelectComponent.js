@@ -1,8 +1,8 @@
-import { Box, Select, Text } from "native-base";
+import { Select } from "native-base";
 import PropTypes from "prop-types";
 import React from "react";
 import { Controller, useFormContext } from "react-hook-form";
-import { StyleSheet } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 
 let itemKey = 0;
 const generateKey = () => {
@@ -11,15 +11,17 @@ const generateKey = () => {
 };
 
 const styles = StyleSheet.create({
+  error: { color: "#f43f5e", fontSize: 12, fontStyle: "italic" },
+  asterisk: { color: "#f43f5e", fontSize: 16 },
   bold: { fontWeight: "bold" },
-  text: { fontSize: 16 },
+  text: { fontSize: 16, marginBottom: 4 },
 });
 
 const SelectComponent = ({
   label,
   placeholder,
   data,
-  myStyle,
+  myStyles,
   hasAsterisk,
   isTitle,
   controllerName,
@@ -29,10 +31,10 @@ const SelectComponent = ({
     formState: { errors },
   } = useFormContext();
   return (
-    <Box style={myStyle}>
-      <Text style={[styles.text, isTitle ? styles.bold : null]} mb={1}>
+    <View style={myStyles}>
+      <Text style={[styles.text, isTitle ? styles.bold : null]}>
         {label}
-        {hasAsterisk && <Text color="danger.500">*</Text>}
+        {hasAsterisk && <Text style={styles.asterisk}>*</Text>}
       </Text>
       <Controller
         control={control}
@@ -59,11 +61,9 @@ const SelectComponent = ({
         )}
       />
       {errors[controllerName]?.message && (
-        <Text color="red.500" fontSize="xs" italic>
-          {errors[controllerName]?.message}
-        </Text>
+        <Text style={styles.error}>{errors[controllerName]?.message}</Text>
       )}
-    </Box>
+    </View>
   );
 };
 
@@ -71,19 +71,17 @@ SelectComponent.propTypes = {
   label: PropTypes.string.isRequired,
   placeholder: PropTypes.string.isRequired,
   data: PropTypes.arrayOf(PropTypes.object),
-  myStyle: PropTypes.objectOf(PropTypes.string.isRequired),
+  myStyles: PropTypes.objectOf(PropTypes.string.isRequired),
   hasAsterisk: PropTypes.bool,
   isTitle: PropTypes.bool,
-  // handleOnChange: PropTypes.func,
   controllerName: PropTypes.string.isRequired,
 };
 
 SelectComponent.defaultProps = {
-  myStyle: {},
+  myStyles: {},
   hasAsterisk: false,
   isTitle: false,
   data: [],
-  // handleOnChange: () => {},
 };
 
 export default SelectComponent;

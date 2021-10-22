@@ -1,7 +1,6 @@
-import { Box, Flex } from "native-base";
 import PropTypes from "prop-types";
 import React from "react";
-import { StyleSheet } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 import AddImageButton from "./AddImageButton";
 import InteractiveImageBox from "./InteractiveImageBox";
@@ -22,14 +21,14 @@ const image = "";
 
 const SingleImageSection = ({ myStyles }) => {
   return (
-    <Flex style={[styles.container, myStyles]}>
+    <View style={[styles.container, myStyles]}>
       {image && (
-        <Box style={styles.imageContainer}>
+        <View style={styles.imageContainer}>
           <InteractiveImageBox image={image} />
-        </Box>
+        </View>
       )}
       {!image && <AddImageButton />}
-    </Flex>
+    </View>
   );
 };
 

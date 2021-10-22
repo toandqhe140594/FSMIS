@@ -1,7 +1,7 @@
-import { Box, Input } from "native-base";
+import { Input } from "native-base";
 import PropTypes from "prop-types";
 import React from "react";
-import { StyleSheet, Text } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 
 const styles = StyleSheet.create({
   container: {
@@ -21,7 +21,7 @@ const InlineInputComponent = ({
   handleOnChange,
 }) => {
   return (
-    <Box style={[styles.container, myStyles]}>
+    <View style={[styles.container, myStyles]}>
       <Text>{label}</Text>
       <Input
         w={COMPACT_INPUT_WIDTH}
@@ -30,7 +30,7 @@ const InlineInputComponent = ({
         value={value}
         onChangeText={handleOnChange}
       />
-    </Box>
+    </View>
   );
 };
 
