@@ -1,7 +1,7 @@
 import { Select } from "native-base";
 import React, { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { FlatList, StyleSheet, View } from "react-native";
+import { FlatList, Pressable, StyleSheet, View } from "react-native";
 
 import InputComponent from "../components/common/InputComponent";
 import FLocationCard from "../components/FLocationCard";
@@ -84,7 +84,9 @@ const AdminFlocationManagementScreen = () => {
   }, [filter]);
   const renderItem = ({ item }) => (
     <View style={styles.card}>
-      <FLocationCard {...item} showImage={false} />
+      <Pressable onPress={() => {}}>
+        <FLocationCard {...item} showImage={false} />
+      </Pressable>
     </View>
   );
   return (
