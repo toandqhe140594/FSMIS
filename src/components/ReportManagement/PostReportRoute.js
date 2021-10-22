@@ -3,32 +3,37 @@ import React, { useEffect, useState } from "react";
 import { FlatList, StyleSheet, View } from "react-native";
 
 import HeaderTab from "../HeaderTab";
-import ReviewReportCard from "./ReviewReportCard";
+import ReportCard from "./ReportCard";
 
 const APIList = [
   {
     id: "1",
-    userName: "Nguyễn Văn A",
+    userName: "Hồ câu Thuần Việt",
+    postType: "Báo cá",
     isProcessed: true,
   },
   {
     id: "2",
-    userName: "Nguyễn Văn A",
+    userName: "Hồ câu Thuần Việt",
+    postType: "Thông báo",
     isProcessed: true,
   },
   {
     id: "3",
-    userName: "Nguyễn Văn A",
+    userName: "Hồ câu Thuần Việt",
+    postType: "Bồi cá",
     isProcessed: false,
   },
   {
     id: "4",
-    userName: "Nguyễn Văn A",
+    userName: "Hồ câu Thuần Việt",
+    postType: "Báo cá",
     isProcessed: true,
   },
   {
     id: "5",
-    userName: "Nguyễn Văn A",
+    userName: "Hồ câu Thuần Việt",
+    postType: "Báo cá",
     isProcessed: false,
   },
 ];
@@ -39,7 +44,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const renderItem = ({ item }) => <ReviewReportCard {...item} />;
+const renderItem = ({ item }) => <ReportCard {...item} isPostReport />;
 
 const PostReportRoute = () => {
   const [filter, setFilter] = useState("");

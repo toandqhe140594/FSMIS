@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { FlatList, StyleSheet, View } from "react-native";
 
 import HeaderTab from "../HeaderTab";
-import ReviewReportCard from "./ReviewReportCard";
+import ReviewReportCard from "./ReportCard";
 
 const styles = StyleSheet.create({
   flatList: { marginTop: 12 },
@@ -12,32 +12,34 @@ const styles = StyleSheet.create({
 const APIList = [
   {
     id: "1",
-    userName: "Nguyễn Văn A",
+    reportTarget: "Hồ Câu Thuần Việt",
     isProcessed: true,
   },
   {
     id: "2",
-    userName: "Nguyễn Văn A",
+    reportTarget: "Hồ Câu Thuần Việt",
     isProcessed: true,
   },
   {
     id: "3",
-    userName: "Nguyễn Văn A",
+    reportTarget: "Hồ Câu Thuần Việt",
     isProcessed: false,
   },
   {
     id: "4",
-    userName: "Nguyễn Văn A",
+    reportTarget: "Hồ Câu Thuần Việt",
     isProcessed: true,
   },
   {
     id: "5",
-    userName: "Nguyễn Văn A",
+    reportTarget: "Hồ Câu Thuần Việt",
     isProcessed: false,
   },
 ];
 
-const renderItem = ({ item }) => <ReviewReportCard {...item} />;
+const renderItem = ({ item }) => (
+  <ReviewReportCard {...item} isFLocationReport />
+);
 
 const FLocationReportRoute = () => {
   const [filter, setFilter] = useState("");
