@@ -189,8 +189,8 @@ const MapViewRoute = () => {
             <Button
               colorScheme="muted"
               position="absolute"
-              right={7}
-              top={5}
+              left={3}
+              top={3}
               onPress={toggleOverlay}
             >
               <Center flexDir="row">
