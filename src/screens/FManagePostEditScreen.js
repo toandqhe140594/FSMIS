@@ -1,8 +1,8 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Box, Button, Center, Select, Text, VStack } from "native-base";
+import { Box, Button, Select, Text, VStack } from "native-base";
 import React, { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { Dimensions, ScrollView, StyleSheet } from "react-native";
+import { Dimensions, ScrollView, StyleSheet, View } from "react-native";
 import * as yup from "yup";
 
 import InputComponent from "../components/common/InputComponent";
@@ -29,10 +29,17 @@ const styles = StyleSheet.create({
   sectionWrapper: {
     width: "90%",
   },
+  center: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
 });
 
-const { height } = Dimensions.get("window");
-const ideaScreenHeight = height - 85;
+const OFFSET_BOTTOM = 85;
+// Get window height without status bar height
+const CUSTOM_SCREEN_HEIGHT = Dimensions.get("window").height - OFFSET_BOTTOM;
+
 const PostEditorScreen = () => {
   const [showImageSection, setShowImageSection] = useState(true);
   const methods = useForm({
@@ -43,7 +50,7 @@ const PostEditorScreen = () => {
   const { handleSubmit } = methods;
   const handleValueChange = (value) => {
     console.log(value);
-    setShowImageSection(value === -1);
+    setShowImageSection(value === "image");
   };
   const onSubmit = (data) => {
     console.log(data);
@@ -53,7 +60,7 @@ const PostEditorScreen = () => {
       {/* Without scrollview, it seems the keyboard will not hide if tap out of the component */}
       <HeaderTab name="Bài đăng" />
       <FormProvider {...methods}>
-        <Center height={ideaScreenHeight} mt={2}>
+        <View style={[styles.center, { height: CUSTOM_SCREEN_HEIGHT }]} mt={2}>
           <VStack flex={4} space={2} style={styles.sectionWrapper}>
             <SelectComponent
               label="Sự kiện"
@@ -93,10 +100,10 @@ const PostEditorScreen = () => {
               )}
             </Box>
           </VStack>
-          <Box mb={2} style={styles.sectionWrapper}>
+          <View style={styles.sectionWrapper}>
             <Button onPress={handleSubmit(onSubmit)}>Đăng</Button>
-          </Box>
-        </Center>
+          </View>
+        </View>
       </FormProvider>
     </ScrollView>
   );

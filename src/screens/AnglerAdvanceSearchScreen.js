@@ -1,7 +1,7 @@
-import { Button, Center, VStack } from "native-base";
+import { Button, VStack } from "native-base";
 import React from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { StyleSheet, View } from "react-native";
+import { Dimensions, StyleSheet, View } from "react-native";
 
 import InputComponent from "../components/common/InputComponent";
 import SelectComponent from "../components/common/SelectComponent";
@@ -26,13 +26,17 @@ const cityData = [
 ];
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    marginTop: 16,
+  appContainer: {
+    paddingTop: 16,
   },
-  wrapper: { width: "90%" },
-  buttonWrapper: {
+  section: {
     flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  sectionWrapper: { width: "90%" },
+  buttonWrapper: {
+    width: "90%",
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
@@ -41,6 +45,10 @@ const styles = StyleSheet.create({
     width: "47%",
   },
 });
+
+const OFFSET_BOTTOM = 85;
+// Get window height without status bar height
+const CUSTOM_SCREEN_HEIGHT = Dimensions.get("window").height - OFFSET_BOTTOM;
 
 const AnglerAdvanceSearchScreen = () => {
   const methods = useForm({ mode: "onChange", reValidateMode: "onChange" });
@@ -51,10 +59,10 @@ const AnglerAdvanceSearchScreen = () => {
   return (
     <>
       <HeaderTab name="Tìm kiếm nâng cao" />
-      <View style={[styles.container]}>
+      <View style={[styles.appContainer, { height: CUSTOM_SCREEN_HEIGHT }]}>
         <FormProvider {...methods}>
-          <Center flex={9}>
-            <VStack flex={8} space={2} style={[styles.wrapper]}>
+          <View style={styles.section}>
+            <VStack flex={10} space={2} style={[styles.sectionWrapper]}>
               <InputComponent
                 label="Từ khoá tìm kiếm"
                 placeholder="Nhập số điện thoại, tên hồ câu"
@@ -85,7 +93,7 @@ const AnglerAdvanceSearchScreen = () => {
                 controllerName="rating"
               />
             </VStack>
-            <View style={[styles.wrapper, styles.buttonWrapper]}>
+            <View style={styles.buttonWrapper}>
               <Button variant="outline" style={styles.button}>
                 Xoá bộ lọc
               </Button>
@@ -93,7 +101,7 @@ const AnglerAdvanceSearchScreen = () => {
                 Tìm kiếm
               </Button>
             </View>
-          </Center>
+          </View>
         </FormProvider>
       </View>
     </>
