@@ -1,9 +1,14 @@
 import { action, thunk } from "easy-peasy";
 
+import { API_URL } from "../constants";
 import http from "../utilities/Http";
 
 const model = {
   currentId: 1,
+  locationReviewScore: {
+    score: null,
+    totalReviews: null,
+  },
   locationPostPageNumber: 0,
   locationShortInformation: {},
   locationOverview: {
@@ -46,6 +51,9 @@ const model = {
   setCurrentId: action((state, payload) => {
     state.currentId = payload;
   }),
+  setLocationReviewScore: action((state, payload) => {
+    state.locationReviewScore = payload;
+  }),
   setLocationPostPageNumber: action((state, payload) => {
     state.locationPostPageNumber = payload;
   }),
@@ -67,6 +75,12 @@ const model = {
   }),
   setTotalPostPage: action((state, payload) => {
     state.totalPostPage = payload;
+  }),
+  getLocationReviewScore: thunk(async (actions, payload, { getState }) => {
+    const { data } = await http.get(
+      `location/${getState().currentId}/${API_URL.LOCATION_REVIEW_SCORE}`,
+    );
+    actions.setLocationReviewScore(data);
   }),
   getLocationOverview: thunk(async (actions, payload, { getState }) => {
     const { data } = await http.get(`location/${getState().currentId}`);
@@ -90,12 +104,14 @@ const model = {
   }),
   getLakeList: thunk(async (actions, payload, { getState }) => {
     const { data } = await http.get(
-      `location/${getState().currentId}/lake/all`,
+      `location/${getState().currentId}/${API_URL.LOCATION_LAKE_ALL}`,
     );
     actions.setLakeList(data);
   }),
   getLakeListByLocationId: thunk(async (actions, payload) => {
-    const { data } = await http.get(`location/${payload.id}/lake/all`);
+    const { data } = await http.get(
+      `location/${payload.id}/${API_URL.LOCATION_LAKE_ALL}`,
+    );
     actions.setLakeList(data);
   }),
   getLakeDetailByLakeId: thunk(async (actions, payload, { getState }) => {

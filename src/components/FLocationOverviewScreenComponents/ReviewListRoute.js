@@ -1,5 +1,6 @@
+import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, Button, Center, ScrollView } from "native-base";
-import React from "react";
+import React, { useEffect } from "react";
 import { Divider, Text } from "react-native-elements";
 import { Rating } from "react-native-ratings";
 
@@ -7,22 +8,37 @@ import HeaderTab from "../HeaderTab";
 import ReviewFromAnglerSection from "../ReviewFromAnglerSection";
 
 const ReviewListRoute = () => {
+  const { locationShortInformation, locationReviewScore } = useStoreState(
+    (states) => states.LocationModel,
+  );
+
+  const getLocationReviewScore = useStoreActions(
+    (actions) => actions.LocationModel.getLocationReviewScore,
+  );
+
+  useEffect(() => {
+    getLocationReviewScore();
+  }, []);
+
+  const { id, name, isVerified } = locationShortInformation;
+
   return (
     <ScrollView>
       <Box>
-        <HeaderTab name="Hồ câu thuần việt" isVerified flagable />
+        <HeaderTab id={id} name={name} isVerified={isVerified} flagable />
         <Divider />
         <Center flex={1} py={3}>
-          <Text h2>4.9</Text>
+          <Text h2>{locationReviewScore.score || 0}</Text>
           <Rating
             imageSize={24}
             ratingCount={5}
             readonly
             showRating={false}
-            startingValue={4.9}
+            startingValue={locationReviewScore.score || 0}
           />
-          <Text>(9 đánh gía)</Text>
+          <Text>({locationReviewScore.totalReviews || 0} đánh gía)</Text>
         </Center>
+
         <Divider />
         <Text style={{ fontWeight: "bold", marginTop: 12, marginLeft: 12 }}>
           Đánh giá của bạn
