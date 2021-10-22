@@ -9,19 +9,22 @@ import PressableCustomCard from "../components/PressableCustomCard";
 import { goToCatchReportDetailScreen } from "../navigations";
 
 const AnglerCatchReportsHistoryScreen = () => {
+  const navigation = useNavigation();
+
   const getCatchReportHistory = useStoreActions(
-    (state) => state.ProfileModel.getCatchReportHistory,
+    (actions) => actions.ProfileModel.getCatchReportHistory,
   );
-  const catchReportHistory = useStoreState(
-    (state) => state.ProfileModel.catchReportHistory,
+
+  // Destructure catchHistoryCurrentPage and catchReportHistory list from ProfileModel
+  const { catchHistoryCurrentPage, catchReportHistory } = useStoreState(
+    (states) => states.ProfileModel,
   );
 
   useEffect(() => {
-    getCatchReportHistory();
-  }, [catchReportHistory, getCatchReportHistory]);
+    // If the current page = 1 aka the list is empty then call api to init the list
+    if (catchHistoryCurrentPage === 1) getCatchReportHistory();
+  }, []);
 
-  const navigation = useNavigation();
-  console.log(catchReportHistory);
   return (
     <Box>
       <HeaderTab name="Lịch sử báo cá" />
@@ -68,6 +71,9 @@ const AnglerCatchReportsHistoryScreen = () => {
               </Box>
             )}
             keyExtractor={(item, index) => index.toString()}
+            onEndReached={() => {
+              getCatchReportHistory(0);
+            }}
           />
         )}
       </Box>

@@ -36,20 +36,7 @@ const model = {
     },
   ],
   catchReportHistory: [],
-  checkInHistoryList: [
-    {
-      id: "1",
-      timeIn: "0/0/0",
-      timeOut: "0/0/0",
-      location: "Ho thuan viet",
-    },
-    {
-      id: "1",
-      timeIn: "0/0/0",
-      timeOut: "0/0/0",
-      location: "Ho thuan viet",
-    },
-  ],
+  checkinHistoryList: [],
   catchReportDetail: {
     userId: "1",
     message: "Ngồi cả sáng",
@@ -64,6 +51,10 @@ const model = {
       { id: "3", fishType: "Lang", quantity: "1", totalWeight: "8" },
     ],
   },
+  catchHistoryCurrentPage: 1,
+  catchHistoryTotalPage: 1,
+  checkinHistoryCurrentPage: 1,
+  checkinHistoryTotalPage: 1,
 
   setUserInfo: action((state, payload) => {
     state.userInfo = payload;
@@ -72,21 +63,66 @@ const model = {
     const { data } = await http.get(`personal`);
     actions.setUserInfo(data);
   }),
+
+  // Start of catch report history
   setCatchReportHistory: action((state, payload) => {
     state.catchReportHistory = state.catchReportHistory.concat(payload);
   }),
-  getCatchReportHistory: thunk(async (actions) => {
-    const { data } = await http.get(`personal/catch`);
-    actions.setCatchReportHistory(data);
+  setCatchHistoryCurrentPage: action((state, payload) => {
+    state.catchHistoryCurrentPage = payload;
   }),
+  setCatchHistoryTotalPage: action((state, payload) => {
+    state.catchHistoryTotalPage = payload;
+  }),
+  getCatchReportHistory: thunk(async (actions, payload, { getState }) => {
+    const { catchHistoryCurrentPage, catchHistoryTotalPage } = getState();
 
-  setCheckInHistoryList: action((state, payload) => {
-    state.catchReportHistory = [
-      ...state.catchReportHistoryList,
-      ...payload.data,
-    ];
+    // If current page is smaller than 0 or larger than maximum page then return
+    if (
+      catchHistoryCurrentPage <= 0 ||
+      catchHistoryCurrentPage > catchHistoryTotalPage
+    )
+      return;
+
+    const { data } = await http.get(`personal/catch`, {
+      params: { pageNo: catchHistoryCurrentPage },
+    });
+    const { totalPage, items } = data;
+    actions.setCatchHistoryCurrentPage(catchHistoryCurrentPage + 1);
+    actions.setCatchHistoryTotalPage(totalPage);
+    actions.setCatchReportHistory(items);
   }),
-  getCheckInHistoryList: action((state, payload) => {}),
+  // End of catch report history
+
+  // Start of checkin history
+  setCheckinHistoryList: action((state, payload) => {
+    state.checkinHistoryList = state.checkinHistoryList.concat(payload);
+  }),
+  setCheckinHistoryCurrentPage: action((state, payload) => {
+    state.checkinHistoryCurrentPage = payload;
+  }),
+  setCheckinHistoryTotalPage: action((state, payload) => {
+    state.checkinHistoryTotalPage = payload;
+  }),
+  getCheckinHistoryList: thunk(async (actions, payload, { getState }) => {
+    const { checkinHistoryCurrentPage, checkinHistoryTotalPage } = getState();
+
+    // If current page is smaller than 0 or larger than maximum page then return
+    if (
+      checkinHistoryCurrentPage <= 0 ||
+      checkinHistoryCurrentPage > checkinHistoryTotalPage
+    )
+      return;
+
+    const { data } = await http.get(`personal/checkin`, {
+      params: { pageNo: checkinHistoryCurrentPage },
+    });
+    const { totalPage, items } = data;
+    actions.setCheckinHistoryCurrentPage(checkinHistoryCurrentPage + 1);
+    actions.setCheckinHistoryTotalPage(totalPage);
+    actions.setCheckinHistoryList(items);
+  }),
+  // End of checkin history
 
   setCatchReportDetail: action((state, payload) => {
     state.catchReportDetail = payload;

@@ -147,11 +147,8 @@ MapViewOverlay.propTypes = {
 };
 
 const MapViewRoute = () => {
-  const locationList = useStoreState(
-    (states) => states.MapSearchModel.locationList,
-  );
-  const currentLocation = useStoreState(
-    (states) => states.MapSearchModel.currentLocation,
+  const { locationList, currentLocation } = useStoreState(
+    (states) => states.MapSearchModel,
   );
   const setCurrentLocation = useStoreActions(
     (actions) => actions.MapSearchModel.setCurrentLocation,
