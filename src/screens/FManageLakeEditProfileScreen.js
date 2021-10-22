@@ -12,7 +12,7 @@ import {
   Text,
   VStack,
 } from "native-base";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { StyleSheet } from "react-native";
 import { v4 as uuidv4 } from "uuid";
@@ -52,8 +52,6 @@ const LakeEditProfileScreen = () => {
     amount: "",
     totalWeight: "",
   };
-  const [fishingMethods, setFishingMethods] = useState([]);
-  const [selectedString, setSelectedString] = useState("Chọn loại hình câu");
   const [cardList, setCardList] = useState([initFishCard]);
   const methods = useForm({
     mode: "onChange",
@@ -64,21 +62,8 @@ const LakeEditProfileScreen = () => {
   const onSubmit = (data) => {
     // Test submit
     console.log(data);
-    console.log(fishingMethods);
     console.log(cardList);
   };
-  const handleOnSelect = (values) => {
-    setFishingMethods(values || []);
-  };
-  useEffect(() => {
-    if (fishingMethods.length === 0) setSelectedString("Chọn loại hình câu");
-    else
-      setSelectedString(
-        fishingMethods.reduce(
-          (accumulator, currentValue) => `${accumulator}, ${currentValue}`,
-        ),
-      );
-  }, [fishingMethods]);
 
   const addCard = () => {
     const newCard = initFishCard;
@@ -106,7 +91,7 @@ const LakeEditProfileScreen = () => {
           <VStack space={3} divider={<Divider />}>
             <Center mt={1}>
               {/* Image Picker section */}
-              <SingleImageSection style={styles.sectionWrapper} />
+              <SingleImageSection myStyles={styles.sectionWrapper} />
             </Center>
 
             <Center>
@@ -120,18 +105,13 @@ const LakeEditProfileScreen = () => {
             </Center>
 
             <Center>
-              <VStack space={2} style={styles.sectionWrapper}>
-                <Text fontSize="md" bold>
-                  Loại hình câu
-                </Text>
-                {/* Uncontrolled field */}
-                <CheckboxSelectorComponent
-                  placeholder={selectedString}
-                  groupValue={fishingMethods}
-                  handleOnSelect={handleOnSelect}
-                  data={fishingMethodData}
-                />
-              </VStack>
+              <CheckboxSelectorComponent
+                myStyle={styles.sectionWrapper}
+                label="Loại hình câu"
+                isTitle
+                placeholder="Chọn loại hình câu"
+                data={fishingMethodData}
+              />
             </Center>
 
             <Center>

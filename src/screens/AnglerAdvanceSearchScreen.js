@@ -1,5 +1,5 @@
 import { Button, Center, VStack } from "native-base";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { StyleSheet, View } from "react-native";
 
@@ -28,6 +28,7 @@ const cityData = [
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    marginTop: 16,
   },
   wrapper: { width: "90%" },
   buttonWrapper: {
@@ -36,42 +37,17 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
   },
+  button: {
+    width: "47%",
+  },
 });
 
 const AnglerAdvanceSearchScreen = () => {
-  const [fishingMethods, setFishingMethods] = useState([]);
-  const [selectedMethods, setSelectedMethods] = useState("");
-  const [fishTypes, setFishTypes] = useState([]);
-  const [selectedTypes, setSelectedTypes] = useState("");
   const methods = useForm({ mode: "onChange", reValidateMode: "onChange" });
-  const handleOnSelectMethods = (values) => {
-    setFishingMethods(values || []);
-  };
-  const handleOnSelectTypes = (values) => {
-    setFishTypes(values || []);
-  };
-  const onSubmit = (date) => {
+  const { handleSubmit } = methods;
+  const onSubmit = (data) => {
     console.log(data);
   };
-  useEffect(() => {
-    if (fishingMethods.length === 0)
-      setSelectedMethods("Lọc theo loại hình câu");
-    else
-      setSelectedMethods(
-        fishingMethods.reduce(
-          (accumulator, currentValue) => `${accumulator}, ${currentValue}`,
-        ),
-      );
-  }, [fishingMethods]);
-  useEffect(() => {
-    if (fishTypes.length === 0) setSelectedTypes("Lọc theo loại cá");
-    else
-      setSelectedTypes(
-        fishTypes.reduce(
-          (accumulator, currentValue) => `${accumulator}, ${currentValue}`,
-        ),
-      );
-  }, [fishTypes]);
   return (
     <>
       <HeaderTab name="Tìm kiếm nâng cao" />
@@ -92,17 +68,15 @@ const AnglerAdvanceSearchScreen = () => {
               />
               <CheckboxSelectorComponent
                 label="Loại hình câu"
-                placeholder={selectedMethods}
-                groupValue={fishingMethods}
-                handleOnSelect={handleOnSelectMethods}
+                placeholder="Chọn loại hình câu"
                 data={fishingMethodData}
+                controllerName="fishingMethods"
               />
               <CheckboxSelectorComponent
                 label="Loại cá"
-                placeholder={selectedTypes}
-                groupValue={fishTypes}
-                handleOnSelect={handleOnSelectTypes}
+                placeholder="Chọn loại cá"
                 data={fishTypeData}
+                controllerName="fishTypes"
               />
               <SelectComponent
                 label="Đánh giá"
@@ -112,10 +86,12 @@ const AnglerAdvanceSearchScreen = () => {
               />
             </VStack>
             <View style={[styles.wrapper, styles.buttonWrapper]}>
-              <Button variant="outline" style={{ width: "45%" }}>
+              <Button variant="outline" style={styles.button}>
                 Xoá bộ lọc
               </Button>
-              <Button style={{ width: "45%" }}>Tìm kiếm</Button>
+              <Button style={styles.button} onPress={handleSubmit(onSubmit)}>
+                Tìm kiếm
+              </Button>
             </View>
           </Center>
         </FormProvider>
