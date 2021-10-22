@@ -8,7 +8,7 @@ import { Text } from "react-native-elements";
 import styles from "../config/styles";
 import { goBack, goToWriteReportScreen } from "../navigations";
 
-const HeaderTab = ({ name, isVerified, flagable }) => {
+const HeaderTab = ({ name, isVerified, flagable, id }) => {
   const navigation = useNavigation();
 
   return (
@@ -42,7 +42,7 @@ const HeaderTab = ({ name, isVerified, flagable }) => {
         </Box>
         <Pressable
           onPress={() => {
-            goToWriteReportScreen(navigation);
+            if (id) goToWriteReportScreen(navigation, { id });
           }}
         >
           <Ionicons
@@ -61,10 +61,12 @@ HeaderTab.propTypes = {
   name: PropTypes.string.isRequired,
   isVerified: PropTypes.bool,
   flagable: PropTypes.bool,
+  id: PropTypes.number,
 };
 HeaderTab.defaultProps = {
   isVerified: false,
   flagable: false,
+  id: null,
 };
 
 export default HeaderTab;
