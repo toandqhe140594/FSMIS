@@ -1,5 +1,6 @@
 import { action, thunk } from "easy-peasy";
 
+import { API_URL } from "../constants";
 import http from "../utilities/Http";
 
 const model = {
@@ -60,7 +61,7 @@ const model = {
     state.userInfo = payload;
   }),
   getUserInfo: thunk(async (actions) => {
-    const { data } = await http.get(`personal`);
+    const { data } = await http.get(`${API_URL.PERSONAL_INFORMATION}`);
     actions.setUserInfo(data);
   }),
 
@@ -84,7 +85,7 @@ const model = {
     )
       return;
 
-    const { data } = await http.get(`personal/catch`, {
+    const { data } = await http.get(`${API_URL.PERSONAL_CATCH_REPORT}`, {
       params: { pageNo: catchHistoryCurrentPage },
     });
     const { totalPage, items } = data;
@@ -114,7 +115,7 @@ const model = {
     )
       return;
 
-    const { data } = await http.get(`personal/checkin`, {
+    const { data } = await http.get(`${API_URL.PERSONAL_CHECKIN}`, {
       params: { pageNo: checkinHistoryCurrentPage },
     });
     const { totalPage, items } = data;
@@ -128,7 +129,9 @@ const model = {
     state.catchReportDetail = payload;
   }),
   getCatchReportDetailById: thunk(async (actions, payload) => {
-    const { data } = await http.get(`personal/catch/${payload.id}`);
+    const { data } = await http.get(
+      `${API_URL.PERSONAL_CATCH_REPORT}/${payload.id}`,
+    );
 
     actions.setCatchReportDetail(data);
   }),
