@@ -47,7 +47,7 @@ const AnglerCheckInHistory = () => {
                 <PressableCustomCard paddingX="2" paddingY="1">
                   <CheckInCard
                     timeIn={item.checkInTime}
-                    timeOut={item.checkoutTime}
+                    timeOut={item.checkOutTime}
                   >
                     <Text bold fontSize="md">
                       {item.locationName}
@@ -57,6 +57,9 @@ const AnglerCheckInHistory = () => {
               </Box>
             )}
             keyExtractor={(item) => item.id.toString()}
+            onEndReached={() => {
+              getCheckinHistoryList();
+            }}
           />
         )}
       </Box>

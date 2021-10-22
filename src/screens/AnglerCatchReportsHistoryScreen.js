@@ -71,6 +71,9 @@ const AnglerCatchReportsHistoryScreen = () => {
               </Box>
             )}
             keyExtractor={(item, index) => index.toString()}
+            onEndReached={() => {
+              getCatchReportHistory(0);
+            }}
           />
         )}
       </Box>
