@@ -18,7 +18,7 @@ public class LakeDtoOut {
     private Float length;
     private Float width;
     private Float depth;
-    private LocalDateTime lastEditTime;
+    private String lastEditTime;
     private String price;
     private String imageUrl;
     private List<FishDtoOut> fishInLake;

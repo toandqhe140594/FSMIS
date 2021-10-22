@@ -101,7 +101,7 @@ public class LakeService {
                 .length(lake.getLength())
                 .width(lake.getWidth())
                 .depth(lake.getDepth())
-                .lastEditTime(lake.getLastEditTime())
+                .lastEditTime(ServiceUtils.convertDateToString(lake.getLastEditTime()))
                 .price(lake.getPrice())
                 .imageUrl(lake.getImageUrl())
                 .fishInLake(fishes)
