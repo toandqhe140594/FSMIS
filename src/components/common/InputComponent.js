@@ -28,10 +28,12 @@ const InputComponent = ({
   } = useFormContext();
   return (
     <View style={myStyles}>
-      <Text style={[styles.text, isTitle ? styles.bold : null]}>
-        {label}
-        {hasAsterisk && <Text style={style.asterisk}>*</Text>}
-      </Text>
+      {label.length > 0 && (
+        <Text style={[styles.text, isTitle ? styles.bold : null]}>
+          {label}
+          {hasAsterisk && <Text style={style.asterisk}>*</Text>}
+        </Text>
+      )}
       <Controller
         control={control}
         name={controllerName}
@@ -55,9 +57,9 @@ const InputComponent = ({
 };
 
 InputComponent.propTypes = {
-  label: PropTypes.string.isRequired,
-  placeholder: PropTypes.string.isRequired,
-  myStyles: PropTypes.objectOf(PropTypes.string.isRequired),
+  label: PropTypes.string,
+  placeholder: PropTypes.string,
+  myStyles: PropTypes.objectOf(PropTypes.string),
   hasAsterisk: PropTypes.bool,
   isTitle: PropTypes.bool,
   type: PropTypes.string,
@@ -66,6 +68,8 @@ InputComponent.propTypes = {
 };
 
 InputComponent.defaultProps = {
+  label: "",
+  placeholder: "",
   myStyles: {},
   hasAsterisk: false,
   isTitle: false,
