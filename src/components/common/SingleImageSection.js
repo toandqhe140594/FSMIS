@@ -22,7 +22,7 @@ const image = "";
 const SingleImageSection = ({ myStyles }) => {
   return (
     <View style={[styles.container, myStyles]}>
-      {image && (
+      {image.length > 0 && (
         <View style={styles.imageContainer}>
           <InteractiveImageBox image={image} />
         </View>
@@ -33,7 +33,7 @@ const SingleImageSection = ({ myStyles }) => {
 };
 
 SingleImageSection.propTypes = {
-  myStyles: PropTypes.objectOf(PropTypes.string.isRequired),
+  myStyles: PropTypes.objectOf(PropTypes.string),
 };
 
 SingleImageSection.defaultProps = {
