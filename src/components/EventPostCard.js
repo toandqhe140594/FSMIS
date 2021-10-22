@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 import React from "react";
 import { Badge, Card, Divider, Text } from "react-native-elements";
 
+import styles from "../config/styles";
 import AvatarCard from "./AvatarCard";
 
 const EventPostCard = ({
@@ -12,15 +13,18 @@ const EventPostCard = ({
   lakePost,
   iconName,
   iconEvent,
+  image,
+  edited,
+  postTime,
+  id,
 }) => {
   // Thu gon angler, lakePost thanh 1
-  const image = "https://picsum.photos/500";
   return (
     <Box mt="1" px="1.4">
       {postStyle === "LAKE_POST" && (
         <>
           <HStack px="2" mb={3} mt={4} justifyContent="space-between">
-            <Box flexDirection="row" justifyContent="flex-start">
+            <Box justifyContent="flex-start" alignItems="flex-start">
               <Badge
                 badgeStyle={{
                   borderRadius: 0,
@@ -32,6 +36,9 @@ const EventPostCard = ({
                 status="primary"
                 value={lakePost.badge}
               />
+              <Text style={styles.ml1}>
+                {postTime} {edited && "(Đã chỉnh sửa)"}
+              </Text>
             </Box>
 
             <Menu
@@ -51,7 +58,7 @@ const EventPostCard = ({
 
           <VStack>
             <Box mb={2} w="100%" px="2" pl="3">
-              <Text>{lakePost.message}</Text>
+              <Text>{lakePost.content && lakePost.content.trim()}</Text>
             </Box>
           </VStack>
         </>
@@ -61,7 +68,7 @@ const EventPostCard = ({
         <VStack pb="1" mb={2} px="2">
           <AvatarCard avatarSize="md" name={angler.name} />
           <Box mt={2}>
-            <Text italic>{angler.message}</Text>
+            <Text italic>{angler.content}</Text>
             <Text>
               <Text bold>Đã câu được :</Text>
               {angler.caches}
@@ -71,23 +78,13 @@ const EventPostCard = ({
       )}
 
       <VStack pb={1}>
-        <Card.Image source={{ uri: `${image}` }} style={{ height: 300 }} />
+        <Card.Image source={{ uri: image }} style={{ height: 250 }} />
       </VStack>
       <Divider />
     </Box>
   );
 };
-EventPostCard.defaultProps = {
-  angler: { name: "Dat", message: "Ngôi cả sáng", caches: " cá chép, cá quả" },
-  lakePost: {
-    badge: "Bồi cá",
-    message:
-      "Trắm đen - Chép khủng bồi hồ vip cho ae câu thứ 3-5, Lorem ipsum dolor, sit amet consectetur adipisicing elit",
-  },
-  postStyle: "LAKE_POST",
-  iconName: "flag",
-  iconEvent: [],
-};
+
 EventPostCard.propTypes = {
   angler: PropTypes.objectOf(
     PropTypes.string,
@@ -100,6 +97,25 @@ EventPostCard.propTypes = {
   iconEvent: PropTypes.arrayOf(
     PropTypes.objectOf(PropTypes.string, PropTypes.func),
   ),
+  image: PropTypes.string,
+  edited: PropTypes.bool,
+  postTime: PropTypes.string,
+  id: PropTypes.number.isRequired,
+};
+
+EventPostCard.defaultProps = {
+  angler: { name: "Dat", content: "Ngôi cả sáng", caches: " cá chép, cá quả" },
+  lakePost: {
+    badge: "Bồi cá",
+    content:
+      "Trắm đen - Chép khủng bồi hồ vip cho ae câu thứ 3-5, Lorem ipsum dolor, sit amet consectetur adipisicing elit",
+  },
+  postStyle: "LAKE_POST",
+  iconName: "flag",
+  iconEvent: [],
+  image: "https://picsum.photos/500",
+  edited: false,
+  postTime: "",
 };
 
 export default EventPostCard;

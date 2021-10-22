@@ -1,6 +1,7 @@
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box } from "native-base";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { FlatList, StyleSheet } from "react-native";
 import { Divider } from "react-native-elements";
 
@@ -28,9 +29,13 @@ const CatchReportRoute = () => {
   return (
     <FlatList
       data={dummyMenu}
-      renderItem={() => (
+      renderItem={({ item }) => (
         <PressableCustomCard paddingX="1">
-          <EventPostCard postStyle="ANGLER_POST" />
+          <EventPostCard
+            postStyle="ANGLER_POST"
+            image="https://picsum.photos/500"
+            id={item.id}
+          />
         </PressableCustomCard>
       )}
       keyExtractor={(item, index) => index.toString()}
@@ -39,16 +44,55 @@ const CatchReportRoute = () => {
 };
 
 const FLocationEventRoute = () => {
+  const [lakePostPage, setLakePostPage] = useState(1);
+  const locationPostList = useStoreState(
+    (states) => states.LocationModel.locationPostList,
+  );
+  const getLocationPostListByPage = useStoreActions(
+    (actions) => actions.LocationModel.getLocationPostListByPage,
+  );
+
+  useEffect(() => {
+    getLocationPostListByPage({ pageNo: lakePostPage });
+    setLakePostPage(lakePostPage + 1);
+  }, []);
+
+  const loadMoreLakePostData = () => {
+    getLocationPostListByPage({ pageNo: lakePostPage });
+    setLakePostPage(lakePostPage + 1);
+  };
   return (
-    <FlatList
-      data={dummyMenu}
-      renderItem={() => (
-        <PressableCustomCard paddingX="1">
-          <EventPostCard postStyle="LAKE_POST" />
-        </PressableCustomCard>
+    <>
+      {locationPostList.length > 0 && (
+        <FlatList
+          data={locationPostList}
+          renderItem={({ item }) => (
+            <PressableCustomCard
+              paddingX="1"
+              onPress={() => {
+                console.log(item.id);
+              }}
+            >
+              <EventPostCard
+                lakePost={{
+                  badge: item.postType === "STOCKING" ? "Bồi cá" : "Thông báo",
+                  content: item.content,
+                }}
+                image={item.url}
+                postStyle="LAKE_POST"
+                edited={item.edited}
+                postTime={item.postTime}
+                id={item.id}
+              />
+            </PressableCustomCard>
+          )}
+          onEndReached={() => {
+            loadMoreLakePostData();
+          }}
+          keyExtractor={(item) => item.id.toString()}
+        />
       )}
-      keyExtractor={(item, index) => index.toString()}
-    />
+    </>
   );
 };
 

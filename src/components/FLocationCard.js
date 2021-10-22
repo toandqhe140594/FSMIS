@@ -12,13 +12,14 @@ import {
 } from "../navigations";
 
 const SpotCard = ({
-  id = 1,
+  id,
   address,
   image,
   isVerifed,
   name,
   rate,
   isManaged,
+  showImage,
 }) => {
   const navigation = useNavigation();
 
@@ -30,20 +31,20 @@ const SpotCard = ({
   return (
     <Pressable onPress={() => onPress()}>
       <Card containerStyle={{ width: "100%", padding: 0, margin: 0 }}>
-        <Card.Image source={{ uri: image }} />
-        <VStack mt={1} mb={1} ml={2} space={1}>
-          <Box flexDir="row" alignItems="center">
-            <Text bold fontSize="lg" mr={2}>
-              {name}
-            </Text>
-            {isVerifed && (
-              <MaterialIcons name="verified" color="blue" size={16} />
-            )}
-          </Box>
+        {showImage && <Card.Image source={{ uri: image }} />}
+        <VStack mt={1.5} mb={2} ml={3} space={1.5}>
           <Box>
+            <Box flexDir="row" alignItems="center">
+              <Text bold fontSize="18" mr={2}>
+                {name}
+              </Text>
+              {isVerifed && (
+                <MaterialIcons name="verified" color="blue" size={16} />
+              )}
+            </Box>
             <Rating
               style={{ alignSelf: "flex-start" }}
-              imageSize={18}
+              imageSize={15}
               ratingCount={5}
               readonly
               showRating={false}
@@ -65,6 +66,7 @@ SpotCard.propTypes = {
   rate: PropTypes.number,
   isManaged: PropTypes.bool,
   id: PropTypes.number,
+  showImage: PropTypes.bool,
 };
 SpotCard.defaultProps = {
   image: "https://picsum.photos/200",
@@ -72,6 +74,7 @@ SpotCard.defaultProps = {
   rate: 0,
   isManaged: false,
   id: 1,
+  showImage: true,
 };
 
 export default SpotCard;

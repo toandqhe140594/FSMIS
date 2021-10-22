@@ -137,6 +137,7 @@ ReviewFromAnglerSection.propTypes = {
   negativeCount: PropTypes.number,
   positiveCount: PropTypes.number,
   rate: PropTypes.number.isRequired,
+  isAdminStyle: PropTypes.bool,
 };
 ReviewFromAnglerSection.defaultProps = {
   isDisabled: false,
@@ -144,5 +145,6 @@ ReviewFromAnglerSection.defaultProps = {
   isNeutral: true,
   negativeCount: 0,
   positiveCount: 0,
+  isAdminStyle: false,
 };
 export default ReviewFromAnglerSection;

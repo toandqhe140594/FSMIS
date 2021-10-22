@@ -7,11 +7,18 @@ const FishCard = ({ image, fishType, quantity, totalWeight }) => {
   const defaultQuantity = "con";
 
   return (
-    <Box flexDirection="row" alignItems="center" borderBottomWidth="0.5">
+    <Box
+      flexDirection="row"
+      alignItems="center"
+      borderBottomWidth="0.5"
+      backgroundColor="white"
+    >
       <Image
+        ml={1}
         alt="LW"
         my={1}
-        size={110}
+        w="150"
+        h="81"
         source={{
           uri: image,
         }}

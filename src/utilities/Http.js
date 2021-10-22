@@ -1,4 +1,5 @@
 import axios from "axios";
+// import * as SecureStore from "expo-secure-store";
 
 // Create axios client, pre-configured with baseURL
 const http = axios.create({
@@ -6,15 +7,18 @@ const http = axios.create({
   timeout: 5000,
   headers: {
     "Content-Type": "application/json",
+    // Authorization: `Bearer ${SecureStore.getItemAsync("userToken")}`,
   },
 });
 
 // Set JSON Web Token in Client to be included in all calls
-export const setClientToken = (token) => {
-  http.interceptors.request.use((config) => {
-    config.headers.Authorization = `Bearer ${token}`;
-    return config;
-  });
+export const setAuthToken = (authToken) => {
+  http.defaults.headers.common.Authorization = authToken;
+};
+
+// Remove JSON Web Token in Client to be included in all calls
+export const removeAuthToken = () => {
+  delete http.defaults.headers.common.Authorization;
 };
 
 export default http;

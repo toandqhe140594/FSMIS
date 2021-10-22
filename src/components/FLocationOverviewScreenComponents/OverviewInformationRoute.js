@@ -1,8 +1,10 @@
-import { useStoreActions, useStoreState } from "easy-peasy";
+import { useStoreState } from "easy-peasy";
 import { Box, Button, Text } from "native-base";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, ScrollView } from "react-native";
 import { Card, Divider } from "react-native-elements";
+import MapView, { Marker } from "react-native-maps";
+import Swiper from "react-native-swiper";
 
 import HeaderTab from "../HeaderTab";
 
@@ -11,9 +13,7 @@ const OverviewInformationRoute = () => {
   const locationOverview = useStoreState(
     (states) => states.LocationModel.locationOverview,
   );
-  const getLocationOverview = useStoreActions(
-    (actions) => actions.LocationModel.getLocationOverview,
-  );
+
   const {
     name,
     verify,
@@ -23,13 +23,13 @@ const OverviewInformationRoute = () => {
     rule,
     service,
     timetable,
+    website,
+    lastEditedDate,
+    longitude,
+    latitude,
   } = locationOverview;
 
   const serviceArr = service.split("\n");
-
-  useEffect(() => {
-    getLocationOverview();
-  }, []);
 
   useEffect(() => {
     if (locationOverview) setLoading(false);
@@ -47,7 +47,10 @@ const OverviewInformationRoute = () => {
             <Box>
               <HeaderTab name={name} isVerified={verify} flagable />
               <Card containerStyle={{ width: "100%", margin: 0, padding: 0 }}>
-                <Card.Image source={{ uri: "https://picsum.photos/200" }} />
+                <Swiper height="auto">
+                  <Card.Image source={{ uri: "https://picsum.photos/400" }} />
+                  <Card.Image source={{ uri: "https://picsum.photos/400" }} />
+                </Swiper>
                 <Button my={4} mx={10}>
                   Lưu điểm câu
                 </Button>
@@ -56,7 +59,7 @@ const OverviewInformationRoute = () => {
                   <Text bold ml={3} fontSize="md">
                     Thông tin liên hệ
                   </Text>
-                  <Box my={2} ml={8}>
+                  <Box my={2} ml={8} mr={2}>
                     <Text>
                       <Text bold>Địa chỉ: </Text>
                       {address}
@@ -66,11 +69,12 @@ const OverviewInformationRoute = () => {
                       <Text underline>{phone}</Text>
                     </Text>
                     <Text>
-                      <Text bold>Website </Text>
-                      <Text underline>https://www.facebook.com/</Text>
+                      <Text bold>Website: </Text>
+                      <Text underline>{website}</Text>
                     </Text>
                     <Text>
-                      <Text bold>Cập nhật lần cuối: </Text>01/10/2021
+                      <Text bold>Cập nhật lần cuối: </Text>
+                      {lastEditedDate}
                     </Text>
                   </Box>
                 </Box>
@@ -79,7 +83,18 @@ const OverviewInformationRoute = () => {
                   Bản đồ
                 </Text>
                 <Box m={3}>
-                  <Card.Image source={{ uri: "https://picsum.photos/200" }} />
+                  <MapView
+                    initialRegion={{
+                      latitude,
+                      longitude,
+                      latitudeDelta: 0.0922,
+                      longitudeDelta: 0.0421,
+                    }}
+                    style={{ height: 150, width: "100%" }}
+                    liteMode
+                  >
+                    <Marker coordinate={{ latitude, longitude }} />
+                  </MapView>
                 </Box>
                 <Divider />
                 <Box m={3}>

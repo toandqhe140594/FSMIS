@@ -38,7 +38,7 @@ const data = [
 ];
 const LakeListManagementScreen = () => {
   const [lakeListData, setLakeListData] = useState(data);
-
+  
   const Separator = () => {
     return <Box h={3} />;
   };

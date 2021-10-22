@@ -25,4 +25,18 @@ export default StyleSheet.create({
   p1: {
     padding: 4,
   },
+  textContentType: {
+    paddingLeft: 8,
+    paddingRight: 8,
+  },
+  stickyButtons: {
+    backgroundColor: "#fc454e",
+    width: 200,
+    height: 50,
+    justifyContent: "center",
+    alignItems: "center",
+    alignSelf: "center",
+    position: "absolute",
+    bottom: 20,
+  },
 });

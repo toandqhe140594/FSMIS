@@ -5,7 +5,7 @@ import React from "react";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 import components from "./src/config/components";
-import RootStackNavigator from "./src/navigations/RootStackNavigator";
+import AuthenticationContainer from "./src/utilities/AuthenticationContainer";
 import store from "./src/utilities/Store";
 
 export default function App() {
@@ -19,7 +19,7 @@ export default function App() {
         <SafeAreaView flex={1}>
           <NavigationContainer>
             <StoreProvider store={store}>
-              <RootStackNavigator />
+              <AuthenticationContainer />
             </StoreProvider>
           </NavigationContainer>
         </SafeAreaView>
