@@ -75,7 +75,7 @@ const AdminFLocationReportDetailScreen = () => {
         <VStack space={3} mt={4} px={3}>
           <Box style={styles.textContentType}>
             <Text bold>Điểm câu bị báo cáo</Text>
-            <Text>"Hồ thuần việt"</Text>
+            <Text>Hồ thuần việt</Text>
           </Box>
           <Divider />
           <Text style={styles.textContentType}>

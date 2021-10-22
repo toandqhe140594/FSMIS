@@ -1,4 +1,4 @@
-import { Box, ScrollView, VStack } from "native-base";
+import { Box, VStack } from "native-base";
 import React from "react";
 
 import AvatarCard from "../components/AvatarCard";
@@ -10,31 +10,31 @@ const menuCategory = [
     id: 1,
     title: "Quản lý các tài khoản",
     icon: "set-meal",
-    route: ROUTE_NAMES.PROFILE_CATCHES_REPORT_HISTORY,
+    route: ROUTE_NAMES.ADMIN_ACCOUNT_MANAGEMENT_DETAIL,
   },
   {
     id: 2,
     title: "Quản lý các điểm câu",
     icon: "check",
-    route: ROUTE_NAMES.PROFILE_CHECKIN_REPORT_HISTORY,
+    route: ROUTE_NAMES.ADMIN_LOCATION_MANAGEMENT,
   },
   {
     id: 3,
-    title: "Quản lý báo cá",
+    title: "Quản lý báo cáo",
     icon: "person",
-    route: ROUTE_NAMES.PROFILE_CHANGE_INFORMATION,
+    route: ROUTE_NAMES.ADMIN_REPORT_MANAGEMENT,
   },
   {
     id: 4,
     title: "Quản lý các loại cá",
     icon: "call",
-    route: ROUTE_NAMES.PROFILE_CHANGE_PHONE_NUMBER,
+    route: ROUTE_NAMES.ADMIN_FISH_MANAGEMENT,
   },
   {
     id: 5,
     title: "Quản lý các loại hình câu",
     icon: "lock",
-    route: ROUTE_NAMES.PROFILE_CHANGE_PASSWORD,
+    route: ROUTE_NAMES.ADMIN_FISHING_METHOD_MANAGEMENT,
   },
   {
     id: 6,
@@ -55,20 +55,16 @@ const AdminMainScreen = () => {
         borderColor="coolGray.200"
         pl="4"
         pr="5"
-        py="2"
+        pt="2"
       >
-        <AvatarCard
-          avatarSize="xl"
-          nameFontSize="21"
-          subText="Lên cần : 69 lần"
-        />
+        <AvatarCard avatarSize="xl" nameFontSize="21" nameUser="Admin" />
       </VStack>
-      <ScrollView maxHeight="80%">
+      <Box maxHeight="80%">
         <VStack mt="4">
           <MenuScreen menuListItem={menuCategory} />
           <MenuScreen menuListItem={logOut} />
         </VStack>
-      </ScrollView>
+      </Box>
     </Box>
   );
 };
