@@ -13,29 +13,7 @@ const model = {
     district: "Ha Dong",
     wards: "none",
   },
-  savedLocationList: [
-    {
-      address: "140 Láng hòa lạc",
-      name: "Hồ Câu Đầm Sòi",
-      rate: 3.5,
-      id: 2,
-      image: "https://picsum.photos/500",
-    },
-    {
-      address: "398 nhà thu minh",
-      name: "Thu Lê Fishing Club",
-      rate: 2.5,
-      id: 10,
-      image: "https://picsum.photos/500",
-    },
-    {
-      address: "Hồ Phương Liệt",
-      name: "Khu câu cá Hồ Phương Liệt",
-      rate: 1.3,
-      id: 9,
-      image: "https://picsum.photos/500",
-    },
-  ],
+  savedLocationList: [],
   catchReportHistory: [],
   checkinHistoryList: [],
   catchReportDetail: {
@@ -56,6 +34,8 @@ const model = {
   catchHistoryTotalPage: 1,
   checkinHistoryCurrentPage: 1,
   checkinHistoryTotalPage: 1,
+  savedLocationCurrentPage: 1,
+  savedLocationTotalPage: 1,
 
   setUserInfo: action((state, payload) => {
     state.userInfo = payload;
@@ -136,14 +116,29 @@ const model = {
     actions.setCatchReportDetail(data);
   }),
 
-  setSavedLocationList: action((state, payload) => {
-    state.savedLocationList = payload;
+  setSavedLocationCurrentPage: action((state, payload) => {
+    state.savedLocationCurrentPage = payload;
   }),
-  getSavedLocationList: thunk(async (actions, payload) => {
-    // const { data } = await http.get(`location/nearby`, {
-    //   params: { ...payload },
-    // });
-    // actions.setSavedLocationList(data);
+  setSavedLocationTotalPage: action((state, payload) => {
+    state.savedLocationTotalPage = payload;
+  }),
+  setSavedLocationList: action((state, payload) => {
+    state.savedLocationList = state.savedLocationList.concat(payload);
+  }),
+  getSavedLocationList: thunk(async (actions, payload, { getState }) => {
+    const { savedLocationCurrentPage: pageNo, savedLocationTotalPage } =
+      getState();
+
+    // If current page is smaller than 0 or larger than maximum page then return
+    if (pageNo <= 0 || pageNo > savedLocationTotalPage) return;
+    const { data } = await http.get(`${API_URL.PERSONAL_SAVED_LOCATION}`, {
+      params: { pageNo },
+    });
+
+    const { totalPage, items } = data;
+    actions.setSavedLocationCurrentPage(pageNo + 1);
+    actions.setSavedLocationTotalPage(totalPage);
+    actions.setSavedLocationList(items);
   }),
 };
 export default model;
