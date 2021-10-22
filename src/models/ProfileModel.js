@@ -64,6 +64,8 @@ const model = {
       { id: "3", fishType: "Lang", quantity: "1", totalWeight: "8" },
     ],
   },
+  catchHistoryCurrentPage: 1,
+  catchHistoryTotalPage: 1,
 
   setUserInfo: action((state, payload) => {
     state.userInfo = payload;
@@ -72,12 +74,33 @@ const model = {
     const { data } = await http.get(`personal`);
     actions.setUserInfo(data);
   }),
+
   setCatchReportHistory: action((state, payload) => {
     state.catchReportHistory = state.catchReportHistory.concat(payload);
   }),
-  getCatchReportHistory: thunk(async (actions) => {
-    const { data } = await http.get(`personal/catch`);
-    actions.setCatchReportHistory(data);
+  getCatchReportHistory: thunk(async (actions, payload, { getState }) => {
+    const { catchHistoryCurrentPage, catchHistoryTotalPage } = getState();
+
+    // If current page is smaller than 0 or larger than maximum page then return
+    if (
+      catchHistoryCurrentPage <= 0 ||
+      catchHistoryCurrentPage > catchHistoryTotalPage
+    )
+      return;
+
+    const { data } = await http.get(`personal/catch`, {
+      params: { pageNo: catchHistoryCurrentPage },
+    });
+    const { totalPage, items } = data;
+    actions.setCatchHistoryCurrentPage(catchHistoryCurrentPage + 1);
+    actions.setCatchHistoryTotalPage(totalPage);
+    actions.setCatchReportHistory(items);
+  }),
+  setCatchHistoryCurrentPage: action((state, payload) => {
+    state.catchHistoryCurrentPage = payload;
+  }),
+  setCatchHistoryTotalPage: action((state, payload) => {
+    state.catchHistoryTotalPage = payload;
   }),
 
   setCheckInHistoryList: action((state, payload) => {
