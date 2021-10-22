@@ -1,60 +1,92 @@
 import { Checkbox, Select } from "native-base";
 import PropTypes from "prop-types";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { Controller, useFormContext } from "react-hook-form";
 import { StyleSheet, Text, View } from "react-native";
 
 const styles = StyleSheet.create({
-  error: {},
+  error: { color: "#f43f5e", fontSize: 12, fontStyle: "italic" },
   bold: { fontWeight: "bold" },
   text: { fontSize: 16, marginBottom: 4 },
 });
 const CheckboxSelectorComponent = ({
   label,
-  groupValue,
+  isTitle,
   placeholder,
-  handleOnSelect,
   data,
+  controllerName,
+  myStyles,
 }) => {
+  const {
+    control,
+    formState: { errors },
+  } = useFormContext();
+  const [userSelection, setUserSelection] = useState("");
   return (
-    <View>
-      {label.length > 0 && <Text style={styles.text}>{label}</Text>}
-      <Select placeholder={placeholder} fontSize="md">
+    <View style={myStyles}>
+      {label.length > 0 && (
+        <Text style={[styles.text, isTitle ? styles.bold : null]}>{label}</Text>
+      )}
+      <Select placeholder={userSelection || placeholder} fontSize="md">
         <Select.Item
+          disabled
           label={
-            <Checkbox.Group
-              colorScheme="green"
-              defaultValue={groupValue}
-              onChange={handleOnSelect}
-              alignItems="flex-start"
-            >
-              {/* Display list of checkbox options */}
-              {data.map((item) => (
-                <Checkbox value={item} my={1}>
-                  {item}
-                </Checkbox>
-              ))}
-            </Checkbox.Group>
+            <Controller
+              control={control}
+              name={controllerName}
+              render={({ field: { onChange, value } }) => {
+                useEffect(() => {
+                  if (value === undefined || value.length === 0)
+                    setUserSelection(placeholder);
+                  else {
+                    setUserSelection(
+                      value.reduce((acc, current) => `${acc}, ${current}`),
+                    );
+                  }
+                }, [value]);
+                return (
+                  <Checkbox.Group
+                    colorScheme="green"
+                    defaultValue={value}
+                    onChange={onChange}
+                    alignItems="flex-start"
+                  >
+                    {/* Display list of checkbox options */}
+                    {data.map((item) => (
+                      <Checkbox value={item} my={1}>
+                        {item}
+                      </Checkbox>
+                    ))}
+                  </Checkbox.Group>
+                );
+              }}
+            />
           }
         />
       </Select>
+      {errors[controllerName]?.message && (
+        <Text style={styles.error}>{errors[controllerName]?.message}</Text>
+      )}
     </View>
   );
 };
 
 CheckboxSelectorComponent.propTypes = {
   label: PropTypes.string,
-  handleOnSelect: PropTypes.func,
+  isTitle: PropTypes.bool,
   placeholder: PropTypes.string,
-  groupValue: PropTypes.arrayOf(PropTypes.string),
   data: PropTypes.arrayOf(PropTypes.string),
+  controllerName: PropTypes.string,
+  myStyles: PropTypes.objectOf(PropTypes.string),
 };
 
 CheckboxSelectorComponent.defaultProps = {
   label: "",
-  groupValue: [],
+  isTitle: false,
   data: [],
-  handleOnSelect: () => {},
   placeholder: "",
+  controllerName: "",
+  myStyles: {},
 };
 
 export default CheckboxSelectorComponent;
