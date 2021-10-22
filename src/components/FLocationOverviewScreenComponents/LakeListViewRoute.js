@@ -26,12 +26,12 @@ const LakeListViewRoute = () => {
     if (lakeList) setLoading(false);
   }, [lakeList]);
 
-  const { name, isVerified } = locationShortInformation;
+  const { id, name, isVerified } = locationShortInformation;
 
   return (
     <ScrollView>
       <Box>
-        <HeaderTab name={name} isVerified={isVerified} flagable />
+        <HeaderTab id={id} name={name} isVerified={isVerified} flagable />
         <Divider />
         <Box mx="7%">
           {loading && (
