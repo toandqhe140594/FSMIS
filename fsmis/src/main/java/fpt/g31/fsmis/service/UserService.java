@@ -70,6 +70,9 @@ public class UserService {
     }
 
     public PaginationDtoOut getPersonalCatchList(HttpServletRequest request, int pageNo) {
+        if(pageNo <= 0) {
+            throw new ValidationException("Địa chỉ không tồn tại");
+        }
         User user = jwtFilter.getUserFromToken(request);
         Page<Catches> catches = catchesRepos.findByUserId(user.getId(), PageRequest.of(pageNo - 1, 10));
         List<CatchesOverviewNoImageDtoOut> catchesOverviewDtoOut = new ArrayList<>();
@@ -125,6 +128,9 @@ public class UserService {
     }
 
     public PaginationDtoOut getSavedFishingLocation(HttpServletRequest request, int pageNo) {
+        if(pageNo <= 0) {
+            throw new ValidationException("Địa chỉ không tồn tại");
+        }
         User user = jwtFilter.getUserFromToken(request);
 
         // CUSTOM PAGINATION
@@ -142,7 +148,7 @@ public class UserService {
                     .name(fishingLocation.getName())
                     .image(ServiceUtils.splitString(fishingLocation.getImageUrl()).get(0))
                     .verify(fishingLocation.getVerify())
-                    .score(reviewRepos.getAverageScoreByFishingLocationId(fishingLocation.getId()))
+                    .score(reviewRepos.getAverageScoreByFishingLocationIdAndActiveIsTrue(fishingLocation.getId()))
                     .address(ServiceUtils.getAddress(fishingLocation.getAddress(), fishingLocation.getWard()))
                     .build();
             output.add(item);
@@ -156,6 +162,9 @@ public class UserService {
     }
 
     public PaginationDtoOut getCheckInHistory(HttpServletRequest request, int pageNo) {
+        if(pageNo <= 0) {
+            throw new ValidationException("Địa chỉ không tồn tại");
+        }
         User user = jwtFilter.getUserFromToken(request);
         Page<CheckIn> checkInList = checkInRepos.findByUserIdOrderByCheckInTimeDesc(user.getId(), PageRequest.of(pageNo-1, 10));
         List<CheckInHistoryPersonalDtoOut> output = new ArrayList<>();

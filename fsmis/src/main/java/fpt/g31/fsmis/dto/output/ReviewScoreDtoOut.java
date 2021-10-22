@@ -9,17 +9,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class FishingLocationItemDtoOut {
-
-    private Long id;
-
-    private String name;
-
-    private String image;
-
-    private boolean verify;
+public class ReviewScoreDtoOut {
 
     private Double score;
-
-    private String address;
+    
+    private Integer totalReviews;
 }
