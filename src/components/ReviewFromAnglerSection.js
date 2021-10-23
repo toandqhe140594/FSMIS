@@ -27,6 +27,15 @@ const ReviewFromAnglerSection = ({
   userImage,
   id,
 }) => {
+  // Placeholder for function
+  const goToEditScreen = () => {
+    console.log("go to edit report screen", id);
+  };
+
+  const deleteReview = () => {
+    console.log("delete review ", id);
+  };
+
   return (
     <Box flex={1} m={3} pos="relative">
       {isDisabled ? (
@@ -49,8 +58,20 @@ const ReviewFromAnglerSection = ({
                 );
               }}
             >
-              <Menu.Item>Chỉnh sửa đánh giá</Menu.Item>
-              <Menu.Item>Xóa đánh giá</Menu.Item>
+              <Menu.Item
+                onPress={() => {
+                  goToEditScreen();
+                }}
+              >
+                Chỉnh sửa đánh giá
+              </Menu.Item>
+              <Menu.Item
+                onPress={() => {
+                  deleteReview();
+                }}
+              >
+                Xóa đánh giá
+              </Menu.Item>
             </Menu>
           </Box>
         </>
