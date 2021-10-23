@@ -24,6 +24,8 @@ const ReviewFromAnglerSection = ({
   negativeCount,
   positiveCount,
   rate,
+  userImage,
+  id,
 }) => {
   return (
     <Box flex={1} m={3} pos="relative">
@@ -66,7 +68,7 @@ const ReviewFromAnglerSection = ({
           rounded
           size="medium"
           source={{
-            uri: "https://picsum.photos/200",
+            uri: userImage,
           }}
           containerStyle={{
             margin: 10,
@@ -93,10 +95,16 @@ const ReviewFromAnglerSection = ({
       {isDisabled ? (
         <Button.Group mt={2}>
           <Button isDisabled>
-            <Text>Hữu ích {positiveCount && `(${positiveCount})`}</Text>
+            <Text>
+              Hữu ích{" "}
+              {positiveCount ? positiveCount > 0 && `(${positiveCount})` : ""}
+            </Text>
           </Button>
           <Button isDisabled>
-            <Text>Không hữu ích {negativeCount && `(${negativeCount})`}</Text>
+            <Text>
+              Không hữu ích{" "}
+              {negativeCount ? negativeCount > 0 && `(${negativeCount})` : ""}
+            </Text>
           </Button>
         </Button.Group>
       ) : (
@@ -108,7 +116,8 @@ const ReviewFromAnglerSection = ({
                 !isNeutral && isPositive && styles.selectedButtonText,
               ]}
             >
-              Hữu ích {positiveCount && `(${positiveCount})`}
+              Hữu ích{" "}
+              {positiveCount ? positiveCount > 0 && `(${positiveCount})` : ""}
             </Text>
           </Button>
           <Button>
@@ -119,7 +128,7 @@ const ReviewFromAnglerSection = ({
               ]}
             >
               Không hữu ích
-              {negativeCount && `(${negativeCount})`}
+              {negativeCount ? negativeCount > 0 && `(${negativeCount})` : ""}
             </Text>
           </Button>
         </Button.Group>
@@ -138,6 +147,8 @@ ReviewFromAnglerSection.propTypes = {
   positiveCount: PropTypes.number,
   rate: PropTypes.number.isRequired,
   isAdminStyle: PropTypes.bool,
+  userImage: PropTypes.string,
+  id: PropTypes.number.isRequired,
 };
 ReviewFromAnglerSection.defaultProps = {
   isDisabled: false,
@@ -146,5 +157,6 @@ ReviewFromAnglerSection.defaultProps = {
   negativeCount: 0,
   positiveCount: 0,
   isAdminStyle: false,
+  userImage: "https://picsum.photos/200",
 };
 export default ReviewFromAnglerSection;

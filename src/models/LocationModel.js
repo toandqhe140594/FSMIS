@@ -3,12 +3,30 @@ import { action, thunk } from "easy-peasy";
 import { API_URL } from "../constants";
 import http from "../utilities/Http";
 
+const initialPersonalReview = {
+  id: null,
+  userId: null,
+  userFullName: "",
+  userAvatar: "",
+  userVoteType: null,
+  score: null,
+  description: "",
+  time: "",
+  upvote: 0,
+  downvote: 0,
+};
+
 const model = {
   currentId: 1,
   locationReviewScore: {
     score: null,
     totalReviews: null,
   },
+  personalReview: {
+    ...initialPersonalReview,
+  },
+  locationReviewList: [],
+  totalReviewPage: 1,
   locationPostPageNumber: 0,
   locationShortInformation: {},
   locationOverview: {
@@ -54,6 +72,20 @@ const model = {
   setLocationReviewScore: action((state, payload) => {
     state.locationReviewScore = payload;
   }),
+  setPersonalReview: action((state, payload) => {
+    state.personalReview = payload;
+  }),
+  setLocationReviewList: action((state, payload) => {
+    if (payload.status === "Overwrite") state.locationReviewList = payload.data;
+    else
+      state.locationReviewList = state.locationReviewList.concat(payload.data);
+  }),
+  setTotalReviewPage: action((state, payload) => {
+    state.totalReviewPage = payload;
+  }),
+  resetPersonalReview: action((state) => {
+    state.personalReview = { ...initialPersonalReview };
+  }),
   setLocationPostPageNumber: action((state, payload) => {
     state.locationPostPageNumber = payload;
   }),
@@ -81,6 +113,27 @@ const model = {
       `location/${getState().currentId}/${API_URL.LOCATION_REVIEW_SCORE}`,
     );
     actions.setLocationReviewScore(data);
+  }),
+  getPersonalReview: thunk(async (actions, payload, { getState }) => {
+    const { data } = await http.get(
+      `location/${getState().currentId}/${API_URL.LOCATION_REVIEW_PERSONAL}`,
+    );
+    actions.setPersonalReview(data);
+  }),
+  getLocationReviewListByPage: thunk(async (actions, payload, { getState }) => {
+    const { pageNo, filter } = payload;
+    const { currentId, totalReviewPage } = getState();
+    console.log(pageNo);
+    if (pageNo > totalReviewPage || pageNo <= 0) return;
+    const { data } = await http.get(`location/${currentId}/review`, {
+      params: { pageNo, filter },
+    });
+    actions.setTotalReviewPage(data.totalPage);
+    if (data.items.length > 0)
+      actions.setLocationReviewList({
+        data: data.items,
+        status: pageNo === 1 ? "Overwrite" : "Append",
+      });
   }),
   getLocationOverview: thunk(async (actions, payload, { getState }) => {
     const { data } = await http.get(`location/${getState().currentId}`);
