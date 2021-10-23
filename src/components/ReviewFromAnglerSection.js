@@ -1,4 +1,5 @@
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { useStoreActions } from "easy-peasy";
 import { Box, Button, Menu, Pressable } from "native-base";
 import PropTypes from "prop-types";
 import React from "react";
@@ -27,6 +28,14 @@ const ReviewFromAnglerSection = ({
   userImage,
   id,
 }) => {
+  const voteReview = useStoreActions(
+    (actions) => actions.LocationModel.voteReview,
+  );
+
+  const onPressVoteActtion = (vote) => {
+    voteReview({ reviewId: id, vote });
+  };
+
   // Placeholder for function
   const goToEditScreen = () => {
     console.log("go to edit report screen", id);
@@ -130,7 +139,11 @@ const ReviewFromAnglerSection = ({
         </Button.Group>
       ) : (
         <Button.Group mt={2}>
-          <Button>
+          <Button
+            onPress={() => {
+              onPressVoteActtion(1);
+            }}
+          >
             <Text
               style={[
                 styles.buttonText,
@@ -141,7 +154,11 @@ const ReviewFromAnglerSection = ({
               {positiveCount ? positiveCount > 0 && `(${positiveCount})` : ""}
             </Text>
           </Button>
-          <Button>
+          <Button
+            onPress={() => {
+              onPressVoteActtion(0);
+            }}
+          >
             <Text
               style={[
                 styles.buttonText,

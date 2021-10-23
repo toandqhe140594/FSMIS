@@ -123,7 +123,6 @@ const model = {
   getLocationReviewListByPage: thunk(async (actions, payload, { getState }) => {
     const { pageNo, filter } = payload;
     const { currentId, totalReviewPage } = getState();
-    console.log(pageNo);
     if (pageNo > totalReviewPage || pageNo <= 0) return;
     const { data } = await http.get(`location/${currentId}/review`, {
       params: { pageNo, filter },
@@ -134,6 +133,35 @@ const model = {
         data: data.items,
         status: pageNo === 1 ? "Overwrite" : "Append",
       });
+  }),
+  voteReview: thunk(async (actions, payload, { getState }) => {
+    const { reviewId, vote } = payload;
+    const { currentId } = getState();
+    const { status, data } = await http.post(
+      `location/${currentId}/review/${reviewId}`,
+      null,
+      {
+        params: { vote },
+      },
+    );
+    // console.log(status);
+    // actions.resetVoteOfReview({ id: reviewId, userVoteType: vote });
+  }),
+  resetVoteOfReview: action((state, payload) => {
+    // const review =
+    //   state.locationReviewList[
+    //     state.locationReviewList.findIndex((x) => x.id === payload.id)
+    //   ];
+    // const { userVoteType } = review;
+    // console.log(review);
+    // if (payload.vote === 1)
+    //   if (userVoteType) review.userVoteType = null;
+    //   else {
+    //     review.userVoteType = userVoteType === null ? false : null;
+    //   }
+    // else if (userVoteType === false) review.userVoteType = null;
+    // else review.userVoteType = userVoteType === null ? true : null;
+    // console.log(state.locationReviewList);
   }),
   getLocationOverview: thunk(async (actions, payload, { getState }) => {
     const { data } = await http.get(`location/${getState().currentId}`);
