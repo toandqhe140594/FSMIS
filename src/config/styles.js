@@ -39,4 +39,8 @@ export default StyleSheet.create({
     position: "absolute",
     bottom: 20,
   },
+  textBoldButton: { fontSize: 16, fontWeight: "bold", color: "white" },
+  textwhite: {
+    color: "white",
+  },
 });
