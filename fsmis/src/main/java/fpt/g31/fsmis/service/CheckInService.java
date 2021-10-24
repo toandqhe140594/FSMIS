@@ -1,5 +1,7 @@
 package fpt.g31.fsmis.service;
 
+import fpt.g31.fsmis.dto.output.CheckInHistoryPersonalDtoOut;
+import fpt.g31.fsmis.dto.output.PaginationDtoOut;
 import fpt.g31.fsmis.entity.CheckIn;
 import fpt.g31.fsmis.entity.FishingLocation;
 import fpt.g31.fsmis.entity.User;
@@ -7,11 +9,17 @@ import fpt.g31.fsmis.exception.NotFoundException;
 import fpt.g31.fsmis.repository.CheckInRepos;
 import fpt.g31.fsmis.repository.FishingLocationRepos;
 import fpt.g31.fsmis.repository.UserRepos;
+import fpt.g31.fsmis.security.JwtFilter;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.ValidationException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -20,6 +28,7 @@ public class CheckInService {
     private final CheckInRepos checkInRepos;
     private final UserRepos userRepos;
     private final FishingLocationRepos fishingLocationRepos;
+    private final JwtFilter jwtFilter;
 
     public String checkIn(String qrString, Long fishingLocationId) {
         Optional<User> userOptional = userRepos.findByQrString(qrString);
@@ -44,5 +53,31 @@ public class CheckInService {
         checkIn.setCheckInTime(LocalDateTime.now());
         checkInRepos.save(checkIn);
         return "Check in thành công";
+    }
+
+    public PaginationDtoOut getPersonalCheckInHistoryList(HttpServletRequest request, int pageNo) {
+        if(pageNo <= 0) {
+            throw new ValidationException("Địa chỉ không tồn tại");
+        }
+        User user = jwtFilter.getUserFromToken(request);
+        Page<CheckIn> checkInList = checkInRepos.findByUserIdOrderByCheckInTimeDesc(user.getId(), PageRequest.of(pageNo-1, 10));
+        List<CheckInHistoryPersonalDtoOut> output = new ArrayList<>();
+        for (CheckIn checkIn : checkInList) {
+            CheckInHistoryPersonalDtoOut item = CheckInHistoryPersonalDtoOut.builder()
+                    .id(checkIn.getId())
+                    .locationId(checkIn.getFishingLocation().getId())
+                    .locationName(checkIn.getFishingLocation().getName())
+                    .checkInTime(ServiceUtils.convertDateToString(checkIn.getCheckInTime()))
+                    .checkOutTime(checkIn.getCheckOutTime() == null
+                            ? "Bạn chưa check-out"
+                            : ServiceUtils.convertDateToString(checkIn.getCheckOutTime()))
+                    .build();
+            output.add(item);
+        }
+        return PaginationDtoOut.builder()
+                .totalPage(checkInList.getTotalPages())
+                .pageNo(pageNo)
+                .items(output)
+                .build();
     }
 }

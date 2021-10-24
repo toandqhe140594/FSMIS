@@ -1,5 +1,7 @@
 package fpt.g31.fsmis.service;
 
+import fpt.g31.fsmis.dto.output.ReviewDtoOut;
+import fpt.g31.fsmis.entity.Review;
 import fpt.g31.fsmis.entity.User;
 import fpt.g31.fsmis.entity.Vote;
 import fpt.g31.fsmis.entity.VoteType;
@@ -7,6 +9,7 @@ import fpt.g31.fsmis.repository.ReviewRepos;
 import fpt.g31.fsmis.repository.VoteRepos;
 import fpt.g31.fsmis.security.JwtFilter;
 import lombok.AllArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,8 +22,9 @@ public class VoteService {
     private final VoteRepos voteRepos;
     private final ReviewRepos reviewRepos;
     private final JwtFilter jwtFilter;
+    private final ModelMapper modelMapper;
 
-    public String vote(HttpServletRequest request, Long reviewId, Long voteType) {
+    public ReviewDtoOut vote(HttpServletRequest request, Long reviewId, Long voteType) {
         if (voteType != 1 && voteType != 0) {
             throw new ValidationException("Địa chỉ không tồn tại");
         }
@@ -50,6 +54,22 @@ public class VoteService {
                 voteRepos.save(vote);
             }
         }
-        return "Đánh giá thành công";
+        Review review = reviewRepos.getById(reviewId);
+        ReviewDtoOut output = modelMapper.map(review, ReviewDtoOut.class);
+        output.setUserId(review.getUser().getId());
+        output.setUserFullName(review.getUser().getFullName());
+        output.setUserAvatar(review.getUser().getAvatarUrl());
+        output.setTime(ServiceUtils.convertDateToString(review.getTime()));
+        output.setUpvote(voteRepos.getVoteCountByReviewId(review.getId(), 0));
+        output.setDownvote(voteRepos.getVoteCountByReviewId(review.getId(), 1));
+        Vote voteOutput = voteRepos.findByReviewIdAndUserId(review.getId(), user.getId());
+        if(voteOutput != null) {
+            if (voteOutput.getVoteType() == VoteType.UPVOTE) {
+                output.setUserVoteType(true);
+            } else if (voteOutput.getVoteType() == VoteType.DOWNVOTE) {
+                output.setUserVoteType(false);
+            }
+        }
+        return output;
     }
 }

@@ -13,6 +13,8 @@ import java.util.List;
 @NoArgsConstructor
 public class CatchesOverviewNoImageDtoOut {
 
+    private Long id;
+
     private Long userId;
 
     private String userFullName;
@@ -20,14 +22,10 @@ public class CatchesOverviewNoImageDtoOut {
     private String avatar;
 
     private Long locationId;
-    
+
     private String locationName;
 
-    private Long catchId;
-
     private String description;
-
-    private List<String> images;
 
     private String time;
 

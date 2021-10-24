@@ -13,7 +13,7 @@ public class LocationPinDtoOut {
     private Long id;
     private String name;
     private boolean verify;
-    private Float rating;
+    private Double score;
     private Float longitude;
     private Float latitude;
 }

@@ -7,6 +7,7 @@ import fpt.g31.fsmis.dto.output.FishDtoOut;
 import fpt.g31.fsmis.dto.output.LakeDtoOut;
 import fpt.g31.fsmis.entity.FishInLake;
 import fpt.g31.fsmis.entity.FishingLocation;
+import fpt.g31.fsmis.entity.FishingMethod;
 import fpt.g31.fsmis.entity.Lake;
 import fpt.g31.fsmis.exception.NotFoundException;
 import fpt.g31.fsmis.repository.FishInLakeRepos;
@@ -80,6 +81,11 @@ public class LakeService {
         if(lake.getFishingLocation().getId().equals(locationId) && !lake.isActive()) {
             throw new ValidationException("Hồ này không tồn tại");
         }
+        List<String> fishingMethodList = new ArrayList<>();
+        for(FishingMethod fishingMethod : lake.getFishingMethodSet()) {
+            fishingMethodList.add(fishingMethod.getName());
+        }
+
         List<FishInLake> fishesInLake = fishInLakeRepos.findByLakeId(lakeId);
         List<FishDtoOut> fishes = new ArrayList<>();
         for(FishInLake fishInLake : fishesInLake) {
@@ -104,6 +110,7 @@ public class LakeService {
                 .lastEditTime(ServiceUtils.convertDateToString(lake.getLastEditTime()))
                 .price(lake.getPrice())
                 .imageUrl(lake.getImageUrl())
+                .fishingMethodList(fishingMethodList)
                 .fishInLake(fishes)
                 .build();
     }
@@ -118,6 +125,11 @@ public class LakeService {
         for (Lake lake: lakeList) {
             LakeOverviewDtoOut lakeOverviewDtoOut = modelMapper.map(lake, LakeOverviewDtoOut.class);
             lakeOverviewDtoOut.setImage(lake.getImageUrl());
+            List<String> fishingMethodList = new ArrayList<>();
+            for(FishingMethod fishingMethod : lake.getFishingMethodSet()) {
+                fishingMethodList.add(fishingMethod.getName());
+            }
+            lakeOverviewDtoOut.setFishingMethodList(fishingMethodList);
             List<String> fishList = new ArrayList<>();
             for (FishInLake fishInLake: fishInLakeRepos.findByLakeId(lake.getId())){
                 fishList.add(fishInLake.getFishSpecies().getName());

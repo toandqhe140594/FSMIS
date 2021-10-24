@@ -15,5 +15,6 @@ public class LakeOverviewDtoOut {
     private Long id;
     private String name;
     private String image;
+    private List<String> fishingMethodList;
     private List<String> fishList;
 }

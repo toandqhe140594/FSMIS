@@ -20,12 +20,11 @@ public class PostService {
     PostRepos postRepos;
     ModelMapper modelMapper;
 
-
-    public PaginationDtoOut getPostByLocationId(Long locationId, Integer pageNo) {
+    public PaginationDtoOut getPostByLocationId(Long locationId, int pageNo) {
         if(pageNo <= 0) {
-            throw new ValidationException("Số trang phải lớn hơn 0");
+            throw new ValidationException("Địa chỉ không tồn tại");
         }
-        Page<Post> postList = postRepos.findByFishingLocationIdOrderByPostTimeDesc(locationId, PageRequest.of(pageNo - 1, 10));
+        Page<Post> postList = postRepos.findByFishingLocationIdAndActiveIsTrueOrderByPostTimeDesc(locationId, PageRequest.of(pageNo - 1, 10));
         List<PostDtoOut> output = new ArrayList<>();
         for (Post post : postList) {
             PostDtoOut item = modelMapper.map(post, PostDtoOut.class);

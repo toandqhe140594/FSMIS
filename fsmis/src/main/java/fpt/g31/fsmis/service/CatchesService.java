@@ -1,0 +1,169 @@
+package fpt.g31.fsmis.service;
+
+import fpt.g31.fsmis.dto.output.*;
+import fpt.g31.fsmis.entity.*;
+import fpt.g31.fsmis.repository.CatchesRepos;
+import fpt.g31.fsmis.repository.FishingLocationRepos;
+import fpt.g31.fsmis.security.JwtFilter;
+import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.ValidationException;
+import java.util.ArrayList;
+import java.util.List;
+
+@Service
+@AllArgsConstructor
+public class CatchesService {
+
+    private final FishingLocationRepos fishingLocationRepos;
+    private final CatchesRepos catchesRepos;
+    private final JwtFilter jwtFilter;
+
+    public PaginationDtoOut getPostedCatchesListByLocationId(Long locationId, int pageNo) {
+        if (pageNo <= 0) {
+            throw new ValidationException("Địa chỉ không tồn tại");
+        }
+        Page<Catches> catchesList = catchesRepos.findByFishingLocationIdAndHiddenIsFalse(locationId, PageRequest.of(pageNo - 1, 10));
+        List<CatchesOverviewHasImageDtoOut> output = new ArrayList<>();
+        for (Catches catches : catchesList) {
+            CatchesOverviewHasImageDtoOut item = CatchesOverviewHasImageDtoOut.builder()
+                    .userId(catches.getUser().getId())
+                    .userFullName(catches.getUser().getFullName())
+                    .avatar(catches.getUser().getAvatarUrl())
+                    .locationId(catches.getFishingLocation().getId())
+                    .locationName(catches.getFishingLocation().getName())
+                    .id(catches.getId())
+                    .description(catches.getDescription())
+                    .time(ServiceUtils.convertDateToString(catches.getTime()))
+                    .images(ServiceUtils.splitString(catches.getImageUrl()))
+                    .build();
+            List<String> fishes = new ArrayList<>();
+            for(CatchesDetail catchesDetail : catches.getCatchesDetailList()) {
+                fishes.add(catchesDetail.getFishSpecies().getName());
+            }
+            item.setFishes(fishes);
+            output.add(item);
+        }
+        return PaginationDtoOut.builder()
+                .totalPage(catchesList.getTotalPages())
+                .pageNo(pageNo)
+                .items(output)
+                .build();
+    }
+
+    // TODO: chưa có filter
+    public PaginationDtoOut getPublicCatchesListByLocationId(HttpServletRequest request, Long locationId, int pageNo) {
+        if (pageNo <= 0) {
+            throw new ValidationException("Địa chỉ không tồn tại");
+        }
+        if(!isOwnerOrStaff(locationId, jwtFilter.getUserFromToken(request))) {
+            throw new ValidationException("Bạn không quản lý địa điểm này");
+        }
+        Page<Catches> catchesList = catchesRepos.findByFishingLocationIdAndHiddenIsFalse(locationId, PageRequest.of(pageNo - 1, 10));
+        List<CatchesOverviewNoImageDtoOut> output = new ArrayList<>();
+        for (Catches catches : catchesList) {
+            CatchesOverviewNoImageDtoOut item = CatchesOverviewNoImageDtoOut.builder()
+                    .userId(catches.getUser().getId())
+                    .userFullName(catches.getUser().getFullName())
+                    .avatar(catches.getUser().getAvatarUrl())
+                    .locationId(catches.getFishingLocation().getId())
+                    .locationName(catches.getFishingLocation().getName())
+                    .id(catches.getId())
+                    .description(catches.getDescription())
+                    .time(ServiceUtils.convertDateToString(catches.getTime()))
+                    .build();
+            List<String> fishes = new ArrayList<>();
+            for(CatchesDetail catchesDetail : catches.getCatchesDetailList()) {
+                fishes.add(catchesDetail.getFishSpecies().getName());
+            }
+            item.setFishes(fishes);
+            output.add(item);
+        }
+        return PaginationDtoOut.builder()
+                .totalPage(catchesList.getTotalPages())
+                .pageNo(pageNo)
+                .items(output)
+                .build();
+    }
+
+    public PaginationDtoOut getPersonalCatchesList(HttpServletRequest request, int pageNo) {
+        if (pageNo <= 0) {
+            throw new ValidationException("Địa chỉ không tồn tại");
+        }
+        User user = jwtFilter.getUserFromToken(request);
+        Page<Catches> catchesList = catchesRepos.findByUserId(user.getId(), PageRequest.of(pageNo - 1, 10));
+        List<CatchesOverviewNoImageDtoOut> output = new ArrayList<>();
+        for (Catches catches : catchesList) {
+            CatchesOverviewNoImageDtoOut item = CatchesOverviewNoImageDtoOut.builder()
+                    .userId(user.getId())
+                    .userFullName(user.getFullName())
+                    .avatar(user.getAvatarUrl())
+                    .locationId(catches.getFishingLocation().getId())
+                    .locationName(catches.getFishingLocation().getName())
+                    .id(catches.getId())
+                    .description(catches.getDescription())
+                    .time(ServiceUtils.convertDateToString(catches.getTime()))
+                    .build();
+            List<String> fishes = new ArrayList<>();
+            for(CatchesDetail catchesDetail : catches.getCatchesDetailList()) {
+                fishes.add(catchesDetail.getFishSpecies().getName());
+            }
+            item.setFishes(fishes);
+            output.add(item);
+        }
+        return PaginationDtoOut.builder()
+                .totalPage(catchesList.getTotalPages())
+                .pageNo(pageNo)
+                .items(output)
+                .build();
+    }
+
+    public Object getCatchesDetail(HttpServletRequest request, Long catchesId) {
+        User user = jwtFilter.getUserFromToken(request);
+        Catches catches = catchesRepos.getById(catchesId);
+        if (catches.getHidden() && catches.getUser() != user) {
+            throw new ValidationException("Địa chỉ này không tồn tại");
+        }
+        List<CatchesDetail> catchesDetailList = catches.getCatchesDetailList();
+        List<CatchesFishDtoOut> fishes = new ArrayList<>();
+        for (CatchesDetail catchesDetail : catchesDetailList) {
+            CatchesFishDtoOut item = CatchesFishDtoOut.builder()
+                    .name(catchesDetail.getFishSpecies().getName())
+                    .image(catchesDetail.getFishSpecies().getImageUrl())
+                    .quantity(catchesDetail.getQuantity())
+                    .weight(catchesDetail.getWeight())
+                    .build();
+            fishes.add(item);
+        }
+
+        return CatchesDetailDtoOut.builder()
+                .id(catches.getId())
+                .userId(catches.getUser().getId())
+                .userFullName(catches.getUser().getFullName())
+                .avatar(catches.getUser().getAvatarUrl())
+                .locationId(catches.getFishingLocation().getId())
+                .locationName(catches.getFishingLocation().getName())
+                .description(catches.getDescription())
+                .images(ServiceUtils.splitString(catches.getImageUrl()))
+                .time(ServiceUtils.convertDateToString(catches.getTime()))
+                .fishes(fishes)
+                .build();
+    }
+
+    private boolean isOwnerOrStaff(Long locationId, User user) {
+        FishingLocation fishingLocation = fishingLocationRepos.getById(locationId);
+        if (fishingLocation.getOwner() == user) {
+            return true;
+        }
+        for (User staff : fishingLocation.getEmployeeList()) {
+            if (staff == user) {
+                return true;
+            }
+        }
+        return false;
+    }
+}

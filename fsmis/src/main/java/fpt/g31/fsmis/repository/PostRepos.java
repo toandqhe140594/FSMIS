@@ -6,5 +6,5 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PostRepos extends JpaRepository<Post, Long> {
-    Page<Post> findByFishingLocationIdOrderByPostTimeDesc(Long id, Pageable pageable);
+    Page<Post> findByFishingLocationIdAndActiveIsTrueOrderByPostTimeDesc(Long id, Pageable pageable);
 }

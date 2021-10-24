@@ -94,6 +94,9 @@ public class ReviewService {
     public String deleteReview(HttpServletRequest request, Long locationId) {
         User user = jwtFilter.getUserFromToken(request);
         Review review = reviewRepos.findByFishingLocationIdAndUserIdAndActiveIsTrue(locationId, user.getId());
+        if(review == null) {
+            throw new ValidationException("Đánh giá không tồn tại");
+        }
         review.setActive(false);
         reviewRepos.save(review);
         return "Xóa đánh giá thành công";
@@ -103,10 +106,10 @@ public class ReviewService {
 
     public PaginationDtoOut getAllReviews(HttpServletRequest request, Long locationId, String filter, int pageNo) {
         if (pageNo <= 0) {
-            throw new IllegalArgumentException("Địa chỉ không tồn tại");
+            throw new ValidationException("Địa chỉ không tồn tại");
         }
         if (!filter.equals("newest") && !filter.equals("highest") && !filter.equals("lowest")) {
-            throw new IllegalArgumentException("Địa chỉ không tồn tại");
+            throw new ValidationException("Địa chỉ không tồn tại");
         }
         User user = jwtFilter.getUserFromToken(request);
         Pageable pageable = PageRequest.of(pageNo - 1, 10);

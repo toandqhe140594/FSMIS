@@ -22,6 +22,7 @@ public class FishingLocationController {
     final CheckInService checkInService;
     final FishingLocationService fishingLocationService;
     final LakeService lakeService;
+    private final CatchesService catchesService;
     final PostService postService;
     private final ReviewService reviewService;
     private final VoteService voteService;
@@ -32,10 +33,6 @@ public class FishingLocationController {
         return new ResponseEntity<>(fishingLocations, HttpStatus.OK);
     }
 
-    @GetMapping(path = "/{locationId}")
-    public ResponseEntity<Object> getById(@PathVariable Long locationId) {
-        return new ResponseEntity<>(fishingLocationService.getById(locationId), HttpStatus.OK);
-    }
 
     @PostMapping
     public ResponseEntity<Object> createFishingLocation(@Valid @RequestBody FishingLocationDtoIn fishingLocationDtoIn) {
@@ -61,6 +58,11 @@ public class FishingLocationController {
 
     // FISHING LOCATION
 
+    @GetMapping(path = "/{locationId}")
+    public ResponseEntity<Object> getFishingLocationOverviewById(HttpServletRequest request, @PathVariable Long locationId) {
+        return new ResponseEntity<>(fishingLocationService.getFishingLocationOverviewById(request, locationId), HttpStatus.OK);
+    }
+
     // LAKE
 
     @GetMapping("/{locationId}/lake")
@@ -75,6 +77,22 @@ public class FishingLocationController {
 
 
     // CHECK-IN
+
+    // CATCH
+
+    @GetMapping("/{locationId}/catch")
+    public ResponseEntity<Object> getPostedCatchesListByLocationId(@PathVariable Long locationId, @RequestParam(defaultValue = "1") int pageNo) {
+        return new ResponseEntity<>(catchesService.getPostedCatchesListByLocationId(locationId, pageNo), HttpStatus.OK);
+    }
+
+    // TODO: chưa có filter
+    @GetMapping("/{locationId}/catch/manager")
+    public ResponseEntity<Object> getPublicCatchesListByLocationId(HttpServletRequest request, @PathVariable Long locationId, @RequestParam(defaultValue = "1") int pageNo) {
+        return new ResponseEntity<>(catchesService.getPublicCatchesListByLocationId(request, locationId, pageNo), HttpStatus.OK);
+    }
+
+    // TODO: Báo cá
+//    @PostMapping("/{locationId}/catch/report")
 
     // REVIEW
 
