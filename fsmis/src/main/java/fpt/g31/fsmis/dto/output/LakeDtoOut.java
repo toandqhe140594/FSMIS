@@ -21,5 +21,6 @@ public class LakeDtoOut {
     private String lastEditTime;
     private String price;
     private String imageUrl;
+    private List<String> fishingMethodList;
     private List<FishDtoOut> fishInLake;
 }

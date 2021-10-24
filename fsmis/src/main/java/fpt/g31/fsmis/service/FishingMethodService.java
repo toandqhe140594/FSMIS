@@ -10,4 +10,7 @@ public class FishingMethodService {
 
     private final FishingMethodRepos fishingMethodRepos;
 
+    public Object getAll() {
+        return fishingMethodRepos.findAll();
+    }
 }

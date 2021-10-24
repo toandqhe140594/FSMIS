@@ -13,9 +13,9 @@ import java.time.LocalDateTime;
 public class UserDtoOut {
     private String fullName;
     private String phone;
-    private LocalDateTime dob;
+    private String dob;
     private String address;
-    private AddressFromWardDtoOut addressFromWard;
+    private LocalDateTime addressFromWard;
     private String avatarUrl;
     private boolean gender;
     private boolean active;

@@ -1,6 +1,9 @@
 package fpt.g31.fsmis.dto.output;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
@@ -8,7 +11,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CatchesDetailDtoOut {
+public class CatchesOverviewHasImageDtoOut {
 
     private Long id;
 
@@ -28,5 +31,5 @@ public class CatchesDetailDtoOut {
 
     private String time;
 
-    private List<CatchesFishDtoOut> fishes;
+    private List<String> fishes;
 }

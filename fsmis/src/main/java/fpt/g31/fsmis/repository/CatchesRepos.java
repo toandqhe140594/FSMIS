@@ -1,7 +1,6 @@
 package fpt.g31.fsmis.repository;
 
 import fpt.g31.fsmis.entity.Catches;
-import fpt.g31.fsmis.entity.CatchesDetail;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,4 +13,5 @@ public interface CatchesRepos extends JpaRepository<Catches, Long> {
 
     Page<Catches> findByUserId(Long id, Pageable pageable);
 
+    Page<Catches> findByFishingLocationIdAndHiddenIsFalse(Long id, Pageable pageable);
 }

@@ -5,13 +5,17 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class FishingLocationDtoOut {
+public class FishingLocationOverviewDtoOut {
     private Long id;
     private String name;
+    private String lastEditedDate;
+    private String website;
     private Float longitude;
     private Float latitude;
     private String address;
@@ -21,8 +25,7 @@ public class FishingLocationDtoOut {
     private String service;
     private String timetable;
     private String rule;
-    private String website;
-    private String lastEditedDate;
-    private boolean active;
+    private List<String> image;
     private boolean verify;
+    private boolean saved;
 }

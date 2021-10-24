@@ -1,6 +1,5 @@
 package fpt.g31.fsmis.controller;
 
-import fpt.g31.fsmis.repository.FishSpeciesRepos;
 import fpt.g31.fsmis.service.FishSpeciesService;
 import fpt.g31.fsmis.service.FishingMethodService;
 import org.springframework.http.HttpStatus;
@@ -23,8 +22,8 @@ public class UtilsController {
         return new ResponseEntity<>(fishSpeciesService.getAll(), HttpStatus.OK);
     }
 
-//    @GetMapping("/method")
-//    public ResponseEntity<Object> getAllMethods() {
-//        return new ResponseEntity<>(null, HttpStatus.OK);
-//    }
+    @GetMapping("/method")
+    public ResponseEntity<Object> getAllFishingMethods() {
+        return new ResponseEntity<>(fishingMethodService.getAll(), HttpStatus.OK);
+    }
 }

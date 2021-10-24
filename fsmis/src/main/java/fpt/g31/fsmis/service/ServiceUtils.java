@@ -43,7 +43,7 @@ public class ServiceUtils {
     }
 
     public static List<String> splitString(String input) {
-        String[] output = input.split("\r\n\r\n");
+        String[] output = input.split("\r\n");
         return Arrays.asList(output);
     }
 }

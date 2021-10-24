@@ -16,7 +16,7 @@ public class PersonalInfoDtoOut {
 
     private String fullName;
 
-    private LocalDateTime dob;
+    private String dob;
 
     private boolean gender;
 
