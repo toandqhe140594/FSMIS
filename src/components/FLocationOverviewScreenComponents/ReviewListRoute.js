@@ -1,3 +1,4 @@
+import { useNavigation } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, Button, Center, ScrollView } from "native-base";
 import PropTypes from "prop-types";
@@ -7,6 +8,7 @@ import { Divider, Text } from "react-native-elements";
 import { Rating } from "react-native-ratings";
 
 import styles from "../../config/styles";
+import { goToWriteReviewScreen } from "../../navigations";
 import HeaderTab from "../HeaderTab";
 import ReviewFromAnglerSection from "../ReviewFromAnglerSection";
 
@@ -40,6 +42,7 @@ FilterButton.propTypes = {
 };
 
 const ReviewListRoute = () => {
+  const navigation = useNavigation();
   const [reviewPage, setReviewPage] = useState(1);
   const [filterType, setFilterType] = useState("newest");
 
@@ -48,6 +51,7 @@ const ReviewListRoute = () => {
     locationReviewScore,
     personalReview,
     locationReviewList,
+    currentId,
   } = useStoreState((states) => states.LocationModel);
 
   const {
@@ -118,6 +122,19 @@ const ReviewListRoute = () => {
           />
         )}
         <Divider />
+        {!personalReview.id && (
+          <Box w="90%" h={10} alignSelf="center" mt={4}>
+            <Button
+              variant="outline"
+              colorScheme="dark"
+              onPress={() => {
+                goToWriteReviewScreen(navigation, { id: currentId });
+              }}
+            >
+              Đăng đánh giá
+            </Button>
+          </Box>
+        )}
         <Box my={2} />
         <Divider />
         <Box p={3}>

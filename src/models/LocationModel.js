@@ -163,6 +163,26 @@ const model = {
     // else review.userVoteType = userVoteType === null ? true : null;
     // console.log(state.locationReviewList);
   }),
+  deletePersonalReview: thunk(async (actions, payload, { getState }) => {
+    const { currentId } = getState();
+    const { status, data } = await http.delete(
+      `location/${currentId}/${API_URL.LOCATION_REVIEW_PERSONAL_DELETE}`,
+    );
+    if (status === 200) actions.setPersonalReview({ id: null });
+    console.log(status, data);
+  }),
+  postReview: thunk(async (actions, payload, { getState }) => {
+    const { description, score } = payload;
+    const { currentId } = getState();
+    const { status, data } = await http.post(
+      `location/${currentId}/${API_URL.LOCATION_REVIEW_PERSONAL_POST}`,
+      {
+        description,
+        score,
+      },
+    );
+    if (status === 200) actions.setPersonalReview(data);
+  }),
   getLocationOverview: thunk(async (actions, payload, { getState }) => {
     const { data } = await http.get(`location/${getState().currentId}`);
     actions.setLocationOverview(data);

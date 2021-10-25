@@ -3,7 +3,7 @@ import { useStoreActions } from "easy-peasy";
 import { Box, Button, Menu, Pressable } from "native-base";
 import PropTypes from "prop-types";
 import React from "react";
-import { StyleSheet } from "react-native";
+import { Alert, StyleSheet } from "react-native";
 import { Avatar, Text } from "react-native-elements";
 import { Rating } from "react-native-ratings";
 
@@ -28,21 +28,26 @@ const ReviewFromAnglerSection = ({
   userImage,
   id,
 }) => {
-  const voteReview = useStoreActions(
-    (actions) => actions.LocationModel.voteReview,
+  const { voteReview, deletePersonalReview } = useStoreActions(
+    (actions) => actions.LocationModel,
   );
 
   const onPressVoteActtion = (vote) => {
     voteReview({ reviewId: id, vote });
   };
 
-  // Placeholder for function
-  const goToEditScreen = () => {
-    console.log("go to edit report screen", id);
-  };
-
   const deleteReview = () => {
-    console.log("delete review ", id);
+    Alert.alert(
+      "Bạn muốn xóa bài đánh giá?",
+      "Bài đánh giá sẽ bị xóa vĩnh viễn. Bạn không thể hoàn tác hành động này",
+      [
+        {
+          text: "Quay lại",
+          style: "cancel",
+        },
+        { text: "Xác nhận", onPress: () => deletePersonalReview() },
+      ],
+    );
   };
 
   return (
@@ -67,13 +72,6 @@ const ReviewFromAnglerSection = ({
                 );
               }}
             >
-              <Menu.Item
-                onPress={() => {
-                  goToEditScreen();
-                }}
-              >
-                Chỉnh sửa đánh giá
-              </Menu.Item>
               <Menu.Item
                 onPress={() => {
                   deleteReview();
