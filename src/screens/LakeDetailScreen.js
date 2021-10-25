@@ -36,6 +36,7 @@ const LakeDetailScreen = () => {
     price,
     imageUrl,
     fishInLake,
+    fishingMethodList,
   } = lakeDetail;
 
   return (
@@ -65,7 +66,7 @@ const LakeDetailScreen = () => {
                 <Text bold fontSize="md">
                   Loại hình:{" "}
                 </Text>
-                Câu đơn, câu đài
+                {fishingMethodList && fishingMethodList.join(", ")}
               </Text>
             </Box>
             <Divider />
@@ -108,7 +109,7 @@ const LakeDetailScreen = () => {
                 {fishInLake &&
                   fishInLake.map((fish) => (
                     <FishInformationCard
-                      currentAmount={fish.quantity}
+                      currentAmount={fish.quantity || 0}
                       currentWeight={fish.totalWeight}
                       image={fish.imageUrl}
                       name={fish.name}

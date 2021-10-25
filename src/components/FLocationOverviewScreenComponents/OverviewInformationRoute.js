@@ -27,6 +27,7 @@ const OverviewInformationRoute = () => {
     lastEditedDate,
     longitude,
     latitude,
+    image,
   } = locationOverview;
 
   const serviceArr = service.split("\n");
@@ -48,8 +49,13 @@ const OverviewInformationRoute = () => {
               <HeaderTab name={name} isVerified={verify} flagable />
               <Card containerStyle={{ width: "100%", margin: 0, padding: 0 }}>
                 <Swiper height="auto">
-                  <Card.Image source={{ uri: "https://picsum.photos/400" }} />
-                  <Card.Image source={{ uri: "https://picsum.photos/400" }} />
+                  {image && image.length > 0 ? (
+                    image.map((item) => (
+                      <Card.Image source={{ uri: item }} key={item} />
+                    ))
+                  ) : (
+                    <Card.Image source={{ uri: "https://picsum.photos/400" }} />
+                  )}
                 </Swiper>
                 <Button my={4} mx={10}>
                   Lưu điểm câu
