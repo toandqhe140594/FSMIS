@@ -1,9 +1,34 @@
 import { action, thunk } from "easy-peasy";
 
+import { API_URL } from "../constants";
 import http from "../utilities/Http";
+
+const initialPersonalReview = {
+  id: null,
+  userId: null,
+  userFullName: "",
+  userAvatar: "",
+  userVoteType: null,
+  score: null,
+  description: "",
+  time: "",
+  upvote: 0,
+  downvote: 0,
+};
 
 const model = {
   currentId: 1,
+  locationReviewScore: {
+    score: null,
+    totalReviews: null,
+  },
+  personalReview: {
+    ...initialPersonalReview,
+  },
+  locationReviewList: [],
+  totalReviewPage: 1,
+  locationPostPageNumber: 0,
+  locationShortInformation: {},
   locationOverview: {
     id: 1,
     name: "placeholderdata",
@@ -27,8 +52,45 @@ const model = {
     verify: false,
   },
   lakeList: [],
+  lakeDetail: {},
+  locationPostList: [
+    {
+      id: 1,
+      name: "Hồ thuần việt",
+      content: "Trắm đen - Chép khủng bồi hồ vip cho ae câu thứ 3-5",
+      postTime: "2021-10-16T17:03:43.618",
+      postType: "STOCKING",
+      url: "https://a-static.besthdwallpaper.com/2021-yae-miko-electro-character-genshin-impact-anime-video-game-hinh-nen-2880x1620-74983_52.jpg",
+      edited: true,
+      active: true,
+    },
+  ],
+  totalPostPage: 1,
   setCurrentId: action((state, payload) => {
     state.currentId = payload;
+  }),
+  setLocationReviewScore: action((state, payload) => {
+    state.locationReviewScore = payload;
+  }),
+  setPersonalReview: action((state, payload) => {
+    state.personalReview = payload;
+  }),
+  setLocationReviewList: action((state, payload) => {
+    if (payload.status === "Overwrite") state.locationReviewList = payload.data;
+    else
+      state.locationReviewList = state.locationReviewList.concat(payload.data);
+  }),
+  setTotalReviewPage: action((state, payload) => {
+    state.totalReviewPage = payload;
+  }),
+  resetPersonalReview: action((state) => {
+    state.personalReview = { ...initialPersonalReview };
+  }),
+  setLocationPostPageNumber: action((state, payload) => {
+    state.locationPostPageNumber = payload;
+  }),
+  setLocationShortInformation: action((state, payload) => {
+    state.locationShortInformation = payload;
   }),
   setLocationOverview: action((state, payload) => {
     state.locationOverview = payload;
@@ -36,13 +98,122 @@ const model = {
   setLakeList: action((state, payload) => {
     state.lakeList = payload;
   }),
+  setLakeDetail: action((state, payload) => {
+    state.lakeDetail = payload;
+  }),
+  setLocationPostList: action((state, payload) => {
+    if (payload.status === "Overwrite") state.locationPostList = payload.data;
+    else state.locationPostList = [...state.locationPostList, ...payload.data];
+  }),
+  setTotalPostPage: action((state, payload) => {
+    state.totalPostPage = payload;
+  }),
+  getLocationReviewScore: thunk(async (actions, payload, { getState }) => {
+    const { data } = await http.get(
+      `location/${getState().currentId}/${API_URL.LOCATION_REVIEW_SCORE}`,
+    );
+    actions.setLocationReviewScore(data);
+  }),
+  getPersonalReview: thunk(async (actions, payload, { getState }) => {
+    const { data } = await http.get(
+      `location/${getState().currentId}/${API_URL.LOCATION_REVIEW_PERSONAL}`,
+    );
+    actions.setPersonalReview(data);
+  }),
+  getLocationReviewListByPage: thunk(async (actions, payload, { getState }) => {
+    const { pageNo, filter } = payload;
+    const { currentId, totalReviewPage } = getState();
+    if (pageNo > totalReviewPage || pageNo <= 0) return;
+    const { data } = await http.get(`location/${currentId}/review`, {
+      params: { pageNo, filter },
+    });
+    actions.setTotalReviewPage(data.totalPage);
+    if (data.items.length > 0)
+      actions.setLocationReviewList({
+        data: data.items,
+        status: pageNo === 1 ? "Overwrite" : "Append",
+      });
+  }),
+  voteReview: thunk(async (actions, payload, { getState }) => {
+    const { reviewId, vote } = payload;
+    const { currentId } = getState();
+    const { status, data } = await http.post(
+      `location/${currentId}/review/${reviewId}`,
+      null,
+      {
+        params: { vote },
+      },
+    );
+    // console.log(status);
+    // actions.resetVoteOfReview({ id: reviewId, userVoteType: vote });
+  }),
+  resetVoteOfReview: action((state, payload) => {
+    // const review =
+    //   state.locationReviewList[
+    //     state.locationReviewList.findIndex((x) => x.id === payload.id)
+    //   ];
+    // const { userVoteType } = review;
+    // console.log(review);
+    // if (payload.vote === 1)
+    //   if (userVoteType) review.userVoteType = null;
+    //   else {
+    //     review.userVoteType = userVoteType === null ? false : null;
+    //   }
+    // else if (userVoteType === false) review.userVoteType = null;
+    // else review.userVoteType = userVoteType === null ? true : null;
+    // console.log(state.locationReviewList);
+  }),
   getLocationOverview: thunk(async (actions, payload, { getState }) => {
     const { data } = await http.get(`location/${getState().currentId}`);
     actions.setLocationOverview(data);
+    actions.setLocationShortInformation({
+      name: data.name,
+      isVerified: data.verify,
+      id: data.id,
+      type: "location",
+    });
   }),
   getLocationOverviewById: thunk(async (actions, payload) => {
     const { data } = await http.get(`location/${payload.id}`);
     actions.setLocationOverview(data);
+    actions.setLocationShortInformation({
+      name: data.name,
+      isVerified: data.verify,
+      id: data.id,
+      type: "location",
+    });
+  }),
+  getLakeList: thunk(async (actions, payload, { getState }) => {
+    const { data } = await http.get(
+      `location/${getState().currentId}/${API_URL.LOCATION_LAKE_ALL}`,
+    );
+    actions.setLakeList(data);
+  }),
+  getLakeListByLocationId: thunk(async (actions, payload) => {
+    const { data } = await http.get(
+      `location/${payload.id}/${API_URL.LOCATION_LAKE_ALL}`,
+    );
+    actions.setLakeList(data);
+  }),
+  getLakeDetailByLakeId: thunk(async (actions, payload, { getState }) => {
+    const { data } = await http.get(
+      `location/${getState().currentId}/lake/${payload.id}`,
+    );
+    actions.setLakeDetail(data);
+  }),
+  getLocationPostListByPage: thunk(async (actions, payload, { getState }) => {
+    const { pageNo } = payload;
+    const { currentId, totalPostPage } = getState();
+    if (pageNo > totalPostPage || pageNo <= 0) return;
+    const { data } = await http.get(`location/${currentId}/post`, {
+      params: { pageNo },
+    });
+    actions.setTotalPostPage(data.totalPage);
+    if (data.items.length > 0)
+      actions.setLocationPostList({
+        data: data.items,
+        status: pageNo === 1 ? "Overwrite" : "Append",
+      });
   }),
 };
 export default model;

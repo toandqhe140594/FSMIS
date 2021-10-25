@@ -4,3 +4,4 @@ export const DEFAULT_LATLNG = {
   latitude: 21.05113180001943,
   longitude: 105.82025917733947,
 };
+export const AUTH_TOKEN = "AuthToken";

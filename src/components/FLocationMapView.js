@@ -16,24 +16,27 @@ export default function FLocationMapView({ coordinates, locationList }) {
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421,
         }}
+        provider={MapView.PROVIDER_GOOGLE}
         mapType="standard"
         style={styles.map}
+        showsUserLocation
       >
-        {locationList.map((location) => (
-          <FLocationMarker
-            coordinate={{
-              latitude: location.latitude,
-              longitude: location.longitude,
-            }}
-            fishingSpot={{
-              name: location.name,
-              rate: location.rating,
-              isVerified: location.verify,
-              id: location.id,
-            }}
-            key={location.id}
-          />
-        ))}
+        {locationList &&
+          locationList.map((location) => (
+            <FLocationMarker
+              coordinate={{
+                latitude: location.latitude,
+                longitude: location.longitude,
+              }}
+              fishingSpot={{
+                name: location.name,
+                rate: location.rating,
+                isVerified: location.verify,
+                id: location.id,
+              }}
+              key={location.id}
+            />
+          ))}
       </MapView>
     </Box>
   );

@@ -1,4 +1,5 @@
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { useStoreActions } from "easy-peasy";
 import { Box, Button, Menu, Pressable } from "native-base";
 import PropTypes from "prop-types";
 import React from "react";
@@ -24,7 +25,26 @@ const ReviewFromAnglerSection = ({
   negativeCount,
   positiveCount,
   rate,
+  userImage,
+  id,
 }) => {
+  const voteReview = useStoreActions(
+    (actions) => actions.LocationModel.voteReview,
+  );
+
+  const onPressVoteActtion = (vote) => {
+    voteReview({ reviewId: id, vote });
+  };
+
+  // Placeholder for function
+  const goToEditScreen = () => {
+    console.log("go to edit report screen", id);
+  };
+
+  const deleteReview = () => {
+    console.log("delete review ", id);
+  };
+
   return (
     <Box flex={1} m={3} pos="relative">
       {isDisabled ? (
@@ -47,8 +67,20 @@ const ReviewFromAnglerSection = ({
                 );
               }}
             >
-              <Menu.Item>Chỉnh sửa đánh giá</Menu.Item>
-              <Menu.Item>Xóa đánh giá</Menu.Item>
+              <Menu.Item
+                onPress={() => {
+                  goToEditScreen();
+                }}
+              >
+                Chỉnh sửa đánh giá
+              </Menu.Item>
+              <Menu.Item
+                onPress={() => {
+                  deleteReview();
+                }}
+              >
+                Xóa đánh giá
+              </Menu.Item>
             </Menu>
           </Box>
         </>
@@ -66,7 +98,7 @@ const ReviewFromAnglerSection = ({
           rounded
           size="medium"
           source={{
-            uri: "https://picsum.photos/200",
+            uri: userImage,
           }}
           containerStyle={{
             margin: 10,
@@ -93,25 +125,40 @@ const ReviewFromAnglerSection = ({
       {isDisabled ? (
         <Button.Group mt={2}>
           <Button isDisabled>
-            <Text>Hữu ích {positiveCount && `(${positiveCount})`}</Text>
+            <Text>
+              Hữu ích{" "}
+              {positiveCount ? positiveCount > 0 && `(${positiveCount})` : ""}
+            </Text>
           </Button>
           <Button isDisabled>
-            <Text>Không hữu ích {negativeCount && `(${negativeCount})`}</Text>
+            <Text>
+              Không hữu ích{" "}
+              {negativeCount ? negativeCount > 0 && `(${negativeCount})` : ""}
+            </Text>
           </Button>
         </Button.Group>
       ) : (
         <Button.Group mt={2}>
-          <Button>
+          <Button
+            onPress={() => {
+              onPressVoteActtion(1);
+            }}
+          >
             <Text
               style={[
                 styles.buttonText,
                 !isNeutral && isPositive && styles.selectedButtonText,
               ]}
             >
-              Hữu ích {positiveCount && `(${positiveCount})`}
+              Hữu ích{" "}
+              {positiveCount ? positiveCount > 0 && `(${positiveCount})` : ""}
             </Text>
           </Button>
-          <Button>
+          <Button
+            onPress={() => {
+              onPressVoteActtion(0);
+            }}
+          >
             <Text
               style={[
                 styles.buttonText,
@@ -119,7 +166,7 @@ const ReviewFromAnglerSection = ({
               ]}
             >
               Không hữu ích
-              {negativeCount && `(${negativeCount})`}
+              {negativeCount ? negativeCount > 0 && `(${negativeCount})` : ""}
             </Text>
           </Button>
         </Button.Group>
@@ -137,6 +184,9 @@ ReviewFromAnglerSection.propTypes = {
   negativeCount: PropTypes.number,
   positiveCount: PropTypes.number,
   rate: PropTypes.number.isRequired,
+  isAdminStyle: PropTypes.bool,
+  userImage: PropTypes.string,
+  id: PropTypes.number.isRequired,
 };
 ReviewFromAnglerSection.defaultProps = {
   isDisabled: false,
@@ -144,5 +194,7 @@ ReviewFromAnglerSection.defaultProps = {
   isNeutral: true,
   negativeCount: 0,
   positiveCount: 0,
+  isAdminStyle: false,
+  userImage: "https://picsum.photos/200",
 };
 export default ReviewFromAnglerSection;

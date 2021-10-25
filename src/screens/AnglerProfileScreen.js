@@ -1,5 +1,6 @@
-import { Box, VStack } from "native-base";
-import React from "react";
+import { useStoreActions, useStoreState } from "easy-peasy";
+import { Box, ScrollView, VStack } from "native-base";
+import React, { useEffect } from "react";
 
 import AvatarCard from "../components/AvatarCard";
 import MenuScreen from "../components/MenuScreen";
@@ -44,7 +45,16 @@ const menuCategory = [
   },
 ];
 const logOut = [{ id: 1, title: "Đăng xuất", icon: "exit-to-app" }];
+
 const AnglerProfileScreen = () => {
+  const getUserInfo = useStoreActions(
+    (state) => state.ProfileModel.getUserInfo,
+  );
+  const userInfo = useStoreState((state) => state.ProfileModel.userInfo);
+  useEffect(() => {
+    getUserInfo();
+  }, []);
+
   return (
     <Box>
       <VStack
@@ -60,13 +70,15 @@ const AnglerProfileScreen = () => {
           avatarSize="xl"
           nameFontSize="21"
           subText="Lên cần : 69 lần"
+          nameUser={userInfo.fullName}
         />
       </VStack>
-
-      <VStack mt="4">
-        <MenuScreen menuListItem={menuCategory} />
-        <MenuScreen menuListItem={logOut} />
-      </VStack>
+      <ScrollView maxHeight="80%">
+        <VStack mt="4">
+          <MenuScreen menuListItem={menuCategory} />
+          <MenuScreen menuListItem={logOut} />
+        </VStack>
+      </ScrollView>
     </Box>
   );
 };

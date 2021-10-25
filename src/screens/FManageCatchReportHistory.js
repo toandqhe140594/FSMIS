@@ -1,3 +1,4 @@
+import { useNavigation } from "@react-navigation/native";
 import { Box, CheckIcon, FlatList, Modal, Select, Text } from "native-base";
 import PropTypes from "prop-types";
 import React, { useState } from "react";
@@ -6,8 +7,10 @@ import CalendarPicker from "react-native-calendar-picker";
 import AvatarCard from "../components/AvatarCard";
 import HeaderTab from "../components/HeaderTab";
 import PressableCustomCard from "../components/PressableCustomCard";
+import { goToCatchReportDetailScreen } from "../navigations";
 
 const FManageCatchReportHistory = ({ angler }) => {
+  const navigation = useNavigation();
   const dummyMenu = [
     { id: 1, message: "Ngoi ca sang", caches: "Ro dong, Diec" },
     { id: 2, message: "Ngoi ca sang", caches: "Ro dong, Diec" },
@@ -60,13 +63,12 @@ const FManageCatchReportHistory = ({ angler }) => {
         <Select
           //   selectedValue={dateFilter}
           minWidth="200"
-          accessibilityLabel="Choose Service"
-          placeholder="Choose Service"
+          accessibilityLabel="Chọn kiểu lọc"
+          placeholder="Chọn kiểu lọc"
           _selectedItem={{
             bg: "teal.600",
             endIcon: <CheckIcon size="5" />,
           }}
-          mt={1}
           onValueChange={(itemValue) => selectedFilterHandler(itemValue)}
         >
           <Select.Item label="Tất cả" value="All" />
@@ -78,14 +80,21 @@ const FManageCatchReportHistory = ({ angler }) => {
           renderItem={({ item }) => (
             <Box
               borderBottomWidth="1"
+              backgroundColor="white"
               _dark={{
                 borderColor: "gray.600",
               }}
               borderColor="coolGray.200"
-              pb="1"
+
               // keyExtractor={(item.id) => item.index_id.toString()}
             >
-              <PressableCustomCard paddingX="3" paddingY="1">
+              <PressableCustomCard
+                paddingX="3"
+                paddingY="1"
+                onPress={() => {
+                  goToCatchReportDetailScreen(navigation);
+                }}
+              >
                 <Box pl="2">
                   <AvatarCard avatarSize="md" nameUser={angler.name} />
                   <Box mt={2}>

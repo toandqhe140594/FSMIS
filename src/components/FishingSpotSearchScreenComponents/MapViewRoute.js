@@ -147,11 +147,8 @@ MapViewOverlay.propTypes = {
 };
 
 const MapViewRoute = () => {
-  const locationList = useStoreState(
-    (states) => states.MapSearchModel.locationList,
-  );
-  const currentLocation = useStoreState(
-    (states) => states.MapSearchModel.currentLocation,
+  const { locationList, currentLocation } = useStoreState(
+    (states) => states.MapSearchModel,
   );
   const setCurrentLocation = useStoreActions(
     (actions) => actions.MapSearchModel.setCurrentLocation,
@@ -192,8 +189,8 @@ const MapViewRoute = () => {
             <Button
               colorScheme="muted"
               position="absolute"
-              right={7}
-              top={5}
+              left={3}
+              top={3}
               onPress={toggleOverlay}
             >
               <Center flexDir="row">

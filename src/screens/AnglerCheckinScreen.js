@@ -1,4 +1,5 @@
 import { useNavigation } from "@react-navigation/native";
+import { useStoreState } from "easy-peasy";
 import { Box, Button, Center, Text } from "native-base";
 import React from "react";
 import QRCode from "react-native-qrcode-svg";
@@ -45,6 +46,13 @@ const CheckinSuccessScreen = () => {
 };
 
 const DefaultQRCodeScreen = () => {
+  const userProfile = useStoreState((states) => states.userProfile);
+  const [qrString, setQrString] = React.useState(null);
+
+  React.useEffect(() => {
+    if (userProfile && userProfile.qrString) setQrString(userProfile.qrString);
+  }, [userProfile]);
+
   return (
     <Center flex={1}>
       <Center w="80%">
@@ -55,7 +63,7 @@ const DefaultQRCodeScreen = () => {
           logo={require("../assets/images/logo.png")}
           logoSize={50}
           size={200}
-          value="Đùa không vui, tôi đã căng"
+          value={qrString || "Default QR DATA"}
         />
       </Center>
     </Center>
@@ -63,7 +71,7 @@ const DefaultQRCodeScreen = () => {
 };
 
 const CheckinScreen = () => {
-  return <CheckinSuccessScreen />;
+  return <DefaultQRCodeScreen />;
 };
 
 export default CheckinScreen;

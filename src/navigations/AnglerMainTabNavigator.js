@@ -2,11 +2,15 @@ import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import React from "react";
 
+import ProfileModel from "../models/ProfileModel";
 import CheckinScreen from "../screens/AnglerCheckinScreen";
 import FLocationSaveScreen from "../screens/FLocationSaveScreen";
 import FishingLocationSearchScreen from "../screens/FLocationSearchScreen";
 import NotificationsScreen from "../screens/NotificationsScreen";
+import store from "../utilities/Store";
 import ProfileNavigator from "./NestedProfileNavigator";
+
+store.addModel("ProfileModel", ProfileModel);
 
 const Tab = createBottomTabNavigator();
 const AnglerMainNavigator = () => {

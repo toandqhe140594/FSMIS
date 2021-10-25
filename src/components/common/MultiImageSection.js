@@ -1,10 +1,15 @@
-import { Box, Flex } from "native-base";
 import PropTypes from "prop-types";
 import React from "react";
-import { StyleSheet } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 import AddImageButton from "./AddImageButton";
 import InteractiveImageBox from "./InteractiveImageBox";
+
+let itemKey = 0;
+const generateKey = () => {
+  itemKey += 1;
+  return itemKey;
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -15,6 +20,8 @@ const styles = StyleSheet.create({
     width: 110,
     height: 110,
     overflow: "hidden",
+    marginTop: 4,
+    marginLeft: 4,
   },
 });
 
@@ -27,22 +34,22 @@ const imageList = [
 
 const MultiImageSection = ({ imageLimit }) => {
   return (
-    <Flex
+    <View
       style={[
         styles.container,
         { justifyContent: imageList.length > 0 ? null : "center" },
       ]}
     >
-      {imageList.map((image, index) => {
+      {imageList.map((image) => {
         return (
           // Test only
-          <Box style={styles.imageContainer} mt={1} ml={1} key={index}>
+          <View style={styles.imageContainer} key={generateKey()}>
             <InteractiveImageBox image={image} />
-          </Box>
+          </View>
         );
       })}
       <AddImageButton isDisabled={imageList.length === imageLimit} />
-    </Flex>
+    </View>
   );
 };
 
