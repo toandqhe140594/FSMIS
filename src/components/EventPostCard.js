@@ -27,12 +27,13 @@ const EventPostCard = ({
             <Box justifyContent="flex-start" alignItems="flex-start">
               <Badge
                 badgeStyle={{
-                  borderRadius: 0,
-                  paddingHorizontal: 4,
-                  width: "auto",
-                  height: 25,
+                  borderRadius: 7,
+                  paddingHorizontal: 1,
+                  width: 90,
+                  height: 30,
+                  marginBottom: 8,
                 }}
-                textStyle={{ fontSize: 15 }}
+                textStyle={{ fontSize: 16, fontWeight: "bold" }}
                 status="primary"
                 value={lakePost.badge}
               />
@@ -45,7 +46,7 @@ const EventPostCard = ({
               trigger={(triggerProps) => {
                 return (
                   <Pressable {...triggerProps}>
-                    <Ionicons name={iconName} size={24} color="black" />
+                    <Ionicons name={iconName} size={22} color="black" />
                   </Pressable>
                 );
               }}
@@ -78,7 +79,7 @@ const EventPostCard = ({
       )}
 
       <VStack pb={1}>
-        <Card.Image source={{ uri: image }} style={{ height: 250 }} />
+        <Card.Image source={{ uri: image }} style={{ height: 290 }} />
       </VStack>
       <Divider />
     </Box>
