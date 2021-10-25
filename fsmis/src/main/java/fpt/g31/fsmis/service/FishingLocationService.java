@@ -1,10 +1,7 @@
 package fpt.g31.fsmis.service;
 
 import fpt.g31.fsmis.dto.input.FishingLocationDtoIn;
-import fpt.g31.fsmis.dto.output.FishingLocationOverviewDtoOut;
-import fpt.g31.fsmis.dto.output.FishingLocationItemDtoOut;
-import fpt.g31.fsmis.dto.output.LocationPinDtoOut;
-import fpt.g31.fsmis.dto.output.PaginationDtoOut;
+import fpt.g31.fsmis.dto.output.*;
 import fpt.g31.fsmis.entity.FishingLocation;
 import fpt.g31.fsmis.entity.User;
 import fpt.g31.fsmis.entity.address.Ward;
@@ -61,17 +58,21 @@ public class FishingLocationService {
         return "Tạo hồ câu thành công!";
     }
 
-    public Boolean disableFishingLocation(Long locationId, Long ownerId) {
+    public ResponseTextDtoOut disableFishingLocation(HttpServletRequest request, Long locationId) {
+        User user = jwtFilter.getUserFromToken(request);
         Optional<FishingLocation> findFishingLocation = fishingLocationRepos.findById(locationId);
         if (!findFishingLocation.isPresent()) {
             throw new FishingLocationNotFoundException(locationId);
         }
         FishingLocation location = findFishingLocation.get();
-        if (!location.getOwner().getId().equals(ownerId)) {
-            throw new UnauthorizedException("Không phải chủ hồ, không có quyền xóa hồ");
+        if(!location.getEmployeeList().isEmpty()) {
+            throw new ValidationException("Vẫn còn nhân viên đang làm việc trong khu vực của bạn.");
+        }
+        if (location.getOwner() != user) {
+            throw new UnauthorizedException("Bạn không có quyền đóng cửa địa điểm.");
         }
         location.setActive(false);
-        return true;
+        return new ResponseTextDtoOut("Bạn đã đóng cửa địa điểm.");
     }
 
     public FishingLocationOverviewDtoOut getFishingLocationOverviewById(HttpServletRequest request, Long locationId) {
@@ -101,6 +102,24 @@ public class FishingLocationService {
             locationPinDtoOutList.add(modelMapper.map(fishingLocation, LocationPinDtoOut.class));
         }
         return locationPinDtoOutList;
+    }
+
+    public SaveStatusDtoOut saveFishingLocation(HttpServletRequest request, Long locationId) {
+        User user = jwtFilter.getUserFromToken(request);
+        FishingLocation itemToSave = fishingLocationRepos.getById(locationId);
+        List<FishingLocation> saved = user.getSavedFishingLocations();
+        for(FishingLocation fishingLocation : saved) {
+            if(fishingLocation == itemToSave) {
+                saved.remove(fishingLocation);
+                user.setSavedFishingLocations(saved);
+                userRepos.save(user);
+                return new SaveStatusDtoOut(false);
+            }
+        }
+        saved.add(itemToSave);
+        user.setSavedFishingLocations(saved);
+        userRepos.save(user);
+        return new SaveStatusDtoOut(true);
     }
 
     public PaginationDtoOut getSavedFishingLocationList(HttpServletRequest request, int pageNo) {

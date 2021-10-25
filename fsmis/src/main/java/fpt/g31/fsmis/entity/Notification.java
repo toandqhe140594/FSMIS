@@ -3,8 +3,8 @@ package fpt.g31.fsmis.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Getter
@@ -20,6 +20,8 @@ public class Notification {
 
     @Column(columnDefinition = "TEXT")
     private String description;
+
+    private LocalDateTime time;
 
     @ManyToMany(mappedBy = "notificationSet")
     private List<User> userSet;

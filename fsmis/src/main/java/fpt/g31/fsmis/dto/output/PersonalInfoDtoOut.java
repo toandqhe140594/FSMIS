@@ -16,11 +16,19 @@ public class PersonalInfoDtoOut {
 
     private String fullName;
 
+    private String phone;
+
     private String dob;
 
     private boolean gender;
 
     private String address;
+
+    private String qrString;
+
+    private String avatarUrl;
+
+    private boolean status;
 
     private AddressFromWardDtoOut addressFromWard;
 }

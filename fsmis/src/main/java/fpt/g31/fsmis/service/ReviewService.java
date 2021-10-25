@@ -11,6 +11,7 @@ import fpt.g31.fsmis.repository.VoteRepos;
 import fpt.g31.fsmis.security.JwtFilter;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.parsing.ReaderEventListener;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -66,7 +67,7 @@ public class ReviewService {
         }
     }
 
-    public String postReview(HttpServletRequest request, Long locationId, ReviewDtoIn reviewDtoIn) {
+    public ReviewDtoOut postReview(HttpServletRequest request, Long locationId, ReviewDtoIn reviewDtoIn) {
         User user = jwtFilter.getUserFromToken(request);
         if (reviewRepos.findByFishingLocationIdAndUserIdAndActiveIsTrue(locationId, user.getId()) != null) {
             throw new ValidationException("Đánh giá đã tồn tại");
@@ -78,18 +79,29 @@ public class ReviewService {
         review.setUser(user);
         review.setFishingLocation(fishingLocation);
         reviewRepos.save(review);
-        return "Đánh giá thành công";
+        return ReviewDtoOut.builder()
+                .id(0L)
+                .userId(user.getId())
+                .userFullName(user.getFullName())
+                .userAvatar(user.getAvatarUrl())
+                .userVoteType(null)
+                .score(review.getScore())
+                .description(review.getDescription())
+                .time(ServiceUtils.convertDateToString(review.getTime()))
+                .upvote(0L)
+                .downvote(0L)
+                .build();
     }
 
-    public String editReview(HttpServletRequest request, Long locationId, ReviewDtoIn reviewDtoIn) {
-        User user = jwtFilter.getUserFromToken(request);
-        Review review = reviewRepos.findByFishingLocationIdAndUserIdAndActiveIsTrue(locationId, user.getId());
-        review.setTime(LocalDateTime.now());
-        review.setScore(reviewDtoIn.getScore());
-        review.setDescription(reviewDtoIn.getDescription());
-        reviewRepos.save(review);
-        return "Đánh giá thành công";
-    }
+//    public String editReview(HttpServletRequest request, Long locationId, ReviewDtoIn reviewDtoIn) {
+//        User user = jwtFilter.getUserFromToken(request);
+//        Review review = reviewRepos.findByFishingLocationIdAndUserIdAndActiveIsTrue(locationId, user.getId());
+//        review.setTime(LocalDateTime.now());
+//        review.setScore(reviewDtoIn.getScore());
+//        review.setDescription(reviewDtoIn.getDescription());
+//        reviewRepos.save(review);
+//        return "Đánh giá thành công";
+//    }
 
     public String deleteReview(HttpServletRequest request, Long locationId) {
         User user = jwtFilter.getUserFromToken(request);
@@ -131,8 +143,8 @@ public class ReviewService {
             item.setUserFullName(review.getUser().getFullName());
             item.setUserAvatar(review.getUser().getAvatarUrl());
             item.setTime(ServiceUtils.convertDateToString(review.getTime()));
-            item.setUpvote(voteRepos.getVoteCountByReviewId(review.getId(), 0));
-            item.setDownvote(voteRepos.getVoteCountByReviewId(review.getId(), 1));
+            item.setUpvote(voteRepos.getVoteCountByReviewId(review.getId(), 1));
+            item.setDownvote(voteRepos.getVoteCountByReviewId(review.getId(), 0));
             Vote vote = voteRepos.findByReviewIdAndUserId(review.getId(), user.getId());
             if(vote != null) {
                 if (vote.getVoteType() == VoteType.UPVOTE) {

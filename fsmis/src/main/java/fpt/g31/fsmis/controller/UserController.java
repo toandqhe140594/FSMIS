@@ -28,8 +28,10 @@ public class UserController {
     // CheckInService
     // @GetMapping("/status")
 
-    // NotificationService
-    // @GetMapping("/notification")
+    @GetMapping("/notification")
+    public ResponseEntity<Object> getPersonalNotification(HttpServletRequest request, @RequestParam(defaultValue = "1") int pageNo) {
+        return new ResponseEntity<>(userService.getPersonalNotification(request, pageNo), HttpStatus.OK);
+    }
 
     @PostMapping("/edit")
     public ResponseEntity<Object> editPersonalInformation(HttpServletRequest request, @RequestBody PersonalInfoDtoIn personalInfoDtoIn) {
