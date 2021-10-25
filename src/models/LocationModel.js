@@ -204,6 +204,13 @@ const model = {
       type: "location",
     });
   }),
+  saveLocation: thunk(async (actions, payload, { getState }) => {
+    const { data } = await http.post(`location/${getState().currentId}/save`);
+    actions.setLocationOverview({
+      ...getState().locationOverview,
+      saved: data.saved,
+    });
+  }),
   getLakeList: thunk(async (actions, payload, { getState }) => {
     const { data } = await http.get(
       `location/${getState().currentId}/${API_URL.LOCATION_LAKE_ALL}`,
