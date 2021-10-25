@@ -1,7 +1,7 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React from "react";
 
-import * as ROUTE_NAMES from "../config/routeNames";
+import { ROUTE_NAMES } from "../constants";
 import AnglerCatchReportsHistoryScreen from "../screens/AnglerCatchReportsHistoryScreen";
 import AnglerCheckInHistory from "../screens/AnglerCheckinHistory";
 import AnglerProfileScreen from "../screens/AnglerProfileScreen";

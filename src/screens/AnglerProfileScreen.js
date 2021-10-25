@@ -4,7 +4,7 @@ import React, { useEffect } from "react";
 
 import AvatarCard from "../components/AvatarCard";
 import MenuScreen from "../components/MenuScreen";
-import * as ROUTE_NAMES from "../config/routeNames";
+import { ROUTE_NAMES } from "../constants";
 
 const menuCategory = [
   {
@@ -44,13 +44,22 @@ const menuCategory = [
     route: ROUTE_NAMES.MANAGEMENT_MODE,
   },
 ];
-const logOut = [{ id: 1, title: "Đăng xuất", icon: "exit-to-app" }];
+const logOut = [
+  {
+    id: 1,
+    title: "Đăng xuất",
+    icon: "exit-to-app",
+    route: ROUTE_NAMES.PROFILE_LOGOUT,
+  },
+];
 
 const AnglerProfileScreen = () => {
   const getUserInfo = useStoreActions(
-    (state) => state.ProfileModel.getUserInfo,
+    (actions) => actions.ProfileModel.getUserInfo,
   );
+
   const userInfo = useStoreState((state) => state.ProfileModel.userInfo);
+
   useEffect(() => {
     getUserInfo();
   }, []);

@@ -1,4 +1,4 @@
-import * as ROUTE_NAMES from "../config/routeNames";
+import { ROUTE_NAMES } from "../constants";
 
 const goBack = (navigation, params) => {
   navigation.goBack({ ...params });

@@ -1,7 +1,7 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React from "react";
 
-import * as ROUTE_NAMES from "../config/routeNames";
+import { ROUTE_NAMES } from "../constants";
 import FManageCatchReportHistory from "../screens/FManageCatchReportHistory";
 import FManageCheckinHistoryScreen from "../screens/FManageCheckinHistory";
 import FManageEditProfileScreen from "../screens/FManageEditProfileScreen";

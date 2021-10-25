@@ -5,7 +5,7 @@ import React, { useEffect } from "react";
 
 import HeaderTab from "../components/HeaderTab";
 import MenuScreen from "../components/MenuScreen";
-import * as ROUTE_NAMES from "../config/routeNames";
+import { ROUTE_NAMES } from "../constants";
 import LocationModel from "../models/LocationModel";
 import store from "../utilities/Store";
 
