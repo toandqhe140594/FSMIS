@@ -15,3 +15,8 @@ export const DEFAULT_LATLNG = {
   longitude: 105.82025917733947,
 };
 export const AUTH_TOKEN = "AuthToken";
+export const USER_PROFILE = "UserProfile";
+export const USER_ROLE = "UserRole";
+
+export const ROLE_USER = "ROLE_USER";
+export const ROLE_ADMIN = "ROLE_ADMIn";
