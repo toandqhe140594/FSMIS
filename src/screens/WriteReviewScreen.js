@@ -1,5 +1,4 @@
-import { Ionicons } from "@expo/vector-icons";
-import React from "react";
+import React, { useState } from "react";
 import { StyleSheet, Text, TextInput, View } from "react-native";
 import { Avatar, Button, Divider } from "react-native-elements";
 import { Rating } from "react-native-ratings";
@@ -7,25 +6,11 @@ import { Rating } from "react-native-ratings";
 import colors from "../config/colors";
 
 const styles = StyleSheet.create({
-  topRowContainer: {
-    height: 40,
-    backgroundColor: "white",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: 8,
-  },
-  topRowLeft: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  title: { fontSize: 20, marginRight: 4 },
   avatarContainer: {
     width: "100%",
     flexDirection: "row",
     alignItems: "center",
+    marginVertical: 5,
   },
   ratingContainer: {
     marginVertical: 5,
@@ -51,16 +36,13 @@ const styles = StyleSheet.create({
 });
 
 const WriteReviewScreen = () => {
+  const [rating, setRating] = useState(1);
+  const [reviewContent, setReviewContent] = useState("");
+  const onSubmit = () => {
+    console.log(`Rating given ${rating}, review: ${reviewContent}`); // Testing
+  };
   return (
     <View>
-      <View style={styles.topRowContainer}>
-        <Ionicons name="arrow-back" size={24} color="black" />
-        <View style={styles.topRowLeft}>
-          <Text style={[styles.title, styles.bold]}>Đánh giá của bạn</Text>
-        </View>
-        <Ionicons name="flag" size={24} color="#fff" />
-      </View>
-      <Divider />
       <View style={styles.avatarContainer}>
         <Avatar
           rounded
@@ -81,7 +63,8 @@ const WriteReviewScreen = () => {
           imageSize={30}
           ratingCount={5}
           showRating={false}
-          startingValue={1}
+          startingValue={rating}
+          onFinishRating={setRating}
           tintColor={colors.defaultBackground}
         />
       </View>
@@ -91,11 +74,14 @@ const WriteReviewScreen = () => {
         numberOfLines={6}
         maxLength={1000}
         placeholder="Chia sẻ về trải nghiệm của bạn"
+        value={reviewContent}
+        onChangeText={setReviewContent}
         style={styles.textArea}
       />
       <Button
         containerStyle={styles.buttonContainer}
         buttonStyle={styles.button}
+        onPress={onSubmit}
         title="Đăng"
       />
     </View>
