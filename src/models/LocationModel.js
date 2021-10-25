@@ -145,23 +145,24 @@ const model = {
       },
     );
     // console.log(status);
-    // actions.resetVoteOfReview({ id: reviewId, userVoteType: vote });
+    const { userVoteType, upvote, downvote } = data;
+    if (status === 200)
+      actions.resetVoteOfReview({
+        id: reviewId,
+        userVoteType,
+        upvote,
+        downvote,
+      });
   }),
   resetVoteOfReview: action((state, payload) => {
-    // const review =
-    //   state.locationReviewList[
-    //     state.locationReviewList.findIndex((x) => x.id === payload.id)
-    //   ];
-    // const { userVoteType } = review;
-    // console.log(review);
-    // if (payload.vote === 1)
-    //   if (userVoteType) review.userVoteType = null;
-    //   else {
-    //     review.userVoteType = userVoteType === null ? false : null;
-    //   }
-    // else if (userVoteType === false) review.userVoteType = null;
-    // else review.userVoteType = userVoteType === null ? true : null;
-    // console.log(state.locationReviewList);
+    const { id, userVoteType, upvote, downvote } = payload;
+    const review =
+      state.locationReviewList[
+        state.locationReviewList.findIndex((x) => x.id === id)
+      ];
+    review.userVoteType = userVoteType;
+    review.upvote = upvote;
+    review.downvote = downvote;
   }),
   deletePersonalReview: thunk(async (actions, payload, { getState }) => {
     const { currentId } = getState();
