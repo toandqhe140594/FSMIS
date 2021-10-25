@@ -3,6 +3,7 @@ package fpt.g31.fsmis.service;
 import fpt.g31.fsmis.dto.input.AuthDtoIn;
 import fpt.g31.fsmis.dto.input.RegistrationDtoIn;
 import fpt.g31.fsmis.dto.output.AuthTokenDtoOut;
+import fpt.g31.fsmis.dto.output.ResponseTextDtoOut;
 import fpt.g31.fsmis.entity.Role;
 import fpt.g31.fsmis.entity.User;
 import fpt.g31.fsmis.repository.UserRepos;
@@ -32,8 +33,8 @@ public class AuthService {
     private final JwtProvider jwtProvider;
 
     @Transactional
-    public String register(RegistrationDtoIn registrationDtoIn) {
-        if(userRepos.existsByPhone(registrationDtoIn.getPhone())) {
+    public ResponseTextDtoOut register(RegistrationDtoIn registrationDtoIn) {
+        if (userRepos.existsByPhone(registrationDtoIn.getPhone())) {
             throw new ValidationException("Số điện thoại này đã tồn tại trong hệ thống");
         }
         User user = User.builder()
@@ -51,36 +52,36 @@ public class AuthService {
                 .roles(Collections.singleton(Role.ROLE_USER))
                 .build();
         userRepos.save(user);
-        return "Đăng ký thành công";
+        return new ResponseTextDtoOut("Đăng ký thành công");
     }
 
     public AuthTokenDtoOut login(AuthDtoIn authDtoIn) {
-    Authentication authentication = authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(authDtoIn.getPhone(), authDtoIn.getPassword()));
-    SecurityContextHolder.getContext().setAuthentication(authentication);
-    User user = userRepos.findByPhone(authDtoIn.getPhone());
-    if (!user.isActive()) {
-        throw new ValidationException("Tài khoản này đã bị vô hiệu hóa");
-    }
-    String token = jwtProvider.generateJwtToken(authentication);
-    return AuthTokenDtoOut.builder()
-            .authToken(token)
-            .id(user.getId())
-            .fullName(user.getFullName())
-            .phone(user.getPhone())
-            .dob(user.getDob())
-            .qrString(user.getQrString())
-            .avatarUrl(user.getAvatarUrl())
-            .gender(user.isGender())
-            .status(user.isStatus())
-            .roles(authentication.getAuthorities().iterator().next().toString())
-            .build();
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(authDtoIn.getPhone(), authDtoIn.getPassword()));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        User user = userRepos.findByPhone(authDtoIn.getPhone());
+        if (!user.isActive()) {
+            throw new ValidationException("Tài khoản này đã bị vô hiệu hóa");
+        }
+        String token = jwtProvider.generateJwtToken(authentication);
+        return AuthTokenDtoOut.builder()
+                .authToken(token)
+                .id(user.getId())
+                .fullName(user.getFullName())
+                .phone(user.getPhone())
+                .dob(user.getDob())
+                .qrString(user.getQrString())
+                .avatarUrl(user.getAvatarUrl())
+                .gender(user.isGender())
+                .status(user.isStatus())
+                .roles(authentication.getAuthorities().iterator().next().toString())
+                .build();
     }
 
-    public String changeForgotPassword(AuthDtoIn authDtoIn) {
+    public ResponseTextDtoOut changeForgotPassword(AuthDtoIn authDtoIn) {
         User user = userRepos.findByPhone(authDtoIn.getPhone());
         user.setPassword(passwordEncoder.encode(authDtoIn.getPassword()));
         userRepos.save(user);
-        return "Đổi mật khẩu thành công";
+        return new ResponseTextDtoOut("Đổi mật khẩu thành công");
     }
 }

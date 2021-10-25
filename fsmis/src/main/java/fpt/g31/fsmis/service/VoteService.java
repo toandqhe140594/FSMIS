@@ -25,7 +25,7 @@ public class VoteService {
     private final ModelMapper modelMapper;
 
     public ReviewDtoOut vote(HttpServletRequest request, Long reviewId, Long voteType) {
-        if (voteType != 1 && voteType != 0) {
+        if (voteType != 0 && voteType != 1) {
             throw new ValidationException("Địa chỉ không tồn tại");
         }
         User user = jwtFilter.getUserFromToken(request);
@@ -60,8 +60,8 @@ public class VoteService {
         output.setUserFullName(review.getUser().getFullName());
         output.setUserAvatar(review.getUser().getAvatarUrl());
         output.setTime(ServiceUtils.convertDateToString(review.getTime()));
-        output.setUpvote(voteRepos.getVoteCountByReviewId(review.getId(), 0));
-        output.setDownvote(voteRepos.getVoteCountByReviewId(review.getId(), 1));
+        output.setUpvote(voteRepos.getVoteCountByReviewId(review.getId(), 1));
+        output.setDownvote(voteRepos.getVoteCountByReviewId(review.getId(), 0));
         Vote voteOutput = voteRepos.findByReviewIdAndUserId(review.getId(), user.getId());
         if(voteOutput != null) {
             if (voteOutput.getVoteType() == VoteType.UPVOTE) {

@@ -31,14 +31,14 @@ public class UserService {
 
     public PersonalInfoDtoOut getPersonalInformation(HttpServletRequest request) {
         User user = jwtFilter.getUserFromToken(request);
-        PersonalInfoDtoOut personalInformationDtoOut =
+        PersonalInfoDtoOut output =
                 modelMapper.map(user, PersonalInfoDtoOut.class);
-        personalInformationDtoOut.setDob(ServiceUtils.convertDateToString(user.getDob()));
-        personalInformationDtoOut.setAddressFromWard(ServiceUtils.getAddressByWard(user.getWard()));
-        return personalInformationDtoOut;
+        output.setDob(ServiceUtils.convertDateToString(user.getDob()));
+        output.setAddressFromWard(ServiceUtils.getAddressByWard(user.getWard()));
+        return output;
     }
 
-    public String savePersonalInformation(HttpServletRequest request, PersonalInfoDtoIn personalInfoDtoIn) {
+    public ResponseTextDtoOut savePersonalInformation(HttpServletRequest request, PersonalInfoDtoIn personalInfoDtoIn) {
         User user = jwtFilter.getUserFromToken(request);
         user.setAvatarUrl(personalInfoDtoIn.getAvatarUrl());
         user.setFullName(personalInfoDtoIn.getFullName());
@@ -47,23 +47,54 @@ public class UserService {
         user.setAddress(personalInfoDtoIn.getAddress());
         user.setWard(wardRepos.getById(personalInfoDtoIn.getWardId()));
         userRepos.save(user);
-        return "Thay đổi thông tin thành công";
+
+        return new ResponseTextDtoOut("Thay đổi thông tin thành công.");
     }
 
-    public String changePassword(HttpServletRequest request, ChangePasswordDtoIn changePasswordDtoIn) {
+    public ResponseTextDtoOut changePassword(HttpServletRequest request, ChangePasswordDtoIn changePasswordDtoIn) {
         User user = jwtFilter.getUserFromToken(request);
         if (!passwordEncoder.matches(changePasswordDtoIn.getOldPassword(), user.getPassword())) {
             throw new ValidationException("Mật khẩu không đúng");
         }
         user.setPassword(passwordEncoder.encode(changePasswordDtoIn.getNewPassword()));
         userRepos.save(user);
-        return "Thay đổi mật khẩu thành công";
+        return new ResponseTextDtoOut("Thay đổi mật khẩu thành công");
     }
 
-    public String changePhone(HttpServletRequest request, String newPhone) {
+    public ResponseTextDtoOut changePhone(HttpServletRequest request, String newPhone) {
         User user = jwtFilter.getUserFromToken(request);
         user.setPhone(newPhone);
         userRepos.save(user);
-        return "Thay đổi số điện thoại thành công";
+        return new ResponseTextDtoOut("Thay đổi số điện thoại thành công");
+    }
+
+    public PaginationDtoOut getPersonalNotification(HttpServletRequest request, int pageNo) {
+        if(pageNo <= 0) {
+            throw new ValidationException("Địa chỉ không tồn tại");
+        }
+        User user = jwtFilter.getUserFromToken(request);
+
+        // CUSTOM PAGING
+        List<Notification> notifications = user.getNotificationSet();
+        PageRequest pageRequest = PageRequest.of(pageNo - 1, 10);
+        int total = notifications.size();
+        int start = (int) pageRequest.getOffset();
+        int end = Math.min((start + pageRequest.getPageSize()), total);
+        if(start > end) {
+            start = end = 0;
+        }
+        Page<Notification> notificationList = new PageImpl<>(notifications.subList(start, end), pageRequest, total);
+
+        List<NotificationDtoOut> output = new ArrayList<>();
+        for(Notification notification : notificationList) {
+            NotificationDtoOut item = modelMapper.map(notification, NotificationDtoOut.class);
+            item.setTime(ServiceUtils.convertDateToString(notification.getTime()));
+            output.add(item);
+        }
+        return PaginationDtoOut.builder()
+                .totalPage(notificationList.getTotalPages())
+                .pageNo(pageNo)
+                .items(output)
+                .build();
     }
 }
