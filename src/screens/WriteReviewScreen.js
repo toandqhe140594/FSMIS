@@ -4,6 +4,8 @@ import { Text, TextInput, View } from "react-native";
 import { Avatar, Button, Divider } from "react-native-elements";
 import { Rating } from "react-native-ratings";
 
+import colors from "../config/colors";
+
 const WriteReviewScreen = () => {
   return (
     <View>
@@ -72,7 +74,8 @@ const WriteReviewScreen = () => {
           imageSize={30}
           ratingCount={5}
           showRating={false}
-          startingValue={0}
+          startingValue={1}
+          tintColor={colors.defaultBackground}
         />
       </View>
       <Divider />
@@ -88,7 +91,11 @@ const WriteReviewScreen = () => {
           padding: 5,
         }}
       />
-      <Button containerStyle={{ marginHorizontal: "15%" }} title="Đăng" />
+      <Button
+        containerStyle={{ marginHorizontal: "15%" }}
+        buttonStyle={{ backgroundColor: colors.defaultPrimaryButton }}
+        title="Đăng"
+      />
     </View>
   );
 };
