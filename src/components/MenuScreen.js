@@ -1,9 +1,11 @@
 import { useNavigation } from "@react-navigation/native";
+import { useStoreDispatch } from "easy-peasy";
 import PropTypes from "prop-types";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import { Icon, ListItem, Text } from "react-native-elements";
 
+import { ROUTE_NAMES } from "../constants";
 import { goToScreen } from "../navigations";
 
 const styles = StyleSheet.create({
@@ -23,8 +25,11 @@ const styles = StyleSheet.create({
 const MenuScreen = ({ menuTitle, menuListItem }) => {
   const navigation = useNavigation();
 
+  const dispatch = useStoreDispatch();
+
   const navigateToScreen = (route) => {
-    goToScreen(navigation, route);
+    if (route === ROUTE_NAMES.PROFILE_LOGOUT) dispatch({ type: "LOGOUT" });
+    else goToScreen(navigation, route);
   };
 
   return (
