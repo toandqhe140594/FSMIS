@@ -1,14 +1,22 @@
+import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, FlatList, Text } from "native-base";
-import React from "react";
+import React, { useEffect } from "react";
 
 import PressableCustomCard from "../components/PressableCustomCard";
 
 const NotificationsScreen = () => {
-  const dummyNotifications = [
-    { id: 1, name: "Hồ thuần việt", event: "Bồi cá", time: "09:00 01/01/2021" },
-    { id: 2, name: "Hồ thuần việt", event: "Bồi cá", time: "09:00 01/01/2021" },
-    { id: 3, name: "Hồ thuần việt", event: "Bồi cá", time: "09:00 01/01/2021" },
-  ];
+  const { notificationCurrentPage, notificationList } = useStoreState(
+    (states) => states.ProfileModel,
+  );
+
+  const getNotificationList = useStoreActions(
+    (actions) => actions.ProfileModel.getNotificationList,
+  );
+
+  useEffect(() => {
+    if (notificationCurrentPage === 1) getNotificationList();
+  }, []);
+
   return (
     <>
       <Box
@@ -18,7 +26,7 @@ const NotificationsScreen = () => {
         }}
       >
         <FlatList
-          data={dummyNotifications}
+          data={notificationList}
           renderItem={({ item }) => (
             <Box
               borderBottomWidth="1"
@@ -29,22 +37,18 @@ const NotificationsScreen = () => {
             >
               <PressableCustomCard paddingX="2" paddingY="1">
                 <Box pl={5} py={3}>
-                  <Text numberOfLines={1} mb={1}>
-                    <Text bold fontSize="md">
-                      {item.name}
-                    </Text>{" "}
-                    đã đăng lên sự kiện
-                    <Text bold fontSize="md">
-                      {" "}
-                      {item.event}
-                    </Text>
+                  <Text numberOfLines={2} mb={1} isTruncated>
+                    {item.description}
                   </Text>
                   <Text>{item.time}</Text>
                 </Box>
               </PressableCustomCard>
             </Box>
           )}
-          keyExtractor={(item, index) => index.toString()}
+          keyExtractor={(item) => item.id.toString()}
+          onEndReached={() => {
+            getNotificationList();
+          }}
         />
       </Box>
     </>
