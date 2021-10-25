@@ -123,12 +123,15 @@ const model = {
     state.savedLocationTotalPage = payload;
   }),
   setSavedLocationList: action((state, payload) => {
-    state.savedLocationList = state.savedLocationList.concat(payload);
+    // If mode is overwrite then overwrite the list, else append the list with new data
+    if (payload.mode === "Overwrite") state.savedLocationList = payload.data;
+    else state.savedLocationList = state.savedLocationList.concat(payload.data);
   }),
   getSavedLocationList: thunk(async (actions, payload, { getState }) => {
-    const { savedLocationCurrentPage: pageNo, savedLocationTotalPage } =
-      getState();
-
+    const { savedLocationCurrentPage, savedLocationTotalPage } = getState();
+    let pageNo = savedLocationCurrentPage;
+    // If user pull to refresh the list, then load data only from page 1
+    if (payload && payload.mode && payload.mode === "refresh") pageNo = 1;
     // If current page is smaller than 0 or larger than maximum page then return
     if (pageNo <= 0 || pageNo > savedLocationTotalPage) return;
     const { data } = await http.get(`${API_URL.PERSONAL_SAVED_LOCATION}`, {
@@ -138,7 +141,10 @@ const model = {
     const { totalPage, items } = data;
     actions.setSavedLocationCurrentPage(pageNo + 1);
     actions.setSavedLocationTotalPage(totalPage);
-    actions.setSavedLocationList(items);
+    actions.setSavedLocationList({
+      data: items,
+      mode: pageNo === 1 ? "Overwrite" : "Append", // If page = 1 then overwrite the list
+    });
   }),
 };
 export default model;
