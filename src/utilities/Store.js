@@ -2,7 +2,7 @@ import { action, createStore, reducer, thunk } from "easy-peasy";
 import * as SecureStore from "expo-secure-store";
 import jwtDecode from "jwt-decode";
 
-import { AUTH_TOKEN } from "../config/constants";
+import { AUTH_TOKEN, USER_PROFILE, USER_ROLE } from "../constants";
 import http, { removeAuthToken, setAuthToken } from "./Http";
 
 const initialLoginState = {
@@ -43,8 +43,16 @@ const Store = createStore({
         return { ...state };
     }
   }),
+  userRole: null,
+  userProfile: null,
   setErrorMessage: action((state, payload) => {
     state.errorMessage = payload;
+  }),
+  setUserRole: action((state, payload) => {
+    state.userRole = payload;
+  }),
+  setUserProfile: action((state, payload) => {
+    state.userProfile = payload;
   }),
   login: thunk(async (actions, payload, { dispatch }) => {
     const { data } = await http.post("auth/login", {
@@ -55,6 +63,10 @@ const Store = createStore({
     try {
       authToken = data.authToken;
       await SecureStore.setItemAsync(AUTH_TOKEN, authToken);
+      await SecureStore.setItemAsync(USER_ROLE, data.roles);
+      await SecureStore.setItemAsync(USER_PROFILE, JSON.stringify(data));
+      actions.setUserRole(data.roles);
+      actions.setUserProfile(data);
       setAuthToken(authToken);
     } catch (e) {
       actions.setErrorMessage(e); // Test only
@@ -68,6 +80,7 @@ const Store = createStore({
   logOut: thunk(async (actions, payload, { dispatch }) => {
     try {
       await SecureStore.deleteItemAsync(AUTH_TOKEN);
+      await SecureStore.deleteItemAsync(USER_PROFILE);
       removeAuthToken();
     } catch (e) {
       actions.setErrorMessage(e); // Test only
@@ -76,8 +89,13 @@ const Store = createStore({
   }),
   retrieveToken: thunk(async (actions, payload, { dispatch }) => {
     let authToken = null;
+    let userRole = null;
+    let userProfile = null;
     try {
       authToken = await SecureStore.getItemAsync(AUTH_TOKEN);
+      userRole = await SecureStore.getItemAsync(USER_ROLE);
+      const userProfileJSONData = await SecureStore.getItemAsync(USER_PROFILE);
+      userProfile = JSON.parse(userProfileJSONData);
     } catch (e) {
       actions.setErrorMessage(e);
     }
@@ -88,6 +106,8 @@ const Store = createStore({
       // If the token has not yet expired
       if (!isExpire) {
         dispatch({ type: "RETRIEVE_TOKEN", authToken });
+        actions.setUserRole(userRole);
+        actions.setUserProfile(userProfile);
         setAuthToken(authToken);
         return;
       }
