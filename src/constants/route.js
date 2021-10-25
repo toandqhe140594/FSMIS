@@ -13,6 +13,7 @@ export const PROFILE_CHANGE_PASSWORD = "Change Profile Password";
 export const PROFILE_CATCHES_REPORT_HISTORY = "View Personal Catches Reports";
 export const PROFILE_CHECKIN_REPORT_HISTORY = "View Personal Checkin History";
 export const PROFILE_MAIN = "Personal Profile";
+export const PROFILE_LOGOUT = "Logout";
 
 export const MANAGEMENT_MODE = "Change to management mode";
 
