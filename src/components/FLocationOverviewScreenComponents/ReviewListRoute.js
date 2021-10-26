@@ -1,8 +1,8 @@
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, Button, Center, ScrollView } from "native-base";
 import PropTypes from "prop-types";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { FlatList } from "react-native";
 import { Divider, Text } from "react-native-elements";
 import { Rating } from "react-native-ratings";
@@ -71,14 +71,16 @@ const ReviewListRoute = () => {
     setReviewPage(2);
   };
 
-  useEffect(() => {
-    getLocationReviewScore();
-    getPersonalReview();
-    loadMoreReviewData();
-    return () => {
-      resetPersonalReview();
-    };
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      getLocationReviewScore();
+      getPersonalReview();
+      resetReviewData();
+      return () => {
+        resetPersonalReview();
+      };
+    }, []),
+  );
 
   useEffect(() => {
     resetReviewData();

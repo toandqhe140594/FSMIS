@@ -65,9 +65,9 @@ const Store = createStore({
       await SecureStore.setItemAsync(AUTH_TOKEN, authToken);
       await SecureStore.setItemAsync(USER_ROLE, data.roles);
       await SecureStore.setItemAsync(USER_PROFILE, JSON.stringify(data));
+      await setAuthToken(authToken);
       actions.setUserRole(data.roles);
       actions.setUserProfile(data);
-      setAuthToken(authToken);
     } catch (e) {
       actions.setErrorMessage(e); // Test only
     }
@@ -106,9 +106,9 @@ const Store = createStore({
       // If the token has not yet expired
       if (!isExpire) {
         dispatch({ type: "RETRIEVE_TOKEN", authToken });
+        await setAuthToken(authToken);
         actions.setUserRole(userRole);
         actions.setUserProfile(userProfile);
-        setAuthToken(authToken);
         return;
       }
     }
