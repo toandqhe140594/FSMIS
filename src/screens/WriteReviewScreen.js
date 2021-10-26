@@ -45,7 +45,13 @@ const styles = StyleSheet.create({
 });
 
 const validationSchema = yup.object().shape({
-  score: yup.number().required("Điểm số không được để trống"),
+  score: yup
+    .number()
+    .test(
+      "isLargerThenZero?",
+      "Số sao không được để trống",
+      (value) => value > 0,
+    ),
   description: yup.string().required("Đánh giá không được để trống"),
 });
 
@@ -57,12 +63,12 @@ const WriteReviewScreen = () => {
   } = useForm({
     mode: "onSubmit",
     reValidateMode: "onChange",
+    defaultValues: { score: 1 },
     resolver: yupResolver(validationSchema),
   });
 
   const { postReview } = useStoreActions((state) => state.LocationModel);
   const onSubmit = (data) => {
-    // console.log(data);
     postReview(data);
   };
   return (
@@ -92,7 +98,7 @@ const WriteReviewScreen = () => {
               imageSize={35}
               ratingCount={5}
               showRating={false}
-              startingValue={value || 1}
+              startingValue={value}
               onFinishRating={onChange}
               tintColor={colors.defaultBackground}
             />
