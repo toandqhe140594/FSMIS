@@ -15,7 +15,7 @@ const AuthenticationContainer = () => {
 
   useEffect(() => {
     setTimeout(async () => {
-      retrieveToken();
+      await retrieveToken();
     }, 1500);
   }, []);
 
