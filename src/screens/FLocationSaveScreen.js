@@ -1,6 +1,7 @@
+import { useFocusEffect } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, VStack } from "native-base";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { FlatList } from "react-native";
 
 import FLocationCard from "../components/FLocationCard";
@@ -23,6 +24,8 @@ const FLocationSaveScreen = () => {
     if (savedLocationCurrentPage === 1)
       getSavedLocationList({ mode: "loadmore" });
   }, []);
+
+  useFocusEffect(useCallback(() => {}, []));
 
   useEffect(() => {
     setRefreshing(false); // If the list is changed then hide refresh icon

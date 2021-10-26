@@ -192,7 +192,7 @@ const model = {
   }),
   deletePersonalReview: thunk(async (actions, payload, { getState }) => {
     const { currentId } = getState();
-    const { status, data } = await http.delete(
+    const { status } = await http.delete(
       `location/${currentId}/${API_URL.LOCATION_REVIEW_PERSONAL_DELETE}`,
     );
     if (status === 200) actions.setPersonalReview({ id: null });
@@ -208,6 +208,7 @@ const model = {
       },
     );
     if (status === 200) actions.setPersonalReview({ ...data, id: null });
+    return status;
   }),
   getLocationOverview: thunk(async (actions, payload, { getState }) => {
     const { data } = await http.get(`location/${getState().currentId}`);
