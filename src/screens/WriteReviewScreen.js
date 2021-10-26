@@ -1,11 +1,41 @@
 import { useStoreState } from "easy-peasy";
-import React from "react";
-import { Text, TextInput, View } from "react-native";
+import React, { useState } from "react";
+import { StyleSheet, Text, TextInput, View } from "react-native";
 import { Avatar, Button, Divider } from "react-native-elements";
 import { Rating } from "react-native-ratings";
 
 import HeaderTab from "../components/HeaderTab";
 import colors from "../config/colors";
+
+const styles = StyleSheet.create({
+  avatarContainer: {
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: 5,
+  },
+  ratingContainer: {
+    marginVertical: 5,
+    marginBottom: 10,
+  },
+  text: {
+    fontSize: 20,
+    marginLeft: 10,
+  },
+  bold: { fontWeight: "bold" },
+  textArea: {
+    borderWidth: 1,
+    margin: 15,
+    textAlignVertical: "top",
+    padding: 5,
+  },
+  buttonContainer: {
+    marginHorizontal: "15%",
+  },
+  button: {
+    backgroundColor: colors.defaultPrimaryButton,
+  },
+});
 
 const WriteReviewScreen = () => {
   const locationShortInformation = useStoreState(
@@ -13,9 +43,13 @@ const WriteReviewScreen = () => {
   );
 
   const { id, name, isVerified } = locationShortInformation;
-
+  const [rating, setRating] = useState(1);
+  const [reviewContent, setReviewContent] = useState("");
+  const onSubmit = () => {
+    console.log(`Rating given ${rating}, review: ${reviewContent}`); // Testing
+  };
   return (
-    <View>
+    <View style={styles.avatarContainer}>
       <HeaderTab id={id} name={name} isVerified={isVerified} flagable />
       <View
         style={{
@@ -34,29 +68,17 @@ const WriteReviewScreen = () => {
             margin: 10,
           }}
         />
-        <Text style={{ fontWeight: "bold" }}>Nguyễn Văn B</Text>
+        <Text style={styles.bold}>Nguyễn Văn B</Text>
       </View>
       <Divider />
-      <View
-        style={{
-          marginVertical: 5,
-          marginBottom: 10,
-        }}
-      >
-        <Text
-          style={{
-            fontWeight: "bold",
-            fontSize: 20,
-            marginLeft: 10,
-          }}
-        >
-          Điểm số:
-        </Text>
+      <View style={styles.ratingContainer}>
+        <Text style={[styles.text, styles.bold]}>Điểm số:</Text>
         <Rating
           imageSize={30}
           ratingCount={5}
           showRating={false}
-          startingValue={1}
+          startingValue={rating}
+          onFinishRating={setRating}
           tintColor={colors.defaultBackground}
         />
       </View>
@@ -66,16 +88,14 @@ const WriteReviewScreen = () => {
         numberOfLines={6}
         maxLength={1000}
         placeholder="Chia sẻ về trải nghiệm của bạn"
-        style={{
-          borderWidth: 1,
-          margin: 15,
-          textAlignVertical: "top",
-          padding: 5,
-        }}
+        value={reviewContent}
+        onChangeText={setReviewContent}
+        style={styles.textArea}
       />
       <Button
-        containerStyle={{ marginHorizontal: "15%" }}
-        buttonStyle={{ backgroundColor: colors.defaultPrimaryButton }}
+        containerStyle={styles.buttonContainer}
+        buttonStyle={styles.button}
+        onPress={onSubmit}
         title="Đăng"
       />
     </View>
