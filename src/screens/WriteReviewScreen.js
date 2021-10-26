@@ -1,5 +1,5 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useStoreActions } from "easy-peasy";
+import { useStoreActions, useStoreState } from "easy-peasy";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import { StyleSheet, Text, TextInput, View } from "react-native";
@@ -67,9 +67,11 @@ const WriteReviewScreen = () => {
     resolver: yupResolver(validationSchema),
   });
 
-  const { postReview } = useStoreActions((state) => state.LocationModel);
+  const postReview = useStoreActions((state) => state.LocationModel.postReview);
+  const userInfo = useStoreState((state) => state.ProfileModel.userInfo);
   const onSubmit = (data) => {
-    postReview(data);
+    console.log(userInfo);
+    // postReview(data);
   };
   return (
     <View>
@@ -79,13 +81,13 @@ const WriteReviewScreen = () => {
           rounded
           size="medium"
           source={{
-            uri: "https://picsum.photos/200",
+            uri: userInfo.avatarUrl,
           }}
           containerStyle={{
             margin: 10,
           }}
         />
-        <Text style={styles.bold}>Nguyễn Văn B</Text>
+        <Text style={styles.bold}>{userInfo.fullName}</Text>
       </View>
       <Divider />
       <View style={styles.section}>
