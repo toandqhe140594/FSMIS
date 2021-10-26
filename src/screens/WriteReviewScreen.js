@@ -70,8 +70,7 @@ const WriteReviewScreen = () => {
   const postReview = useStoreActions((state) => state.LocationModel.postReview);
   const userInfo = useStoreState((state) => state.ProfileModel.userInfo);
   const onSubmit = (data) => {
-    console.log(userInfo);
-    // postReview(data);
+    postReview(data);
   };
   return (
     <View>

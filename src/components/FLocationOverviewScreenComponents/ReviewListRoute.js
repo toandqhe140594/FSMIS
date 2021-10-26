@@ -123,7 +123,7 @@ const ReviewListRoute = () => {
               userImage={personalReview.userAvatar}
               id={personalReview.id}
             />
-            <Divider />
+            {/* <Divider /> */}
           </>
         )}
         {!personalReview.id && (
