@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { Ionicons } from "@expo/vector-icons";
 import { Box, HStack, Menu, Pressable, VStack } from "native-base";
 import PropTypes from "prop-types";
@@ -9,16 +10,22 @@ import AvatarCard from "./AvatarCard";
 
 const EventPostCard = ({
   postStyle,
-  angler,
+  anglerName,
+  anglerContent,
+  anglerCatch,
   lakePost,
   iconName,
   iconEvent,
   image,
   edited,
   postTime,
+  fishList,
+  imageAvatar,
   id,
 }) => {
   // Thu gon angler, lakePost thanh 1
+
+
   return (
     <Box mt="1" px="1.4">
       {postStyle === "LAKE_POST" && (
@@ -67,12 +74,17 @@ const EventPostCard = ({
 
       {postStyle === "ANGLER_POST" && (
         <VStack pb="1" mb={2} px="2">
-          <AvatarCard avatarSize="md" name={angler.name} />
+          <AvatarCard
+            avatarSize="lg"
+            nameUser={anglerName}
+            subText={postTime}
+            image={imageAvatar}
+          />
           <Box mt={2}>
-            <Text italic>{angler.content}</Text>
+            <Text italic>{anglerContent}</Text>
             <Text>
               <Text bold>Đã câu được :</Text>
-              {angler.caches}
+              {fishList}
             </Text>
           </Box>
         </VStack>

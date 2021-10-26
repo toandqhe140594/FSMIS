@@ -26,20 +26,56 @@ const dummyMenu = [
 ];
 
 const CatchReportRoute = () => {
+  const [lakeCatchPage, setLakeCatchPage] = useState(1);
+  const locationCatchList = useStoreState(
+    (states) => states.LocationModel.locationCatchList,
+  );
+  const getLocationCatchListByPage = useStoreActions(
+    (actions) => actions.LocationModel.getLocationCatchListByPage,
+  );
+
+  useEffect(() => {
+    getLocationCatchListByPage({ pageNo: lakeCatchPage });
+    setLakeCatchPage(lakeCatchPage + 1);
+    console.log(`locationCatchList`, locationCatchList[0].userFullName);
+  }, []);
+
+  const loadMoreLakeCatchData = () => {
+    getLocationCatchListByPage({ pageNo: lakeCatchPage });
+    setLakeCatchPage(lakeCatchPage + 1);
+  };
+
   return (
-    <FlatList
-      data={dummyMenu}
-      renderItem={({ item }) => (
-        <PressableCustomCard paddingX="1">
-          <EventPostCard
-            postStyle="ANGLER_POST"
-            image="https://picsum.photos/500"
-            id={item.id}
-          />
-        </PressableCustomCard>
+    <>
+      {locationCatchList.length > 0 && (
+        <FlatList
+          data={locationCatchList}
+          renderItem={({ item }) => (
+            <PressableCustomCard
+              paddingX="1"
+              onPress={() => {
+                console.log(item.id);
+              }}
+            >
+              <EventPostCard
+                // image={item.url}
+                postStyle="ANGLER_POST"
+                anglerName={item.userFullName}
+                anglerContent={item.description}
+                postTime={item.time}
+                fishList={item.fishes}
+                id={item.id}
+                imageAvatar={item.avatar}
+              />
+            </PressableCustomCard>
+          )}
+          onEndReached={() => {
+            loadMoreLakeCatchData();
+          }}
+          keyExtractor={(item) => item.id.toString()}
+        />
       )}
-      keyExtractor={(item, index) => index.toString()}
-    />
+    </>
   );
 };
 
