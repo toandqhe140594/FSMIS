@@ -1,40 +1,22 @@
-import { Ionicons } from "@expo/vector-icons";
+import { useStoreState } from "easy-peasy";
 import React from "react";
 import { Text, TextInput, View } from "react-native";
 import { Avatar, Button, Divider } from "react-native-elements";
 import { Rating } from "react-native-ratings";
 
+import HeaderTab from "../components/HeaderTab";
 import colors from "../config/colors";
 
 const WriteReviewScreen = () => {
+  const locationShortInformation = useStoreState(
+    (states) => states.LocationModel.locationShortInformation,
+  );
+
+  const { id, name, isVerified } = locationShortInformation;
+
   return (
     <View>
-      <View
-        style={{
-          height: 40,
-          backgroundColor: "white",
-          flexDirection: "row",
-          justifyContent: "space-between",
-          alignItems: "center",
-          paddingHorizontal: 8,
-        }}
-      >
-        <Ionicons name="arrow-back" size={24} color="black" />
-        <View
-          style={{
-            flex: 1,
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Text style={{ fontWeight: "bold", fontSize: 20, marginRight: 4 }}>
-            Đánh giá của bạn
-          </Text>
-        </View>
-        <Ionicons name="flag" size={24} color="#fff" />
-      </View>
-      <Divider />
+      <HeaderTab id={id} name={name} isVerified={isVerified} flagable />
       <View
         style={{
           width: "100%",
