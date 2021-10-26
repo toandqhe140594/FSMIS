@@ -1,6 +1,7 @@
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import React from "react";
+import { useStoreActions } from "easy-peasy";
+import React, { useEffect } from "react";
 
 import ProfileModel from "../models/ProfileModel";
 import CheckinScreen from "../screens/AnglerCheckinScreen";
@@ -14,6 +15,14 @@ store.addModel("ProfileModel", ProfileModel);
 
 const Tab = createBottomTabNavigator();
 const AnglerMainNavigator = () => {
+  const getUserInfo = useStoreActions(
+    (actions) => actions.ProfileModel.getUserInfo,
+  );
+
+  useEffect(() => {
+    getUserInfo();
+  }, []);
+
   return (
     <Tab.Navigator
       initialRouteName="Báo cá"
