@@ -99,9 +99,15 @@ const FLocationEventRoute = () => {
 const Tab = createMaterialTopTabNavigator();
 
 const EventListRoute = () => {
+  const locationShortInformation = useStoreState(
+    (states) => states.LocationModel.locationShortInformation,
+  );
+
+  const { id, name, isVerified } = locationShortInformation;
+
   return (
     <Box style={{ flex: 1 }}>
-      <HeaderTab name="Hồ câu thuần việt" isVerified flagable />
+      <HeaderTab id={id} name={name} isVerified={isVerified} flagable />
       <Divider />
       <Tab.Navigator
         sceneContainerStyle={{
