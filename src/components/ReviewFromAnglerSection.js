@@ -28,9 +28,8 @@ const ReviewFromAnglerSection = ({
   userImage,
   id,
 }) => {
-  const { voteReview, deletePersonalReview } = useStoreActions(
-    (actions) => actions.LocationModel,
-  );
+  const { voteReview, deletePersonalReview, getLocationReviewScore } =
+    useStoreActions((actions) => actions.LocationModel);
 
   const onPressVoteActtion = (vote) => {
     voteReview({ reviewId: id, vote });
@@ -45,7 +44,13 @@ const ReviewFromAnglerSection = ({
           text: "Quay lại",
           style: "cancel",
         },
-        { text: "Xác nhận", onPress: () => deletePersonalReview() },
+        {
+          text: "Xác nhận",
+          onPress: async () => {
+            await deletePersonalReview();
+            getLocationReviewScore();
+          },
+        },
       ],
     );
   };
