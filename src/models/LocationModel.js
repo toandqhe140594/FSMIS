@@ -123,16 +123,16 @@ const model = {
   getLocationReviewListByPage: thunk(async (actions, payload, { getState }) => {
     const { pageNo, filter } = payload;
     const { currentId, totalReviewPage } = getState();
+    // If current page greater than total page or less than 1 then return
     if (pageNo > totalReviewPage || pageNo <= 0) return;
     const { data } = await http.get(`location/${currentId}/review`, {
       params: { pageNo, filter },
     });
     actions.setTotalReviewPage(data.totalPage);
-    if (data.items.length > 0)
-      actions.setLocationReviewList({
-        data: data.items,
-        status: pageNo === 1 ? "Overwrite" : "Append",
-      });
+    actions.setLocationReviewList({
+      data: data.items,
+      status: pageNo === 1 ? "Overwrite" : "Append",
+    });
   }),
   voteReview: thunk(async (actions, payload, { getState }) => {
     const { reviewId, vote } = payload;
@@ -144,7 +144,6 @@ const model = {
         params: { vote },
       },
     );
-    // console.log(status);
     const { userVoteType, upvote, downvote } = data;
     if (status === 200)
       actions.resetVoteOfReview({
@@ -170,7 +169,6 @@ const model = {
       `location/${currentId}/${API_URL.LOCATION_REVIEW_PERSONAL_DELETE}`,
     );
     if (status === 200) actions.setPersonalReview({ id: null });
-    console.log(status, data);
   }),
   postReview: thunk(async (actions, payload, { getState }) => {
     const { description, score } = payload;
@@ -182,7 +180,7 @@ const model = {
         score,
       },
     );
-    if (status === 200) actions.setPersonalReview(data);
+    if (status === 200) actions.setPersonalReview({ ...data, id: null });
   }),
   getLocationOverview: thunk(async (actions, payload, { getState }) => {
     const { data } = await http.get(`location/${getState().currentId}`);

@@ -16,7 +16,7 @@ store.addModel("ProfileModel", ProfileModel);
 const Tab = createBottomTabNavigator();
 const AnglerMainNavigator = () => {
   const getUserInfo = useStoreActions(
-    (state) => state.ProfileModel.getUserInfo,
+    (actions) => actions.ProfileModel.getUserInfo,
   );
 
   useEffect(() => {
