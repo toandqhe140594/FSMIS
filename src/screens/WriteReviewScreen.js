@@ -1,8 +1,11 @@
-import { useStoreState } from "easy-peasy";
-import React, { useState } from "react";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useStoreActions } from "easy-peasy";
+import React from "react";
+import { Controller, useForm } from "react-hook-form";
 import { StyleSheet, Text, TextInput, View } from "react-native";
 import { Avatar, Button, Divider } from "react-native-elements";
 import { Rating } from "react-native-ratings";
+import * as yup from "yup";
 
 import HeaderTab from "../components/HeaderTab";
 import colors from "../config/colors";
@@ -14,20 +17,18 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginVertical: 5,
   },
-  ratingContainer: {
-    marginVertical: 5,
-    marginBottom: 10,
-  },
-  text: {
+  title: {
     fontSize: 20,
-    marginLeft: 10,
   },
   bold: { fontWeight: "bold" },
+  section: {
+    margin: 15,
+  },
   textArea: {
     borderWidth: 1,
-    margin: 15,
     textAlignVertical: "top",
     padding: 5,
+    height: 150,
   },
   buttonContainer: {
     marginHorizontal: "15%",
@@ -35,29 +36,39 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: colors.defaultPrimaryButton,
   },
+  error: {
+    color: "#f43f5e",
+    fontSize: 12,
+    fontStyle: "italic",
+    marginTop: 6,
+  },
+});
+
+const validationSchema = yup.object().shape({
+  score: yup.number().required("Điểm số không được để trống"),
+  description: yup.string().required("Đánh giá không được để trống"),
 });
 
 const WriteReviewScreen = () => {
-  const locationShortInformation = useStoreState(
-    (states) => states.LocationModel.locationShortInformation,
-  );
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    mode: "onSubmit",
+    reValidateMode: "onChange",
+    resolver: yupResolver(validationSchema),
+  });
 
-  const { id, name, isVerified } = locationShortInformation;
-  const [rating, setRating] = useState(1);
-  const [reviewContent, setReviewContent] = useState("");
-  const onSubmit = () => {
-    console.log(`Rating given ${rating}, review: ${reviewContent}`); // Testing
+  const { postReview } = useStoreActions((state) => state.LocationModel);
+  const onSubmit = (data) => {
+    // console.log(data);
+    postReview(data);
   };
   return (
-    <View style={styles.avatarContainer}>
-      <HeaderTab id={id} name={name} isVerified={isVerified} flagable />
-      <View
-        style={{
-          width: "100%",
-          flexDirection: "row",
-          alignItems: "center",
-        }}
-      >
+    <View>
+      <HeaderTab name="Đánh giá của bạn" />
+      <View style={styles.avatarContainer}>
         <Avatar
           rounded
           size="medium"
@@ -71,31 +82,52 @@ const WriteReviewScreen = () => {
         <Text style={styles.bold}>Nguyễn Văn B</Text>
       </View>
       <Divider />
-      <View style={styles.ratingContainer}>
-        <Text style={[styles.text, styles.bold]}>Điểm số:</Text>
-        <Rating
-          imageSize={30}
-          ratingCount={5}
-          showRating={false}
-          startingValue={rating}
-          onFinishRating={setRating}
-          tintColor={colors.defaultBackground}
+      <View style={styles.section}>
+        <Text style={[styles.title, styles.bold]}>Điểm số:</Text>
+        <Controller
+          control={control}
+          name="score"
+          render={({ field: { onChange, value } }) => (
+            <Rating
+              imageSize={35}
+              ratingCount={5}
+              showRating={false}
+              startingValue={value || 1}
+              onFinishRating={onChange}
+              tintColor={colors.defaultBackground}
+            />
+          )}
         />
+        {errors.score?.message && (
+          <Text style={styles.error}>{errors.score?.message}</Text>
+        )}
       </View>
       <Divider />
-      <TextInput
-        multiline
-        numberOfLines={6}
-        maxLength={1000}
-        placeholder="Chia sẻ về trải nghiệm của bạn"
-        value={reviewContent}
-        onChangeText={setReviewContent}
-        style={styles.textArea}
-      />
+      <View style={styles.section}>
+        <Controller
+          control={control}
+          name="description"
+          render={({ field: { onChange, value, onBlur } }) => (
+            <TextInput
+              multiline
+              numberOfLines={6}
+              maxLength={1000}
+              placeholder="Chia sẻ về trải nghiệm của bạn"
+              value={value}
+              onChangeText={onChange}
+              onBlur={onBlur}
+              style={styles.textArea}
+            />
+          )}
+        />
+        {errors.description?.message && (
+          <Text style={styles.error}>{errors.description?.message}</Text>
+        )}
+      </View>
       <Button
         containerStyle={styles.buttonContainer}
         buttonStyle={styles.button}
-        onPress={onSubmit}
+        onPress={handleSubmit(onSubmit)}
         title="Đăng"
       />
     </View>
