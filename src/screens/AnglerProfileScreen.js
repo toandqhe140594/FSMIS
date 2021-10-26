@@ -80,6 +80,7 @@ const AnglerProfileScreen = () => {
           nameFontSize="21"
           subText="Lên cần : 69 lần"
           nameUser={userInfo.fullName}
+          image={userInfo.avatarUrl}
         />
       </VStack>
       <ScrollView maxHeight="80%">

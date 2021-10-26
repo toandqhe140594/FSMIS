@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import { FlatList, StyleSheet } from "react-native";
 import { Divider } from "react-native-elements";
 
+import AvatarCard from "../AvatarCard";
 import EventPostCard from "../EventPostCard";
 import HeaderTab from "../HeaderTab";
 import PressableCustomCard from "../PressableCustomCard";
@@ -19,32 +20,32 @@ const styles = StyleSheet.create({
     marginTop: 0,
   },
 });
-const dummyMenu = [
-  { id: 1, name: "Hồ thuần việt" },
-  { id: 2, name: "Hồ không thuần việt" },
-  { id: 3, name: "Hồ Quản" },
-];
 
 const CatchReportRoute = () => {
+  const [img, setImage] = useState("");
   const [lakeCatchPage, setLakeCatchPage] = useState(1);
-  const locationCatchList = useStoreState(
-    (states) => states.LocationModel.locationCatchList,
-  );
+
   const getLocationCatchListByPage = useStoreActions(
     (actions) => actions.LocationModel.getLocationCatchListByPage,
+  );
+  const locationCatchList = useStoreState(
+    (states) => states.LocationModel.locationCatchList,
   );
 
   useEffect(() => {
     getLocationCatchListByPage({ pageNo: lakeCatchPage });
     setLakeCatchPage(lakeCatchPage + 1);
-    console.log(`locationCatchList`, locationCatchList[0].userFullName);
+    // setImage(locationCatchList[0].avatar);
   }, []);
-
   const loadMoreLakeCatchData = () => {
     getLocationCatchListByPage({ pageNo: lakeCatchPage });
     setLakeCatchPage(lakeCatchPage + 1);
   };
 
+  // console.log(`locationCatchList`, locationCatchList[0]);
+  const setAvtImage = (imgAvatar) => {
+    setImage(imgAvatar);
+  };
   return (
     <>
       {locationCatchList.length > 0 && (
@@ -54,10 +55,11 @@ const CatchReportRoute = () => {
             <PressableCustomCard
               paddingX="1"
               onPress={() => {
-                console.log(item.id);
+                setImage(item.avatar);
+                console.log("img :>> ", img.length);
               }}
             >
-              <EventPostCard
+              {/* <EventPostCard
                 // image={item.url}
                 postStyle="ANGLER_POST"
                 anglerName={item.userFullName}
@@ -66,7 +68,16 @@ const CatchReportRoute = () => {
                 fishList={item.fishes}
                 id={item.id}
                 imageAvatar={item.avatar}
-              />
+              /> */}
+              {img.length > 10000 ? (
+                <AvatarCard
+                  avatarSize="lg"
+                  image={img}
+                  nameUser={item.userFullName}
+                />
+              ) : (
+                setAvtImage(item.avatar)
+              )}
             </PressableCustomCard>
           )}
           onEndReached={() => {
@@ -153,9 +164,10 @@ const EventListRoute = () => {
           tabBarStyle: styles.tabBarStyle,
           tabBarLabelStyle: styles.tabBarLabelStyle,
         }}
+        initialRouteName="Lịch sử báo cá"
       >
-        <Tab.Screen name="Bài viết" component={FLocationEventRoute} />
         <Tab.Screen name="Lịch sử báo cá" component={CatchReportRoute} />
+        <Tab.Screen name="Bài viết" component={FLocationEventRoute} />
       </Tab.Navigator>
     </Box>
   );

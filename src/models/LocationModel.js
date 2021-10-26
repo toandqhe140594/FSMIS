@@ -71,8 +71,8 @@ const model = {
       id: 2,
       userId: 2,
       userFullName: "Lê Anh",
-      // avatar:
-      //   "https://everythingisviral.com/wp-content/uploads/2020/10/polite-cat.png",
+      avatar:
+        "https://everythingisviral.com/wp-content/uploads/2020/10/polite-cat.png",
       locationId: 1,
       locationName: "Hồ Câu Test data",
       description: "Test data",
@@ -80,7 +80,7 @@ const model = {
         "https://everythingisviral.com/wp-content/uploads/2020/10/polite-cat.png",
         "https://pm1.narvii.com/6895/e82cdf913979cfacd28ec588d6867a66ec5d3678r1-1073-1073v2_hq.jpg",
       ],
-      time: "20/10/2020 00:00:00",
+      time: "0/0/0",
       fishes: ["Cá diếc", "Cá trắm đen"],
     },
   ],

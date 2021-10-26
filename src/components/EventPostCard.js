@@ -2,7 +2,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Box, HStack, Menu, Pressable, VStack } from "native-base";
 import PropTypes from "prop-types";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Badge, Card, Divider, Text } from "react-native-elements";
 
 import styles from "../config/styles";
@@ -24,8 +24,8 @@ const EventPostCard = ({
   id,
 }) => {
   // Thu gon angler, lakePost thanh 1
-
-
+ 
+ 
   return (
     <Box mt="1" px="1.4">
       {postStyle === "LAKE_POST" && (
@@ -74,6 +74,7 @@ const EventPostCard = ({
 
       {postStyle === "ANGLER_POST" && (
         <VStack pb="1" mb={2} px="2">
+          <Card.Image source={{ uri: imageAvatar }} style={{ height: 50 }} />
           <AvatarCard
             avatarSize="lg"
             nameUser={anglerName}

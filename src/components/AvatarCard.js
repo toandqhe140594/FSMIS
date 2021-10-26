@@ -11,8 +11,10 @@ const AvatarCard = ({
   image,
   onPress,
 }) => {
+  console.log("imageAvatar card:>> ", image.length);
   return (
     // <PressableCustomCard onPress={onPress}>
+
     <Box
       w={{
         base: "100%",
@@ -70,8 +72,7 @@ AvatarCard.defaultProps = {
   nameFontSize: "md",
   subText: null,
   subTextFontSize: "sm",
-  image:
-    "https://pbs.twimg.com/profile_images/1369921787568422915/hoyvrUpc_400x400.jpg",
+  image: "",
   onPress: () => {},
 };
 export default AvatarCard;
