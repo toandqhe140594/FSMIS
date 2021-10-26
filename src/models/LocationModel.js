@@ -81,7 +81,7 @@ const model = {
       state.locationReviewList = state.locationReviewList.concat(payload.data);
   }),
   setTotalReviewPage: action((state, payload) => {
-    state.totalReviewPage = payload;
+    state.totalReviewPage = payload < 1 ? 1 : payload;
   }),
   resetPersonalReview: action((state) => {
     state.personalReview = { ...initialPersonalReview };
@@ -103,10 +103,10 @@ const model = {
   }),
   setLocationPostList: action((state, payload) => {
     if (payload.status === "Overwrite") state.locationPostList = payload.data;
-    else state.locationPostList = [...state.locationPostList, ...payload.data];
+    else state.locationPostList = state.locationPostList.concat(payload.data);
   }),
   setTotalPostPage: action((state, payload) => {
-    state.totalPostPage = payload;
+    state.totalPostPage = payload < 1 ? 1 : payload;
   }),
   getLocationReviewScore: thunk(async (actions, payload, { getState }) => {
     const { data } = await http.get(
@@ -237,11 +237,10 @@ const model = {
       params: { pageNo },
     });
     actions.setTotalPostPage(data.totalPage);
-    if (data.items.length > 0)
-      actions.setLocationPostList({
-        data: data.items,
-        status: pageNo === 1 ? "Overwrite" : "Append",
-      });
+    actions.setLocationPostList({
+      data: data.items,
+      status: pageNo === 1 ? "Overwrite" : "Append",
+    });
   }),
 };
 export default model;
