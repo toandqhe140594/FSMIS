@@ -180,7 +180,7 @@ const model = {
         score,
       },
     );
-    if (status === 200) actions.setPersonalReview({ id: null, ...data });
+    if (status === 200) actions.setPersonalReview({ ...data, id: null });
   }),
   getLocationOverview: thunk(async (actions, payload, { getState }) => {
     const { data } = await http.get(`location/${getState().currentId}`);
