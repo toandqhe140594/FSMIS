@@ -53,18 +53,7 @@ const model = {
   },
   lakeList: [],
   lakeDetail: {},
-  locationPostList: [
-    {
-      id: 1,
-      name: "Hồ thuần việt",
-      content: "Trắm đen - Chép khủng bồi hồ vip cho ae câu thứ 3-5",
-      postTime: "2021-10-16T17:03:43.618",
-      postType: "STOCKING",
-      url: "https://a-static.besthdwallpaper.com/2021-yae-miko-electro-character-genshin-impact-anime-video-game-hinh-nen-2880x1620-74983_52.jpg",
-      edited: true,
-      active: true,
-    },
-  ],
+  locationPostList: [],
   totalPostPage: 1,
   setCurrentId: action((state, payload) => {
     state.currentId = payload;
@@ -165,7 +154,7 @@ const model = {
   }),
   deletePersonalReview: thunk(async (actions, payload, { getState }) => {
     const { currentId } = getState();
-    const { status, data } = await http.delete(
+    const { status } = await http.delete(
       `location/${currentId}/${API_URL.LOCATION_REVIEW_PERSONAL_DELETE}`,
     );
     if (status === 200) actions.setPersonalReview({ id: null });
@@ -181,6 +170,7 @@ const model = {
       },
     );
     if (status === 200) actions.setPersonalReview({ ...data, id: null });
+    return status;
   }),
   getLocationOverview: thunk(async (actions, payload, { getState }) => {
     const { data } = await http.get(`location/${getState().currentId}`);

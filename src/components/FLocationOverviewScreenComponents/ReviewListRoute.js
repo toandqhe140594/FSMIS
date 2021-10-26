@@ -3,7 +3,6 @@ import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, Button, Center, ScrollView } from "native-base";
 import PropTypes from "prop-types";
 import React, { useCallback, useEffect, useState } from "react";
-import { FlatList } from "react-native";
 import { Divider, Text } from "react-native-elements";
 import { Rating } from "react-native-ratings";
 
@@ -39,6 +38,14 @@ FilterButton.propTypes = {
   content: PropTypes.string.isRequired,
   value: PropTypes.string.isRequired,
   changeFilterAction: PropTypes.func.isRequired,
+};
+
+const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
+  const paddingToBottom = 20;
+  return (
+    layoutMeasurement.height + contentOffset.y >=
+    contentSize.height - paddingToBottom
+  );
 };
 
 const ReviewListRoute = () => {
@@ -89,7 +96,14 @@ const ReviewListRoute = () => {
   const { id, name, isVerified } = locationShortInformation;
 
   return (
-    <ScrollView>
+    <ScrollView
+      onScroll={({ nativeEvent }) => {
+        if (isCloseToBottom(nativeEvent)) {
+          console.log("end reach"); // Test only
+          loadMoreReviewData();
+        }
+      }}
+    >
       <Box>
         <HeaderTab id={id} name={name} isVerified={isVerified} flagable />
         <Divider />
@@ -165,49 +179,28 @@ const ReviewListRoute = () => {
           </Button.Group>
         </Box>
         <Divider />
-        <FlatList
-          data={locationReviewList}
-          renderItem={({ item }) => {
-            const { userVoteType } = item;
-            return (
-              <ReviewFromAnglerSection
-                name={item.userFullName}
-                content={item.description}
-                isPositive={userVoteType === true}
-                isNeutral={userVoteType === null}
-                date={item.time}
-                positiveCount={item.upvote}
-                negativeCount={item.downvote}
-                rate={item.score}
-                id={item.id}
-              />
-            );
-          }}
-          ItemSeparatorComponent={Divider}
-          keyExtractor={(item) => item.id.toString()}
-          onEndReached={() => {
-            console.log("end reach");
-            loadMoreReviewData();
-          }}
-        />
-        {/* {locationReviewList &&
+        {locationReviewList &&
+          locationReviewList.length > 0 &&
           locationReviewList.map((item) => {
             const { userVoteType } = item;
             return (
-              <ReviewFromAnglerSection
-                name={item.userFullName}
-                content={item.description}
-                isPositive={userVoteType === true}
-                isNeutral={userVoteType === null}
-                date={item.time}
-                positiveCount={item.upvote}
-                negativeCount={item.downvote}
-                rate={item.score}
-                id={item.id}
-                key={item.id}
-              />
+              <Box key={item.id}>
+                <ReviewFromAnglerSection
+                  name={item.userFullName}
+                  content={item.description}
+                  isPositive={userVoteType === true}
+                  isNeutral={userVoteType === null}
+                  date={item.time}
+                  positiveCount={item.upvote}
+                  negativeCount={item.downvote}
+                  rate={item.score}
+                  id={item.id}
+                  key={item.id}
+                />
+                <Divider />
+              </Box>
             );
-          })} */}
+          })}
       </Box>
     </ScrollView>
   );

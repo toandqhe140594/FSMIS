@@ -1,14 +1,16 @@
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useNavigation } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
-import { StyleSheet, Text, TextInput, View } from "react-native";
+import { StyleSheet, Text, TextInput, ToastAndroid, View } from "react-native";
 import { Avatar, Button, Divider } from "react-native-elements";
 import { Rating } from "react-native-ratings";
 import * as yup from "yup";
 
 import HeaderTab from "../components/HeaderTab";
 import colors from "../config/colors";
+import { goBack } from "../navigations";
 
 const styles = StyleSheet.create({
   avatarContainer: {
@@ -56,6 +58,8 @@ const validationSchema = yup.object().shape({
 });
 
 const WriteReviewScreen = () => {
+  const navigation = useNavigation();
+
   const {
     control,
     handleSubmit,
@@ -67,11 +71,33 @@ const WriteReviewScreen = () => {
     resolver: yupResolver(validationSchema),
   });
 
-  const postReview = useStoreActions((state) => state.LocationModel.postReview);
-  const userInfo = useStoreState((state) => state.ProfileModel.userInfo);
-  const onSubmit = (data) => {
-    postReview(data);
+  const postReview = useStoreActions(
+    (actions) => actions.LocationModel.postReview,
+  );
+
+  const userInfo = useStoreState((states) => states.ProfileModel.userInfo);
+
+  const showToastWithGravity = (message) => {
+    ToastAndroid.showWithGravity(
+      message,
+      ToastAndroid.LONG,
+      ToastAndroid.BOTTOM,
+    );
   };
+
+  const onSubmit = (data) => {
+    postReview(data).then((result) => {
+      // Test only
+      // If api return status of success
+      if (result === 200) {
+        showToastWithGravity("Đánh giá thành công");
+        goBack(navigation);
+      } else {
+        showToastWithGravity("Đánh giá thất bại");
+      }
+    });
+  };
+
   return (
     <View>
       <HeaderTab name="Đánh giá của bạn" />
