@@ -14,6 +14,7 @@ const model = {
     wards: "none",
   },
   savedLocationList: [],
+  notificationList: [],
   catchReportHistory: [],
   checkinHistoryList: [],
   catchReportDetail: {
@@ -36,6 +37,8 @@ const model = {
   checkinHistoryTotalPage: 1,
   savedLocationCurrentPage: 1,
   savedLocationTotalPage: 1,
+  notificationCurrentPage: 1,
+  notificationTotalPage: 1,
 
   setUserInfo: action((state, payload) => {
     state.userInfo = payload;
@@ -116,6 +119,7 @@ const model = {
     actions.setCatchReportDetail(data);
   }),
 
+  // Start of saved location list
   setSavedLocationCurrentPage: action((state, payload) => {
     state.savedLocationCurrentPage = payload;
   }),
@@ -123,12 +127,15 @@ const model = {
     state.savedLocationTotalPage = payload;
   }),
   setSavedLocationList: action((state, payload) => {
-    state.savedLocationList = state.savedLocationList.concat(payload);
+    // If mode is overwrite then overwrite the list, else append the list with new data
+    if (payload.mode === "Overwrite") state.savedLocationList = payload.data;
+    else state.savedLocationList = state.savedLocationList.concat(payload.data);
   }),
   getSavedLocationList: thunk(async (actions, payload, { getState }) => {
-    const { savedLocationCurrentPage: pageNo, savedLocationTotalPage } =
-      getState();
-
+    const { savedLocationCurrentPage, savedLocationTotalPage } = getState();
+    let pageNo = savedLocationCurrentPage;
+    // If user pull to refresh the list, then load data only from page 1
+    if (payload && payload.mode && payload.mode === "refresh") pageNo = 1;
     // If current page is smaller than 0 or larger than maximum page then return
     if (pageNo <= 0 || pageNo > savedLocationTotalPage) return;
     const { data } = await http.get(`${API_URL.PERSONAL_SAVED_LOCATION}`, {
@@ -138,7 +145,36 @@ const model = {
     const { totalPage, items } = data;
     actions.setSavedLocationCurrentPage(pageNo + 1);
     actions.setSavedLocationTotalPage(totalPage);
-    actions.setSavedLocationList(items);
+    actions.setSavedLocationList({
+      data: items,
+      mode: pageNo === 1 ? "Overwrite" : "Append", // If page = 1 then overwrite the list
+    });
+  }),
+  // End of saved location list
+
+  setNotificationCurrentPage: action((state, payload) => {
+    state.notificationCurrentPage = payload;
+  }),
+  setNotificationTotalPage: action((state, payload) => {
+    state.notificationTotalPage = payload;
+  }),
+  setNotificationList: action((state, payload) => {
+    state.notificationList = state.notificationList.concat(payload);
+  }),
+  getNotificationList: thunk(async (actions, payload, { getState }) => {
+    const { notificationCurrentPage: pageNo, notificationTotalPage } =
+      getState();
+
+    // If current page is smaller than 0 or larger than maximum page then return
+    if (pageNo <= 0 || pageNo > notificationTotalPage) return;
+    const { data } = await http.get(`${API_URL.PERSONAL_NOTIFICATION}`, {
+      params: { pageNo },
+    });
+
+    const { totalPage, items } = data;
+    actions.setNotificationCurrentPage(pageNo + 1);
+    actions.setNotificationTotalPage(totalPage);
+    actions.setNotificationList(items);
   }),
 };
 export default model;

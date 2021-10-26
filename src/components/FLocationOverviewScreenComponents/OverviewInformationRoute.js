@@ -1,5 +1,6 @@
-import { useStoreState } from "easy-peasy";
-import { Box, Button, Text } from "native-base";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useStoreActions, useStoreState } from "easy-peasy";
+import { Box, Button, Icon, Text } from "native-base";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, ScrollView } from "react-native";
 import { Card, Divider } from "react-native-elements";
@@ -12,6 +13,10 @@ const OverviewInformationRoute = () => {
   const [loading, setLoading] = useState(true);
   const locationOverview = useStoreState(
     (states) => states.LocationModel.locationOverview,
+  );
+
+  const saveLocation = useStoreActions(
+    (actions) => actions.LocationModel.saveLocation,
   );
 
   const {
@@ -28,6 +33,7 @@ const OverviewInformationRoute = () => {
     longitude,
     latitude,
     image,
+    saved,
   } = locationOverview;
 
   const serviceArr = service.split("\n");
@@ -57,9 +63,24 @@ const OverviewInformationRoute = () => {
                     <Card.Image source={{ uri: "https://picsum.photos/400" }} />
                   )}
                 </Swiper>
-                <Button my={4} mx={10}>
-                  Lưu điểm câu
+
+                <Button
+                  my={4}
+                  mx={10}
+                  endIcon={
+                    <Icon
+                      as={MaterialCommunityIcons}
+                      name={saved ? "bookmark-off" : "bookmark"}
+                      size="sm"
+                    />
+                  }
+                  onPress={() => {
+                    saveLocation();
+                  }}
+                >
+                  {saved ? "Bỏ lưu" : "Lưu điểm câu"}
                 </Button>
+
                 <Card.Divider />
                 <Box>
                   <Text bold ml={3} fontSize="md">
