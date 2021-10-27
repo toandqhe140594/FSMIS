@@ -1,11 +1,12 @@
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+import { useNavigation } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box } from "native-base";
 import React, { useEffect, useState } from "react";
 import { FlatList, StyleSheet } from "react-native";
 import { Divider } from "react-native-elements";
 
-import AvatarCard from "../AvatarCard";
+import { goToCatchReportDetailScreen } from "../../navigations";
 import EventPostCard from "../EventPostCard";
 import HeaderTab from "../HeaderTab";
 import PressableCustomCard from "../PressableCustomCard";
@@ -22,6 +23,7 @@ const styles = StyleSheet.create({
 });
 
 const CatchReportRoute = () => {
+  const navigation = useNavigation();
   const [img, setImage] = useState("");
   const [lakeCatchPage, setLakeCatchPage] = useState(1);
 
@@ -35,15 +37,13 @@ const CatchReportRoute = () => {
   useEffect(() => {
     getLocationCatchListByPage({ pageNo: lakeCatchPage });
     setLakeCatchPage(lakeCatchPage + 1);
-    // setImage(locationCatchList[0].avatar);
   }, []);
   const loadMoreLakeCatchData = () => {
     getLocationCatchListByPage({ pageNo: lakeCatchPage });
     setLakeCatchPage(lakeCatchPage + 1);
   };
 
-  // console.log(`locationCatchList`, locationCatchList[0]);
-  const setAvtImage = (imgAvatar) => {
+  const setDataImage = (imgAvatar) => {
     setImage(imgAvatar);
   };
   return (
@@ -51,35 +51,34 @@ const CatchReportRoute = () => {
       {locationCatchList.length > 0 && (
         <FlatList
           data={locationCatchList}
-          renderItem={({ item }) => (
-            <PressableCustomCard
-              paddingX="1"
-              onPress={() => {
-                setImage(item.avatar);
-                console.log("img :>> ", img.length);
-              }}
-            >
-              {/* <EventPostCard
-                // image={item.url}
-                postStyle="ANGLER_POST"
-                anglerName={item.userFullName}
-                anglerContent={item.description}
-                postTime={item.time}
-                fishList={item.fishes}
-                id={item.id}
-                imageAvatar={item.avatar}
-              /> */}
-              {img.length > 10000 ? (
-                <AvatarCard
-                  avatarSize="lg"
-                  image={img}
-                  nameUser={item.userFullName}
-                />
-              ) : (
-                setAvtImage(item.avatar)
-              )}
-            </PressableCustomCard>
-          )}
+          renderItem={({ item }) => {
+            return (
+              <PressableCustomCard
+                paddingX="1"
+                onPress={() => {
+                  goToCatchReportDetailScreen(navigation, {
+                    id: item.id,
+                  });
+                }}
+              >
+                {img.length > 0 && item.images !== undefined ? (
+                  <EventPostCard
+                    postStyle="ANGLER_POST"
+                    anglerName={item.userFullName}
+                    anglerContent={item.description}
+                    postTime={item.time}
+                    fishList={item.fishes}
+                    id={item.id}
+                    imageAvatar={item.avatar}
+                    image={item.images[0]}
+                    numberOfImages={item.images.length}
+                  />
+                ) : (
+                  setDataImage(item.avatar)
+                )}
+              </PressableCustomCard>
+            );
+          }}
           onEndReached={() => {
             loadMoreLakeCatchData();
           }}
@@ -164,10 +163,10 @@ const EventListRoute = () => {
           tabBarStyle: styles.tabBarStyle,
           tabBarLabelStyle: styles.tabBarLabelStyle,
         }}
-        initialRouteName="Lịch sử báo cá"
+        initialRouteName="Bài viết"
       >
-        <Tab.Screen name="Lịch sử báo cá" component={CatchReportRoute} />
         <Tab.Screen name="Bài viết" component={FLocationEventRoute} />
+        <Tab.Screen name="Lịch sử báo cá" component={CatchReportRoute} />
       </Tab.Navigator>
     </Box>
   );

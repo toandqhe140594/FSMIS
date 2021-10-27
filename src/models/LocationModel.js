@@ -68,11 +68,11 @@ const model = {
   ],
   locationCatchList: [
     {
-      id: 2,
+      id: 1,
       userId: 2,
       userFullName: "Lê Anh",
       avatar:
-        "https://everythingisviral.com/wp-content/uploads/2020/10/polite-cat.png",
+        "https://i.pinimg.com/736x/54/12/11/541211d3d6faf98854cb9b3da2373c4e.jpg",
       locationId: 1,
       locationName: "Hồ Câu Test data",
       description: "Test data",

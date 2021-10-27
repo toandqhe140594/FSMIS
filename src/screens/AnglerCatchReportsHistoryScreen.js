@@ -10,7 +10,6 @@ import { goToCatchReportDetailScreen } from "../navigations";
 
 const AnglerCatchReportsHistoryScreen = () => {
   const navigation = useNavigation();
-
   const getCatchReportHistory = useStoreActions(
     (actions) => actions.ProfileModel.getCatchReportHistory,
   );
@@ -60,6 +59,7 @@ const AnglerCatchReportsHistoryScreen = () => {
                       avatarSize="md"
                       nameUser={item.userFullName}
                       subText={item.locationName}
+                      image={item.avatar}
                     />
                     <Box mt={2}>
                       <Text italic>{item.description}</Text>

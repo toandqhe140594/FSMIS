@@ -113,7 +113,7 @@ const model = {
   }),
   getCatchReportDetailById: thunk(async (actions, payload) => {
     const { data } = await http.get(
-      `${API_URL.PERSONAL_CATCH_REPORT}/${payload.id}`,
+      `${API_URL.PERSONAL_CATCH_REPORT_DETAIL}/${payload.id}`,
     );
 
     actions.setCatchReportDetail(data);

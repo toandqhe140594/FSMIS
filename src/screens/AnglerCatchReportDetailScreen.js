@@ -26,14 +26,14 @@ const AnglerCatchReportDetailScreen = () => {
       const { id } = route.params;
       getCatchReportDetailById({ id });
     }
-  }, [catchDetails]);
+  }, [catchDetails.avatar]);
 
   const openLocationOverviewScreen = () => {
     goToFishingLocationOverviewScreen(navigation, {
       id: catchDetails.locationId,
     });
   };
-
+  const { avatar } = catchDetails;
   return (
     <ScrollView>
       <HeaderTab name="Chi Tiết" />
@@ -67,12 +67,15 @@ const AnglerCatchReportDetailScreen = () => {
         pr="4"
         py="2"
       >
-        <AvatarCard
-          avatarSize="lg"
-          nameUser={catchDetails.userFullName}
-          nameFontSize="lg"
-          subText={catchDetails.time}
-        />
+        {avatar !== undefined && (
+          <AvatarCard
+            avatarSize="lg"
+            nameUser={catchDetails.userFullName}
+            nameFontSize="lg"
+            subText={catchDetails.time}
+            image={avatar}
+          />
+        )}
 
         <VStack space={2} my={4}>
           <Text>
@@ -89,7 +92,9 @@ const AnglerCatchReportDetailScreen = () => {
               {catchDetails.locationName}
             </Text>
           </Text>
-          <Text italic>{catchDetails.description}</Text>
+          <Text italic fontSize="lg">
+            &quot; {catchDetails.description} &quot;
+          </Text>
         </VStack>
         <VStack mt="4" space={2}>
           <VStack space={1}>

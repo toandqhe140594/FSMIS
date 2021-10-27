@@ -28,7 +28,9 @@ const AvatarCard = ({
           source={{
             uri: image,
           }}
-        />
+        >
+          FS
+        </Avatar>
         <VStack ml={1}>
           <Text
             _dark={{
