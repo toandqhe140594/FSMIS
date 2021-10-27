@@ -1,6 +1,7 @@
 import "react-native-get-random-values";
 
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useFocusEffect, useRoute } from "@react-navigation/native";
 import {
   Box,
   Button,
@@ -11,7 +12,7 @@ import {
   Text,
   VStack,
 } from "native-base";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import { ScrollView, StyleSheet } from "react-native";
 import { v4 as uuidv4 } from "uuid";
@@ -46,34 +47,50 @@ const AnglerCatchReportScreen = () => {
     totalWeight: "",
     isReleased: false,
   };
+  const route = useRoute();
   const [cardList, setCardList] = useState([initCatchCard]);
+  const [imageArray, setImageArray] = useState([]);
   const methods = useForm({
     mode: "onChange",
     reValidateMode: "onChange",
+    defaultValues: { isPublic: false },
     resolver: yupResolver(validationSchema),
   });
   const { control, handleSubmit } = methods;
   const onSubmit = (data) => {
     console.log(data);
     console.log(cardList);
+    console.log(imageArray);
   };
   const addCard = () => {
     const newCard = initCatchCard;
     setCardList((prev) => [...prev, newCard]);
   };
   const deleteCard = (id) => {
-    const newCardList = cardList.filter((card) => card.id !== id);
-    setCardList(newCardList);
+    setCardList(cardList.filter((card) => card.id !== id));
   };
   const updateCard = (id, name, value) => {
-    const newCardList = cardList.map((card) => {
-      if (card.id === id) {
-        return { ...card, [name]: value };
-      }
-      return card;
-    });
-    setCardList(newCardList);
+    setCardList(
+      cardList.map((card) => {
+        if (card.id === id) {
+          return { ...card, [name]: value };
+        }
+        return card;
+      }),
+    );
   };
+  const updateImageArray = (id) => {
+    setImageArray(imageArray.filter((image) => image.id !== id));
+  };
+  useFocusEffect(
+    // useCallback will listen to route.param
+    useCallback(() => {
+      setImageArray(route.params?.base64Array);
+      return () => {
+        setImageArray([]);
+      };
+    }, [route.params]),
+  );
   return (
     <>
       <HeaderTab name="Báo cá" />
@@ -83,7 +100,11 @@ const AnglerCatchReportScreen = () => {
             <Center>
               <Stack space={2} style={styles.sectionWrapper}>
                 {/* Impage picker section */}
-                <MultiImageSection imageLimit={3} />
+                <MultiImageSection
+                  deleteImage={updateImageArray}
+                  imageArray={imageArray}
+                  selectLimit={3}
+                />
                 {/* Textarea input field */}
                 <TextAreaComponent
                   placeholder="Mô tả ngày câu của bạn"

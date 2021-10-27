@@ -55,6 +55,10 @@ const goToLakeEditScreen = (navigation, params) => {
   navigation.navigate(ROUTE_NAMES.FMANAGE_LAKE_EDIT, { ...params });
 };
 
+const goToMediaSelectScreen = (navigation, params) => {
+  navigation.navigate(ROUTE_NAMES.MEDIA_SELECTOR, { ...params });
+};
+
 const goToAdminAccountManagementScreen = (navigation, params) => {
   navigation.navigate(ROUTE_NAMES.ADMIN_ACCOUNT_MANAGEMENT, {
     ...params,
@@ -115,6 +119,7 @@ export {
   goToLakeDetailScreen,
   goToLakeEditScreen,
   goToLogoScreen,
+  goToMediaSelectScreen,
   goToPostEditScreen,
   goToScreen,
   goToWriteReportScreen,
