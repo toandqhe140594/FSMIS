@@ -56,8 +56,7 @@ const Store = createStore({
   }),
   login: thunk(async (actions, payload, { dispatch }) => {
     const { data } = await http.post("auth/login", {
-      phone: "0963372727", // Test only
-      password: "Asdf2k@!",
+      ...payload,
     });
     let authToken = null;
     try {
