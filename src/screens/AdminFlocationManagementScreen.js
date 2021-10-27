@@ -1,7 +1,7 @@
 import { Select } from "native-base";
 import React, { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { FlatList, Pressable, StyleSheet, View } from "react-native";
+import { FlatList, StyleSheet, View } from "react-native";
 
 import InputComponent from "../components/common/InputComponent";
 import FLocationCard from "../components/FLocationCard";
@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
 
 const APIList = [
   {
-    id: "spot1",
+    id: 1,
     address: "Hưng Yên",
     image: "https://wallpaperaccess.com/full/317501.jpg",
     isVerifed: true,
@@ -30,7 +30,7 @@ const APIList = [
     rate: 4,
   },
   {
-    id: "spot2",
+    id: 2,
     address: "Hưng Yên",
     image: "https://wallpaperaccess.com/full/317501.jpg",
     isVerifed: true,
@@ -38,7 +38,7 @@ const APIList = [
     rate: 4,
   },
   {
-    id: "spot3",
+    id: 3,
     address: "Hưng Yên",
     image: "https://wallpaperaccess.com/full/317501.jpg",
     isVerifed: false,
@@ -46,7 +46,7 @@ const APIList = [
     rate: 4,
   },
   {
-    id: "spot4",
+    id: 4,
     address: "Hưng Yên",
     image: "https://wallpaperaccess.com/full/317501.jpg",
     isVerifed: true,
@@ -54,7 +54,7 @@ const APIList = [
     rate: 4,
   },
   {
-    id: "spot5",
+    id: 5,
     address: "Hưng Yên",
     image: "https://wallpaperaccess.com/full/317501.jpg",
     isVerifed: false,
@@ -63,15 +63,7 @@ const APIList = [
   },
 ];
 
-const renderItem = ({ item }) => (
-  <View style={styles.card}>
-    <Pressable onPress={() => {}}>
-      <FLocationCard {...item} showImage={false} />
-    </Pressable>
-  </View>
-);
-
-const AdminFlocationManagementScreen = () => {
+const AdminFLocationManagementScreen = () => {
   const [fLocationList, setFLocationList] = useState(APIList);
   const [filter, setFilter] = useState("Tất cả");
   const methods = useForm();
@@ -116,11 +108,16 @@ const AdminFlocationManagementScreen = () => {
         <FlatList
           style={styles.wrapper}
           data={fLocationList}
-          renderItem={renderItem}
+          renderItem={({ item }) => (
+            <View style={styles.card}>
+              <FLocationCard {...item} showImage={false} isAdmin />
+            </View>
+          )}
+          keyExtractor={(item) => item.id.toString()}
         />
       </View>
     </>
   );
 };
 
-export default AdminFlocationManagementScreen;
+export default AdminFLocationManagementScreen;
