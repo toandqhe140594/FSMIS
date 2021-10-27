@@ -1,6 +1,9 @@
 export const AUTHENTICATION_LOGIN = "auth/login";
 export const AUTHENTICATION_REGISTER = "auth/register";
 
+export const ADMIN_FISH_LIST = "util/fish";
+export const ADMIN_FISHING_METHOD_LIST = "util/method";
+
 export const PERSONAL_CHECKIN = "personal/checkin";
 export const PERSONAL_CATCH_REPORT = "personal/catch";
 export const PERSONAL_SAVED_LOCATION = "personal/save";
