@@ -18,9 +18,9 @@ const AdminReportManagementScreen = () => {
         tabBarIconStyle: { display: "none" },
       }}
     >
-      <Tab.Screen name="Báo cáo điểm câu" component={FLocationReportRoute} />
-      <Tab.Screen name="Báo cáo đánh giá" component={ReviewReportRoute} />
-      <Tab.Screen name="Báo cáo bài đăng" component={PostReportRoute} />
+      <Tab.Screen name="Điểm câu" component={FLocationReportRoute} />
+      <Tab.Screen name="Đánh giá" component={ReviewReportRoute} />
+      <Tab.Screen name="Bài đăng" component={PostReportRoute} />
     </Tab.Navigator>
   );
 };
