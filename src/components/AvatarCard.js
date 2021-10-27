@@ -10,7 +10,6 @@ const AvatarCard = ({
   subTextFontSize,
   image,
 }) => {
-  console.log("imageAvatar card:>> ", image.length);
   return (
     <Box
       w={{
