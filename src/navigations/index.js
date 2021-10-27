@@ -55,6 +55,10 @@ const goToLakeEditScreen = (navigation, params) => {
   navigation.navigate(ROUTE_NAMES.FMANAGE_LAKE_EDIT, { ...params });
 };
 
+const goToMediaSelectScreen = (navigation, params) => {
+  navigation.navigate(ROUTE_NAMES.MEDIA_SELECTOR, { ...params });
+};
+
 export {
   goBack,
   goToCatchReportDetailScreen,
@@ -66,6 +70,7 @@ export {
   goToLakeDetailScreen,
   goToLakeEditScreen,
   goToLogoScreen,
+  goToMediaSelectScreen,
   goToPostEditScreen,
   goToScreen,
   goToWriteReportScreen,
