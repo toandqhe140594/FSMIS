@@ -59,7 +59,9 @@ const InputComponent = ({
 InputComponent.propTypes = {
   label: PropTypes.string,
   placeholder: PropTypes.string,
-  myStyles: PropTypes.objectOf(PropTypes.string),
+  myStyles: PropTypes.objectOf(
+    PropTypes.oneOfType([PropTypes.string, PropTypes.number]), // Accept object with property of type string or number
+  ),
   hasAsterisk: PropTypes.bool,
   isTitle: PropTypes.bool,
   type: PropTypes.string,
