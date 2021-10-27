@@ -4,7 +4,20 @@ import { API_URL } from "../constants";
 import http from "../utilities/Http";
 
 const model = {
-  fishingMethodList: [],
+  fishingMethodList: [
+    {
+      id: 1,
+      name: "Câu đơn",
+    },
+    {
+      id: 2,
+      name: "Câu đài",
+    },
+    {
+      id: 3,
+      name: "Câu lăng xê",
+    },
+  ],
   setFishingMethodList: action((state, payload) => {
     state.fishingMethodList = payload;
   }),
