@@ -2,10 +2,12 @@ export const ANGLER_MAIN = "Angler Main Screen";
 export const LOGIN = "Login";
 export const LOGO = "Logo";
 export const FLOCATION_OVERVIEW = "Fishing Location Overview";
+export const FLOCATION_CATHES_DETAIL = "Fishing Location Catches Report Detail";
 export const WRITE_REVIEW = "Write Review";
 export const WRITE_REPORT = "Write Report";
 export const LAKE_DETAIL = "Lake Detail";
 export const CATCHES_REPORT_DETAIL = "Catches Report Detail";
+
 export const CATCHES_REPORT_FORM = "Catches Report FORM";
 export const PROFILE_CHANGE_INFORMATION = "Change Profiler Information";
 export const PROFILE_CHANGE_PHONE_NUMBER = "Change Phone Number";

@@ -1,5 +1,5 @@
 import { useNavigation } from "@react-navigation/native";
-import { Box } from "native-base";
+import { Box, Button } from "native-base";
 import React from "react";
 import { FlatList } from "react-native";
 import { Divider } from "react-native-elements";
@@ -57,10 +57,17 @@ const FLocationEventRoute = () => {
 };
 
 const FManageFishLocationPostScreen = () => {
+  const navigation = useNavigation();
+  const onPress = () => {
+    goToPostEditScreen(navigation);
+  };
   return (
     <Box style={{ flex: 1 }}>
       <HeaderTab name="Hồ câu thuần việt" isVerified />
       <Divider />
+      <Button colorScheme="blueGray" size="lg" onPress={onPress}>
+        Tạo bài viết
+      </Button>
       <FLocationEventRoute />
     </Box>
   );

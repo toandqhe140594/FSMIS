@@ -6,6 +6,7 @@ export const ADMIN_FISHING_METHOD_LIST = "util/method";
 
 export const PERSONAL_CHECKIN = "personal/checkin";
 export const PERSONAL_CATCH_REPORT = "personal/catch";
+export const PERSONAL_CATCH_REPORT_DETAIL = "catches";
 export const PERSONAL_SAVED_LOCATION = "personal/save";
 export const PERSONAL_NOTIFICATION = "personal/notification";
 export const PERSONAL_INFORMATION = "personal";

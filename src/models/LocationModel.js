@@ -28,6 +28,7 @@ const model = {
   locationReviewList: [],
   totalReviewPage: 1,
   locationPostPageNumber: 0,
+  locationCatchPageNumber: 0,
   locationShortInformation: {},
   locationOverview: {
     id: 1,
@@ -54,7 +55,9 @@ const model = {
   lakeList: [],
   lakeDetail: {},
   locationPostList: [],
+  locationCatchList: [],
   totalPostPage: 1,
+  totalCatchPage: 1,
   setCurrentId: action((state, payload) => {
     state.currentId = payload;
   }),
@@ -95,6 +98,13 @@ const model = {
     else state.locationPostList = state.locationPostList.concat(payload.data);
   }),
   setTotalPostPage: action((state, payload) => {
+    state.totalPostPage = payload < 1 ? 1 : payload;
+  }),
+  setLocationCatchList: action((state, payload) => {
+    if (payload.status === "Overwrite") state.locationCatchList = payload.data;
+    else state.locationCatchList = state.locationCatchList.concat(payload.data);
+  }),
+  setTotalCatchPage: action((state, payload) => {
     state.totalPostPage = payload < 1 ? 1 : payload;
   }),
   getLocationReviewScore: thunk(async (actions, payload, { getState }) => {
@@ -226,6 +236,19 @@ const model = {
     });
     actions.setTotalPostPage(data.totalPage);
     actions.setLocationPostList({
+      data: data.items,
+      status: pageNo === 1 ? "Overwrite" : "Append",
+    });
+  }),
+  getLocationCatchListByPage: thunk(async (actions, payload, { getState }) => {
+    const { pageNo } = payload;
+    const { currentId, totalCatchPage } = getState();
+    if (pageNo > totalCatchPage || pageNo <= 0) return;
+    const { data } = await http.get(`location/${currentId}/catch`, {
+      params: { pageNo },
+    });
+    actions.setTotalCatchPage(data.totalPage);
+    actions.setLocationCatchList({
       data: data.items,
       status: pageNo === 1 ? "Overwrite" : "Append",
     });

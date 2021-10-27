@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { Ionicons } from "@expo/vector-icons";
 import { Box, HStack, Menu, Pressable, VStack } from "native-base";
 import PropTypes from "prop-types";
@@ -9,16 +10,18 @@ import AvatarCard from "./AvatarCard";
 
 const EventPostCard = ({
   postStyle,
-  angler,
+  anglerName,
+  anglerContent,
+  numberOfImages,
   lakePost,
   iconName,
   iconEvent,
   image,
   edited,
   postTime,
-  id,
+  fishList,
+  imageAvatar,
 }) => {
-  // Thu gon angler, lakePost thanh 1
   return (
     <Box mt="1" px="1.4">
       {postStyle === "LAKE_POST" && (
@@ -27,12 +30,13 @@ const EventPostCard = ({
             <Box justifyContent="flex-start" alignItems="flex-start">
               <Badge
                 badgeStyle={{
-                  borderRadius: 0,
-                  paddingHorizontal: 4,
-                  width: "auto",
-                  height: 25,
+                  borderRadius: 7,
+                  paddingHorizontal: 1,
+                  width: 90,
+                  height: 30,
+                  marginBottom: 8,
                 }}
-                textStyle={{ fontSize: 15 }}
+                textStyle={{ fontSize: 16, fontWeight: "bold" }}
                 status="primary"
                 value={lakePost.badge}
               />
@@ -45,7 +49,7 @@ const EventPostCard = ({
               trigger={(triggerProps) => {
                 return (
                   <Pressable {...triggerProps}>
-                    <Ionicons name={iconName} size={24} color="black" />
+                    <Ionicons name={iconName} size={22} color="black" />
                   </Pressable>
                 );
               }}
@@ -66,19 +70,28 @@ const EventPostCard = ({
 
       {postStyle === "ANGLER_POST" && (
         <VStack pb="1" mb={2} px="2">
-          <AvatarCard avatarSize="md" name={angler.name} />
+          <AvatarCard
+            avatarSize="lg"
+            nameUser={anglerName}
+            subText={postTime}
+            image={imageAvatar}
+          />
           <Box mt={2}>
-            <Text italic>{angler.content}</Text>
+            <Text italic>{anglerContent}</Text>
             <Text>
-              <Text bold>Đã câu được :</Text>
-              {angler.caches}
+              <Text bold>Đã câu được : </Text>
+              {fishList.map((item) => {
+                return <Text key={item}>{item}. </Text>;
+              })}
+
+              {numberOfImages > 1 && `___ còn ${numberOfImages} ảnh.... `}
             </Text>
           </Box>
         </VStack>
       )}
 
       <VStack pb={1}>
-        <Card.Image source={{ uri: image }} style={{ height: 250 }} />
+        <Card.Image source={{ uri: image }} style={{ height: 290 }} />
       </VStack>
       <Divider />
     </Box>

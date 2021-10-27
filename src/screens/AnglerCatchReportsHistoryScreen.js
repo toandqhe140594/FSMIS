@@ -10,7 +10,6 @@ import { goToCatchReportDetailScreen } from "../navigations";
 
 const AnglerCatchReportsHistoryScreen = () => {
   const navigation = useNavigation();
-
   const getCatchReportHistory = useStoreActions(
     (actions) => actions.ProfileModel.getCatchReportHistory,
   );
@@ -19,12 +18,10 @@ const AnglerCatchReportsHistoryScreen = () => {
   const { catchHistoryCurrentPage, catchReportHistory } = useStoreState(
     (states) => states.ProfileModel,
   );
-
   useEffect(() => {
     // If the current page = 1 aka the list is empty then call api to init the list
     if (catchHistoryCurrentPage === 1) getCatchReportHistory();
   }, []);
-
   return (
     <Box>
       <HeaderTab name="Lịch sử báo cá" />
@@ -53,7 +50,7 @@ const AnglerCatchReportsHistoryScreen = () => {
                   paddingX="3"
                   onPress={() => {
                     goToCatchReportDetailScreen(navigation, {
-                      id: item.catchId,
+                      id: item.id,
                     });
                   }}
                 >
@@ -62,6 +59,7 @@ const AnglerCatchReportsHistoryScreen = () => {
                       avatarSize="md"
                       nameUser={item.userFullName}
                       subText={item.locationName}
+                      image={item.avatar}
                     />
                     <Box mt={2}>
                       <Text italic>{item.description}</Text>
