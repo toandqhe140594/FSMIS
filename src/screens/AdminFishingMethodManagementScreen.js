@@ -1,30 +1,38 @@
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, Button, Center } from "native-base";
 import PropTypes from "prop-types";
-import React, { useState } from "react";
-import { FlatList } from "react-native";
+import React, { useCallback, useState } from "react";
+import { Alert, FlatList } from "react-native";
 import { Divider, SearchBar, Text } from "react-native-elements";
 
 import HeaderTab from "../components/HeaderTab";
+import FishingMethodModel from "../models/FishingMethodModel";
 import { goToAdminFishingMethodEditScreen } from "../navigations";
+import store from "../utilities/Store";
 
-const fishList = [
-  {
-    id: 1,
-    name: "Câu đơn",
-  },
-  {
-    id: 2,
-    name: "Câu đài",
-  },
-  {
-    id: 3,
-    name: "Câu lăng xê",
-  },
-];
+store.addModel("FishingMethodModel", FishingMethodModel);
 
 const FishingMethodManagementCard = ({ id, name }) => {
   const navigation = useNavigation();
+
+  const showDeleteAlert = () => {
+    Alert.alert(
+      "Bạn muốn xóa loại hình câu này?",
+      `"${name}" sẽ bị xóa vĩnh viễn. Bạn không thể hoàn tác hành động này`,
+      [
+        {
+          text: "Quay lại",
+          style: "cancel",
+        },
+        {
+          text: "Xác nhận",
+          onPress: async () => {},
+        },
+      ],
+    );
+  };
+
   return (
     <Box
       flexDirection="row"
@@ -47,7 +55,13 @@ const FishingMethodManagementCard = ({ id, name }) => {
           >
             Chỉnh sửa
           </Button>
-          <Button>Xóa</Button>
+          <Button
+            onPress={() => {
+              showDeleteAlert();
+            }}
+          >
+            Xóa
+          </Button>
         </Button.Group>
       </Box>
     </Box>
@@ -63,9 +77,23 @@ const AdminFishingMethodManagementScreen = () => {
   const navigation = useNavigation();
   const [search, setSearch] = useState("");
 
+  const fishingMethodList = useStoreState(
+    (states) => states.FishingMethodModel.fishingMethodList,
+  );
+  const getFishingMethodList = useStoreActions(
+    (actions) => actions.FishingMethodModel.getFishingMethodList,
+  );
+
   const updateSearch = (searchKey) => {
     setSearch(searchKey);
   };
+
+  useFocusEffect(
+    useCallback(() => {
+      // getFishingMethodList();
+      return () => {};
+    }, []),
+  );
 
   return (
     <>
@@ -103,7 +131,7 @@ const AdminFishingMethodManagementScreen = () => {
 
           <Box flex={1} w="100%">
             <FlatList
-              data={fishList}
+              data={fishingMethodList}
               renderItem={({ item }) => (
                 <FishingMethodManagementCard id={item.id} name={item.name} />
               )}
