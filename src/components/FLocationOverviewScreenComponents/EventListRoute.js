@@ -24,7 +24,6 @@ const styles = StyleSheet.create({
 
 const CatchReportRoute = () => {
   const navigation = useNavigation();
-  const [img, setImage] = useState("");
   const [lakeCatchPage, setLakeCatchPage] = useState(1);
 
   const getLocationCatchListByPage = useStoreActions(
@@ -43,9 +42,6 @@ const CatchReportRoute = () => {
     setLakeCatchPage(lakeCatchPage + 1);
   };
 
-  const setDataImage = (imgAvatar) => {
-    setImage(imgAvatar);
-  };
   return (
     <>
       {locationCatchList.length > 0 && (
@@ -61,21 +57,17 @@ const CatchReportRoute = () => {
                   });
                 }}
               >
-                {img.length > 0 && item.images !== undefined ? (
-                  <EventPostCard
-                    postStyle="ANGLER_POST"
-                    anglerName={item.userFullName}
-                    anglerContent={item.description}
-                    postTime={item.time}
-                    fishList={item.fishes}
-                    id={item.id}
-                    imageAvatar={item.avatar}
-                    image={item.images[0]}
-                    numberOfImages={item.images.length}
-                  />
-                ) : (
-                  setDataImage(item.avatar)
-                )}
+                <EventPostCard
+                  postStyle="ANGLER_POST"
+                  anglerName={item.userFullName}
+                  anglerContent={item.description}
+                  postTime={item.time}
+                  fishList={item.fishes}
+                  id={item.id}
+                  imageAvatar={item.avatar}
+                  image={item.images[0]}
+                  numberOfImages={item.images.length}
+                />
               </PressableCustomCard>
             );
           }}
