@@ -7,6 +7,7 @@ import { Card } from "react-native-elements";
 import { Rating } from "react-native-ratings";
 
 import {
+  goToAdminFLocationOverviewScreen,
   goToFishingLocationOverviewScreen,
   goToFManageMainScreen,
 } from "../navigations";
@@ -19,12 +20,14 @@ const SpotCard = ({
   name,
   rate,
   isManaged,
+  isAdmin,
   showImage,
 }) => {
   const navigation = useNavigation();
 
   const onPress = () => {
     if (isManaged) goToFManageMainScreen(navigation, { id });
+    else if (isAdmin) goToAdminFLocationOverviewScreen(navigation, { id });
     else goToFishingLocationOverviewScreen(navigation, { id });
   };
 
@@ -67,6 +70,7 @@ SpotCard.propTypes = {
   isManaged: PropTypes.bool,
   id: PropTypes.number,
   showImage: PropTypes.bool,
+  isAdmin: PropTypes.bool,
 };
 SpotCard.defaultProps = {
   image: "https://picsum.photos/200",
@@ -75,6 +79,7 @@ SpotCard.defaultProps = {
   isManaged: false,
   id: 1,
   showImage: true,
+  isAdmin: false,
 };
 
 export default SpotCard;

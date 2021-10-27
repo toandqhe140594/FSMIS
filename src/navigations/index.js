@@ -57,10 +57,58 @@ const goToLakeEditScreen = (navigation, params) => {
 
 const goToMediaSelectScreen = (navigation, params) => {
   navigation.navigate(ROUTE_NAMES.MEDIA_SELECTOR, { ...params });
+
+const goToAdminAccountManagementScreen = (navigation, params) => {
+  navigation.navigate(ROUTE_NAMES.ADMIN_ACCOUNT_MANAGEMENT, {
+    ...params,
+  });
+};
+
+const goToAdminAccountManagementDetailScreen = (navigation, params) => {
+  navigation.navigate(ROUTE_NAMES.ADMIN_ACCOUNT_MANAGEMENT_DETAIL, {
+    ...params,
+  });
+};
+
+const goToAdminFishManagementScreen = (navigation, params) => {
+  navigation.navigate(ROUTE_NAMES.ADMIN_FISH_MANAGEMENT, {
+    ...params,
+  });
+};
+
+const goToAdminFishEditScreen = (navigation, params) => {
+  navigation.navigate(ROUTE_NAMES.ADMIN_FISH_MANAGEMENT_EDIT, {
+    ...params,
+  });
+};
+
+const goToAdminFishingMethodManagementScreen = (navigation, params) => {
+  navigation.navigate(ROUTE_NAMES.ADMIN_FISHING_METHOD_MANAGEMENT, {
+    ...params,
+  });
+};
+
+const goToAdminFishingMethodEditScreen = (navigation, params) => {
+  navigation.navigate(ROUTE_NAMES.ADMIN_FISHING_METHOD_MANAGEMENT_EDIT, {
+    ...params,
+  });
+};
+
+const goToAdminFLocationOverviewScreen = (navigation, params) => {
+  navigation.navigate(ROUTE_NAMES.ADMIN_LOCATION_MANAGEMENT_OVERVIEW, {
+    ...params,
+  });
 };
 
 export {
   goBack,
+  goToAdminAccountManagementDetailScreen,
+  goToAdminAccountManagementScreen,
+  goToAdminFishEditScreen,
+  goToAdminFishingMethodEditScreen,
+  goToAdminFishingMethodManagementScreen,
+  goToAdminFishManagementScreen,
+  goToAdminFLocationOverviewScreen,
   goToCatchReportDetailScreen,
   goToCatchReportFormScreen,
   goToCatchReportVerifyDetailScreen,
@@ -76,3 +124,4 @@ export {
   goToWriteReportScreen,
   goToWriteReviewScreen,
 };
+

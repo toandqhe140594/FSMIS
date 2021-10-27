@@ -1,3 +1,4 @@
+import { useNavigation } from "@react-navigation/native";
 import { Box, Button, Center } from "native-base";
 import PropTypes from "prop-types";
 import React, { useState } from "react";
@@ -5,6 +6,7 @@ import { FlatList } from "react-native";
 import { Divider, SearchBar, Text } from "react-native-elements";
 
 import HeaderTab from "../components/HeaderTab";
+import { goToAdminFishingMethodEditScreen } from "../navigations";
 
 const fishList = [
   {
@@ -22,6 +24,7 @@ const fishList = [
 ];
 
 const FishingMethodManagementCard = ({ id, name }) => {
+  const navigation = useNavigation();
   return (
     <Box
       flexDirection="row"
@@ -37,7 +40,13 @@ const FishingMethodManagementCard = ({ id, name }) => {
       </Box>
       <Box w="35%" alignItems="flex-end">
         <Button.Group>
-          <Button>Chỉnh sửa</Button>
+          <Button
+            onPress={() => {
+              goToAdminFishingMethodEditScreen(navigation, { id, name });
+            }}
+          >
+            Chỉnh sửa
+          </Button>
           <Button>Xóa</Button>
         </Button.Group>
       </Box>
@@ -51,6 +60,7 @@ FishingMethodManagementCard.propTypes = {
 };
 
 const AdminFishingMethodManagementScreen = () => {
+  const navigation = useNavigation();
   const [search, setSearch] = useState("");
 
   const updateSearch = (searchKey) => {
@@ -78,8 +88,17 @@ const AdminFishingMethodManagementScreen = () => {
               console.log("end edit", search); // Test only
             }}
           />
-          <Button my={2} w="70%">
-            Thêm loại cá
+          <Button
+            my={2}
+            w="70%"
+            onPress={() => {
+              goToAdminFishingMethodEditScreen(navigation, {
+                id: null,
+                name: null,
+              });
+            }}
+          >
+            Thêm loại hình câu
           </Button>
 
           <Box flex={1} w="100%">

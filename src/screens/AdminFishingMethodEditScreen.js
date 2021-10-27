@@ -1,6 +1,7 @@
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useRoute } from "@react-navigation/native";
 import { Box, Button, Center, Input, Text } from "native-base";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
 
@@ -11,9 +12,14 @@ const validationSchema = yup.object().shape({
   fishingMethodName: yup.string().required("Tên loại hình không thể bỏ trống"),
 });
 const AdminFishingMethodEditScreen = () => {
+  const route = useRoute();
+
+  const [isNew, setIsNew] = useState(true);
+
   const {
     control,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm({
     mode: "all",
@@ -24,7 +30,13 @@ const AdminFishingMethodEditScreen = () => {
     console.log(data); // Test only
   };
 
-  const isNew = true;
+  useEffect(() => {
+    const { id, name } = route.params;
+    if (id) {
+      setIsNew(false);
+      setValue("fishingMethodName", name);
+    }
+  }, []);
 
   return (
     <>

@@ -1,3 +1,4 @@
+import { useNavigation } from "@react-navigation/native";
 import { Box, Center, Divider } from "native-base";
 import React, { useState } from "react";
 import { FlatList } from "react-native";
@@ -5,6 +6,7 @@ import { SearchBar } from "react-native-elements";
 
 import AvatarCard from "../components/AvatarCard";
 import HeaderTab from "../components/HeaderTab";
+import { goToAdminAccountManagementDetailScreen } from "../navigations";
 
 const userList = [
   {
@@ -31,6 +33,7 @@ const userList = [
 ];
 
 const AdminAccountManagementScreen = () => {
+  const navigation = useNavigation();
   const [search, setSearch] = useState("");
 
   const updateSearch = (searchKey) => {
@@ -68,7 +71,9 @@ const AdminAccountManagementScreen = () => {
                   nameUser={item.name}
                   subText={`SĐT: ${item.phone}`}
                   image={item.image}
-                  onPress={() => {}}
+                  onPress={() => {
+                    goToAdminAccountManagementDetailScreen(navigation);
+                  }}
                 />
               )}
               keyExtractor={(item) => item.id.toString()}
