@@ -137,6 +137,7 @@ const ReviewListRoute = () => {
             id={personalReview.id}
           />
         )}
+        <Divider />
         {!personalReview.id && (
           <Box w="90%" h={10} alignSelf="center" mt={4}>
             <Button
