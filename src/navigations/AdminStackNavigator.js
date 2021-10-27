@@ -8,7 +8,7 @@ import AdminFishEditScreen from "../screens/AdminFishEditScreen";
 import AdminFishingMethodEditScreen from "../screens/AdminFishingMethodEditScreen";
 import AdminFishingMethodManagementScreen from "../screens/AdminFishingMethodManagementScreen";
 import AdminFishManagementScreen from "../screens/AdminFishManagementScreen";
-import AdminFLocationManagementScreen from "../screens/AdminFlocationManagementScreen";
+import AdminFLocationManagementScreen from "../screens/AdminFLocationManagementScreen";
 import AdminFLocationReportDetailScreen from "../screens/AdminFLocationReportDetailScreen";
 import AdminMainScreen from "../screens/AdminMainScreen";
 import AdminReportEventPostScreen from "../screens/AdminReportEventPostScreen";
