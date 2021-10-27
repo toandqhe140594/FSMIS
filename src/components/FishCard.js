@@ -17,7 +17,7 @@ const FishCard = ({ image, fishType, quantity, totalWeight }) => {
         ml={1}
         alt="LW"
         my={1}
-        w="150"
+        w="160"
         h="81"
         source={{
           uri: image,

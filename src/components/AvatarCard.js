@@ -15,28 +15,19 @@ const AvatarCard = ({
 }) => {
   console.log("imageAvatar card:>> ", image.length);
   return (
-    // <PressableCustomCard onPress={onPress}>
-
-    <Box
-      w={{
-        base: "100%",
-        md: "25%",
-      }}
-      my={2}
-    >
-      <HStack space={3} alignItems="center">
-        <Avatar
-          size={avatarSize}
-          source={{
-            uri: image,
-          }}
-        >
-          FS
-        </Avatar>
-        <VStack ml={1}>
-          <Text
-            _dark={{
-              color: "warmGray.50",
+    <PressableCustomCard onPress={onPress}>
+      <Box
+        w={{
+          base: "100%",
+          md: "25%",
+        }}
+        my={2}
+      >
+        <HStack space={3} alignItems="center">
+          <Avatar
+            size={avatarSize}
+            source={{
+              uri: image,
             }}
           />
           <VStack ml={1}>
@@ -82,7 +73,7 @@ AvatarCard.defaultProps = {
   nameFontSize: "md",
   subText: null,
   subTextFontSize: "sm",
-  image: "",
+  image: "https://picsum.photos/seed/picsum/200/300",
   onPress: () => {},
 };
 export default AvatarCard;
