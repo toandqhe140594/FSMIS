@@ -23,7 +23,7 @@ const RootStackNavigator = () => {
       screenOptions={{
         headerShown: false,
       }}
-      initialRouteName={ROUTE_NAMES.MANAGEMENT_MODE}
+      initialRouteName={ROUTE_NAMES.ANGLER_MAIN}
     >
       <RootStack.Screen
         name={ROUTE_NAMES.ANGLER_MAIN}

@@ -124,21 +124,18 @@ const ReviewListRoute = () => {
           Đánh giá của bạn
         </Text>
         {personalReview.id && (
-          <>
-            <ReviewFromAnglerSection
-              name={personalReview.userFullName}
-              content={personalReview.description}
-              isPositive={false}
-              date={personalReview.time}
-              isDisabled
-              positiveCount={personalReview.upvote}
-              negativeCount={personalReview.downvote}
-              rate={personalReview.score}
-              userImage={personalReview.userAvatar}
-              id={personalReview.id}
-            />
-            {/* <Divider /> */}
-          </>
+          <ReviewFromAnglerSection
+            name={personalReview.userFullName}
+            content={personalReview.description}
+            isPositive={false}
+            date={personalReview.time}
+            isDisabled
+            positiveCount={personalReview.upvote}
+            negativeCount={personalReview.downvote}
+            rate={personalReview.score}
+            userImage={personalReview.userAvatar}
+            id={personalReview.id}
+          />
         )}
         {!personalReview.id && (
           <Box w="90%" h={10} alignSelf="center" mt={4}>
