@@ -1,3 +1,4 @@
+import { useNavigation } from "@react-navigation/native";
 import { Box, Button, Center } from "native-base";
 import PropTypes from "prop-types";
 import React, { useState } from "react";
@@ -5,6 +6,7 @@ import { FlatList } from "react-native";
 import { Avatar, Divider, SearchBar, Text } from "react-native-elements";
 
 import HeaderTab from "../components/HeaderTab";
+import { goToAdminFishEditScreen } from "../navigations";
 
 const fishList = [
   {
@@ -28,6 +30,8 @@ const fishList = [
 ];
 
 const FishManagementCard = ({ id, name, image }) => {
+  const navigation = useNavigation();
+
   return (
     <Box flexDirection="row" alignItems="center" justifyContent="space-between">
       <Box flex={1} flexDirection="row">
@@ -49,7 +53,13 @@ const FishManagementCard = ({ id, name, image }) => {
       </Box>
       <Box w="35%" mx={2} alignItems="flex-end">
         <Button.Group>
-          <Button>Chỉnh sửa</Button>
+          <Button
+            onPress={() => {
+              goToAdminFishEditScreen(navigation, { id, name, image });
+            }}
+          >
+            Chỉnh sửa
+          </Button>
           <Button>Xóa</Button>
         </Button.Group>
       </Box>
@@ -68,6 +78,7 @@ FishManagementCard.defaultProps = {
 };
 
 const AdminAccountManagementScreen = () => {
+  const navigation = useNavigation();
   const [search, setSearch] = useState("");
 
   const updateSearch = (searchKey) => {
@@ -95,7 +106,13 @@ const AdminAccountManagementScreen = () => {
               console.log("end edit");
             }}
           />
-          <Button my={2} w="70%">
+          <Button
+            my={2}
+            w="70%"
+            onPress={() => {
+              goToAdminFishEditScreen(navigation, { id: null });
+            }}
+          >
             Thêm loại cá
           </Button>
 
