@@ -9,41 +9,43 @@ const menuCategory = [
   {
     id: 1,
     title: "Quản lý các tài khoản",
-    icon: "set-meal",
-    route: ROUTE_NAMES.ADMIN_ACCOUNT_MANAGEMENT_DETAIL,
+    icon: "person",
+    route: ROUTE_NAMES.ADMIN_ACCOUNT_MANAGEMENT,
   },
   {
     id: 2,
     title: "Quản lý các điểm câu",
-    icon: "check",
+    icon: "place",
     route: ROUTE_NAMES.ADMIN_LOCATION_MANAGEMENT,
   },
   {
     id: 3,
     title: "Quản lý báo cáo",
-    icon: "person",
+    icon: "report",
     route: ROUTE_NAMES.ADMIN_REPORT_MANAGEMENT,
   },
   {
     id: 4,
     title: "Quản lý các loại cá",
-    icon: "call",
+    icon: "fish",
+    type: "material-community",
     route: ROUTE_NAMES.ADMIN_FISH_MANAGEMENT,
   },
   {
     id: 5,
     title: "Quản lý các loại hình câu",
-    icon: "lock",
+    icon: "list",
     route: ROUTE_NAMES.ADMIN_FISHING_METHOD_MANAGEMENT,
   },
+];
+const logOut = [
   {
-    id: 6,
-    title: `Đăng suất`,
-    icon: "av-timer",
-    route: ROUTE_NAMES.MANAGEMENT_MODE,
+    id: 1,
+    title: "Đăng xuất",
+    icon: "exit-to-app",
+    route: ROUTE_NAMES.PROFILE_LOGOUT,
   },
 ];
-const logOut = [{ id: 1, title: "Đăng xuất", icon: "exit-to-app" }];
 
 const AdminMainScreen = () => {
   return (

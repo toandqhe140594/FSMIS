@@ -2,6 +2,8 @@ import { Avatar, Box, HStack, Text, VStack } from "native-base";
 import PropTypes from "prop-types";
 import React from "react";
 
+import PressableCustomCard from "./PressableCustomCard";
+
 const AvatarCard = ({
   avatarSize,
   nameUser,
@@ -36,27 +38,33 @@ const AvatarCard = ({
             _dark={{
               color: "warmGray.50",
             }}
-            color="coolGray.800"
-            bold
-            fontSize={nameFontSize || "md"}
-          >
-            {nameUser}
-          </Text>
-          {subText && (
+          />
+          <VStack ml={1}>
             <Text
-              color="coolGray.600"
               _dark={{
-                color: "warmGray.200",
+                color: "warmGray.50",
               }}
-              fontSize={subTextFontSize || "md"}
+              color="coolGray.800"
+              bold
+              fontSize={nameFontSize || "md"}
             >
-              {subText}
+              {nameUser}
             </Text>
-          )}
-        </VStack>
-      </HStack>
-    </Box>
-    // </PressableCustomCard>
+            {subText && (
+              <Text
+                color="coolGray.600"
+                _dark={{
+                  color: "warmGray.200",
+                }}
+                fontSize={subTextFontSize || "md"}
+              >
+                {subText}
+              </Text>
+            )}
+          </VStack>
+        </HStack>
+      </Box>
+    </PressableCustomCard>
   );
 };
 AvatarCard.propTypes = {

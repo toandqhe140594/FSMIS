@@ -1,33 +1,38 @@
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, Button, Center } from "native-base";
 import PropTypes from "prop-types";
-import React, { useState } from "react";
-import { FlatList } from "react-native";
+import React, { useCallback, useState } from "react";
+import { Alert, FlatList } from "react-native";
 import { Avatar, Divider, SearchBar, Text } from "react-native-elements";
 
 import HeaderTab from "../components/HeaderTab";
+import FishModel from "../models/FishModel";
+import { goToAdminFishEditScreen } from "../navigations";
+import store from "../utilities/Store";
 
-const fishList = [
-  {
-    id: 1,
-    name: "Cá he vàng",
-    image:
-      "https://3.bp.blogspot.com/-e_zPS-jj8uc/WgL9uZWdIII/AAAAAAAASZk/dCH8qqu-Vck-vOcQ3Tzow1ETM8Y2sgV4ACLcBGAs/s1600/ca-he-vang-barbonymus_altus.jpg",
-  },
-  {
-    id: 2,
-    name: "Cá chép",
-    image:
-      "https://st.quantrimang.com/photos/image/2020/12/01/phan-biet-cac-loai-ca-1.jpg",
-  },
-  {
-    id: 3,
-    name: "Cá vàng",
-    image:
-      "https://cacanhtuanphong.com/wp-content/uploads/2016/10/ca-vang-gold-fish-5_thumb.jpg",
-  },
-];
+store.addModel("FishModel", FishModel);
 
 const FishManagementCard = ({ id, name, image }) => {
+  const navigation = useNavigation();
+
+  const showDeleteAlert = () => {
+    Alert.alert(
+      "Bạn muốn xóa loài cá này?",
+      `"${name}" sẽ bị xóa vĩnh viễn. Bạn không thể hoàn tác hành động này`,
+      [
+        {
+          text: "Quay lại",
+          style: "cancel",
+        },
+        {
+          text: "Xác nhận",
+          onPress: async () => {},
+        },
+      ],
+    );
+  };
+
   return (
     <Box flexDirection="row" alignItems="center" justifyContent="space-between">
       <Box flex={1} flexDirection="row">
@@ -49,8 +54,20 @@ const FishManagementCard = ({ id, name, image }) => {
       </Box>
       <Box w="35%" mx={2} alignItems="flex-end">
         <Button.Group>
-          <Button>Chỉnh sửa</Button>
-          <Button>Xóa</Button>
+          <Button
+            onPress={() => {
+              goToAdminFishEditScreen(navigation, { id, name, image });
+            }}
+          >
+            Chỉnh sửa
+          </Button>
+          <Button
+            onPress={() => {
+              showDeleteAlert();
+            }}
+          >
+            Xóa
+          </Button>
         </Button.Group>
       </Box>
     </Box>
@@ -67,12 +84,25 @@ FishManagementCard.defaultProps = {
   image: "https://picsum.photos/200",
 };
 
-const AdminAccountManagementScreen = () => {
+const AdminFishManagementScreen = () => {
+  const navigation = useNavigation();
   const [search, setSearch] = useState("");
+
+  const fishList = useStoreState((states) => states.FishModel.fishList);
+  const getFishList = useStoreActions(
+    (actions) => actions.FishModel.getFishList,
+  );
 
   const updateSearch = (searchKey) => {
     setSearch(searchKey);
   };
+
+  useFocusEffect(
+    useCallback(() => {
+      getFishList();
+      return () => {};
+    }, []),
+  );
 
   return (
     <>
@@ -95,7 +125,13 @@ const AdminAccountManagementScreen = () => {
               console.log("end edit");
             }}
           />
-          <Button my={2} w="70%">
+          <Button
+            my={2}
+            w="70%"
+            onPress={() => {
+              goToAdminFishEditScreen(navigation, { id: null });
+            }}
+          >
             Thêm loại cá
           </Button>
 
@@ -119,4 +155,4 @@ const AdminAccountManagementScreen = () => {
   );
 };
 
-export default AdminAccountManagementScreen;
+export default AdminFishManagementScreen;

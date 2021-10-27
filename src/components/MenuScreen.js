@@ -42,7 +42,7 @@ const MenuScreen = ({ menuTitle, menuListItem }) => {
             navigateToScreen(item.route);
           }}
         >
-          <Icon name={item.icon} size={26} />
+          <Icon name={item.icon} size={26} type={item.type || "material"} />
           <ListItem.Content style={{ height: 40 }}>
             <ListItem.Title>{item.title}</ListItem.Title>
           </ListItem.Content>
