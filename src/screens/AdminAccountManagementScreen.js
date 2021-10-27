@@ -6,6 +6,7 @@ import { SearchBar } from "react-native-elements";
 
 import AvatarCard from "../components/AvatarCard";
 import HeaderTab from "../components/HeaderTab";
+import PressableCustomCard from "../components/PressableCustomCard";
 import { goToAdminAccountManagementDetailScreen } from "../navigations";
 
 const userList = [
@@ -67,14 +68,17 @@ const AdminAccountManagementScreen = () => {
             <FlatList
               data={userList}
               renderItem={({ item }) => (
-                <AvatarCard
-                  nameUser={item.name}
-                  subText={`SĐT: ${item.phone}`}
-                  image={item.image}
+                <PressableCustomCard
                   onPress={() => {
                     goToAdminAccountManagementDetailScreen(navigation);
                   }}
-                />
+                >
+                  <AvatarCard
+                    nameUser={item.name}
+                    subText={`SĐT: ${item.phone}`}
+                    image={item.image}
+                  />
+                </PressableCustomCard>
               )}
               keyExtractor={(item) => item.id.toString()}
               ItemSeparatorComponent={Divider}
