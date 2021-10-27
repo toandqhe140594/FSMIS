@@ -8,7 +8,7 @@ import { Text } from "react-native-elements";
 import styles from "../config/styles";
 import { goBack } from "../navigations";
 
-const HeaderWithButton = ({ name, isVerified, buttonName, onPress }) => {
+const HeaderWithButton = ({ name, isVerified, buttonName, onSuccess }) => {
   const navigation = useNavigation();
 
   return (
@@ -43,7 +43,13 @@ const HeaderWithButton = ({ name, isVerified, buttonName, onPress }) => {
         <Ionicons name="arrow-back" size={24} color="rgba(0,0,0,0)" />
       </Box>
       <Divider />
-      <Button position="absolute" right={3} onPress={onPress}>
+      <Button
+        position="absolute"
+        right={2}
+        bottom={1}
+        top={1}
+        onPress={onSuccess}
+      >
         {buttonName}
       </Button>
     </Box>
@@ -54,7 +60,7 @@ HeaderWithButton.propTypes = {
   name: PropTypes.string.isRequired,
   isVerified: PropTypes.bool,
   buttonName: PropTypes.string.isRequired,
-  onPress: PropTypes.func.isRequired,
+  onSuccess: PropTypes.func.isRequired,
 };
 HeaderWithButton.defaultProps = {
   isVerified: false,
