@@ -23,6 +23,7 @@ import MultiImageSection from "../components/common/MultiImageSection";
 import SelectComponent from "../components/common/SelectComponent";
 import TextAreaComponent from "../components/common/TextAreaComponent";
 import HeaderTab from "../components/HeaderTab";
+import { ROUTE_NAMES } from "../constants";
 
 const validationSchema = yup.object().shape({
   aCaption: yup.string().required("Hãy viết suy nghĩ của bạn về ngày câu"),
@@ -107,6 +108,7 @@ const AnglerCatchReportScreen = () => {
               <Stack space={2} style={styles.sectionWrapper}>
                 {/* Impage picker section */}
                 <MultiImageSection
+                  formRoute={ROUTE_NAMES.CATCHES_REPORT_FORM}
                   deleteImage={updateImageArray}
                   imageArray={imageArray}
                   selectLimit={3}
