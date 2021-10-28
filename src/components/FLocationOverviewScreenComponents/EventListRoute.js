@@ -8,7 +8,6 @@ import { Divider } from "react-native-elements";
 
 import { goToCatchReportDetailScreen } from "../../navigations";
 import EventPostCard from "../EventPostCard";
-import HeaderTab from "../HeaderTab";
 import PressableCustomCard from "../PressableCustomCard";
 
 const styles = StyleSheet.create({
@@ -137,15 +136,8 @@ const FLocationEventRoute = () => {
 const Tab = createMaterialTopTabNavigator();
 
 const EventListRoute = () => {
-  const locationShortInformation = useStoreState(
-    (states) => states.LocationModel.locationShortInformation,
-  );
-
-  const { id, name, isVerified } = locationShortInformation;
-
   return (
     <Box style={{ flex: 1 }}>
-      <HeaderTab id={id} name={name} isVerified={isVerified} flagable />
       <Divider />
       <Tab.Navigator
         sceneContainerStyle={{

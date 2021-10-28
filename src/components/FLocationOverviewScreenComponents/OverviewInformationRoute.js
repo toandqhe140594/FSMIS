@@ -7,8 +7,6 @@ import { Card, Divider } from "react-native-elements";
 import MapView, { Marker } from "react-native-maps";
 import Swiper from "react-native-swiper";
 
-import HeaderTab from "../HeaderTab";
-
 const OverviewInformationRoute = () => {
   const [loading, setLoading] = useState(true);
   const locationOverview = useStoreState(
@@ -20,8 +18,6 @@ const OverviewInformationRoute = () => {
   );
 
   const {
-    name,
-    verify,
     address,
     description,
     phone,
@@ -52,7 +48,6 @@ const OverviewInformationRoute = () => {
         <Box>
           <ScrollView>
             <Box>
-              <HeaderTab name={name} isVerified={verify} flagable />
               <Card containerStyle={{ width: "100%", margin: 0, padding: 0 }}>
                 <Swiper height="auto">
                   {image && image.length > 0 ? (

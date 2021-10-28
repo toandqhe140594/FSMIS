@@ -8,7 +8,6 @@ import { Rating } from "react-native-ratings";
 
 import styles from "../../config/styles";
 import { goToWriteReviewScreen } from "../../navigations";
-import HeaderTab from "../HeaderTab";
 import ReviewFromAnglerSection from "../ReviewFromAnglerSection";
 
 const FilterButton = ({ filterType, content, value, changeFilterAction }) => {
@@ -53,13 +52,8 @@ const ReviewListRoute = () => {
   const [reviewPage, setReviewPage] = useState(1);
   const [filterType, setFilterType] = useState("newest");
 
-  const {
-    locationShortInformation,
-    locationReviewScore,
-    personalReview,
-    locationReviewList,
-    currentId,
-  } = useStoreState((states) => states.LocationModel);
+  const { locationReviewScore, personalReview, locationReviewList, currentId } =
+    useStoreState((states) => states.LocationModel);
 
   const {
     getLocationReviewScore,
@@ -93,8 +87,6 @@ const ReviewListRoute = () => {
     resetReviewData();
   }, [filterType]);
 
-  const { id, name, isVerified } = locationShortInformation;
-
   return (
     <ScrollView
       onScroll={({ nativeEvent }) => {
@@ -105,7 +97,6 @@ const ReviewListRoute = () => {
       }}
     >
       <Box>
-        <HeaderTab id={id} name={name} isVerified={isVerified} flagable />
         <Divider />
         <Center flex={1} py={3}>
           <Text h2>{locationReviewScore.score || 0}</Text>
