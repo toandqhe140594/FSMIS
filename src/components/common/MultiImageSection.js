@@ -22,10 +22,6 @@ const styles = StyleSheet.create({
     borderRadius: 2,
     borderWidth: 0.5,
   },
-  singleImagesWrapper: {
-    width: "90%",
-    height: 210,
-  },
   image: {
     width: "100%",
     height: "100%",
@@ -38,6 +34,7 @@ const styles = StyleSheet.create({
 });
 
 const MultiImageSection = ({
+  containerStyle,
   imageArray,
   selectLimit,
   deleteImage,
@@ -77,7 +74,7 @@ const MultiImageSection = ({
             // If there is only one image, make it takes up hold space
             style={
               selectLimit === 1
-                ? styles.singleImagesWrapper
+                ? { ...containerStyle, height: 210 }
                 : styles.multipleImagesWrapper
             }
             key={image.id}
@@ -110,6 +107,7 @@ const MultiImageSection = ({
 };
 
 MultiImageSection.propTypes = {
+  containerStyle: PropTypes.objectOf(PropTypes.string),
   imageArray: PropTypes.arrayOf(PropTypes.object),
   selectLimit: PropTypes.number,
   deleteImage: PropTypes.func,
@@ -117,6 +115,7 @@ MultiImageSection.propTypes = {
 };
 
 MultiImageSection.defaultProps = {
+  containerStyle: {},
   imageArray: [],
   selectLimit: 1,
   deleteImage: () => {},
