@@ -1,9 +1,14 @@
 package fpt.g31.fsmis.service;
 
+import fpt.g31.fsmis.dto.input.CatchReportDtoIn;
+import fpt.g31.fsmis.dto.input.CatchesDetailDtoIn;
 import fpt.g31.fsmis.dto.output.*;
 import fpt.g31.fsmis.entity.*;
+import fpt.g31.fsmis.exception.NotFoundException;
 import fpt.g31.fsmis.repository.CatchesRepos;
+import fpt.g31.fsmis.repository.FishSpeciesRepos;
 import fpt.g31.fsmis.repository.FishingLocationRepos;
+import fpt.g31.fsmis.repository.LakeRepos;
 import fpt.g31.fsmis.security.JwtFilter;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -12,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ValidationException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +27,8 @@ public class CatchesService {
 
     private final FishingLocationRepos fishingLocationRepos;
     private final CatchesRepos catchesRepos;
+    private final LakeRepos lakeRepos;
+    private final FishSpeciesRepos fishSpeciesRepos;
     private final JwtFilter jwtFilter;
 
     public PaginationDtoOut getPostedCatchesListByLocationId(Long locationId, int pageNo) {
@@ -125,7 +133,7 @@ public class CatchesService {
     public Object getCatchesDetail(HttpServletRequest request, Long catchesId) {
         User user = jwtFilter.getUserFromToken(request);
         Catches catches = catchesRepos.getById(catchesId);
-        if (catches.getHidden() && catches.getUser() != user) {
+        if (Boolean.TRUE.equals(catches.getHidden()) && catches.getUser() != user) {
             throw new ValidationException("Địa chỉ này không tồn tại");
         }
         List<CatchesDetail> catchesDetailList = catches.getCatchesDetailList();
@@ -165,5 +173,36 @@ public class CatchesService {
             }
         }
         return false;
+    }
+
+    public Object catchReport(HttpServletRequest request, CatchReportDtoIn catchReportDtoIn) {
+        User user = jwtFilter.getUserFromToken(request);
+        Lake lake = lakeRepos.findById(catchReportDtoIn.getLakeId())
+                .orElseThrow(() -> new NotFoundException("Hồ câu không tồn tại"));
+        FishingLocation fishingLocation = lake.getFishingLocation();
+        List<CatchesDetail> catchesDetailList = new ArrayList<>();
+        for (CatchesDetailDtoIn catchesDetailDtoIn :
+                catchReportDtoIn.getCatchesDetailList()) {
+            FishSpecies fishSpecies = fishSpeciesRepos.findById(catchesDetailDtoIn.getFishSpeciesId())
+                    .orElseThrow(() -> new NotFoundException("Loài cá không tồn tại"));
+            CatchesDetail catchesDetail = CatchesDetail.builder()
+                    .quantity(catchesDetailDtoIn.getQuantity())
+                    .weight(catchesDetailDtoIn.getWeight())
+                    .fishSpecies(fishSpecies)
+                    .build();
+            catchesDetailList.add(catchesDetail);
+        }
+        Catches catches = Catches.builder()
+                .description(catchReportDtoIn.getDescription())
+                .imageUrl(catchReportDtoIn.getImageUrl())
+                .time(LocalDateTime.now())
+                .hidden(catchReportDtoIn.isHidden())
+                .approved(false)
+                .user(user)
+                .fishingLocation(fishingLocation)
+                .catchesDetailList(catchesDetailList)
+                .build();
+        catchesRepos.save(catches);
+        return new ResponseTextDtoOut("Báo cá thành công, vui lòng chờ hồ câu duyệt!");
     }
 }
