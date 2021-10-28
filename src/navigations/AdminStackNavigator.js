@@ -10,11 +10,11 @@ import AdminFishingMethodManagementScreen from "../screens/AdminFishingMethodMan
 import AdminFishManagementScreen from "../screens/AdminFishManagementScreen";
 import AdminFLocationManagementScreen from "../screens/AdminFLocationManagementScreen";
 import AdminFLocationReportDetailScreen from "../screens/AdminFLocationReportDetailScreen";
+import AdminFLocationVerifyScreen from "../screens/AdminFLocationVerifyScreen";
 import AdminMainScreen from "../screens/AdminMainScreen";
 import AdminReportEventPostScreen from "../screens/AdminReportEventPostScreen";
 import AdminReportManagementScreen from "../screens/AdminReportManagementScreen";
 import AdminReportReviewDetailScreen from "../screens/AdminReportReviewDetailScreen";
-import FishingLocationOverviewScreen from "../screens/FLocationOverviewScreen";
 
 const AdminStack = createNativeStackNavigator();
 
@@ -67,15 +67,13 @@ const AdminStackNavigator = () => {
         name={ROUTE_NAMES.ADMIN_REPORT_MANAGEMENT_REVIEW_DETAIL}
         component={AdminReportReviewDetailScreen}
       />
-
-      {/* Placeholder */}
       <AdminStack.Screen
         name={ROUTE_NAMES.ADMIN_LOCATION_MANAGEMENT}
         component={AdminFLocationManagementScreen}
       />
       <AdminStack.Screen
         name={ROUTE_NAMES.ADMIN_LOCATION_MANAGEMENT_OVERVIEW}
-        component={FishingLocationOverviewScreen} // Test
+        component={AdminFLocationVerifyScreen}
       />
       <AdminStack.Screen
         name={ROUTE_NAMES.ADMIN_REPORT_MANAGEMENT}

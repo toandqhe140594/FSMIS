@@ -1,5 +1,5 @@
 import { useStoreActions, useStoreState } from "easy-peasy";
-import { Box, ScrollView, VStack } from "native-base";
+import { Box, VStack } from "native-base";
 import React, { useEffect } from "react";
 
 import AvatarCard from "../components/AvatarCard";
@@ -83,12 +83,12 @@ const AnglerProfileScreen = () => {
           image={userInfo.avatarUrl}
         />
       </VStack>
-      <ScrollView maxHeight="80%">
+      <Box maxHeight="80%">
         <VStack mt="4">
           <MenuScreen menuListItem={menuCategory} />
           <MenuScreen menuListItem={logOut} />
         </VStack>
-      </ScrollView>
+      </Box>
     </Box>
   );
 };

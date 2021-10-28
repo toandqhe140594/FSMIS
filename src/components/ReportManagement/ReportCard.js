@@ -42,7 +42,7 @@ const ReportCard = ({
   postType,
   isProcessed,
 }) => {
-  const getBadgeText = () => (isProcessed ? "Đã Xử lý" : "Chưa xử lý");
+  const getBadgeText = () => (isProcessed ? "Đã xử lý" : "Chưa xử lý");
   const getBadgeStatus = () => (isProcessed ? "success" : "error");
   return (
     <View style={styles.container}>
