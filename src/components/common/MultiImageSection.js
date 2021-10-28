@@ -14,13 +14,17 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     marginTop: 2,
   },
-  wrapper: {
+  multipleImagesWrapper: {
     width: 110,
     height: 110,
     marginTop: 4,
     marginLeft: 4,
     borderRadius: 2,
     borderWidth: 0.5,
+  },
+  singleImagesWrapper: {
+    width: "90%",
+    height: 210,
   },
   image: {
     width: "100%",
@@ -34,7 +38,6 @@ const styles = StyleSheet.create({
 });
 
 const MultiImageSection = ({
-  myStyles,
   imageArray,
   selectLimit,
   deleteImage,
@@ -72,7 +75,11 @@ const MultiImageSection = ({
         return (
           <View
             // If there is only one image, make it takes up hold space
-            style={selectLimit === 1 ? myStyles : styles.wrapper}
+            style={
+              selectLimit === 1
+                ? styles.singleImagesWrapper
+                : styles.multipleImagesWrapper
+            }
             key={image.id}
           >
             <Image
@@ -93,7 +100,7 @@ const MultiImageSection = ({
             })
           }
         >
-          <View style={[styles.wrapper, styles.border]}>
+          <View style={[styles.multipleImagesWrapper, styles.border]}>
             <Icon as={<Entypo name="plus" />} size={10} mr={1} />
           </View>
         </Pressable>
@@ -106,7 +113,6 @@ MultiImageSection.propTypes = {
   imageArray: PropTypes.arrayOf(PropTypes.object),
   selectLimit: PropTypes.number,
   deleteImage: PropTypes.func,
-  myStyles: PropTypes.objectOf(PropTypes.string),
   formRoute: PropTypes.string,
 };
 
@@ -114,7 +120,6 @@ MultiImageSection.defaultProps = {
   imageArray: [],
   selectLimit: 1,
   deleteImage: () => {},
-  myStyles: {},
   formRoute: "",
 };
 
