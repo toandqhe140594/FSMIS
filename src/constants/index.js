@@ -19,4 +19,4 @@ export const USER_PROFILE = "UserProfile";
 export const USER_ROLE = "UserRole";
 
 export const ROLE_USER = "ROLE_USER";
-export const ROLE_ADMIN = "ROLE_ADMIn";
+export const ROLE_ADMIN = "ROLE_ADMIN";
