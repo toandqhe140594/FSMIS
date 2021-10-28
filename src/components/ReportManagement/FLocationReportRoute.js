@@ -68,7 +68,7 @@ const FLocationReportRoute = () => {
           my={2}
           alignSelf="center"
           placeholder="Lọc hiển thị báo cáo"
-          defaultValue={<Select.Item label="Tất cả" value="Tất cả" />}
+          defaultValue="Tất cả"
           value={filter}
           onValueChange={setFilter}
           fontSize="md"
