@@ -1,4 +1,4 @@
-import "react-native-get-random-values";
+// import "react-native-get-random-values";
 
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useFocusEffect, useRoute } from "@react-navigation/native";
@@ -15,7 +15,7 @@ import {
 import React, { useCallback, useState } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import { ScrollView, StyleSheet } from "react-native";
-import { v4 as uuidv4 } from "uuid";
+// import { v4 as uuidv4 } from "uuid";
 import * as yup from "yup";
 
 import CatchReportCard from "../components/CatchReport/CatchReportCard";
@@ -30,6 +30,12 @@ const validationSchema = yup.object().shape({
   isPublic: yup.bool(),
 });
 
+let itemKey = 0;
+const generateKey = () => {
+  itemKey += 1;
+  return `${itemKey}`;
+};
+
 const styles = StyleSheet.create({
   sectionWrapper: {
     width: "90%",
@@ -41,7 +47,7 @@ const styles = StyleSheet.create({
 
 const AnglerCatchReportScreen = () => {
   const initCatchCard = {
-    id: uuidv4(),
+    id: generateKey(),
     fishType: "",
     catches: "",
     totalWeight: "",
