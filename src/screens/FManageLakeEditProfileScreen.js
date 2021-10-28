@@ -1,5 +1,5 @@
 // To install uuid, installs react-native-random-value pkg first
-import "react-native-get-random-values";
+// import "react-native-get-random-values";
 
 import { yupResolver } from "@hookform/resolvers/yup";
 import {
@@ -15,11 +15,12 @@ import {
 import React, { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { StyleSheet } from "react-native";
-import { v4 as uuidv4 } from "uuid";
+// import { v4 as uuidv4 } from "uuid";
 import * as yup from "yup";
 
 import InputComponent from "../components/common/InputComponent";
-import SingleImageSection from "../components/common/SingleImageSection";
+import MultiImageSection from "../components/common/MultiImageSection";
+// import SingleImageSection from "../components/common/SingleImageSection";
 import TextAreaComponent from "../components/common/TextAreaComponent";
 import HeaderTab from "../components/HeaderTab";
 import AddFishCard from "../components/LakeEditProfile/AddFishCard";
@@ -35,6 +36,12 @@ const validationSchema = yup.object().shape({
 
 const fishingMethodData = ["Câu đài", "Câu đơn", "Câu lục"];
 
+let itemKey = 0;
+const generateKey = () => {
+  itemKey += 1;
+  return `${itemKey}`;
+};
+
 const styles = StyleSheet.create({
   sectionWrapper: {
     width: "90%",
@@ -46,13 +53,14 @@ const styles = StyleSheet.create({
 
 const LakeEditProfileScreen = () => {
   const initFishCard = {
-    id: uuidv4(),
+    id: generateKey(),
     fish: "",
     weightDescription: "",
     amount: "",
     totalWeight: "",
   };
   const [cardList, setCardList] = useState([initFishCard]);
+
   const methods = useForm({
     mode: "onChange",
     reValidateMode: "onChange",
@@ -82,7 +90,6 @@ const LakeEditProfileScreen = () => {
     });
     setCardList(newCardList);
   };
-
   return (
     <>
       <HeaderTab name="Chỉnh sửa hồ bé" />
@@ -91,7 +98,7 @@ const LakeEditProfileScreen = () => {
           <VStack space={3} divider={<Divider />}>
             <Center mt={1}>
               {/* Image Picker section */}
-              <SingleImageSection myStyles={styles.sectionWrapper} />
+              <MultiImageSection myStyles={styles.sectionWrapper} />
             </Center>
 
             <Center>
