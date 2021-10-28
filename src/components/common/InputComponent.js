@@ -31,7 +31,7 @@ const InputComponent = ({
       {label.length > 0 && (
         <Text style={[styles.text, isTitle ? styles.bold : null]}>
           {label}
-          {hasAsterisk && <Text style={style.asterisk}>*</Text>}
+          {hasAsterisk && <Text style={styles.asterisk}>*</Text>}
         </Text>
       )}
       <Controller
