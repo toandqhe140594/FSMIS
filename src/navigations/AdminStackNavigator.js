@@ -67,8 +67,6 @@ const AdminStackNavigator = () => {
         name={ROUTE_NAMES.ADMIN_REPORT_MANAGEMENT_REVIEW_DETAIL}
         component={AdminReportReviewDetailScreen}
       />
-
-      {/* Placeholder */}
       <AdminStack.Screen
         name={ROUTE_NAMES.ADMIN_LOCATION_MANAGEMENT}
         component={AdminFLocationManagementScreen}
