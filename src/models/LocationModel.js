@@ -29,7 +29,6 @@ const model = {
   totalReviewPage: 1,
   locationPostPageNumber: 0,
   locationCatchPageNumber: 0,
-  locationShortInformation: {},
   locationOverview: {
     id: 1,
     name: "placeholderdata",
@@ -80,9 +79,6 @@ const model = {
   }),
   setLocationPostPageNumber: action((state, payload) => {
     state.locationPostPageNumber = payload;
-  }),
-  setLocationShortInformation: action((state, payload) => {
-    state.locationShortInformation = payload;
   }),
   setLocationOverview: action((state, payload) => {
     state.locationOverview = payload;
@@ -185,22 +181,10 @@ const model = {
   getLocationOverview: thunk(async (actions, payload, { getState }) => {
     const { data } = await http.get(`location/${getState().currentId}`);
     actions.setLocationOverview(data);
-    actions.setLocationShortInformation({
-      name: data.name,
-      isVerified: data.verify,
-      id: data.id,
-      type: "location",
-    });
   }),
   getLocationOverviewById: thunk(async (actions, payload) => {
     const { data } = await http.get(`location/${payload.id}`);
     actions.setLocationOverview(data);
-    actions.setLocationShortInformation({
-      name: data.name,
-      isVerified: data.verify,
-      id: data.id,
-      type: "location",
-    });
   }),
   saveLocation: thunk(async (actions, payload, { getState }) => {
     const { data } = await http.post(`location/${getState().currentId}/save`);
