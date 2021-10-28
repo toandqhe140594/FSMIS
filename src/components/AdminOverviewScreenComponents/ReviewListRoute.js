@@ -1,4 +1,4 @@
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useFocusEffect } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, Button, Center, ScrollView } from "native-base";
 import PropTypes from "prop-types";
@@ -7,7 +7,6 @@ import { Divider, Text } from "react-native-elements";
 import { Rating } from "react-native-ratings";
 
 import styles from "../../config/styles";
-import { goToWriteReviewScreen } from "../../navigations";
 import ReviewFromAnglerSection from "../ReviewFromAnglerSection";
 
 const FilterButton = ({ filterType, content, value, changeFilterAction }) => {
@@ -48,12 +47,12 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
 };
 
 const ReviewListRoute = () => {
-  const navigation = useNavigation();
   const [reviewPage, setReviewPage] = useState(1);
   const [filterType, setFilterType] = useState("newest");
 
-  const { locationReviewScore, personalReview, locationReviewList, currentId } =
-    useStoreState((states) => states.LocationModel);
+  const { locationReviewScore, locationReviewList } = useStoreState(
+    (states) => states.LocationModel,
+  );
 
   const {
     getLocationReviewScore,
@@ -97,7 +96,6 @@ const ReviewListRoute = () => {
       }}
     >
       <Box>
-        <Divider />
         <Center flex={1} py={3}>
           <Text h2>{locationReviewScore.score || 0}</Text>
           <Rating
@@ -110,39 +108,6 @@ const ReviewListRoute = () => {
           <Text>({locationReviewScore.totalReviews || 0} đánh gía)</Text>
         </Center>
 
-        <Divider />
-        <Text style={{ fontWeight: "bold", marginTop: 12, marginLeft: 12 }}>
-          Đánh giá của bạn
-        </Text>
-        {personalReview.id && (
-          <ReviewFromAnglerSection
-            name={personalReview.userFullName}
-            content={personalReview.description}
-            isPositive={false}
-            date={personalReview.time}
-            isDisabled
-            positiveCount={personalReview.upvote}
-            negativeCount={personalReview.downvote}
-            rate={personalReview.score}
-            userImage={personalReview.userAvatar}
-            id={personalReview.id}
-          />
-        )}
-        <Divider />
-        {!personalReview.id && (
-          <Box w="90%" h={10} alignSelf="center" mt={4}>
-            <Button
-              variant="outline"
-              colorScheme="dark"
-              onPress={() => {
-                goToWriteReviewScreen(navigation, { id: currentId });
-              }}
-            >
-              Đăng đánh giá
-            </Button>
-          </Box>
-        )}
-        <Box my={2} />
         <Divider />
         <Box p={3}>
           <Text style={{ fontWeight: "bold" }}>Đánh giá từ cộng đồng</Text>
@@ -179,6 +144,7 @@ const ReviewListRoute = () => {
                   content={item.description}
                   isPositive={userVoteType === true}
                   isNeutral={userVoteType === null}
+                  isDisabled
                   date={item.time}
                   positiveCount={item.upvote}
                   negativeCount={item.downvote}

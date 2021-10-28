@@ -3,11 +3,11 @@ import { useRoute } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import React, { useEffect } from "react";
 
-import EventListRoute from "../components/FLocationOverviewScreenComponents/EventListRoute";
-import LakeListViewRoute from "../components/FLocationOverviewScreenComponents/LakeListViewRoute";
-import OverviewInformationRoute from "../components/FLocationOverviewScreenComponents/OverviewInformationRoute";
-import ReviewListRoute from "../components/FLocationOverviewScreenComponents/ReviewListRoute";
-import HeaderTab from "../components/HeaderTab";
+import EventListRoute from "../components/AdminOverviewScreenComponents/EventListRoute";
+import LakeListViewRoute from "../components/AdminOverviewScreenComponents/LakeListViewRoute";
+import OverviewInformationRoute from "../components/AdminOverviewScreenComponents/OverviewInformationRoute";
+import ReviewListRoute from "../components/AdminOverviewScreenComponents/ReviewListRoute";
+import HeaderWithButton from "../components/HeaderWithButton";
 import LocationModel from "../models/LocationModel";
 import store from "../utilities/Store";
 
@@ -39,7 +39,15 @@ const FishingSpotDetailScreen = () => {
 
   return (
     <>
-      <HeaderTab id={id} name={name} isVerified={verify} flagable />
+      <HeaderWithButton
+        id={id}
+        name={name}
+        isVerified={verify}
+        buttonName={verify ? "Hủy xác thực" : "Xác thực"}
+        onSuccess={() => {
+          console.log(id);
+        }}
+      />
       <Tab.Navigator
         sceneContainerStyle={{ backgroundColor: "white" }}
         screenOptions={{

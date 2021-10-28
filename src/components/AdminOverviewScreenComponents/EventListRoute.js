@@ -4,7 +4,6 @@ import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box } from "native-base";
 import React, { useEffect, useState } from "react";
 import { FlatList, StyleSheet } from "react-native";
-import { Divider } from "react-native-elements";
 
 import { goToCatchReportDetailScreen } from "../../navigations";
 import EventPostCard from "../EventPostCard";
@@ -138,7 +137,6 @@ const Tab = createMaterialTopTabNavigator();
 const EventListRoute = () => {
   return (
     <Box style={{ flex: 1 }}>
-      <Divider />
       <Tab.Navigator
         sceneContainerStyle={{
           backgroundColor: "white",

@@ -7,7 +7,6 @@ import LakeCard from "../LakeCard";
 
 const LakeListViewRoute = () => {
   const lakeList = useStoreState((states) => states.LocationModel.lakeList);
-
   const getLakeList = useStoreActions(
     (actions) => actions.LocationModel.getLakeList,
   );
