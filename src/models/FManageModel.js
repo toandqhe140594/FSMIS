@@ -6,6 +6,7 @@ const model = {
   listOfFishingLocations: [],
   locationDetails: {
     id: 1,
+    role: "ROLE_MANAGER",
     name: "placeholderdata",
     longitude: 20.65606,
     latitude: 106.096535,
@@ -26,15 +27,78 @@ const model = {
     active: true,
     verify: false,
   },
+
   listOfLake: [],
   lakeDetail: {},
   listOfStaff: [],
   staffDetail: {},
   catchReportList: [],
   catchReportDetail: {},
-  catchReportHistory: [],
+  catchReportHistory: [
+    {
+      id: 4,
+      userId: 2,
+      userFullName: "Lê Test",
+      avatar: "https://picsum.photos/200/300",
+      locationId: 8,
+      locationName: "Hồ Câu Thiên Đường",
+      description: "Mẻ này ngon",
+      time: "20/10/2020 00:00:00",
+      fishes: ["Cá chày"],
+    },
+    {
+      id: 2,
+      userId: 2,
+      userFullName: "Lê Test",
+      avatar: "https://picsum.photos/200/300",
+      locationId: 8,
+      locationName: "Hồ Câu Thiên Đường",
+      description: "Mẻ này ngon",
+      time: "20/10/2020 00:00:00",
+      fishes: ["Cá chày"],
+    },
+  ],
+  catchReportCurrentPage: 1,
+  catchTotalPage: 1,
   checkInHistoryList: [],
-  eventPostList: [],
-  eventPostDetail: {},
+  postList: [],
+  postDetail: {},
+
+  setListOfFishingLocations: action((state, payload) => {
+    state.listOfFishingLocations = payload;
+  }),
+  getListOfFishingLocations: thunk(
+    async (actions, payload, { getState }) => {},
+  ),
+
+  setLocationDetails: action((state, payload) => {
+    state.locationDetails = payload;
+  }),
+  getLocationDetails: thunk(async (actions, payload, { getState }) => {}),
+
+  setListOfLake: action((state, payload) => {
+    state.locationDetails = payload;
+  }),
+  getListOfLake: thunk(async (actions, payload, { getState }) => {}),
+
+  setLakeDetail: action((state, payload) => {
+    state.locationDetails = payload;
+  }),
+  getLakeDetail: thunk(async (actions, payload, { getState }) => {}),
+
+  setCatchReportList: action((state, payload) => {
+    state.locationDetails = payload;
+  }),
+  getCatchReportList: thunk(async (actions, payload, { getState }) => {}),
+
+  setCatchReportDetail: action((state, payload) => {
+    state.locationDetails = payload;
+  }),
+  getCatchReportDetail: thunk(async (actions, payload, { getState }) => {}),
+
+  setCheckInHistoryList: action((state, payload) => {
+    state.locationDetails = payload;
+  }),
+  getCheckInHistoryList: thunk(async (actions, payload, { getState }) => {}),
 };
 export default model;

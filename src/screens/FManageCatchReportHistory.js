@@ -1,5 +1,14 @@
 import { useNavigation } from "@react-navigation/native";
-import { Box, CheckIcon, FlatList, Modal, Select, Text } from "native-base";
+import { useStoreActions, useStoreState } from "easy-peasy";
+import {
+  Box,
+  Button,
+  CheckIcon,
+  FlatList,
+  Modal,
+  Select,
+  Text,
+} from "native-base";
 import PropTypes from "prop-types";
 import React, { useState } from "react";
 import CalendarPicker from "react-native-calendar-picker";
@@ -11,23 +20,22 @@ import { goToCatchReportDetailScreen } from "../navigations";
 
 const FManageCatchReportHistory = ({ angler }) => {
   const navigation = useNavigation();
-  const dummyMenu = [
-    { id: 1, message: "Ngoi ca sang", caches: "Ro dong, Diec" },
-    { id: 2, message: "Ngoi ca sang", caches: "Ro dong, Diec" },
-    { id: 3, message: "Ngoi ca sang", caches: "Ro dong, Diec" },
-    { id: 4, message: "Ngoi ca sang", caches: "Ro dong, Diec" },
-    { id: 4, message: "Ngoi ca sang", caches: "Ro dong, Diec" },
-    { id: 4, message: "Ngoi ca sang", caches: "Ro dong, Diec" },
-    { id: 4, message: "Ngoi ca sang", caches: "Ro dong, Diec" },
-    { id: 4, message: "Ngoi ca sang", caches: "Ro dong, Diec" },
-    { id: 4, message: "Ngoi ca sang", caches: "Ro dong, Diec" },
-    { id: 4, message: "Ngoi ca sang", caches: "Ro dong, Diec" },
-    { id: 4, message: "Ngoi ca sang", caches: "Ro dong, Diec" },
-    { id: 4, message: "Ngoi ca sang", caches: "Ro dong, Diec" },
-    { id: 4, message: "Ngoi ca sang", caches: "Ro dong, Diec" },
-    { id: 4, message: "Ngoi ca sang", caches: "Ro dong, Diec" },
-  ];
-  //   const [dateFilter, setDateFilter] = useState("");
+  const [startDate, setStartDate] = useState();
+  const [endDate, setEndDate] = useState();
+  const catchReportHistory = useStoreState(
+    (states) => states.FManageModel.catchReportHistory,
+  );
+  const dateChangeHandler = (date, type) => {
+    if (type === "END_DATE") {
+      setEndDate(date);
+    } else {
+      setStartDate(date);
+      setEndDate(null);
+    }
+    console.log(`startDate`, startDate);
+    console.log(`endDate`, endDate);
+  };
+
   const [modalVisible, setModalVisible] = useState(false);
 
   const selectedFilterHandler = (type) => {
@@ -35,11 +43,13 @@ const FManageCatchReportHistory = ({ angler }) => {
       setModalVisible(true);
     }
   };
-
+  const submitDateFilterHandler = () => {
+    dateChangeHandler();
+    setModalVisible(false);
+  };
   return (
     <Box>
       <HeaderTab name="Lịch sử báo cá" />
-
       <Box
         w={{
           base: "100%",
@@ -55,7 +65,18 @@ const FManageCatchReportHistory = ({ angler }) => {
             <Modal.CloseButton />
             <Modal.Header>Chọn ngày</Modal.Header>
             <Modal.Body>
-              <CalendarPicker scrollable />
+              <CalendarPicker
+                allowRangeSelection
+                scrollable
+                todayBackgroundColor="#e6ffe6"
+                selectedDayColor="#66ff33"
+                selectedDayTextColor="#000000"
+                scaleFactor={375}
+                onDateChange={dateChangeHandler}
+              />
+              <Button size="lg" onPress={submitDateFilterHandler}>
+                OK
+              </Button>
             </Modal.Body>
           </Modal.Content>
         </Modal>
@@ -70,44 +91,61 @@ const FManageCatchReportHistory = ({ angler }) => {
             endIcon: <CheckIcon size="5" />,
           }}
           onValueChange={(itemValue) => selectedFilterHandler(itemValue)}
+          backgroundColor="white"
         >
           <Select.Item label="Tất cả" value="All" />
           <Select.Item label="Theo ngày" value="BY_DATE" />
         </Select>
 
         <FlatList
-          data={dummyMenu}
-          renderItem={({ item }) => (
-            <Box
-              borderBottomWidth="1"
-              backgroundColor="white"
-              _dark={{
-                borderColor: "gray.600",
-              }}
-              borderColor="coolGray.200"
-
-              // keyExtractor={(item.id) => item.index_id.toString()}
-            >
-              <PressableCustomCard
-                paddingX="3"
-                paddingY="1"
-                onPress={() => {
-                  goToCatchReportDetailScreen(navigation);
+          data={catchReportHistory}
+          renderItem={({ item }) => {
+            const {
+              id,
+              userFullName,
+              avatar,
+              locationName,
+              description,
+              time,
+              fishes,
+            } = item;
+            return (
+              <Box
+                borderBottomWidth="1"
+                backgroundColor="white"
+                _dark={{
+                  borderColor: "gray.600",
                 }}
+                borderColor="coolGray.200"
               >
-                <Box pl="2">
-                  <AvatarCard avatarSize="md" nameUser={angler.name} />
-                  <Box mt={2}>
-                    <Text italic>{item.message}</Text>
-                    <Text>
-                      <Text bold>Đã câu được :</Text>
-                      {item.caches}
-                    </Text>
+                <PressableCustomCard
+                  paddingX="3"
+                  paddingY="1"
+                  onPress={() => {
+                    goToCatchReportDetailScreen(navigation);
+                  }}
+                >
+                  <Box pl="2">
+                    <AvatarCard
+                      avatarSize="md"
+                      nameUser={userFullName}
+                      image={avatar}
+                      subText={time}
+                    />
+                    <Box mt={2}>
+                      <Text italic>{description}</Text>
+                      <Text>
+                        <Text bold>Đã câu được :</Text>
+                        {fishes.map((fish) => (
+                          <Text>{fish}. </Text>
+                        ))}
+                      </Text>
+                    </Box>
                   </Box>
-                </Box>
-              </PressableCustomCard>
-            </Box>
-          )}
+                </PressableCustomCard>
+              </Box>
+            );
+          }}
           keyExtractor={(item, index) => index.toString()}
         />
       </Box>

@@ -14,16 +14,20 @@ const FishCard = ({ image, fishType, quantity, totalWeight }) => {
       backgroundColor="white"
     >
       <Image
-        ml={1}
+        ml={3}
         alt="LW"
         my={1}
-        w="170"
-        h="95"
+        py={0.5}
+        resizeMode="contain"
+        size="lg"
+        w="150"
+        h="110"
         source={{
           uri: image,
         }}
       />
-      <Box flex={1} my={3} mx={3}>
+
+      <Box flex={1} my={3} mx={4}>
         <Text bold fontSize="md" mb={1}>
           {fishType}
         </Text>

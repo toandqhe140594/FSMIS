@@ -1,4 +1,4 @@
-import { Box, CheckIcon, FlatList, Modal, Select } from "native-base";
+import { Box, Button, CheckIcon, FlatList, Modal, Select } from "native-base";
 import PropTypes from "prop-types";
 import React, { useState } from "react";
 import CalendarPicker from "react-native-calendar-picker";
@@ -27,16 +27,32 @@ const FManageCheckinHistoryScreen = ({ angler }) => {
   ];
   //   const [dateFilter, setDateFilter] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
+  const [startDate, setStartDate] = useState();
+  const [endDate, setEndDate] = useState();
 
   const selectedFilterHandler = (type) => {
     if (type === "BY_DATE") {
       setModalVisible(true);
     }
   };
+  const dateChangeHandler = (date, type) => {
+    if (type === "END_DATE") {
+      setEndDate(date);
+    } else {
+      setStartDate(date);
+      setEndDate(null);
+    }
+    console.log(`startDate`, startDate);
+    console.log(`endDate`, endDate);
+  };
 
+  const submitDateFilterHandler = () => {
+    dateChangeHandler();
+    setModalVisible(false);
+  };
   return (
     <Box>
-      <HeaderTab name="Lịch sử báo cá" />
+      <HeaderTab name="Lịch sử Check-in" />
 
       <Box
         w={{
@@ -53,7 +69,18 @@ const FManageCheckinHistoryScreen = ({ angler }) => {
             <Modal.CloseButton />
             <Modal.Header>Chọn ngày</Modal.Header>
             <Modal.Body>
-              <CalendarPicker scrollable />
+              <CalendarPicker
+                allowRangeSelection
+                scrollable
+                todayBackgroundColor="#e6ffe6"
+                selectedDayColor="#66ff33"
+                selectedDayTextColor="#000000"
+                scaleFactor={375}
+                onDateChange={dateChangeHandler}
+              />
+              <Button size="lg" onPress={submitDateFilterHandler}>
+                OK
+              </Button>
             </Modal.Body>
           </Modal.Content>
         </Modal>
@@ -62,7 +89,7 @@ const FManageCheckinHistoryScreen = ({ angler }) => {
           //   selectedValue={dateFilter}
           minWidth="200"
           accessibilityLabel="Chọn chế độ lọc"
-          placeholder="Choose Service"
+          placeholder="Chọn chế độ lọc"
           backgroundColor="white"
           _selectedItem={{
             bg: "teal.600",
@@ -84,7 +111,8 @@ const FManageCheckinHistoryScreen = ({ angler }) => {
                 borderColor: "gray.600",
               }}
               borderColor="coolGray.200"
-              pb="1"
+              pb="2"
+              backgroundColor="white"
             >
               <PressableCustomCard paddingX="3" paddingY="1">
                 <CheckInCard>

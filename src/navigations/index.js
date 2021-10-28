@@ -100,6 +100,11 @@ const goToAdminFLocationOverviewScreen = (navigation, params) => {
     ...params,
   });
 };
+const goToFManageEditProfileScreen = (navigation, params) => {
+  navigation.navigate(ROUTE_NAMES.FMANAGE_PROFILE_EDIT, {
+    ...params,
+  });
+};
 
 export {
   goBack,
@@ -114,6 +119,7 @@ export {
   goToCatchReportFormScreen,
   goToCatchReportVerifyDetailScreen,
   goToFishingLocationOverviewScreen,
+  goToFManageEditProfileScreen,
   goToFManageMainScreen,
   goToFManageSelectScreen,
   goToLakeDetailScreen,

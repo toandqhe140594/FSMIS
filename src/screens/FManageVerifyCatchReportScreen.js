@@ -37,8 +37,8 @@ const VerifyCatchReportScreen = ({ angler }) => {
       time: "09:00 01/04/2021",
     },
   ];
-  const onPressHandler = () => {
-    console.log("ahhh, you press me");
+  const goToDetailHandler = () => {
+    goToCatchReportVerifyDetailScreen(navigation);
   };
   return (
     <Box>
@@ -65,7 +65,7 @@ const VerifyCatchReportScreen = ({ angler }) => {
               <PressableCustomCard
                 paddingX="3"
                 paddingY="1"
-                onPress={onPressHandler}
+                onPress={goToDetailHandler}
               >
                 <HStack pl="2" justifyContent="space-between">
                   <Box width="65%">
@@ -90,13 +90,7 @@ const VerifyCatchReportScreen = ({ angler }) => {
                     width="33%"
                   >
                     <Button colorScheme="tertiary">Đồng ý</Button>
-                    <Button
-                      onPress={() =>
-                        goToCatchReportVerifyDetailScreen(navigation)
-                      }
-                    >
-                      Chi tiết
-                    </Button>
+                    <Button onPress={goToDetailHandler}>Chi tiết</Button>
                   </VStack>
                 </HStack>
               </PressableCustomCard>
