@@ -38,6 +38,7 @@ const MultiImageSection = ({
   imageArray,
   selectLimit,
   deleteImage,
+  formRoute,
 }) => {
   const navigation = useNavigation();
   const handleDelete = (id) => {
@@ -84,7 +85,14 @@ const MultiImageSection = ({
         );
       })}
       {imageArray.length !== selectLimit && (
-        <Pressable onPress={() => goToMediaSelectScreen(navigation)}>
+        <Pressable
+          onPress={() =>
+            goToMediaSelectScreen(navigation, {
+              returnRoute: formRoute,
+              maxSelectable: selectLimit,
+            })
+          }
+        >
           <View style={[styles.wrapper, styles.border]}>
             <Icon as={<Entypo name="plus" />} size={10} mr={1} />
           </View>
@@ -99,13 +107,15 @@ MultiImageSection.propTypes = {
   selectLimit: PropTypes.number,
   deleteImage: PropTypes.func,
   myStyles: PropTypes.objectOf(PropTypes.string),
+  formRoute: PropTypes.string,
 };
 
 MultiImageSection.defaultProps = {
   imageArray: [],
-  selectLimit: 5,
+  selectLimit: 1,
   deleteImage: () => {},
   myStyles: {},
+  formRoute: "",
 };
 
 export default MultiImageSection;
