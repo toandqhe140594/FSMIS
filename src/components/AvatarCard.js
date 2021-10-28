@@ -22,7 +22,7 @@ const AvatarCard = ({
         <Avatar
           size={avatarSize}
           source={{
-            uri: image,
+            uri: image !== "" ? image : undefined,
           }}
         />
         <VStack ml={1}>

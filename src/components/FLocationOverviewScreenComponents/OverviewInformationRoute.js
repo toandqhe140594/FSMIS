@@ -57,7 +57,11 @@ const OverviewInformationRoute = () => {
                 <Swiper height="auto">
                   {image && image.length > 0 ? (
                     image.map((item) => (
-                      <Card.Image source={{ uri: item }} key={item} />
+                      <Card.Image
+                        source={{ uri: item }}
+                        key={item}
+                        style={{ height: 270 }}
+                      />
                     ))
                   ) : (
                     <Card.Image source={{ uri: "https://picsum.photos/400" }} />
