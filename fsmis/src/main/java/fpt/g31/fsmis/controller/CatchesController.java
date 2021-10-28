@@ -1,15 +1,14 @@
 package fpt.g31.fsmis.controller;
 
+import fpt.g31.fsmis.dto.input.CatchReportDtoIn;
 import fpt.g31.fsmis.service.CatchesService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api/catches")
@@ -21,5 +20,10 @@ public class CatchesController {
     @GetMapping("/{catchesId}")
     public ResponseEntity<Object> getCatchesDetails(HttpServletRequest request, @PathVariable Long catchesId) {
         return new ResponseEntity<>(catchesService.getCatchesDetail(request, catchesId), HttpStatus.OK);
+    }
+
+    @PostMapping("/report")
+    public ResponseEntity<Object> catchReport(HttpServletRequest request, @RequestBody @Valid CatchReportDtoIn catchReportDtoIn) {
+        return new ResponseEntity<>(catchesService.catchReport(request, catchReportDtoIn), HttpStatus.OK);
     }
 }
