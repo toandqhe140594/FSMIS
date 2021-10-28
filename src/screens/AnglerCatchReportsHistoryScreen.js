@@ -30,6 +30,7 @@ const AnglerCatchReportsHistoryScreen = () => {
           base: "100%",
           md: "25%",
         }}
+        pb="20%"
       >
         {catchReportHistory.length !== 0 && (
           <FlatList
