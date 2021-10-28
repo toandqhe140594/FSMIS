@@ -3,7 +3,6 @@ import PropTypes from "prop-types";
 import React from "react";
 import { Controller, useFormContext } from "react-hook-form";
 import { StyleSheet, Text, View } from "react-native";
-import { style } from "styled-system";
 
 const styles = StyleSheet.create({
   error: { color: "#f43f5e", fontSize: 12, fontStyle: "italic" },
