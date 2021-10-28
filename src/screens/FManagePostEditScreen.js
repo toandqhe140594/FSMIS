@@ -1,15 +1,17 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Box, Button, Select, Text, VStack } from "native-base";
-import React, { useState } from "react";
+import { useFocusEffect, useRoute } from "@react-navigation/native";
+import { Button, Select, Text, VStack } from "native-base";
+import React, { useCallback, useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { Dimensions, ScrollView, StyleSheet, View } from "react-native";
 import * as yup from "yup";
 
 import InputComponent from "../components/common/InputComponent";
+import MultiImageSection from "../components/common/MultiImageSection";
 import SelectComponent from "../components/common/SelectComponent";
-import SingleImageSection from "../components/common/SingleImageSection";
 import TextAreaComponent from "../components/common/TextAreaComponent";
 import HeaderTab from "../components/HeaderTab";
+import { ROUTE_NAMES } from "../constants";
 
 const validationSchema = yup.object().shape({
   postType: yup.number().default(-1),
@@ -30,7 +32,6 @@ const styles = StyleSheet.create({
     width: "90%",
   },
   center: {
-    flex: 1,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -41,6 +42,8 @@ const OFFSET_BOTTOM = 85;
 const CUSTOM_SCREEN_HEIGHT = Dimensions.get("window").height - OFFSET_BOTTOM;
 
 const PostEditorScreen = () => {
+  const route = useRoute();
+  const [imageArray, setImageArray] = useState([]);
   const [showImageSection, setShowImageSection] = useState(true);
   const methods = useForm({
     mode: "onSubmit",
@@ -49,63 +52,96 @@ const PostEditorScreen = () => {
   });
   const { handleSubmit } = methods;
   const handleValueChange = (value) => {
-    console.log(value);
     setShowImageSection(value === "image");
   };
+  /**
+   *  Reset the image array if imageArray is not empty
+   *  when switching to input link video
+   */
+  useEffect(() => {
+    if (showImageSection !== "image" && imageArray?.length > 0)
+      setImageArray([]);
+  }, [showImageSection]);
   const onSubmit = (data) => {
     console.log(data);
   };
+  const updateImageArray = (id) => {
+    setImageArray(imageArray.filter((image) => image.id !== id));
+  };
+  useFocusEffect(
+    // useCallback will listen to route.param
+    useCallback(() => {
+      setImageArray(route.params?.base64Array);
+      return () => {
+        setImageArray([]);
+      };
+    }, [route.params]),
+  );
   return (
-    <ScrollView>
-      {/* Without scrollview, it seems the keyboard will not hide if tap out of the component */}
+    <>
       <HeaderTab name="Bài đăng" />
+      {/* Without scrollview, it seems the keyboard will not hide if tap out of the component */}
       <FormProvider {...methods}>
-        <View style={[styles.center, { height: CUSTOM_SCREEN_HEIGHT }]} mt={2}>
-          <VStack flex={4} space={2} style={styles.sectionWrapper}>
-            <SelectComponent
-              label="Sự kiện"
-              placeholder="Chọn sự kiện"
-              data={postTypeData}
-              controllerName="postType"
-            />
-            <TextAreaComponent
-              label="Miêu tả"
-              placeholder=""
-              numberOfLines={3}
-              controllerName="postDescription"
-            />
-            <Box>
-              <Text fontSize="md" mb={1}>
-                Đính kèm
-              </Text>
-              <Select
-                placeholder="Chọn loại đính kèm"
-                accessibilityLabel="Chọn loại đính kèm"
-                onValueChange={handleValueChange}
-                defaultValue="Ảnh"
-                fontSize="md"
-              >
-                <Select.Item label="Ảnh" value="image" />
-                <Select.Item label="Link Video" value="linkVideo" />
-              </Select>
-            </Box>
-            <Box mt={4}>
-              {showImageSection && <SingleImageSection />}
+        <ScrollView
+          contentContainerStyle={{
+            justifyContent: "center",
+            alignItems: "center",
+            height: CUSTOM_SCREEN_HEIGHT,
+            marginTop: 8,
+          }}
+        >
+          <View style={[{ flex: 2 }, styles.sectionWrapper]}>
+            <VStack space={2} mb={2}>
+              <SelectComponent
+                label="Sự kiện"
+                placeholder="Chọn sự kiện"
+                data={postTypeData}
+                controllerName="postType"
+              />
+              <TextAreaComponent
+                label="Miêu tả"
+                placeholder=""
+                numberOfLines={3}
+                controllerName="postDescription"
+              />
+              <>
+                <Text fontSize="md" mb={1}>
+                  Đính kèm
+                </Text>
+                <Select
+                  placeholder="Chọn loại đính kèm"
+                  accessibilityLabel="Chọn loại đính kèm"
+                  onValueChange={handleValueChange}
+                  defaultValue="Ảnh"
+                  fontSize="md"
+                >
+                  <Select.Item label="Ảnh" value="image" />
+                  <Select.Item label="Link Video" value="linkVideo" />
+                </Select>
+              </>
               {!showImageSection && (
                 <InputComponent
                   placeholder="Nhập link vào đây"
-                  label="Đính kèm link"
+                  label="Đường dẫn"
                   controllerName="postVideoLink"
                 />
               )}
-            </Box>
-          </VStack>
+            </VStack>
+            {showImageSection && (
+              <MultiImageSection
+                containerStyle={{ width: "100%" }}
+                formRoute={ROUTE_NAMES.FMANAGE_POST_EDIT}
+                imageArray={imageArray}
+                deleteImage={updateImageArray}
+              />
+            )}
+          </View>
           <View style={styles.sectionWrapper}>
             <Button onPress={handleSubmit(onSubmit)}>Đăng</Button>
           </View>
-        </View>
+        </ScrollView>
       </FormProvider>
-    </ScrollView>
+    </>
   );
 };
 
