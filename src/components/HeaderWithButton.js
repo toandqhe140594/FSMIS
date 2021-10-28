@@ -15,22 +15,36 @@ const HeaderWithButton = ({ name, isVerified, buttonName, onSuccess }) => {
     <Box position="relative" justifyContent="center">
       <Box
         style={{ height: 40 }}
-        bg="white"
         flexDir="row"
-        justifyContent="space-between"
         alignItems="center"
         px={4}
         w="100%"
+        bg="white"
       >
         <Pressable
           onPress={() => {
             goBack(navigation);
           }}
+          flex={1}
         >
           <Ionicons name="arrow-back" size={24} color="black" />
         </Pressable>
-        <Box flexDir="row" alignItems="center" alignSelf="center">
-          <Text style={[styles.nameTextLg]}>{name}</Text>
+        <Box
+          flexDir="row"
+          alignItems="center"
+          alignSelf="center"
+          flex={1.2}
+          justifyContent="center"
+        >
+          <Text
+            style={[
+              styles.nameTextLg,
+              { fontSize: 12, flex: 1, textAlign: "center" },
+            ]}
+            numberOfLines={1}
+          >
+            {name}
+          </Text>
           {isVerified && (
             <MaterialIcons
               name="verified"
@@ -40,18 +54,20 @@ const HeaderWithButton = ({ name, isVerified, buttonName, onSuccess }) => {
             />
           )}
         </Box>
-        <Ionicons name="arrow-back" size={24} color="rgba(0,0,0,0)" />
+        <Box flex={1} justifyContent="flex-end" alignItems="flex-end">
+          <Button
+            // position="absolute"
+            onPress={onSuccess}
+            _text={{
+              fontSize: 10,
+            }}
+            w="80%"
+          >
+            {buttonName}
+          </Button>
+        </Box>
       </Box>
       <Divider />
-      <Button
-        position="absolute"
-        right={2}
-        bottom={1}
-        top={1}
-        onPress={onSuccess}
-      >
-        {buttonName}
-      </Button>
     </Box>
   );
 };
