@@ -123,6 +123,7 @@ const LakeEditProfileScreen = () => {
             <Center mt={1}>
               {/* Image Picker section */}
               <MultiImageSection
+                containerStyle={styles.sectionWrapper}
                 formRoute={ROUTE_NAMES.FMANAGE_LAKE_EDIT}
                 imageArray={imageArray}
                 deleteImage={updateImageArray}
