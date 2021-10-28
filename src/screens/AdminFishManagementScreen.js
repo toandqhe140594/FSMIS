@@ -2,7 +2,7 @@ import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, Button, Center } from "native-base";
 import PropTypes from "prop-types";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Alert, FlatList } from "react-native";
 import { Avatar, Divider, SearchBar, Text } from "react-native-elements";
 
@@ -86,15 +86,25 @@ FishManagementCard.defaultProps = {
 
 const AdminFishManagementScreen = () => {
   const navigation = useNavigation();
-  const [search, setSearch] = useState("");
 
   const fishList = useStoreState((states) => states.FishModel.fishList);
   const getFishList = useStoreActions(
     (actions) => actions.FishModel.getFishList,
   );
 
+  const [search, setSearch] = useState("");
+  const [displayedList, setDisplayedList] = useState(fishList);
+
   const updateSearch = (searchKey) => {
     setSearch(searchKey);
+  };
+
+  const onEndEdit = () => {
+    if (!fishList) return;
+    const filteredList = fishList.filter((fish) =>
+      fish.name.toUpperCase().includes(search.toUpperCase()),
+    );
+    setDisplayedList(filteredList);
   };
 
   useFocusEffect(
@@ -103,6 +113,10 @@ const AdminFishManagementScreen = () => {
       return () => {};
     }, []),
   );
+
+  useEffect(() => {
+    setDisplayedList(fishList);
+  }, [fishList]);
 
   return (
     <>
@@ -122,7 +136,10 @@ const AdminFishManagementScreen = () => {
             lightTheme
             blurOnSubmit
             onEndEditing={() => {
-              console.log("end edit");
+              onEndEdit();
+            }}
+            onClear={() => {
+              setDisplayedList(fishList);
             }}
           />
           <Button
@@ -137,7 +154,7 @@ const AdminFishManagementScreen = () => {
 
           <Box flex={1} w="100%">
             <FlatList
-              data={fishList}
+              data={displayedList}
               renderItem={({ item }) => (
                 <FishManagementCard
                   id={item.id}
