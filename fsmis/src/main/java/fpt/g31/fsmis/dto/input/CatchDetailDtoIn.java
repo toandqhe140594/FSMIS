@@ -11,11 +11,13 @@ import javax.validation.constraints.NotNull;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CatchesDetailDtoIn {
+public class CatchDetailDtoIn {
     @NotNull
     private Integer quantity;
     @NotNull
     private Float weight;
     @NotNull
     private Long fishSpeciesId;
+    @NotNull
+    private boolean returnToOwner;
 }

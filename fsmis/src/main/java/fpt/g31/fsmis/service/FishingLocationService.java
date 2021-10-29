@@ -23,7 +23,6 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ValidationException;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -161,5 +160,23 @@ public class FishingLocationService {
                 .pageNo(pageNo)
                 .items(output)
                 .build();
+    }
+
+    public List<FishingLocationItemDtoOut> getOwnedFishingLocation(HttpServletRequest request) {
+        User user = jwtFilter.getUserFromToken(request);
+        List<FishingLocation> fishingLocationList = fishingLocationRepos.findByOwnerIdAndActiveIsTrue(user.getId());
+        List<FishingLocationItemDtoOut> fishingLocationItemDtoOutList = new ArrayList<>();
+        for (FishingLocation fishingLocation: fishingLocationList) {
+            FishingLocationItemDtoOut fishingLocationItemDtoOut = FishingLocationItemDtoOut.builder()
+                    .id(fishingLocation.getId())
+                    .name(fishingLocation.getName())
+                    .image(ServiceUtils.splitString(fishingLocation.getImageUrl()).get(0))
+                    .verify(fishingLocation.getVerify())
+                    .address(ServiceUtils.getAddress(fishingLocation.getAddress(), fishingLocation.getWard()))
+                    .score(reviewRepos.getAverageScoreByFishingLocationIdAndActiveIsTrue(fishingLocation.getId()))
+                    .build();
+            fishingLocationItemDtoOutList.add(fishingLocationItemDtoOut);
+        }
+        return fishingLocationItemDtoOutList;
     }
 }

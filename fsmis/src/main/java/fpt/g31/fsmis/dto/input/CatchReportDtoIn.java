@@ -14,12 +14,12 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class CatchReportDtoIn {
-    private String imageUrl;
+    private List<String> images;
     private String description;
     @NotNull
     private Long lakeId;
     @NotEmpty
-    private List<CatchesDetailDtoIn> catchesDetailList;
+    private List<CatchDetailDtoIn> catchesDetailList;
     @NotNull
     private boolean hidden;
 }

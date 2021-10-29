@@ -62,6 +62,11 @@ public class FishingLocationController {
         return new ResponseEntity<>(fishingLocationService.getFishingLocationOverviewById(request, locationId), HttpStatus.OK);
     }
 
+    @GetMapping("/manager")
+    public ResponseEntity<Object> getOwnedFishingLocation(HttpServletRequest request){
+        return new ResponseEntity<>(fishingLocationService.getOwnedFishingLocation(request), HttpStatus.OK);
+    }
+
     // LAKE
 
     @GetMapping("/{locationId}/lake")

@@ -1,7 +1,7 @@
 package fpt.g31.fsmis.service;
 
 import fpt.g31.fsmis.dto.input.CatchReportDtoIn;
-import fpt.g31.fsmis.dto.input.CatchesDetailDtoIn;
+import fpt.g31.fsmis.dto.input.CatchDetailDtoIn;
 import fpt.g31.fsmis.dto.output.*;
 import fpt.g31.fsmis.entity.*;
 import fpt.g31.fsmis.exception.NotFoundException;
@@ -181,20 +181,21 @@ public class CatchesService {
                 .orElseThrow(() -> new NotFoundException("Hồ câu không tồn tại"));
         FishingLocation fishingLocation = lake.getFishingLocation();
         List<CatchesDetail> catchesDetailList = new ArrayList<>();
-        for (CatchesDetailDtoIn catchesDetailDtoIn :
+        for (CatchDetailDtoIn catchDetailDtoIn :
                 catchReportDtoIn.getCatchesDetailList()) {
-            FishSpecies fishSpecies = fishSpeciesRepos.findById(catchesDetailDtoIn.getFishSpeciesId())
+            FishSpecies fishSpecies = fishSpeciesRepos.findById(catchDetailDtoIn.getFishSpeciesId())
                     .orElseThrow(() -> new NotFoundException("Loài cá không tồn tại"));
             CatchesDetail catchesDetail = CatchesDetail.builder()
-                    .quantity(catchesDetailDtoIn.getQuantity())
-                    .weight(catchesDetailDtoIn.getWeight())
+                    .quantity(catchDetailDtoIn.getQuantity())
+                    .weight(catchDetailDtoIn.getWeight())
                     .fishSpecies(fishSpecies)
+                    .returnToOwner(catchDetailDtoIn.isReturnToOwner())
                     .build();
             catchesDetailList.add(catchesDetail);
         }
         Catches catches = Catches.builder()
                 .description(catchReportDtoIn.getDescription())
-                .imageUrl(catchReportDtoIn.getImageUrl())
+                .imageUrl(ServiceUtils.mergeString(catchReportDtoIn.getImages()))
                 .time(LocalDateTime.now())
                 .hidden(catchReportDtoIn.isHidden())
                 .approved(false)
