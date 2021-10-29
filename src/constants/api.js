@@ -15,6 +15,7 @@ export const PERSONAL_CATCH_REPORT_DETAIL = "catches";
 export const PERSONAL_SAVED_LOCATION = "personal/save";
 export const PERSONAL_NOTIFICATION = "personal/notification";
 export const PERSONAL_INFORMATION = "personal";
+export const PERSONAL_OWNED_LOCATION = "location/manager";
 
 export const LOCATION_OVERVIEW = "location";
 export const LOCATION_NEARBY = "location/nearby";
