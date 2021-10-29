@@ -105,6 +105,21 @@ const goToFManageEditProfileScreen = (navigation, params) => {
     ...params,
   });
 };
+const goToFManageAddStaff = (navigation, params) => {
+  navigation.navigate(ROUTE_NAMES.FMANAGE_STAFF_ADD, {
+    ...params,
+  });
+};
+const goToFManageStaffDetail = (navigation, params) => {
+  navigation.navigate(ROUTE_NAMES.FMANAGE_STAFF_DETAIL, {
+    ...params,
+  });
+};
+const goToFManageStaffManagement = (navigation, params) => {
+  navigation.navigate(ROUTE_NAMES.FMANAGE_STAFF_MANAGEMENT, {
+    ...params,
+  });
+};
 
 export {
   goBack,
@@ -119,9 +134,12 @@ export {
   goToCatchReportFormScreen,
   goToCatchReportVerifyDetailScreen,
   goToFishingLocationOverviewScreen,
+  goToFManageAddStaff,
   goToFManageEditProfileScreen,
   goToFManageMainScreen,
   goToFManageSelectScreen,
+  goToFManageStaffDetail,
+  goToFManageStaffManagement,
   goToLakeDetailScreen,
   goToLakeEditScreen,
   goToLogoScreen,

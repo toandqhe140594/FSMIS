@@ -115,7 +115,7 @@ EventPostCard.propTypes = {
   image: PropTypes.string,
   edited: PropTypes.bool,
   postTime: PropTypes.string,
-  id: PropTypes.number.isRequired,
+  id: PropTypes.number,
 };
 
 EventPostCard.defaultProps = {
@@ -131,6 +131,7 @@ EventPostCard.defaultProps = {
   image: "https://picsum.photos/500",
   edited: false,
   postTime: "",
+  id: 1,
 };
 
 export default EventPostCard;

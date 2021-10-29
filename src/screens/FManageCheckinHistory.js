@@ -1,5 +1,13 @@
-import { Box, Button, CheckIcon, FlatList, Modal, Select } from "native-base";
-import PropTypes from "prop-types";
+import { useStoreState } from "easy-peasy";
+import {
+  Box,
+  Button,
+  CheckIcon,
+  Divider,
+  FlatList,
+  Modal,
+  Select,
+} from "native-base";
 import React, { useState } from "react";
 import CalendarPicker from "react-native-calendar-picker";
 
@@ -8,27 +16,14 @@ import CheckInCard from "../components/CheckInCard";
 import HeaderTab from "../components/HeaderTab";
 import PressableCustomCard from "../components/PressableCustomCard";
 
-const FManageCheckinHistoryScreen = ({ angler }) => {
-  const dummyMenu = [
-    { id: 1, message: "Ngoi ca sang", caches: "Ro dong, Diec" },
-    { id: 2, message: "Ngoi ca sang", caches: "Ro dong, Diec" },
-    { id: 3, message: "Ngoi ca sang", caches: "Ro dong, Diec" },
-    { id: 4, message: "Ngoi ca sang", caches: "Ro dong, Diec" },
-    { id: 4, message: "Ngoi ca sang", caches: "Ro dong, Diec" },
-    { id: 4, message: "Ngoi ca sang", caches: "Ro dong, Diec" },
-    { id: 4, message: "Ngoi ca sang", caches: "Ro dong, Diec" },
-    { id: 4, message: "Ngoi ca sang", caches: "Ro dong, Diec" },
-    { id: 4, message: "Ngoi ca sang", caches: "Ro dong, Diec" },
-    { id: 4, message: "Ngoi ca sang", caches: "Ro dong, Diec" },
-    { id: 4, message: "Ngoi ca sang", caches: "Ro dong, Diec" },
-    { id: 4, message: "Ngoi ca sang", caches: "Ro dong, Diec" },
-    { id: 4, message: "Ngoi ca sang", caches: "Ro dong, Diec" },
-    { id: 4, message: "Ngoi ca sang", caches: "Ro dong, Diec" },
-  ];
+const FManageCheckinHistoryScreen = () => {
+  const listCheckInModel = useStoreState(
+    (actions) => actions.FManageModel.checkInHistoryList,
+  );
   const [modalVisible, setModalVisible] = useState(false);
   const [startDate, setStartDate] = useState();
   const [endDate, setEndDate] = useState();
-
+  const [listCheckIn, setListCheckIn] = useState(listCheckInModel);
   const selectedFilterHandler = (type) => {
     if (type === "BY_DATE") {
       setModalVisible(true);
@@ -95,6 +90,7 @@ const FManageCheckinHistoryScreen = ({ angler }) => {
             endIcon: <CheckIcon size="5" />,
           }}
           mt={1}
+          mb={0.5}
           onValueChange={(itemValue) => selectedFilterHandler(itemValue)}
         >
           <Select.Item label="Tất cả" value="All" />
@@ -102,8 +98,8 @@ const FManageCheckinHistoryScreen = ({ angler }) => {
         </Select>
 
         <FlatList
-          data={dummyMenu}
-          renderItem={() => (
+          data={listCheckIn}
+          renderItem={({ item }) => (
             <Box
               borderBottomWidth="1"
               _dark={{
@@ -114,23 +110,23 @@ const FManageCheckinHistoryScreen = ({ angler }) => {
               backgroundColor="white"
             >
               <PressableCustomCard paddingX="3" paddingY="1">
-                <CheckInCard>
-                  <AvatarCard avatarSize="md" nameUser={angler.name} />
+                <CheckInCard
+                  timeIn={item.checkInTime}
+                  timeOut={item.checkOutTime}
+                >
+                  <AvatarCard avatarSize="md" nameUser={item.name} />
                 </CheckInCard>
               </PressableCustomCard>
             </Box>
           )}
           keyExtractor={(item, index) => index.toString()}
         />
+        <Box my="10">
+          <Divider />
+        </Box>
       </Box>
     </Box>
   );
 };
 
-FManageCheckinHistoryScreen.defaultProps = {
-  angler: { id: "1", name: "Dat" },
-};
-FManageCheckinHistoryScreen.propTypes = {
-  angler: PropTypes.objectOf(PropTypes.string, PropTypes.string),
-};
 export default FManageCheckinHistoryScreen;
