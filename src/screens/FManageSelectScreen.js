@@ -78,11 +78,23 @@ const FlocationSelectorScreen = () => {
             </View>
           </Pressable>
 
-          {spotExample.length > 0 && (
+          {listOfFishingLocations.length > 0 && (
             <VStack w="90%" space={2} my={2}>
-              {spotExample.map((spot) => (
-                <FLocationCard {...spot} isManaged key={spot.id} />
-              ))}
+              {listOfFishingLocations.map((location) => {
+                const { id, name, image, verify, score, address } = location;
+                return (
+                  <FLocationCard
+                    id={id}
+                    name={name}
+                    image={image}
+                    isVerifed={verify}
+                    rate={score}
+                    address={address}
+                    isManaged
+                    key={id}
+                  />
+                );
+              })}
             </VStack>
           )}
         </View>
