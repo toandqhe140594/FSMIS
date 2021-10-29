@@ -13,4 +13,5 @@ public class UserCheckInDtoOut {
     private String name;
     private String avatar;
     private String checkInTime;
+    private String checkOutTime;
 }
