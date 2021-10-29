@@ -4,6 +4,7 @@ import { API_URL } from "../constants";
 import http from "../utilities/Http";
 
 const model = {
+  locationLatLng: {},
   currentId: 2,
   listOfFishingLocations: [],
   locationDetails: {
@@ -67,6 +68,9 @@ const model = {
   totalPostPage: 1,
   postDetail: {},
 
+  setLocationLatLng: action((state, payload) => {
+    state.locationLatLng = payload;
+  }),
   setListOfFishingLocations: action((state, payload) => {
     state.listOfFishingLocations = payload;
   }),
