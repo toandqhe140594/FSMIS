@@ -2,6 +2,7 @@ package fpt.g31.fsmis.service;
 
 import fpt.g31.fsmis.dto.output.CheckInHistoryPersonalDtoOut;
 import fpt.g31.fsmis.dto.output.PaginationDtoOut;
+import fpt.g31.fsmis.dto.output.UserCheckInDtoOut;
 import fpt.g31.fsmis.entity.CheckIn;
 import fpt.g31.fsmis.entity.FishingLocation;
 import fpt.g31.fsmis.entity.User;
@@ -20,7 +21,6 @@ import javax.validation.ValidationException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -30,17 +30,14 @@ public class CheckInService {
     private final FishingLocationRepos fishingLocationRepos;
     private final JwtFilter jwtFilter;
 
-    public String checkIn(String qrString, Long fishingLocationId) {
-        Optional<User> userOptional = userRepos.findByQrString(qrString);
-        if (!userOptional.isPresent()) {
-            throw new NotFoundException("Không tìm thấy tài khoản!");
+    public UserCheckInDtoOut checkIn(String qrString, Long fishingLocationId) {
+        User user = userRepos.findByQrString(qrString)
+                .orElseThrow(() -> new NotFoundException("Không tìm thấy tài khoản!"));
+        if (!user.isAvailable()) {
+            throw new ValidationException("Không được check-in tại điểm khác khi đang câu!");
         }
-        User user = userOptional.get();
-        Optional<FishingLocation> fishingLocationOptional = fishingLocationRepos.findById(fishingLocationId);
-        if (!fishingLocationOptional.isPresent()) {
-            throw new NotFoundException("Không tìm thấy hồ câu!");
-        }
-        FishingLocation fishingLocation = fishingLocationOptional.get();
+        FishingLocation fishingLocation = fishingLocationRepos.findById(fishingLocationId)
+                .orElseThrow(() -> new NotFoundException("Không tìm thấy hồ câu!"));
         if (fishingLocation.getOwner().equals(user)) {
             throw new ValidationException("Chủ hồ không được check in tại hồ của mình!");
         }
@@ -48,19 +45,25 @@ public class CheckInService {
             throw new ValidationException("Nhân viên không được check in tại nơi làm việc của mình!");
         }
         CheckIn checkIn = new CheckIn();
-        checkIn.setUser(userOptional.get());
-        checkIn.setFishingLocation(fishingLocationOptional.get());
+        checkIn.setUser(user);
+        checkIn.setFishingLocation(fishingLocation);
         checkIn.setCheckInTime(LocalDateTime.now());
         checkInRepos.save(checkIn);
-        return "Check in thành công";
+        user.setAvailable(false);
+        userRepos.save(user);
+        return UserCheckInDtoOut.builder()
+                .avatar(user.getAvatarUrl())
+                .name(user.getFullName())
+                .checkInTime(ServiceUtils.convertDateToString(LocalDateTime.now()))
+                .build();
     }
 
     public PaginationDtoOut getPersonalCheckInHistoryList(HttpServletRequest request, int pageNo) {
-        if(pageNo <= 0) {
+        if (pageNo <= 0) {
             throw new ValidationException("Địa chỉ không tồn tại");
         }
         User user = jwtFilter.getUserFromToken(request);
-        Page<CheckIn> checkInList = checkInRepos.findByUserIdOrderByCheckInTimeDesc(user.getId(), PageRequest.of(pageNo-1, 10));
+        Page<CheckIn> checkInList = checkInRepos.findByUserIdOrderByCheckInTimeDesc(user.getId(), PageRequest.of(pageNo - 1, 10));
         List<CheckInHistoryPersonalDtoOut> output = new ArrayList<>();
         for (CheckIn checkIn : checkInList) {
             CheckInHistoryPersonalDtoOut item = CheckInHistoryPersonalDtoOut.builder()

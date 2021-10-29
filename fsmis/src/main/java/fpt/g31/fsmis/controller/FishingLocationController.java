@@ -86,6 +86,10 @@ public class FishingLocationController {
     }
 
     // CHECK-IN
+    @PostMapping(path = "/{locationId}/checkin")
+    public ResponseEntity<Object> checkIn(@PathVariable Long locationId, @RequestBody String qrString) {
+        return new ResponseEntity<>(checkInService.checkIn(qrString, locationId), HttpStatus.OK);
+    }
 
     // CATCH
 
