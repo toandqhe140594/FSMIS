@@ -14,7 +14,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     marginTop: 2,
   },
-  wrapper: {
+  multipleImagesWrapper: {
     width: 110,
     height: 110,
     marginTop: 4,
@@ -34,10 +34,11 @@ const styles = StyleSheet.create({
 });
 
 const MultiImageSection = ({
-  myStyles,
+  containerStyle,
   imageArray,
   selectLimit,
   deleteImage,
+  formRoute,
 }) => {
   const navigation = useNavigation();
   const handleDelete = (id) => {
@@ -71,7 +72,11 @@ const MultiImageSection = ({
         return (
           <View
             // If there is only one image, make it takes up hold space
-            style={selectLimit === 1 ? myStyles : styles.wrapper}
+            style={
+              selectLimit === 1
+                ? { ...containerStyle, height: 210 }
+                : styles.multipleImagesWrapper
+            }
             key={image.id}
           >
             <Image
@@ -84,8 +89,15 @@ const MultiImageSection = ({
         );
       })}
       {imageArray.length !== selectLimit && (
-        <Pressable onPress={() => goToMediaSelectScreen(navigation)}>
-          <View style={[styles.wrapper, styles.border]}>
+        <Pressable
+          onPress={() =>
+            goToMediaSelectScreen(navigation, {
+              returnRoute: formRoute,
+              maxSelectable: selectLimit,
+            })
+          }
+        >
+          <View style={[styles.multipleImagesWrapper, styles.border]}>
             <Icon as={<Entypo name="plus" />} size={10} mr={1} />
           </View>
         </Pressable>
@@ -95,17 +107,19 @@ const MultiImageSection = ({
 };
 
 MultiImageSection.propTypes = {
+  containerStyle: PropTypes.objectOf(PropTypes.string),
   imageArray: PropTypes.arrayOf(PropTypes.object),
   selectLimit: PropTypes.number,
   deleteImage: PropTypes.func,
-  myStyles: PropTypes.objectOf(PropTypes.string),
+  formRoute: PropTypes.string,
 };
 
 MultiImageSection.defaultProps = {
+  containerStyle: {},
   imageArray: [],
-  selectLimit: 5,
+  selectLimit: 1,
   deleteImage: () => {},
-  myStyles: {},
+  formRoute: "",
 };
 
 export default MultiImageSection;

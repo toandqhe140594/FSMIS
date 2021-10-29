@@ -1,7 +1,8 @@
 // To install uuid, installs react-native-random-value pkg first
-import "react-native-get-random-values";
+// import "react-native-get-random-values";
 
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useFocusEffect, useRoute } from "@react-navigation/native";
 import {
   Box,
   Button,
@@ -12,28 +13,43 @@ import {
   Text,
   VStack,
 } from "native-base";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { StyleSheet } from "react-native";
-import { v4 as uuidv4 } from "uuid";
+// import { v4 as uuidv4 } from "uuid";
 import * as yup from "yup";
 
 import InputComponent from "../components/common/InputComponent";
-import SingleImageSection from "../components/common/SingleImageSection";
+import MultiImageSection from "../components/common/MultiImageSection";
+// import SingleImageSection from "../components/common/SingleImageSection";
 import TextAreaComponent from "../components/common/TextAreaComponent";
 import HeaderTab from "../components/HeaderTab";
 import AddFishCard from "../components/LakeEditProfile/AddFishCard";
 import CheckboxSelectorComponent from "../components/LakeEditProfile/CheckboxSelectorComponent";
+import { ROUTE_NAMES } from "../constants";
 
 const validationSchema = yup.object().shape({
   lakeName: yup.string().required("Tên hồ không thể bỏ trống"),
   lakeDescription: yup.string().required("Miêu tả giá vé ở hồ này"),
+  lakeFishingMethods: yup
+    .array()
+    .test(
+      "isArrayEmpty?",
+      "Loại hình câu của hồ không được để trống",
+      (value) => value.length !== 0,
+    ),
   lakeLength: yup.string().required("Chiều dài hồ không được để trống"),
   lakeWidth: yup.string().required("Chiều rộng hồ không được để trống"),
   lakeDepth: yup.string().required("Độ sâu của hồ không được để trống"),
 });
 
 const fishingMethodData = ["Câu đài", "Câu đơn", "Câu lục"];
+
+let itemKey = 0;
+const generateKey = () => {
+  itemKey += 1;
+  return `${itemKey}`;
+};
 
 const styles = StyleSheet.create({
   sectionWrapper: {
@@ -46,16 +62,19 @@ const styles = StyleSheet.create({
 
 const LakeEditProfileScreen = () => {
   const initFishCard = {
-    id: uuidv4(),
+    id: generateKey(),
     fish: "",
     weightDescription: "",
     amount: "",
     totalWeight: "",
   };
   const [cardList, setCardList] = useState([initFishCard]);
+  const [imageArray, setImageArray] = useState([]);
+  const route = useRoute();
   const methods = useForm({
-    mode: "onChange",
-    reValidateMode: "onChange",
+    mode: "onSubmit",
+    reValidateMode: "onSubmit",
+    defaultValues: { lakeFishingMethods: [] },
     resolver: yupResolver(validationSchema),
   });
   const { handleSubmit } = methods;
@@ -82,7 +101,19 @@ const LakeEditProfileScreen = () => {
     });
     setCardList(newCardList);
   };
-
+  const updateImageArray = (id) => {
+    setImageArray(imageArray.filter((image) => image.id !== id));
+  };
+  // Fire when navigates back to the screen
+  useFocusEffect(
+    // useCallback will listen to route.param
+    useCallback(() => {
+      setImageArray(route.params?.base64Array);
+      return () => {
+        setImageArray([]);
+      };
+    }, [route.params]),
+  );
   return (
     <>
       <HeaderTab name="Chỉnh sửa hồ bé" />
@@ -91,7 +122,12 @@ const LakeEditProfileScreen = () => {
           <VStack space={3} divider={<Divider />}>
             <Center mt={1}>
               {/* Image Picker section */}
-              <SingleImageSection myStyles={styles.sectionWrapper} />
+              <MultiImageSection
+                containerStyle={styles.sectionWrapper}
+                formRoute={ROUTE_NAMES.FMANAGE_LAKE_EDIT}
+                imageArray={imageArray}
+                deleteImage={updateImageArray}
+              />
             </Center>
 
             <Center>
@@ -106,11 +142,12 @@ const LakeEditProfileScreen = () => {
 
             <Center>
               <CheckboxSelectorComponent
-                myStyle={styles.sectionWrapper}
+                myStyles={styles.sectionWrapper}
                 label="Loại hình câu"
                 isTitle
                 placeholder="Chọn loại hình câu"
                 data={fishingMethodData}
+                controllerName="lakeFishingMethods" // this controller returns an array
               />
             </Center>
 

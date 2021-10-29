@@ -16,6 +16,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     textAlignVertical: "top",
     padding: 5,
+    height: 100,
   },
   text: { fontSize: 16 },
   bold: { fontWeight: "bold" },

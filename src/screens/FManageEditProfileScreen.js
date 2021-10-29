@@ -1,6 +1,7 @@
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useFocusEffect, useRoute } from "@react-navigation/native";
 import { Box, Button, Center, Divider, Stack, Text, VStack } from "native-base";
-import React from "react";
+import React, { useCallback, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { ScrollView, StyleSheet } from "react-native";
 import * as yup from "yup";
@@ -11,6 +12,7 @@ import SelectComponent from "../components/common/SelectComponent";
 import TextAreaComponent from "../components/common/TextAreaComponent";
 import MapOverviewBox from "../components/FLocationEditProfile/MapOverviewBox";
 import HeaderTab from "../components/HeaderTab";
+import { ROUTE_NAMES } from "../constants";
 
 const cityData = [
   { label: "Hà Nội", val: 1 },
@@ -51,6 +53,8 @@ const styles = StyleSheet.create({
 });
 
 const FManageEditProfileScreen = () => {
+  const route = useRoute();
+  const [imageArray, setImageArray] = useState([]);
   const methods = useForm({
     mode: "onChange",
     reValidateMode: "onChange",
@@ -59,7 +63,20 @@ const FManageEditProfileScreen = () => {
   const { handleSubmit } = methods;
   const onSubmit = (data) => {
     console.log(data);
+    console.log(imageArray);
   };
+  const updateImageArray = (id) => {
+    setImageArray(imageArray.filter((image) => image.id !== id));
+  };
+  useFocusEffect(
+    // useCallback will listen to route.param
+    useCallback(() => {
+      setImageArray(route.params?.base64Array);
+      return () => {
+        setImageArray([]);
+      };
+    }, [route.params]),
+  );
   return (
     <>
       <HeaderTab name="Thông tin điểm câu" />
@@ -72,7 +89,12 @@ const FManageEditProfileScreen = () => {
                 <Text bold fontSize="md" mt={2}>
                   Ảnh bìa (nhiều nhất là 5)
                 </Text>
-                <MultiImageSection imageLimit={5} />
+                <MultiImageSection
+                  formRoute={ROUTE_NAMES.FMANAGE_PROFILE_EDIT}
+                  imageArray={imageArray}
+                  deleteImage={updateImageArray}
+                  selectLimit={5}
+                />
                 {/* Input location name */}
                 <InputComponent
                   isTitle
