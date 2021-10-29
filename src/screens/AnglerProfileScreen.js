@@ -10,7 +10,8 @@ const menuCategory = [
   {
     id: 1,
     title: "Lịch sử Báo cá",
-    icon: "set-meal",
+    icon: "fish",
+    type: "material-community",
     route: ROUTE_NAMES.PROFILE_CATCHES_REPORT_HISTORY,
   },
   {

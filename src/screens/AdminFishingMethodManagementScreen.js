@@ -1,9 +1,9 @@
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, Button, Center } from "native-base";
 import PropTypes from "prop-types";
-import React, { useCallback, useState } from "react";
-import { Alert, FlatList } from "react-native";
+import React, { useEffect, useState } from "react";
+import { ActivityIndicator, Alert, FlatList } from "react-native";
 import { Divider, SearchBar, Text } from "react-native-elements";
 
 import HeaderTab from "../components/HeaderTab";
@@ -75,7 +75,6 @@ FishingMethodManagementCard.propTypes = {
 
 const AdminFishingMethodManagementScreen = () => {
   const navigation = useNavigation();
-  const [search, setSearch] = useState("");
 
   const fishingMethodList = useStoreState(
     (states) => states.FishingMethodModel.fishingMethodList,
@@ -84,16 +83,49 @@ const AdminFishingMethodManagementScreen = () => {
     (actions) => actions.FishingMethodModel.getFishingMethodList,
   );
 
+  const [search, setSearch] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [displayedList, setDisplayedList] = useState(fishingMethodList);
+
   const updateSearch = (searchKey) => {
     setSearch(searchKey);
   };
 
-  useFocusEffect(
-    useCallback(() => {
-      // getFishingMethodList();
-      return () => {};
-    }, []),
-  );
+  const onClear = () => {
+    setDisplayedList(fishingMethodList);
+  };
+
+  const onEndEditing = () => {
+    // If the list is empty
+    if (!fishingMethodList) return;
+    // Filter all element in the data list whose name includes search key
+    const filteredList = fishingMethodList.filter((method) =>
+      method.name.toUpperCase().includes(search.toUpperCase()),
+    );
+    setDisplayedList(filteredList);
+  };
+
+  useEffect(() => {
+    getFishingMethodList();
+    const loadingTimeout = setTimeout(() => {
+      setIsLoading(false);
+    }, 1000); // Test
+    return () => {
+      clearTimeout(loadingTimeout);
+    };
+  }, []);
+
+  useEffect(() => {
+    setDisplayedList(fishingMethodList);
+    if (fishingMethodList) setIsLoading(false);
+  }, [fishingMethodList]);
+
+  if (isLoading)
+    return (
+      <Center flex={1}>
+        <ActivityIndicator size="large" color="blue" />
+      </Center>
+    );
 
   return (
     <>
@@ -112,9 +144,8 @@ const AdminFishingMethodManagementScreen = () => {
             }}
             lightTheme
             blurOnSubmit
-            onEndEditing={() => {
-              console.log("end edit", search); // Test only
-            }}
+            onEndEditing={onEndEditing}
+            onClear={onClear}
           />
           <Button
             my={2}
@@ -131,7 +162,7 @@ const AdminFishingMethodManagementScreen = () => {
 
           <Box flex={1} w="100%">
             <FlatList
-              data={fishingMethodList}
+              data={displayedList}
               renderItem={({ item }) => (
                 <FishingMethodManagementCard id={item.id} name={item.name} />
               )}

@@ -1,7 +1,16 @@
-import { Box, Button, HStack, ScrollView, Text, VStack } from "native-base";
+import {
+  Box,
+  Button,
+  Divider,
+  HStack,
+  ScrollView,
+  Text,
+  VStack,
+} from "native-base";
 import PropTypes from "prop-types";
 import React from "react";
 import { Image } from "react-native-elements";
+import Swiper from "react-native-swiper";
 
 import AvatarCard from "../components/AvatarCard";
 import FishCard from "../components/FishCard";
@@ -11,13 +20,21 @@ const VerifyCatchReportDetailScreen = ({ catchDetails }) => (
   <>
     <ScrollView>
       <HeaderTab name="Chi Tiết" />
-
-      <Image
-        source={{
-          uri: "https://picsum.photos/400",
-        }}
-        style={{ width: "100%", height: 450 }}
-      />
+      <Swiper height="auto" loadMinimal>
+        <Image
+          source={{
+            uri: "https://picsum.photos/400",
+          }}
+          style={{ width: "100%", height: 450 }}
+        />
+        <Image
+          source={{
+            uri: "https://picsum.photos/400",
+          }}
+          style={{ width: "100%", height: 450 }}
+        />
+      </Swiper>
+      <Divider />
       <Box
         _dark={{
           borderColor: "gray.600",

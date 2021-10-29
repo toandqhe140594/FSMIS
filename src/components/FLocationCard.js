@@ -26,7 +26,8 @@ const SpotCard = ({
   const navigation = useNavigation();
 
   const onPress = () => {
-    if (isManaged) goToFManageMainScreen(navigation, { id });
+    if (isManaged)
+      goToFManageMainScreen(navigation, { id, name, isVerified: isVerifed });
     else if (isAdmin) goToAdminFLocationOverviewScreen(navigation, { id });
     else goToFishingLocationOverviewScreen(navigation, { id });
   };

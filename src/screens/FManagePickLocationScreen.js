@@ -1,3 +1,5 @@
+import { useNavigation } from "@react-navigation/native";
+import { useStoreActions, useStoreState } from "easy-peasy";
 import * as Location from "expo-location";
 import { Box } from "native-base";
 import React, { useEffect, useRef, useState } from "react";
@@ -6,6 +8,7 @@ import MapView, { Marker } from "react-native-maps";
 
 import HeaderWithButton from "../components/HeaderWithButton";
 import { DEFAULT_LATLNG } from "../config/constants";
+import { goBack } from "../navigations";
 
 const styles = StyleSheet.create({
   map: {
@@ -16,9 +19,18 @@ const styles = StyleSheet.create({
 });
 
 const PickLocationScreen = () => {
+  const navigation = useNavigation();
   const mapRef = useRef(null);
   const [location, setLocation] = useState(null);
   const [markerCoords, setMarkerCoords] = useState(DEFAULT_LATLNG);
+
+  const locationLatLng = useStoreState(
+    (states) => states.FManageModel.locationLatLng,
+  );
+
+  const setLocationLatLng = useStoreActions(
+    (actions) => actions.FManageModel.setLocationLatLng,
+  );
 
   /**
    * Check and request access to location service from user
@@ -28,6 +40,15 @@ const PickLocationScreen = () => {
     (async () => {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") return;
+
+      if (
+        locationLatLng &&
+        locationLatLng.longitude &&
+        locationLatLng.latitude
+      ) {
+        setLocation({ coords: locationLatLng });
+        return;
+      }
 
       let currentLocation = await Location.getLastKnownPositionAsync({});
       if (!currentLocation)
@@ -52,7 +73,15 @@ const PickLocationScreen = () => {
       longitude === markerCoords.longitude &&
       latitude === markerCoords.latitude
     ) {
-      mapRef.current.fitToCoordinates([{ ...markerCoords }]);
+      mapRef.current.animateToRegion(
+        {
+          latitude: markerCoords.latitude,
+          longitude: markerCoords.longitude,
+          latitudeDelta: 0.026,
+          longitudeDelta: 0.027,
+        },
+        1000,
+      );
     }
   }, [markerCoords]);
 
@@ -61,8 +90,9 @@ const PickLocationScreen = () => {
       <HeaderWithButton
         name="Chọn vị trí"
         buttonName="Chọn"
-        onPress={() => {
-          alert(`${markerCoords.latitude} ${markerCoords.longitude}`); // Test only
+        onSuccess={() => {
+          setLocationLatLng(markerCoords);
+          goBack(navigation);
         }}
       />
 
@@ -73,7 +103,12 @@ const PickLocationScreen = () => {
           mapType="standard"
           style={styles.map}
           initialRegion={{
-            ...DEFAULT_LATLNG,
+            latitude: locationLatLng.latitude
+              ? locationLatLng.latitude
+              : DEFAULT_LATLNG.latitude,
+            longitude: locationLatLng.longitude
+              ? locationLatLng.longitude
+              : DEFAULT_LATLNG.longitude,
             latitudeDelta: 0.0922,
             longitudeDelta: 0.0421,
           }}

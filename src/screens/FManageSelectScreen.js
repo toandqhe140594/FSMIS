@@ -41,9 +41,24 @@ const styles = StyleSheet.create({
 });
 
 const FlocationSelectorScreen = () => {
+  const navigation = useNavigation();
+
+  const listOfFishingLocations = useStoreState(
+    (states) => states.FManageModel.listOfFishingLocations,
+  );
+  const getListOfFishingLocations = useStoreActions(
+    (actions) => actions.FManageModel.getListOfFishingLocations,
+  );
+
+  useEffect(() => {
+    getListOfFishingLocations();
+  }, []);
+
   // Center the add button if the list is emtpy
   const getEmptyListStyling = () =>
-    spotExample.length === 0 ? { flex: 1, justifyContent: "center" } : {};
+    listOfFishingLocations.length === 0
+      ? { flex: 1, justifyContent: "center" }
+      : {};
 
   return (
     <>

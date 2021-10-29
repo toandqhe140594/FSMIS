@@ -22,8 +22,8 @@ const model = {
     state.fishingMethodList = payload;
   }),
   getFishingMethodList: thunk(async (actions) => {
-    const { data } = await http.get(`${API_URL.ADMIN_FISHING_METHOD_LIST}`);
-    actions.setFishingMethodList(data);
+    // const { data } = await http.get(`${API_URL.ADMIN_FISHING_METHOD_LIST}`);
+    // actions.setFishingMethodList(data);
   }),
 };
 export default model;
