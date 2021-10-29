@@ -1,9 +1,12 @@
+import { useNavigation } from "@react-navigation/native";
+import { useStoreActions, useStoreState } from "easy-peasy";
 import { VStack } from "native-base";
-import React from "react";
+import React, { useEffect } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
 import FLocationCard from "../components/FLocationCard";
 import HeaderTab from "../components/HeaderTab";
+import { goToFManageEditProfileScreen } from "../navigations";
 
 const spotExample = [
   {
@@ -65,7 +68,11 @@ const FlocationSelectorScreen = () => {
       <HeaderTab name="Chọn điểm câu làm việc" />
       <ScrollView contentContainerStyle={getEmptyListStyling()}>
         <View style={[styles.center, getEmptyListStyling()]}>
-          <Pressable onPress={() => {}}>
+          <Pressable
+            onPress={() => {
+              goToFManageEditProfileScreen(navigation);
+            }}
+          >
             <View style={styles.border}>
               <Text style={{ fontSize: 12 }}>Thêm điểm câu</Text>
             </View>
