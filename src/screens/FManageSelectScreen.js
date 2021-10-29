@@ -8,25 +8,6 @@ import FLocationCard from "../components/FLocationCard";
 import HeaderTab from "../components/HeaderTab";
 import { goToFManageEditProfileScreen } from "../navigations";
 
-const spotExample = [
-  {
-    id: 1,
-    address: "Hưng Yên",
-    image: "https://wallpaperaccess.com/full/317501.jpg",
-    isVerifed: true,
-    name: "Ho cau thuan viet",
-    rate: 4,
-  },
-  {
-    id: 2,
-    address: "Hưng Yên",
-    image: "https://wallpaperaccess.com/full/317501.jpg",
-    isVerifed: true,
-    name: "Ho cau thuan viet",
-    rate: 4,
-  },
-];
-
 const styles = StyleSheet.create({
   center: {
     alignItems: "center",
