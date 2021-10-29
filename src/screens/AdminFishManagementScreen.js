@@ -1,9 +1,9 @@
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, Button, Center } from "native-base";
 import PropTypes from "prop-types";
-import React, { useCallback, useEffect, useState } from "react";
-import { Alert, FlatList } from "react-native";
+import React, { useEffect, useState } from "react";
+import { ActivityIndicator, Alert, FlatList } from "react-native";
 import { Avatar, Divider, SearchBar, Text } from "react-native-elements";
 
 import HeaderTab from "../components/HeaderTab";
@@ -13,8 +13,10 @@ import store from "../utilities/Store";
 
 store.addModel("FishModel", FishModel);
 
-const FishManagementCard = ({ id, name, image }) => {
+const FishManagementCard = ({ id, name, image, setIsLoading, getFishList }) => {
   const navigation = useNavigation();
+
+  const deleteFish = useStoreActions((actions) => actions.FishModel.deleteFish);
 
   const showDeleteAlert = () => {
     Alert.alert(
@@ -27,7 +29,11 @@ const FishManagementCard = ({ id, name, image }) => {
         },
         {
           text: "Xác nhận",
-          onPress: async () => {},
+          onPress: () => {
+            deleteFish({ id });
+            setIsLoading(true);
+            getFishList();
+          },
         },
       ],
     );
@@ -78,6 +84,8 @@ FishManagementCard.propTypes = {
   id: PropTypes.number.isRequired,
   name: PropTypes.string.isRequired,
   image: PropTypes.string,
+  setIsLoading: PropTypes.func.isRequired,
+  getFishList: PropTypes.func.isRequired,
 };
 
 FishManagementCard.defaultProps = {
@@ -93,30 +101,71 @@ const AdminFishManagementScreen = () => {
   );
 
   const [search, setSearch] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
   const [displayedList, setDisplayedList] = useState(fishList);
 
   const updateSearch = (searchKey) => {
     setSearch(searchKey);
   };
 
-  const onEndEdit = () => {
+  const onClear = () => {
+    setDisplayedList(fishList);
+  };
+
+  const onEndEditing = () => {
+    // If the list is empty
     if (!fishList) return;
+    // Filter all element in the data list whose name includes search key
     const filteredList = fishList.filter((fish) =>
       fish.name.toUpperCase().includes(search.toUpperCase()),
     );
     setDisplayedList(filteredList);
   };
 
-  useFocusEffect(
-    useCallback(() => {
-      getFishList();
-      return () => {};
-    }, []),
-  );
-
   useEffect(() => {
     setDisplayedList(fishList);
+    if (fishList) setIsLoading(false);
   }, [fishList]);
+
+  useEffect(() => {
+    setIsLoading(true);
+    getFishList();
+    // Hide the activity indicator after 5 seconds aka request timeout
+    const loadingTimeout = setTimeout(() => {
+      setIsLoading(false);
+    }, 5000);
+    return () => {
+      clearTimeout(loadingTimeout);
+    };
+  }, []);
+
+  const ListView = () => {
+    if (isLoading)
+      return (
+        <Center flex={1}>
+          <ActivityIndicator size="large" color="blue" />
+        </Center>
+      );
+
+    return (
+      <Box flex={1} w="100%">
+        <FlatList
+          data={displayedList}
+          renderItem={({ item }) => (
+            <FishManagementCard
+              id={item.id}
+              name={item.name}
+              image={item.image}
+              setIsLoading={setIsLoading}
+              getFishList={getFishList}
+            />
+          )}
+          keyExtractor={(item) => item.id.toString()}
+          ItemSeparatorComponent={Divider}
+        />
+      </Box>
+    );
+  };
 
   return (
     <>
@@ -135,12 +184,8 @@ const AdminFishManagementScreen = () => {
             }}
             lightTheme
             blurOnSubmit
-            onEndEditing={() => {
-              onEndEdit();
-            }}
-            onClear={() => {
-              setDisplayedList(fishList);
-            }}
+            onEndEditing={onEndEditing}
+            onClear={onClear}
           />
           <Button
             my={2}
@@ -152,20 +197,7 @@ const AdminFishManagementScreen = () => {
             Thêm loại cá
           </Button>
 
-          <Box flex={1} w="100%">
-            <FlatList
-              data={displayedList}
-              renderItem={({ item }) => (
-                <FishManagementCard
-                  id={item.id}
-                  name={item.name}
-                  image={item.image}
-                />
-              )}
-              keyExtractor={(item) => item.id.toString()}
-              ItemSeparatorComponent={Divider}
-            />
-          </Box>
+          <ListView />
         </Box>
       </Center>
     </>
