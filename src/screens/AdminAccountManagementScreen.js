@@ -1,45 +1,79 @@
 import { useNavigation } from "@react-navigation/native";
+import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, Center, Divider } from "native-base";
-import React, { useState } from "react";
-import { FlatList } from "react-native";
+import React, { useEffect, useState } from "react";
+import { ActivityIndicator, FlatList } from "react-native";
 import { SearchBar } from "react-native-elements";
 
 import AvatarCard from "../components/AvatarCard";
 import HeaderTab from "../components/HeaderTab";
 import PressableCustomCard from "../components/PressableCustomCard";
+import AccountManagementModel from "../models/AccountManagementModel";
 import { goToAdminAccountManagementDetailScreen } from "../navigations";
+import store from "../utilities/Store";
 
-const userList = [
-  {
-    id: 1,
-    name: "Nguyễn Văn A",
-    phone: "0987654321",
-    image:
-      "https://cdns-images.dzcdn.net/images/artist/4099da261a61666f58bb3598f0c4c37f/264x264.jpg",
-  },
-  {
-    id: 2,
-    name: "Nguyễn Văn B",
-    phone: "0987654321",
-    image:
-      "https://i.zoomtventertainment.com/story/Lisa_0.png?tr=w-400,h-300,fo-auto",
-  },
-  {
-    id: 3,
-    name: "Nguyễn Văn C",
-    phone: "0987654321",
-    image:
-      "http://pm1.narvii.com/7145/8e99f6f6f2e12a708ea03fcbe8264f311d859842r1-409-512v2_uhq.jpg",
-  },
-];
+store.addModel("AccountManagementModel", AccountManagementModel);
 
 const AdminAccountManagementScreen = () => {
   const navigation = useNavigation();
+
+  const userList = useStoreState(
+    (states) => states.AccountManagementModel.userList,
+  );
+  const { setUserList, getUserList } = useStoreActions(
+    (actions) => actions.AccountManagementModel,
+  );
+
   const [search, setSearch] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [page, setPage] = useState(2);
+  const [displayedList, setDisplayedList] = useState(userList);
 
   const updateSearch = (searchKey) => {
     setSearch(searchKey);
   };
+
+  const loadMoreUserData = () => {
+    getUserList({ pageNo: page });
+    setPage(page + 1);
+  };
+
+  const onClear = () => {
+    setDisplayedList(userList);
+  };
+
+  const onEndEditing = () => {
+    if (!userList) return;
+    const filteredList = userList.filter(
+      (user) =>
+        user.name.toUpperCase().includes(search.toUpperCase()) ||
+        user.phone.includes(search),
+    );
+    setDisplayedList(filteredList);
+  };
+
+  useEffect(() => {
+    setDisplayedList(userList);
+    if (userList) setIsLoading(false);
+  }, [userList]);
+
+  useEffect(() => {
+    getUserList({ pageNo: 1 });
+    const loadingTimeout = setTimeout(() => {
+      setIsLoading(false);
+    }, 1000); // Test
+    return () => {
+      clearTimeout(loadingTimeout);
+      setUserList([]);
+    };
+  }, []);
+
+  if (isLoading)
+    return (
+      <Center flex={1}>
+        <ActivityIndicator size="large" color="blue" />
+      </Center>
+    );
 
   return (
     <>
@@ -58,19 +92,19 @@ const AdminAccountManagementScreen = () => {
             }}
             lightTheme
             blurOnSubmit
-            keyboardType="phone-pad"
-            onEndEditing={() => {
-              console.log("end edit");
-            }}
+            onEndEditing={onEndEditing}
+            onClear={onClear}
           />
 
           <Box w="90%">
             <FlatList
-              data={userList}
+              data={displayedList}
               renderItem={({ item }) => (
                 <PressableCustomCard
                   onPress={() => {
-                    goToAdminAccountManagementDetailScreen(navigation);
+                    goToAdminAccountManagementDetailScreen(navigation, {
+                      id: item.id,
+                    });
                   }}
                 >
                   <AvatarCard
@@ -82,6 +116,9 @@ const AdminAccountManagementScreen = () => {
               )}
               keyExtractor={(item) => item.id.toString()}
               ItemSeparatorComponent={Divider}
+              onEndReached={() => {
+                loadMoreUserData();
+              }}
             />
           </Box>
         </Box>
