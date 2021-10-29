@@ -48,7 +48,7 @@ public class AuthService {
                 .avatarUrl("http://picsum.photos/200")
                 .gender(registrationDtoIn.getGender())
                 .active(true)
-                .status(false)
+                .available(true)
                 .roles(Collections.singleton(Role.ROLE_USER))
                 .build();
         userRepos.save(user);
@@ -73,7 +73,7 @@ public class AuthService {
                 .qrString(user.getQrString())
                 .avatarUrl(user.getAvatarUrl())
                 .gender(user.isGender())
-                .status(user.isStatus())
+                .status(user.isAvailable())
                 .roles(authentication.getAuthorities().iterator().next().toString())
                 .build();
     }

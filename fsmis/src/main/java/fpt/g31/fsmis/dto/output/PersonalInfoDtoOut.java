@@ -1,6 +1,5 @@
 package fpt.g31.fsmis.dto.output;
 
-import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -28,7 +27,7 @@ public class PersonalInfoDtoOut {
 
     private String avatarUrl;
 
-    private boolean status;
+    private boolean available;
 
     private AddressFromWardDtoOut addressFromWard;
 }

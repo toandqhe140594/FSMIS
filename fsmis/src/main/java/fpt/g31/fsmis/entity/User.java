@@ -43,7 +43,7 @@ public class User {
 
     private boolean gender;
 
-    private boolean status;
+    private boolean available;
 
     private boolean active;
 

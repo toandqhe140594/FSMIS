@@ -16,7 +16,7 @@ public class UtilsController {
     private final FishingMethodService fishingMethodService;
 
     @GetMapping("/fish")
-    public ResponseEntity<Object> getAllFishSpecies(@RequestParam(required = false) boolean withImage) {
+    public ResponseEntity<Object> getAllFishSpecies(@RequestParam(required = false, defaultValue = "true") boolean withImage) {
         return new ResponseEntity<>(fishSpeciesService.getAll(withImage), HttpStatus.OK);
     }
 
