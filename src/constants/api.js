@@ -2,7 +2,12 @@ export const AUTHENTICATION_LOGIN = "auth/login";
 export const AUTHENTICATION_REGISTER = "auth/register";
 
 export const ADMIN_FISH_LIST = "util/fish";
+export const ADMIN_FISH_ADD = "util/fish";
+export const ADMIN_FISH_EDIT = "util/fish";
+export const ADMIN_FISH_DELETE = "util/fish";
 export const ADMIN_FISHING_METHOD_LIST = "util/method";
+export const ADMIN_ACCOUNT_LIST = "util/method";
+export const ADMIN_ACCOUNT_INFORMATION = "util/method";
 
 export const PERSONAL_CHECKIN = "personal/checkin";
 export const PERSONAL_CATCH_REPORT = "personal/catch";
