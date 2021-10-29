@@ -43,6 +43,18 @@ const goToFManageMainScreen = (navigation, params) => {
   navigation.navigate(ROUTE_NAMES.FMANAGE_MAIN, { ...params });
 };
 
+const goToFManageEditProfileScreen = (navigation, params) => {
+  navigation.navigate(ROUTE_NAMES.FMANAGE_PROFILE_EDIT, {
+    ...params,
+  });
+};
+
+const goToFManageLocationPickScreen = (navigation, params) => {
+  navigation.navigate(ROUTE_NAMES.FMANAGE_LOCATION_PICK, {
+    ...params,
+  });
+};
+
 const goToPostEditScreen = (navigation, params) => {
   navigation.navigate(ROUTE_NAMES.FMANAGE_POST_EDIT, { ...params });
 };
@@ -100,11 +112,6 @@ const goToAdminFLocationOverviewScreen = (navigation, params) => {
     ...params,
   });
 };
-const goToFManageEditProfileScreen = (navigation, params) => {
-  navigation.navigate(ROUTE_NAMES.FMANAGE_PROFILE_EDIT, {
-    ...params,
-  });
-};
 
 export {
   goBack,
@@ -120,6 +127,7 @@ export {
   goToCatchReportVerifyDetailScreen,
   goToFishingLocationOverviewScreen,
   goToFManageEditProfileScreen,
+  goToFManageLocationPickScreen,
   goToFManageMainScreen,
   goToFManageSelectScreen,
   goToLakeDetailScreen,
