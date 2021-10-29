@@ -25,7 +25,6 @@ const FManageCheckinHistoryScreen = ({ angler }) => {
     { id: 4, message: "Ngoi ca sang", caches: "Ro dong, Diec" },
     { id: 4, message: "Ngoi ca sang", caches: "Ro dong, Diec" },
   ];
-  //   const [dateFilter, setDateFilter] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [startDate, setStartDate] = useState();
   const [endDate, setEndDate] = useState();

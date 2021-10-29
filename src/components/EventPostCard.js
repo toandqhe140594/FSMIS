@@ -55,7 +55,9 @@ const EventPostCard = ({
               }}
             >
               {iconEvent.map((item) => (
-                <Menu.Item onPress={item.onPress}>{item.name}</Menu.Item>
+                <Menu.Item onPress={item.onPress} key={item.name}>
+                  {item.name}
+                </Menu.Item>
               ))}
             </Menu>
           </HStack>

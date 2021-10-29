@@ -1,6 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
+import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, Button } from "native-base";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { FlatList } from "react-native";
 import { Divider } from "react-native-elements";
 
@@ -8,16 +9,6 @@ import EventPostCard from "../components/EventPostCard";
 import HeaderTab from "../components/HeaderTab";
 import { goToPostEditScreen } from "../navigations";
 
-// const styles = StyleSheet.create({
-//   tabBarStyle: {
-//     height: 40,
-//     justifyContent: "center",
-//   },
-//   tabBarLabelStyle: {
-//     fontSize: 13,
-//     marginTop: 0,
-//   },
-// });
 const dummyMenu = [
   { id: 1, name: "Hồ thuần việt" },
   { id: 2, name: "Hồ không thuần việt" },
@@ -26,10 +17,29 @@ const dummyMenu = [
 
 const FLocationEventRoute = () => {
   const navigation = useNavigation();
+  const [lakePostPage, setTotalPostPage] = useState(1);
+
+  const getLocationPostListByPage = useStoreActions(
+    (actions) => actions.FManageModel.getLocationPostListByPage,
+  );
+  const locationPostList = useStoreState(
+    (states) => states.FManageModel.locationPostList,
+  );
+
+  useEffect(() => {
+    getLocationPostListByPage({ pageNo: lakePostPage });
+    setTotalPostPage(lakePostPage + 1);
+  }, []);
+
+  const loadMoreLakeCatchData = () => {
+    getLocationPostListByPage({ pageNo: lakePostPage });
+    setTotalPostPage(lakePostPage + 1);
+  };
 
   const editPostHandler = () => {
     goToPostEditScreen(navigation);
   };
+
   const removePostHandler = () => {
     console.log("xoa bai");
   };
@@ -39,6 +49,7 @@ const FLocationEventRoute = () => {
     { name: "Xóa bài đăng", onPress: removePostHandler },
   ];
 
+  console.log(`locationCatchList`, locationPostList[0]);
   return (
     <FlatList
       data={dummyMenu}
@@ -51,6 +62,9 @@ const FLocationEventRoute = () => {
           />
         </Box>
       )}
+      onEndReached={() => {
+        loadMoreLakeCatchData();
+      }}
       keyExtractor={(item) => item.id}
     />
   );
@@ -65,7 +79,7 @@ const FManageFishLocationPostScreen = () => {
     <Box style={{ flex: 1 }}>
       <HeaderTab name="Hồ câu thuần việt" isVerified />
       <Divider />
-      <Button colorScheme="blueGray" size="lg" onPress={onPress}>
+      <Button colorScheme="blue" size="lg" onPress={onPress}>
         Tạo bài viết
       </Button>
       <FLocationEventRoute />

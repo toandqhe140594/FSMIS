@@ -10,7 +10,6 @@ import FManageModel from "../models/FManageModel";
 import store from "../utilities/Store";
 
 store.addModel("FManageModel", FManageModel);
-// store.addModel("LocationModel", LocationModel);
 
 const menuCategoryForOwner = [
   {
@@ -144,7 +143,6 @@ const menuCategoryForStaff = [
   },
 ];
 
-// const logOut = [{ id: 1, title: "Đóng cửa hồ" }];
 const FManageHomeScreen = ({ typeString }) => {
   const fishingLocationName = "Hồ Thuần Việt";
   let menuCategory;

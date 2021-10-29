@@ -1,8 +1,10 @@
 import { action, thunk } from "easy-peasy";
 
+import { API_URL } from "../constants";
 import http from "../utilities/Http";
+
 const model = {
-  managementID: 1,
+  currentId: 2,
   listOfFishingLocations: [],
   locationDetails: {
     id: 1,
@@ -32,7 +34,6 @@ const model = {
   lakeDetail: {},
   listOfStaff: [],
   staffDetail: {},
-  catchReportList: [],
   catchReportDetail: {},
   catchReportHistory: [
     {
@@ -61,7 +62,9 @@ const model = {
   catchReportCurrentPage: 1,
   catchTotalPage: 1,
   checkInHistoryList: [],
-  postList: [],
+  locationPostList: [],
+  locationPostPageNumber: 0,
+  totalPostPage: 1,
   postDetail: {},
 
   setListOfFishingLocations: action((state, payload) => {
@@ -100,5 +103,26 @@ const model = {
     state.locationDetails = payload;
   }),
   getCheckInHistoryList: thunk(async (actions, payload, { getState }) => {}),
+
+  setTotalPostPage: action((state, payload) => {
+    state.totalPostPage = payload < 1 ? 1 : payload;
+  }),
+  setLocationPostList: action((state, payload) => {
+    if (payload.status === "Overwrite") state.locationPostList = payload.data;
+    else state.locationPostList = state.locationPostList.concat(payload.data);
+  }),
+  getLocationPostListByPage: thunk(async (actions, payload, { getState }) => {
+    const { pageNo } = payload;
+    const { currentId, totalPostPage } = getState();
+    if (pageNo > totalPostPage || pageNo <= 0) return;
+    const { data } = await http.get(`location/${currentId}/post`, {
+      params: { pageNo },
+    });
+    actions.setTotalPostPage(data.totalPage);
+    actions.setLocationPostList({
+      data: data.items,
+      status: pageNo === 1 ? "Overwrite" : "Append",
+    });
+  }),
 };
 export default model;
