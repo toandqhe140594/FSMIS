@@ -19,4 +19,6 @@ public interface FishingLocationRepos extends JpaRepository<FishingLocation, Lon
             "where distance < ?3\n" +
             "ORDER BY distance;")
     List<FishingLocation> getNearByLocation(Float longitude, Float latitude, Integer distance, Long methodId, Integer minRating);
+
+    List<FishingLocation> findByOwnerIdAndActiveIsTrue(Long ownerId);
 }

@@ -46,4 +46,13 @@ public class ServiceUtils {
         String[] output = input.split("\r\n");
         return Arrays.asList(output);
     }
+
+    public static String mergeString(List<String> input){
+        StringBuilder sbd = new StringBuilder();
+        for (String s :
+                input) {
+            sbd.append(s).append("\r\n");
+        }
+        return sbd.toString();
+    }
 }

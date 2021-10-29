@@ -15,11 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class FishSpeciesController {
     private FishSpeciesService fishSpeciesService;
 
-    @GetMapping("/all")
-    public ResponseEntity<Object> getAllSpecies(){
-        return new ResponseEntity<>(fishSpeciesService.getAll(), HttpStatus.OK);
-    }
-
     @GetMapping
     public ResponseEntity<Object> getSpeciesById(@RequestParam Long speciesId){
         return new ResponseEntity<>(fishSpeciesService.getById(speciesId), HttpStatus.OK);
