@@ -1,9 +1,11 @@
+import { useNavigation } from "@react-navigation/native";
 import { Box, Center, ScrollView, VStack } from "native-base";
 import React from "react";
 
 import AddImageButton from "../components/common/AddImageButton";
 import SpotCard from "../components/FLocationCard";
 import HeaderTab from "../components/HeaderTab";
+import { goToFManageEditProfileScreen } from "../navigations";
 
 const spotExample = [
   {
@@ -50,6 +52,7 @@ const spotExample = [
 
 const FlocationSelectorScreen = () => {
   // Center the add button if the list is emtpy
+  const navigation = useNavigation();
   const getEmptyListStyling = () =>
     spotExample.length === 0 ? { flex: 1, justifyContent: "center" } : {};
 
@@ -59,7 +62,11 @@ const FlocationSelectorScreen = () => {
       <ScrollView _contentContainerStyle={getEmptyListStyling()}>
         <Center style={getEmptyListStyling()}>
           <Box style={{ marginTop: 1 }}>
-            <AddImageButton />
+            <AddImageButton
+              onPress={() => {
+                goToFManageEditProfileScreen(navigation);
+              }}
+            />
           </Box>
           {spotExample.length > 0 && (
             <VStack w="90%" space={2} my={2}>

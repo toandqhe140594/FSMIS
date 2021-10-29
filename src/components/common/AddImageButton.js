@@ -16,9 +16,9 @@ const styles = StyleSheet.create({
   },
 });
 
-const AddImageButton = ({ isDisabled }) => {
+const AddImageButton = ({ isDisabled, onPress }) => {
   return (
-    <TouchableOpacity disabled={isDisabled}>
+    <TouchableOpacity disabled={isDisabled} onPress={onPress}>
       <Box
         style={[
           styles.container,
@@ -40,10 +40,12 @@ const AddImageButton = ({ isDisabled }) => {
 
 AddImageButton.propTypes = {
   isDisabled: PropTypes.bool,
+  onPress: PropTypes.func,
 };
 
 AddImageButton.defaultProps = {
   isDisabled: false,
+  onPress: () => {},
 };
 
 export default AddImageButton;

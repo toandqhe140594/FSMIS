@@ -101,7 +101,7 @@ const model = {
     else state.locationCatchList = state.locationCatchList.concat(payload.data);
   }),
   setTotalCatchPage: action((state, payload) => {
-    state.totalPostPage = payload < 1 ? 1 : payload;
+    state.totalCatchPage = payload < 1 ? 1 : payload;
   }),
   getLocationReviewScore: thunk(async (actions, payload, { getState }) => {
     const { data } = await http.get(
@@ -224,6 +224,7 @@ const model = {
       status: pageNo === 1 ? "Overwrite" : "Append",
     });
   }),
+
   getLocationCatchListByPage: thunk(async (actions, payload, { getState }) => {
     const { pageNo } = payload;
     const { currentId, totalCatchPage } = getState();

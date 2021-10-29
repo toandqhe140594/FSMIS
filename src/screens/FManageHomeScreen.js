@@ -6,13 +6,14 @@ import React, { useEffect } from "react";
 import HeaderTab from "../components/HeaderTab";
 import MenuScreen from "../components/MenuScreen";
 import { ROUTE_NAMES } from "../constants";
-import LocationModel from "../models/LocationModel";
+import FManageModel from "../models/FManageModel";
 import store from "../utilities/Store";
 
-store.addModel("LocationModel", LocationModel);
+store.addModel("FManageModel", FManageModel);
 
 const menuCategoryForOwner = [
   {
+    id: 1,
     category: [
       {
         id: 1,
@@ -41,6 +42,7 @@ const menuCategoryForOwner = [
     ],
   },
   {
+    id: 2,
     category: [
       {
         id: 7,
@@ -58,12 +60,14 @@ const menuCategoryForOwner = [
   },
 
   {
+    id: 3,
     category: [
       {
         id: 5,
         title: "Xác nhận báo cá",
         route: ROUTE_NAMES.FMANAGE_CATCH_VERIFY,
-        icon: "set-meal",
+        icon: "fish",
+        type: "material-community",
       },
       {
         id: 6,
@@ -75,6 +79,7 @@ const menuCategoryForOwner = [
   },
 
   {
+    id: 4,
     category: [
       {
         id: 9,
@@ -86,6 +91,7 @@ const menuCategoryForOwner = [
   },
 
   {
+    id: 5,
     category: [
       {
         id: 10,
@@ -101,14 +107,27 @@ const menuCategoryForStaff = [
     id: 1,
     title: "Xem trang điểm câu của bạn",
     route: ROUTE_NAMES.FLOCATION_OVERVIEW,
-    icon: "check",
+    icon: "waves",
   },
 
   {
-    id: 2,
+    id: 7,
+    title: `Quét mã QR`,
+    route: ROUTE_NAMES.FMANAGE_QR_SCAN,
+    icon: "qr-code",
+  },
+  {
+    id: 5,
     title: "Xác nhận báo cá",
     route: ROUTE_NAMES.FMANAGE_CATCH_VERIFY,
-    icon: "check",
+    icon: "fish",
+    type: "material-community",
+  },
+  {
+    id: 9,
+    title: `Quản lý bài đăng`,
+    route: ROUTE_NAMES.FMANAGE_POST_MANAGEMENT,
+    icon: "post-add",
   },
   {
     id: 3,
@@ -117,26 +136,13 @@ const menuCategoryForStaff = [
     icon: "check",
   },
   {
-    id: 4,
-    title: `Quét mã QR`,
-    route: ROUTE_NAMES.FMANAGE_QR_SCAN,
-    icon: "check",
-  },
-  {
-    id: 5,
+    id: 8,
     title: `Lịch sử Check-in`,
     route: ROUTE_NAMES.FMANAGE_CHECKIN_HISTORY,
-    icon: "check",
-  },
-  {
-    id: 6,
-    title: `Quản lý bài đăng`,
-    route: ROUTE_NAMES.FMANAGE_POST_MANAGEMENT,
-    icon: "check",
+    icon: "how-to-reg",
   },
 ];
 
-// const logOut = [{ id: 1, title: "Đóng cửa hồ" }];
 const FManageHomeScreen = ({ typeString }) => {
   const fishingLocationName = "Hồ Thuần Việt";
   let menuCategory;
@@ -165,7 +171,7 @@ const FManageHomeScreen = ({ typeString }) => {
       <ScrollView maxHeight="97%">
         <VStack mt="1" mb="2">
           {menuCategory.map((item) => {
-            return <MenuScreen menuListItem={item.category} />;
+            return <MenuScreen menuListItem={item.category} key={item.id} />;
           })}
         </VStack>
       </ScrollView>
