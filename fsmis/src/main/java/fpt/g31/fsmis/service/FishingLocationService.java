@@ -37,13 +37,16 @@ public class FishingLocationService {
     private ModelMapper modelMapper;
     private final JwtFilter jwtFilter;
 
+    private static final String UNAUTHORIZED = "Không có quyền truy cập thông tin;";
+    private static final String LOCATION_NOT_FOUND = "Không tìm thấy hồ câu!";
+
     public List<FishingLocation> findAllFishingLocations() {
         return fishingLocationRepos.findAll();
     }
 
     public String createFishingLocation(FishingLocationDtoIn fishingLocationDtoIn) {
         User owner = userRepos.findById(fishingLocationDtoIn.getOwnerId())
-                .orElseThrow(() -> new NotFoundException("Không tìm thấy hồ câu!"));
+                .orElseThrow(() -> new NotFoundException(LOCATION_NOT_FOUND));
         Ward ward = wardRepos.findById(fishingLocationDtoIn.getWardId())
                 .orElseThrow(() -> new NotFoundException("Không tìm thấy phường/xã!"));
         FishingLocation fishingLocation = modelMapper.map(fishingLocationDtoIn, FishingLocation.class);
@@ -178,5 +181,67 @@ public class FishingLocationService {
             fishingLocationItemDtoOutList.add(fishingLocationItemDtoOut);
         }
         return fishingLocationItemDtoOutList;
+    }
+
+    public List<StaffDtoOut> getStaff(Long locationId, HttpServletRequest request) {
+        User user = jwtFilter.getUserFromToken(request);
+        FishingLocation location = fishingLocationRepos.findById(locationId)
+                .orElseThrow(() -> new ValidationException(LOCATION_NOT_FOUND));
+        if (location.getOwner() != user){
+            throw new UnauthorizedException(UNAUTHORIZED);
+        }
+        List<StaffDtoOut> staffDtoOuts = new ArrayList<>();
+        for (User staff :
+                location.getEmployeeList()) {
+            staffDtoOuts.add(StaffDtoOut.builder()
+                    .id(staff.getId())
+                    .name(staff.getFullName())
+                    .avatar(staff.getAvatarUrl())
+                    .phone(staff.getPhone())
+                    .build());
+        }
+        return staffDtoOuts;
+    }
+
+    public StaffDtoOut addStaff(Long locationId, Long userId, HttpServletRequest request) {
+        User owner = jwtFilter.getUserFromToken(request);
+        FishingLocation location = fishingLocationRepos.findById(locationId)
+                .orElseThrow(() -> new ValidationException(LOCATION_NOT_FOUND));
+        if (location.getOwner() != owner){
+            throw new UnauthorizedException(UNAUTHORIZED);
+        }
+        User staff = userRepos.findById(userId)
+                .orElseThrow(() -> new ValidationException("Không tìm thấy tài khoản!"));
+        List<User> staffList = location.getEmployeeList();
+        staffList.add(staff);
+        location.setEmployeeList(staffList);
+        fishingLocationRepos.save(location);
+        return StaffDtoOut.builder()
+                .id(staff.getId())
+                .name(staff.getFullName())
+                .phone(staff.getPhone())
+                .avatar(staff.getAvatarUrl())
+                .build();
+    }
+
+    public StaffDtoOut deleteStaff(Long locationId, Long staffId, HttpServletRequest request) {
+        User owner = jwtFilter.getUserFromToken(request);
+        FishingLocation location = fishingLocationRepos.findById(locationId)
+                .orElseThrow(() -> new ValidationException(LOCATION_NOT_FOUND));
+        if (location.getOwner() != owner){
+            throw new UnauthorizedException(UNAUTHORIZED);
+        }
+        User staff = userRepos.findById(staffId)
+                .orElseThrow(() -> new ValidationException("Không tìm thấy tài khoản!"));
+        List<User> staffList = location.getEmployeeList();
+        staffList.remove(staff);
+        location.setEmployeeList(staffList);
+        fishingLocationRepos.save(location);
+        return StaffDtoOut.builder()
+                .id(staff.getId())
+                .name(staff.getFullName())
+                .phone(staff.getPhone())
+                .avatar(staff.getAvatarUrl())
+                .build();
     }
 }
