@@ -54,6 +54,11 @@ const goToFManageLocationPickScreen = (navigation, params) => {
     ...params,
   });
 };
+const goToFManageAddStaffScreen = (navigation, params) => {
+  navigation.navigate(ROUTE_NAMES.FMANAGE_STAFF_ADD, {
+    ...params,
+  });
+};
 
 const goToPostEditScreen = (navigation, params) => {
   navigation.navigate(ROUTE_NAMES.FMANAGE_POST_EDIT, { ...params });
@@ -64,7 +69,9 @@ const goToCatchReportVerifyDetailScreen = (navigation, params) => {
 };
 
 const goToLakeEditScreen = (navigation, params) => {
-  navigation.navigate(ROUTE_NAMES.FMANAGE_LAKE_EDIT, { ...params });
+  if (params.id)
+    navigation.navigate(ROUTE_NAMES.FMANAGE_LAKE_EDIT, { ...params });
+  else navigation.navigate(ROUTE_NAMES.FMANAGE_LAKE_ADD, { ...params });
 };
 
 const goToMediaSelectScreen = (navigation, params) => {
@@ -126,6 +133,7 @@ export {
   goToCatchReportFormScreen,
   goToCatchReportVerifyDetailScreen,
   goToFishingLocationOverviewScreen,
+  goToFManageAddStaffScreen,
   goToFManageEditProfileScreen,
   goToFManageLocationPickScreen,
   goToFManageMainScreen,
