@@ -91,7 +91,6 @@ const ReviewListRoute = () => {
     <ScrollView
       onScroll={({ nativeEvent }) => {
         if (isCloseToBottom(nativeEvent)) {
-          console.log("end reach"); // Test only
           loadMoreReviewData();
         }
       }}
