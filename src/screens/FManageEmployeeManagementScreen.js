@@ -19,10 +19,6 @@ const FManageEmployeeManagementScreen = () => {
   );
   const [displayedList, setDisplayedList] = useState(listOfStaff);
 
-  const deleteStaff = (id) => {
-    setDisplayedList(displayedList.filter((employee) => employee.id !== id));
-  };
-
   useEffect(() => {
     getListOfStaff();
   }, []);
@@ -57,7 +53,6 @@ const FManageEmployeeManagementScreen = () => {
                     phoneNumber: phone,
                     image: avatar,
                   }}
-                  deleteEmployee={deleteStaff}
                 />
               );
             }}
