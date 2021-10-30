@@ -210,8 +210,12 @@ public class FishingLocationService {
         if (location.getOwner() != owner){
             throw new UnauthorizedException(UNAUTHORIZED);
         }
+        if (userRepos.getAllStaffId().contains(userId) || userRepos.getAllOwnerId().contains(userId)) {
+            throw new ValidationException("Không thể thêm tài khoản này làm nhân viên!");
+        }
         User staff = userRepos.findById(userId)
                 .orElseThrow(() -> new ValidationException("Không tìm thấy tài khoản!"));
+
         List<User> staffList = location.getEmployeeList();
         staffList.add(staff);
         location.setEmployeeList(staffList);
