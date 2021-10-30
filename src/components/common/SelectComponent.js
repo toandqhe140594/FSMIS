@@ -50,8 +50,8 @@ const SelectComponent = ({
             {data.map((item) => (
               <Select.Item
                 key={generateKey()}
-                label={item.label}
-                value={item.val}
+                label={item.name}
+                value={item.id}
                 my={1}
               >
                 {item.label}

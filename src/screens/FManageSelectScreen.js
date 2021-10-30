@@ -1,12 +1,28 @@
 import { useNavigation } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
-import { Box, Center, ScrollView, VStack } from "native-base";
+import { VStack } from "native-base";
 import React, { useEffect } from "react";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
-import AddImageButton from "../components/common/AddImageButton";
 import FLocationCard from "../components/FLocationCard";
 import HeaderTab from "../components/HeaderTab";
 import { goToFManageEditProfileScreen } from "../navigations";
+
+const styles = StyleSheet.create({
+  center: {
+    alignItems: "center",
+  },
+  border: {
+    width: 110,
+    height: 110,
+    marginTop: 8,
+    borderRadius: 2,
+    borderWidth: 1,
+    borderStyle: "dashed",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+});
 
 const FlocationSelectorScreen = () => {
   const navigation = useNavigation();
@@ -31,15 +47,18 @@ const FlocationSelectorScreen = () => {
   return (
     <>
       <HeaderTab name="Chọn điểm câu làm việc" />
-      <ScrollView _contentContainerStyle={getEmptyListStyling()}>
-        <Center style={getEmptyListStyling()}>
-          <Box style={{ marginTop: 1 }}>
-            <AddImageButton
-              onPress={() => {
-                goToFManageEditProfileScreen(navigation);
-              }}
-            />
-          </Box>
+      <ScrollView contentContainerStyle={getEmptyListStyling()}>
+        <View style={[styles.center, getEmptyListStyling()]}>
+          <Pressable
+            onPress={() => {
+              goToFManageEditProfileScreen(navigation);
+            }}
+          >
+            <View style={styles.border}>
+              <Text style={{ fontSize: 12 }}>Thêm điểm câu</Text>
+            </View>
+          </Pressable>
+
           {listOfFishingLocations.length > 0 && (
             <VStack w="90%" space={2} my={2}>
               {listOfFishingLocations.map((location) => {
@@ -59,7 +78,7 @@ const FlocationSelectorScreen = () => {
               })}
             </VStack>
           )}
-        </Center>
+        </View>
       </ScrollView>
     </>
   );

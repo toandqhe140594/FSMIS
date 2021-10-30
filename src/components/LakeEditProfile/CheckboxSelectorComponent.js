@@ -43,8 +43,7 @@ const CheckboxSelectorComponent = ({
               name={controllerName}
               render={({ field: { onChange, value } }) => {
                 useEffect(() => {
-                  if (value === undefined || value.length === 0)
-                    setUserSelection(placeholder);
+                  if (value.length === 0) setUserSelection(placeholder);
                   else {
                     setUserSelection(
                       value.reduce((acc, current) => `${acc}, ${current}`),

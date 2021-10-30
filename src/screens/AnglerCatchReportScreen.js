@@ -1,4 +1,4 @@
-import "react-native-get-random-values";
+// import "react-native-get-random-values";
 
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useFocusEffect, useRoute } from "@react-navigation/native";
@@ -15,7 +15,7 @@ import {
 import React, { useCallback, useState } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import { ScrollView, StyleSheet } from "react-native";
-import { v4 as uuidv4 } from "uuid";
+// import { v4 as uuidv4 } from "uuid";
 import * as yup from "yup";
 
 import CatchReportCard from "../components/CatchReport/CatchReportCard";
@@ -23,12 +23,19 @@ import MultiImageSection from "../components/common/MultiImageSection";
 import SelectComponent from "../components/common/SelectComponent";
 import TextAreaComponent from "../components/common/TextAreaComponent";
 import HeaderTab from "../components/HeaderTab";
+import { ROUTE_NAMES } from "../constants";
 
 const validationSchema = yup.object().shape({
   aCaption: yup.string().required("Hãy viết suy nghĩ của bạn về ngày câu"),
   aLakeType: yup.number().required("Loại hồ không được để trống"),
   isPublic: yup.bool(),
 });
+
+let itemKey = 0;
+const generateKey = () => {
+  itemKey += 1;
+  return `${itemKey}`;
+};
 
 const styles = StyleSheet.create({
   sectionWrapper: {
@@ -41,7 +48,7 @@ const styles = StyleSheet.create({
 
 const AnglerCatchReportScreen = () => {
   const initCatchCard = {
-    id: uuidv4(),
+    id: generateKey(),
     fishType: "",
     catches: "",
     totalWeight: "",
@@ -101,6 +108,7 @@ const AnglerCatchReportScreen = () => {
               <Stack space={2} style={styles.sectionWrapper}>
                 {/* Impage picker section */}
                 <MultiImageSection
+                  formRoute={ROUTE_NAMES.CATCHES_REPORT_FORM}
                   deleteImage={updateImageArray}
                   imageArray={imageArray}
                   selectLimit={3}

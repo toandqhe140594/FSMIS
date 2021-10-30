@@ -1,13 +1,11 @@
 import { Ionicons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { AssetsSelector } from "expo-images-picker";
 import { MediaType } from "expo-media-library";
 import React, { useMemo } from "react";
 import { StyleSheet, View } from "react-native";
 
 import HeaderWithButton from "../components/HeaderWithButton";
-// import { ROUTE_NAMES } from "../constants";
-import { goToCatchReportFormScreen } from "../navigations";
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
@@ -23,14 +21,21 @@ const generateKey = () => {
 
 const MediaSelectScreen = () => {
   const navigation = useNavigation();
-
+  const route = useRoute();
+  /**
+   * Need 2 params:
+   * returnRoute specifies where to send data back
+   * and maxSelectable specifies how much image can be selected
+   */
+  const { returnRoute, maxSelectable } = route.params;
   // onSuccess is an async process
   const onSuccess = async (data) => {
     const base64Array = await data.map((obj) => ({
       id: generateKey(),
       base64: `data:${MEDIA_TYPE}/${FILE_EXTENSION};base64,${obj.base64}`,
     }));
-    goToCatchReportFormScreen(navigation, { base64Array });
+    // Return back to where the MediaSelectScreen called
+    navigation.navigate(returnRoute, { base64Array });
   };
 
   // Manage error message of <AssestSelector />
@@ -53,8 +58,8 @@ const MediaSelectScreen = () => {
       getImageMetaData: false, // true might perform slower results
       initialLoad: 100, // number of images load on screen
       assetsType: [MediaType.photo, MediaType.video],
-      minSelection: 1,
-      maxSelection: 5, // max image can be select at a time
+      minSelection: maxSelectable, // max images can be select at a time
+      maxSelection: maxSelectable, // max images receive after the selection
       portraitCols: 4,
       landscapeCols: 4,
     }),
