@@ -59,7 +59,11 @@ const goToFManageAddStaffScreen = (navigation, params) => {
     ...params,
   });
 };
-
+const goToFManageStaffDetailScreen = (navigation, params) => {
+  navigation.navigate(ROUTE_NAMES.FMANAGE_STAFF_DETAIL, {
+    ...params,
+  });
+};
 const goToPostEditScreen = (navigation, params) => {
   navigation.navigate(ROUTE_NAMES.FMANAGE_POST_EDIT, { ...params });
 };
@@ -138,6 +142,7 @@ export {
   goToFManageLocationPickScreen,
   goToFManageMainScreen,
   goToFManageSelectScreen,
+  goToFManageStaffDetailScreen,
   goToLakeDetailScreen,
   goToLakeEditScreen,
   goToLogoScreen,
