@@ -63,7 +63,7 @@ public class CheckInService {
             throw new ValidationException("Địa chỉ không tồn tại");
         }
         User user = jwtFilter.getUserFromToken(request);
-        Page<CheckIn> checkInList = checkInRepos.findByUserIdOrderByCheckInTimeDesc(user.getId(), PageRequest.of(pageNo - 1, 10));
+        Page<CheckIn> checkInList = checkInRepos.findFirstByUserIdOrderByCheckInTimeDesc(user.getId(), PageRequest.of(pageNo - 1, 10));
         List<CheckInHistoryPersonalDtoOut> output = new ArrayList<>();
         for (CheckIn checkIn : checkInList) {
             CheckInHistoryPersonalDtoOut item = CheckInHistoryPersonalDtoOut.builder()
@@ -81,6 +81,22 @@ public class CheckInService {
                 .totalPage(checkInList.getTotalPages())
                 .pageNo(pageNo)
                 .items(output)
+                .build();
+    }
+
+    public UserCheckInDtoOut checkOut(HttpServletRequest request) {
+        User user = jwtFilter.getUserFromToken(request);
+        if (user.isAvailable()) {
+            throw new ValidationException("Bạn chưa check-in");
+        }
+        CheckIn checkIn = checkInRepos.findFirstByUserIdOrderByCheckInTimeDesc(user.getId());
+        checkIn.setCheckOutTime(LocalDateTime.now());
+        checkInRepos.save(checkIn);
+        user.setAvailable(true);
+        userRepos.save(user);
+        return UserCheckInDtoOut.builder()
+                .checkInTime(ServiceUtils.convertDateToString(checkIn.getCheckInTime()))
+                .checkOutTime(ServiceUtils.convertDateToString(checkIn.getCheckOutTime()))
                 .build();
     }
 }

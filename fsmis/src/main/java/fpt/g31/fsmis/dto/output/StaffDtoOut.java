@@ -9,9 +9,9 @@ import lombok.Setter;
 @Setter
 @Getter
 @Builder
-public class UserCheckInDtoOut {
+public class StaffDtoOut {
+    private Long id;
     private String name;
     private String avatar;
-    private String checkInTime;
-    private String checkOutTime;
+    private String phone;
 }

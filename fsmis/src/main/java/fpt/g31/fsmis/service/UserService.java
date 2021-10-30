@@ -97,4 +97,14 @@ public class UserService {
                 .items(output)
                 .build();
     }
+
+    public StaffDtoOut findUserByPhone(String phone) {
+        User user = userRepos.findByPhone(phone);
+        return StaffDtoOut.builder()
+                .id(user.getId())
+                .name(user.getFullName())
+                .avatar(user.getAvatarUrl())
+                .phone(user.getPhone())
+                .build();
+    }
 }

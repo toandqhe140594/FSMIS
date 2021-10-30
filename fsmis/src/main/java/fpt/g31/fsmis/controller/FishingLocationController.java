@@ -26,6 +26,7 @@ public class FishingLocationController {
     final PostService postService;
     private final ReviewService reviewService;
     private final VoteService voteService;
+    final UserService userService;
 
     @GetMapping(path = "/all")
     public ResponseEntity<Object> getAll() {
@@ -86,9 +87,15 @@ public class FishingLocationController {
     }
 
     // CHECK-IN
-    @PostMapping(path = "/{locationId}/checkin")
+    @PostMapping("/{locationId}/checkin")
     public ResponseEntity<Object> checkIn(@PathVariable Long locationId, @RequestBody String qrString) {
         return new ResponseEntity<>(checkInService.checkIn(qrString, locationId), HttpStatus.OK);
+    }
+
+    // CHECK-OUT
+    @PostMapping("/checkout")
+    public ResponseEntity<Object> checkOut(HttpServletRequest request) {
+        return new ResponseEntity<>(checkInService.checkOut(request), HttpStatus.OK);
     }
 
     // CATCH
@@ -166,13 +173,27 @@ public class FishingLocationController {
 
     // STAFF
 
-//    @GetMapping("/{locationId}/staff")
-//
-//    @PostMapping("/{locationId}/staff/add")
+    @GetMapping("/{locationId}/staff")
+    public ResponseEntity<Object> getStaff(@PathVariable Long locationId, HttpServletRequest request) {
+        return new ResponseEntity<>(fishingLocationService.getStaff(locationId, request), HttpStatus.OK);
+    }
+
+    @PostMapping("/findUserByPhone")
+    public ResponseEntity<Object> findUserByPhone(@RequestBody String phone){
+        return new ResponseEntity<>(userService.findUserByPhone(phone), HttpStatus.OK);
+    }
+
+    @PostMapping("/{locationId}/staff/add")
+    public ResponseEntity<Object> addStaff(@PathVariable Long locationId, HttpServletRequest request, @RequestBody Long userId) {
+        return new ResponseEntity<>(fishingLocationService.addStaff(locationId, userId, request), HttpStatus.OK);
+    }
 //
 //    @GetMapping("/{locationId}/staff/{staffId}")
 //
-//    @DeleteMapping("/{locationId}/staff/{staffId}/delete")
+    @DeleteMapping("/{locationId}/staff/{staffId}/delete")
+    public ResponseEntity<Object> deleteStaff(@PathVariable Long locationId, @PathVariable Long staffId, HttpServletRequest request) {
+        return new ResponseEntity<>(fishingLocationService.deleteStaff(locationId, staffId, request), HttpStatus.OK);
+    }
 
     // REPORT
 
