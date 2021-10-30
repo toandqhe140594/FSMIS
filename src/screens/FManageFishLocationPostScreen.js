@@ -52,7 +52,7 @@ const FLocationEventRoute = () => {
   console.log(`locationCatchList`, locationPostList[0]);
   return (
     <FlatList
-      data={dummyMenu}
+      data={locationPostList}
       renderItem={({ item }) => (
         <Box backgroundColor="white" my="1">
           <EventPostCard

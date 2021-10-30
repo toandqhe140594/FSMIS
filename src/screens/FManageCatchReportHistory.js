@@ -18,10 +18,10 @@ import HeaderTab from "../components/HeaderTab";
 import PressableCustomCard from "../components/PressableCustomCard";
 import { goToCatchReportDetailScreen } from "../navigations";
 
-const FManageCatchReportHistory = ({ angler }) => {
+const FManageCatchReportHistory = () => {
   const navigation = useNavigation();
-  const [startDate, setStartDate] = useState();
-  const [endDate, setEndDate] = useState();
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const catchReportHistory = useStoreState(
     (states) => states.FManageModel.catchReportHistory,
   );
@@ -88,15 +88,13 @@ const FManageCatchReportHistory = ({ angler }) => {
           placeholder="Chọn kiểu lọc"
           _selectedItem={{
             bg: "teal.600",
-            endIcon: <CheckIcon size="5" />,
           }}
           onValueChange={(itemValue) => selectedFilterHandler(itemValue)}
-          backgroundColor="white"
+          backgroundColor="light.500"
         >
           <Select.Item label="Tất cả" value="All" />
-          <Select.Item label="Theo ngày" value="BY_DATE" />
+          <Select.Item label="Theo Ngày" value="BY_DATE" />
         </Select>
-
         <FlatList
           data={catchReportHistory}
           renderItem={({ item }) => {
@@ -137,7 +135,7 @@ const FManageCatchReportHistory = ({ angler }) => {
                       <Text>
                         <Text bold>Đã câu được :</Text>
                         {fishes.map((fish) => (
-                          <Text>{fish}. </Text>
+                          <Text key={fish}>{fish}. </Text>
                         ))}
                       </Text>
                     </Box>
