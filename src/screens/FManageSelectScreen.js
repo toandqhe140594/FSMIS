@@ -6,8 +6,11 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 
 import FLocationCard from "../components/FLocationCard";
 import HeaderTab from "../components/HeaderTab";
+import FManageModel from "../models/FManageModel";
 import { goToFManageEditProfileScreen } from "../navigations";
+import store from "../utilities/Store";
 
+store.addModel("FManageModel", FManageModel);
 const styles = StyleSheet.create({
   center: {
     alignItems: "center",
@@ -24,7 +27,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const FlocationSelectorScreen = () => {
+const FManageSelectScreen = () => {
   const navigation = useNavigation();
 
   const listOfFishingLocations = useStoreState(
@@ -84,4 +87,4 @@ const FlocationSelectorScreen = () => {
   );
 };
 
-export default FlocationSelectorScreen;
+export default FManageSelectScreen;

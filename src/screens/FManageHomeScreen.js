@@ -7,10 +7,6 @@ import React, { useEffect, useState } from "react";
 import HeaderTab from "../components/HeaderTab";
 import MenuScreen from "../components/MenuScreen";
 import { ROUTE_NAMES } from "../constants";
-import FManageModel from "../models/FManageModel";
-import store from "../utilities/Store";
-
-store.addModel("FManageModel", FManageModel);
 
 const menuCategoryForOwner = [
   {
