@@ -184,6 +184,9 @@ const model = {
   }),
   /**
    * Vote a review
+   * @param {Object} [payload] the payload pass to function
+   * @param {Number} [payload.reviewId] the id of the review
+   * @param {Number} [payload.vote] 0 or 1, type of vote
    */
   voteReview: thunk(async (actions, payload, { getState }) => {
     const { reviewId, vote } = payload;
