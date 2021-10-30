@@ -7,7 +7,7 @@ import { Dimensions, StyleSheet } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 
 import HeaderWithButton from "../components/HeaderWithButton";
-import { DEFAULT_LATLNG } from "../config/constants";
+import { DEFAULT_LATLNG } from "../constants";
 import { goBack } from "../navigations";
 
 const styles = StyleSheet.create({

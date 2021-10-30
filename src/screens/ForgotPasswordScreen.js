@@ -4,7 +4,7 @@ import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
 
-import { phoneRegExp } from "../config/constants";
+import { phoneRegExp } from "../constants";
 
 const errMsg = "Số điện thoại không hợp lệ";
 // Validation schema for form

@@ -20,7 +20,7 @@ import {
 } from "react-native";
 import * as yup from "yup";
 
-import { phoneRegExp } from "../config/constants";
+import { phoneRegExp } from "../constants";
 
 const validationSchema = yup.object().shape({
   phoneNumber: yup
