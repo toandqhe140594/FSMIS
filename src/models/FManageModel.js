@@ -13,7 +13,13 @@ const model = {
   lakeDetail: {},
 
   listOfStaff: [],
-  staffDetail: {},
+  staffDetail: {
+    name: "Đào Quốc Toản",
+    dob: "15/10/2021",
+    phoneNumber: "098764434",
+    gender: true,
+    address: "Số 1 hồ Hoàng Kiếm Việt Nam Hà Nội Châu Á",
+  },
 
   catchReportDetail: {},
   catchReportHistory: [
@@ -42,7 +48,24 @@ const model = {
   ],
   catchReportCurrentPage: 1,
   catchTotalPage: 1,
-  checkInHistoryList: [],
+  checkInHistoryList: [
+    {
+      id: 8,
+      name: "Dat Test",
+      locationId: 3,
+      locationName: "Hồ Câu Định Công",
+      checkInTime: "26/01/2021 06:30:00",
+      checkOutTime: "26/01/2021 11:00:00",
+    },
+    {
+      id: 7,
+      name: "Dat",
+      locationId: 3,
+      locationName: "Hồ Câu Định Công",
+      checkInTime: "25/01/2021 06:30:00",
+      checkOutTime: "26/01/2021 11:00:00",
+    },
+  ],
 
   locationReviewScore: {
     score: null,

@@ -9,12 +9,6 @@ import EventPostCard from "../components/EventPostCard";
 import HeaderTab from "../components/HeaderTab";
 import { goToPostEditScreen } from "../navigations";
 
-const dummyMenu = [
-  { id: 1, name: "Hồ thuần việt" },
-  { id: 2, name: "Hồ không thuần việt" },
-  { id: 3, name: "Hồ Quản" },
-];
-
 const FLocationEventRoute = () => {
   const navigation = useNavigation();
   const [lakePostPage, setTotalPostPage] = useState(1);
@@ -49,10 +43,9 @@ const FLocationEventRoute = () => {
     { name: "Xóa bài đăng", onPress: removePostHandler },
   ];
 
-  console.log(`locationCatchList`, locationPostList[0]);
   return (
     <FlatList
-      data={dummyMenu}
+      data={locationPostList}
       renderItem={({ item }) => (
         <Box backgroundColor="white" my="1">
           <EventPostCard
