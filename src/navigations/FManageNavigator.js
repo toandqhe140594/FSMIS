@@ -10,6 +10,7 @@ import FManageEmployeeDetailScreen from "../screens/FManageEmployeeDetailScreen"
 import FManageEmployeeManagementScreen from "../screens/FManageEmployeeManagementScreen";
 import FManageFishLocationPostScreen from "../screens/FManageFishLocationPostScreen";
 import FManageHomeScreen from "../screens/FManageHomeScreen";
+import FManageLakeAddNewScreen from "../screens/FManageLakeAddNewScreen";
 import FManageLakeEditProfileScreen from "../screens/FManageLakeEditProfileScreen";
 import FManageLakeManagementScreen from "../screens/FManageLakeManagementScreen";
 import FManageLocationViewScreen from "../screens/FManageLocationViewScreen";
@@ -53,6 +54,10 @@ const ManageNavigator = () => {
       <ManageStack.Screen
         name={ROUTE_NAMES.FMANAGE_LAKE_MANAGEMENT}
         component={FManageLakeManagementScreen}
+      />
+      <ManageStack.Screen
+        name={ROUTE_NAMES.FMANAGE_LAKE_ADD}
+        component={FManageLakeAddNewScreen}
       />
       <ManageStack.Screen
         name={ROUTE_NAMES.FMANAGE_LAKE_EDIT}
