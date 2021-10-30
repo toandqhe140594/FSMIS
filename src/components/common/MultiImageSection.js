@@ -107,7 +107,9 @@ const MultiImageSection = ({
 };
 
 MultiImageSection.propTypes = {
-  containerStyle: PropTypes.objectOf(PropTypes.string),
+  containerStyle: PropTypes.objectOf(
+    PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  ),
   imageArray: PropTypes.arrayOf(PropTypes.object),
   selectLimit: PropTypes.number,
   deleteImage: PropTypes.func,
