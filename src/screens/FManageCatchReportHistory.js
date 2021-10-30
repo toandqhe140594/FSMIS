@@ -1,15 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
-import { useStoreActions, useStoreState } from "easy-peasy";
-import {
-  Box,
-  Button,
-  CheckIcon,
-  FlatList,
-  Modal,
-  Select,
-  Text,
-} from "native-base";
-import PropTypes from "prop-types";
+import { useStoreState } from "easy-peasy";
+import { Box, Button, FlatList, Modal, Select, Text } from "native-base";
 import React, { useState } from "react";
 import CalendarPicker from "react-native-calendar-picker";
 
@@ -98,15 +89,7 @@ const FManageCatchReportHistory = () => {
         <FlatList
           data={catchReportHistory}
           renderItem={({ item }) => {
-            const {
-              id,
-              userFullName,
-              avatar,
-              locationName,
-              description,
-              time,
-              fishes,
-            } = item;
+            const { userFullName, avatar, description, time, fishes } = item;
             return (
               <Box
                 borderBottomWidth="1"
@@ -151,10 +134,4 @@ const FManageCatchReportHistory = () => {
   );
 };
 
-FManageCatchReportHistory.defaultProps = {
-  angler: { id: "1", name: "Dat" },
-};
-FManageCatchReportHistory.propTypes = {
-  angler: PropTypes.objectOf(PropTypes.string, PropTypes.string),
-};
 export default FManageCatchReportHistory;
