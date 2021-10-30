@@ -28,7 +28,7 @@ const FishingSpotDetailScreen = () => {
   );
 
   useEffect(() => {
-    if (route.params) {
+    if (route.params && route.params.id) {
       const { id } = route.params;
       setCurrentId(id);
       getLocationOverviewById({ id });

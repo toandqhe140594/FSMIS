@@ -1,7 +1,8 @@
+import { useRoute } from "@react-navigation/native";
 import { useStoreActions } from "easy-peasy";
 import { Box, ScrollView, VStack } from "native-base";
 import PropTypes from "prop-types";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 import HeaderTab from "../components/HeaderTab";
 import MenuScreen from "../components/MenuScreen";
@@ -14,7 +15,7 @@ const menuCategoryForOwner = [
       {
         id: 1,
         title: "Xem trang điểm câu của bạn",
-        route: ROUTE_NAMES.FLOCATION_OVERVIEW,
+        route: ROUTE_NAMES.FMANAGE_LOCATION_OVERVIEW,
         icon: "waves",
       },
       {
@@ -140,7 +141,13 @@ const menuCategoryForStaff = [
 ];
 
 const FManageHomeScreen = ({ typeString }) => {
-  const fishingLocationName = "Hồ Thuần Việt";
+  const route = useRoute();
+  const [shortLocationOverview, setShortLocationOverview] = useState({
+    name: "Hồ câu",
+    id: 0,
+    isVerified: false,
+  });
+
   let menuCategory;
   if (typeString === "OWNER") {
     menuCategory = [...menuCategoryForOwner];
@@ -148,21 +155,25 @@ const FManageHomeScreen = ({ typeString }) => {
   if (typeString === "STAFF") {
     menuCategory = [...menuCategoryForStaff];
   }
-  const setCurrentId = useStoreActions(
-    (actions) => actions.LocationModel.setCurrentId,
-  );
-  const getLocationOverviewById = useStoreActions(
-    (actions) => actions.LocationModel.getLocationOverviewById,
-  );
+
+  const { setCurrentId, getLocationDetailsById, getListOfLake } =
+    useStoreActions((actions) => actions.FManageModel);
 
   useEffect(() => {
-    setCurrentId("1");
-    getLocationOverviewById({ id: "1" });
+    if (route.params) {
+      const { id, name, isVerified } = route.params;
+      setCurrentId(id);
+      getLocationDetailsById({ id });
+      setShortLocationOverview({ id, name, isVerified });
+      getListOfLake({ id });
+    }
   }, []);
+
+  const { id, name, isVerified } = shortLocationOverview;
 
   return (
     <Box>
-      <HeaderTab name={fishingLocationName} isVerified />
+      <HeaderTab id={id} name={name} isVerified={isVerified} />
 
       <ScrollView maxHeight="97%">
         <VStack mt="1" mb="2">

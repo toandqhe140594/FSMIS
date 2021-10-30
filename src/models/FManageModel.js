@@ -4,6 +4,7 @@ import { API_URL } from "../constants";
 import http from "../utilities/Http";
 
 const model = {
+  locationLatLng: {},
   currentId: 2,
   listOfFishingLocations: [
     {
@@ -125,22 +126,39 @@ const model = {
   totalPostPage: 1,
   postDetail: {},
 
+  setCurrentId: action((state, payload) => {
+    state.currentId = payload;
+  }),
+  setLocationLatLng: action((state, payload) => {
+    state.locationLatLng = payload;
+  }),
   setListOfFishingLocations: action((state, payload) => {
     state.listOfFishingLocations = payload;
   }),
-  getListOfFishingLocations: thunk(
-    async (actions, payload, { getState }) => {},
-  ),
+  getListOfFishingLocations: thunk(async (actions) => {
+    const { data } = await http.get(`${API_URL.PERSONAL_OWNED_LOCATION}`);
+    actions.setListOfFishingLocations(data);
+  }),
 
   setLocationDetails: action((state, payload) => {
     state.locationDetails = payload;
   }),
-  getLocationDetails: thunk(async (actions, payload, { getState }) => {}),
+  getLocationDetailsById: thunk(async (actions, payload) => {
+    const { data } = await http.get(`location/${payload.id}`);
+    actions.setLocationDetails(data);
+  }),
 
   setListOfLake: action((state, payload) => {
-    state.locationDetails = payload;
+    state.listOfLake = payload;
   }),
-  getListOfLake: thunk(async (actions, payload, { getState }) => {}),
+  getListOfLake: thunk(async (actions, payload, { getState }) => {
+    const { data } = await http.get(
+      `location/${payload.id ? payload.id : getState().currentId}/${
+        API_URL.LOCATION_LAKE_ALL
+      }`,
+    );
+    actions.setListOfLake(data);
+  }),
 
   setLakeDetail: action((state, payload) => {
     state.locationDetails = payload;

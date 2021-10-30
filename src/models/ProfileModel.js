@@ -4,14 +4,22 @@ import { API_URL } from "../constants";
 import http from "../utilities/Http";
 
 const model = {
+  // Shape of useInfo from api return
   userInfo: {
     id: "1",
-    name: "dat",
-    gender: "male",
+    fullName: "dat",
+    gender: true, // true for male, false for female
     address: "ha dong-ha noi",
-    city: "Ha Noi",
-    district: "Ha Dong",
-    wards: "none",
+    avatarUrl: "",
+    dob: "",
+    addressFromWard: {
+      ward: "An Khánh",
+      wardId: 9877,
+      district: "Hoài Đức",
+      districtId: 274,
+      province: "Hà Nội",
+      provinceId: 1,
+    },
   },
   savedLocationList: [],
   notificationList: [],

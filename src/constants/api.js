@@ -15,6 +15,7 @@ export const PERSONAL_CATCH_REPORT_DETAIL = "catches";
 export const PERSONAL_SAVED_LOCATION = "personal/save";
 export const PERSONAL_NOTIFICATION = "personal/notification";
 export const PERSONAL_INFORMATION = "personal";
+export const PERSONAL_OWNED_LOCATION = "location/manager";
 
 export const LOCATION_OVERVIEW = "location";
 export const LOCATION_NEARBY = "location/nearby";
@@ -23,3 +24,7 @@ export const LOCATION_REVIEW_SCORE = "review/score";
 export const LOCATION_REVIEW_PERSONAL = "review/me";
 export const LOCATION_REVIEW_PERSONAL_DELETE = "review/me/delete";
 export const LOCATION_REVIEW_PERSONAL_POST = "review/me/post";
+
+export const ADDRESS_ALL_PROVINCE = "/address/province";
+export const ADDRESS_PROVINCE_DISTRICT = "address/district";
+export const ADDRESS_DISTRICT_WARD = "address/ward";
