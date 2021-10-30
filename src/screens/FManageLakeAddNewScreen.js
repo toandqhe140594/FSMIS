@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const LakeEditProfileScreen = () => {
+const LakeAddNewScreen = () => {
   const route = useRoute();
 
   const initFishCard = {
@@ -117,7 +117,7 @@ const LakeEditProfileScreen = () => {
 
   return (
     <>
-      <HeaderTab name="Chỉnh sửa hồ bé" />
+      <HeaderTab name="Thêm hồ bé" />
       <ScrollView>
         <FormProvider {...methods}>
           <VStack space={3} divider={<Divider />}>
@@ -125,7 +125,7 @@ const LakeEditProfileScreen = () => {
               {/* Image Picker section */}
               <MultiImageSection
                 containerStyle={styles.sectionWrapper}
-                formRoute={ROUTE_NAMES.FMANAGE_LAKE_EDIT}
+                formRoute={ROUTE_NAMES.FMANAGE_LAKE_ADD}
                 imageArray={imageArray}
                 deleteImage={updateImageArray}
               />
@@ -219,7 +219,7 @@ const LakeEditProfileScreen = () => {
                   mb={2}
                   onPress={handleSubmit(onSubmit)}
                 >
-                  Lưu thông tin hồ câu
+                  Thêm hồ câu
                 </Button>
                 <Button
                   style={styles.button}
@@ -237,4 +237,4 @@ const LakeEditProfileScreen = () => {
   );
 };
 
-export default LakeEditProfileScreen;
+export default LakeAddNewScreen;
