@@ -19,7 +19,7 @@ const FishingSpotDetailScreen = () => {
 
   return (
     <>
-      <HeaderTab id={id} name={name} isVerified={verify} flagable />
+      <HeaderTab id={id} name={name} isVerified={verify} />
       <Tab.Navigator
         sceneContainerStyle={{ backgroundColor: "white" }}
         screenOptions={{
