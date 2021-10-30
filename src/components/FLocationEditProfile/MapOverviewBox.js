@@ -1,7 +1,7 @@
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { useStoreState } from "easy-peasy";
 import { Box } from "native-base";
-import React, { useCallback, useRef } from "react";
+import React, { useRef } from "react";
 import { StyleSheet, TouchableOpacity } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 
@@ -19,23 +19,6 @@ const MapOverviewBox = () => {
 
   const locationLatLng = useStoreState(
     (states) => states.FManageModel.locationLatLng,
-  );
-
-  useFocusEffect(
-    useCallback(() => {
-      // If the map reference is inited and locationLatLng is not empty
-      if (mapRef.current && locationLatLng)
-        mapRef.current.animateToRegion(
-          {
-            latitude: locationLatLng.latitude,
-            longitude: locationLatLng.longitude,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
-          },
-          1,
-        );
-      return () => {};
-    }, [locationLatLng]),
   );
 
   return (
@@ -61,7 +44,7 @@ const MapOverviewBox = () => {
         {locationLatLng.latitude && (
           <MapView
             ref={mapRef}
-            initialRegion={{
+            region={{
               latitude: locationLatLng.latitude,
               longitude: locationLatLng.longitude,
               latitudeDelta: 0.0922,
