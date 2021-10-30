@@ -7,34 +7,14 @@ const model = {
   locationLatLng: {},
   currentId: 2,
   listOfFishingLocations: [],
-  locationDetails: {
-    id: 1,
-    role: "ROLE_MANAGER",
-    name: "placeholderdata",
-    longitude: 20.65606,
-    latitude: 106.096535,
-    address: "Gần Chùa Núi Lá, Tiên Lữ, Hưng Yên 160000",
-    addressFromWard: {
-      ward: "Phúc Xá",
-      wardId: 1,
-      district: "Ba Đình",
-      districtId: 1,
-      province: "Hà Nội",
-      provinceId: 1,
-    },
-    phone: "0123456789",
-    description: "Hồ câu đơn đài Thuần Việt - nơi giải trí cho anh em cần thủ",
-    service: "Ăn uống\nChụp ảnh\nBao móm",
-    timetable: "Từ 8h đến 22h hàng ngày, trừ thứ 3 và thứ 6",
-    rule: "Cần <5.4M",
-    active: true,
-    verify: false,
-  },
+  locationDetails: {},
 
   listOfLake: [],
   lakeDetail: {},
+
   listOfStaff: [],
   staffDetail: {},
+
   catchReportDetail: {},
   catchReportHistory: [
     {
@@ -63,9 +43,20 @@ const model = {
   catchReportCurrentPage: 1,
   catchTotalPage: 1,
   checkInHistoryList: [],
+
+  locationReviewScore: {
+    score: null,
+    totalReviews: null,
+  },
+  locationReviewList: [],
+  totalReviewPage: 1,
+
   locationPostList: [],
-  locationPostPageNumber: 0,
   totalPostPage: 1,
+
+  locationCatchList: [], // List of public catch report to display on overview screen
+  totalCatchPage: 1,
+
   postDetail: {},
 
   setCurrentId: action((state, payload) => {
@@ -101,34 +92,141 @@ const model = {
     );
     actions.setListOfLake(data);
   }),
-
   setLakeDetail: action((state, payload) => {
-    state.locationDetails = payload;
+    state.lakeDetail = payload;
   }),
-  getLakeDetail: thunk(async (actions, payload, { getState }) => {}),
-
-  setCatchReportList: action((state, payload) => {
-    state.locationDetails = payload;
+  getLakeDetailByLakeId: thunk(async (actions, payload, { getState }) => {
+    const { data } = await http.get(
+      `location/${getState().currentId}/lake/${payload.id}`,
+    );
+    actions.setLakeDetail(data);
   }),
-  getCatchReportList: thunk(async (actions, payload, { getState }) => {}),
 
-  setCatchReportDetail: action((state, payload) => {
-    state.locationDetails = payload;
+  // START OF REVIEW RELATED SECTION
+
+  /**
+   * Set data for locationReviewList
+   * If status = Overwrite then overwrite all the list, else append new data to list
+   */
+  setLocationReviewList: action((state, payload) => {
+    // If status indicated that the list need to be overwritten
+    if (payload.status === "Overwrite") state.locationReviewList = payload.data;
+    else
+      state.locationReviewList = state.locationReviewList.concat(payload.data);
   }),
-  getCatchReportDetail: thunk(async (actions, payload, { getState }) => {}),
-
-  setCheckInHistoryList: action((state, payload) => {
-    state.locationDetails = payload;
+  /**
+   * Set total page of reviews
+   * The total page can not be lower than 1
+   */
+  setTotalReviewPage: action((state, payload) => {
+    state.totalReviewPage = payload < 1 ? 1 : payload;
   }),
-  getCheckInHistoryList: thunk(async (actions, payload, { getState }) => {}),
+  /**
+   * Set data for locationReviewScore
+   * @param {Object} [payload] the payload pass to function
+   * @param {Number} [payload.score] average review score of location
+   * @param {Number} [payload.totalReviews] total numbers of reviews
+   */
+  setLocationReviewScore: action((state, payload) => {
+    state.locationReviewScore = payload;
+  }),
+  /**
+   * Get the average review score and the number of review of the location
+   */
+  getLocationReviewScore: thunk(async (actions, payload, { getState }) => {
+    const { data } = await http.get(
+      `location/${getState().currentId}/${API_URL.LOCATION_REVIEW_SCORE}`,
+    );
+    actions.setLocationReviewScore(data);
+  }),
+  /**
+   * Get review data by page and filter type
+   * @param {Object} [payload] the payload pass to function
+   * @param {Number} [payload.pageNo] the page of data need to get
+   * @param {String} [payload.filter] the filter type of data
+   */
+  getLocationReviewListByPage: thunk(async (actions, payload, { getState }) => {
+    const { pageNo, filter } = payload;
+    const { currentId, totalReviewPage } = getState();
+    // If current page greater than total page or less than 1 then return
+    if (pageNo > totalReviewPage || pageNo <= 0) return;
+    const { data } = await http.get(`location/${currentId}/review`, {
+      params: { pageNo, filter },
+    });
+    actions.setTotalReviewPage(data.totalPage);
+    actions.setLocationReviewList({
+      data: data.items,
+      status: pageNo === 1 ? "Overwrite" : "Append",
+    });
+  }),
+  /**
+   * Vote a review
+   */
+  voteReview: thunk(async (actions, payload, { getState }) => {
+    const { reviewId, vote } = payload;
+    const { currentId } = getState();
+    const { status, data } = await http.post(
+      `location/${currentId}/review/${reviewId}`,
+      null,
+      {
+        params: { vote },
+      },
+    );
+    const { userVoteType, upvote, downvote } = data;
+    if (status === 200)
+      actions.resetVoteOfReview({
+        id: reviewId,
+        userVoteType,
+        upvote,
+        downvote,
+      });
+  }),
+  /**
+   * Reset data of the review that has been vote
+   * Reset userVoteType, upvote amount and downvote amount by id of review
+   * @param {Object} [payload] the payload pass to function
+   * @param {Number} [payload.id] the id of the review
+   * @param {Boolean} [payload.userVoteType] new votetype of the review
+   * @param {Number} [payload.upvote] new upvote number of the review
+   * @param {Number} [payload.downvote] new downvote number of the review
+   */
+  resetVoteOfReview: action((state, payload) => {
+    const { id, userVoteType, upvote, downvote } = payload;
+    const review =
+      state.locationReviewList[
+        state.locationReviewList.findIndex((x) => x.id === id)
+      ];
+    review.userVoteType = userVoteType;
+    review.upvote = upvote;
+    review.downvote = downvote;
+  }),
 
+  // END OF REVIEW RELATED SECTION
+
+  // START OF POST RELATED SECTION
+
+  /**
+   * Set value for total page number of post list
+   * The value of total page can not be smaller than 1
+   */
   setTotalPostPage: action((state, payload) => {
     state.totalPostPage = payload < 1 ? 1 : payload;
   }),
+  /**
+   * Set data for post list
+   * @param {Object} [payload] the payload pass to function
+   * @param {Array} [payload.data] the data of the list
+   * @param {String} [payload.status] indicate that the post list should be overwritten or append new data
+   */
   setLocationPostList: action((state, payload) => {
     if (payload.status === "Overwrite") state.locationPostList = payload.data;
     else state.locationPostList = state.locationPostList.concat(payload.data);
   }),
+  /**
+   * Get posts data by page
+   * @param {Object} [payload] the payload pass to function
+   * @param {Number} [payload.pageNo] the page of data need to get
+   */
   getLocationPostListByPage: thunk(async (actions, payload, { getState }) => {
     const { pageNo } = payload;
     const { currentId, totalPostPage } = getState();
@@ -142,5 +240,80 @@ const model = {
       status: pageNo === 1 ? "Overwrite" : "Append",
     });
   }),
+
+  // END OF POST RELATED SECTION
+
+  // START OF CATCH REPORT RELATED SECTION
+
+  /**
+   * Set value for total page number of post list
+   * The value of total page can not be smaller than 1
+   */
+  setTotalCatchPage: action((state, payload) => {
+    state.totalCatchPage = payload < 1 ? 1 : payload;
+  }),
+
+  /**
+   * Set data for catch reports list for display on the location overview page
+   * @param {Object} [payload] the payload pass to function
+   * @param {Array} [payload.data] the data of the list
+   * @param {String} [payload.status] indicate that the list should be overwritten or append new data
+   */
+  setLocationCatchList: action((state, payload) => {
+    if (payload.status === "Overwrite") state.locationCatchList = payload.data;
+    else state.locationCatchList = state.locationCatchList.concat(payload.data);
+  }),
+  /**
+   * Get catch reports data by page
+   * @param {Object} [payload] the payload pass to function
+   * @param {Number} [payload.pageNo] the page of data need to get
+   */
+  getLocationCatchListByPage: thunk(async (actions, payload, { getState }) => {
+    const { pageNo } = payload;
+    const { currentId, totalCatchPage } = getState();
+    if (pageNo > totalCatchPage || pageNo <= 0) return;
+    const { data } = await http.get(`location/${currentId}/catch`, {
+      params: { pageNo },
+    });
+    actions.setTotalCatchPage(data.totalPage);
+    actions.setLocationCatchList({
+      data: data.items,
+      status: pageNo === 1 ? "Overwrite" : "Append",
+    });
+  }),
+
+  setCatchReportList: action((state, payload) => {
+    state.locationDetails = payload;
+  }),
+  getCatchReportList: thunk(async (actions, payload, { getState }) => {}),
+
+  setCatchReportDetail: action((state, payload) => {
+    state.locationDetails = payload;
+  }),
+  getCatchReportDetail: thunk(async (actions, payload, { getState }) => {}),
+
+  // END OF CATCH REPORT RELATED SECTION
+
+  // START OF STAFF RELATED SECTION
+
+  /**
+   * Set list of staffs data
+   */
+  setListOfStaff: action((state, payload) => {
+    state.listOfStaff = payload;
+  }),
+  /**
+   * Get data for list of staff from api
+   */
+  getListOfStaff: thunk(async (actions, payload, { getState }) => {
+    const { data } = await http.get(`location/${getState().currentId}/staff`);
+    actions.setListOfStaff(data);
+  }),
+  // END OF STAFF RELATED SECTION
+
+  setCheckInHistoryList: action((state, payload) => {
+    state.locationDetails = payload;
+  }),
+  getCheckInHistoryList: thunk(async (actions, payload, { getState }) => {}),
 };
 export default model;
