@@ -1,4 +1,4 @@
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useFocusEffect } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, Button, Center, ScrollView } from "native-base";
 import PropTypes from "prop-types";
@@ -7,7 +7,6 @@ import { Divider, Text } from "react-native-elements";
 import { Rating } from "react-native-ratings";
 
 import styles from "../../config/styles";
-import { goToWriteReviewScreen } from "../../navigations";
 import ReviewFromAnglerSection from "../ReviewFromAnglerSection";
 
 const FilterButton = ({ filterType, content, value, changeFilterAction }) => {
@@ -48,19 +47,15 @@ const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
 };
 
 const ReviewListRoute = () => {
-  const navigation = useNavigation();
   const [reviewPage, setReviewPage] = useState(1);
   const [filterType, setFilterType] = useState("newest");
 
-  const { locationReviewScore, personalReview, locationReviewList, currentId } =
-    useStoreState((states) => states.LocationModel);
+  const { locationReviewScore, locationReviewList } = useStoreState(
+    (states) => states.FManageModel,
+  );
 
-  const {
-    getLocationReviewScore,
-    getPersonalReview,
-    resetPersonalReview,
-    getLocationReviewListByPage,
-  } = useStoreActions((actions) => actions.LocationModel);
+  const { getLocationReviewScore, getLocationReviewListByPage } =
+    useStoreActions((actions) => actions.FManageModel);
 
   const loadMoreReviewData = () => {
     getLocationReviewListByPage({ pageNo: reviewPage, filter: filterType });
@@ -75,14 +70,11 @@ const ReviewListRoute = () => {
   useFocusEffect(
     useCallback(() => {
       getLocationReviewScore();
-      getPersonalReview();
       resetReviewData();
-      return () => {
-        resetPersonalReview();
-      };
     }, []),
   );
 
+  // if filterType changes, then reset the list
   useEffect(() => {
     resetReviewData();
   }, [filterType]);
@@ -91,7 +83,6 @@ const ReviewListRoute = () => {
     <ScrollView
       onScroll={({ nativeEvent }) => {
         if (isCloseToBottom(nativeEvent)) {
-          console.log("end reach"); // Test only
           loadMoreReviewData();
         }
       }}

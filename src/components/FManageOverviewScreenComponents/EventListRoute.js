@@ -25,11 +25,11 @@ const CatchReportRoute = () => {
   const navigation = useNavigation();
   const [lakeCatchPage, setLakeCatchPage] = useState(1);
 
-  const getLocationCatchListByPage = useStoreActions(
-    (actions) => actions.LocationModel.getLocationCatchListByPage,
-  );
   const locationCatchList = useStoreState(
-    (states) => states.LocationModel.locationCatchList,
+    (states) => states.FManageModel.locationCatchList,
+  );
+  const getLocationCatchListByPage = useStoreActions(
+    (actions) => actions.FManageModel.getLocationCatchListByPage,
   );
 
   useEffect(() => {
@@ -83,10 +83,10 @@ const CatchReportRoute = () => {
 const FLocationEventRoute = () => {
   const [lakePostPage, setLakePostPage] = useState(1);
   const locationPostList = useStoreState(
-    (states) => states.LocationModel.locationPostList,
+    (states) => states.FManageModel.locationPostList,
   );
   const getLocationPostListByPage = useStoreActions(
-    (actions) => actions.LocationModel.getLocationPostListByPage,
+    (actions) => actions.FManageModel.getLocationPostListByPage,
   );
 
   useEffect(() => {
