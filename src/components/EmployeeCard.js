@@ -36,7 +36,7 @@ const EmployeeCard = ({ employee, deleteEmployee }) => {
 };
 EmployeeCard.propTypes = {
   employee: PropTypes.shape({
-    id: PropTypes.string,
+    id: PropTypes.number,
     name: PropTypes.string,
     phoneNumber: PropTypes.string,
     image: PropTypes.string,
