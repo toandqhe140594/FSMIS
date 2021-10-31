@@ -3,7 +3,12 @@ import * as SecureStore from "expo-secure-store";
 import jwtDecode from "jwt-decode";
 
 import { AUTH_TOKEN, USER_PROFILE, USER_ROLE } from "../constants";
-import http, { removeAuthToken, setAuthToken } from "./Http";
+import http, {
+  removeAuthToken,
+  setAuthToken,
+  setBeforeRequestFunction,
+  setRequestErrorMessageHandling,
+} from "./Http";
 
 const initialLoginState = {
   authToken: null,
@@ -73,6 +78,13 @@ const Store = createStore({
       await SecureStore.setItemAsync(USER_ROLE, data.roles);
       await SecureStore.setItemAsync(USER_PROFILE, JSON.stringify(data));
       await setAuthToken(authToken);
+
+      await setBeforeRequestFunction(() => {
+        actions.setErrorMessage("");
+      });
+
+      await setRequestErrorMessageHandling(actions.setErrorMessage);
+
       actions.setUserRole(data.roles);
       actions.setUserProfile(data);
     } catch (e) {
@@ -84,6 +96,7 @@ const Store = createStore({
       authToken,
     });
   }),
+
   /**
    * Remove the authentication token from SecureStore
    */
@@ -97,6 +110,7 @@ const Store = createStore({
     }
     dispatch({ type: "LOGOUT" });
   }),
+
   /**
    * Retrieve authentication token from SecureStore to login
    */
@@ -120,6 +134,13 @@ const Store = createStore({
       if (!isExpire) {
         dispatch({ type: "RETRIEVE_TOKEN", authToken });
         await setAuthToken(authToken);
+
+        await setBeforeRequestFunction(() => {
+          actions.setErrorMessage("");
+        });
+
+        await setRequestErrorMessageHandling(actions.setErrorMessage);
+
         actions.setUserRole(userRole);
         actions.setUserProfile(userProfile);
         return;
