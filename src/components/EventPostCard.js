@@ -110,7 +110,7 @@ EventPostCard.propTypes = {
   postStyle: PropTypes.string,
   iconName: PropTypes.string,
   iconEvent: PropTypes.arrayOf(
-    PropTypes.objectOf(PropTypes.string, PropTypes.func),
+    PropTypes.shape({ name: PropTypes.string, onPress: PropTypes.func }),
   ),
   image: PropTypes.string,
   edited: PropTypes.bool,
