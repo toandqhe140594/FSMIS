@@ -1,87 +1,110 @@
-import { Box, Button, Checkbox, VStack } from "native-base";
-import PropTypes from "prop-types";
-import React, { useEffect, useState } from "react";
-import { StyleSheet, Text } from "react-native";
-
-import InlineInputComponent from "../common/InlineInputComponent";
-import InlineSelectComponent from "../common/InlineSelectComponent";
+import { Button, Checkbox, Input, Select } from "native-base";
+import React, { useEffect } from "react";
+import { Controller, useFieldArray, useFormContext } from "react-hook-form";
+import { StyleSheet, Text, View } from "react-native";
 
 const styles = StyleSheet.create({
   cardWrapper: {
     paddingHorizontal: 10,
     paddingVertical: 8,
     marginVertical: 5,
+    backgroundColor: "#fafafa",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    elevation: 5,
   },
   rowWrapper: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    marginVertical: 8,
   },
 });
 
-const CatchReportCard = ({ id, deleteCard, updateCard }) => {
-  const [fishType, setFishType] = useState("");
-  const [catches, setCatches] = useState("");
-  const [totalWeight, setTotalWeight] = useState("");
-  const [isReleased, setReleased] = useState(false);
+const CatchReportCard = () => {
+  const { control } = useFormContext();
+  const { fields, append, remove } = useFieldArray({ control, name: "cards" });
+  /**
+   * Append a card ready to use
+   */
   useEffect(() => {
-    updateCard(id, "fishType", fishType);
-  }, [fishType]);
-  useEffect(() => {
-    updateCard(id, "catches", catches);
-  }, [catches]);
-  useEffect(() => {
-    updateCard(id, "totalWeight", totalWeight);
-  }, [totalWeight]);
-  useEffect(() => {
-    updateCard(id, "isReleased", isReleased);
-  }, [isReleased]);
+    const initCard = () => append({});
+    initCard();
+  }, []);
   return (
-    <VStack
-      shadow={2}
-      backgroundColor="trueGray.50"
-      space={2}
-      style={styles.cardWrapper}
-    >
-      <InlineSelectComponent
-        label="Chọn loài cá"
-        placeholder="Nhấp để chọn cá"
-        data={["Cá diếc", "Cá chép"]}
-        value={fishType}
-        handleOnChange={setFishType}
-      />
-      <InlineInputComponent
-        label="Số lượng (con)"
-        placeholder="Nhập số lượng con"
-        value={catches}
-        handleOnChange={setCatches}
-      />
-      <InlineInputComponent
-        label="Tổng cân nặng (kg)"
-        placeholder="Nhập tổng cân nặng"
-        value={totalWeight}
-        handleOnChange={setTotalWeight}
-      />
-      <Box style={styles.rowWrapper}>
-        <Checkbox isChecked={isReleased} onChange={setReleased}>
-          <Text style={{ marginLeft: 10 }}>Giao lại cho chủ hồ</Text>
-        </Checkbox>
-        <Button w="40%" onPress={() => deleteCard(id)}>
-          Xoá
-        </Button>
-      </Box>
-    </VStack>
+    <>
+      {fields.map(({ id }, index) => (
+        <View style={styles.cardWrapper} key={id}>
+          <Controller
+            name={`cards[${index}].fishType`}
+            control={control}
+            render={({ field: { onChange, value } }) => (
+              <Select
+                mt={2}
+                fontSize="md"
+                placeholder="Chọn loại cá"
+                onValueChange={onChange}
+                selectedValue={value}
+              >
+                <Select.Item label="Cá diếc" value={1} />
+                <Select.Item label="Cá chép" value={2} />
+              </Select>
+            )}
+          />
+          <Controller
+            name={`cards[${index}].catches`}
+            control={control}
+            render={({ field: { value, onChange, onBlur } }) => (
+              <Input
+                mt={2}
+                fontSize="md"
+                placeholder="Nhập số cá (con)"
+                value={value}
+                onChangeText={onChange}
+                onBlur={onBlur}
+              />
+            )}
+          />
+          <Controller
+            name={`cards[${index}].totalWeight`}
+            control={control}
+            render={({ field: { value, onChange, onBlur } }) => (
+              <Input
+                mt={2}
+                fontSize="md"
+                placeholder="Tổng cân nặng (kg)"
+                value={value}
+                onChangeText={onChange}
+                onBlur={onBlur}
+              />
+            )}
+          />
+
+          <View style={styles.rowWrapper}>
+            <Controller
+              name={`cards[${index}].isReleased`}
+              control={control}
+              render={({ field: { value, onChange } }) => (
+                <Checkbox value={value} onChange={onChange}>
+                  <Text style={{ marginLeft: 10, fontSize: 16 }}>
+                    Giao lại cho chủ hồ
+                  </Text>
+                </Checkbox>
+              )}
+            />
+            <Button fontSize="md" w="40%" onPress={() => remove(index)}>
+              Xoá
+            </Button>
+          </View>
+        </View>
+      ))}
+      <Button w="90%" mt={3} alignSelf="center" onPress={() => append({})}>
+        Thêm thẻ
+      </Button>
+    </>
   );
 };
 
-CatchReportCard.propTypes = {
-  id: PropTypes.string,
-  deleteCard: PropTypes.func,
-  updateCard: PropTypes.func,
-};
-CatchReportCard.defaultProps = {
-  id: "",
-  deleteCard: () => {},
-  updateCard: () => {},
-};
 export default CatchReportCard;
