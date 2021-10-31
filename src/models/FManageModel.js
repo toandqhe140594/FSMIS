@@ -348,6 +348,20 @@ const model = {
     state.staffOverview = payload;
   }),
   /**
+   * Set data for staff detail information
+   * @param {Object} [payload] the payload pass to function
+   * @param {Number} [payload.id] the id of the staff
+   * @param {String} [payload.name] the name of the staff
+   * @param {String} [payload.avatar] the avatar of the staff
+   * @param {String} [payload.phone] the phone of the staff
+   * @param {String} [payload.dob] the dob of the staff
+   * @param {String} [payload.address] the address of the staff
+   * @param {Boolean} [payload.gender] the gender of the staff, true - male, false - female
+   */
+  setStaffDetail: action((state, payload) => {
+    state.staffDetail = payload;
+  }),
+  /**
    * Get data for list of staff from api
    */
   getListOfStaff: thunk(async (actions, payload, { getState }) => {
@@ -371,7 +385,24 @@ const model = {
     else actions.setStaffOverview({});
   }),
   /**
-   * Find overview data of staff by phone
+   * Get information of the staff by id
+   * @param {Object} [payload] the payload pass to function
+   * @param {String} [payload.userId] the userId of the staff that need to get information
+   */
+  getStaffDetailById: thunk(async (actions, payload, { getState }) => {
+    const { currentId } = getState();
+    const { userId } = payload;
+    const { data, status } = await http.get(
+      `location/${currentId}/${API_URL.STAFF_ADD}`,
+      {
+        userId,
+      },
+    );
+    if (status === 200) actions.setStaffDetail(data);
+    else actions.setStaffManagementErrorMsg(data.responseText);
+  }),
+  /**
+   * Add staff to fishing location by id
    * @param {Object} [payload] the payload pass to function
    * @param {String} [payload.userId] the userId of the staff that need to be added
    */
@@ -388,25 +419,46 @@ const model = {
     else actions.setStaffManagementErrorMsg(data.responseText);
   }),
   /**
-   * Find overview data of staff by phone
+   * Delete staff from fishing location by id
    * @param {Object} [payload] the payload pass to function
    * @param {String} [payload.userId] the userId of the staff that need to be delete
+   * @param {Function} [payload.setDeleteSuccess] the function to set delete success indicator
    */
   deleteStaffById: thunk(async (actions, payload, { getState }) => {
     const { currentId } = getState();
-    const { userId } = payload;
-    const { data, status } = await http.post(
+    const { userId, setDeleteSuccess } = payload;
+    const { data, status } = await http.delete(
       `location/${currentId}/${API_URL.STAFF_DELETE}`,
       {
         userId,
       },
     );
-    if (status === 200) actions.getListOfStaff();
-    else actions.setStaffManagementErrorMsg(data.responseText);
+    if (status === 200) {
+      actions.getListOfStaff();
+      setDeleteSuccess(true);
+    } else actions.setStaffManagementErrorMsg(data.responseText);
   }),
 
   // END OF STAFF RELATED SECTION
 
+  // START OF FISHING LOCATION MANAGEMENT RELATED SECTION
+
+  /**
+   * Close the fishing location
+   * @param {Object} [payload] the payload pass to function
+   * @param {Function} [payload.setDeleteSuccess] the function to set delete success indicator
+   */
+  closeFishingLocation: thunk(async (actions, payload, { getState }) => {
+    const { currentId } = getState();
+    const { setDeleteSuccess } = payload;
+    const { data, status } = await http.delete(`location/${currentId}/close`);
+    if (status === 200) {
+      actions.getListOfFishingLocations();
+      setDeleteSuccess(true);
+    } else actions.setStaffManagementErrorMsg(data.responseText);
+  }),
+
+  // END OF FISHING LOCATION MANAGEMENT RELATED SECTION
   setCheckInHistoryList: action((state, payload) => {
     state.locationDetails = payload;
   }),
