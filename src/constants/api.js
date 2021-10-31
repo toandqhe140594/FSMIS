@@ -9,6 +9,10 @@ export const ADMIN_FISHING_METHOD_LIST = "util/method";
 export const ADMIN_ACCOUNT_LIST = "util/method";
 export const ADMIN_ACCOUNT_INFORMATION = "util/method";
 
+export const STAFF_FIND_BY_PHONE = "findUserByPhone";
+export const STAFF_ADD = "staff/add";
+export const STAFF_DELETE = "staff/delete";
+
 export const PERSONAL_CHECKIN = "personal/checkin";
 export const PERSONAL_CATCH_REPORT = "personal/catch";
 export const PERSONAL_CATCH_REPORT_DETAIL = "catches";
