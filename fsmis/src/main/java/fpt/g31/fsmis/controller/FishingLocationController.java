@@ -32,12 +32,20 @@ public class FishingLocationController {
         return new ResponseEntity<>(fishingLocations, HttpStatus.OK);
     }
 
-    @PostMapping
-    public ResponseEntity<Object> createFishingLocation(@Valid @RequestBody FishingLocationDtoIn fishingLocationDtoIn) {
-        return new ResponseEntity<>(fishingLocationService.createFishingLocation(fishingLocationDtoIn), HttpStatus.CREATED);
+    @PostMapping("/add")
+    public ResponseEntity<Object> createFishingLocation(@Valid @RequestBody FishingLocationDtoIn fishingLocationDtoIn,
+                                                        HttpServletRequest request) {
+        return new ResponseEntity<>(fishingLocationService.createFishingLocation(fishingLocationDtoIn, request), HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/{locationId}/close")
+    @PutMapping("/edit/{locationId}")
+    public ResponseEntity<Object> editFishingLocation(@Valid @RequestBody FishingLocationDtoIn fishingLocationDtoIn,
+                                                      HttpServletRequest request,
+                                                      @PathVariable Long locationId){
+        return new ResponseEntity<>(fishingLocationService.editFishingLocation(fishingLocationDtoIn, request, locationId), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/close/{locationId}")
     public ResponseEntity<Object> closeFishingLocation(HttpServletRequest request, @PathVariable Long locationId) {
         return new ResponseEntity<>(fishingLocationService.disableFishingLocation(request, locationId), HttpStatus.OK);
     }
@@ -209,6 +217,8 @@ public class FishingLocationController {
     }
 
     // REPORT
-
 //    @PostMapping("/{locationId}/report")
+//    public ResponseEntity<Object> reportLocation(@PathVariable Long locationId, HttpServletRequest request, ReportDtoIn reportDtoIn){
+//        return new ResponseEntity<>()
+//    }
 }

@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -43,6 +44,6 @@ public class FishingLocationDtoIn {
     @NotEmpty
     private String rule;
 
-    @NotNull
-    private Long ownerId;
+    @NotEmpty
+    private List<String> images;
 }
