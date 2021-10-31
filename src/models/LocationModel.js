@@ -3,7 +3,7 @@ import { action, thunk } from "easy-peasy";
 import { API_URL } from "../constants";
 import http from "../utilities/Http";
 
-const initialPersonalReview = {
+const initialPersonalReviewShape = {
   id: null,
   userId: null,
   userFullName: "",
@@ -22,9 +22,7 @@ const model = {
     score: null,
     totalReviews: null,
   },
-  personalReview: {
-    ...initialPersonalReview,
-  },
+  personalReview: {},
   locationReviewList: [],
   totalReviewPage: 1,
   locationPostPageNumber: 0,
@@ -54,7 +52,7 @@ const model = {
     state.totalReviewPage = payload < 1 ? 1 : payload;
   }),
   resetPersonalReview: action((state) => {
-    state.personalReview = { ...initialPersonalReview };
+    state.personalReview = { ...initialPersonalReviewShape };
   }),
   setLocationPostPageNumber: action((state, payload) => {
     state.locationPostPageNumber = payload;
