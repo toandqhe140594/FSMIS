@@ -1,8 +1,6 @@
 package fpt.g31.fsmis.repository;
 
-import fpt.g31.fsmis.entity.FishingLocation;
 import fpt.g31.fsmis.entity.User;
-import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -11,7 +9,7 @@ import java.util.Optional;
 
 public interface UserRepos extends JpaRepository<User, Long> {
 
-    User findByPhone(String phone);
+    Optional<User> findByPhone(String phone);
 
     boolean existsByPhone(String phone);
 
@@ -24,5 +22,5 @@ public interface UserRepos extends JpaRepository<User, Long> {
     @Query(value = "select distinct employee_id \n" +
             "from tbl_employee_list tel ", nativeQuery = true)
     List<Long> getAllStaffId();
-    
+
 }

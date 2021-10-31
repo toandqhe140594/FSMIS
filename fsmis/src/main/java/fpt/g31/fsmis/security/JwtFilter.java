@@ -55,10 +55,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
     public User getUserFromToken(HttpServletRequest request) {
         String phone = jwtProvider.getPhoneFromJwtToken(getJwtTokenFromRequest(request));
-        User user = userRepos.findByPhone(phone);
-        if (user == null) {
-            throw new ValidationException("Người dùng không tồn tại");
-        }
-        return user;
+        return userRepos.findByPhone(phone)
+                .orElseThrow(() -> new ValidationException("Người dùng không tồn tại"));
     }
 }
