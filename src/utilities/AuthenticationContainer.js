@@ -3,8 +3,8 @@ import React, { useEffect } from "react";
 
 import { ROLE_USER } from "../constants";
 import AdminStackNavigator from "../navigations/AdminStackNavigator";
+import AuthenticationStackNavigator from "../navigations/AuthenticationStackNavigator";
 import RootStackNavigator from "../navigations/RootStackNavigator";
-import Login from "../screens/LoginScreen";
 import LogoScreen from "../screens/LogoScreen";
 
 const AuthenticationContainer = () => {
@@ -29,7 +29,7 @@ const AuthenticationContainer = () => {
 
   return (
     <>
-      {loginState.authToken === null && <Login />}
+      {loginState.authToken === null && <AuthenticationStackNavigator />}
       {loginState.authToken !== null &&
         (userRole === ROLE_USER ? (
           <RootStackNavigator />
