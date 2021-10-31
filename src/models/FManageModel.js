@@ -12,7 +12,9 @@ const model = {
   listOfLake: [],
   lakeDetail: {},
 
+  staffManagementErrorMsg: "",
   listOfStaff: [],
+  staffOverview: {},
   staffDetail: {
     name: "Đào Quốc Toản",
     dob: "15/10/2021",
@@ -309,7 +311,7 @@ const model = {
   }),
 
   setCatchReportList: action((state, payload) => {
-    state.locationDetails = payload;
+    state.catchReportHistory = payload;
   }),
   getCatchReportList: thunk(async (actions, payload, { getState }) => {}),
 
@@ -323,10 +325,27 @@ const model = {
   // START OF STAFF RELATED SECTION
 
   /**
+   * Set error message for staff related stuff
+   */
+  setStaffManagementErrorMsg: action((state, payload) => {
+    state.staffManagementErrorMsg = payload;
+  }),
+  /**
    * Set list of staffs data
    */
   setListOfStaff: action((state, payload) => {
     state.listOfStaff = payload;
+  }),
+  /**
+   * Set data for staff overview
+   * @param {Object} [payload] the payload pass to function
+   * @param {Number} [payload.id] the id of the staff
+   * @param {String} [payload.name] the name of the staff
+   * @param {String} [payload.avatar] the avatar of the staff
+   * @param {String} [payload.phone] the phone of the staff
+   */
+  setStaffOverview: action((state, payload) => {
+    state.staffOverview = payload;
   }),
   /**
    * Get data for list of staff from api
@@ -335,6 +354,57 @@ const model = {
     const { data } = await http.get(`location/${getState().currentId}/staff`);
     actions.setListOfStaff(data);
   }),
+  /**
+   * Find overview data of staff by phone
+   * @param {Object} [payload] the payload pass to function
+   * @param {String} [payload.phone] the phone of the staff
+   */
+  findStaffByPhone: thunk(async (actions, payload) => {
+    const { phone } = payload;
+    const { data, status } = await http.post(
+      `location/${API_URL.STAFF_FIND_BY_PHONE}`,
+      {
+        phone,
+      },
+    );
+    if (status === 200) actions.setStaffOverview(data);
+    else actions.setStaffOverview({});
+  }),
+  /**
+   * Find overview data of staff by phone
+   * @param {Object} [payload] the payload pass to function
+   * @param {String} [payload.userId] the userId of the staff that need to be added
+   */
+  addStaffById: thunk(async (actions, payload, { getState }) => {
+    const { currentId } = getState();
+    const { userId } = payload;
+    const { data, status } = await http.post(
+      `location/${currentId}/${API_URL.STAFF_ADD}`,
+      {
+        userId,
+      },
+    );
+    if (status === 200) actions.getListOfStaff();
+    else actions.setStaffManagementErrorMsg(data.responseText);
+  }),
+  /**
+   * Find overview data of staff by phone
+   * @param {Object} [payload] the payload pass to function
+   * @param {String} [payload.userId] the userId of the staff that need to be delete
+   */
+  deleteStaffById: thunk(async (actions, payload, { getState }) => {
+    const { currentId } = getState();
+    const { userId } = payload;
+    const { data, status } = await http.post(
+      `location/${currentId}/${API_URL.STAFF_DELETE}`,
+      {
+        userId,
+      },
+    );
+    if (status === 200) actions.getListOfStaff();
+    else actions.setStaffManagementErrorMsg(data.responseText);
+  }),
+
   // END OF STAFF RELATED SECTION
 
   setCheckInHistoryList: action((state, payload) => {
