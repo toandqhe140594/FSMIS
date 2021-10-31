@@ -30,44 +30,80 @@ import java.util.Optional;
 @Service
 @AllArgsConstructor
 public class FishingLocationService {
+    private static final String UNAUTHORIZED = "Không có quyền truy cập thông tin;";
+    private static final String LOCATION_NOT_FOUND = "Không tìm thấy hồ câu!";
+
+    private final JwtFilter jwtFilter;
     private FishingLocationRepos fishingLocationRepos;
     private UserRepos userRepos;
     private WardRepos wardRepos;
     private ReviewRepos reviewRepos;
     private ModelMapper modelMapper;
-    private final JwtFilter jwtFilter;
-
-    private static final String UNAUTHORIZED = "Không có quyền truy cập thông tin;";
-    private static final String LOCATION_NOT_FOUND = "Không tìm thấy hồ câu!";
 
     public List<FishingLocation> findAllFishingLocations() {
         return fishingLocationRepos.findAll();
     }
 
-    public String createFishingLocation(FishingLocationDtoIn fishingLocationDtoIn) {
-        User owner = userRepos.findById(fishingLocationDtoIn.getOwnerId())
-                .orElseThrow(() -> new NotFoundException(LOCATION_NOT_FOUND));
+    public ResponseTextDtoOut createFishingLocation(FishingLocationDtoIn fishingLocationDtoIn,
+                                                    HttpServletRequest request) {
+        User owner = jwtFilter.getUserFromToken(request);
         Ward ward = wardRepos.findById(fishingLocationDtoIn.getWardId())
                 .orElseThrow(() -> new NotFoundException("Không tìm thấy phường/xã!"));
-        FishingLocation fishingLocation = modelMapper.map(fishingLocationDtoIn, FishingLocation.class);
-        fishingLocation.setCreatedDate(LocalDateTime.now());
-        fishingLocation.setLastEditedDate(LocalDateTime.now());
-        fishingLocation.setOwner(owner);
-        fishingLocation.setWard(ward);
-        fishingLocation.setActive(true);
-        fishingLocation.setVerify(false);
+        FishingLocation fishingLocation = FishingLocation.builder()
+                .name(fishingLocationDtoIn.getName())
+                .longitude(fishingLocationDtoIn.getLongitude())
+                .latitude(fishingLocationDtoIn.getLatitude())
+                .address(fishingLocationDtoIn.getAddress())
+                .ward(ward)
+                .phone(fishingLocationDtoIn.getPhone())
+                .description(fishingLocationDtoIn.getDescription())
+                .website(fishingLocationDtoIn.getWebsite())
+                .service(fishingLocationDtoIn.getService())
+                .timetable(fishingLocationDtoIn.getTimetable())
+                .rule(fishingLocationDtoIn.getRule())
+                .imageUrl(ServiceUtils.mergeString(fishingLocationDtoIn.getImages()))
+                .createdDate(LocalDateTime.now())
+                .lastEditedDate(LocalDateTime.now())
+                .active(true)
+                .verify(false)
+                .owner(owner)
+                .build();
         fishingLocationRepos.save(fishingLocation);
-        return "Tạo hồ câu thành công!";
+        return new ResponseTextDtoOut("Tạo hồ câu thành công!");
+    }
+
+    public ResponseTextDtoOut editFishingLocation(FishingLocationDtoIn fishingLocationDtoIn, HttpServletRequest request, Long locationId) {
+        FishingLocation location = fishingLocationRepos.findById(locationId)
+                .orElseThrow(() -> new ValidationException(LOCATION_NOT_FOUND));
+        User user = jwtFilter.getUserFromToken(request);
+        if (!location.getOwner().equals(user)) {
+            throw new ValidationException("Không có quyền chỉnh sửa hồ");
+        }
+        Ward ward = wardRepos.findById(fishingLocationDtoIn.getWardId())
+                .orElseThrow(() -> new NotFoundException("Không tìm thấy phường/xã!"));
+        location.setName(fishingLocationDtoIn.getName());
+        location.setPhone(fishingLocationDtoIn.getPhone());
+        location.setWebsite(fishingLocationDtoIn.getWebsite());
+        location.setAddress(fishingLocationDtoIn.getAddress());
+        location.setWard(ward);
+        location.setLongitude(fishingLocationDtoIn.getLongitude());
+        location.setLatitude(fishingLocationDtoIn.getLatitude());
+        location.setDescription(location.getDescription());
+        location.setTimetable(fishingLocationDtoIn.getTimetable());
+        location.setService(fishingLocationDtoIn.getService());
+        location.setRule(fishingLocationDtoIn.getRule());
+        location.setImageUrl(ServiceUtils.mergeString(fishingLocationDtoIn.getImages()));
+        location.setLastEditedDate(LocalDateTime.now());
+        location.setVerify(false);
+        fishingLocationRepos.save(location);
+        return new ResponseTextDtoOut("Chỉnh sửa thông tin hồ câu thành công!");
     }
 
     public ResponseTextDtoOut disableFishingLocation(HttpServletRequest request, Long locationId) {
         User user = jwtFilter.getUserFromToken(request);
-        Optional<FishingLocation> findFishingLocation = fishingLocationRepos.findById(locationId);
-        if (!findFishingLocation.isPresent()) {
-            throw new FishingLocationNotFoundException(locationId);
-        }
-        FishingLocation location = findFishingLocation.get();
-        if(!location.getEmployeeList().isEmpty()) {
+        FishingLocation location = fishingLocationRepos.findById(locationId)
+                .orElseThrow(() -> new ValidationException(LOCATION_NOT_FOUND));
+        if (!location.getEmployeeList().isEmpty()) {
             throw new ValidationException("Vẫn còn nhân viên đang làm việc trong khu vực của bạn.");
         }
         if (location.getOwner() != user) {
@@ -89,8 +125,8 @@ public class FishingLocationService {
         dtoOut.setAddressFromWard(ServiceUtils.getAddressByWard(location.getWard()));
         dtoOut.setImage(ServiceUtils.splitString(location.getImageUrl()));
         dtoOut.setSaved(false);
-        for(FishingLocation fishinglocation : user.getSavedFishingLocations()) {
-            if(fishinglocation == location) {
+        for (FishingLocation fishinglocation : user.getSavedFishingLocations()) {
+            if (fishinglocation == location) {
                 dtoOut.setSaved(true);
             }
         }
@@ -110,8 +146,8 @@ public class FishingLocationService {
         User user = jwtFilter.getUserFromToken(request);
         FishingLocation itemToSave = fishingLocationRepos.getById(locationId);
         List<FishingLocation> saved = user.getSavedFishingLocations();
-        for(FishingLocation fishingLocation : saved) {
-            if(fishingLocation == itemToSave) {
+        for (FishingLocation fishingLocation : saved) {
+            if (fishingLocation == itemToSave) {
                 saved.remove(fishingLocation);
                 user.setSavedFishingLocations(saved);
                 userRepos.save(user);
@@ -136,7 +172,7 @@ public class FishingLocationService {
         int total = saved.size();
         int start = (int) pageRequest.getOffset();
         int end = Math.min((start + pageRequest.getPageSize()), total);
-        if(start > end) {
+        if (start > end) {
             start = end = 0;
         }
         Page<FishingLocation> savedFishingLocations = new PageImpl<>(saved.subList(start, end), pageRequest, total);
@@ -169,7 +205,7 @@ public class FishingLocationService {
         User user = jwtFilter.getUserFromToken(request);
         List<FishingLocation> fishingLocationList = fishingLocationRepos.findByOwnerIdAndActiveIsTrue(user.getId());
         List<FishingLocationItemDtoOut> fishingLocationItemDtoOutList = new ArrayList<>();
-        for (FishingLocation fishingLocation: fishingLocationList) {
+        for (FishingLocation fishingLocation : fishingLocationList) {
             FishingLocationItemDtoOut fishingLocationItemDtoOut = FishingLocationItemDtoOut.builder()
                     .id(fishingLocation.getId())
                     .name(fishingLocation.getName())
@@ -187,7 +223,7 @@ public class FishingLocationService {
         User user = jwtFilter.getUserFromToken(request);
         FishingLocation location = fishingLocationRepos.findById(locationId)
                 .orElseThrow(() -> new ValidationException(LOCATION_NOT_FOUND));
-        if (location.getOwner() != user){
+        if (location.getOwner() != user) {
             throw new UnauthorizedException(UNAUTHORIZED);
         }
         List<StaffDtoOut> staffDtoOuts = new ArrayList<>();
@@ -207,7 +243,7 @@ public class FishingLocationService {
         User owner = jwtFilter.getUserFromToken(request);
         FishingLocation location = fishingLocationRepos.findById(locationId)
                 .orElseThrow(() -> new ValidationException(LOCATION_NOT_FOUND));
-        if (location.getOwner() != owner){
+        if (location.getOwner() != owner) {
             throw new UnauthorizedException(UNAUTHORIZED);
         }
         if (userRepos.getAllStaffId().contains(userId) || userRepos.getAllOwnerId().contains(userId)) {
@@ -232,7 +268,7 @@ public class FishingLocationService {
         User owner = jwtFilter.getUserFromToken(request);
         FishingLocation location = fishingLocationRepos.findById(locationId)
                 .orElseThrow(() -> new ValidationException(LOCATION_NOT_FOUND));
-        if (location.getOwner() != owner){
+        if (location.getOwner() != owner) {
             throw new UnauthorizedException(UNAUTHORIZED);
         }
         User staff = userRepos.findById(staffId)

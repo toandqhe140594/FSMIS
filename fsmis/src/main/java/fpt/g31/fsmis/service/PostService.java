@@ -49,26 +49,39 @@ public class PostService {
                 .build();
     }
 
-    public ResponseTextDtoOut createPost(Long locationId, PostDtoIn postDtoIn, HttpServletRequest request) {
+    public ResponseTextDtoOut savePost(Long locationId, PostDtoIn postDtoIn, HttpServletRequest request, boolean isCreate) {
         User user = jwtFilter.getUserFromToken(request);
         FishingLocation location = locationRepos.findById(locationId)
                 .orElseThrow(() -> new ValidationException("Không tìm thấy hồ câu!"));
         if (!location.getOwner().equals(user)
                 && !location.getEmployeeList().contains(user)) {
-            throw new ValidationException("Không có quyền tạo bài viết");
+            throw new ValidationException("Không có quyền tạo/chỉnh sửa bài viết!");
         }
-        Post post = Post.builder()
-                .content(postDtoIn.getContent())
-                .postTime(LocalDateTime.now())
-                .postType(postDtoIn.getPostType())
-                .edited(false)
-                .active(true)
-                .attachmentType(postDtoIn.getAttachmentType())
-                .url(postDtoIn.getUrl())
-                .fishingLocation(location)
-                .build();
-        postRepos.save(post);
-        return new ResponseTextDtoOut("Tạo bài viết thành công!");
+        if (isCreate) {
+            Post post = Post.builder()
+                    .content(postDtoIn.getContent())
+                    .postTime(LocalDateTime.now())
+                    .postType(postDtoIn.getPostType())
+                    .edited(false)
+                    .active(true)
+                    .attachmentType(postDtoIn.getAttachmentType())
+                    .url(postDtoIn.getUrl())
+                    .fishingLocation(location)
+                    .build();
+            postRepos.save(post);
+            return new ResponseTextDtoOut("Tạo bài viết thành công!");
+        } else {
+            Post post = postRepos.findById(postDtoIn.getId())
+                    .orElseThrow(() -> new ValidationException("Không tìm thấy bài viết"));
+            post.setContent(postDtoIn.getContent());
+            post.setPostType(postDtoIn.getPostType());
+            post.setAttachmentType(postDtoIn.getAttachmentType());
+            post.setUrl(postDtoIn.getUrl());
+            post.setEdited(true);
+            postRepos.save(post);
+            return new ResponseTextDtoOut("Chỉnh sửa bài viết thành công!");
+        }
+
     }
 
     public ResponseTextDtoOut deletePost(Long postId, HttpServletRequest request) {

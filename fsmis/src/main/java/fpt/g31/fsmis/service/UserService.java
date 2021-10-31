@@ -2,10 +2,11 @@ package fpt.g31.fsmis.service;
 
 import fpt.g31.fsmis.dto.input.ChangePasswordDtoIn;
 import fpt.g31.fsmis.dto.input.PersonalInfoDtoIn;
-import fpt.g31.fsmis.dto.input.PhoneDtoIn;
 import fpt.g31.fsmis.dto.output.*;
-import fpt.g31.fsmis.entity.*;
-import fpt.g31.fsmis.repository.*;
+import fpt.g31.fsmis.entity.Notification;
+import fpt.g31.fsmis.entity.User;
+import fpt.g31.fsmis.repository.UserRepos;
+import fpt.g31.fsmis.repository.WardRepos;
 import fpt.g31.fsmis.security.JwtFilter;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -15,10 +16,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ValidationException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -70,7 +71,7 @@ public class UserService {
     }
 
     public PaginationDtoOut getPersonalNotification(HttpServletRequest request, int pageNo) {
-        if(pageNo <= 0) {
+        if (pageNo <= 0) {
             throw new ValidationException("Địa chỉ không tồn tại");
         }
         User user = jwtFilter.getUserFromToken(request);
@@ -81,13 +82,13 @@ public class UserService {
         int total = notifications.size();
         int start = (int) pageRequest.getOffset();
         int end = Math.min((start + pageRequest.getPageSize()), total);
-        if(start > end) {
+        if (start > end) {
             start = end = 0;
         }
         Page<Notification> notificationList = new PageImpl<>(notifications.subList(start, end), pageRequest, total);
 
         List<NotificationDtoOut> output = new ArrayList<>();
-        for(Notification notification : notificationList) {
+        for (Notification notification : notificationList) {
             NotificationDtoOut item = modelMapper.map(notification, NotificationDtoOut.class);
             item.setTime(ServiceUtils.convertDateToString(notification.getTime()));
             output.add(item);
@@ -99,8 +100,8 @@ public class UserService {
                 .build();
     }
 
-    public StaffDtoOut findUserByPhone(PhoneDtoIn phoneDtoIn) {
-        User user = userRepos.findByPhone(phoneDtoIn.getPhone().trim())
+    public StaffDtoOut findUserByPhone(String phone) {
+        User user = userRepos.findByPhone(phone.trim())
                 .orElseThrow(() -> new ValidationException("Tài khoản không tồn tại"));
         return StaffDtoOut.builder()
                 .id(user.getId())
