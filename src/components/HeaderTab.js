@@ -58,12 +58,13 @@ const HeaderTab = ({ name, isVerified, flagable, id }) => {
 };
 
 HeaderTab.propTypes = {
-  name: PropTypes.string.isRequired,
+  name: PropTypes.string,
   isVerified: PropTypes.bool,
   flagable: PropTypes.bool,
   id: PropTypes.number,
 };
 HeaderTab.defaultProps = {
+  name: "",
   isVerified: false,
   flagable: false,
   id: null,
