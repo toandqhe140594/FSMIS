@@ -2,6 +2,7 @@ package fpt.g31.fsmis.service;
 
 import fpt.g31.fsmis.dto.input.ChangePasswordDtoIn;
 import fpt.g31.fsmis.dto.input.PersonalInfoDtoIn;
+import fpt.g31.fsmis.dto.input.PhoneDtoIn;
 import fpt.g31.fsmis.dto.output.*;
 import fpt.g31.fsmis.entity.*;
 import fpt.g31.fsmis.repository.*;
@@ -98,8 +99,9 @@ public class UserService {
                 .build();
     }
 
-    public StaffDtoOut findUserByPhone(String phone) {
-        User user = userRepos.findByPhone(phone);
+    public StaffDtoOut findUserByPhone(PhoneDtoIn phoneDtoIn) {
+        User user = userRepos.findByPhone(phoneDtoIn.getPhone().trim())
+                .orElseThrow(() -> new ValidationException("Tài khoản không tồn tại"));
         return StaffDtoOut.builder()
                 .id(user.getId())
                 .name(user.getFullName())

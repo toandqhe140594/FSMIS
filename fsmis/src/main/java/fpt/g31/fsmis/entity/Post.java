@@ -34,6 +34,8 @@ public class Post {
     @Column(columnDefinition = "TEXT")
     private String url;
 
+    private AttachmentType attachmentType;
+
     @ManyToOne
     private FishingLocation fishingLocation;
 }

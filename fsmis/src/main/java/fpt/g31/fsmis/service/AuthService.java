@@ -59,7 +59,8 @@ public class AuthService {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(authDtoIn.getPhone(), authDtoIn.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        User user = userRepos.findByPhone(authDtoIn.getPhone());
+        User user = userRepos.findByPhone(authDtoIn.getPhone())
+                .orElseThrow(() -> new ValidationException("Tài khoản không tồn tại!"));
         if (!user.isActive()) {
             throw new ValidationException("Tài khoản này đã bị vô hiệu hóa");
         }
@@ -79,7 +80,8 @@ public class AuthService {
     }
 
     public ResponseTextDtoOut changeForgotPassword(AuthDtoIn authDtoIn) {
-        User user = userRepos.findByPhone(authDtoIn.getPhone());
+        User user = userRepos.findByPhone(authDtoIn.getPhone())
+                .orElseThrow(() -> new ValidationException("Tài khoản không tồn tại"));
         user.setPassword(passwordEncoder.encode(authDtoIn.getPassword()));
         userRepos.save(user);
         return new ResponseTextDtoOut("Đổi mật khẩu thành công");

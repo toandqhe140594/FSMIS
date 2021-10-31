@@ -1,9 +1,7 @@
 package fpt.g31.fsmis.controller;
 
 
-import fpt.g31.fsmis.dto.input.FishingLocationDtoIn;
-import fpt.g31.fsmis.dto.input.LakeDtoIn;
-import fpt.g31.fsmis.dto.input.ReviewDtoIn;
+import fpt.g31.fsmis.dto.input.*;
 import fpt.g31.fsmis.entity.FishingLocation;
 import fpt.g31.fsmis.service.*;
 import lombok.AllArgsConstructor;
@@ -64,7 +62,7 @@ public class FishingLocationController {
     }
 
     @GetMapping("/manager")
-    public ResponseEntity<Object> getOwnedFishingLocation(HttpServletRequest request){
+    public ResponseEntity<Object> getOwnedFishingLocation(HttpServletRequest request) {
         return new ResponseEntity<>(fishingLocationService.getOwnedFishingLocation(request), HttpStatus.OK);
     }
 
@@ -165,12 +163,21 @@ public class FishingLocationController {
         return new ResponseEntity<>(postService.getPostByLocationId(locationId, pageNo), HttpStatus.OK);
     }
 
-//    @GetMapping("/{locationId}/post/add")
+    @PostMapping("/{locationId}/post/add")
+    public ResponseEntity<Object> createPost(@PathVariable Long locationId,
+                                             @RequestBody @Valid PostDtoIn postDtoIn,
+                                             HttpServletRequest request) {
+        return new ResponseEntity<>(postService.createPost(locationId, postDtoIn, request), HttpStatus.OK);
+    }
 //
 //    @PostMapping("/{locationId}/post/{postId}/edit")
 //
-//    @DeleteMapping("/{locationId}/post/{postId}/delete")
-
+    @DeleteMapping("/{locationId}/post/{postId}/delete")
+    public ResponseEntity<Object> deletePost(@PathVariable Long locationId,
+                                             @PathVariable Long postId,
+                                             HttpServletRequest request){
+        return new ResponseEntity<>(postService.deletePost(postId, request), HttpStatus.OK);
+    }
     // STAFF
 
     @GetMapping("/{locationId}/staff")
@@ -179,15 +186,16 @@ public class FishingLocationController {
     }
 
     @PostMapping("/findUserByPhone")
-    public ResponseEntity<Object> findUserByPhone(@RequestBody String phone){
-        return new ResponseEntity<>(userService.findUserByPhone(phone), HttpStatus.OK);
+    public ResponseEntity<Object> findUserByPhone(@RequestBody @Valid PhoneDtoIn phoneDtoIn) {
+        return new ResponseEntity<>(userService.findUserByPhone(phoneDtoIn), HttpStatus.OK);
     }
 
     @PostMapping("/{locationId}/staff/add")
     public ResponseEntity<Object> addStaff(@PathVariable Long locationId, HttpServletRequest request, @RequestBody Long userId) {
         return new ResponseEntity<>(fishingLocationService.addStaff(locationId, userId, request), HttpStatus.OK);
     }
-//
+
+    //
 //    @GetMapping("/{locationId}/staff/{staffId}")
 //
     @DeleteMapping("/{locationId}/staff/{staffId}/delete")

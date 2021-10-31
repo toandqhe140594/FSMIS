@@ -5,7 +5,9 @@ import fpt.g31.fsmis.exception.NotFoundException;
 import fpt.g31.fsmis.exception.UnauthorizedException;
 import javax.validation.ValidationException;
 import com.twilio.exception.ApiException;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -46,7 +48,10 @@ public class GlobalAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     ResponseTextDtoOut methodArgumentNotValidExceptionHandler(MethodArgumentNotValidException ex) {
         ex.printStackTrace();
-        return new ResponseTextDtoOut(ex.getMessage());
+        return new ResponseTextDtoOut(
+                ex.getBindingResult().getFieldErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage)
+                        .collect(java.util.stream.Collectors.joining(", "))
+        );
     }
 
     @ResponseBody
@@ -86,7 +91,7 @@ public class GlobalAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     ResponseTextDtoOut methodArgumentTypeMismatchExceptionHandler(MethodArgumentTypeMismatchException ex) {
         ex.printStackTrace();
-        return new ResponseTextDtoOut("Địa chỉ không tồn tại");
+        return new ResponseTextDtoOut(ex.getMessage());
     }
 
     @ResponseBody
@@ -95,5 +100,13 @@ public class GlobalAdvice {
     ResponseTextDtoOut httpRequestMethodNotSupportedExceptionHandler(HttpRequestMethodNotSupportedException ex) {
         ex.printStackTrace();
         return new ResponseTextDtoOut("Không hỗ trợ phương thức này cho API");
+    }
+
+    @ResponseBody
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    ResponseTextDtoOut httpMessageNotReadableExceptionHandler(HttpMessageNotReadableException ex) {
+        ex.printStackTrace();
+        return new ResponseTextDtoOut("Form điền thiếu thông tin");
     }
 }
