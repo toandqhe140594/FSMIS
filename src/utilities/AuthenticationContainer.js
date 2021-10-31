@@ -1,5 +1,6 @@
 import { useStoreActions, useStoreState } from "easy-peasy";
 import React, { useEffect } from "react";
+import { ToastAndroid } from "react-native";
 
 import { ROLE_USER } from "../constants";
 import AdminStackNavigator from "../navigations/AdminStackNavigator";
@@ -20,7 +21,14 @@ const AuthenticationContainer = () => {
   }, []);
 
   useEffect(() => {
-    if (errorMessage) alert(errorMessage);
+    if (errorMessage)
+      ToastAndroid.showWithGravityAndOffset(
+        errorMessage,
+        ToastAndroid.LONG,
+        ToastAndroid.BOTTOM,
+        25,
+        50,
+      );
   }, [errorMessage]);
 
   if (loginState.isLoading) {
