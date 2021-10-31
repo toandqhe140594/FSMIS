@@ -1,3 +1,4 @@
+import { useNavigation } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import { Button, Center } from "native-base";
 import React, { useEffect, useState } from "react";
@@ -6,8 +7,11 @@ import { SearchBar } from "react-native-elements";
 
 import EmployeeDetailBox from "../components/EmployeeDetailBox";
 import HeaderTab from "../components/HeaderTab";
+import { goBack } from "../navigations";
 
 const FManageEmployeeAddScreen = () => {
+  const navigation = useNavigation();
+
   const { staffOverview, staffManagementErrorMsg } = useStoreState(
     (states) => states.FManageModel,
   );
@@ -19,6 +23,8 @@ const FManageEmployeeAddScreen = () => {
   } = useStoreActions((actions) => actions.FManageModel);
 
   const [search, setSearch] = useState("");
+  const [success, setSuccess] = useState(false);
+
   const updateSearch = (searchKey) => {
     setSearch(searchKey);
   };
@@ -28,15 +34,8 @@ const FManageEmployeeAddScreen = () => {
   };
 
   const addStaff = () => {
-    addStaffById({ userId: staffOverview.id });
+    addStaffById({ userId: staffOverview.id, setSuccess });
   };
-
-  useEffect(() => {
-    return () => {
-      setStaffOverview({});
-      setStaffManagementErrorMsg("");
-    };
-  }, []);
 
   useEffect(() => {
     // If error occur
@@ -49,6 +48,26 @@ const FManageEmployeeAddScreen = () => {
         50,
       );
   }, [staffManagementErrorMsg]);
+
+  useEffect(() => {
+    if (success) {
+      ToastAndroid.showWithGravityAndOffset(
+        "Thêm nhân viên thành công",
+        ToastAndroid.LONG,
+        ToastAndroid.BOTTOM,
+        25,
+        50,
+      );
+      goBack(navigation);
+    }
+  }, [success]);
+
+  useEffect(() => {
+    return () => {
+      setStaffOverview({});
+      setStaffManagementErrorMsg("");
+    };
+  }, []);
 
   return (
     <>
