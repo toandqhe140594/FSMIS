@@ -42,7 +42,7 @@ const VerifyCatchReportScreen = ({ angler }) => {
   };
   return (
     <Box>
-      <HeaderTab name="Xác báo cá" />
+      <HeaderTab name="Xác nhận báo cá" />
       <Box
         w={{
           base: "100%",
