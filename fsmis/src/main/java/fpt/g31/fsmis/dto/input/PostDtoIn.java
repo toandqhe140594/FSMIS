@@ -12,6 +12,8 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PostDtoIn {
+    private Long id;
+
     @NotNull
     private PostType postType;
 

@@ -167,12 +167,17 @@ public class FishingLocationController {
     public ResponseEntity<Object> createPost(@PathVariable Long locationId,
                                              @RequestBody @Valid PostDtoIn postDtoIn,
                                              HttpServletRequest request) {
-        return new ResponseEntity<>(postService.createPost(locationId, postDtoIn, request), HttpStatus.OK);
+        return new ResponseEntity<>(postService.savePost(locationId, postDtoIn, request, true), HttpStatus.OK);
     }
-//
-//    @PostMapping("/{locationId}/post/{postId}/edit")
-//
-    @DeleteMapping("/{locationId}/post/{postId}/delete")
+
+    @PutMapping("/{locationId}/post/edit")
+    public ResponseEntity<Object> editPost(@PathVariable Long locationId,
+                                           HttpServletRequest request,
+                                           @RequestBody PostDtoIn postDtoIn) {
+        return new ResponseEntity<>(postService.savePost(locationId, postDtoIn, request, false), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{locationId}/post/delete/{postId}")
     public ResponseEntity<Object> deletePost(@PathVariable Long locationId,
                                              @PathVariable Long postId,
                                              HttpServletRequest request){
@@ -185,20 +190,20 @@ public class FishingLocationController {
         return new ResponseEntity<>(fishingLocationService.getStaff(locationId, request), HttpStatus.OK);
     }
 
-    @PostMapping("/findUserByPhone")
-    public ResponseEntity<Object> findUserByPhone(@RequestBody @Valid PhoneDtoIn phoneDtoIn) {
-        return new ResponseEntity<>(userService.findUserByPhone(phoneDtoIn), HttpStatus.OK);
+    @PostMapping("/findUserByPhone/{phone}")
+    public ResponseEntity<Object> findUserByPhone(@PathVariable String phone) {
+        return new ResponseEntity<>(userService.findUserByPhone(phone), HttpStatus.OK);
     }
 
-    @PostMapping("/{locationId}/staff/add")
-    public ResponseEntity<Object> addStaff(@PathVariable Long locationId, HttpServletRequest request, @RequestBody Long userId) {
+    @PostMapping("/{locationId}/staff/add/{userId}")
+    public ResponseEntity<Object> addStaff(@PathVariable Long locationId, HttpServletRequest request, @PathVariable Long userId) {
         return new ResponseEntity<>(fishingLocationService.addStaff(locationId, userId, request), HttpStatus.OK);
     }
 
     //
 //    @GetMapping("/{locationId}/staff/{staffId}")
 //
-    @DeleteMapping("/{locationId}/staff/{staffId}/delete")
+    @DeleteMapping("/{locationId}/staff/delete/{staffId}")
     public ResponseEntity<Object> deleteStaff(@PathVariable Long locationId, @PathVariable Long staffId, HttpServletRequest request) {
         return new ResponseEntity<>(fishingLocationService.deleteStaff(locationId, staffId, request), HttpStatus.OK);
     }

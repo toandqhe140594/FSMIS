@@ -30,15 +30,14 @@ import java.util.Optional;
 @Service
 @AllArgsConstructor
 public class FishingLocationService {
+    private static final String UNAUTHORIZED = "Không có quyền truy cập thông tin;";
+    private static final String LOCATION_NOT_FOUND = "Không tìm thấy hồ câu!";
+    private final JwtFilter jwtFilter;
     private FishingLocationRepos fishingLocationRepos;
     private UserRepos userRepos;
     private WardRepos wardRepos;
     private ReviewRepos reviewRepos;
     private ModelMapper modelMapper;
-    private final JwtFilter jwtFilter;
-
-    private static final String UNAUTHORIZED = "Không có quyền truy cập thông tin;";
-    private static final String LOCATION_NOT_FOUND = "Không tìm thấy hồ câu!";
 
     public List<FishingLocation> findAllFishingLocations() {
         return fishingLocationRepos.findAll();
@@ -67,7 +66,7 @@ public class FishingLocationService {
             throw new FishingLocationNotFoundException(locationId);
         }
         FishingLocation location = findFishingLocation.get();
-        if(!location.getEmployeeList().isEmpty()) {
+        if (!location.getEmployeeList().isEmpty()) {
             throw new ValidationException("Vẫn còn nhân viên đang làm việc trong khu vực của bạn.");
         }
         if (location.getOwner() != user) {
@@ -89,8 +88,8 @@ public class FishingLocationService {
         dtoOut.setAddressFromWard(ServiceUtils.getAddressByWard(location.getWard()));
         dtoOut.setImage(ServiceUtils.splitString(location.getImageUrl()));
         dtoOut.setSaved(false);
-        for(FishingLocation fishinglocation : user.getSavedFishingLocations()) {
-            if(fishinglocation == location) {
+        for (FishingLocation fishinglocation : user.getSavedFishingLocations()) {
+            if (fishinglocation == location) {
                 dtoOut.setSaved(true);
             }
         }
@@ -110,8 +109,8 @@ public class FishingLocationService {
         User user = jwtFilter.getUserFromToken(request);
         FishingLocation itemToSave = fishingLocationRepos.getById(locationId);
         List<FishingLocation> saved = user.getSavedFishingLocations();
-        for(FishingLocation fishingLocation : saved) {
-            if(fishingLocation == itemToSave) {
+        for (FishingLocation fishingLocation : saved) {
+            if (fishingLocation == itemToSave) {
                 saved.remove(fishingLocation);
                 user.setSavedFishingLocations(saved);
                 userRepos.save(user);
@@ -136,7 +135,7 @@ public class FishingLocationService {
         int total = saved.size();
         int start = (int) pageRequest.getOffset();
         int end = Math.min((start + pageRequest.getPageSize()), total);
-        if(start > end) {
+        if (start > end) {
             start = end = 0;
         }
         Page<FishingLocation> savedFishingLocations = new PageImpl<>(saved.subList(start, end), pageRequest, total);
@@ -169,7 +168,7 @@ public class FishingLocationService {
         User user = jwtFilter.getUserFromToken(request);
         List<FishingLocation> fishingLocationList = fishingLocationRepos.findByOwnerIdAndActiveIsTrue(user.getId());
         List<FishingLocationItemDtoOut> fishingLocationItemDtoOutList = new ArrayList<>();
-        for (FishingLocation fishingLocation: fishingLocationList) {
+        for (FishingLocation fishingLocation : fishingLocationList) {
             FishingLocationItemDtoOut fishingLocationItemDtoOut = FishingLocationItemDtoOut.builder()
                     .id(fishingLocation.getId())
                     .name(fishingLocation.getName())
@@ -187,7 +186,7 @@ public class FishingLocationService {
         User user = jwtFilter.getUserFromToken(request);
         FishingLocation location = fishingLocationRepos.findById(locationId)
                 .orElseThrow(() -> new ValidationException(LOCATION_NOT_FOUND));
-        if (location.getOwner() != user){
+        if (location.getOwner() != user) {
             throw new UnauthorizedException(UNAUTHORIZED);
         }
         List<StaffDtoOut> staffDtoOuts = new ArrayList<>();
@@ -207,7 +206,7 @@ public class FishingLocationService {
         User owner = jwtFilter.getUserFromToken(request);
         FishingLocation location = fishingLocationRepos.findById(locationId)
                 .orElseThrow(() -> new ValidationException(LOCATION_NOT_FOUND));
-        if (location.getOwner() != owner){
+        if (location.getOwner() != owner) {
             throw new UnauthorizedException(UNAUTHORIZED);
         }
         if (userRepos.getAllStaffId().contains(userId) || userRepos.getAllOwnerId().contains(userId)) {
@@ -232,7 +231,7 @@ public class FishingLocationService {
         User owner = jwtFilter.getUserFromToken(request);
         FishingLocation location = fishingLocationRepos.findById(locationId)
                 .orElseThrow(() -> new ValidationException(LOCATION_NOT_FOUND));
-        if (location.getOwner() != owner){
+        if (location.getOwner() != owner) {
             throw new UnauthorizedException(UNAUTHORIZED);
         }
         User staff = userRepos.findById(staffId)
