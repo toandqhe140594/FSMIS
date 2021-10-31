@@ -31,12 +31,6 @@ const validationSchema = yup.object().shape({
   isPublic: yup.bool(),
 });
 
-let itemKey = 0;
-const generateKey = () => {
-  itemKey += 1;
-  return `${itemKey}`;
-};
-
 const styles = StyleSheet.create({
   sectionWrapper: {
     width: "90%",
@@ -47,15 +41,7 @@ const styles = StyleSheet.create({
 });
 
 const AnglerCatchReportScreen = () => {
-  const initCatchCard = {
-    id: generateKey(),
-    fishType: "",
-    catches: "",
-    totalWeight: "",
-    isReleased: false,
-  };
   const route = useRoute();
-  const [cardList, setCardList] = useState([initCatchCard]);
   const [imageArray, setImageArray] = useState([]);
   const methods = useForm({
     mode: "onChange",
@@ -66,25 +52,7 @@ const AnglerCatchReportScreen = () => {
   const { control, handleSubmit } = methods;
   const onSubmit = (data) => {
     console.log(data);
-    console.log(cardList);
-    console.log(imageArray);
-  };
-  const addCard = () => {
-    const newCard = initCatchCard;
-    setCardList((prev) => [...prev, newCard]);
-  };
-  const deleteCard = (id) => {
-    setCardList(cardList.filter((card) => card.id !== id));
-  };
-  const updateCard = (id, name, value) => {
-    setCardList(
-      cardList.map((card) => {
-        if (card.id === id) {
-          return { ...card, [name]: value };
-        }
-        return card;
-      }),
-    );
+    // console.log(imageArray);
   };
   const updateImageArray = (id) => {
     setImageArray(imageArray.filter((image) => image.id !== id));
@@ -129,8 +97,8 @@ const AnglerCatchReportScreen = () => {
                 label="Vị trí hồ câu"
                 placeholder="Chọn hồ câu"
                 data={[
-                  { label: "Hồ thường", val: 1 },
-                  { label: "Hồ VIP", val: 2 },
+                  { name: "Hồ thường", id: 1 },
+                  { name: "Hồ VIP", id: 2 },
                 ]}
                 controllerName="aLakeType"
               />
@@ -141,25 +109,7 @@ const AnglerCatchReportScreen = () => {
                 <Text bold fontSize="md">
                   Thông tin cá
                 </Text>
-                {/* Catch Report card list */}
-                <VStack mb={1}>
-                  {cardList.map((card) => (
-                    <CatchReportCard
-                      key={card.id}
-                      id={card.id}
-                      deleteCard={deleteCard}
-                      updateCard={updateCard}
-                    />
-                  ))}
-                </VStack>
-                {/* Add catch report card button */}
-                <Button
-                  style={styles.button}
-                  alignSelf="center"
-                  onPress={addCard}
-                >
-                  Thêm loại cá
-                </Button>
+                <CatchReportCard />
               </Stack>
             </Center>
 
