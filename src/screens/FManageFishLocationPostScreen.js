@@ -9,7 +9,7 @@ import EventPostCard from "../components/EventPostCard";
 import HeaderTab from "../components/HeaderTab";
 import { goToPostEditScreen } from "../navigations";
 
-const FLocationEventRoute = () => {
+const PostListContainerComponent = () => {
   const navigation = useNavigation();
   const [lakePostPage, setTotalPostPage] = useState(1);
 
@@ -30,11 +30,12 @@ const FLocationEventRoute = () => {
     setTotalPostPage(lakePostPage + 1);
   };
 
-  const editPostHandler = () => {
-    goToPostEditScreen(navigation);
+  const editPostHandler = (id) => {
+    goToPostEditScreen(navigation, { id });
   };
 
-  const removePostHandler = () => {
+  const removePostHandler = (id) => {
+    console.log(id);
     console.log("xoa bai");
   };
 
@@ -52,30 +53,45 @@ const FLocationEventRoute = () => {
             postStyle="LAKE_POST"
             iconName="ellipsis-vertical"
             iconEvent={listEvent}
+            id={item.id}
+            image={item.url}
+            lakePost={{
+              badge: item.postType === "STOCKING" ? "Bồi cá" : "Thông báo",
+              content: item.content,
+            }}
+            postTime={item.postTime}
           />
         </Box>
       )}
       onEndReached={() => {
         loadMoreLakeCatchData();
       }}
-      keyExtractor={(item) => item.id}
+      keyExtractor={(item) => item.id.toString()}
     />
   );
 };
 
 const FManageFishLocationPostScreen = () => {
   const navigation = useNavigation();
+
+  const locationDetails = useStoreState(
+    (states) => states.FManageModel.locationDetails,
+  );
+
   const onPress = () => {
     goToPostEditScreen(navigation);
   };
+
+  const { id, name, verify } = locationDetails;
+
   return (
     <Box style={{ flex: 1 }}>
-      <HeaderTab name="Hồ câu thuần việt" isVerified />
+      <HeaderTab id={id} name={name} isVerified={verify} />
       <Divider />
       <Button colorScheme="blue" size="lg" onPress={onPress}>
         Tạo bài viết
       </Button>
-      <FLocationEventRoute />
+      <PostListContainerComponent />
     </Box>
   );
 };

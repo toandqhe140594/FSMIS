@@ -58,7 +58,6 @@ const ReviewListRoute = () => {
   const {
     getLocationReviewScore,
     getPersonalReview,
-    resetPersonalReview,
     getLocationReviewListByPage,
   } = useStoreActions((actions) => actions.LocationModel);
 
@@ -77,9 +76,7 @@ const ReviewListRoute = () => {
       getLocationReviewScore();
       getPersonalReview();
       resetReviewData();
-      return () => {
-        resetPersonalReview();
-      };
+      return () => {};
     }, []),
   );
 

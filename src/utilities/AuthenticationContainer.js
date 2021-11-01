@@ -1,10 +1,11 @@
 import { useStoreActions, useStoreState } from "easy-peasy";
 import React, { useEffect } from "react";
+import { ToastAndroid } from "react-native";
 
 import { ROLE_USER } from "../constants";
 import AdminStackNavigator from "../navigations/AdminStackNavigator";
+import AuthenticationStackNavigator from "../navigations/AuthenticationStackNavigator";
 import RootStackNavigator from "../navigations/RootStackNavigator";
-import Login from "../screens/LoginScreen";
 import LogoScreen from "../screens/LogoScreen";
 
 const AuthenticationContainer = () => {
@@ -20,7 +21,14 @@ const AuthenticationContainer = () => {
   }, []);
 
   useEffect(() => {
-    if (errorMessage) alert(errorMessage);
+    if (errorMessage)
+      ToastAndroid.showWithGravityAndOffset(
+        errorMessage,
+        ToastAndroid.LONG,
+        ToastAndroid.BOTTOM,
+        25,
+        50,
+      );
   }, [errorMessage]);
 
   if (loginState.isLoading) {
@@ -29,7 +37,7 @@ const AuthenticationContainer = () => {
 
   return (
     <>
-      {loginState.authToken === null && <Login />}
+      {loginState.authToken === null && <AuthenticationStackNavigator />}
       {loginState.authToken !== null &&
         (userRole === ROLE_USER ? (
           <RootStackNavigator />

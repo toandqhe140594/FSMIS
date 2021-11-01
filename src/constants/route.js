@@ -1,6 +1,11 @@
 export const ANGLER_MAIN = "Angler Main Screen";
-export const LOGIN = "Login";
 export const LOGO = "Logo";
+export const LOGIN = "Login";
+export const REGISTER = "Register Screen";
+export const REGISTER_INFORMATION = "Register Information Screen";
+export const OTP_SCREEN = "OTP Screen";
+export const PASSWORD_FORGOT = "Forget Password Screen";
+export const PASSWORD_CHANGE = "Change Password Screen";
 export const FLOCATION_OVERVIEW = "Fishing Location Overview";
 export const FLOCATION_CATHES_DETAIL = "Fishing Location Catches Report Detail";
 export const WRITE_REVIEW = "Write Review";

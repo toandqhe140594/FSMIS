@@ -46,14 +46,11 @@ const genderData = [
   { name: "Nữ", id: false },
 ];
 
-const defaultAvatar =
-  "https://pbs.twimg.com/profile_images/1177303899243343872/B0sUJIH0_400x400.jpg";
-
 const EditProfileScreen = () => {
   const [date, setDate] = useState(null);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [formattedDate, setFormattedDate] = useState("");
-  const [avatarImage, setAvatarImage] = useState(defaultAvatar);
+  const [avatarImage, setAvatarImage] = useState(undefined);
   const navigation = useNavigation();
   const route = useRoute();
   const userInfo = useStoreState((state) => state.ProfileModel.userInfo);
@@ -113,6 +110,10 @@ const EditProfileScreen = () => {
     }
   }, [date]);
 
+  useEffect(() => {
+    if (userInfo.avatarUrl) setAvatarImage(userInfo.avatarUrl);
+  }, [userInfo]);
+
   const onDateChange = (e, selectedDate) => {
     const currentDate = selectedDate || date;
     setShowDatePicker(false);
@@ -151,7 +152,7 @@ const EditProfileScreen = () => {
         },
         {
           text: "Đồng ý",
-          onPress: () => setAvatarImage(defaultAvatar),
+          onPress: () => setAvatarImage(userInfo.avatarUrl),
         },
       ],
       {
@@ -192,7 +193,10 @@ const EditProfileScreen = () => {
                 size={130}
                 rounded
                 source={{
-                  uri: avatarImage !== undefined ? avatarImage : defaultAvatar,
+                  uri:
+                    avatarImage !== undefined
+                      ? avatarImage
+                      : userInfo.avatarUrl,
                 }}
                 onLongPress={() => deleteImage()}
                 onPress={() =>

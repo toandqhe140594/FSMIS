@@ -3,7 +3,12 @@ import * as SecureStore from "expo-secure-store";
 import jwtDecode from "jwt-decode";
 
 import { AUTH_TOKEN, USER_PROFILE, USER_ROLE } from "../constants";
-import http, { removeAuthToken, setAuthToken } from "./Http";
+import http, {
+  removeAuthToken,
+  setAuthToken,
+  setBeforeRequestFunction,
+  setRequestErrorMessageHandling,
+} from "./Http";
 
 const initialLoginState = {
   authToken: null,
@@ -13,6 +18,7 @@ const initialLoginState = {
 
 const Store = createStore({
   errorMessage: "",
+  // eslint-disable-next-line no-shadow
   loginState: reducer((state = initialLoginState, action) => {
     switch (action.type) {
       case "LOGIN":
@@ -54,6 +60,13 @@ const Store = createStore({
   setUserProfile: action((state, payload) => {
     state.userProfile = payload;
   }),
+
+  /**
+   * Call the API to get authentcation token
+   * @param {Object} [payload] the payload pass to the function
+   * @param {String} [payload.phone] the account phone number
+   * @param {String} [payload.password] the password
+   */
   login: thunk(async (actions, payload, { dispatch }) => {
     const { data } = await http.post("auth/login", {
       ...payload,
@@ -65,6 +78,13 @@ const Store = createStore({
       await SecureStore.setItemAsync(USER_ROLE, data.roles);
       await SecureStore.setItemAsync(USER_PROFILE, JSON.stringify(data));
       await setAuthToken(authToken);
+
+      await setBeforeRequestFunction(() => {
+        actions.setErrorMessage("");
+      });
+
+      await setRequestErrorMessageHandling(actions.setErrorMessage);
+
       actions.setUserRole(data.roles);
       actions.setUserProfile(data);
     } catch (e) {
@@ -76,6 +96,10 @@ const Store = createStore({
       authToken,
     });
   }),
+
+  /**
+   * Remove the authentication token from SecureStore
+   */
   logOut: thunk(async (actions, payload, { dispatch }) => {
     try {
       await SecureStore.deleteItemAsync(AUTH_TOKEN);
@@ -86,6 +110,10 @@ const Store = createStore({
     }
     dispatch({ type: "LOGOUT" });
   }),
+
+  /**
+   * Retrieve authentication token from SecureStore to login
+   */
   retrieveToken: thunk(async (actions, payload, { dispatch }) => {
     let authToken = null;
     let userRole = null;
@@ -106,6 +134,13 @@ const Store = createStore({
       if (!isExpire) {
         dispatch({ type: "RETRIEVE_TOKEN", authToken });
         await setAuthToken(authToken);
+
+        await setBeforeRequestFunction(() => {
+          actions.setErrorMessage("");
+        });
+
+        await setRequestErrorMessageHandling(actions.setErrorMessage);
+
         actions.setUserRole(userRole);
         actions.setUserProfile(userProfile);
         return;

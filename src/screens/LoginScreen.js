@@ -1,5 +1,6 @@
 import { MaterialIcons } from "@expo/vector-icons";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useNavigation } from "@react-navigation/native";
 import { useStoreActions } from "easy-peasy";
 import {
   Box,
@@ -24,6 +25,7 @@ import {
 import * as yup from "yup";
 
 import { phoneRegExp } from "../constants";
+import { goToRegisterScreen } from "../navigations";
 
 // Validation schema for form
 const validationSchema = yup.object().shape({
@@ -39,6 +41,7 @@ const validationSchema = yup.object().shape({
 });
 
 const LoginScreen = () => {
+  const navigation = useNavigation();
   const {
     control,
     handleSubmit,
@@ -170,7 +173,15 @@ const LoginScreen = () => {
           </Center>
           <Box justifyContent="flex-end" alignItems="center" mb={6}>
             <Text>
-              Bạn chưa có tài khoản? <Text underline>Đăng ký</Text>
+              Bạn chưa có tài khoản?{" "}
+              <Text
+                underline
+                onPress={() => {
+                  goToRegisterScreen(navigation);
+                }}
+              >
+                Đăng ký
+              </Text>
             </Text>
           </Box>
         </Box>

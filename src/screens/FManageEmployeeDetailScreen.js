@@ -1,7 +1,8 @@
-import { useNavigation } from "@react-navigation/native";
-import { useStoreState } from "easy-peasy";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { useStoreActions, useStoreState } from "easy-peasy";
 import { Button, Center } from "native-base";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { Alert, ToastAndroid } from "react-native";
 
 import EmployeeDetailBox from "../components/EmployeeDetailBox";
 import HeaderTab from "../components/HeaderTab";
@@ -9,24 +10,78 @@ import { goBack } from "../navigations";
 
 const FManageEmployeeDetailScreen = () => {
   const navigation = useNavigation();
-  const employeeInfo = useStoreState(
-    (actions) => actions.FManageModel.staffDetail,
-  );
+  const route = useRoute();
+  const { id } = route.params;
 
-  // Placeholder for future implement
+  const { staffManagementErrorMsg, staffDetail } = useStoreState(
+    (actions) => actions.FManageModel,
+  );
+  const { getStaffDetailById, deleteStaffById, setStaffManagementErrorMsg } =
+    useStoreActions((actions) => actions.FManageModel);
+
+  const [deleteSuccess, setDeleteSuccess] = useState(false);
+
   const onDeleteEmployee = () => {
-    goBack(navigation); // Test
+    Alert.alert(
+      "Bạn muốn xóa nhân viên này khỏi hồ",
+      `"${staffDetail.name}" sẽ bị xóa vĩnh viễn. Bạn không thể hoàn tác hành động này`,
+      [
+        {
+          text: "Quay lại",
+          style: "cancel",
+        },
+        {
+          text: "Xác nhận",
+          onPress: () => {
+            deleteStaffById({ userId: staffDetail.id, setDeleteSuccess });
+          },
+        },
+      ],
+    );
   };
+
+  useEffect(() => {
+    // If error occur
+    if (staffManagementErrorMsg)
+      ToastAndroid.showWithGravityAndOffset(
+        staffManagementErrorMsg,
+        ToastAndroid.LONG,
+        ToastAndroid.BOTTOM,
+        25,
+        50,
+      );
+  }, [staffManagementErrorMsg]);
+
+  useEffect(() => {
+    if (deleteSuccess) {
+      ToastAndroid.showWithGravityAndOffset(
+        "Xóa thành công",
+        ToastAndroid.LONG,
+        ToastAndroid.BOTTOM,
+        25,
+        50,
+      );
+      goBack(navigation);
+    }
+  }, [deleteSuccess]);
+
+  useEffect(() => {
+    getStaffDetailById({ id });
+    return () => {
+      setStaffManagementErrorMsg("");
+    };
+  }, []);
+
   return (
     <>
       <HeaderTab name="Quản lý nhân viên" />
       <Center flex={1} alignItems="center">
         <EmployeeDetailBox
-          name={employeeInfo.name}
-          dob={employeeInfo.dob}
-          phoneNumber={employeeInfo.phoneNumber}
-          gender={employeeInfo.gender}
-          address={employeeInfo.address}
+          name={staffDetail.name}
+          dob={staffDetail.dob}
+          phoneNumber={staffDetail.phoneNumber}
+          gender={staffDetail.gender}
+          address={staffDetail.address}
           isDetailed
         />
 

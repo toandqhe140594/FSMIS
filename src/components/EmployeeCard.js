@@ -29,7 +29,7 @@ const EmployeeCard = ({ employee }) => {
       <Box w="35%" mr={4}>
         <Button
           onPress={() => {
-            goToFManageStaffDetailScreen(navigation);
+            goToFManageStaffDetailScreen(navigation, { id: employee.id });
           }}
         >
           Chi tiết

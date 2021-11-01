@@ -23,9 +23,8 @@ const FishingSpotDetailScreen = () => {
   const setCurrentId = useStoreActions(
     (actions) => actions.LocationModel.setCurrentId,
   );
-  const getLocationOverviewById = useStoreActions(
-    (actions) => actions.LocationModel.getLocationOverviewById,
-  );
+  const { resetPersonalReview, getLocationOverviewById, setLocationOverview } =
+    useStoreActions((actions) => actions.LocationModel);
 
   useEffect(() => {
     if (route.params && route.params.id) {
@@ -33,6 +32,10 @@ const FishingSpotDetailScreen = () => {
       setCurrentId(id);
       getLocationOverviewById({ id });
     }
+    return () => {
+      resetPersonalReview();
+      setLocationOverview({});
+    };
   }, []);
 
   const { id, name, verify } = locationOverview;

@@ -11,6 +11,30 @@ const goToLogoScreen = (navigation) => {
   navigation.navigate(ROUTE_NAMES.LOGO);
 };
 
+const goToLoginScreen = (navigation) => {
+  navigation.navigate(ROUTE_NAMES.LOGIN);
+};
+
+const goToRegisterScreen = (navigation) => {
+  navigation.navigate(ROUTE_NAMES.REGISTER);
+};
+
+const goToRegisterInformationScreen = (navigation) => {
+  navigation.navigate(ROUTE_NAMES.REGISTER_INFORMATION);
+};
+
+const goToForgotPasswordScreen = (navigation) => {
+  navigation.navigate(ROUTE_NAMES.PASSWORD_FORGOT);
+};
+
+const goToChangePasswordScreen = (navigation) => {
+  navigation.navigate(ROUTE_NAMES.PASSWORD_CHANGE);
+};
+
+const goToOTPScreen = (navigation) => {
+  navigation.navigate(ROUTE_NAMES.OTP_SCREEN);
+};
+
 const goToLakeDetailScreen = (navigation, params) => {
   navigation.navigate(ROUTE_NAMES.LAKE_DETAIL, { ...params });
 };
@@ -136,6 +160,7 @@ export {
   goToCatchReportDetailScreen,
   goToCatchReportFormScreen,
   goToCatchReportVerifyDetailScreen,
+  goToChangePasswordScreen,
   goToFishingLocationOverviewScreen,
   goToFManageAddStaffScreen,
   goToFManageEditProfileScreen,
@@ -143,11 +168,16 @@ export {
   goToFManageMainScreen,
   goToFManageSelectScreen,
   goToFManageStaffDetailScreen,
+  goToForgotPasswordScreen,
   goToLakeDetailScreen,
   goToLakeEditScreen,
+  goToLoginScreen,
   goToLogoScreen,
   goToMediaSelectScreen,
+  goToOTPScreen,
   goToPostEditScreen,
+  goToRegisterInformationScreen,
+  goToRegisterScreen,
   goToScreen,
   goToWriteReportScreen,
   goToWriteReviewScreen,
