@@ -18,7 +18,7 @@ import { ScrollView, StyleSheet } from "react-native";
 // import { v4 as uuidv4 } from "uuid";
 import * as yup from "yup";
 
-import CatchReportCard from "../components/CatchReport/CatchReportCard";
+import CatchReportSection from "../components/CatchReport/CatchReportSection";
 import MultiImageSection from "../components/common/MultiImageSection";
 import SelectComponent from "../components/common/SelectComponent";
 import TextAreaComponent from "../components/common/TextAreaComponent";
@@ -120,7 +120,7 @@ const AnglerCatchReportScreen = () => {
                 <Text bold fontSize="md">
                   Thông tin cá
                 </Text>
-                <CatchReportCard />
+                <CatchReportSection />
               </Stack>
             </Center>
 
