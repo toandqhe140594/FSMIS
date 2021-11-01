@@ -46,16 +46,18 @@ const PostListContainerComponent = () => {
   return (
     <FlatList
       data={locationPostList}
-      renderItem={({ item }) => (
-        <Box backgroundColor="white" my="1">
-          <EventPostCard
-            postStyle="LAKE_POST"
-            iconName="ellipsis-vertical"
-            iconEvent={listEvent}
-            id={item.id}
-          />
-        </Box>
-      )}
+      renderItem={({ item }) => {
+        return (
+          <Box backgroundColor="white" my="1">
+            <EventPostCard
+              postStyle="LAKE_POST"
+              iconName="ellipsis-vertical"
+              iconEvent={listEvent}
+              id={item.id}
+            />
+          </Box>
+        );
+      }}
       onEndReached={() => {
         loadMoreLakeCatchData();
       }}
