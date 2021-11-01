@@ -2,6 +2,7 @@
 
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useFocusEffect, useRoute } from "@react-navigation/native";
+import { useStoreActions } from "easy-peasy";
 import {
   Box,
   Button,
@@ -54,6 +55,9 @@ const styles = StyleSheet.create({
 const AnglerCatchReportScreen = () => {
   const route = useRoute();
   const [imageArray, setImageArray] = useState([]);
+  const submitCatchReport = useStoreActions(
+    (actions) => actions.LocationModel.submitCatchReport,
+  );
   const methods = useForm({
     mode: "onChange",
     reValidateMode: "onChange",
@@ -62,8 +66,27 @@ const AnglerCatchReportScreen = () => {
   });
   const { control, handleSubmit } = methods;
   const onSubmit = (data) => {
-    console.log(data);
-    // console.log(imageArray);
+    const { aCaption, aLakeType, isPublic, cards } = data;
+    const catchesDetailList = cards.map(
+      ({
+        catches: quantity,
+        fishType: fishSpeciesId,
+        isReleased: returnToOwner,
+        totalWeight: weight,
+      }) => ({
+        quantity,
+        fishSpeciesId,
+        returnToOwner,
+        weight,
+      }),
+    );
+    submitCatchReport({
+      catchesDetailList,
+      description: aCaption,
+      hidden: isPublic,
+      images: imageArray,
+      lakeId: aLakeType,
+    });
   };
   const updateImageArray = (id) => {
     setImageArray(imageArray.filter((image) => image.id !== id));

@@ -34,6 +34,20 @@ const model = {
   locationCatchList: [],
   totalPostPage: 1,
   totalCatchPage: 1,
+  catchReportDetail: {
+    catchesDetailList: [
+      {
+        fishSpeciesId: 0,
+        quantity: 0,
+        returnToOwner: true,
+        weight: 0,
+      },
+    ],
+    description: "string",
+    hidden: true,
+    images: ["string"],
+    lakeId: 0,
+  },
   setCurrentId: action((state, payload) => {
     state.currentId = payload;
   }),
@@ -152,6 +166,17 @@ const model = {
         score,
       },
     );
+    if (status === 200) actions.setPersonalReview({ ...data, id: null });
+    return status;
+  }),
+  submitCatchReport: thunk(async (actions, payload, { getState }) => {
+    const { description, lakeId, catchesDetailList, images } = payload;
+    const { status, data } = await http.post(`${API_URL.SEND_CATCH_REPORT}`, {
+      lakeId,
+      description,
+      catchesDetailList,
+      images,
+    });
     if (status === 200) actions.setPersonalReview({ ...data, id: null });
     return status;
   }),
