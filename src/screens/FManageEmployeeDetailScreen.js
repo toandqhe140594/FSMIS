@@ -53,7 +53,16 @@ const FManageEmployeeDetailScreen = () => {
   }, [staffManagementErrorMsg]);
 
   useEffect(() => {
-    if (deleteSuccess) goBack(navigation);
+    if (deleteSuccess) {
+      ToastAndroid.showWithGravityAndOffset(
+        "Xóa thành công",
+        ToastAndroid.LONG,
+        ToastAndroid.BOTTOM,
+        25,
+        50,
+      );
+      goBack(navigation);
+    }
   }, [deleteSuccess]);
 
   useEffect(() => {
