@@ -67,6 +67,12 @@ const goToFManageMainScreen = (navigation, params) => {
   navigation.navigate(ROUTE_NAMES.FMANAGE_MAIN, { ...params });
 };
 
+const goToFManageAddNewScreen = (navigation, params) => {
+  navigation.navigate(ROUTE_NAMES.FMANAGE_PROFILE_ADD_NEW, {
+    ...params,
+  });
+};
+
 const goToFManageEditProfileScreen = (navigation, params) => {
   navigation.navigate(ROUTE_NAMES.FMANAGE_PROFILE_EDIT, {
     ...params,
@@ -162,6 +168,7 @@ export {
   goToCatchReportVerifyDetailScreen,
   goToChangePasswordScreen,
   goToFishingLocationOverviewScreen,
+  goToFManageAddNewScreen,
   goToFManageAddStaffScreen,
   goToFManageEditProfileScreen,
   goToFManageLocationPickScreen,
