@@ -45,7 +45,7 @@ const AnglerCatchReportDetailScreen = () => {
               source={{
                 uri: imageUri,
               }}
-              style={{ width: "100%", height: 375 }}
+              style={{ width: "100%", height: 450 }}
               resizeMode="contain"
             />
           ))
@@ -55,7 +55,7 @@ const AnglerCatchReportDetailScreen = () => {
             source={{
               uri: "https://everythingisviral.com/wp-content/uploads/2020/10/polite-cat.png",
             }}
-            style={{ width: "100%", height: 375 }}
+            style={{ width: "100%", height: 450 }}
           />
         )}
       </Swiper>
