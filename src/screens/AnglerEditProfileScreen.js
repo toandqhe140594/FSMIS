@@ -87,6 +87,7 @@ const EditProfileScreen = () => {
   useEffect(() => {
     getAllProvince();
     setFormattedDate(userInfo.dob.split(" ")[0]);
+    setAvatarImage(userInfo.avatarUrl);
     return () => {
       resetDataList();
     };
