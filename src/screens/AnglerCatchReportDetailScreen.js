@@ -45,7 +45,7 @@ const AnglerCatchReportDetailScreen = () => {
               source={{
                 uri: imageUri,
               }}
-              style={{ width: "100%", height: 450 }}
+              style={{ width: "100%", height: 400 }}
               resizeMode="contain"
             />
           ))

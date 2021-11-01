@@ -27,23 +27,29 @@ const EventPostCard = ({
     <Box mt="1" px="1.4">
       {postStyle === "LAKE_POST" && (
         <>
-          <HStack px="2" mb={3} mt={4} justifyContent="space-between">
+          <HStack px="2" space={2} mt={4} pb={3} justifyContent="space-between">
             <Box justifyContent="flex-start" alignItems="flex-start">
               <Badge
                 badgeStyle={{
                   borderRadius: 7,
                   paddingHorizontal: 1,
-                  width: 90,
+                  width: "auto",
                   height: 30,
-                  marginBottom: 8,
+                  marginBottom: 2,
+                  paddingLeft: 15,
+                  paddingRight: 15,
+                  paddingTop: 18,
+                  paddingBottom: 18,
                 }}
                 textStyle={{ fontSize: 16, fontWeight: "bold" }}
                 status="primary"
                 value={lakePost.badge}
               />
-              <Text style={styles.ml1}>
-                {postTime} {edited && "(Đã chỉnh sửa)"}
-              </Text>
+              {postTime !== undefined && (
+                <Text style={styles.ml1}>
+                  {postTime} {edited && "(Đã chỉnh sửa)"}
+                </Text>
+              )}
             </Box>
 
             <Menu
@@ -94,7 +100,14 @@ const EventPostCard = ({
       )}
 
       <VStack pb={1}>
-        <Card.Image source={{ uri: image }} style={{ height: 290 }} />
+        <Card.Image
+          source={
+            image !== undefined
+              ? { uri: image }
+              : { uri: "https://picsum.photos/500" }
+          }
+          style={{ height: 290 }}
+        />
       </VStack>
       <Divider />
     </Box>
