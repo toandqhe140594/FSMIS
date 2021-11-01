@@ -30,11 +30,12 @@ const PostListContainerComponent = () => {
     setTotalPostPage(lakePostPage + 1);
   };
 
-  const editPostHandler = () => {
-    goToPostEditScreen(navigation);
+  const editPostHandler = (id) => {
+    goToPostEditScreen(navigation, { id });
   };
 
-  const removePostHandler = () => {
+  const removePostHandler = (id) => {
+    console.log(id);
     console.log("xoa bai");
   };
 

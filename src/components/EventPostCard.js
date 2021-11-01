@@ -21,6 +21,7 @@ const EventPostCard = ({
   postTime,
   fishList,
   imageAvatar,
+  id,
 }) => {
   return (
     <Box mt="1" px="1.4">
@@ -55,7 +56,7 @@ const EventPostCard = ({
               }}
             >
               {iconEvent.map((item) => (
-                <Menu.Item onPress={item.onPress} key={item.name}>
+                <Menu.Item onPress={() => item.onPress(id)} key={item.name}>
                   {item.name}
                 </Menu.Item>
               ))}
