@@ -29,6 +29,17 @@ const validationSchema = yup.object().shape({
   aCaption: yup.string().required("Hãy viết suy nghĩ của bạn về ngày câu"),
   aLakeType: yup.number().required("Loại hồ không được để trống"),
   isPublic: yup.bool(),
+  isReleased: yup.bool(),
+  cards: yup.array().of(
+    yup.object().shape({
+      fishType: yup.number().required("Loại cá không được để trống"),
+      catches: yup.number().required("Số cá bắt được không được để trống"),
+      totalWeight: yup
+        .number()
+        .required("Tổng cân nặng cá không được để trống"),
+      isReleased: yup.bool().default(false),
+    }),
+  ),
 });
 
 const styles = StyleSheet.create({
