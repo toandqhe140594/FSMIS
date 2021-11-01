@@ -99,10 +99,12 @@ const EditProfileScreen = () => {
    * to update district list and ward list
    */
   useEffect(() => {
-    const selectedProvinceId = getValues("aProvinceId");
-    const selectedDistrictId = getValues("aDistrictId");
-    getDisctrictByProvinceId({ id: selectedProvinceId });
-    getWardByDistrictId({ id: selectedDistrictId });
+    (async () => {
+      const selectedProvinceId = getValues("aProvinceId");
+      const selectedDistrictId = getValues("aDistrictId");
+      await getDisctrictByProvinceId({ id: selectedProvinceId });
+      getWardByDistrictId({ id: selectedDistrictId });
+    })();
   }, [formState]);
 
   useEffect(() => {
@@ -129,7 +131,7 @@ const EditProfileScreen = () => {
   useFocusEffect(
     // useCallback will listen to route.param
     useCallback(() => {
-      if (route.params?.base64Array) {
+      if (route.params?.base64Array && route.params.base64Array[0]) {
         setAvatarImage(route.params?.base64Array[0].base64);
       }
       return () => {
@@ -153,7 +155,10 @@ const EditProfileScreen = () => {
         },
         {
           text: "Đồng ý",
-          onPress: () => setAvatarImage(userInfo.avatarUrl),
+          onPress: () => {
+            setAvatarImage(userInfo.avatarUrl);
+            navigation.setParams({ base64Array: [] });
+          },
         },
       ],
       {
