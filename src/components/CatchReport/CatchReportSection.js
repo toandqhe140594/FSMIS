@@ -21,11 +21,20 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginVertical: 8,
   },
+  error: { color: "#f43f5e", fontSize: 12, fontStyle: "italic" },
 });
 
-const CatchReportCard = () => {
-  const { control } = useFormContext();
-  const { fields, append, remove } = useFieldArray({ control, name: "cards" });
+const CatchReportSection = () => {
+  const {
+    control,
+    formState: { errors },
+  } = useFormContext();
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "cards",
+    // Cards will be unregistered when unmount
+    shouldUnregister: true,
+  });
   /**
    * Append a card ready to use
    */
@@ -35,6 +44,7 @@ const CatchReportCard = () => {
   }, []);
   return (
     <>
+      {/* fields controls each object with field fishType, catches, totalWeight and isReleased */}
       {fields.map(({ id }, index) => (
         <View style={styles.cardWrapper} key={id}>
           <Controller
@@ -53,6 +63,12 @@ const CatchReportCard = () => {
               </Select>
             )}
           />
+          {/* Check error message of fishType field of a specific object in the fieldArray */}
+          {errors.cards?.[index]?.fishType?.message && (
+            <Text style={styles.error}>
+              {errors?.cards?.[index].fishType?.message}
+            </Text>
+          )}
           <Controller
             name={`cards[${index}].catches`}
             control={control}
@@ -67,6 +83,12 @@ const CatchReportCard = () => {
               />
             )}
           />
+          {/* Check error message of catches feld of a specific object in the fieldArray */}
+          {errors.cards?.[index]?.catches?.message && (
+            <Text style={styles.error}>
+              {errors.cards?.[index].catches?.message}
+            </Text>
+          )}
           <Controller
             name={`cards[${index}].totalWeight`}
             control={control}
@@ -81,7 +103,12 @@ const CatchReportCard = () => {
               />
             )}
           />
-
+          {/* Check error message of totalWeight field of a specific object in the fieldArray */}
+          {errors.cards?.[index]?.totalWeight?.message && (
+            <Text style={styles.error}>
+              {errors.cards?.[index].totalWeight?.message}
+            </Text>
+          )}
           <View style={styles.rowWrapper}>
             <Controller
               name={`cards[${index}].isReleased`}
@@ -107,4 +134,4 @@ const CatchReportCard = () => {
   );
 };
 
-export default CatchReportCard;
+export default CatchReportSection;
