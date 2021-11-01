@@ -53,6 +53,12 @@ const PostListContainerComponent = () => {
             iconName="ellipsis-vertical"
             iconEvent={listEvent}
             id={item.id}
+            image={item.url}
+            lakePost={{
+              badge: item.postType === "STOCKING" ? "Bồi cá" : "Thông báo",
+              content: item.content,
+            }}
+            postTime={item.postTime}
           />
         </Box>
       )}
