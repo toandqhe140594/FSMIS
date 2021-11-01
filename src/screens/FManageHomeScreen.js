@@ -1,5 +1,5 @@
 import { useRoute } from "@react-navigation/native";
-import { useStoreActions } from "easy-peasy";
+import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, ScrollView, VStack } from "native-base";
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
@@ -142,6 +142,13 @@ const menuCategoryForStaff = [
 
 const FManageHomeScreen = ({ typeString }) => {
   const route = useRoute();
+
+  const locationDetails = useStoreState(
+    (states) => states.FManageModel.locationDetails,
+  );
+  const setLocationLatLng = useStoreActions(
+    (actions) => actions.FManageModel.setLocationLatLng,
+  );
   const [shortLocationOverview, setShortLocationOverview] = useState({
     name: "Hồ câu",
     id: 0,
@@ -158,6 +165,15 @@ const FManageHomeScreen = ({ typeString }) => {
 
   const { setCurrentId, getLocationDetailsById, getListOfLake } =
     useStoreActions((actions) => actions.FManageModel);
+
+  useEffect(() => {
+    if (locationDetails.latitude && locationDetails.longitude) {
+      setLocationLatLng({
+        latitude: locationDetails.latitude,
+        longitude: locationDetails.longitude,
+      });
+    }
+  }, [locationDetails]);
 
   useEffect(() => {
     if (route.params) {

@@ -32,6 +32,7 @@ export const FMANAGE_CATCH_VERIFY = "FManage Verify Catch Report";
 export const FMANAGE_CATCH_DETAIL = "FManage Detail Catch Report";
 export const FMANAGE_SELECTOR = "FManage Select Fishing Location";
 export const FMANAGE_PROFILE_EDIT = "FManage Edit Fishing Location";
+export const FMANAGE_PROFILE_ADD_NEW = "FManage Add New Fishing Location";
 export const FMANAGE_MAIN = "FManage Fishing Location Management Screen";
 export const FMANAGE_STAFF_MANAGEMENT = "FManage Staff List";
 export const FMANAGE_STAFF_ADD = "FManage Add Staff";
