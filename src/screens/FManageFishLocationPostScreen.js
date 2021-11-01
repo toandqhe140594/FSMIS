@@ -30,11 +30,12 @@ const PostListContainerComponent = () => {
     setTotalPostPage(lakePostPage + 1);
   };
 
-  const editPostHandler = () => {
-    goToPostEditScreen(navigation);
+  const editPostHandler = (id) => {
+    goToPostEditScreen(navigation, { id });
   };
 
-  const removePostHandler = () => {
+  const removePostHandler = (id) => {
+    console.log(id);
     console.log("xoa bai");
   };
 
@@ -46,18 +47,22 @@ const PostListContainerComponent = () => {
   return (
     <FlatList
       data={locationPostList}
-      renderItem={({ item }) => {
-        return (
-          <Box backgroundColor="white" my="1">
-            <EventPostCard
-              postStyle="LAKE_POST"
-              iconName="ellipsis-vertical"
-              iconEvent={listEvent}
-              id={item.id}
-            />
-          </Box>
-        );
-      }}
+      renderItem={({ item }) => (
+        <Box backgroundColor="white" my="1">
+          <EventPostCard
+            postStyle="LAKE_POST"
+            iconName="ellipsis-vertical"
+            iconEvent={listEvent}
+            id={item.id}
+            image={item.url}
+            lakePost={{
+              badge: item.postType === "STOCKING" ? "Bồi cá" : "Thông báo",
+              content: item.content,
+            }}
+            postTime={item.postTime}
+          />
+        </Box>
+      )}
       onEndReached={() => {
         loadMoreLakeCatchData();
       }}
