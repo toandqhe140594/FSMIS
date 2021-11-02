@@ -102,26 +102,30 @@ const FLocationEventRoute = () => {
       {locationPostList.length > 0 && (
         <FlatList
           data={locationPostList}
-          renderItem={({ item }) => (
-            <PressableCustomCard
-              paddingX="1"
-              onPress={() => {
-                console.log(item.id);
-              }}
-            >
-              <EventPostCard
-                lakePost={{
-                  badge: item.postType === "STOCKING" ? "Bồi cá" : "Thông báo",
-                  content: item.content,
+          renderItem={({ item }) => {
+            return (
+              <PressableCustomCard
+                paddingX="1"
+                onPress={() => {
+                  console.log(item.id);
                 }}
-                image={item.url}
-                postStyle="LAKE_POST"
-                edited={item.edited}
-                postTime={item.postTime}
-                id={item.id}
-              />
-            </PressableCustomCard>
-          )}
+              >
+                <EventPostCard
+                  lakePost={{
+                    badge:
+                      item.postType === "STOCKING" ? "Bồi cá" : "Thông báo",
+                    content: item.content,
+                  }}
+                  image={item.url}
+                  postStyle="LAKE_POST"
+                  edited={item.edited}
+                  postTime={item.postTime}
+                  id={item.id}
+                  iconName="flag"
+                />
+              </PressableCustomCard>
+            );
+          }}
           onEndReached={() => {
             loadMoreLakePostData();
           }}

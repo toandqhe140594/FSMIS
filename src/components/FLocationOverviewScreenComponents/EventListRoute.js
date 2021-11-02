@@ -7,6 +7,7 @@ import { FlatList, StyleSheet } from "react-native";
 import { Divider } from "react-native-elements";
 
 import { goToCatchReportDetailScreen } from "../../navigations";
+import { goToWriteReportScreen } from "../../navigations";
 import EventPostCard from "../EventPostCard";
 import PressableCustomCard from "../PressableCustomCard";
 
@@ -81,6 +82,7 @@ const CatchReportRoute = () => {
 };
 
 const FLocationEventRoute = () => {
+  const navigation = useNavigation();
   const [lakePostPage, setLakePostPage] = useState(1);
   const locationPostList = useStoreState(
     (states) => states.LocationModel.locationPostList,
@@ -98,6 +100,10 @@ const FLocationEventRoute = () => {
     getLocationPostListByPage({ pageNo: lakePostPage });
     setLakePostPage(lakePostPage + 1);
   };
+  const reportHandler = (id) => {
+    goToWriteReportScreen(navigation);
+  };
+  const listEvent = [{ name: "Báo cáo bài viết", onPress: reportHandler }];
   return (
     <>
       {locationPostList.length > 0 && (
@@ -120,6 +126,8 @@ const FLocationEventRoute = () => {
                 edited={item.edited}
                 postTime={item.postTime}
                 id={item.id}
+                iconName="flag"
+                iconEvent={listEvent}
               />
             </PressableCustomCard>
           )}

@@ -58,6 +58,7 @@ const AnglerCatchReportScreen = () => {
   const submitCatchReport = useStoreActions(
     (actions) => actions.LocationModel.submitCatchReport,
   );
+  // const lakeList = useStoreActions((actions) => actions.LocationModel.lakeList);
   const methods = useForm({
     mode: "onChange",
     reValidateMode: "onChange",

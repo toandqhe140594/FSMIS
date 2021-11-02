@@ -71,7 +71,7 @@ const DefaultQRCodeScreen = () => {
 };
 
 const CheckinScreen = () => {
-  return <DefaultQRCodeScreen />;
+  return <CheckinSuccessScreen />;
 };
 
 export default CheckinScreen;
