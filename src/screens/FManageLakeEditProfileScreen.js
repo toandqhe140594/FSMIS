@@ -50,8 +50,8 @@ const validationSchema = yup.object().shape({
       totalWeight: yup
         .number()
         .required("Tổng cân nặng cá không được để trống"),
-      minWeight: yup.number(),
-      maxWeight: yup.number(),
+      minWeight: yup.number().required("Biểu cá không được để trống"),
+      maxWeight: yup.number().required("Biểu cá không được để trống"),
     }),
   ),
 });
