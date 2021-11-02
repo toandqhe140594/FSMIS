@@ -57,10 +57,7 @@ const MultiImageSection = ({
         },
         {
           text: "Đồng ý",
-          onPress: () => {
-            deleteImage(id);
-            navigation.setParams({ base64Array: [] });
-          },
+          onPress: () => deleteImage(id),
         },
       ],
       {

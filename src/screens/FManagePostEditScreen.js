@@ -47,6 +47,7 @@ const CUSTOM_SCREEN_HEIGHT = Dimensions.get("window").height - OFFSET_BOTTOM;
 
 const PostEditorScreen = () => {
   const route = useRoute();
+  const navigation = useNavigation();
   const [imageArray, setImageArray] = useState([]);
   const [showSection, setShowSection] = useState(null);
   const methods = useForm({
@@ -73,10 +74,11 @@ const PostEditorScreen = () => {
     // useCallback will listen to route.param
     useCallback(() => {
       if (route.params?.base64Array && route.params.base64Array[0]) {
+        // Set imageArray state and reset navigation params
         setImageArray(route.params?.base64Array);
       }
       return () => {
-        setImageArray([]);
+        navigation.setParams({ base64Array: [] });
       };
     }, [route.params]),
   );

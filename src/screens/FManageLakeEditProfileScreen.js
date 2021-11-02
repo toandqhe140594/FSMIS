@@ -99,7 +99,7 @@ const LakeEditProfileScreen = () => {
         setImageArray(route.params?.base64Array);
       }
       return () => {
-        setImageArray([]);
+        navigation.setParams({ base64Array: [] });
       };
     }, [route.params]),
   );

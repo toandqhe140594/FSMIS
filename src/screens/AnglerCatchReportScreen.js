@@ -1,7 +1,11 @@
 // import "react-native-get-random-values";
 
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useFocusEffect, useRoute } from "@react-navigation/native";
+import {
+  useFocusEffect,
+  useNavigation,
+  useRoute,
+} from "@react-navigation/native";
 import {
   Box,
   Button,
@@ -53,6 +57,7 @@ const styles = StyleSheet.create({
 
 const AnglerCatchReportScreen = () => {
   const route = useRoute();
+  const navigation = useNavigation();
   const [imageArray, setImageArray] = useState([]);
   const methods = useForm({
     mode: "onChange",
@@ -76,7 +81,7 @@ const AnglerCatchReportScreen = () => {
         setImageArray(route.params.base64Array);
       }
       return () => {
-        setImageArray([]);
+        navigation.setParams({ base64Array: [] });
       };
     }, [route.params]),
   );

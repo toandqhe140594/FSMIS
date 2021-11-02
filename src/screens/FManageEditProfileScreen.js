@@ -77,16 +77,12 @@ const FManageEditProfileScreen = () => {
   useFocusEffect(
     // useCallback will listen to route.param
     useCallback(() => {
-      (async () => {
-        if (route.params?.base64Array && route.params?.base64Array.length > 0) {
-          // Wait after images are set to reset naviagtion param
-          const newBase64Array = route.params.base64Array;
-          setImageArray(newBase64Array);
-          navigation.setParams({ base64Array: [] });
-        }
-      })();
+      if (route.params?.base64Array && route.params.base64Array.length) {
+        // Wait after images are set to reset naviagtion param
+        setImageArray(route.params.base64Array);
+      }
       return () => {
-        setImageArray([]);
+        navigation.setParams({ base64Array: [] });
       };
     }, [route.params]),
   );
