@@ -183,6 +183,9 @@ const FManageHomeScreen = ({ typeString }) => {
       setShortLocationOverview({ id, name, isVerified });
       getListOfLake({ id });
     }
+    return () => {
+      setLocationLatLng({ latitude: null, longitude: null });
+    };
   }, []);
 
   const { id, name, isVerified } = shortLocationOverview;
