@@ -6,12 +6,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 @Repository
 public interface CatchesRepos extends JpaRepository<Catches, Long> {
 
     Page<Catches> findByUserId(Long id, Pageable pageable);
 
     Page<Catches> findByFishingLocationIdAndHiddenIsFalse(Long id, Pageable pageable);
+
+    long countByUserId(Long userId);
 }

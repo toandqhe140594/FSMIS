@@ -30,4 +30,6 @@ public class PersonalInfoDtoOut {
     private boolean available;
 
     private AddressFromWardDtoOut addressFromWard;
+
+    private long catchesCount;
 }

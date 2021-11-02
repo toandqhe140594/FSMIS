@@ -132,7 +132,8 @@ public class CatchesService {
 
     public Object getCatchesDetail(HttpServletRequest request, Long catchesId) {
         User user = jwtFilter.getUserFromToken(request);
-        Catches catches = catchesRepos.getById(catchesId);
+        Catches catches = catchesRepos.findById(catchesId)
+                .orElseThrow(() -> new NotFoundException("Không tìm thấy bản ghi này!"));
         if (Boolean.TRUE.equals(catches.getHidden()) && catches.getUser() != user) {
             throw new ValidationException("Địa chỉ này không tồn tại");
         }

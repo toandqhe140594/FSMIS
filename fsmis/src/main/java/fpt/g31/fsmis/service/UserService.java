@@ -5,6 +5,7 @@ import fpt.g31.fsmis.dto.input.PersonalInfoDtoIn;
 import fpt.g31.fsmis.dto.output.*;
 import fpt.g31.fsmis.entity.Notification;
 import fpt.g31.fsmis.entity.User;
+import fpt.g31.fsmis.repository.CatchesRepos;
 import fpt.g31.fsmis.repository.UserRepos;
 import fpt.g31.fsmis.repository.WardRepos;
 import fpt.g31.fsmis.security.JwtFilter;
@@ -27,6 +28,7 @@ public class UserService {
 
     private final UserRepos userRepos;
     private final WardRepos wardRepos;
+    private final CatchesRepos catchesRepos;
     private final ModelMapper modelMapper;
     private final JwtFilter jwtFilter;
     private final PasswordEncoder passwordEncoder;
@@ -37,6 +39,7 @@ public class UserService {
                 modelMapper.map(user, PersonalInfoDtoOut.class);
         output.setDob(ServiceUtils.convertDateToString(user.getDob()));
         output.setAddressFromWard(ServiceUtils.getAddressByWard(user.getWard()));
+        output.setCatchesCount(catchesRepos.countByUserId(user.getId()));
         return output;
     }
 

@@ -5,7 +5,6 @@ import fpt.g31.fsmis.dto.output.*;
 import fpt.g31.fsmis.entity.FishingLocation;
 import fpt.g31.fsmis.entity.User;
 import fpt.g31.fsmis.entity.address.Ward;
-import fpt.g31.fsmis.exception.FishingLocationNotFoundException;
 import fpt.g31.fsmis.exception.NotFoundException;
 import fpt.g31.fsmis.exception.UnauthorizedException;
 import fpt.g31.fsmis.repository.FishingLocationRepos;
@@ -25,7 +24,6 @@ import javax.validation.ValidationException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -116,11 +114,13 @@ public class FishingLocationService {
 
     public FishingLocationOverviewDtoOut getFishingLocationOverviewById(HttpServletRequest request, Long locationId) {
         User user = jwtFilter.getUserFromToken(request);
-        Optional<FishingLocation> findFishingLocation = fishingLocationRepos.findById(locationId);
-        if (!findFishingLocation.isPresent()) {
-            throw new FishingLocationNotFoundException(locationId);
-        }
-        FishingLocation location = findFishingLocation.get();
+//        Optional<FishingLocation> findFishingLocation = fishingLocationRepos.findById(locationId);
+//        if (!findFishingLocation.isPresent()) {
+//            throw new FishingLocationNotFoundException(locationId);
+//        }
+//        FishingLocation location = findFishingLocation.get();
+        FishingLocation location = fishingLocationRepos.findById(locationId)
+                .orElseThrow(() -> new NotFoundException("Không tìm thấy khu hồ!"));
         FishingLocationOverviewDtoOut dtoOut = modelMapper.map(location, FishingLocationOverviewDtoOut.class);
         dtoOut.setLastEditedDate(ServiceUtils.convertDateToString(location.getLastEditedDate()));
         dtoOut.setAddressFromWard(ServiceUtils.getAddressByWard(location.getWard()));
@@ -130,6 +130,13 @@ public class FishingLocationService {
             if (fishinglocation == location) {
                 dtoOut.setSaved(true);
             }
+        }
+        if (location.getOwner().equals(user)) {
+            dtoOut.setRole("OWNER");
+        } else if (location.getEmployeeList().contains(user)) {
+            dtoOut.setRole("STAFF");
+        } else {
+            dtoOut.setRole("ANGLER");
         }
         return dtoOut;
     }
