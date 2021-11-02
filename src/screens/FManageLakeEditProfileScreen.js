@@ -90,14 +90,16 @@ const LakeEditProfileScreen = () => {
   const updateImageArray = (id) => {
     const newBase64Array = imageArray.filter((image) => image.id !== id);
     setImageArray(newBase64Array);
-    navigation.setParams({ base64Array: newBase64Array });
+    navigation.setParams({ base64Array: [] });
   };
 
   // Fire when navigates back to the screen
   useFocusEffect(
     // useCallback will listen to route.param
     useCallback(() => {
-      setImageArray(route.params?.base64Array);
+      if (route.params?.base64Array && route.params.base64Array[0]) {
+        setImageArray(route.params?.base64Array);
+      }
       return () => {
         setImageArray([]);
       };

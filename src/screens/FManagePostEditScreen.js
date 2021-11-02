@@ -75,7 +75,7 @@ const PostEditorScreen = () => {
   useFocusEffect(
     // useCallback will listen to route.param
     useCallback(() => {
-      if (route.params?.base64Array && route.params?.base64Array[0]) {
+      if (route.params?.base64Array && route.params.base64Array[0]) {
         setImageArray(route.params?.base64Array);
       }
       return () => {
