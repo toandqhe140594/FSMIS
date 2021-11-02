@@ -41,6 +41,10 @@ const MultiImageSection = ({
   formRoute,
 }) => {
   const navigation = useNavigation();
+  /**
+   * Displays an pop-up before delete an image
+   * @param {number} id: id of the image
+   */
   const handleDelete = (id) => {
     Alert.alert(
       "Thông báo",
@@ -53,7 +57,10 @@ const MultiImageSection = ({
         },
         {
           text: "Đồng ý",
-          onPress: () => deleteImage(id),
+          onPress: () => {
+            deleteImage(id);
+            navigation.setParams({ base64Array: [] });
+          },
         },
       ],
       {
