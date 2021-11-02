@@ -1,5 +1,9 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useFocusEffect, useRoute } from "@react-navigation/native";
+import {
+  useFocusEffect,
+  useNavigation,
+  useRoute,
+} from "@react-navigation/native";
 import { Button, Select, Text, VStack } from "native-base";
 import React, { useCallback, useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
@@ -43,35 +47,37 @@ const CUSTOM_SCREEN_HEIGHT = Dimensions.get("window").height - OFFSET_BOTTOM;
 
 const PostEditorScreen = () => {
   const route = useRoute();
+  const navigation = useNavigation();
   const [imageArray, setImageArray] = useState([]);
-  const [showImageSection, setShowImageSection] = useState(true);
+  const [showSection, setShowSection] = useState(null);
   const methods = useForm({
     mode: "onSubmit",
     reValidateMode: "onSubmit",
     resolver: yupResolver(validationSchema),
   });
   const { handleSubmit } = methods;
-  const handleValueChange = (value) => {
-    setShowImageSection(value === "image");
-  };
   /**
    *  Reset the image array if imageArray is not empty
    *  when switching to input link video
    */
   useEffect(() => {
-    if (showImageSection !== "image" && imageArray?.length > 0)
-      setImageArray([]);
-  }, [showImageSection]);
+    if (showSection !== "image" && imageArray?.length > 0) setImageArray([]);
+  }, [showSection]);
   const onSubmit = (data) => {
     console.log(data);
   };
   const updateImageArray = (id) => {
-    setImageArray(imageArray.filter((image) => image.id !== id));
+    const newBase64Array = imageArray.filter((image) => image.id !== id);
+    setImageArray(newBase64Array);
+    navigation.setParams({ base64Array: {} });
   };
+  // Fire when navigates back to this screen
   useFocusEffect(
     // useCallback will listen to route.param
     useCallback(() => {
-      setImageArray(route.params?.base64Array);
+      if (route.params?.base64Array && route.params?.base64Array[0]) {
+        setImageArray(route.params?.base64Array);
+      }
       return () => {
         setImageArray([]);
       };
@@ -80,7 +86,6 @@ const PostEditorScreen = () => {
   return (
     <>
       <HeaderTab name="Bài đăng" />
-      {/* Without scrollview, it seems the keyboard will not hide if tap out of the component */}
       <FormProvider {...methods}>
         <ScrollView
           contentContainerStyle={{
@@ -111,15 +116,16 @@ const PostEditorScreen = () => {
                 <Select
                   placeholder="Chọn loại đính kèm"
                   accessibilityLabel="Chọn loại đính kèm"
-                  onValueChange={handleValueChange}
-                  defaultValue="Ảnh"
+                  onValueChange={setShowSection}
+                  defaultValue="none"
                   fontSize="md"
                 >
+                  <Select.Item label="Không đính kèm" value="none" />
                   <Select.Item label="Ảnh" value="image" />
-                  <Select.Item label="Link Video" value="linkVideo" />
+                  <Select.Item label="Link Video" value="link" />
                 </Select>
               </>
-              {!showImageSection && (
+              {showSection === "link" && (
                 <InputComponent
                   placeholder="Nhập link vào đây"
                   label="Đường dẫn"
@@ -127,7 +133,7 @@ const PostEditorScreen = () => {
                 />
               )}
             </VStack>
-            {showImageSection && (
+            {showSection === "image" && (
               <MultiImageSection
                 containerStyle={{ width: "100%" }}
                 formRoute={ROUTE_NAMES.FMANAGE_POST_EDIT}
