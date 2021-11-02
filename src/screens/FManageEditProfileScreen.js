@@ -1,5 +1,9 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useFocusEffect, useRoute } from "@react-navigation/native";
+import {
+  useFocusEffect,
+  useNavigation,
+  useRoute,
+} from "@react-navigation/native";
 import { Box, Button, Center, Divider, Stack, Text, VStack } from "native-base";
 import React, { useCallback, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
@@ -54,6 +58,7 @@ const styles = StyleSheet.create({
 
 const FManageEditProfileScreen = () => {
   const route = useRoute();
+  const navigation = useNavigation();
   const [imageArray, setImageArray] = useState([]);
   const methods = useForm({
     mode: "onChange",
@@ -68,10 +73,18 @@ const FManageEditProfileScreen = () => {
   const updateImageArray = (id) => {
     setImageArray(imageArray.filter((image) => image.id !== id));
   };
+  // Fire when naviagtes back to this screen
   useFocusEffect(
     // useCallback will listen to route.param
     useCallback(() => {
-      setImageArray(route.params?.base64Array);
+      (async () => {
+        if (route.params?.base64Array && route.params?.base64Array.length > 0) {
+          // Wait after images are set to reset naviagtion param
+          const newBase64Array = route.params.base64Array;
+          setImageArray(newBase64Array);
+          navigation.setParams({ base64Array: [] });
+        }
+      })();
       return () => {
         setImageArray([]);
       };
