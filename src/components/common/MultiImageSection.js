@@ -43,7 +43,7 @@ const MultiImageSection = ({
   const navigation = useNavigation();
   /**
    * Displays an pop-up before delete an image
-   * @param {number} id: id of the image
+   * @param {Number} id: id of the image
    */
   const handleDelete = (id) => {
     Alert.alert(
