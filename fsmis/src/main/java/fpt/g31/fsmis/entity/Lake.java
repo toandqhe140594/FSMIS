@@ -53,6 +53,6 @@ public class Lake {
     )
     private Set<FishingMethod> fishingMethodSet;
 
-    @OneToMany(mappedBy = "id")
+    @OneToMany(mappedBy = "id", cascade = CascadeType.ALL)
     private List<FishInLake> fishInLakeList;
 }

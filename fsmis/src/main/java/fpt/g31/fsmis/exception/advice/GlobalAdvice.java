@@ -91,7 +91,7 @@ public class GlobalAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     ResponseTextDtoOut methodArgumentTypeMismatchExceptionHandler(MethodArgumentTypeMismatchException ex) {
         ex.printStackTrace();
-        return new ResponseTextDtoOut(ex.getMessage());
+        return new ResponseTextDtoOut("Tham số truyền vào sai định dạng");
     }
 
     @ResponseBody

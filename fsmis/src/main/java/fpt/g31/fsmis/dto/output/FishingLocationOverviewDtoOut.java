@@ -28,4 +28,5 @@ public class FishingLocationOverviewDtoOut {
     private List<String> image;
     private boolean verify;
     private boolean saved;
+    private String role;
 }

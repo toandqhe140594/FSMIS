@@ -1,7 +1,10 @@
 package fpt.g31.fsmis.controller;
 
 
-import fpt.g31.fsmis.dto.input.*;
+import fpt.g31.fsmis.dto.input.FishingLocationDtoIn;
+import fpt.g31.fsmis.dto.input.LakeDtoIn;
+import fpt.g31.fsmis.dto.input.PostDtoIn;
+import fpt.g31.fsmis.dto.input.ReviewDtoIn;
 import fpt.g31.fsmis.entity.FishingLocation;
 import fpt.g31.fsmis.service.*;
 import lombok.AllArgsConstructor;
@@ -17,14 +20,14 @@ import java.util.List;
 @RequestMapping(path = "/api/location")
 @AllArgsConstructor
 public class FishingLocationController {
-    final CheckInService checkInService;
-    final FishingLocationService fishingLocationService;
-    final LakeService lakeService;
+    private final CheckInService checkInService;
+    private final FishingLocationService fishingLocationService;
+    private final LakeService lakeService;
+    private final PostService postService;
+    private final UserService userService;
     private final CatchesService catchesService;
-    final PostService postService;
     private final ReviewService reviewService;
     private final VoteService voteService;
-    final UserService userService;
 
     @GetMapping(path = "/all")
     public ResponseEntity<Object> getAll() {
@@ -41,18 +44,13 @@ public class FishingLocationController {
     @PutMapping("/edit/{locationId}")
     public ResponseEntity<Object> editFishingLocation(@Valid @RequestBody FishingLocationDtoIn fishingLocationDtoIn,
                                                       HttpServletRequest request,
-                                                      @PathVariable Long locationId){
+                                                      @PathVariable Long locationId) {
         return new ResponseEntity<>(fishingLocationService.editFishingLocation(fishingLocationDtoIn, request, locationId), HttpStatus.OK);
     }
 
     @DeleteMapping("/close/{locationId}")
     public ResponseEntity<Object> closeFishingLocation(HttpServletRequest request, @PathVariable Long locationId) {
         return new ResponseEntity<>(fishingLocationService.disableFishingLocation(request, locationId), HttpStatus.OK);
-    }
-
-    @PostMapping("/{locationId}/lake")
-    public ResponseEntity<Object> createLake(@RequestBody @Valid LakeDtoIn lakeDtoIn, @PathVariable Long locationId) {
-        return new ResponseEntity<>(lakeService.createLake(lakeDtoIn, locationId), HttpStatus.CREATED);
     }
 
     @GetMapping("/nearby")
@@ -84,6 +82,26 @@ public class FishingLocationController {
     @GetMapping("/{locationId}/lake/{lakeId}")
     public ResponseEntity<Object> getLakeById(@PathVariable Long locationId, @PathVariable Long lakeId) {
         return new ResponseEntity<>(lakeService.getLakeById(locationId, lakeId), HttpStatus.OK);
+    }
+
+    @PostMapping("/{locationId}/lake/add")
+    public ResponseEntity<Object> createLake(@RequestBody @Valid LakeDtoIn lakeDtoIn,
+                                             @PathVariable Long locationId,
+                                             HttpServletRequest request) {
+        return new ResponseEntity<>(lakeService.createLake(lakeDtoIn, locationId, request), HttpStatus.CREATED);
+    }
+
+    @PutMapping("{locationId}/lake/edit/{lakeId}")
+    public ResponseEntity<Object> editLake(@RequestBody @Valid LakeDtoIn lakeDtoIn,
+                                           @PathVariable Long lakeId,
+                                           HttpServletRequest request) {
+        return new ResponseEntity<>(lakeService.editLake(lakeDtoIn, lakeId, request), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{locationId}/lake/close/{lakeId}")
+    public ResponseEntity<Object> closeLake(@PathVariable Long lakeId,
+                                            HttpServletRequest request) {
+        return new ResponseEntity<>(lakeService.closeLake(lakeId, request), HttpStatus.OK);
     }
 
     // SAVE
@@ -188,7 +206,7 @@ public class FishingLocationController {
     @DeleteMapping("/{locationId}/post/delete/{postId}")
     public ResponseEntity<Object> deletePost(@PathVariable Long locationId,
                                              @PathVariable Long postId,
-                                             HttpServletRequest request){
+                                             HttpServletRequest request) {
         return new ResponseEntity<>(postService.deletePost(postId, request), HttpStatus.OK);
     }
     // STAFF
