@@ -110,6 +110,7 @@ public class FishingLocationService {
             throw new UnauthorizedException("Bạn không có quyền đóng cửa địa điểm.");
         }
         location.setActive(false);
+        fishingLocationRepos.save(location);
         return new ResponseTextDtoOut("Bạn đã đóng cửa địa điểm.");
     }
 

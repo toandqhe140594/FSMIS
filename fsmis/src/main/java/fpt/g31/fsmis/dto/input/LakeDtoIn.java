@@ -27,7 +27,7 @@ public class LakeDtoIn {
     @NotEmpty
     private String imageUrl;
     @NotNull
-    private Long ownerId;
-    @NotNull
     private List<FishInLakeDtoIn> fishInLakeList;
+    @NotNull
+    private Long[] methods;
 }

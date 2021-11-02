@@ -13,6 +13,8 @@ import javax.validation.constraints.NotNull;
 @Builder
 public class FishInLakeDtoIn {
 
+    private Long id;
+
     @NotNull
     private Long fishSpeciesId;
 
