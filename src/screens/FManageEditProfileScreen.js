@@ -19,18 +19,18 @@ import HeaderTab from "../components/HeaderTab";
 import { ROUTE_NAMES } from "../constants";
 
 const cityData = [
-  { label: "Hà Nội", val: 1 },
-  { label: "Hồ Chí Minh", val: 2 },
+  { name: "Hà Nội", id: 1 },
+  { name: "Hồ Chí Minh", id: 2 },
 ];
 
 const districtData = [
-  { label: "Hai Bà Trưng", val: 1 },
-  { label: "Hoàng Mai", val: 2 },
+  { name: "Hai Bà Trưng", id: 1 },
+  { name: "Hoàng Mai", id: 2 },
 ];
 
 const communeData = [
-  { label: "Vĩnh Hưng", val: 1 },
-  { label: "Thanh Lương", val: 2 },
+  { name: "Vĩnh Hưng", id: 1 },
+  { name: "Thanh Lương", id: 2 },
 ];
 
 const validationSchema = yup.object().shape({
@@ -78,7 +78,6 @@ const FManageEditProfileScreen = () => {
     // useCallback will listen to route.param
     useCallback(() => {
       if (route.params?.base64Array && route.params.base64Array.length) {
-        // Wait after images are set to reset naviagtion param
         setImageArray(route.params.base64Array);
       }
       return () => {

@@ -1,5 +1,3 @@
-// import "react-native-get-random-values";
-
 import { yupResolver } from "@hookform/resolvers/yup";
 import {
   useFocusEffect,
@@ -19,7 +17,6 @@ import {
 import React, { useCallback, useState } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import { ScrollView, StyleSheet } from "react-native";
-// import { v4 as uuidv4 } from "uuid";
 import * as yup from "yup";
 
 import CatchReportSection from "../components/CatchReport/CatchReportSection";
