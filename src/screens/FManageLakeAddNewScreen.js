@@ -1,6 +1,3 @@
-// To install uuid, installs react-native-random-value pkg first
-// import "react-native-get-random-values";
-
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useFocusEffect, useRoute } from "@react-navigation/native";
 import {
