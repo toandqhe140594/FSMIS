@@ -1,4 +1,4 @@
-import { Button, Checkbox, Input, Select } from "native-base";
+import { Button, Input, Select } from "native-base";
 import React, { useEffect } from "react";
 import { Controller, useFieldArray, useFormContext } from "react-hook-form";
 import { StyleSheet, Text, View } from "react-native";
@@ -19,12 +19,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginVertical: 8,
+    marginTop: 8,
   },
   error: { color: "#f43f5e", fontSize: 12, fontStyle: "italic" },
 });
 
-const CatchReportSection = () => {
+const FishCardSection = () => {
   const {
     control,
     formState: { errors },
@@ -44,7 +44,7 @@ const CatchReportSection = () => {
   }, []);
   return (
     <>
-      {/* fields controls each object with field fishType, catches, totalWeight and isReleased */}
+      {/* fields controls each object with field fishType, amount, totalWeight and isReleased */}
       {fields.map(({ id }, index) => (
         <View style={styles.cardWrapper} key={id}>
           <Controller
@@ -69,8 +69,45 @@ const CatchReportSection = () => {
               {errors?.cards?.[index].fishType?.message}
             </Text>
           )}
+          <View style={styles.rowWrapper}>
+            <Controller
+              name={`cards[${index}].minWeight`}
+              control={control}
+              render={() => (
+                <Input
+                  w="48%"
+                  fontSize="md"
+                  placeholder="Biểu nhỏ nhất"
+                  keyboardType="number-pad"
+                />
+              )}
+            />
+            <Text style={{ fontWeight: "bold", fontSize: 16 }}>-</Text>
+            <Controller
+              name={`cards[${index}].maxWeight`}
+              control={control}
+              render={() => (
+                <Input
+                  w="48%"
+                  fontSize="md"
+                  placeholder="Biểu lớn nhất"
+                  keyboardType="number-pad"
+                />
+              )}
+            />
+          </View>
+          {(errors.cards?.[index]?.minWeight?.message && (
+            <Text style={styles.error}>
+              {errors?.cards?.[index].minWeight?.message}
+            </Text>
+          )) ||
+            (errors.cards?.[index]?.maxWeight?.message && (
+              <Text style={styles.error}>
+                {errors?.cards?.[index].maxWeight?.message}
+              </Text>
+            ))}
           <Controller
-            name={`cards[${index}].catches`}
+            name={`cards[${index}].amount`}
             control={control}
             render={({ field: { value, onChange, onBlur } }) => (
               <Input
@@ -84,10 +121,10 @@ const CatchReportSection = () => {
               />
             )}
           />
-          {/* Check error message of catches feld of a specific object in the fieldArray */}
-          {errors.cards?.[index]?.catches?.message && (
+          {/* Check error message of amount feld of a specific object in the fieldArray */}
+          {errors.cards?.[index]?.amount?.message && (
             <Text style={styles.error}>
-              {errors.cards?.[index].catches?.message}
+              {errors.cards?.[index].amount?.message}
             </Text>
           )}
           <Controller
@@ -111,22 +148,15 @@ const CatchReportSection = () => {
               {errors.cards?.[index].totalWeight?.message}
             </Text>
           )}
-          <View style={styles.rowWrapper}>
-            <Controller
-              name={`cards[${index}].isReleased`}
-              control={control}
-              render={({ field: { value, onChange } }) => (
-                <Checkbox value={value} onChange={onChange}>
-                  <Text style={{ marginLeft: 10, fontSize: 16 }}>
-                    Giao lại cho chủ hồ
-                  </Text>
-                </Checkbox>
-              )}
-            />
-            <Button fontSize="md" w="40%" onPress={() => remove(index)}>
-              Xoá
-            </Button>
-          </View>
+          <Button
+            fontSize="md"
+            w="45%"
+            mt={2}
+            alignSelf="flex-end"
+            onPress={() => remove(index)}
+          >
+            Xoá
+          </Button>
         </View>
       ))}
       <Button w="90%" mt={3} alignSelf="center" onPress={() => append({})}>
@@ -136,4 +166,4 @@ const CatchReportSection = () => {
   );
 };
 
-export default CatchReportSection;
+export default FishCardSection;
