@@ -54,6 +54,11 @@ const model = {
   setLocationReviewScore: action((state, payload) => {
     state.locationReviewScore = payload;
   }),
+
+  setCatchReportDetail: action((state, payload) => {
+    state.catchReportDetail = payload;
+  }),
+
   setPersonalReview: action((state, payload) => {
     state.personalReview = payload;
   }),
@@ -169,6 +174,7 @@ const model = {
     if (status === 200) actions.setPersonalReview({ ...data, id: null });
     return status;
   }),
+
   submitCatchReport: thunk(async (actions, payload, { getState }) => {
     const { description, lakeId, catchesDetailList, images } = payload;
     const { status, data } = await http.post(`${API_URL.SEND_CATCH_REPORT}`, {
@@ -177,7 +183,10 @@ const model = {
       catchesDetailList,
       images,
     });
-    if (status === 200) actions.setPersonalReview({ ...data, id: null });
+    if (status === 200) {
+      actions.setCatchReportDetail({ ...data, id: null });
+      console.log(`status`, status);
+    }
     return status;
   }),
   getLocationOverview: thunk(async (actions, payload, { getState }) => {

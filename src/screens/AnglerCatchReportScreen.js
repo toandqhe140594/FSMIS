@@ -15,7 +15,7 @@ import {
 } from "native-base";
 import React, { useCallback, useState } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
-import { ScrollView, StyleSheet } from "react-native";
+import { Alert, ScrollView, StyleSheet } from "react-native";
 // import { v4 as uuidv4 } from "uuid";
 import * as yup from "yup";
 
@@ -80,13 +80,30 @@ const AnglerCatchReportScreen = () => {
         weight,
       }),
     );
-    submitCatchReport({
-      catchesDetailList,
-      description: aCaption,
-      hidden: isPublic,
-      images: imageArray,
-      lakeId: aLakeType,
-    });
+    if (imageArray !== undefined && imageArray.length > 0) {
+      const imagesStringArray = imageArray.map((item) => item.base64);
+      submitCatchReport({
+        catchesDetailList,
+        description: aCaption,
+        hidden: isPublic,
+        images: imagesStringArray,
+        lakeId: aLakeType,
+      });
+      return Alert.alert("Gửi thành công", "Thông tin gửi thành công", [
+        {
+          text: "OK",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel",
+        },
+      ]);
+    }
+    return Alert.alert("Thiếu thông tin", "Vui lòng thêm ảnh buổi câu.", [
+      {
+        text: "OK",
+        onPress: () => console.log("Cancel Pressed"),
+        style: "cancel",
+      },
+    ]);
   };
   const updateImageArray = (id) => {
     setImageArray(imageArray.filter((image) => image.id !== id));
