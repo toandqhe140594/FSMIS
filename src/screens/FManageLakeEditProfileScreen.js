@@ -88,9 +88,7 @@ const LakeEditProfileScreen = () => {
    * @param {number} id: id of the deleted image
    */
   const updateImageArray = (id) => {
-    const newBase64Array = imageArray.filter((image) => image.id !== id);
-    setImageArray(newBase64Array);
-    navigation.setParams({ base64Array: [] });
+    setImageArray(imageArray.filter((image) => image.id !== id));
   };
 
   // Fire when navigates back to the screen

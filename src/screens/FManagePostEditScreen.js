@@ -47,7 +47,6 @@ const CUSTOM_SCREEN_HEIGHT = Dimensions.get("window").height - OFFSET_BOTTOM;
 
 const PostEditorScreen = () => {
   const route = useRoute();
-  const navigation = useNavigation();
   const [imageArray, setImageArray] = useState([]);
   const [showSection, setShowSection] = useState(null);
   const methods = useForm({
@@ -67,9 +66,7 @@ const PostEditorScreen = () => {
     console.log(data);
   };
   const updateImageArray = (id) => {
-    const newBase64Array = imageArray.filter((image) => image.id !== id);
-    setImageArray(newBase64Array);
-    navigation.setParams({ base64Array: {} });
+    setImageArray(imageArray.filter((image) => image.id !== id));
   };
   // Fire when navigates back to this screen
   useFocusEffect(
