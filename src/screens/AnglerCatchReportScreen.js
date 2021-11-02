@@ -68,10 +68,13 @@ const AnglerCatchReportScreen = () => {
   const updateImageArray = (id) => {
     setImageArray(imageArray.filter((image) => image.id !== id));
   };
+  // Fire when navigates back to this screen
   useFocusEffect(
     // useCallback will listen to route.param
     useCallback(() => {
-      setImageArray(route.params?.base64Array);
+      if (route.params?.base64Array && route.params.base64Array[0]) {
+        setImageArray(route.params.base64Array);
+      }
       return () => {
         setImageArray([]);
       };
