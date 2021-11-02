@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginVertical: 8,
+    marginTop: 8,
   },
   error: { color: "#f43f5e", fontSize: 12, fontStyle: "italic" },
 });
@@ -69,6 +69,43 @@ const FishCardSection = () => {
               {errors?.cards?.[index].fishType?.message}
             </Text>
           )}
+          <View style={styles.rowWrapper}>
+            <Controller
+              name={`cards[${index}].minWeight`}
+              control={control}
+              render={() => (
+                <Input
+                  w="48%"
+                  fontSize="md"
+                  placeholder="Biểu nhỏ nhất"
+                  keyboardType="number-pad"
+                />
+              )}
+            />
+            <Text style={{ fontWeight: "bold", fontSize: 16 }}>-</Text>
+            <Controller
+              name={`cards[${index}].maxWeight`}
+              control={control}
+              render={() => (
+                <Input
+                  w="48%"
+                  fontSize="md"
+                  placeholder="Biểu lớn nhất"
+                  keyboardType="number-pad"
+                />
+              )}
+            />
+          </View>
+          {(errors.cards?.[index]?.minWeight?.message && (
+            <Text style={styles.error}>
+              {errors?.cards?.[index].minWeight?.message}
+            </Text>
+          )) ||
+            (errors.cards?.[index]?.maxWeight?.message && (
+              <Text style={styles.error}>
+                {errors?.cards?.[index].maxWeight?.message}
+              </Text>
+            ))}
           <Controller
             name={`cards[${index}].amount`}
             control={control}
@@ -80,6 +117,7 @@ const FishCardSection = () => {
                 value={value}
                 onChangeText={onChange}
                 onBlur={onBlur}
+                keyboardType="number-pad"
               />
             )}
           />
@@ -100,6 +138,7 @@ const FishCardSection = () => {
                 value={value}
                 onChangeText={onChange}
                 onBlur={onBlur}
+                keyboardType="number-pad"
               />
             )}
           />
@@ -109,11 +148,15 @@ const FishCardSection = () => {
               {errors.cards?.[index].totalWeight?.message}
             </Text>
           )}
-          <View style={styles.rowWrapper}>
-            <Button fontSize="md" w="40%" onPress={() => remove(index)}>
-              Xoá
-            </Button>
-          </View>
+          <Button
+            fontSize="md"
+            w="45%"
+            mt={2}
+            alignSelf="flex-end"
+            onPress={() => remove(index)}
+          >
+            Xoá
+          </Button>
         </View>
       ))}
       <Button w="90%" mt={3} alignSelf="center" onPress={() => append({})}>
