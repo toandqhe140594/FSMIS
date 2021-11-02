@@ -80,6 +80,7 @@ const CatchReportSection = () => {
                 value={value}
                 onChangeText={onChange}
                 onBlur={onBlur}
+                keyboardType="number-pad"
               />
             )}
           />
@@ -100,6 +101,7 @@ const CatchReportSection = () => {
                 value={value}
                 onChangeText={onChange}
                 onBlur={onBlur}
+                keyboardType="number-pad"
               />
             )}
           />
