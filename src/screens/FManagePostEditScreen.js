@@ -26,9 +26,9 @@ const validationSchema = yup.object().shape({
 });
 
 const postTypeData = [
-  { label: "Thông báo", val: -1 },
-  { label: "Bồi cá", val: 0 },
-  { label: "Báo cá", val: 1 },
+  { name: "Thông báo", id: -1 },
+  { name: "Bồi cá", id: 0 },
+  { name: "Báo cá", id: 1 },
 ];
 
 const styles = StyleSheet.create({
