@@ -4,6 +4,7 @@ import { Box, ScrollView, VStack } from "native-base";
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 
+import CloseFLocationComponent from "../components/CloseFLocationComponent";
 import HeaderTab from "../components/HeaderTab";
 import MenuScreen from "../components/MenuScreen";
 import { ROUTE_NAMES } from "../constants";
@@ -83,18 +84,6 @@ const menuCategoryForOwner = [
         title: `Quản lý bài đăng`,
         route: ROUTE_NAMES.FMANAGE_POST_MANAGEMENT,
         icon: "post-add",
-      },
-    ],
-  },
-
-  {
-    id: 5,
-    category: [
-      {
-        id: 10,
-        title: `Đóng cửa khu hồ`,
-        route: ROUTE_NAMES.FLOCATION_CLOSE_FISHING_LOCATION,
-        icon: "cancel",
       },
     ],
   },
@@ -199,6 +188,7 @@ const FManageHomeScreen = ({ typeString }) => {
           {menuCategory.map((item) => {
             return <MenuScreen menuListItem={item.category} key={item.id} />;
           })}
+          <CloseFLocationComponent name={name} />
         </VStack>
       </ScrollView>
     </Box>
