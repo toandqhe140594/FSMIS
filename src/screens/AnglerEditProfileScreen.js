@@ -135,7 +135,7 @@ const EditProfileScreen = () => {
         setAvatarImage(route.params?.base64Array[0].base64);
       }
       return () => {
-        setAvatarImage([]);
+        navigation.setParams({ base64Array: [] });
       };
     }, [route.params]),
   );
@@ -155,10 +155,7 @@ const EditProfileScreen = () => {
         },
         {
           text: "Đồng ý",
-          onPress: () => {
-            setAvatarImage(userInfo.avatarUrl);
-            navigation.setParams({ base64Array: [] });
-          },
+          onPress: () => setAvatarImage(userInfo.avatarUrl),
         },
       ],
       {
