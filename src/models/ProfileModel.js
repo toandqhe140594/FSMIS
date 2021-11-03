@@ -119,12 +119,26 @@ const model = {
   setCatchReportDetail: action((state, payload) => {
     state.catchReportDetail = payload;
   }),
-  getCatchReportDetailById: thunk(async (actions, payload) => {
-    const { data } = await http.get(
-      `${API_URL.PERSONAL_CATCH_REPORT_DETAIL}/${payload.id}`,
-    );
 
-    actions.setCatchReportDetail(data);
+  /**
+   * Get catch report detail information by id
+   * @param {Object} [payload] the payload pass to function
+   * @param {String} [payload.id] id of the catch report
+   * @param {Function} [payload.setIsLoading] function indicate stop loading for data
+   */
+  getCatchReportDetailById: thunk(async (actions, payload) => {
+    try {
+      const { data, status } = await http.get(
+        `${API_URL.PERSONAL_CATCH_REPORT_DETAIL}/${payload.id}`,
+      );
+      if (status === 200) {
+        actions.setCatchReportDetail(data);
+        payload.setIsLoading(false);
+      }
+    } catch (error) {
+      actions.setCatchReportDetail({});
+      payload.setIsLoading(false);
+    }
   }),
 
   // Start of saved location list
