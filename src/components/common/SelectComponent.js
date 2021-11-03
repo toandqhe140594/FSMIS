@@ -1,14 +1,8 @@
 import { Select } from "native-base";
 import PropTypes from "prop-types";
-import React from "react";
+import React, { memo } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 import { StyleSheet, Text, View } from "react-native";
-
-let itemKey = 0;
-const generateKey = () => {
-  itemKey += 1;
-  return itemKey;
-};
 
 const styles = StyleSheet.create({
   error: { color: "#f43f5e", fontSize: 12, fontStyle: "italic" },
@@ -25,6 +19,7 @@ const SelectComponent = ({
   hasAsterisk,
   isTitle,
   controllerName,
+  handleValueChange,
 }) => {
   const {
     control,
@@ -43,19 +38,20 @@ const SelectComponent = ({
           <Select
             accessibilityLabel={placeholder}
             placeholder={placeholder}
-            onValueChange={onChange}
+            onValueChange={(val) => {
+              onChange(val);
+              handleValueChange(controllerName, val);
+            }}
             selectedValue={value}
             fontSize="md"
           >
             {data.map((item) => (
               <Select.Item
-                key={generateKey()}
+                key={item.id}
                 label={item.name}
                 value={item.id}
                 my={1}
-              >
-                {item.label}
-              </Select.Item>
+              />
             ))}
           </Select>
         )}
@@ -75,6 +71,7 @@ SelectComponent.propTypes = {
   hasAsterisk: PropTypes.bool,
   isTitle: PropTypes.bool,
   controllerName: PropTypes.string.isRequired,
+  handleValueChange: PropTypes.func,
 };
 
 SelectComponent.defaultProps = {
@@ -82,6 +79,7 @@ SelectComponent.defaultProps = {
   hasAsterisk: false,
   isTitle: false,
   data: [],
+  handleValueChange: () => {},
 };
 
-export default SelectComponent;
+export default React.memo(SelectComponent);

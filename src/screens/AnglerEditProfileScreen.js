@@ -8,7 +8,7 @@ import {
 } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import { Button, Center, Icon, Input, Text, VStack } from "native-base";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import {
   Alert,
@@ -32,25 +32,23 @@ import store from "../utilities/Store";
 
 store.addModel("AddressModel", AddressModel);
 
-const validationSchema = yup.object().shape({
-  aName: yup.string().required("Họ và tên không thể bỏ trống"),
-  aGender: yup.bool(),
-  aAddress: yup.string(),
-  aProvinceId: yup.number(),
-  aDistrictId: yup.number(),
-  aWardId: yup.number(),
-});
-
-const genderData = [
-  { name: "Nam", id: true },
-  { name: "Nữ", id: false },
-];
-
 const EditProfileScreen = () => {
   const [date, setDate] = useState(null);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [formattedDate, setFormattedDate] = useState("");
   const [avatarImage, setAvatarImage] = useState(undefined);
+  const validationSchema = useMemo(
+    () =>
+      yup.object().shape({
+        aName: yup.string().required("Họ và tên không thể bỏ trống"),
+        aGender: yup.bool(),
+        aAddress: yup.string(),
+        aProvinceId: yup.number(),
+        aDistrictId: yup.number(),
+        aWardId: yup.number(),
+      }),
+    [],
+  );
   const navigation = useNavigation();
   const route = useRoute();
   const userInfo = useStoreState((state) => state.ProfileModel.userInfo);
@@ -64,8 +62,9 @@ const EditProfileScreen = () => {
     getWardByDistrictId,
   } = useStoreActions((actions) => actions.AddressModel);
   const methods = useForm({
-    mode: "onChange",
-    reValidateMode: "onChange",
+    // avoid change mode and reValidationMode to onChange to save re-render
+    mode: "onSubmit",
+    reValidateMode: "onSbumit",
     defaultValues: {
       aName: userInfo.fullName,
       aGender: userInfo.gender,
@@ -76,16 +75,26 @@ const EditProfileScreen = () => {
     },
     resolver: yupResolver(validationSchema),
   });
-  const { handleSubmit, formState, getValues } = methods;
-
+  const { handleSubmit, getValues } = methods;
+  const handleValueChange = useCallback((field, value) => {
+    if (field === "aProvinceId") {
+      getDisctrictByProvinceId({ id: value });
+    } else if (field === "aDistrictId") {
+      getWardByDistrictId({ id: value });
+    }
+  }, []);
   /**
    * Run first time when the screen inits
    * get all province list for select dropdown
    * and set custome date picker value
-   * When component unmoute, reset district list and ward list
+   * When component unmoute, reset distric list and ward list
    */
   useEffect(() => {
+    const provinceId = getValues("aProvinceId");
+    const districtId = getValues("aDistrictId");
     getAllProvince();
+    getDisctrictByProvinceId({ id: provinceId });
+    getWardByDistrictId({ id: districtId });
     setFormattedDate(userInfo.dob.split(" ")[0]);
     setAvatarImage(userInfo.avatarUrl);
     return () => {
@@ -93,19 +102,19 @@ const EditProfileScreen = () => {
     };
   }, []);
 
-  /*
-   * Fire when the formState changed (field is touch or dirty)
-   * Get value from select dropdown province and district field
-   * to update district list and ward list
-   */
-  useEffect(() => {
-    (async () => {
-      const selectedProvinceId = getValues("aProvinceId");
-      const selectedDistrictId = getValues("aDistrictId");
-      await getDisctrictByProvinceId({ id: selectedProvinceId });
-      getWardByDistrictId({ id: selectedDistrictId });
-    })();
-  }, [formState]);
+  // /*
+  //  * Fire when aProvinceId value change
+  //  */
+  // useEffect(() => {
+  //   getDisctrictByProvinceId({ id: watchProvince });
+  // }, [watchProvince]);
+
+  // /*
+  //  * Fire when aDistrictId value change
+  //  */
+  // useEffect(() => {
+  //   getWardByDistrictId({ id: watchDistrict });
+  // }, [watchDistrict]);
 
   useEffect(() => {
     if (date) {
@@ -168,7 +177,7 @@ const EditProfileScreen = () => {
 
   return (
     <KeyboardAvoidingView>
-      <ScrollView>
+      <ScrollView nestedScrollEnabled>
         {showDatePicker && (
           <DateTimePicker
             display="default"
@@ -178,8 +187,8 @@ const EditProfileScreen = () => {
             onChange={onDateChange}
           />
         )}
-        <HeaderTab name="Thông tin cá nhân" />
         <Center flex={1} minHeight={Math.round(useWindowDimensions().height)}>
+          <HeaderTab name="Thông tin cá nhân" />
           <FormProvider {...methods}>
             <VStack
               flex={1}
@@ -245,7 +254,6 @@ const EditProfileScreen = () => {
                 label="Giới tính"
                 isTitle
                 placeholder="Chọn giới tính"
-                data={genderData}
                 controllerName="aGender"
               />
 
@@ -264,6 +272,7 @@ const EditProfileScreen = () => {
                 placeholder="Chọn tỉnh/thành phố"
                 data={provinceList}
                 controllerName="aProvinceId"
+                handleValueChange={handleValueChange}
               />
 
               {/* District select box */}
@@ -273,6 +282,7 @@ const EditProfileScreen = () => {
                 placeholder="Chọn quận/huyện"
                 data={districtList}
                 controllerName="aDistrictId"
+                handleValueChange={handleValueChange}
               />
 
               {/* Ward select box */}
