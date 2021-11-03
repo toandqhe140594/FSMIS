@@ -81,7 +81,7 @@ const LakeAddNewScreen = () => {
   };
 
   /**
-   * Tak id of the image and remove image from imageArray
+   * Take id of the image and remove image from imageArray
    * @param {Number} id: id in the object image
    */
   const updateImageArray = (id) => {
