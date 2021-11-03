@@ -1,7 +1,8 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, ScrollView, Text, VStack } from "native-base";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { ActivityIndicator } from "react-native";
 import { Image } from "react-native-elements";
 import Swiper from "react-native-swiper";
 
@@ -13,52 +14,72 @@ import { goToFishingLocationOverviewScreen } from "../navigations";
 const AnglerCatchReportDetailScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
-  const getCatchReportDetailById = useStoreActions(
-    (actions) => actions.ProfileModel.getCatchReportDetailById,
-  );
 
   const catchDetails = useStoreState(
     (state) => state.ProfileModel.catchReportDetail,
   );
+  const getCatchReportDetailById = useStoreActions(
+    (actions) => actions.ProfileModel.getCatchReportDetailById,
+  );
 
-  useEffect(() => {
-    if (route.params) {
-      const { id } = route.params;
-      getCatchReportDetailById({ id });
-    }
-  }, [catchDetails.avatar]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const openLocationOverviewScreen = () => {
     goToFishingLocationOverviewScreen(navigation, {
       id: catchDetails.locationId,
     });
   };
+
+  useEffect(() => {
+    const timeOut = setTimeout(() => {
+      setIsLoading(false);
+    }, 5000);
+    if (route.params) {
+      const { id } = route.params;
+      getCatchReportDetailById({ id, setIsLoading });
+    }
+    return () => {
+      clearTimeout(timeOut);
+    };
+  }, []);
+
   const { avatar } = catchDetails;
+
+  if (isLoading)
+    return (
+      <Box flex={1} justifyContent="center" alignItems="center">
+        <ActivityIndicator size="large" color="blue" />
+      </Box>
+    );
+
+  if (!catchDetails.id) {
+    return (
+      <>
+        <HeaderTab name="Chi Tiết" />
+        <Box flex={1} justifyContent="center" alignItems="center">
+          Không có dữ liệu
+        </Box>
+      </>
+    );
+  }
+
   return (
     <ScrollView>
       <HeaderTab name="Chi Tiết" />
-      <Swiper height="auto" loadMinimal>
-        {catchDetails.images !== undefined ? (
-          catchDetails.images.map((imageUri) => (
+      {catchDetails.images && catchDetails.images.length > 0 && (
+        <Swiper height="auto" loadMinimal>
+          {catchDetails.images.map((imageUri, index) => (
             <Image
-              key={imageUri}
+              key={index.toString()}
               source={{
                 uri: imageUri,
               }}
               style={{ width: "100%", height: 450 }}
               resizeMode="contain"
             />
-          ))
-        ) : (
-          <Image
-            key="1"
-            source={{
-              uri: "https://everythingisviral.com/wp-content/uploads/2020/10/polite-cat.png",
-            }}
-            style={{ width: "100%", height: 450 }}
-          />
-        )}
-      </Swiper>
+          ))}
+        </Swiper>
+      )}
       <Box
         _dark={{
           borderColor: "gray.600",
