@@ -1,7 +1,9 @@
-// import "react-native-get-random-values";
-
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useFocusEffect, useRoute } from "@react-navigation/native";
+import {
+  useFocusEffect,
+  useNavigation,
+  useRoute,
+} from "@react-navigation/native";
 import { useStoreActions } from "easy-peasy";
 import {
   Box,
@@ -54,6 +56,7 @@ const styles = StyleSheet.create({
 
 const AnglerCatchReportScreen = () => {
   const route = useRoute();
+  const navigation = useNavigation();
   const [imageArray, setImageArray] = useState([]);
   const submitCatchReport = useStoreActions(
     (actions) => actions.LocationModel.submitCatchReport,
@@ -109,12 +112,15 @@ const AnglerCatchReportScreen = () => {
   const updateImageArray = (id) => {
     setImageArray(imageArray.filter((image) => image.id !== id));
   };
+  // Fire when navigates back to this screen
   useFocusEffect(
     // useCallback will listen to route.param
     useCallback(() => {
-      setImageArray(route.params?.base64Array);
+      if (route.params?.base64Array && route.params.base64Array[0]) {
+        setImageArray(route.params.base64Array);
+      }
       return () => {
-        setImageArray([]);
+        navigation.setParams({ base64Array: [] });
       };
     }, [route.params]),
   );

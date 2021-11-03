@@ -41,6 +41,10 @@ const MultiImageSection = ({
   formRoute,
 }) => {
   const navigation = useNavigation();
+  /**
+   * Displays an pop-up before delete an image
+   * @param {Number} id: id of the image
+   */
   const handleDelete = (id) => {
     Alert.alert(
       "Thông báo",

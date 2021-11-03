@@ -2,25 +2,12 @@ import { useNavigation } from "@react-navigation/native";
 import { useStoreDispatch } from "easy-peasy";
 import PropTypes from "prop-types";
 import React from "react";
-import { StyleSheet, View } from "react-native";
+import { View } from "react-native";
 import { Icon, ListItem, Text } from "react-native-elements";
 
+import styles from "../config/styles";
 import { ROUTE_NAMES } from "../constants";
 import { goToScreen } from "../navigations";
-
-const styles = StyleSheet.create({
-  view: {
-    marginBottom: 6,
-  },
-  text: {
-    textAlign: "left",
-    padding: 2,
-    fontSize: 19,
-    marginBottom: 3,
-    marginTop: 5,
-    marginLeft: 11,
-  },
-});
 
 const MenuScreen = ({ menuTitle, menuListItem }) => {
   const navigation = useNavigation();
@@ -33,8 +20,10 @@ const MenuScreen = ({ menuTitle, menuListItem }) => {
   };
 
   return (
-    <View style={styles.view}>
-      {menuTitle && <Text style={styles.text}> {menuTitle}</Text>}
+    <View style={styles.menuScreenListItemView}>
+      {menuTitle && (
+        <Text style={styles.menuScreenListItemText}> {menuTitle}</Text>
+      )}
       {menuListItem.map((item) => (
         <ListItem
           key={item.id}
