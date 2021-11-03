@@ -95,10 +95,10 @@ const LakeAddNewScreen = () => {
   useFocusEffect(
     // useCallback will listen to route.param
     useCallback(() => {
-      setImageArray(route.params?.base64Array);
-      return () => {
+      if (route.param?.base64Array && route.params.base64Array.length) {
+        setImageArray(route.params?.base64Array);
         navigation.setParams({ base64Array: [] });
-      };
+      }
     }, [route.params]),
   );
 
