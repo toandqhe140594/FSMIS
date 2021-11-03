@@ -1,4 +1,5 @@
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 import { useStoreActions } from "easy-peasy";
 import { Box, Button, Menu, Pressable } from "native-base";
 import PropTypes from "prop-types";
@@ -6,6 +7,8 @@ import React from "react";
 import { Alert, StyleSheet } from "react-native";
 import { Avatar, Text } from "react-native-elements";
 import { Rating } from "react-native-ratings";
+
+import { goToWriteReportScreen } from "../navigations";
 
 const styles = StyleSheet.create({
   buttonText: { color: "white" },
@@ -28,6 +31,8 @@ const ReviewFromAnglerSection = ({
   userImage,
   id,
 }) => {
+  const navigation = useNavigation();
+
   const { voteReview, deletePersonalReview, getLocationReviewScore } =
     useStoreActions((actions) => actions.LocationModel);
 
@@ -93,6 +98,9 @@ const ReviewFromAnglerSection = ({
           name="flag"
           size={24}
           style={{ position: "absolute", top: 0, right: 0 }}
+          onPress={() => {
+            goToWriteReportScreen(navigation, { id, type: "review" });
+          }}
         />
       )}
 

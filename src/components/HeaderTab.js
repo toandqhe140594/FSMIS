@@ -42,7 +42,7 @@ const HeaderTab = ({ name, isVerified, flagable, id }) => {
         </Box>
         <Pressable
           onPress={() => {
-            if (id) goToWriteReportScreen(navigation, { id });
+            if (id) goToWriteReportScreen(navigation, { id, type: "location" });
           }}
         >
           <Ionicons

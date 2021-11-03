@@ -32,6 +32,7 @@ export const FMANAGE_CATCH_VERIFY = "FManage Verify Catch Report";
 export const FMANAGE_CATCH_DETAIL = "FManage Detail Catch Report";
 export const FMANAGE_SELECTOR = "FManage Select Fishing Location";
 export const FMANAGE_PROFILE_EDIT = "FManage Edit Fishing Location";
+export const FMANAGE_PROFILE_ADD_NEW = "FManage Add New Fishing Location";
 export const FMANAGE_MAIN = "FManage Fishing Location Management Screen";
 export const FMANAGE_STAFF_MANAGEMENT = "FManage Staff List";
 export const FMANAGE_STAFF_ADD = "FManage Add Staff";
@@ -39,13 +40,12 @@ export const FMANAGE_STAFF_DETAIL = "FManage Staff Detail";
 export const FMANAGE_POST_MANAGEMENT = "FManage Post List Of Fishing Location";
 export const FMANAGE_POST_EDIT = "FManage Edit Post";
 export const FMANAGE_LOCATION_OVERVIEW = "FManage View Location Overview";
+export const FMANAGE_LOCATION_CLOSE = "Close Personal Fishing Location";
 
 export const FMANAGE_LOCATION_PICK = "FManage Pick Location On Map";
 export const FMANAGE_CHECKIN_HISTORY = "FManage Checkin List";
 export const FMANAGE_CHECKIN_VERIFY = "FManage Verify Checkin";
 export const FMANAGE_QR_SCAN = "FManage Scan QR Code";
-
-export const FLOCATION_CLOSE_FISHING_LOCATION = "Delete Fishing Location";
 
 export const ADMIN_MAIN = "Admin Management Main Screen";
 export const ADMIN_ACCOUNT_MANAGEMENT = "Admin Account Management Screen";

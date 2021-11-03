@@ -22,6 +22,7 @@ export const PERSONAL_INFORMATION = "personal";
 export const PERSONAL_OWNED_LOCATION = "location/manager";
 
 export const LOCATION_OVERVIEW = "location";
+export const LOCATION_CLOSE = "location/close";
 export const LOCATION_NEARBY = "location/nearby";
 export const LOCATION_LAKE_ALL = "lake";
 export const LOCATION_REVIEW_SCORE = "review/score";
@@ -32,3 +33,5 @@ export const LOCATION_REVIEW_PERSONAL_POST = "review/me/post";
 export const ADDRESS_ALL_PROVINCE = "/address/province";
 export const ADDRESS_PROVINCE_DISTRICT = "address/district";
 export const ADDRESS_DISTRICT_WARD = "address/ward";
+
+export const REPORT_WRITE = "report/add";

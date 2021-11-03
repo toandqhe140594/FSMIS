@@ -9,6 +9,16 @@ import EmployeeDetailBox from "../components/EmployeeDetailBox";
 import HeaderTab from "../components/HeaderTab";
 import { goBack } from "../navigations";
 
+const showToastMessage = (message) => {
+  ToastAndroid.showWithGravityAndOffset(
+    message,
+    ToastAndroid.LONG,
+    ToastAndroid.BOTTOM,
+    25,
+    50,
+  );
+};
+
 const FManageEmployeeAddScreen = () => {
   const navigation = useNavigation();
 
@@ -30,7 +40,8 @@ const FManageEmployeeAddScreen = () => {
   };
 
   const onEndEditing = () => {
-    findStaffByPhone({ phone: search });
+    if (search.trim()) findStaffByPhone({ phone: search });
+    else showToastMessage("Số điện thoại không thể để trống");
   };
 
   const addStaff = () => {
@@ -39,25 +50,12 @@ const FManageEmployeeAddScreen = () => {
 
   useEffect(() => {
     // If error occur
-    if (staffManagementErrorMsg)
-      ToastAndroid.showWithGravityAndOffset(
-        staffManagementErrorMsg,
-        ToastAndroid.LONG,
-        ToastAndroid.BOTTOM,
-        25,
-        50,
-      );
+    if (staffManagementErrorMsg) showToastMessage(staffManagementErrorMsg);
   }, [staffManagementErrorMsg]);
 
   useEffect(() => {
     if (success) {
-      ToastAndroid.showWithGravityAndOffset(
-        "Thêm nhân viên thành công",
-        ToastAndroid.LONG,
-        ToastAndroid.BOTTOM,
-        25,
-        50,
-      );
+      showToastMessage("Thêm nhân viên thành công");
       goBack(navigation);
     }
   }, [success]);

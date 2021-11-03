@@ -2,6 +2,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React from "react";
 
 import { ROUTE_NAMES } from "../constants";
+import FManageAddNewScreen from "../screens/FManageAddNewScreen";
 import FManageCatchReportHistory from "../screens/FManageCatchReportHistory";
 import FManageCheckinHistoryScreen from "../screens/FManageCheckinHistory";
 import FManageEditProfileScreen from "../screens/FManageEditProfileScreen";
@@ -42,6 +43,10 @@ const ManageNavigator = () => {
       <ManageStack.Screen
         name={ROUTE_NAMES.FMANAGE_LOCATION_OVERVIEW}
         component={FManageLocationViewScreen}
+      />
+      <ManageStack.Screen
+        name={ROUTE_NAMES.FMANAGE_PROFILE_ADD_NEW}
+        component={FManageAddNewScreen}
       />
       <ManageStack.Screen
         name={ROUTE_NAMES.FMANAGE_PROFILE_EDIT}

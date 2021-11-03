@@ -43,4 +43,15 @@ export default StyleSheet.create({
   textwhite: {
     color: "white",
   },
+  menuScreenListItemView: {
+    marginBottom: 6,
+  },
+  menuScreenListItemText: {
+    textAlign: "left",
+    padding: 2,
+    fontSize: 19,
+    marginBottom: 3,
+    marginTop: 5,
+    marginLeft: 11,
+  },
 });

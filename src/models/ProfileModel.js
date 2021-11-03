@@ -184,5 +184,27 @@ const model = {
     actions.setNotificationTotalPage(totalPage);
     actions.setNotificationList(items);
   }),
+
+  /**
+   * Submit new report to server
+   * @param {Object} [payload] the payload pass to function
+   * @param {Number} [payload.id] the id of the element that is reported
+   * @param {String} [payload.type] the type of the report
+   * @param {String} [payload.content] the content of the report
+   * @param {Function} [payload.setSuccess] the function to indicate success after request
+   */
+  writeNewReport: thunk(async (actions, payload) => {
+    const { id, type, content, setSuccess } = payload;
+    try {
+      const { status } = await http.post(`${API_URL.REPORT_WRITE}`, {
+        id,
+        type,
+        content,
+      });
+      if (status === 200) setSuccess(true);
+    } catch (error) {
+      setSuccess(false);
+    }
+  }),
 };
 export default model;

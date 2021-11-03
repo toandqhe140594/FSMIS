@@ -1,9 +1,10 @@
 import { useRoute } from "@react-navigation/native";
-import { useStoreActions } from "easy-peasy";
+import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, ScrollView, VStack } from "native-base";
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 
+import CloseFLocationComponent from "../components/CloseFLocationComponent";
 import HeaderTab from "../components/HeaderTab";
 import MenuScreen from "../components/MenuScreen";
 import { ROUTE_NAMES } from "../constants";
@@ -86,18 +87,6 @@ const menuCategoryForOwner = [
       },
     ],
   },
-
-  {
-    id: 5,
-    category: [
-      {
-        id: 10,
-        title: `Đóng cửa khu hồ`,
-        route: ROUTE_NAMES.FLOCATION_CLOSE_FISHING_LOCATION,
-        icon: "cancel",
-      },
-    ],
-  },
 ];
 const menuCategoryForStaff = [
   {
@@ -142,6 +131,13 @@ const menuCategoryForStaff = [
 
 const FManageHomeScreen = ({ typeString }) => {
   const route = useRoute();
+
+  const locationDetails = useStoreState(
+    (states) => states.FManageModel.locationDetails,
+  );
+  const setLocationLatLng = useStoreActions(
+    (actions) => actions.FManageModel.setLocationLatLng,
+  );
   const [shortLocationOverview, setShortLocationOverview] = useState({
     name: "Hồ câu",
     id: 0,
@@ -160,6 +156,15 @@ const FManageHomeScreen = ({ typeString }) => {
     useStoreActions((actions) => actions.FManageModel);
 
   useEffect(() => {
+    if (locationDetails.latitude && locationDetails.longitude) {
+      setLocationLatLng({
+        latitude: locationDetails.latitude,
+        longitude: locationDetails.longitude,
+      });
+    }
+  }, [locationDetails]);
+
+  useEffect(() => {
     if (route.params) {
       const { id, name, isVerified } = route.params;
       setCurrentId(id);
@@ -167,6 +172,9 @@ const FManageHomeScreen = ({ typeString }) => {
       setShortLocationOverview({ id, name, isVerified });
       getListOfLake({ id });
     }
+    return () => {
+      setLocationLatLng({ latitude: null, longitude: null });
+    };
   }, []);
 
   const { id, name, isVerified } = shortLocationOverview;
@@ -180,6 +188,7 @@ const FManageHomeScreen = ({ typeString }) => {
           {menuCategory.map((item) => {
             return <MenuScreen menuListItem={item.category} key={item.id} />;
           })}
+          <CloseFLocationComponent name={name} />
         </VStack>
       </ScrollView>
     </Box>

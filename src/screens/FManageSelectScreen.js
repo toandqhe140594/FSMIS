@@ -7,7 +7,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import FLocationCard from "../components/FLocationCard";
 import HeaderTab from "../components/HeaderTab";
 import FManageModel from "../models/FManageModel";
-import { goToFManageEditProfileScreen } from "../navigations";
+import { goToFManageAddNewScreen } from "../navigations";
 import store from "../utilities/Store";
 
 store.addModel("FManageModel", FManageModel);
@@ -54,7 +54,7 @@ const FManageSelectScreen = () => {
         <View style={[styles.center, getEmptyListStyling()]}>
           <Pressable
             onPress={() => {
-              goToFManageEditProfileScreen(navigation);
+              goToFManageAddNewScreen(navigation);
             }}
           >
             <View style={styles.border}>
