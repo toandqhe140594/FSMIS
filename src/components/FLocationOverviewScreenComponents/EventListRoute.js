@@ -100,8 +100,8 @@ const FLocationEventRoute = () => {
     getLocationPostListByPage({ pageNo: lakePostPage });
     setLakePostPage(lakePostPage + 1);
   };
-  const reportHandler = (id) => {
-    goToWriteReportScreen(navigation);
+  const reportHandler = (id, idType) => {
+    goToWriteReportScreen(navigation, { id, idType });
   };
   const listEvent = [{ name: "Báo cáo bài viết", onPress: reportHandler }];
   return (
@@ -110,26 +110,19 @@ const FLocationEventRoute = () => {
         <FlatList
           data={locationPostList}
           renderItem={({ item }) => (
-            <PressableCustomCard
-              paddingX="1"
-              onPress={() => {
-                console.log(item.id);
+            <EventPostCard
+              lakePost={{
+                badge: item.postType === "STOCKING" ? "Bồi cá" : "Thông báo",
+                content: item.content,
               }}
-            >
-              <EventPostCard
-                lakePost={{
-                  badge: item.postType === "STOCKING" ? "Bồi cá" : "Thông báo",
-                  content: item.content,
-                }}
-                image={item.url}
-                postStyle="LAKE_POST"
-                edited={item.edited}
-                postTime={item.postTime}
-                id={item.id}
-                iconName="flag"
-                iconEvent={listEvent}
-              />
-            </PressableCustomCard>
+              image={item.url}
+              postStyle="LAKE_POST"
+              edited={item.edited}
+              postTime={item.postTime}
+              id={item.id}
+              iconName="flag"
+              iconEvent={listEvent}
+            />
           )}
           onEndReached={() => {
             loadMoreLakePostData();
