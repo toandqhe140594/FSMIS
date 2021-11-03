@@ -8,6 +8,7 @@ import LakeListViewRoute from "../components/FLocationOverviewScreenComponents/L
 import OverviewInformationRoute from "../components/FLocationOverviewScreenComponents/OverviewInformationRoute";
 import ReviewListRoute from "../components/FLocationOverviewScreenComponents/ReviewListRoute";
 import HeaderTab from "../components/HeaderTab";
+import { VIEW_ROLE_ANGLER } from "../constants";
 import LocationModel from "../models/LocationModel";
 import store from "../utilities/Store";
 
@@ -23,8 +24,12 @@ const FishingSpotDetailScreen = () => {
   const setCurrentId = useStoreActions(
     (actions) => actions.LocationModel.setCurrentId,
   );
-  const { resetPersonalReview, getLocationOverviewById, setLocationOverview } =
-    useStoreActions((actions) => actions.LocationModel);
+  const {
+    resetPersonalReview,
+    getLocationOverviewById,
+    setLocationOverview,
+    setLocationReviewList,
+  } = useStoreActions((actions) => actions.LocationModel);
 
   useEffect(() => {
     if (route.params && route.params.id) {
@@ -34,15 +39,21 @@ const FishingSpotDetailScreen = () => {
     }
     return () => {
       resetPersonalReview();
+      setLocationReviewList({ data: [], status: "Overwrite" });
       setLocationOverview({});
     };
   }, []);
 
-  const { id, name, verify } = locationOverview;
+  const { id, name, verify, role } = locationOverview;
 
   return (
     <>
-      <HeaderTab id={id} name={name} isVerified={verify} flagable />
+      <HeaderTab
+        id={id}
+        name={name}
+        isVerified={verify}
+        flagable={role === VIEW_ROLE_ANGLER}
+      />
       <Tab.Navigator
         sceneContainerStyle={{ backgroundColor: "white" }}
         screenOptions={{
