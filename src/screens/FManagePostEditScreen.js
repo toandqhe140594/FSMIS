@@ -75,10 +75,8 @@ const PostEditorScreen = () => {
     useCallback(() => {
       if (route.params?.base64Array && route.params.base64Array[0]) {
         setImageArray(route.params?.base64Array);
-      }
-      return () => {
         navigation.setParams({ base64Array: [] });
-      };
+      }
     }, [route.params]),
   );
   return (

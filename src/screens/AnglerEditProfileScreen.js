@@ -133,10 +133,8 @@ const EditProfileScreen = () => {
     useCallback(() => {
       if (route.params?.base64Array && route.params.base64Array[0]) {
         setAvatarImage(route.params?.base64Array[0].base64);
-      }
-      return () => {
         navigation.setParams({ base64Array: [] });
-      };
+      }
     }, [route.params]),
   );
 

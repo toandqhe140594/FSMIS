@@ -79,10 +79,8 @@ const FManageEditProfileScreen = () => {
     useCallback(() => {
       if (route.params?.base64Array && route.params.base64Array.length) {
         setImageArray(route.params.base64Array);
-      }
-      return () => {
         navigation.setParams({ base64Array: [] });
-      };
+      }
     }, [route.params]),
   );
   return (
