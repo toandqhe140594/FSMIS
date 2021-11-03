@@ -109,7 +109,8 @@ const model = {
     const { data } = await http.get(
       `location/${getState().currentId}/${API_URL.LOCATION_REVIEW_PERSONAL}`,
     );
-    actions.setPersonalReview(data);
+    if (data.id) actions.setPersonalReview(data);
+    else actions.setPersonalReview({});
   }),
   getLocationReviewListByPage: thunk(async (actions, payload, { getState }) => {
     const { pageNo, filter } = payload;
@@ -175,7 +176,7 @@ const model = {
     return status;
   }),
 
-  submitCatchReport: thunk(async (actions, payload, { getState }) => {
+  submitCatchReport: thunk(async (actions, payload) => {
     const { description, lakeId, catchesDetailList, images } = payload;
     const { status, data } = await http.post(`${API_URL.SEND_CATCH_REPORT}`, {
       lakeId,
