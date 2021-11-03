@@ -6,8 +6,10 @@ import React, { useEffect, useState } from "react";
 import { FlatList, StyleSheet } from "react-native";
 import { Divider } from "react-native-elements";
 
-import { goToCatchReportDetailScreen } from "../../navigations";
-import { goToWriteReportScreen } from "../../navigations";
+import {
+  goToCatchReportDetailScreen,
+  goToWriteReportScreen,
+} from "../../navigations";
 import EventPostCard from "../EventPostCard";
 import PressableCustomCard from "../PressableCustomCard";
 
