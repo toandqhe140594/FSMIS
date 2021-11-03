@@ -27,7 +27,7 @@ const ChangePhoneNumberScreen = () => {
       >
         {/* Phone number input field */}
         <Text bold fontSize="md">
-          Nhập số điện thoại mới <Text color="danger.500">*</Text>
+          Nhập số điện thoại mới<Text color="danger.500">*</Text>
         </Text>
         <Input
           InputLeftElement={

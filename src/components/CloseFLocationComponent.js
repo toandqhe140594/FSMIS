@@ -51,7 +51,6 @@ const CloseFLocationComponent = ({ name }) => {
 
   return (
     <View style={styles.menuScreenListItemView}>
-      {/* <Text style={styles.text}></Text> */}
       <ListItem
         onPress={() => {
           closeAction();
