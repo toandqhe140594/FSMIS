@@ -20,3 +20,7 @@ export const USER_ROLE = "UserRole";
 
 export const ROLE_USER = "ROLE_USER";
 export const ROLE_ADMIN = "ROLE_ADMIN";
+
+export const VIEW_ROLE_ANGLER = "ANGLER";
+export const VIEW_ROLE_OWNER = "OWNER";
+export const VIEW_ROLE_STAFF = "STAFF";
