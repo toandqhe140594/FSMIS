@@ -100,8 +100,8 @@ const FLocationEventRoute = () => {
     getLocationPostListByPage({ pageNo: lakePostPage });
     setLakePostPage(lakePostPage + 1);
   };
-  const reportHandler = (id, idType) => {
-    goToWriteReportScreen(navigation, { id, idType });
+  const reportHandler = (id, type) => {
+    goToWriteReportScreen(navigation, { id, type });
   };
   const listEvent = [{ name: "Báo cáo bài viết", onPress: reportHandler }];
   return (
