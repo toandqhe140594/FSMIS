@@ -4,6 +4,7 @@ import {
   useNavigation,
   useRoute,
 } from "@react-navigation/native";
+import { useStoreActions } from "easy-peasy";
 import {
   Box,
   Button,
@@ -16,7 +17,7 @@ import {
 } from "native-base";
 import React, { useCallback, useState } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
-import { ScrollView, StyleSheet } from "react-native";
+import { Alert, ScrollView, StyleSheet } from "react-native";
 import * as yup from "yup";
 
 import CatchReportSection from "../components/CatchReport/CatchReportSection";
@@ -56,6 +57,10 @@ const AnglerCatchReportScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
   const [imageArray, setImageArray] = useState([]);
+  const submitCatchReport = useStoreActions(
+    (actions) => actions.LocationModel.submitCatchReport,
+  );
+  // const lakeList = useStoreActions((actions) => actions.LocationModel.lakeList);
   const methods = useForm({
     mode: "onChange",
     reValidateMode: "onChange",
@@ -64,8 +69,44 @@ const AnglerCatchReportScreen = () => {
   });
   const { control, handleSubmit } = methods;
   const onSubmit = (data) => {
-    console.log(data);
-    // console.log(imageArray);
+    const { aCaption, aLakeType, isPublic, cards } = data;
+    const catchesDetailList = cards.map(
+      ({
+        catches: quantity,
+        fishType: fishSpeciesId,
+        isReleased: returnToOwner,
+        totalWeight: weight,
+      }) => ({
+        quantity,
+        fishSpeciesId,
+        returnToOwner,
+        weight,
+      }),
+    );
+    if (imageArray !== undefined && imageArray.length > 0) {
+      const imagesStringArray = imageArray.map((item) => item.base64);
+      submitCatchReport({
+        catchesDetailList,
+        description: aCaption,
+        hidden: isPublic,
+        images: imagesStringArray,
+        lakeId: aLakeType,
+      });
+      return Alert.alert("Gửi thành công", "Thông tin gửi thành công", [
+        {
+          text: "OK",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel",
+        },
+      ]);
+    }
+    return Alert.alert("Thiếu thông tin", "Vui lòng thêm ảnh buổi câu.", [
+      {
+        text: "OK",
+        onPress: () => console.log("Cancel Pressed"),
+        style: "cancel",
+      },
+    ]);
   };
   const updateImageArray = (id) => {
     setImageArray(imageArray.filter((image) => image.id !== id));

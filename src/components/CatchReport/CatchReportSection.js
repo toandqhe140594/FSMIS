@@ -58,8 +58,8 @@ const CatchReportSection = () => {
                 onValueChange={onChange}
                 selectedValue={value}
               >
-                <Select.Item label="Cá diếc" value={1} />
-                <Select.Item label="Cá chép" value={2} />
+                <Select.Item label="Cá diếc" value={6} />
+                <Select.Item label="Cá chép" value={8} />
               </Select>
             )}
           />

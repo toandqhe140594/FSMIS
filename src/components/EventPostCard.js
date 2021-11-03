@@ -140,7 +140,7 @@ EventPostCard.defaultProps = {
       "Trắm đen - Chép khủng bồi hồ vip cho ae câu thứ 3-5, Lorem ipsum dolor, sit amet consectetur adipisicing elit",
   },
   postStyle: "LAKE_POST",
-  iconName: "flag",
+  iconName: "",
   iconEvent: [],
   image: "https://picsum.photos/500",
   edited: false,
