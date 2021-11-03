@@ -58,6 +58,8 @@ const TextAreaComponent = ({
               onChangeText={onChange}
               onBlur={onBlur}
               value={value}
+              backgroundColor="white"
+              padding={10}
             />
           </TouchableWithoutFeedback>
         )}

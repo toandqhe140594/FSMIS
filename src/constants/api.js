@@ -34,4 +34,5 @@ export const ADDRESS_ALL_PROVINCE = "/address/province";
 export const ADDRESS_PROVINCE_DISTRICT = "address/district";
 export const ADDRESS_DISTRICT_WARD = "address/ward";
 
+export const SEND_CATCH_REPORT = "catches/report";
 export const REPORT_WRITE = "report/add";
