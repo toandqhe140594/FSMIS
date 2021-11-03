@@ -175,20 +175,20 @@ const model = {
     return status;
   }),
 
-  submitCatchReport: thunk(async (actions, payload, { getState }) => {
-    const { description, lakeId, catchesDetailList, images } = payload;
-    const { status, data } = await http.post(`${API_URL.SEND_CATCH_REPORT}`, {
-      lakeId,
-      description,
-      catchesDetailList,
-      images,
-    });
-    if (status === 200) {
-      actions.setCatchReportDetail({ ...data, id: null });
-      console.log(`status`, status);
-    }
-    return status;
-  }),
+  // submitCatchReport: thunk(async (actions, payload, { getState }) => {
+  //   const { description, lakeId, catchesDetailList, images } = payload;
+  //   const { status, data } = await http.post(`${API_URL.SEND_CATCH_REPORT}`, {
+  //     lakeId,
+  //     description,
+  //     catchesDetailList,
+  //     images,
+  //   });
+  //   if (status === 200) {
+  //     actions.setCatchReportDetail({ ...data, id: null });
+  //     console.log(`status`, status);
+  //   }
+  //   return status;
+  // }),
   getLocationOverview: thunk(async (actions, payload, { getState }) => {
     const { data } = await http.get(`location/${getState().currentId}`);
     actions.setLocationOverview(data);

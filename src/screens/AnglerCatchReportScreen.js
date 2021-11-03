@@ -4,7 +4,7 @@ import {
   useNavigation,
   useRoute,
 } from "@react-navigation/native";
-import { useStoreActions } from "easy-peasy";
+import { useStoreActions, useStoreState } from "easy-peasy";
 import {
   Box,
   Button,
@@ -15,7 +15,7 @@ import {
   Text,
   VStack,
 } from "native-base";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import { Alert, ScrollView, StyleSheet } from "react-native";
 import * as yup from "yup";
@@ -58,16 +58,40 @@ const AnglerCatchReportScreen = () => {
   const navigation = useNavigation();
   const [imageArray, setImageArray] = useState([]);
   const submitCatchReport = useStoreActions(
-    (actions) => actions.LocationModel.submitCatchReport,
+    (actions) => actions.CheckInModel.submitCatchReport,
   );
-  // const lakeList = useStoreActions((actions) => actions.LocationModel.lakeList);
+  const getLakeList = useStoreActions(
+    (actions) => actions.CheckInModel.getLakeListByLocationId,
+  );
+  const listLake = useStoreState((states) => states.CheckInModel.lakeList);
+  const listFishModel = useStoreState((states) => states.CheckInModel.fishList);
+
+  useEffect(() => {
+    getLakeList();
+  }, []);
+
   const methods = useForm({
     mode: "onChange",
     reValidateMode: "onChange",
     defaultValues: { isPublic: false },
     resolver: yupResolver(validationSchema),
   });
+
+  const { watch } = methods;
+  const watchALakeTypeField = watch("aLakeType");
+  const [listFish, setListFish] = useState([]);
+
+  useEffect(() => {
+    const filter = listFishModel.filter(
+      (item) => item.id === watchALakeTypeField,
+    );
+    if (filter[0] !== undefined) {
+      setListFish(filter[0].fishList);
+    }
+  }, [watchALakeTypeField]);
+
   const { control, handleSubmit } = methods;
+
   const onSubmit = (data) => {
     const { aCaption, aLakeType, isPublic, cards } = data;
     const catchesDetailList = cards.map(
@@ -153,10 +177,7 @@ const AnglerCatchReportScreen = () => {
                 isTitle
                 label="Vị trí hồ câu"
                 placeholder="Chọn hồ câu"
-                data={[
-                  { name: "Hồ thường", id: 1 },
-                  { name: "Hồ VIP", id: 2 },
-                ]}
+                data={listLake}
                 controllerName="aLakeType"
               />
             </Center>
@@ -166,7 +187,7 @@ const AnglerCatchReportScreen = () => {
                 <Text bold fontSize="md">
                   Thông tin cá
                 </Text>
-                <CatchReportSection />
+                <CatchReportSection fishList={listFish} />
               </Stack>
             </Center>
 
