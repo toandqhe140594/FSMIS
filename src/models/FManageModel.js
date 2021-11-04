@@ -467,6 +467,21 @@ const model = {
     }
   }),
 
+  // DucHM ADD_START 4/11/2021
+  /**
+   * Add new fishing location
+   * @param {Object} [payload.addData] an object pass to POST body
+   * @param {Function} [payload.setAddStatus] the function set status
+   */
+  addNewLocation: thunk(async (actions, payload) => {
+    const { addData, setAddStatus } = payload;
+    const { status, data } = await http.post(API_URL.LOCATION_ADD, addData, {
+      params: {},
+    });
+    // actions.getListOfFishingLocations();
+    const message = `Response ${data} with code ${status}`;
+    setAddStatus(message);
+  }),
   // END OF FISHING LOCATION MANAGEMENT RELATED SECTION
 
   /**
