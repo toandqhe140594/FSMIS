@@ -14,7 +14,7 @@ import {
   Text,
   VStack,
 } from "native-base";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { StyleSheet } from "react-native";
 import * as yup from "yup";
@@ -26,32 +26,6 @@ import HeaderTab from "../components/HeaderTab";
 import CheckboxSelectorComponent from "../components/LakeEditProfile/CheckboxSelectorComponent";
 import FishCardSection from "../components/LakeEditProfile/FishCardSection";
 import { ROUTE_NAMES } from "../constants";
-
-const validationSchema = yup.object().shape({
-  lakeName: yup.string().required("Tên hồ không thể bỏ trống"),
-  lakeDescription: yup.string().required("Miêu tả giá vé ở hồ này"),
-  lakeFishingMethods: yup
-    .array()
-    .test(
-      "isArrayEmpty?",
-      "Loại hình câu của hồ không được để trống",
-      (value) => value.length !== 0,
-    ),
-  lakeLength: yup.string().required("Chiều dài hồ không được để trống"),
-  lakeWidth: yup.string().required("Chiều rộng hồ không được để trống"),
-  lakeDepth: yup.string().required("Độ sâu của hồ không được để trống"),
-  cards: yup.array().of(
-    yup.object().shape({
-      fishType: yup.number().required("Loại cá không được để trống"),
-      amount: yup.number().required("Số cá bắt được không được để trống"),
-      totalWeight: yup
-        .number()
-        .required("Tổng cân nặng cá không được để trống"),
-      minWeight: yup.number().required("Biểu cá không được để trống"),
-      maxWeight: yup.number().required("Biểu cá không được để trống"),
-    }),
-  ),
-});
 
 const fishingMethodData = ["Câu đài", "Câu đơn", "Câu lục"];
 
@@ -68,6 +42,35 @@ const LakeEditProfileScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
   const [imageArray, setImageArray] = useState([]);
+  const validationSchema = useMemo(
+    () =>
+      yup.object().shape({
+        lakeName: yup.string().required("Tên hồ không thể bỏ trống"),
+        lakeDescription: yup.string().required("Miêu tả giá vé ở hồ này"),
+        lakeFishingMethods: yup
+          .array()
+          .test(
+            "isArrayEmpty?",
+            "Loại hình câu của hồ không được để trống",
+            (value) => value.length !== 0,
+          ),
+        lakeLength: yup.string().required("Chiều dài hồ không được để trống"),
+        lakeWidth: yup.string().required("Chiều rộng hồ không được để trống"),
+        lakeDepth: yup.string().required("Độ sâu của hồ không được để trống"),
+        cards: yup.array().of(
+          yup.object().shape({
+            fishType: yup.number().required("Loại cá không được để trống"),
+            amount: yup.number().required("Số cá bắt được không được để trống"),
+            totalWeight: yup
+              .number()
+              .required("Tổng cân nặng cá không được để trống"),
+            minWeight: yup.number().required("Biểu cá không được để trống"),
+            maxWeight: yup.number().required("Biểu cá không được để trống"),
+          }),
+        ),
+      }),
+    [],
+  );
   const methods = useForm({
     mode: "onSubmit",
     reValidateMode: "onSubmit",
