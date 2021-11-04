@@ -25,6 +25,7 @@ export const LOCATION_OVERVIEW = "location";
 export const LOCATION_CLOSE = "location/close";
 export const LOCATION_NEARBY = "location/nearby";
 export const LOCATION_LAKE_ALL = "lake";
+export const LOCATION_LAKE_CLOSE = "lake/close";
 export const LOCATION_REVIEW_SCORE = "review/score";
 export const LOCATION_REVIEW_PERSONAL = "review/me";
 export const LOCATION_REVIEW_PERSONAL_DELETE = "review/me/delete";
