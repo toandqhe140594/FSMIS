@@ -1,7 +1,7 @@
 package fpt.g31.fsmis.service;
 
-import fpt.g31.fsmis.dto.input.CatchReportDtoIn;
 import fpt.g31.fsmis.dto.input.CatchDetailDtoIn;
+import fpt.g31.fsmis.dto.input.CatchReportDtoIn;
 import fpt.g31.fsmis.dto.output.*;
 import fpt.g31.fsmis.entity.*;
 import fpt.g31.fsmis.exception.NotFoundException;
@@ -50,7 +50,7 @@ public class CatchesService {
                     .images(ServiceUtils.splitString(catches.getImageUrl()))
                     .build();
             List<String> fishes = new ArrayList<>();
-            for(CatchesDetail catchesDetail : catches.getCatchesDetailList()) {
+            for (CatchesDetail catchesDetail : catches.getCatchesDetailList()) {
                 fishes.add(catchesDetail.getFishSpecies().getName());
             }
             item.setFishes(fishes);
@@ -66,10 +66,10 @@ public class CatchesService {
     // TODO: chưa có filter
     public PaginationDtoOut getPublicCatchesListByLocationId(HttpServletRequest request, Long locationId, int pageNo) {
         if (pageNo <= 0) {
-            throw new ValidationException("Địa chỉ không tồn tại");
+            throw new ValidationException("Số trang không hợp lệ");
         }
-        if(!isOwnerOrStaff(locationId, jwtFilter.getUserFromToken(request))) {
-            throw new ValidationException("Bạn không quản lý địa điểm này");
+        if (!isOwnerOrStaff(locationId, jwtFilter.getUserFromToken(request))) {
+            throw new ValidationException("Không có quyền truy cập");
         }
         Page<Catches> catchesList = catchesRepos.findByFishingLocationIdAndHiddenIsFalseOrderByTimeDesc(locationId, PageRequest.of(pageNo - 1, 10));
         List<CatchesOverviewNoImageDtoOut> output = new ArrayList<>();
@@ -85,11 +85,42 @@ public class CatchesService {
                     .time(ServiceUtils.convertDateToString(catches.getTime()))
                     .build();
             List<String> fishes = new ArrayList<>();
-            for(CatchesDetail catchesDetail : catches.getCatchesDetailList()) {
+            for (CatchesDetail catchesDetail : catches.getCatchesDetailList()) {
                 fishes.add(catchesDetail.getFishSpecies().getName());
             }
             item.setFishes(fishes);
             output.add(item);
+        }
+        return PaginationDtoOut.builder()
+                .totalPage(catchesList.getTotalPages())
+                .pageNo(pageNo)
+                .items(output)
+                .build();
+    }
+
+    public PaginationDtoOut getPendingCatchReports(HttpServletRequest request, Long locationId, int pageNo) {
+        if (pageNo <= 0) {
+            throw new ValidationException("Số trang không hợp lệ");
+        }
+        if (!isOwnerOrStaff(locationId, jwtFilter.getUserFromToken(request))) {
+            throw new ValidationException("Không có quyền truy cập");
+        }
+        Page<Catches> catchesList = catchesRepos.findByFishingLocationIdAndApprovedIsFalseOrderByTimeDesc(locationId, PageRequest.of(pageNo - 1, 10));
+        List<PendingCatchReportItemDtoOut> output = new ArrayList<>();
+        for (Catches catches : catchesList) {
+            List<String> fishList = new ArrayList<>();
+            for (CatchesDetail catchesDetail : catches.getCatchesDetailList()) {
+                fishList.add(catchesDetail.getFishSpecies().getName());
+            }
+            PendingCatchReportItemDtoOut dtoOut = PendingCatchReportItemDtoOut.builder()
+                    .id(catches.getId())
+                    .name(catches.getUser().getFullName())
+                    .avatar(catches.getUser().getAvatarUrl())
+                    .postTime(ServiceUtils.convertDateToString(catches.getTime()))
+                    .description(catches.getDescription())
+                    .fishList(fishList)
+                    .build();
+            output.add(dtoOut);
         }
         return PaginationDtoOut.builder()
                 .totalPage(catchesList.getTotalPages())
@@ -117,7 +148,7 @@ public class CatchesService {
                     .time(ServiceUtils.convertDateToString(catches.getTime()))
                     .build();
             List<String> fishes = new ArrayList<>();
-            for(CatchesDetail catchesDetail : catches.getCatchesDetailList()) {
+            for (CatchesDetail catchesDetail : catches.getCatchesDetailList()) {
                 fishes.add(catchesDetail.getFishSpecies().getName());
             }
             item.setFishes(fishes);

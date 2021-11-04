@@ -145,6 +145,11 @@ public class FishingLocationController {
         return new ResponseEntity<>(catchesService.getPublicCatchesListByLocationId(request, locationId, pageNo), HttpStatus.OK);
     }
 
+    @GetMapping("/{locationId}/catch/pending")
+    public ResponseEntity<Object> getPendingCatchReportList(HttpServletRequest request, @PathVariable Long locationId, @RequestParam(defaultValue = "1") int pageNo) {
+        return new ResponseEntity<>(catchesService.getPendingCatchReports(request, locationId, pageNo), HttpStatus.OK);
+    }
+
     // TODO: Báo cá
 //    @PostMapping("/{locationId}/catch/report")
 
