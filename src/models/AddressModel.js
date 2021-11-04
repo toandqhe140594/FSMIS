@@ -22,7 +22,7 @@ const model = {
 
   /**
    * Set province list
-   * Payload @param {Array} provinceData: array of {id, name, type}
+   * @param {Array} payload.provinceData array of {id, name, type}
    */
   setProvinceList: action((state, payload) => {
     state.provinceList = payload.provinceData;
@@ -30,7 +30,7 @@ const model = {
 
   /**
    * Set district list of of current province
-   * Payload @param {Array} districtData: array of {id, name, type}
+   * @param {Array} payload.districtData array of {id, name, type}
    */
   setDistrictListByProvinceId: action((state, payload) => {
     state.districtList = payload.districtData;
@@ -38,7 +38,7 @@ const model = {
 
   /**
    * Set district list of of current province
-   * Payload @param {Array} wardData: array of {id, name, type}
+   * @param {Array} payload.wardData: array of {id, name, type}
    */
   setWardListByDistrictId: action((state, payload) => {
     state.wardList = payload.wardData;
@@ -64,7 +64,7 @@ const model = {
 
   /**
    * Set previous selected province ID from the user
-   * Payload @param {Number} id: province
+   * @param {Number} payload.id province id
    */
   setPrevSelectedProvinceId: action((state, payload) => {
     state.prevSelectedProvinceId = payload.id;
@@ -72,7 +72,7 @@ const model = {
 
   /**
    * Set previous selected province ID from the user
-   * Payload @param {Number} id: district id
+   * @param {Number} payload.id district id
    */
   setPrevSelectedDistrictId: action((state, payload) => {
     state.prevSelectedDistrictId = payload.id;
@@ -94,7 +94,7 @@ const model = {
 
   /**
    * Get all districts by province ID from api
-   * Payload @param {Number} id: province id
+   * @param {Number} payload.id province id
    */
   getDisctrictByProvinceId: thunk(async (actions, payload, { getState }) => {
     const { prevSelectedProvinceId } = getState();
@@ -115,7 +115,7 @@ const model = {
 
   /**
    * Get all wards by district ID from api
-   * Payload @param {Number} id: district id
+   * @param {Number} payload.id district id
    */
   getWardByDistrictId: thunk(async (actions, payload, { getState }) => {
     const { prevSelectedDistrictId } = getState();
