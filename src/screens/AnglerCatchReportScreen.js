@@ -66,10 +66,6 @@ const AnglerCatchReportScreen = () => {
   const listLake = useStoreState((states) => states.CheckInModel.lakeList);
   const listFishModel = useStoreState((states) => states.CheckInModel.fishList);
 
-  useEffect(() => {
-    getLakeList();
-  }, []);
-
   const methods = useForm({
     mode: "onChange",
     reValidateMode: "onChange",
@@ -80,15 +76,6 @@ const AnglerCatchReportScreen = () => {
   const { watch } = methods;
   const watchALakeTypeField = watch("aLakeType");
   const [listFish, setListFish] = useState([]);
-
-  useEffect(() => {
-    const filter = listFishModel.filter(
-      (item) => item.id === watchALakeTypeField,
-    );
-    if (filter[0] !== undefined) {
-      setListFish(filter[0].fishList);
-    }
-  }, [watchALakeTypeField]);
 
   const { control, handleSubmit } = methods;
 
@@ -141,12 +128,22 @@ const AnglerCatchReportScreen = () => {
     useCallback(() => {
       if (route.params?.base64Array && route.params.base64Array[0]) {
         setImageArray(route.params.base64Array);
-      }
-      return () => {
         navigation.setParams({ base64Array: [] });
-      };
+      }
     }, [route.params]),
   );
+  useEffect(() => {
+    const filter = listFishModel.filter(
+      (item) => item.id === watchALakeTypeField,
+    );
+    if (filter[0] !== undefined) {
+      setListFish(filter[0].fishList);
+    }
+  }, [watchALakeTypeField]);
+  useEffect(() => {
+    getLakeList();
+  }, []);
+
   return (
     <>
       <HeaderTab name="Báo cá" />
