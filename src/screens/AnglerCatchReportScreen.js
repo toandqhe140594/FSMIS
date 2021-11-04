@@ -15,7 +15,7 @@ import {
   Text,
   VStack,
 } from "native-base";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import { Alert, ScrollView, StyleSheet } from "react-native";
 import * as yup from "yup";
@@ -26,23 +26,6 @@ import SelectComponent from "../components/common/SelectComponent";
 import TextAreaComponent from "../components/common/TextAreaComponent";
 import HeaderTab from "../components/HeaderTab";
 import { ROUTE_NAMES } from "../constants";
-
-const validationSchema = yup.object().shape({
-  aCaption: yup.string().required("Hãy viết suy nghĩ của bạn về ngày câu"),
-  aLakeType: yup.number().required("Loại hồ không được để trống"),
-  isPublic: yup.bool(),
-  isReleased: yup.bool(),
-  cards: yup.array().of(
-    yup.object().shape({
-      fishType: yup.number().required("Loại cá không được để trống"),
-      catches: yup.number().required("Số cá bắt được không được để trống"),
-      totalWeight: yup
-        .number()
-        .required("Tổng cân nặng cá không được để trống"),
-      isReleased: yup.bool().default(false),
-    }),
-  ),
-});
 
 const styles = StyleSheet.create({
   sectionWrapper: {
@@ -65,10 +48,41 @@ const AnglerCatchReportScreen = () => {
   );
   const listLake = useStoreState((states) => states.CheckInModel.lakeList);
   const listFishModel = useStoreState((states) => states.CheckInModel.fishList);
-
+  const validationSchema = useMemo(
+    () =>
+      yup.object().shape({
+        aCaption: yup
+          .string()
+          .required("Hãy viết suy nghĩ của bạn về ngày câu"),
+        aLakeType: yup
+          .number()
+          .typeError("Trường này chỉ được nhập số")
+          .required("Loại hồ không được để trống"),
+        isPublic: yup.bool(),
+        isReleased: yup.bool(),
+        cards: yup.array().of(
+          yup.object().shape({
+            fishType: yup
+              .number()
+              .typeError("Trường này chỉ được nhập số")
+              .required("Loại cá không được để trống"),
+            catches: yup
+              .number()
+              .typeError("Trường này chỉ được nhập số")
+              .required("Số cá bắt được không được để trống"),
+            totalWeight: yup
+              .number()
+              .typeError("Trường này chỉ được nhập số")
+              .required("Tổng cân nặng cá không được để trống"),
+            isReleased: yup.bool().default(false),
+          }),
+        ),
+      }),
+    [],
+  );
   const methods = useForm({
-    mode: "onChange",
-    reValidateMode: "onChange",
+    mode: "onSubmit",
+    reValidateMode: "onSubmit",
     defaultValues: { isPublic: false },
     resolver: yupResolver(validationSchema),
   });
