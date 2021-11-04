@@ -4,8 +4,9 @@ import {
   useNavigation,
   useRoute,
 } from "@react-navigation/native";
+import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, Button, Center, Divider, Stack, Text, VStack } from "native-base";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { ScrollView, StyleSheet } from "react-native";
 import * as yup from "yup";
@@ -17,35 +18,10 @@ import TextAreaComponent from "../components/common/TextAreaComponent";
 import MapOverviewBox from "../components/FLocationEditProfile/MapOverviewBox";
 import HeaderTab from "../components/HeaderTab";
 import { ROUTE_NAMES } from "../constants";
+import AddressModel from "../models/AddressModel";
+import store from "../utilities/Store";
 
-const cityData = [
-  { name: "Hà Nội", id: 1 },
-  { name: "Hồ Chí Minh", id: 2 },
-];
-
-const districtData = [
-  { name: "Hai Bà Trưng", id: 1 },
-  { name: "Hoàng Mai", id: 2 },
-];
-
-const communeData = [
-  { name: "Vĩnh Hưng", id: 1 },
-  { name: "Thanh Lương", id: 2 },
-];
-
-const validationSchema = yup.object().shape({
-  fName: yup.string().required("Tên địa điểm không thể bỏ trống"),
-  fPhone: yup.string().required("Số điện thoại không dược bỏ trống"),
-  fWebsite: yup.string(),
-  fAddress: yup.string().required("Địa chỉ không được để trống"),
-  fCityAddress: yup.number().required("Tỉnh/Thành phố không được để trống"),
-  fDistrictAddress: yup.number().required("Quận/Huyện không được để trống"),
-  fCommuneAddress: yup.number().required("Phường/xã không được để trống"),
-  fDescription: yup.string().required("Hãy viết một vài điều về địa điểm"),
-  fRules: yup.string(),
-  fServices: yup.string(),
-  fSchedule: yup.string().required("Hãy nêu rõ lịch biểu của hồ"),
-});
+store.addModel("AddressModel", AddressModel);
 
 const styles = StyleSheet.create({
   sectionWrapper: {
@@ -60,11 +36,42 @@ const FManageEditProfileScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
   const [imageArray, setImageArray] = useState([]);
+  const validationSchema = useMemo(() =>
+    yup.object().shape({
+      fName: yup.string().required("Tên địa điểm không thể bỏ trống"),
+      fPhone: yup.string().required("Số điện thoại không dược bỏ trống"),
+      fWebsite: yup.string(),
+      fAddress: yup.string().required("Địa chỉ không được để trống"),
+      fProvinceId: yup.number().required("Tỉnh/Thành phố không được để trống"),
+      fDistrictId: yup.number().required("Quận/Huyện không được để Id"),
+      fWardId: yup.number().required("Phường/xã không được để trống"),
+      fDescription: yup.string().required("Hãy viết một vài điều về địa điểm"),
+      fRules: yup.string(),
+      fServices: yup.string(),
+      fSchedule: yup.string().required("Hãy nêu rõ lịch biểu của hồ"),
+    }),
+  );
+  const { provinceList, districtList, wardList } = useStoreState(
+    (state) => state.AddressModel,
+  );
+  const {
+    resetDataList,
+    getAllProvince,
+    getDisctrictByProvinceId,
+    getWardByDistrictId,
+  } = useStoreActions((actions) => actions.AddressModel);
   const methods = useForm({
     mode: "onChange",
     reValidateMode: "onChange",
     resolver: yupResolver(validationSchema),
   });
+  const generateAddressDropdown = useCallback((name, value) => {
+    if (name === "fProvinceId") {
+      getDisctrictByProvinceId({ id: value });
+    } else if (name === "fDistrictId") {
+      getWardByDistrictId({ id: value });
+    }
+  }, []);
   const { handleSubmit } = methods;
   const onSubmit = (data) => {
     console.log(data);
@@ -73,6 +80,14 @@ const FManageEditProfileScreen = () => {
   const updateImageArray = (id) => {
     setImageArray(imageArray.filter((image) => image.id !== id));
   };
+
+  useEffect(() => {
+    getAllProvince();
+    return () => {
+      resetDataList();
+    };
+  }, []);
+
   // Fire when naviagtes back to this screen
   useFocusEffect(
     // useCallback will listen to route.param
@@ -141,24 +156,26 @@ const FManageEditProfileScreen = () => {
                   placeholder="Chọn tỉnh/thành phố"
                   label="Tỉnh/Thành phố"
                   hasAsterisk
-                  controllerName="fCityAddress"
-                  data={cityData}
+                  controllerName="fProvinceId"
+                  data={provinceList}
+                  handleDataIfValChanged={generateAddressDropdown}
                 />
 
                 <SelectComponent
                   placeholder="Chọn quận/huyện"
                   label="Quận/Huyện"
                   hasAsterisk
-                  controllerName="fDistrictAddress"
-                  data={districtData}
+                  controllerName="fDistrictId"
+                  data={districtList}
+                  handleDataIfValChanged={generateAddressDropdown}
                 />
 
                 <SelectComponent
                   label="Phường/Xã"
                   placeholder="Chọn phường/xã"
                   hasAsterisk
-                  controllerName="fCommuneAddress"
-                  data={communeData}
+                  controllerName="fWardId"
+                  data={wardList}
                 />
               </VStack>
             </Center>
