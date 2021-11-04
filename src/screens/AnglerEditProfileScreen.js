@@ -76,77 +76,18 @@ const EditProfileScreen = () => {
     resolver: yupResolver(validationSchema),
   });
   const { handleSubmit, getValues } = methods;
-  const handleValueChange = useCallback((field, value) => {
-    if (field === "aProvinceId") {
+  const generateAddressDropdown = useCallback((name, value) => {
+    if (name === "aProvinceId") {
       getDisctrictByProvinceId({ id: value });
-    } else if (field === "aDistrictId") {
+    } else if (name === "aDistrictId") {
       getWardByDistrictId({ id: value });
     }
   }, []);
-  /**
-   * Run first time when the screen inits
-   * get all province list for select dropdown
-   * and set custome date picker value
-   * When component unmoute, reset distric list and ward list
-   */
-  useEffect(() => {
-    const provinceId = getValues("aProvinceId");
-    const districtId = getValues("aDistrictId");
-    getAllProvince();
-    getDisctrictByProvinceId({ id: provinceId });
-    getWardByDistrictId({ id: districtId });
-    setFormattedDate(userInfo.dob.split(" ")[0]);
-    setAvatarImage(userInfo.avatarUrl);
-    return () => {
-      resetDataList();
-    };
-  }, []);
-
-  // /*
-  //  * Fire when aProvinceId value change
-  //  */
-  // useEffect(() => {
-  //   getDisctrictByProvinceId({ id: watchProvince });
-  // }, [watchProvince]);
-
-  // /*
-  //  * Fire when aDistrictId value change
-  //  */
-  // useEffect(() => {
-  //   getWardByDistrictId({ id: watchDistrict });
-  // }, [watchDistrict]);
-
-  useEffect(() => {
-    if (date) {
-      setFormattedDate(moment(date).format("DD/MM/YYYY").toString());
-    }
-  }, [date]);
-
-  useEffect(() => {
-    if (userInfo.avatarUrl) setAvatarImage(userInfo.avatarUrl);
-  }, [userInfo]);
-
   const onDateChange = (e, selectedDate) => {
     const currentDate = selectedDate || date;
     setShowDatePicker(false);
     setDate(currentDate);
   };
-
-  /**
-   * When navigate from MediaSelectScreen back to Edit Form
-   * the callback listen to route params and set
-   * avatar image to what had been previously chosen in MediaSelectScreen
-   */
-  useFocusEffect(
-    // useCallback will listen to route.param
-    useCallback(() => {
-      if (route.params?.base64Array && route.params.base64Array[0]) {
-        setAvatarImage(route.params?.base64Array[0].base64);
-        navigation.setParams({ base64Array: [] });
-      }
-    }, [route.params]),
-  );
-
   /**
    * Call an alert box to reset avatar image back to default avatar
    */
@@ -174,7 +115,48 @@ const EditProfileScreen = () => {
   const onSubmit = (data) => {
     console.log(data); // Test submit
   };
+  /**
+   * Run first time when the screen inits
+   * get all province list for select dropdown
+   * and set custome date picker value
+   * When component unmoute, reset distric list and ward list
+   */
+  useEffect(() => {
+    getAllProvince();
+    getDisctrictByProvinceId({ id: getValues("aProvinceId") });
+    getWardByDistrictId({ id: getValues("aDistrictId") });
+    setFormattedDate(userInfo.dob.split(" ")[0]);
+    setAvatarImage(userInfo.avatarUrl);
+    return () => {
+      resetDataList();
+    };
+  }, []);
 
+  useEffect(() => {
+    if (date) {
+      setFormattedDate(moment(date).format("DD/MM/YYYY").toString());
+    }
+  }, [date]);
+
+  useEffect(() => {
+    if (userInfo.avatarUrl) setAvatarImage(userInfo.avatarUrl);
+  }, [userInfo]);
+
+  /**
+   * When navigate from MediaSelectScreen back to Edit Form
+   * the callback listen to route params and set
+   * avatar image to what had been previously chosen in MediaSelectScreen
+   */
+  useFocusEffect(
+    // useCallback will listen to route.param
+    useCallback(() => {
+      if (route.params?.base64Array && route.params.base64Array[0]) {
+        setAvatarImage(route.params?.base64Array[0].base64);
+        navigation.setParams({ base64Array: [] });
+      }
+    }, [route.params]),
+  );
+  console.log("render parent");
   return (
     <KeyboardAvoidingView>
       <ScrollView nestedScrollEnabled>
@@ -272,7 +254,7 @@ const EditProfileScreen = () => {
                 placeholder="Chọn tỉnh/thành phố"
                 data={provinceList}
                 controllerName="aProvinceId"
-                handleValueChange={handleValueChange}
+                handleDataIfValChanged={generateAddressDropdown}
               />
 
               {/* District select box */}
@@ -282,7 +264,7 @@ const EditProfileScreen = () => {
                 placeholder="Chọn quận/huyện"
                 data={districtList}
                 controllerName="aDistrictId"
-                handleValueChange={handleValueChange}
+                handleDataIfValChanged={generateAddressDropdown}
               />
 
               {/* Ward select box */}

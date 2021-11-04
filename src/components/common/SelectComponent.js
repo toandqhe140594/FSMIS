@@ -1,6 +1,6 @@
 import { Select } from "native-base";
 import PropTypes from "prop-types";
-import React, { memo } from "react";
+import React from "react";
 import { Controller, useFormContext } from "react-hook-form";
 import { StyleSheet, Text, View } from "react-native";
 
@@ -19,7 +19,7 @@ const SelectComponent = ({
   hasAsterisk,
   isTitle,
   controllerName,
-  handleValueChange,
+  handleDataIfValChanged,
 }) => {
   const {
     control,
@@ -34,27 +34,30 @@ const SelectComponent = ({
       <Controller
         control={control}
         name={controllerName}
-        render={({ field: { onChange, value } }) => (
-          <Select
-            accessibilityLabel={placeholder}
-            placeholder={placeholder}
-            onValueChange={(val) => {
-              onChange(val);
-              handleValueChange(controllerName, val);
-            }}
-            selectedValue={value}
-            fontSize="md"
-          >
-            {data.map((item) => (
-              <Select.Item
-                key={item.id}
-                label={item.name}
-                value={item.id}
-                my={1}
-              />
-            ))}
-          </Select>
-        )}
+        render={({ field: { onChange, value } }) => {
+          const handleChange = (val) => {
+            onChange(val);
+            handleDataIfValChanged(controllerName, val);
+          };
+          return (
+            <Select
+              accessibilityLabel={placeholder}
+              placeholder={placeholder}
+              onValueChange={handleChange}
+              selectedValue={value}
+              fontSize="md"
+            >
+              {data.map((item) => (
+                <Select.Item
+                  key={item.id}
+                  label={item.name}
+                  value={item.id}
+                  my={1}
+                />
+              ))}
+            </Select>
+          );
+        }}
       />
       {errors[controllerName]?.message && (
         <Text style={styles.error}>{errors[controllerName]?.message}</Text>
@@ -71,7 +74,7 @@ SelectComponent.propTypes = {
   hasAsterisk: PropTypes.bool,
   isTitle: PropTypes.bool,
   controllerName: PropTypes.string.isRequired,
-  handleValueChange: PropTypes.func,
+  handleDataIfValChanged: PropTypes.func,
 };
 
 SelectComponent.defaultProps = {
@@ -79,7 +82,7 @@ SelectComponent.defaultProps = {
   hasAsterisk: false,
   isTitle: false,
   data: [],
-  handleValueChange: () => {},
+  handleDataIfValChanged: () => {},
 };
 
 export default React.memo(SelectComponent);
