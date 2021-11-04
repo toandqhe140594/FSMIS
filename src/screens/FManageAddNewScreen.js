@@ -15,18 +15,18 @@ import HeaderTab from "../components/HeaderTab";
 import { ROUTE_NAMES } from "../constants";
 
 const cityData = [
-  { label: "Hà Nội", val: 1 },
-  { label: "Hồ Chí Minh", val: 2 },
+  { name: "Hà Nội", id: 1 },
+  { name: "Hồ Chí Minh", id: 2 },
 ];
 
 const districtData = [
-  { label: "Hai Bà Trưng", val: 1 },
-  { label: "Hoàng Mai", val: 2 },
+  { name: "Hai Bà Trưng", id: 1 },
+  { name: "Hoàng Mai", id: 2 },
 ];
 
 const communeData = [
-  { label: "Vĩnh Hưng", val: 1 },
-  { label: "Thanh Lương", val: 2 },
+  { name: "Vĩnh Hưng", id: 1 },
+  { name: "Thanh Lương", id: 2 },
 ];
 
 const validationSchema = yup.object().shape({
@@ -54,6 +54,7 @@ const styles = StyleSheet.create({
 
 const FManageAddNewScreen = () => {
   const route = useRoute();
+  const navigation = useNavigation();
   const [imageArray, setImageArray] = useState([]);
   const methods = useForm({
     mode: "onChange",
@@ -71,10 +72,10 @@ const FManageAddNewScreen = () => {
   useFocusEffect(
     // useCallback will listen to route.param
     useCallback(() => {
-      setImageArray(route.params?.base64Array);
-      return () => {
-        setImageArray([]);
-      };
+      if (route.params?.base64Array && route.params.base64Array.length) {
+        setImageArray(route.params?.base64Array);
+        navigation.setParams({ base64Array: [] });
+      }
     }, [route.params]),
   );
   return (
