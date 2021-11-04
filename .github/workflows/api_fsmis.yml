@@ -43,7 +43,6 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: java-app
-          path: '${{ github.workspace }}/fsmis/target/*.jar'
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
@@ -52,4 +51,4 @@ jobs:
           app-name: 'fsmis'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_E627CDCA136A49EEB000AE3C7BE32873 }}
-          package: '*.jar'
+          package: 'fsmis-0.0.1-SNAPSHOT.jar'
