@@ -6,7 +6,10 @@ import React, { useEffect, useState } from "react";
 import { FlatList, StyleSheet } from "react-native";
 import { Divider } from "react-native-elements";
 
-import { goToCatchReportDetailScreen } from "../../navigations";
+import {
+  goToCatchReportDetailScreen,
+  goToWriteReportScreen,
+} from "../../navigations";
 import EventPostCard from "../EventPostCard";
 import PressableCustomCard from "../PressableCustomCard";
 
@@ -81,6 +84,7 @@ const CatchReportRoute = () => {
 };
 
 const FLocationEventRoute = () => {
+  const navigation = useNavigation();
   const [lakePostPage, setLakePostPage] = useState(1);
   const locationPostList = useStoreState(
     (states) => states.LocationModel.locationPostList,
@@ -98,30 +102,29 @@ const FLocationEventRoute = () => {
     getLocationPostListByPage({ pageNo: lakePostPage });
     setLakePostPage(lakePostPage + 1);
   };
+  const reportHandler = (id, type) => {
+    goToWriteReportScreen(navigation, { id, type });
+  };
+  const listEvent = [{ name: "Báo cáo bài viết", onPress: reportHandler }];
   return (
     <>
       {locationPostList.length > 0 && (
         <FlatList
           data={locationPostList}
           renderItem={({ item }) => (
-            <PressableCustomCard
-              paddingX="1"
-              onPress={() => {
-                console.log(item.id);
+            <EventPostCard
+              lakePost={{
+                badge: item.postType === "STOCKING" ? "Bồi cá" : "Thông báo",
+                content: item.content,
               }}
-            >
-              <EventPostCard
-                lakePost={{
-                  badge: item.postType === "STOCKING" ? "Bồi cá" : "Thông báo",
-                  content: item.content,
-                }}
-                image={item.url}
-                postStyle="LAKE_POST"
-                edited={item.edited}
-                postTime={item.postTime}
-                id={item.id}
-              />
-            </PressableCustomCard>
+              image={item.url}
+              postStyle="LAKE_POST"
+              edited={item.edited}
+              postTime={item.postTime}
+              id={item.id}
+              iconName="flag"
+              iconEvent={listEvent}
+            />
           )}
           onEndReached={() => {
             loadMoreLakePostData();

@@ -4,6 +4,7 @@ import {
   useNavigation,
   useRoute,
 } from "@react-navigation/native";
+import { useStoreActions, useStoreState } from "easy-peasy";
 import {
   Box,
   Button,
@@ -14,9 +15,9 @@ import {
   Text,
   VStack,
 } from "native-base";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
-import { ScrollView, StyleSheet } from "react-native";
+import { Alert, ScrollView, StyleSheet } from "react-native";
 import * as yup from "yup";
 
 import CatchReportSection from "../components/CatchReport/CatchReportSection";
@@ -56,16 +57,67 @@ const AnglerCatchReportScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
   const [imageArray, setImageArray] = useState([]);
+  const submitCatchReport = useStoreActions(
+    (actions) => actions.CheckInModel.submitCatchReport,
+  );
+  const getLakeList = useStoreActions(
+    (actions) => actions.CheckInModel.getLakeListByLocationId,
+  );
+  const listLake = useStoreState((states) => states.CheckInModel.lakeList);
+  const listFishModel = useStoreState((states) => states.CheckInModel.fishList);
+
   const methods = useForm({
     mode: "onChange",
     reValidateMode: "onChange",
     defaultValues: { isPublic: false },
     resolver: yupResolver(validationSchema),
   });
+
+  const { watch } = methods;
+  const watchALakeTypeField = watch("aLakeType");
+  const [listFish, setListFish] = useState([]);
+
   const { control, handleSubmit } = methods;
+
   const onSubmit = (data) => {
-    console.log(data);
-    // console.log(imageArray);
+    const { aCaption, aLakeType, isPublic, cards } = data;
+    const catchesDetailList = cards.map(
+      ({
+        catches: quantity,
+        fishType: fishSpeciesId,
+        isReleased: returnToOwner,
+        totalWeight: weight,
+      }) => ({
+        quantity,
+        fishSpeciesId,
+        returnToOwner,
+        weight,
+      }),
+    );
+    if (imageArray !== undefined && imageArray.length > 0) {
+      const imagesStringArray = imageArray.map((item) => item.base64);
+      submitCatchReport({
+        catchesDetailList,
+        description: aCaption,
+        hidden: isPublic,
+        images: imagesStringArray,
+        lakeId: aLakeType,
+      });
+      return Alert.alert("Gửi thành công", "Thông tin gửi thành công", [
+        {
+          text: "OK",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel",
+        },
+      ]);
+    }
+    return Alert.alert("Thiếu thông tin", "Vui lòng thêm ảnh buổi câu.", [
+      {
+        text: "OK",
+        onPress: () => console.log("Cancel Pressed"),
+        style: "cancel",
+      },
+    ]);
   };
   const updateImageArray = (id) => {
     setImageArray(imageArray.filter((image) => image.id !== id));
@@ -76,12 +128,22 @@ const AnglerCatchReportScreen = () => {
     useCallback(() => {
       if (route.params?.base64Array && route.params.base64Array[0]) {
         setImageArray(route.params.base64Array);
-      }
-      return () => {
         navigation.setParams({ base64Array: [] });
-      };
+      }
     }, [route.params]),
   );
+  useEffect(() => {
+    const filter = listFishModel.filter(
+      (item) => item.id === watchALakeTypeField,
+    );
+    if (filter[0] !== undefined) {
+      setListFish(filter[0].fishList);
+    }
+  }, [watchALakeTypeField]);
+  useEffect(() => {
+    getLakeList();
+  }, []);
+
   return (
     <>
       <HeaderTab name="Báo cá" />
@@ -112,10 +174,7 @@ const AnglerCatchReportScreen = () => {
                 isTitle
                 label="Vị trí hồ câu"
                 placeholder="Chọn hồ câu"
-                data={[
-                  { name: "Hồ thường", id: 1 },
-                  { name: "Hồ VIP", id: 2 },
-                ]}
+                data={listLake}
                 controllerName="aLakeType"
               />
             </Center>
@@ -125,7 +184,7 @@ const AnglerCatchReportScreen = () => {
                 <Text bold fontSize="md">
                   Thông tin cá
                 </Text>
-                <CatchReportSection />
+                <CatchReportSection fishList={listFish} />
               </Stack>
             </Center>
 

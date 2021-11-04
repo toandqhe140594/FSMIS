@@ -10,6 +10,14 @@ import styles from "../../config/styles";
 import { goToWriteReviewScreen } from "../../navigations";
 import ReviewFromAnglerSection from "../ReviewFromAnglerSection";
 
+const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
+  const paddingToBottom = 20;
+  return (
+    layoutMeasurement.height + contentOffset.y >=
+    contentSize.height - paddingToBottom
+  );
+};
+
 const FilterButton = ({ filterType, content, value, changeFilterAction }) => {
   const onPress = () => {
     changeFilterAction(value);
@@ -39,18 +47,70 @@ FilterButton.propTypes = {
   changeFilterAction: PropTypes.func.isRequired,
 };
 
-const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
-  const paddingToBottom = 20;
+const PersonalReviewSection = ({ personalReview, currentLocationId }) => {
+  const navigation = useNavigation();
+  const {
+    id: reviewId,
+    userFullName,
+    description,
+    time,
+    upvote,
+    downvote,
+    score,
+    userAvatar,
+  } = personalReview;
+
   return (
-    layoutMeasurement.height + contentOffset.y >=
-    contentSize.height - paddingToBottom
+    <>
+      {reviewId && (
+        <ReviewFromAnglerSection
+          name={userFullName}
+          content={description}
+          isPositive={false}
+          date={time}
+          isDisabled
+          positiveCount={upvote}
+          negativeCount={downvote}
+          rate={score}
+          userImage={userAvatar}
+          id={reviewId}
+        />
+      )}
+      <Divider />
+      {!reviewId && (
+        <Box w="90%" h={10} alignSelf="center" mt={4}>
+          <Button
+            variant="outline"
+            colorScheme="dark"
+            onPress={() => {
+              goToWriteReviewScreen(navigation, { id: currentLocationId });
+            }}
+          >
+            Đăng đánh giá
+          </Button>
+        </Box>
+      )}
+    </>
   );
+};
+PersonalReviewSection.propTypes = {
+  currentLocationId: PropTypes.number.isRequired,
+  personalReview: PropTypes.shape({
+    id: PropTypes.number,
+    userFullName: PropTypes.string,
+    description: PropTypes.string,
+    time: PropTypes.string,
+    upvote: PropTypes.number,
+    downvote: PropTypes.number,
+    score: PropTypes.number,
+    userAvatar: PropTypes.string,
+  }).isRequired,
 };
 
 const ReviewListRoute = () => {
-  const navigation = useNavigation();
   const [reviewPage, setReviewPage] = useState(1);
   const [filterType, setFilterType] = useState("newest");
+  const [isCheckin, setIsCheckin] = useState(true); // Test
 
   const { locationReviewScore, personalReview, locationReviewList, currentId } =
     useStoreState((states) => states.LocationModel);
@@ -110,32 +170,14 @@ const ReviewListRoute = () => {
         <Text style={{ fontWeight: "bold", marginTop: 12, marginLeft: 12 }}>
           Đánh giá của bạn
         </Text>
-        {personalReview.id && (
-          <ReviewFromAnglerSection
-            name={personalReview.userFullName}
-            content={personalReview.description}
-            isPositive={false}
-            date={personalReview.time}
-            isDisabled
-            positiveCount={personalReview.upvote}
-            negativeCount={personalReview.downvote}
-            rate={personalReview.score}
-            userImage={personalReview.userAvatar}
-            id={personalReview.id}
+        {isCheckin ? (
+          <PersonalReviewSection
+            personalReview={personalReview}
+            currentLocationId={currentId}
           />
-        )}
-        <Divider />
-        {!personalReview.id && (
-          <Box w="90%" h={10} alignSelf="center" mt={4}>
-            <Button
-              variant="outline"
-              colorScheme="dark"
-              onPress={() => {
-                goToWriteReviewScreen(navigation, { id: currentId });
-              }}
-            >
-              Đăng đánh giá
-            </Button>
+        ) : (
+          <Box w="100%" px={3} mt={2}>
+            <Text>Bạn cần checkin để đăng đánh giá ở hồ này</Text>
           </Box>
         )}
         <Box my={2} />

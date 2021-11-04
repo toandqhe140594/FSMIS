@@ -34,12 +34,31 @@ const model = {
   locationCatchList: [],
   totalPostPage: 1,
   totalCatchPage: 1,
+  catchReportDetail: {
+    catchesDetailList: [
+      {
+        fishSpeciesId: 0,
+        quantity: 0,
+        returnToOwner: true,
+        weight: 0,
+      },
+    ],
+    description: "string",
+    hidden: true,
+    images: ["string"],
+    lakeId: 0,
+  },
   setCurrentId: action((state, payload) => {
     state.currentId = payload;
   }),
   setLocationReviewScore: action((state, payload) => {
     state.locationReviewScore = payload;
   }),
+
+  setCatchReportDetail: action((state, payload) => {
+    state.catchReportDetail = payload;
+  }),
+
   setPersonalReview: action((state, payload) => {
     state.personalReview = payload;
   }),
@@ -90,7 +109,8 @@ const model = {
     const { data } = await http.get(
       `location/${getState().currentId}/${API_URL.LOCATION_REVIEW_PERSONAL}`,
     );
-    actions.setPersonalReview(data);
+    if (data.id) actions.setPersonalReview(data);
+    else actions.setPersonalReview({});
   }),
   getLocationReviewListByPage: thunk(async (actions, payload, { getState }) => {
     const { pageNo, filter } = payload;
@@ -155,6 +175,7 @@ const model = {
     if (status === 200) actions.setPersonalReview({ ...data, id: null });
     return status;
   }),
+
   getLocationOverview: thunk(async (actions, payload, { getState }) => {
     const { data } = await http.get(`location/${getState().currentId}`);
     actions.setLocationOverview(data);

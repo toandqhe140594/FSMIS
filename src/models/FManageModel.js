@@ -25,6 +25,9 @@ const model = {
   },
 
   catchReportDetail: {},
+  unresolvedCatchReportList: [],
+  unresolvedCatchReportTotalPage: 1,
+  unresolvedCatchReportCurrentPage: 1,
   catchReportHistory: [
     {
       id: 4,
@@ -51,6 +54,7 @@ const model = {
   ],
   catchReportCurrentPage: 1,
   catchTotalPage: 1,
+
   checkInHistoryList: [
     {
       id: 8,
@@ -387,10 +391,7 @@ const model = {
     const { userId } = payload;
     try {
       const { data, status } = await http.get(
-        `location/${currentId}/${API_URL.STAFF_ADD}`,
-        {
-          userId,
-        },
+        `location/${currentId}/staff/${userId}`,
       );
 
       if (status === 200) actions.setStaffDetail(data);
@@ -467,5 +468,71 @@ const model = {
   }),
 
   // END OF FISHING LOCATION MANAGEMENT RELATED SECTION
+
+  /**
+   * Set list data of unresolved catch eport
+   */
+  setUnresolvedCatchReportList: action((state, payload) => {
+    state.unresolvedCatchReportList = payload;
+  }),
+  /**
+   * Set current page for list data of unresolved catch eport
+   */
+  setUnresolvedCatchReportCurrentPage: action((state, payload) => {
+    state.unresolvedCatchReportCurrentPage = payload;
+  }),
+  /**
+   * Set total page number for list data of unresolved catch eport
+   * Total page cannot be less than 1
+   */
+  setUnresolvedCatchReportTotalPage: action((state, payload) => {
+    state.unresolvedCatchReportTotalPage = payload < 1 ? 1 : payload;
+  }),
+  /**
+   * Get list data of unresolved catch eport
+   * @param {Object} [payload] the payload pass to function
+   */
+  getUnresolvedCatchReportList: thunk(
+    async (actions, payload, { getState }) => {
+      const { status } = payload;
+      const {
+        currentId,
+        unresolvedCatchReportCurrentPage: currentPage,
+        unresolvedCatchReportTotalPage: totalPage,
+      } = getState();
+      // If current page greater than total page or smaller than 1 then return
+      if (currentPage > totalPage || currentPage < 1) return;
+      let pageNo = 1;
+      // If this function is called to load more data to list
+      if (status === "APPEND") {
+        pageNo = currentPage;
+        actions.setUnresolvedCatchReportCurrentPage(currentPage + 1);
+      } else {
+        // If this function is called to load data from page 1
+        actions.setUnresolvedCatchReportCurrentPage(1);
+        actions.setUnresolvedCatchReportTotalPage(1);
+      }
+      // try {
+      //   const { data, status: httpResponseStatus } = await http.get(
+      //     `${API_URL.LOCATION_CLOSE}/${currentId}`,
+      //     {
+      //       params: { pageNo },
+      //     },
+      //   );
+      //   if (httpResponseStatus === 200) {
+      //     actions.setUnresolvedCatchReportList(data.items);
+      //     actions.setUnresolvedCatchReportTotalPage(data.totalPage);
+      //   }
+      // } catch (error) {
+      //   actions.setUnresolvedCatchReportList([]);
+      //   actions.setUnresolvedCatchReportTotalPage(1);
+      //   actions.setUnresolvedCatchReportCurrentPage(1);
+      // }
+      console.log(status, currentId, currentPage, totalPage);
+    },
+  ),
+  // START UNRESOLVED CATCH REPORT RELATED SECTION
+
+  // END UNRESOLVED CATCH REPORT RELATED SECTION
 };
 export default model;

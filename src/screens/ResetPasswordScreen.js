@@ -27,7 +27,7 @@ const ResetPasswordScreen = () => {
       >
         {/* Old pass word input field */}
         <Text bold fontSize="md">
-          Mật khẩu cũ <Text color="danger.500">*</Text>
+          Mật khẩu cũ<Text color="danger.500">*</Text>
         </Text>
         <Box position="relative" justifyContent="center">
           <Input placeholder="Nhập mật khẩu cũ" size="lg" type="password" />
