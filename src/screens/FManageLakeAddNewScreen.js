@@ -14,8 +14,8 @@ import {
   Text,
   VStack,
 } from "native-base";
-import React, { useCallback, useState } from "react";
-import { FormProvider, useForm, useMemo } from "react-hook-form";
+import React, { useCallback, useMemo, useState } from "react";
+import { FormProvider, useForm } from "react-hook-form";
 import { StyleSheet } from "react-native";
 import * as yup from "yup";
 
@@ -49,23 +49,35 @@ const LakeAddNewScreen = () => {
         lakeDescription: yup.string().required("Miêu tả giá vé ở hồ này"),
         lakeFishingMethods: yup
           .array()
-          .test(
-            "isArrayEmpty?",
-            "Loại hình câu của hồ không được để trống",
-            (value) => value.length !== 0,
-          ),
-        lakeLength: yup.string().required("Chiều dài hồ không được để trống"),
-        lakeWidth: yup.string().required("Chiều rộng hồ không được để trống"),
-        lakeDepth: yup.string().required("Độ sâu của hồ không được để trống"),
+          .min(1, "Trường này kia không được để trống"),
+        lakeLength: yup
+          .number()
+          .typeError("Trường này chỉ được nhập số")
+          .required("Chiều dài hồ không được để trống"),
+        lakeWidth: yup
+          .number()
+          .typeError("Trường này chỉ được nhập số")
+          .required("Chiều rộng hồ không được để trống"),
+        lakeDepth: yup.number().required("Độ sâu của hồ không được để trống"),
         cards: yup.array().of(
           yup.object().shape({
-            fishType: yup.number().required("Loại cá không được để trống"),
-            amount: yup.number().required("Số cá bắt được không được để trống"),
+            fishType: yup.number().required("Trường này không được để trống"),
+            amount: yup
+              .number()
+              .typeError("Trường này chỉ được nhập số")
+              .required("Số cá được không được để trống"),
             totalWeight: yup
               .number()
-              .required("Tổng cân nặng cá không được để trống"),
-            minWeight: yup.number().required("Biểu cá không được để trống"),
-            maxWeight: yup.number().required("Biểu cá không được để trống"),
+              .typeError("Trường này chỉ được nhập số")
+              .required("Cân nặng không được để trống"),
+            minWeight: yup
+              .number()
+              .typeError("Trường này chỉ được nhập số")
+              .required("Biểu nhỏ không được để trống"),
+            maxWeight: yup
+              .number()
+              .typeError("Trường này chỉ được nhập số")
+              .required("Biểu lớn không được để trống"),
           }),
         ),
       }),

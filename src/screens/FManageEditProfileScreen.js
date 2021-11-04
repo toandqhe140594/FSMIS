@@ -39,7 +39,13 @@ const FManageEditProfileScreen = () => {
   const validationSchema = useMemo(() =>
     yup.object().shape({
       fName: yup.string().required("Tên địa điểm không thể bỏ trống"),
-      fPhone: yup.string().required("Số điện thoại không dược bỏ trống"),
+      fPhone: yup
+        .string()
+        .matches(
+          /((09|03|07|08|05)+([0-9]{8})\b)/,
+          "Số điện thoại không hợp lệ",
+        )
+        .required("Số điện thoại không dược bỏ trống"),
       fWebsite: yup.string(),
       fAddress: yup.string().required("Địa chỉ không được để trống"),
       fProvinceId: yup.number().required("Tỉnh/Thành phố không được để trống"),
