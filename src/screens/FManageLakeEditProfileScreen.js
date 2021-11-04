@@ -4,6 +4,7 @@ import {
   useNavigation,
   useRoute,
 } from "@react-navigation/native";
+import { useStoreActions, useStoreState } from "easy-peasy";
 import {
   Box,
   Button,
@@ -14,7 +15,7 @@ import {
   Text,
   VStack,
 } from "native-base";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { StyleSheet } from "react-native";
 import * as yup from "yup";
@@ -26,6 +27,8 @@ import HeaderTab from "../components/HeaderTab";
 import CheckboxSelectorComponent from "../components/LakeEditProfile/CheckboxSelectorComponent";
 import FishCardSection from "../components/LakeEditProfile/FishCardSection";
 import { ROUTE_NAMES } from "../constants";
+import { goBack } from "../navigations";
+import { showAlertConfirmBox, showToastMessage } from "../utilities";
 
 const validationSchema = yup.object().shape({
   lakeName: yup.string().required("Tên hồ không thể bỏ trống"),
@@ -67,7 +70,12 @@ const styles = StyleSheet.create({
 const LakeEditProfileScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
-  const [imageArray, setImageArray] = useState([]);
+
+  const lakeDetail = useStoreState((states) => states.FManageModel.lakeDetail);
+  const { getLakeDetailByLakeId, closeLakeByLakeId } = useStoreActions(
+    (actions) => actions.FManageModel,
+  );
+
   const methods = useForm({
     mode: "onSubmit",
     reValidateMode: "onSubmit",
@@ -75,14 +83,28 @@ const LakeEditProfileScreen = () => {
     resolver: yupResolver(validationSchema),
   });
   const { handleSubmit } = methods;
+
+  const [imageArray, setImageArray] = useState([]);
+  const [deleteSuccess, setDeleteSuccess] = useState(false);
+
   const onSubmit = (data) => {
     // Test submit
     console.log(data);
   };
 
+  const onDeleteLake = (id, name) => {
+    showAlertConfirmBox(
+      "Bạn muốn xóa hồ này?",
+      `"${name}" sẽ bị xóa vĩnh viễn. Bạn không thể hoàn tác hành động này`,
+      () => {
+        closeLakeByLakeId({ id, setDeleteSuccess });
+      },
+    );
+  };
+
   /**
    * Remove an image and update the image array
-   * @param {number} id: id of the deleted image
+   * @param {number} id id of the deleted image
    */
   const updateImageArray = (id) => {
     setImageArray(imageArray.filter((image) => image.id !== id));
@@ -98,6 +120,19 @@ const LakeEditProfileScreen = () => {
       }
     }, [route.params]),
   );
+
+  useEffect(() => {
+    if (route.params.id) {
+      getLakeDetailByLakeId({ id: route.params.id });
+    }
+  }, []);
+
+  useEffect(() => {
+    if (deleteSuccess) {
+      showToastMessage("Xóa hồ thành công");
+      goBack(navigation);
+    }
+  }, [deleteSuccess]);
 
   return (
     <>
@@ -193,6 +228,9 @@ const LakeEditProfileScreen = () => {
                   style={styles.button}
                   variant="outline"
                   alignSelf="center"
+                  onPress={() => {
+                    onDeleteLake(lakeDetail.id, lakeDetail.name);
+                  }}
                 >
                   Xoá hồ câu
                 </Button>

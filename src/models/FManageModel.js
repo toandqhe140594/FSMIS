@@ -115,6 +115,10 @@ const model = {
   setListOfLake: action((state, payload) => {
     state.listOfLake = payload;
   }),
+  removeLakeFromList: action((state, payload) => {
+    const newList = state.listOfLake.filter((lake) => lake.id !== payload.id);
+    state.listOfLake = newList;
+  }),
   getListOfLake: thunk(async (actions, payload, { getState }) => {
     const { data } = await http.get(
       `location/${payload.id ? payload.id : getState().currentId}/${
@@ -133,6 +137,26 @@ const model = {
     actions.setLakeDetail(data);
   }),
 
+  /**
+   * Close lake of fishing location
+   * @param {Object} [payload] the payload pass to function
+   * @param {Function} [payload.setDeleteSuccess] the function to set delete success indicator
+   */
+  closeLakeByLakeId: thunk(async (actions, payload, { getState }) => {
+    const { currentId } = getState();
+    const { id, setDeleteSuccess } = payload;
+    try {
+      const { status } = await http.delete(
+        `location/${currentId}/${API_URL.LOCATION_LAKE_CLOSE}/${id}`,
+      );
+      if (status === 200) {
+        actions.removeLakeFromList({ id });
+        setDeleteSuccess(true);
+      }
+    } catch (error) {
+      setDeleteSuccess(false);
+    }
+  }),
   // START OF REVIEW RELATED SECTION
 
   /**
@@ -456,13 +480,13 @@ const model = {
     const { currentId } = getState();
     const { setDeleteSuccess } = payload;
     try {
-      const { data, status } = await http.delete(
+      const { status } = await http.delete(
         `${API_URL.LOCATION_CLOSE}/${currentId}`,
       );
       if (status === 200) {
         actions.getListOfFishingLocations();
         setDeleteSuccess(true);
-      } else actions.setStaffManagementErrorMsg(data.responseText);
+      }
     } catch (error) {
       setDeleteSuccess(false);
     }
