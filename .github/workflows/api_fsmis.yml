@@ -52,4 +52,4 @@ jobs:
           app-name: 'fsmis'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_E627CDCA136A49EEB000AE3C7BE32873 }}
-          package: '${{ github.workspace }}/fsmis/target/*.jar'
+          package: '*.jar'
