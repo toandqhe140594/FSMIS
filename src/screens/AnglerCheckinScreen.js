@@ -1,8 +1,9 @@
 import { useNavigation } from "@react-navigation/native";
-import { useStoreState } from "easy-peasy";
+import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, Button, Center, Text } from "native-base";
 import PropTypes from "prop-types";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { Alert, ToastAndroid } from "react-native";
 import QRCode from "react-native-qrcode-svg";
 
 import FLocationCard from "../components/FLocationCard";
@@ -11,12 +12,35 @@ import { goToCatchReportFormScreen } from "../navigations";
 import store from "../utilities/Store";
 
 store.addModel("CheckInModel", CheckInModel);
+
 // After checkin successful at a location
 const CheckinSuccessScreen = () => {
+  const navigation = useNavigation();
+
   const locationInfo = useStoreState(
     (states) => states.CheckInModel.fishingLocationInfo,
   );
-  const navigation = useNavigation();
+  const personalCheckout = useStoreActions(
+    (actions) => actions.CheckInModel.personalCheckout,
+  );
+
+  const showCheckoutAlert = () => {
+    Alert.alert(
+      "Checkout",
+      "Bạn có muốn checkout mà không báo kết quả câu?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        { text: "OK", onPress: () => personalCheckout() },
+      ],
+      {
+        cancelable: true,
+      },
+    );
+  };
+
   return (
     <Box
       flex={1}
@@ -34,7 +58,7 @@ const CheckinSuccessScreen = () => {
           address={locationInfo.address}
           name={locationInfo.name}
           isVerifed={locationInfo.verify}
-          rate={3.5}
+          rate={locationInfo.score}
         />
       </Box>
       <Box w="70%">
@@ -47,7 +71,14 @@ const CheckinSuccessScreen = () => {
         >
           Báo kết quả câu
         </Button>
-        <Button size="lg">Check out</Button>
+        <Button
+          size="lg"
+          onPress={() => {
+            showCheckoutAlert();
+          }}
+        >
+          Checkout
+        </Button>
       </Box>
     </Box>
   );
@@ -57,38 +88,65 @@ const DefaultQRCodeScreen = ({ onRefreshHandler }) => {
   const userProfile = useStoreState((states) => states.userProfile);
   const [qrString, setQrString] = React.useState(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (userProfile && userProfile.qrString) setQrString(userProfile.qrString);
   }, [userProfile]);
 
   return (
-    <Center flex={1}>
-      <Center w="80%">
-        <Text bold textAlign="center" mb="10%">
-          Hãy để nhân viên được quét mã QR để được Checkin và Báo cá
-        </Text>
-        <QRCode
-          logo={require("../assets/images/logo.png")}
-          logoSize={50}
-          size={200}
-          value={qrString || "Default QR DATA"}
-        />
-        <Button mt={4} size="lg" px={10} onPress={onRefreshHandler}>
-          Tải lại
-        </Button>
+    <>
+      <Center flex={1}>
+        <Center w="80%">
+          <Text bold textAlign="center" mb="10%">
+            Hãy để nhân viên được quét mã QR để được Checkin và Báo cá
+          </Text>
+          <QRCode
+            logo={require("../assets/images/logo.png")}
+            logoSize={50}
+            size={200}
+            value={qrString || "Default QR DATA"}
+          />
+        </Center>
       </Center>
-    </Center>
+      <Box justifyContent="flex-end" alignItems="center" mb={10}>
+        <Button mt={4} size="lg" px={10} onPress={onRefreshHandler} w="50%">
+          Lấy thông tin checkin
+        </Button>
+      </Box>
+    </>
   );
 };
 
 const CheckinScreen = () => {
-  const [isCheckin, setCheckin] = useState(false);
   const stateCheckIn = useStoreState(
     (states) => states.CheckInModel.checkInState,
   );
+  const getCheckInState = useStoreActions(
+    (actions) => actions.FManageModel.getCheckInState,
+  );
+
+  const [isCheckin, setCheckin] = useState(false);
+
   const refreshHandler = () => {
-    setCheckin(stateCheckIn);
+    getCheckInState();
   };
+
+  useEffect(() => {
+    getCheckInState();
+  }, []);
+
+  useEffect(() => {
+    setCheckin(stateCheckIn);
+    if (!stateCheckIn) {
+      ToastAndroid.showWithGravityAndOffset(
+        "Bạn chưa checkin ở hồ câu",
+        ToastAndroid.LONG,
+        ToastAndroid.BOTTOM,
+        25,
+        50,
+      );
+    }
+  }, [stateCheckIn]);
+
   return (
     <>
       {isCheckin ? (

@@ -36,3 +36,6 @@ export const ADDRESS_DISTRICT_WARD = "address/ward";
 
 export const SEND_CATCH_REPORT = "catches/report";
 export const REPORT_WRITE = "report/add";
+export const CHECKIN = "checkin";
+export const CHECKIN_STATUS = "checkin/status";
+export const CHECKOUT = "location/checkout";

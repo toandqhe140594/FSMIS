@@ -8,28 +8,11 @@ const model = {
   fishingLocationInfo: {
     id: 2,
     name: "Hồ Câu Định Công",
-    lastEditedDate: "18/10/2021 21:40:57",
-    website: "https://www.facebook.com/hocaudinhcong.nkct",
-    longitude: 105.831116,
-    latitude: 20.97807,
     address: "Hồ Định Công",
-    addressFromWard: {
-      ward: "Định Công",
-      wardId: 307,
-      district: "Hoàng Mai",
-      districtId: 8,
-      province: "Hà Nội",
-      provinceId: 1,
-    },
-    phone: "0968607368",
     description: "Nơi giải trí cho anh em cần thủ",
-    service: "Ăn uống\nChụp ảnh\nBao móm",
-    timetable: "Từ 8h đến 22h hàng ngày, trừ thứ 3 và thứ 6",
-    rule: "Cần <5.4M",
     image: ["https://cdn.kinhtedothi.vn/545/2020/11/23/hodinhcong1.JPG"],
     verify: true,
-    saved: true,
-    role: "ANGLER",
+    score: 3,
   },
   lakeList: [
     {
@@ -91,10 +74,18 @@ const model = {
     lakeId: 0,
   },
 
+  /**
+   * Set data to fishing location short display
+   */
+  setFishingLocationInfo: action((state, payload) => {
+    state.fishingLocationInfo = payload;
+  }),
+  /**
+   * Set checkin status
+   */
   setCheckInState: action((state, payload) => {
     state.checkInState = payload;
   }),
-  getCheckInState: "",
 
   setLakeList: action((state, payload) => {
     state.lakeList = payload;
@@ -124,9 +115,40 @@ const model = {
     });
     if (status === 200) {
       actions.setCatchReportDetail({ ...data, id: null });
-      console.log(`status`, status);
     }
     return status;
+  }),
+
+  /**
+   * Get checkin status
+   */
+  getCheckInState: thunk(async (actions) => {
+    try {
+      const { data, status } = await http.post(`${API_URL.CHECKIN_STATUS}`);
+      if (status === 200) {
+        actions.setCheckInState(!data.available);
+        actions.setFishingLocationInfo(data.fishingLocation);
+      }
+    } catch (error) {
+      actions.setCheckInState(false);
+      actions.setFishingLocationInfo({});
+    }
+  }),
+
+  /**
+   * Checkout from fishing location if currently checkin
+   */
+  personalCheckout: thunk(async (actions) => {
+    try {
+      const { status } = await http.post(`${API_URL.CHECKOUT}`);
+      if (status === 200) {
+        actions.setCheckInState(false);
+        actions.setFishingLocationInfo({});
+      }
+    } catch (error) {
+      actions.setCheckInState(false);
+      actions.setFishingLocationInfo({});
+    }
   }),
 };
 export default model;
