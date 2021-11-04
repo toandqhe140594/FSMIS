@@ -32,7 +32,7 @@ public class District {
     private Province province;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "id", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "district", cascade = CascadeType.ALL)
     private List<Ward> wardList;
 
 }

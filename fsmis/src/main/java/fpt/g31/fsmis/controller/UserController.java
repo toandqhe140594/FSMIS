@@ -25,8 +25,10 @@ public class UserController {
         return new ResponseEntity<>(userService.getPersonalInformation(request), HttpStatus.OK);
     }
 
-    // CheckInService
-    // @GetMapping("/status")
+     @GetMapping("/availability")
+     public ResponseEntity<Object> isAvailable(HttpServletRequest request){
+        return new ResponseEntity<>(userService.isAvailable(request), HttpStatus.OK);
+     }
 
     @GetMapping("/notification")
     public ResponseEntity<Object> getPersonalNotification(HttpServletRequest request, @RequestParam(defaultValue = "1") int pageNo) {

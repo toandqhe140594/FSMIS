@@ -5,6 +5,8 @@ import fpt.g31.fsmis.exception.NotFoundException;
 import fpt.g31.fsmis.exception.UnauthorizedException;
 import javax.validation.ValidationException;
 import com.twilio.exception.ApiException;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -108,5 +110,13 @@ public class GlobalAdvice {
     ResponseTextDtoOut httpMessageNotReadableExceptionHandler(HttpMessageNotReadableException ex) {
         ex.printStackTrace();
         return new ResponseTextDtoOut("Form điền thiếu thông tin");
+    }
+
+    @ResponseBody
+    @ExceptionHandler({ExpiredJwtException.class, MalformedJwtException.class})
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    ResponseTextDtoOut jwtExceptionHandler(HttpMessageNotReadableException ex) {
+        ex.printStackTrace();
+        return new ResponseTextDtoOut("Lỗi jwt");
     }
 }

@@ -3,11 +3,10 @@ package fpt.g31.fsmis.service;
 import fpt.g31.fsmis.dto.input.ChangePasswordDtoIn;
 import fpt.g31.fsmis.dto.input.PersonalInfoDtoIn;
 import fpt.g31.fsmis.dto.output.*;
+import fpt.g31.fsmis.entity.FishingLocation;
 import fpt.g31.fsmis.entity.Notification;
 import fpt.g31.fsmis.entity.User;
-import fpt.g31.fsmis.repository.CatchesRepos;
-import fpt.g31.fsmis.repository.UserRepos;
-import fpt.g31.fsmis.repository.WardRepos;
+import fpt.g31.fsmis.repository.*;
 import fpt.g31.fsmis.security.JwtFilter;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -32,6 +31,8 @@ public class UserService {
     private final ModelMapper modelMapper;
     private final JwtFilter jwtFilter;
     private final PasswordEncoder passwordEncoder;
+    private final CheckInRepos checkInRepos;
+    private final ReviewRepos reviewRepos;
 
     public PersonalInfoDtoOut getPersonalInformation(HttpServletRequest request) {
         User user = jwtFilter.getUserFromToken(request);
@@ -111,6 +112,26 @@ public class UserService {
                 .name(user.getFullName())
                 .avatar(user.getAvatarUrl())
                 .phone(user.getPhone())
+                .build();
+    }
+
+    public IsAvailableDtoOut isAvailable(HttpServletRequest request) {
+        User user = jwtFilter.getUserFromToken(request);
+        FishingLocationItemDtoOut fishingLocationItemDtoOut = null;
+        if (!user.isAvailable()) {
+            FishingLocation location = checkInRepos.findFirstByUserIdOrderByCheckInTimeDesc(user.getId()).getFishingLocation();
+            fishingLocationItemDtoOut = FishingLocationItemDtoOut.builder()
+                    .id(location.getId())
+                    .name(location.getName())
+                    .image(ServiceUtils.splitString(location.getImageUrl()).get(0))
+                    .verify(location.getVerify())
+                    .address(ServiceUtils.getAddress(location.getAddress(), location.getWard()))
+                    .score(reviewRepos.getAverageScoreByFishingLocationIdAndActiveIsTrue(location.getId()))
+                    .build();
+        }
+        return IsAvailableDtoOut.builder()
+                .isAvailable(user.isAvailable())
+                .fishingLocationItemDtoOut(fishingLocationItemDtoOut)
                 .build();
     }
 }

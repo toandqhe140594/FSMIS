@@ -27,7 +27,7 @@ public class Province {
     private String type;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "id", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "province", cascade = CascadeType.ALL)
     private List<District> districtList;
 
 }

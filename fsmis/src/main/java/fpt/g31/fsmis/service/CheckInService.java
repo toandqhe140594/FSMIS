@@ -2,6 +2,7 @@ package fpt.g31.fsmis.service;
 
 import fpt.g31.fsmis.dto.output.CheckInHistoryPersonalDtoOut;
 import fpt.g31.fsmis.dto.output.PaginationDtoOut;
+import fpt.g31.fsmis.dto.output.ResponseTextDtoOut;
 import fpt.g31.fsmis.dto.output.UserCheckInDtoOut;
 import fpt.g31.fsmis.entity.CheckIn;
 import fpt.g31.fsmis.entity.FishingLocation;
@@ -98,5 +99,13 @@ public class CheckInService {
                 .checkInTime(ServiceUtils.convertDateToString(checkIn.getCheckInTime()))
                 .checkOutTime(ServiceUtils.convertDateToString(checkIn.getCheckOutTime()))
                 .build();
+    }
+
+    public ResponseTextDtoOut isCheckedIn(Long locationId, HttpServletRequest request) {
+        User user = jwtFilter.getUserFromToken(request);
+        if (!fishingLocationRepos.existsById(locationId)) {
+            throw new NotFoundException("Không tìm thấy khu hồ!");
+        }
+        return new ResponseTextDtoOut(checkInRepos.existsByUserIdAndFishingLocationIdAndCheckOutTimeIsNull(user.getId(), locationId)?"true":"false");
     }
 }

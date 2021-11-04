@@ -79,6 +79,11 @@ public class FishingLocationController {
         return new ResponseEntity<>(lakeService.getAllByLocationId(locationId), HttpStatus.OK);
     }
 
+    @GetMapping("/fishes/{locationId}")
+    public ResponseEntity<Object> getAllLakeWithFishInLake(@PathVariable Long locationId) {
+        return new ResponseEntity<>(lakeService.getAllLakeWithFishInLake(locationId), HttpStatus.OK);
+    }
+
     @GetMapping("/{locationId}/lake/{lakeId}")
     public ResponseEntity<Object> getLakeById(@PathVariable Long locationId, @PathVariable Long lakeId) {
         return new ResponseEntity<>(lakeService.getLakeById(locationId, lakeId), HttpStatus.OK);
@@ -114,6 +119,11 @@ public class FishingLocationController {
     @PostMapping("/{locationId}/checkin")
     public ResponseEntity<Object> checkIn(@PathVariable Long locationId, @RequestBody String qrString) {
         return new ResponseEntity<>(checkInService.checkIn(qrString, locationId), HttpStatus.OK);
+    }
+
+    @GetMapping("/{locationId}/checkin/status")
+    public ResponseEntity<Object> isCheckedIn(@PathVariable Long locationId, HttpServletRequest request) {
+        return new ResponseEntity<>(checkInService.isCheckedIn(locationId, request), HttpStatus.OK);
     }
 
     // CHECK-OUT
@@ -214,6 +224,13 @@ public class FishingLocationController {
     @GetMapping("/{locationId}/staff")
     public ResponseEntity<Object> getStaff(@PathVariable Long locationId, HttpServletRequest request) {
         return new ResponseEntity<>(fishingLocationService.getStaff(locationId, request), HttpStatus.OK);
+    }
+
+    @GetMapping("{locationId}/staff/{staffId}")
+    public ResponseEntity<Object> getStaffDetail(@PathVariable Long locationId,
+                                                 @PathVariable Long staffId,
+                                                 HttpServletRequest request) {
+        return new ResponseEntity<>(fishingLocationService.getStaffDetail(locationId, staffId, request), HttpStatus.OK);
     }
 
     @PostMapping("/findUserByPhone/{phone}")

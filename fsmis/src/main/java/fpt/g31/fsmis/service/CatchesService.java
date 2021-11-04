@@ -35,7 +35,7 @@ public class CatchesService {
         if (pageNo <= 0) {
             throw new ValidationException("Địa chỉ không tồn tại");
         }
-        Page<Catches> catchesList = catchesRepos.findByFishingLocationIdAndHiddenIsFalse(locationId, PageRequest.of(pageNo - 1, 10));
+        Page<Catches> catchesList = catchesRepos.findByFishingLocationIdAndHiddenIsFalseOrderByTimeDesc(locationId, PageRequest.of(pageNo - 1, 10));
         List<CatchesOverviewHasImageDtoOut> output = new ArrayList<>();
         for (Catches catches : catchesList) {
             CatchesOverviewHasImageDtoOut item = CatchesOverviewHasImageDtoOut.builder()
@@ -71,7 +71,7 @@ public class CatchesService {
         if(!isOwnerOrStaff(locationId, jwtFilter.getUserFromToken(request))) {
             throw new ValidationException("Bạn không quản lý địa điểm này");
         }
-        Page<Catches> catchesList = catchesRepos.findByFishingLocationIdAndHiddenIsFalse(locationId, PageRequest.of(pageNo - 1, 10));
+        Page<Catches> catchesList = catchesRepos.findByFishingLocationIdAndHiddenIsFalseOrderByTimeDesc(locationId, PageRequest.of(pageNo - 1, 10));
         List<CatchesOverviewNoImageDtoOut> output = new ArrayList<>();
         for (Catches catches : catchesList) {
             CatchesOverviewNoImageDtoOut item = CatchesOverviewNoImageDtoOut.builder()
