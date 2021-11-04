@@ -1,3 +1,4 @@
+import { FontAwesome5, MaterialCommunityIcons } from "@expo/vector-icons";
 import { Button, Checkbox, Input, Select } from "native-base";
 import PropTypes from "prop-types";
 import React, { useEffect } from "react";
@@ -84,11 +85,19 @@ const CatchReportSection = ({ fishList }) => {
               <Input
                 mt={2}
                 fontSize="md"
-                placeholder="Nhập số cá (con)"
+                placeholder="Nhập số con bắt được"
                 value={value}
                 onChangeText={onChange}
                 onBlur={onBlur}
                 keyboardType="number-pad"
+                InputLeftElement={
+                  <FontAwesome5
+                    style={{ marginLeft: 12 }}
+                    name="fish"
+                    size={24}
+                    color="black"
+                  />
+                }
               />
             )}
           />
@@ -105,11 +114,19 @@ const CatchReportSection = ({ fishList }) => {
               <Input
                 mt={2}
                 fontSize="md"
-                placeholder="Tổng cân nặng (kg)"
+                placeholder="Nhập tổng cân nặng (kg)"
                 value={value}
                 onChangeText={onChange}
                 onBlur={onBlur}
                 keyboardType="number-pad"
+                InputLeftElement={
+                  <MaterialCommunityIcons
+                    style={{ marginLeft: 12 }}
+                    name="weight-kilogram"
+                    size={28}
+                    color="#262626"
+                  />
+                }
               />
             )}
           />
@@ -125,7 +142,7 @@ const CatchReportSection = ({ fishList }) => {
               control={control}
               render={({ field: { value, onChange } }) => (
                 <Checkbox value={value} onChange={onChange}>
-                  <Text style={{ marginLeft: 10, fontSize: 16 }}>
+                  <Text style={{ marginLeft: 12, fontSize: 16 }}>
                     Giao lại cho chủ hồ
                   </Text>
                 </Checkbox>

@@ -1,3 +1,4 @@
+import { FontAwesome5, MaterialCommunityIcons } from "@expo/vector-icons";
 import { Button, Input, Select } from "native-base";
 import React, { useEffect } from "react";
 import { Controller, useFieldArray, useFormContext } from "react-hook-form";
@@ -77,8 +78,11 @@ const FishCardSection = () => {
                 <Input
                   w="48%"
                   fontSize="md"
-                  placeholder="Biểu nhỏ nhất"
+                  // placeholder="Nhỏ nhất"
                   keyboardType="number-pad"
+                  InputLeftElement={
+                    <Text style={{ marginLeft: 12, fontSize: 16 }}>Biểu</Text>
+                  }
                 />
               )}
             />
@@ -90,8 +94,11 @@ const FishCardSection = () => {
                 <Input
                   w="48%"
                   fontSize="md"
-                  placeholder="Biểu lớn nhất"
+                  // placeholder="Lớn nhất"
                   keyboardType="number-pad"
+                  InputLeftElement={
+                    <Text style={{ marginLeft: 12, fontSize: 16 }}>Biểu</Text>
+                  }
                 />
               )}
             />
@@ -113,11 +120,19 @@ const FishCardSection = () => {
               <Input
                 mt={2}
                 fontSize="md"
-                placeholder="Nhập số cá (con)"
+                placeholder="Nhập số con thả hồ"
                 value={value}
                 onChangeText={onChange}
                 onBlur={onBlur}
                 keyboardType="number-pad"
+                InputLeftElement={
+                  <FontAwesome5
+                    style={{ marginLeft: 12 }}
+                    name="fish"
+                    size={24}
+                    color="black"
+                  />
+                }
               />
             )}
           />
@@ -134,11 +149,19 @@ const FishCardSection = () => {
               <Input
                 mt={2}
                 fontSize="md"
-                placeholder="Tổng cân nặng (kg)"
+                placeholder="Nhập tổng cân nặng (kg)"
                 value={value}
                 onChangeText={onChange}
                 onBlur={onBlur}
                 keyboardType="number-pad"
+                InputLeftElement={
+                  <MaterialCommunityIcons
+                    style={{ marginLeft: 12 }}
+                    name="weight-kilogram"
+                    size={28}
+                    color="#262626"
+                  />
+                }
               />
             )}
           />
