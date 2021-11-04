@@ -108,7 +108,7 @@ const DefaultQRCodeScreen = ({ onRefreshHandler }) => {
         </Center>
       </Center>
       <Box justifyContent="flex-end" alignItems="center" mb={10}>
-        <Button mt={4} size="lg" px={10} onPress={onRefreshHandler} w="50%">
+        <Button mt={4} size="lg" px={3} onPress={onRefreshHandler} w="50%">
           Lấy thông tin checkin
         </Button>
       </Box>
@@ -121,7 +121,7 @@ const CheckinScreen = () => {
     (states) => states.CheckInModel.checkInState,
   );
   const getCheckInState = useStoreActions(
-    (actions) => actions.FManageModel.getCheckInState,
+    (actions) => actions.CheckInModel.getCheckInState,
   );
 
   const [isCheckin, setCheckin] = useState(false);
