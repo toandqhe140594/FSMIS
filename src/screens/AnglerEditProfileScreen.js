@@ -88,6 +88,13 @@ const EditProfileScreen = () => {
     setShowDatePicker(false);
     setDate(currentDate);
   };
+  const genderList = useMemo(
+    () => [
+      { id: true, name: "Nam" },
+      { id: false, name: "Nữ" },
+    ],
+    [],
+  );
   /**
    * Call an alert box to reset avatar image back to default avatar
    */
@@ -156,7 +163,6 @@ const EditProfileScreen = () => {
       }
     }, [route.params]),
   );
-  console.log("render parent");
   return (
     <KeyboardAvoidingView>
       <ScrollView nestedScrollEnabled>
@@ -237,6 +243,7 @@ const EditProfileScreen = () => {
                 isTitle
                 placeholder="Chọn giới tính"
                 controllerName="aGender"
+                data={genderList}
               />
 
               {/* Address input field */}
