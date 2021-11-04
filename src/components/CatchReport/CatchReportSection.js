@@ -1,4 +1,5 @@
 import { Button, Checkbox, Input, Select } from "native-base";
+import PropTypes from "prop-types";
 import React, { useEffect } from "react";
 import { Controller, useFieldArray, useFormContext } from "react-hook-form";
 import { StyleSheet, Text, View } from "react-native";
@@ -24,7 +25,7 @@ const styles = StyleSheet.create({
   error: { color: "#f43f5e", fontSize: 12, fontStyle: "italic" },
 });
 
-const CatchReportSection = () => {
+const CatchReportSection = ({ fishList }) => {
   const {
     control,
     formState: { errors },
@@ -58,8 +59,15 @@ const CatchReportSection = () => {
                 onValueChange={onChange}
                 selectedValue={value}
               >
-                <Select.Item label="Cá diếc" value={6} />
-                <Select.Item label="Cá chép" value={8} />
+                {fishList.map((fish) => {
+                  return (
+                    <Select.Item
+                      label={fish.name}
+                      value={fish.id}
+                      key={fish.id}
+                    />
+                  );
+                })}
               </Select>
             )}
           />
@@ -135,5 +143,11 @@ const CatchReportSection = () => {
     </>
   );
 };
+CatchReportSection.propTypes = {
+  fishList: PropTypes.arrayOf(PropTypes.object),
+};
 
+CatchReportSection.defaultProps = {
+  fishList: [{}],
+};
 export default CatchReportSection;
