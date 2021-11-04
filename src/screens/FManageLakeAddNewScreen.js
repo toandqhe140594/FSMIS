@@ -1,5 +1,9 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useFocusEffect, useRoute } from "@react-navigation/native";
+import {
+  useFocusEffect,
+  useNavigation,
+  useRoute,
+} from "@react-navigation/native";
 import {
   Box,
   Button,
@@ -19,8 +23,8 @@ import InputComponent from "../components/common/InputComponent";
 import MultiImageSection from "../components/common/MultiImageSection";
 import TextAreaComponent from "../components/common/TextAreaComponent";
 import HeaderTab from "../components/HeaderTab";
-import AddFishCard from "../components/LakeEditProfile/AddFishCard";
 import CheckboxSelectorComponent from "../components/LakeEditProfile/CheckboxSelectorComponent";
+import FishCardSection from "../components/LakeEditProfile/FishCardSection";
 import { ROUTE_NAMES } from "../constants";
 
 const validationSchema = yup.object().shape({
@@ -36,15 +40,20 @@ const validationSchema = yup.object().shape({
   lakeLength: yup.string().required("Chiều dài hồ không được để trống"),
   lakeWidth: yup.string().required("Chiều rộng hồ không được để trống"),
   lakeDepth: yup.string().required("Độ sâu của hồ không được để trống"),
+  cards: yup.array().of(
+    yup.object().shape({
+      fishType: yup.number().required("Loại cá không được để trống"),
+      amount: yup.number().required("Số cá bắt được không được để trống"),
+      totalWeight: yup
+        .number()
+        .required("Tổng cân nặng cá không được để trống"),
+      minWeight: yup.number().required("Biểu cá không được để trống"),
+      maxWeight: yup.number().required("Biểu cá không được để trống"),
+    }),
+  ),
 });
 
 const fishingMethodData = ["Câu đài", "Câu đơn", "Câu lục"];
-
-let itemKey = 0;
-const generateKey = () => {
-  itemKey += 1;
-  return `${itemKey}`;
-};
 
 const styles = StyleSheet.create({
   sectionWrapper: {
@@ -57,15 +66,7 @@ const styles = StyleSheet.create({
 
 const LakeAddNewScreen = () => {
   const route = useRoute();
-
-  const initFishCard = {
-    id: generateKey(),
-    fish: "",
-    weightDescription: "",
-    amount: "",
-    totalWeight: "",
-  };
-  const [cardList, setCardList] = useState([initFishCard]);
+  const navigation = useNavigation();
   const [imageArray, setImageArray] = useState([]);
   const methods = useForm({
     mode: "onSubmit",
@@ -77,26 +78,12 @@ const LakeAddNewScreen = () => {
   const onSubmit = (data) => {
     // Test submit
     console.log(data);
-    console.log(cardList);
   };
 
-  const addCard = () => {
-    const newCard = initFishCard;
-    setCardList((prev) => [...prev, newCard]);
-  };
-  const deleteCard = (id) => {
-    const newCardList = cardList.filter((card) => card.id !== id);
-    setCardList(newCardList);
-  };
-  const updateCard = (id, name, value) => {
-    const newCardList = cardList.map((card) => {
-      if (card.id === id) {
-        return { ...card, [name]: value };
-      }
-      return card;
-    });
-    setCardList(newCardList);
-  };
+  /**
+   * Take id of the image and remove image from imageArray
+   * @param {Number} id: id in the object image
+   */
   const updateImageArray = (id) => {
     setImageArray(imageArray.filter((image) => image.id !== id));
   };
@@ -105,10 +92,10 @@ const LakeAddNewScreen = () => {
   useFocusEffect(
     // useCallback will listen to route.param
     useCallback(() => {
-      setImageArray(route.params?.base64Array);
-      return () => {
-        setImageArray([]);
-      };
+      if (route.param?.base64Array && route.params.base64Array.length) {
+        setImageArray(route.params?.base64Array);
+        navigation.setParams({ base64Array: [] });
+      }
     }, [route.params]),
   );
 
@@ -188,23 +175,7 @@ const LakeAddNewScreen = () => {
                 <Text fontSize="md" bold>
                   Các loại cá
                 </Text>
-                <VStack mb={1}>
-                  {cardList.map((card) => (
-                    <AddFishCard
-                      key={card.id}
-                      id={card.id}
-                      deleteCard={deleteCard}
-                      updateCard={updateCard}
-                    />
-                  ))}
-                </VStack>
-                <Button
-                  style={styles.button}
-                  alignSelf="center"
-                  onPress={addCard}
-                >
-                  Thêm loại cá
-                </Button>
+                <FishCardSection />
               </Stack>
             </Center>
             <Center>
@@ -217,13 +188,6 @@ const LakeAddNewScreen = () => {
                   onPress={handleSubmit(onSubmit)}
                 >
                   Thêm hồ câu
-                </Button>
-                <Button
-                  style={styles.button}
-                  variant="outline"
-                  alignSelf="center"
-                >
-                  Xoá hồ câu
                 </Button>
               </Box>
             </Center>
