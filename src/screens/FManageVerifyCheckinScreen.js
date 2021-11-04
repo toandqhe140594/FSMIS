@@ -1,11 +1,20 @@
+import { useNavigation } from "@react-navigation/native";
+import { useStoreState } from "easy-peasy";
 import { Box, Button, Center, VStack } from "native-base";
 import React from "react";
 import { Avatar, Text } from "react-native-elements";
 
 import HeaderTab from "../components/HeaderTab";
 import styles from "../config/styles";
+import { goBack } from "../navigations";
 
-const AddEmployeeScreen = () => {
+const FManageVerifyCheckinScreen = () => {
+  const navigation = useNavigation();
+
+  const anglerCheckinOverviewInfor = useStoreState(
+    (states) => states.FManageModel.anglerCheckinOverviewInfor,
+  );
+
   return (
     <Box flex={1}>
       <HeaderTab name="Thông tin" />
@@ -16,21 +25,41 @@ const AddEmployeeScreen = () => {
             size="xlarge"
             icon={{ name: "user", type: "font-awesome" }}
             source={{
-              uri: "https://picsum.photos/200",
+              uri: anglerCheckinOverviewInfor.avatar,
             }}
           />
-          <Text style={[styles.nameTextLg]}>Đào Quốc Toản</Text>
-          <Text>Thời gian check in: 9:00 15/10/2021</Text>
+          <Text style={[styles.nameTextLg]}>
+            {anglerCheckinOverviewInfor.name}
+          </Text>
+          <Text>
+            Thời gian check in: {anglerCheckinOverviewInfor.checkInTime}
+          </Text>
         </VStack>
       </Box>
       <Box flex={1} />
       <Center mb={3}>
-        <Button w="50%" size="md">
-          Duyệt
+        <Button
+          w="50%"
+          size="md"
+          mb={2}
+          onPress={() => {
+            goBack(navigation);
+          }}
+        >
+          Tiếp tục
+        </Button>
+        <Button
+          w="50%"
+          size="md"
+          onPress={() => {
+            navigation.pop(2);
+          }}
+        >
+          Màn hình quản lý
         </Button>
       </Center>
     </Box>
   );
 };
 
-export default AddEmployeeScreen;
+export default FManageVerifyCheckinScreen;
