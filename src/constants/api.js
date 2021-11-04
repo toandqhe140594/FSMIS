@@ -29,6 +29,7 @@ export const LOCATION_REVIEW_SCORE = "review/score";
 export const LOCATION_REVIEW_PERSONAL = "review/me";
 export const LOCATION_REVIEW_PERSONAL_DELETE = "review/me/delete";
 export const LOCATION_REVIEW_PERSONAL_POST = "review/me/post";
+export const LOCATION_ADD = "location/add";
 
 export const ADDRESS_ALL_PROVINCE = "/address/province";
 export const ADDRESS_PROVINCE_DISTRICT = "address/district";
