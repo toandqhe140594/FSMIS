@@ -22,13 +22,14 @@ jobs:
           java-version: '8'
 
       - name: Build with Maven
+        working-directory: ./fsmis
         run: mvn clean install
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v2
         with:
           name: java-app
-          path: '${{ github.workspace }}/target/*.jar'
+          path: '${{ github.workspace }}/fsmis/target/*.jar'
 
   deploy:
     runs-on: ubuntu-latest
@@ -42,6 +43,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: java-app
+          path: '${{ github.workspace }}/fsmis/target/*.jar'
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
@@ -50,4 +52,4 @@ jobs:
           app-name: 'fsmis'
           slot-name: 'Production'
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_E627CDCA136A49EEB000AE3C7BE32873 }}
-          package: '*.jar'
+          package: '${{ github.workspace }}/fsmis/target/*.jar'
