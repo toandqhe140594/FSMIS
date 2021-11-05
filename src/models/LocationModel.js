@@ -22,7 +22,7 @@ const model = {
     score: null,
     totalReviews: null,
   },
-  checkinStatus: null,
+  checkinStatus: null, // State that indicates if user is checked in the fishing location before
   personalReview: {},
   locationReviewList: [],
   totalReviewPage: 1,
@@ -41,10 +41,6 @@ const model = {
     state.currentId = payload;
   }),
   setLocationReviewScore: action((state, payload) => {
-    state.locationReviewScore = payload;
-  }),
-
-  setCheckinStatus: action((state, payload) => {
     state.locationReviewScore = payload;
   }),
 
@@ -229,5 +225,20 @@ const model = {
       status: pageNo === 1 ? "Overwrite" : "Append",
     });
   }),
+
+  // START OF CHECKIN STATUS RELATED STUFF
+
+  /**
+   * Set value for checkin status
+   */
+  setCheckinStatus: action((state, payload) => {
+    state.locationReviewScore = payload;
+  }),
+  /**
+   * Get checkin status indicating that if angler is checked in at the fishing location before
+   */
+  getCheckinStatus: thunk(async () => {}),
+
+  // END OF CHECKIN STATUS RELATED STUFF
 };
 export default model;
