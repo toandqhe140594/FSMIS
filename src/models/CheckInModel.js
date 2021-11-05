@@ -4,60 +4,10 @@ import { API_URL } from "../constants";
 import http from "../utilities/Http";
 
 const model = {
-  checkInState: true,
-  fishingLocationInfo: {
-    id: 2,
-    name: "Hồ Câu Định Công",
-    address: "Hồ Định Công",
-    description: "Nơi giải trí cho anh em cần thủ",
-    image: ["https://cdn.kinhtedothi.vn/545/2020/11/23/hodinhcong1.JPG"],
-    verify: true,
-    score: 3,
-  },
-  lakeList: [
-    {
-      id: 2,
-      name: "Hồ thường 1",
-      image: "https://picsum.photos/500",
-      fishingMethodList: ["Câu đơn", "Câu đài"],
-      fishList: ["Cá diếc", "Cá chép", "Cá trắm đen"],
-    },
-  ],
-  fishList: [
-    {
-      id: 2,
-      fishList: [
-        {
-          id: 6,
-          name: "Cá diếc",
-          image:
-            "https://tepbac.com/upload/species/ge_image/ca-diec-Carassius-gibelio.jpg",
-        },
-        {
-          id: 7,
-          name: "Cá trắm đen",
-          image:
-            "https://tepbac.com/upload/news/ge_image/2018/07/ca-tram-den_1532339843.jpg",
-        },
-      ],
-    },
-    {
-      id: 1,
-      fishList: [
-        {
-          id: 8,
-          name: "Cá chép",
-          image: "https://tepbac.com/upload/news/ge_image/ca-chep_5.jpg",
-        },
-        {
-          id: 9,
-          name: "Cá lăng",
-          image:
-            "https://vuahaisanxanh.com/thumb/540x405/1/upload/product/ca-lang-kg1600222424.jpg",
-        },
-      ],
-    },
-  ],
+  checkInState: null, // State indicate that the user is currently checkin at a fishing location or not
+  fishingLocationInfo: {},
+  lakeList: [],
+  fishList: [],
   currentLakeId: null,
   catchReportDetail: {
     catchesDetailList: [
@@ -79,12 +29,6 @@ const model = {
    */
   setFishingLocationInfo: action((state, payload) => {
     state.fishingLocationInfo = payload;
-  }),
-  /**
-   * Set checkin status
-   */
-  setCheckInState: action((state, payload) => {
-    state.checkInState = payload;
   }),
 
   setLakeList: action((state, payload) => {
@@ -118,20 +62,83 @@ const model = {
     }
     return status;
   }),
+  /**
+   * Set list of fishes in the current checkin location
+   */
+  setFishList: action((state, payload) => {
+    state.fishList = payload;
+  }),
+
+  /**
+   * Set fish and lake data of the current checkin location
+   * @param {Object} [payload] payload pass to function
+   * @param {Array} [payload.fishInLake] array contains data of lakes and fishes of the fishing location
+   */
+  setFishAndLakeList: action((state, payload) => {
+    let lakeList = [];
+    let fishList = [];
+    // Loop through the array contains fishes and lakes data
+    payload.fishInLake.forEach((element) => {
+      const { id, name, fishDtoOutList } = element;
+      lakeList = lakeList.concat({ id, name });
+      fishList = fishList.concat({
+        id,
+        fishList: fishDtoOutList.map(
+          ({ id: fishId, name: fishName, quantity }) => ({
+            id: fishId,
+            name: fishName,
+            quantity,
+          }),
+        ),
+      });
+    });
+    state.lakeList = lakeList;
+    state.fishList = fishList;
+  }),
+  /**
+   * Get all fishes in lakes in fishing location
+   */
+  getAllFishes: thunk(async (actions, payload, { getState }) => {
+    const { id: locationId } = getState().fishingLocationInfo;
+    try {
+      const { data, status } = await http.get(
+        `${API_URL.LOCATION_FISHES_ALL}/${locationId}`,
+      );
+      if (status === 200) {
+        actions.setFishAndLakeList({ fishInLake: data });
+      }
+    } catch (error) {
+      actions.setFishAndLakeList({ fishInLake: [] });
+    }
+  }),
+
+  // START OF CHECKIN RELATED STUFF
+
+  /**
+   * Set checkin status
+   */
+  setCheckInState: action((state, payload) => {
+    state.checkInState = payload;
+  }),
 
   /**
    * Get checkin status
+   * @param {Object} [payload] payload pass to action
+   * @param {Function} [payload.setLoading] function indicate the request is loading
    */
-  getCheckInState: thunk(async (actions) => {
+  getCheckInState: thunk(async (actions, payload) => {
+    const { setLoading } = payload;
     try {
-      const { data, status } = await http.post(`${API_URL.CHECKIN_STATUS}`);
+      const { data, status } = await http.get(`${API_URL.CHECKIN_STATUS}`);
       if (status === 200) {
+        await actions.setFishingLocationInfo(data.fishingLocationItemDtoOut);
         actions.setCheckInState(!data.available);
-        actions.setFishingLocationInfo(data.fishingLocation);
+        setLoading(false);
       }
     } catch (error) {
-      actions.setCheckInState(false);
       actions.setFishingLocationInfo({});
+      actions.setCheckInState(false);
+      setLoading(false);
     }
   }),
 
@@ -150,5 +157,7 @@ const model = {
       actions.setFishingLocationInfo({});
     }
   }),
+
+  // END OF CHECKIN RELATED STUFF
 };
 export default model;
