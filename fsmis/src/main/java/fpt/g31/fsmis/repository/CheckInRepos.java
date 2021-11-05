@@ -12,4 +12,6 @@ public interface CheckInRepos extends JpaRepository<CheckIn, Long> {
     Page<CheckIn> findFirstByUserIdOrderByCheckInTimeDesc(Long id, Pageable pageable);
 
     CheckIn findFirstByUserIdOrderByCheckInTimeDesc(Long userId);
+
+    boolean existsByUserIdAndFishingLocationIdAndCheckOutTimeIsNull(Long userId, Long fishingLocationId);
 }

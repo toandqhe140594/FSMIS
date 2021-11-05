@@ -7,10 +7,7 @@ import fpt.g31.fsmis.entity.User;
 import fpt.g31.fsmis.entity.address.Ward;
 import fpt.g31.fsmis.exception.NotFoundException;
 import fpt.g31.fsmis.exception.UnauthorizedException;
-import fpt.g31.fsmis.repository.FishingLocationRepos;
-import fpt.g31.fsmis.repository.ReviewRepos;
-import fpt.g31.fsmis.repository.UserRepos;
-import fpt.g31.fsmis.repository.WardRepos;
+import fpt.g31.fsmis.repository.*;
 import fpt.g31.fsmis.security.JwtFilter;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -37,6 +34,7 @@ public class FishingLocationService {
     private WardRepos wardRepos;
     private ReviewRepos reviewRepos;
     private ModelMapper modelMapper;
+    private final CheckInRepos checkInRepos;
 
     public List<FishingLocation> findAllFishingLocations() {
         return fishingLocationRepos.findAll();
@@ -114,11 +112,6 @@ public class FishingLocationService {
 
     public FishingLocationOverviewDtoOut getFishingLocationOverviewById(HttpServletRequest request, Long locationId) {
         User user = jwtFilter.getUserFromToken(request);
-//        Optional<FishingLocation> findFishingLocation = fishingLocationRepos.findById(locationId);
-//        if (!findFishingLocation.isPresent()) {
-//            throw new FishingLocationNotFoundException(locationId);
-//        }
-//        FishingLocation location = findFishingLocation.get();
         FishingLocation location = fishingLocationRepos.findById(locationId)
                 .orElseThrow(() -> new NotFoundException("Không tìm thấy khu hồ!"));
         FishingLocationOverviewDtoOut dtoOut = modelMapper.map(location, FishingLocationOverviewDtoOut.class);
@@ -290,6 +283,30 @@ public class FishingLocationService {
                 .name(staff.getFullName())
                 .phone(staff.getPhone())
                 .avatar(staff.getAvatarUrl())
+                .build();
+    }
+
+    public UserDtoOut getStaffDetail(Long locationId, Long staffId, HttpServletRequest request) {
+        User user = jwtFilter.getUserFromToken(request);
+        FishingLocation location = fishingLocationRepos.findById(locationId)
+                .orElseThrow(() -> new NotFoundException("Không tìm thấy khu hồ!"));
+        User staff = userRepos.findById(staffId)
+                .orElseThrow(() -> new NotFoundException("Không tìm thấy tài khoản!"));
+        if (!location.getOwner().equals(user)){
+            throw new ValidationException("Không phải chủ hồ, không có quyền truy cập!");
+        }
+        if (!location.getEmployeeList().contains(staff)){
+            throw new ValidationException("Tài khoản được tìm kiếm không phải nhân viên, không có quyền truy cập!");
+        }
+        return UserDtoOut.builder()
+                .id(staff.getId())
+                .avatar(staff.getAvatarUrl())
+                .active(staff.isActive())
+                .fullName(staff.getFullName())
+                .dob(ServiceUtils.convertDateToString(staff.getDob()))
+                .phone(staff.getPhone())
+                .gender(staff.isGender())
+                .address(ServiceUtils.getAddress(staff.getAddress(), staff.getWard()))
                 .build();
     }
 }

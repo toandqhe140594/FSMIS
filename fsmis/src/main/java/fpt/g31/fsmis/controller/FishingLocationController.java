@@ -79,6 +79,11 @@ public class FishingLocationController {
         return new ResponseEntity<>(lakeService.getAllByLocationId(locationId), HttpStatus.OK);
     }
 
+    @GetMapping("/fishes/{locationId}")
+    public ResponseEntity<Object> getAllLakeWithFishInLake(@PathVariable Long locationId) {
+        return new ResponseEntity<>(lakeService.getAllLakeWithFishInLake(locationId), HttpStatus.OK);
+    }
+
     @GetMapping("/{locationId}/lake/{lakeId}")
     public ResponseEntity<Object> getLakeById(@PathVariable Long locationId, @PathVariable Long lakeId) {
         return new ResponseEntity<>(lakeService.getLakeById(locationId, lakeId), HttpStatus.OK);
@@ -116,6 +121,11 @@ public class FishingLocationController {
         return new ResponseEntity<>(checkInService.checkIn(qrString, locationId), HttpStatus.OK);
     }
 
+    @GetMapping("/{locationId}/checkin/status")
+    public ResponseEntity<Object> isCheckedIn(@PathVariable Long locationId, HttpServletRequest request) {
+        return new ResponseEntity<>(checkInService.isCheckedIn(locationId, request), HttpStatus.OK);
+    }
+
     // CHECK-OUT
     @PostMapping("/checkout")
     public ResponseEntity<Object> checkOut(HttpServletRequest request) {
@@ -133,6 +143,11 @@ public class FishingLocationController {
     @GetMapping("/{locationId}/catch/manager")
     public ResponseEntity<Object> getPublicCatchesListByLocationId(HttpServletRequest request, @PathVariable Long locationId, @RequestParam(defaultValue = "1") int pageNo) {
         return new ResponseEntity<>(catchesService.getPublicCatchesListByLocationId(request, locationId, pageNo), HttpStatus.OK);
+    }
+
+    @GetMapping("/{locationId}/catch/pending")
+    public ResponseEntity<Object> getPendingCatchReportList(HttpServletRequest request, @PathVariable Long locationId, @RequestParam(defaultValue = "1") int pageNo) {
+        return new ResponseEntity<>(catchesService.getPendingCatchReports(request, locationId, pageNo), HttpStatus.OK);
     }
 
     // TODO: Báo cá
@@ -214,6 +229,13 @@ public class FishingLocationController {
     @GetMapping("/{locationId}/staff")
     public ResponseEntity<Object> getStaff(@PathVariable Long locationId, HttpServletRequest request) {
         return new ResponseEntity<>(fishingLocationService.getStaff(locationId, request), HttpStatus.OK);
+    }
+
+    @GetMapping("{locationId}/staff/{staffId}")
+    public ResponseEntity<Object> getStaffDetail(@PathVariable Long locationId,
+                                                 @PathVariable Long staffId,
+                                                 HttpServletRequest request) {
+        return new ResponseEntity<>(fishingLocationService.getStaffDetail(locationId, staffId, request), HttpStatus.OK);
     }
 
     @PostMapping("/findUserByPhone/{phone}")

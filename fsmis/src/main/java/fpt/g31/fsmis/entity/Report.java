@@ -26,6 +26,10 @@ public class Report {
 
     @ManyToOne
     @JoinColumn
+    private User user;
+
+    @ManyToOne
+    @JoinColumn
     private Review review;
 
     @ManyToOne

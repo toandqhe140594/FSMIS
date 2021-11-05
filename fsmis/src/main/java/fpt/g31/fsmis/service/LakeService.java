@@ -2,10 +2,7 @@ package fpt.g31.fsmis.service;
 
 import fpt.g31.fsmis.dto.input.FishInLakeDtoIn;
 import fpt.g31.fsmis.dto.input.LakeDtoIn;
-import fpt.g31.fsmis.dto.output.FishDtoOut;
-import fpt.g31.fsmis.dto.output.LakeDtoOut;
-import fpt.g31.fsmis.dto.output.LakeOverviewDtoOut;
-import fpt.g31.fsmis.dto.output.ResponseTextDtoOut;
+import fpt.g31.fsmis.dto.output.*;
 import fpt.g31.fsmis.entity.*;
 import fpt.g31.fsmis.exception.NotFoundException;
 import fpt.g31.fsmis.repository.*;
@@ -203,5 +200,32 @@ public class LakeService {
                 throw new ValidationException("Tương quan khối lượng và số lượng không hợp lệ, dòng " + row);
             }
         }
+    }
+
+    public List<LakeWithFishInLakeDtoOut> getAllLakeWithFishInLake(Long locationId) {
+        FishingLocation location = fishingLocationRepos.findById(locationId)
+                .orElseThrow(() -> new NotFoundException("Không tìm thấy khu hồ!"));
+        List<LakeWithFishInLakeDtoOut> output = new ArrayList<>();
+//        List<Lake> lakeList = lakeRepos.findByFishingLocationId(locationId);
+//        for (Lake lake : lakeList) {
+        for (Lake lake : location.getLakeList()) {
+            List<FishDtoOut> fishDtoOutList = new ArrayList<>();
+//            List<FishInLake> fishInLakeList = fishInLakeRepos.findByLakeId(lake.getId());
+//            for (FishInLake fishInLake: fishInLakeList){
+            for (FishInLake fishInLake : lake.getFishInLakeList()) {
+                FishDtoOut fishDtoOut = FishDtoOut.builder()
+                        .id(fishInLake.getId())
+                        .name(fishInLake.getFishSpecies().getName() + " biểu " + fishInLake.getMinWeight() + "-" + fishInLake.getMaxWeight())
+                        .build();
+                fishDtoOutList.add(fishDtoOut);
+            }
+            LakeWithFishInLakeDtoOut lakeWithFishInLakeDtoOut = LakeWithFishInLakeDtoOut.builder()
+                    .id(lake.getId())
+                    .name(lake.getName())
+                    .fishDtoOutList(fishDtoOutList)
+                    .build();
+            output.add(lakeWithFishInLakeDtoOut);
+        }
+        return output;
     }
 }

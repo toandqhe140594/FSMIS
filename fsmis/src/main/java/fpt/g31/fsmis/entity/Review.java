@@ -33,7 +33,7 @@ public class Review {
     @JoinColumn
     private User user;
 
-    @OneToMany(mappedBy = "id")
+    @OneToMany(mappedBy = "review")
     private List<Vote> voteList;
 
     @ManyToOne

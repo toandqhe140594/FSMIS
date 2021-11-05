@@ -70,11 +70,11 @@ public class FishingLocation {
     private Boolean verify;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "id", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "fishingLocation", cascade = CascadeType.ALL)
     private List<CheckIn> checkInList;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "id", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "fishingLocation", cascade = CascadeType.ALL)
     private List<Post> postList;
 
     @JsonIgnore
@@ -89,14 +89,14 @@ public class FishingLocation {
     private List<User> employeeList;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "id")
+    @OneToMany(mappedBy = "fishingLocation")
     private List<Review> reviewList;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "id")
+    @OneToMany(mappedBy = "fishingLocation", cascade = CascadeType.ALL)
     private List<Lake> lakeList;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "id")
+    @OneToMany(mappedBy = "fishingLocation")
     private List<Catches> catchesList;
 }
