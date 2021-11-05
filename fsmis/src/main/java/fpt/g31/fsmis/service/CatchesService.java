@@ -134,7 +134,7 @@ public class CatchesService {
             throw new ValidationException("Địa chỉ không tồn tại");
         }
         User user = jwtFilter.getUserFromToken(request);
-        Page<Catches> catchesList = catchesRepos.findByUserId(user.getId(), PageRequest.of(pageNo - 1, 10));
+        Page<Catches> catchesList = catchesRepos.findByUserIdOrderByTimeDesc(user.getId(), PageRequest.of(pageNo - 1, 10));
         List<CatchesOverviewNoImageDtoOut> output = new ArrayList<>();
         for (Catches catches : catchesList) {
             CatchesOverviewNoImageDtoOut item = CatchesOverviewNoImageDtoOut.builder()

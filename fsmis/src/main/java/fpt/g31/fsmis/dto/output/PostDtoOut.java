@@ -15,5 +15,6 @@ public class PostDtoOut {
     private String postTime;
     private String postType;
     private String url;
+    private String attachmentType;
     private boolean edited;
 }
