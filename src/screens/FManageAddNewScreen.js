@@ -6,10 +6,9 @@ import {
 } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, Button, Center, Divider, Stack, Text, VStack } from "native-base";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { Alert, ScrollView, StyleSheet } from "react-native";
-import * as yup from "yup";
 
 import InputComponent from "../components/common/InputComponent";
 import MultiImageSection from "../components/common/MultiImageSection";
@@ -17,7 +16,7 @@ import SelectComponent from "../components/common/SelectComponent";
 import TextAreaComponent from "../components/common/TextAreaComponent";
 import MapOverviewBox from "../components/FLocationEditProfile/MapOverviewBox";
 import HeaderTab from "../components/HeaderTab";
-import { ROUTE_NAMES } from "../constants";
+import { ROUTE_NAMES, SCHEMA } from "../constants";
 import AddressModel from "../models/AddressModel";
 import FManageModel from "../models/FManageModel";
 import store from "../utilities/Store";
@@ -49,33 +48,10 @@ const FManageAddNewScreen = () => {
     getWardByDistrictId,
   } = useStoreActions((actions) => actions.AddressModel);
   const { addNewLocation } = useStoreActions((actions) => actions.FManageModel);
-  const validationSchema = useMemo(
-    () =>
-      yup.object().shape({
-        name: yup.string().required("Tên địa điểm không thể bỏ trống"),
-        phone: yup
-          .string()
-          .matches(
-            /((09|03|07|08|05)+([0-9]{8})\b)/,
-            "Số điện thoại không hợp lệ",
-          )
-          .required("Số điện thoại không dược bỏ trống"),
-        website: yup.string(),
-        address: yup.string().required("Địa chỉ không được để trống"),
-        provinceId: yup.number().required("Tỉnh/Thành phố không được để trống"),
-        districtId: yup.number().required("Quận/Huyện không được để trống"),
-        wardId: yup.number().required("Phường/xã không được để trống"),
-        description: yup.string().required("Hãy viết một vài điều về địa điểm"),
-        rule: yup.string(),
-        service: yup.string(),
-        timetable: yup.string().required("Hãy nêu rõ lịch biểu của hồ"),
-      }),
-    [],
-  );
   const methods = useForm({
     mode: "onSubmit",
     reValidateMode: "onSubmit",
-    resolver: yupResolver(validationSchema),
+    resolver: yupResolver(SCHEMA.FMANAGE_PROFILE_FORM),
   });
   const { handleSubmit } = methods;
   const generateAddressDropdown = useCallback((name, value) => {
@@ -85,12 +61,13 @@ const FManageAddNewScreen = () => {
       getWardByDistrictId({ id: value });
     }
   }, []);
+  //
   const onSubmit = (data) => {
     const images = imageArray.map((image) => image.base64);
     const addData = { ...data, ...locationLatLng, images };
     addNewLocation({ addData, setAddStatus });
-    Alert.alert("Thông báo", addStatus, [], { cancelable: true });
   };
+  //
   const updateImageArray = (id) => {
     setImageArray(imageArray.filter((image) => image.id !== id));
   };
@@ -100,6 +77,11 @@ const FManageAddNewScreen = () => {
       resetDataList();
     };
   }, []);
+  useEffect(() => {
+    console.log(addStatus);
+    // if addStatus === "SUCCESS"
+    // else
+  }, [addStatus]);
   useFocusEffect(
     // useCallback will listen to route.param
     useCallback(() => {
