@@ -45,9 +45,11 @@ const CheckboxSelectorComponent = ({
                 useEffect(() => {
                   if (value.length === 0) setUserSelection(placeholder);
                   else {
-                    setUserSelection(
-                      value.reduce((acc, current) => `${acc}, ${current}`),
-                    );
+                    const selectMethods = data.reduce((acc, { name, id }) => {
+                      if (value.includes(id)) return acc.concat(", ", name);
+                      return acc;
+                    }, "");
+                    setUserSelection(selectMethods.slice(2));
                   }
                 }, [value]);
                 return (
@@ -59,8 +61,8 @@ const CheckboxSelectorComponent = ({
                   >
                     {/* Display list of checkbox options */}
                     {data.map((item) => (
-                      <Checkbox key={generateKey()} value={item} my={1}>
-                        {item}
+                      <Checkbox key={generateKey()} value={item.id} my={1}>
+                        {item.name}
                       </Checkbox>
                     ))}
                   </Checkbox.Group>
