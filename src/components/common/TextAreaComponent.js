@@ -15,7 +15,7 @@ const styles = StyleSheet.create({
     borderColor: "#e5e5e5",
     borderRadius: 5,
     textAlignVertical: "top",
-    padding: 5,
+    padding: 10,
     height: 100,
     backgroundColor: "#fafafa",
     shadowColor: "#000",
@@ -65,7 +65,6 @@ const TextAreaComponent = ({
               onBlur={onBlur}
               value={value}
               backgroundColor="white"
-              padding={10}
             />
           </TouchableWithoutFeedback>
         )}
