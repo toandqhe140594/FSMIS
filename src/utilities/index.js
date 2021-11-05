@@ -35,4 +35,17 @@ const showAlertConfirmBox = (title, message, onSuccess) => {
   ]);
 };
 
-export { showAlertConfirmBox, showToastMessage };
+/**
+ * Display an alert box with option to cancel and accept
+ * @param {String} title title of the alert box
+ * @param {String} message message to display
+ */
+const showAlertBox = (title, message) => {
+  Alert.alert(title, message, [
+    {
+      text: "Xác nhận",
+    },
+  ]);
+};
+
+export { showAlertBox, showAlertConfirmBox, showToastMessage };
