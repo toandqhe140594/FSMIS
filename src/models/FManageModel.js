@@ -475,13 +475,37 @@ const model = {
    */
   addNewLocation: thunk(async (actions, payload) => {
     const { addData, setAddStatus } = payload;
-    const { status, data } = await http.post(API_URL.LOCATION_ADD, addData, {
-      params: {},
-    });
-    // actions.getListOfFishingLocations();
-    const message = `Response ${data} with code ${status}`;
-    setAddStatus(message);
+    try {
+      await http.post(API_URL.LOCATION_ADD, addData, {
+        params: {},
+      });
+      setAddStatus("SUCCESS");
+      actions.getListOfFishingLocations();
+    } catch (error) {
+      setAddStatus("FAILED");
+    }
   }),
+  // DucHM ADD_END 4/11/2021
+
+  // DucHM ADD_START 5/11/2021
+  /**
+   * Add new lake to a fishing location
+   * If there no fishing location id pass in, get current id in state
+   * @param {Object} [payload.addData] an object pass to POST body
+   * @param {Function} [payload.setAddStatus] the function set status
+   */
+  addNewLakeInLocation: thunk(async (actions, payload, { getState }) => {
+    const { addData, setAddStatus } = payload;
+    const { currentId } = getState();
+    try {
+      await http.post(`location/${currentId}/lake/add`, addData);
+      setAddStatus("SUCCESS");
+      actions.getListOfLake();
+    } catch (error) {
+      setAddStatus("FAILED");
+    }
+  }),
+  // DucHM ADD_END 5/11/2021
   // END OF FISHING LOCATION MANAGEMENT RELATED SECTION
 
   /**
