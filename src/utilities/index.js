@@ -9,7 +9,7 @@ const showToastMessage = (message) => {
     message,
     ToastAndroid.LONG,
     ToastAndroid.BOTTOM,
-    25,
+    0,
     50,
   );
 };
@@ -48,4 +48,39 @@ const showAlertBox = (title, message) => {
   ]);
 };
 
-export { showAlertBox, showAlertConfirmBox, showToastMessage };
+/**
+ * Show an alert box that cannot be cancel
+ * @param {String} title title of the alert box
+ * @param {String} message message to display
+ * @param {Function} onSuccess function fire when press ok
+ * @param {String} buttonTitle title for the accept button
+ */
+const showAlertAbsoluteBox = (
+  title,
+  message,
+  onSuccess = () => {},
+  buttonTitle = "Xác nhận",
+) => {
+  Alert.alert(
+    title,
+    message,
+    [
+      {
+        text: buttonTitle,
+        onPress: () => {
+          onSuccess();
+        },
+      },
+    ],
+    {
+      cancelable: false,
+    },
+  );
+};
+
+export {
+  showAlertAbsoluteBox,
+  showAlertBox,
+  showAlertConfirmBox,
+  showToastMessage,
+};
