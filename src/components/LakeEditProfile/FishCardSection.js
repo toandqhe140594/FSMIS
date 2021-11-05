@@ -1,4 +1,5 @@
 import { FontAwesome5, MaterialCommunityIcons } from "@expo/vector-icons";
+import { useStoreState } from "easy-peasy";
 import { Button, Input, Select } from "native-base";
 import React, { useEffect } from "react";
 import { Controller, useFieldArray, useFormContext } from "react-hook-form";
@@ -26,6 +27,7 @@ const styles = StyleSheet.create({
 });
 
 const FishCardSection = () => {
+  const { fishList } = useStoreState((state) => state.FishModel);
   const {
     control,
     formState: { errors },
@@ -59,8 +61,13 @@ const FishCardSection = () => {
                 onValueChange={onChange}
                 selectedValue={value}
               >
-                <Select.Item label="Cá diếc" value={6} />
-                <Select.Item label="Cá chép" value={7} />
+                {fishList.map((fish) => (
+                  <Select.Item
+                    key={fish.id}
+                    label={fish.name}
+                    value={fish.id}
+                  />
+                ))}
               </Select>
             )}
           />

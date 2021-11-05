@@ -4,7 +4,7 @@ import {
   useNavigation,
   useRoute,
 } from "@react-navigation/native";
-import { useStoreActions } from "easy-peasy";
+import { useStoreActions, useStoreState } from "easy-peasy";
 import {
   Box,
   Button,
@@ -26,16 +26,14 @@ import HeaderTab from "../components/HeaderTab";
 import CheckboxSelectorComponent from "../components/LakeEditProfile/CheckboxSelectorComponent";
 import FishCardSection from "../components/LakeEditProfile/FishCardSection";
 import { ROUTE_NAMES, SCHEMA } from "../constants";
+import FishingMethodModel from "../models/FishingMethodModel";
+import FishModel from "../models/FishModel";
 import FManageModel from "../models/FManageModel";
 import store from "../utilities/Store";
 
 store.addModel("FManageModel", FManageModel);
-
-const fishingMethodData = [
-  { name: "Câu đài", id: 1 },
-  { name: "Câu đơn", id: 2 },
-  { name: "Câu lục", id: 3 },
-];
+store.addModel("FishingMethodModel", FishingMethodModel);
+store.addModel("FishModel", FishModel);
 
 const styles = StyleSheet.create({
   sectionWrapper: {
@@ -50,9 +48,16 @@ const LakeAddNewScreen = () => {
   const navigation = useNavigation();
   const [imageArray, setImageArray] = useState([]);
   const [addStatus, setAddStatus] = useState("");
+  const { fishingMethodList } = useStoreState(
+    (state) => state.FishingMethodModel,
+  );
   const { addNewLakeInLocation } = useStoreActions(
     (actions) => actions.FManageModel,
   );
+  const { getFishingMethodList } = useStoreActions(
+    (actions) => actions.FishingMethodModel,
+  );
+  const { getFishList } = useStoreActions((actions) => actions.FishModel);
   const methods = useForm({
     mode: "onSubmit",
     reValidateMode: "onSubmit",
@@ -75,6 +80,15 @@ const LakeAddNewScreen = () => {
   const updateImageArray = (id) => {
     setImageArray(imageArray.filter((image) => image.id !== id));
   };
+
+  /**
+   * Everytime enter the screen, call api
+   * to get fishing method list and fish list
+   */
+  useEffect(() => {
+    getFishingMethodList();
+    getFishList();
+  }, []);
 
   useEffect(() => {
     // console.log(addStatus);
@@ -123,7 +137,7 @@ const LakeAddNewScreen = () => {
                 label="Loại hình câu"
                 isTitle
                 placeholder="Chọn loại hình câu"
-                data={fishingMethodData}
+                data={fishingMethodList}
                 controllerName="methods" // this controller returns an array
               />
             </Center>
@@ -148,16 +162,19 @@ const LakeAddNewScreen = () => {
                   label="Chiều dài (m)"
                   placeholder="Nhập chiều dài của hồ"
                   controllerName="length"
+                  useNumPad
                 />
                 <InputComponent
                   label="Chiều rộng (m)"
                   placeholder="Nhập chiều rộng của hồ"
                   controllerName="width"
+                  useNumPad
                 />
                 <InputComponent
                   label="Độ sâu (m)"
                   placeholder="Nhập độ sâu của hồ"
                   controllerName="depth"
+                  useNumPad
                 />
               </VStack>
             </Center>

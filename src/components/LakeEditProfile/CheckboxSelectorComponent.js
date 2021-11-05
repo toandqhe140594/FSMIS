@@ -61,7 +61,12 @@ const CheckboxSelectorComponent = ({
                   >
                     {/* Display list of checkbox options */}
                     {data.map((item) => (
-                      <Checkbox key={generateKey()} value={item.id} my={1}>
+                      <Checkbox
+                        key={generateKey()}
+                        value={item.id}
+                        my={1}
+                        size="md"
+                      >
                         {item.name}
                       </Checkbox>
                     ))}
