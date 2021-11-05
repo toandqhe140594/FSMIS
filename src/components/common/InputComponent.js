@@ -20,6 +20,7 @@ const InputComponent = ({
   type,
   leftIcon,
   controllerName,
+  useNumPad,
 }) => {
   const {
     control,
@@ -45,6 +46,7 @@ const InputComponent = ({
             onBlur={onBlur}
             value={value}
             fontSize="md"
+            keyboardType={useNumPad ? "number-pad" : "default"}
           />
         )}
       />
@@ -66,6 +68,7 @@ InputComponent.propTypes = {
   type: PropTypes.string,
   leftIcon: PropTypes.element,
   controllerName: PropTypes.string,
+  useNumPad: PropTypes.bool,
 };
 
 InputComponent.defaultProps = {
@@ -77,6 +80,7 @@ InputComponent.defaultProps = {
   type: "text",
   leftIcon: <></>,
   controllerName: "",
+  useNumPad: false,
 };
 
 export default InputComponent;
