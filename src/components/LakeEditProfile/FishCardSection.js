@@ -32,8 +32,8 @@ const FishCardSection = () => {
   } = useFormContext();
   const { fields, append, remove } = useFieldArray({
     control,
-    name: "cards",
-    // Cards will be unregistered when unmount
+    name: "fishInLakeList",
+    // fishInLakeList will be unregistered when unmount
     shouldUnregister: true,
   });
   /**
@@ -45,11 +45,11 @@ const FishCardSection = () => {
   }, []);
   return (
     <>
-      {/* fields controls each object with field fishType, amount, totalWeight and isReleased */}
+      {/* fields controls each object with field fishSpeciesId, quantity, totalWeight and isReleased */}
       {fields.map(({ id }, index) => (
         <View style={styles.cardWrapper} key={id}>
           <Controller
-            name={`cards[${index}].fishType`}
+            name={`fishInLakeList[${index}].fishSpeciesId`}
             control={control}
             render={({ field: { onChange, value } }) => (
               <Select
@@ -59,66 +59,88 @@ const FishCardSection = () => {
                 onValueChange={onChange}
                 selectedValue={value}
               >
-                <Select.Item label="Cá diếc" value={1} />
-                <Select.Item label="Cá chép" value={2} />
+                <Select.Item label="Cá diếc" value={6} />
+                <Select.Item label="Cá chép" value={7} />
               </Select>
             )}
           />
-          {/* Check error message of fishType field of a specific object in the fieldArray */}
-          {errors.cards?.[index]?.fishType?.message && (
+          {/* Check error message of fishSpeciesId field of a specific object in the fieldArray */}
+          {errors.fishInLakeList?.[index]?.fishSpeciesId?.message && (
             <Text style={styles.error}>
-              {errors?.cards?.[index].fishType?.message}
+              {errors?.fishInLakeList?.[index].fishSpeciesId?.message}
             </Text>
           )}
           <View style={styles.rowWrapper}>
             <Controller
-              name={`cards[${index}].minWeight`}
+              name={`fishInLakeList[${index}].minWeight`}
               control={control}
-              render={() => (
+              render={({ field: { onChange, value, onBlur } }) => (
                 <Input
                   w="48%"
+                  type="number"
                   fontSize="md"
-                  // placeholder="Nhỏ nhất"
+                  placeholder="Min"
+                  value={value}
+                  onChangeText={onChange}
+                  onBlur={onBlur}
                   keyboardType="number-pad"
                   InputLeftElement={
-                    <Text style={{ marginLeft: 12, fontSize: 16 }}>Biểu</Text>
+                    <Text
+                      style={{
+                        marginLeft: 12,
+                        fontSize: 16,
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Biểu
+                    </Text>
                   }
                 />
               )}
             />
             <Text style={{ fontWeight: "bold", fontSize: 16 }}>-</Text>
             <Controller
-              name={`cards[${index}].maxWeight`}
+              name={`fishInLakeList[${index}].maxWeight`}
               control={control}
-              render={() => (
+              render={({ field: { onChange, value, onBlur } }) => (
                 <Input
                   w="48%"
+                  type="text"
                   fontSize="md"
-                  // placeholder="Lớn nhất"
+                  placeholder="Max"
                   keyboardType="number-pad"
+                  value={value}
+                  onChangeText={onChange}
+                  onBlur={onBlur}
                   InputLeftElement={
-                    <Text style={{ marginLeft: 12, fontSize: 16 }}>Biểu</Text>
+                    <Text
+                      style={{
+                        marginLeft: 12,
+                        fontSize: 16,
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Biểu
+                    </Text>
                   }
                 />
               )}
             />
           </View>
-          {(errors.cards?.[index]?.minWeight?.message && (
+          {(errors.fishInLakeList?.[index]?.minWeight?.message ||
+            errors.fishInLakeList?.[index]?.maxWeight?.message) && (
             <Text style={styles.error}>
-              {errors?.cards?.[index].minWeight?.message}
+              {errors?.fishInLakeList?.[index].minWeight?.message}{" "}
+              {errors?.fishInLakeList?.[index].maxWeight?.message}
             </Text>
-          )) ||
-            (errors.cards?.[index]?.maxWeight?.message && (
-              <Text style={styles.error}>
-                {errors?.cards?.[index].maxWeight?.message}
-              </Text>
-            ))}
+          )}
           <Controller
-            name={`cards[${index}].amount`}
+            name={`fishInLakeList[${index}].quantity`}
             control={control}
             render={({ field: { value, onChange, onBlur } }) => (
               <Input
                 mt={2}
+                type="text"
                 fontSize="md"
                 placeholder="Nhập số con thả hồ"
                 value={value}
@@ -136,18 +158,19 @@ const FishCardSection = () => {
               />
             )}
           />
-          {/* Check error message of amount feld of a specific object in the fieldArray */}
-          {errors.cards?.[index]?.amount?.message && (
+          {/* Check error message of quantity feld of a specific object in the fieldArray */}
+          {errors.fishInLakeList?.[index]?.quantity?.message && (
             <Text style={styles.error}>
-              {errors.cards?.[index].amount?.message}
+              {errors.fishInLakeList?.[index].quantity?.message}
             </Text>
           )}
           <Controller
-            name={`cards[${index}].totalWeight`}
+            name={`fishInLakeList[${index}].totalWeight`}
             control={control}
             render={({ field: { value, onChange, onBlur } }) => (
               <Input
                 mt={2}
+                type="text"
                 fontSize="md"
                 placeholder="Nhập tổng cân nặng (kg)"
                 value={value}
@@ -166,9 +189,9 @@ const FishCardSection = () => {
             )}
           />
           {/* Check error message of totalWeight field of a specific object in the fieldArray */}
-          {errors.cards?.[index]?.totalWeight?.message && (
+          {errors.fishInLakeList?.[index]?.totalWeight?.message && (
             <Text style={styles.error}>
-              {errors.cards?.[index].totalWeight?.message}
+              {errors.fishInLakeList?.[index].totalWeight?.message}
             </Text>
           )}
           <Button
