@@ -4,12 +4,6 @@ import React from "react";
 import { Controller, useFormContext } from "react-hook-form";
 import { StyleSheet, Text, View } from "react-native";
 
-let itemKey = 0;
-const generateKey = () => {
-  itemKey += 1;
-  return itemKey;
-};
-
 const styles = StyleSheet.create({
   error: { color: "#f43f5e", fontSize: 12, fontStyle: "italic" },
   asterisk: { color: "#f43f5e", fontSize: 16 },
@@ -26,6 +20,7 @@ const SelectComponent = ({
   isTitle,
   controllerName,
   defaultValue,
+  handleDataIfValChanged,
 }) => {
   const {
     control,
@@ -40,27 +35,31 @@ const SelectComponent = ({
       <Controller
         control={control}
         name={controllerName}
-        render={({ field: { onChange, value } }) => (
-          <Select
-            accessibilityLabel={placeholder}
-            placeholder={placeholder}
-            onValueChange={onChange}
-            selectedValue={value}
-            fontSize="md"
-            defaultValue={defaultValue}
-          >
-            {data.map((item) => (
-              <Select.Item
-                key={generateKey()}
-                label={item.name}
-                value={item.id}
-                my={1}
-              >
-                {item.label}
-              </Select.Item>
-            ))}
-          </Select>
-        )}
+        render={({ field: { onChange, value } }) => {
+          const handleChange = (val) => {
+            onChange(val);
+            handleDataIfValChanged(controllerName, val);
+          };
+          return (
+            <Select
+              accessibilityLabel={placeholder}
+              placeholder={placeholder}
+              onValueChange={handleChange}
+              selectedValue={value}
+              fontSize="md"
+              defaultValue={defaultValue}
+            >
+              {data.map((item) => (
+                <Select.Item
+                  key={item.id}
+                  label={item.name}
+                  value={item.id}
+                  my={1}
+                />
+              ))}
+            </Select>
+          );
+        }}
       />
       {errors[controllerName]?.message && (
         <Text style={styles.error}>{errors[controllerName]?.message}</Text>
@@ -78,6 +77,7 @@ SelectComponent.propTypes = {
   isTitle: PropTypes.bool,
   controllerName: PropTypes.string.isRequired,
   defaultValue: PropTypes.string,
+  handleDataIfValChanged: PropTypes.func,
 };
 
 SelectComponent.defaultProps = {
@@ -86,6 +86,7 @@ SelectComponent.defaultProps = {
   isTitle: false,
   data: [],
   defaultValue: "",
+  handleDataIfValChanged: () => {},
 };
 
-export default SelectComponent;
+export default React.memo(SelectComponent);

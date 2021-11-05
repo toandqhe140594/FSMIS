@@ -73,6 +73,7 @@ const model = {
       checkOutTime: "26/01/2021 11:00:00",
     },
   ],
+  anglerCheckinOverviewInfor: {},
 
   locationReviewScore: {
     score: null,
@@ -115,6 +116,10 @@ const model = {
   setListOfLake: action((state, payload) => {
     state.listOfLake = payload;
   }),
+  removeLakeFromList: action((state, payload) => {
+    const newList = state.listOfLake.filter((lake) => lake.id !== payload.id);
+    state.listOfLake = newList;
+  }),
   getListOfLake: thunk(async (actions, payload, { getState }) => {
     const { data } = await http.get(
       `location/${payload.id ? payload.id : getState().currentId}/${
@@ -133,6 +138,26 @@ const model = {
     actions.setLakeDetail(data);
   }),
 
+  /**
+   * Close lake of fishing location
+   * @param {Object} [payload] the payload pass to function
+   * @param {Function} [payload.setDeleteSuccess] the function to set delete success indicator
+   */
+  closeLakeByLakeId: thunk(async (actions, payload, { getState }) => {
+    const { currentId } = getState();
+    const { id, setDeleteSuccess } = payload;
+    try {
+      const { status } = await http.delete(
+        `location/${currentId}/${API_URL.LOCATION_LAKE_CLOSE}/${id}`,
+      );
+      if (status === 200) {
+        actions.removeLakeFromList({ id });
+        setDeleteSuccess(true);
+      }
+    } catch (error) {
+      setDeleteSuccess(false);
+    }
+  }),
   // START OF REVIEW RELATED SECTION
 
   /**
@@ -490,19 +515,21 @@ const model = {
     const { currentId } = getState();
     const { setDeleteSuccess } = payload;
     try {
-      const { data, status } = await http.delete(
+      const { status } = await http.delete(
         `${API_URL.LOCATION_CLOSE}/${currentId}`,
       );
       if (status === 200) {
         actions.getListOfFishingLocations();
         setDeleteSuccess(true);
-      } else actions.setStaffManagementErrorMsg(data.responseText);
+      }
     } catch (error) {
       setDeleteSuccess(false);
     }
   }),
 
   // END OF FISHING LOCATION MANAGEMENT RELATED SECTION
+
+  // START UNRESOLVED CATCH REPORT RELATED SECTION
 
   /**
    * Set list data of unresolved catch eport
@@ -547,27 +574,63 @@ const model = {
         actions.setUnresolvedCatchReportCurrentPage(1);
         actions.setUnresolvedCatchReportTotalPage(1);
       }
-      // try {
-      //   const { data, status: httpResponseStatus } = await http.get(
-      //     `${API_URL.LOCATION_CLOSE}/${currentId}`,
-      //     {
-      //       params: { pageNo },
-      //     },
-      //   );
-      //   if (httpResponseStatus === 200) {
-      //     actions.setUnresolvedCatchReportList(data.items);
-      //     actions.setUnresolvedCatchReportTotalPage(data.totalPage);
-      //   }
-      // } catch (error) {
-      //   actions.setUnresolvedCatchReportList([]);
-      //   actions.setUnresolvedCatchReportTotalPage(1);
-      //   actions.setUnresolvedCatchReportCurrentPage(1);
-      // }
-      console.log(status, currentId, currentPage, totalPage);
+      try {
+        const { data, status: httpResponseStatus } = await http.get(
+          `${API_URL.LOCATION_CLOSE}/${currentId}`,
+          {
+            params: { pageNo },
+          },
+        );
+        if (httpResponseStatus === 200) {
+          actions.setUnresolvedCatchReportList(data.items);
+          actions.setUnresolvedCatchReportTotalPage(data.totalPage);
+        }
+      } catch (error) {
+        actions.setUnresolvedCatchReportList([]);
+        actions.setUnresolvedCatchReportTotalPage(1);
+        actions.setUnresolvedCatchReportCurrentPage(1);
+      }
     },
   ),
-  // START UNRESOLVED CATCH REPORT RELATED SECTION
 
   // END UNRESOLVED CATCH REPORT RELATED SECTION
+
+  // START OF CHECKIN RELATED SECTION
+
+  /**
+   * Set Angler overview data to display after checkin success
+   */
+  setAnglerCheckinOverviewInfor: action((state, payload) => {
+    state.anglerCheckinOverviewInfor = payload;
+  }),
+  /**
+   * Checkin an angler to the fishing location
+   * @param {Object} [payload] the payload pass to function
+   * @param {String} [payload.qrString] qrString unique to the angler
+   * @param {Function} [payload.setSuccess] indicate that action is success
+   */
+  checkInAngler: thunk(async (actions, payload, { getState }) => {
+    const { qrString, setSuccess } = payload;
+    const { currentId } = getState();
+    try {
+      const { status, data } = await http.post(
+        `checkin/${currentId}`,
+        qrString,
+        {
+          headers: {
+            "Content-type": "text/plain",
+          },
+        },
+      );
+      if (status === 200) {
+        setSuccess(true);
+        actions.setAnglerCheckinOverviewInfor(data);
+      }
+    } catch (error) {
+      setSuccess(false);
+      actions.setAnglerCheckinOverviewInfor({});
+    }
+  }),
+  // END OF CHECKIN RELATED SECTION
 };
 export default model;

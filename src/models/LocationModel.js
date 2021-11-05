@@ -22,6 +22,7 @@ const model = {
     score: null,
     totalReviews: null,
   },
+  checkinStatus: null,
   personalReview: {},
   locationReviewList: [],
   totalReviewPage: 1,
@@ -34,24 +35,16 @@ const model = {
   locationCatchList: [],
   totalPostPage: 1,
   totalCatchPage: 1,
-  catchReportDetail: {
-    catchesDetailList: [
-      {
-        fishSpeciesId: 0,
-        quantity: 0,
-        returnToOwner: true,
-        weight: 0,
-      },
-    ],
-    description: "string",
-    hidden: true,
-    images: ["string"],
-    lakeId: 0,
-  },
+  catchReportDetail: {},
+
   setCurrentId: action((state, payload) => {
     state.currentId = payload;
   }),
   setLocationReviewScore: action((state, payload) => {
+    state.locationReviewScore = payload;
+  }),
+
+  setCheckinStatus: action((state, payload) => {
     state.locationReviewScore = payload;
   }),
 

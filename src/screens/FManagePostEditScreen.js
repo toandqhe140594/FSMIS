@@ -109,12 +109,9 @@ const PostEditScreen = () => {
     // useCallback will listen to route.param
     useCallback(() => {
       if (route.params?.base64Array && route.params.base64Array[0]) {
-        // Set imageArray state and reset navigation params
         setImageArray(route.params?.base64Array);
-      }
-      return () => {
         navigation.setParams({ base64Array: [] });
-      };
+      }
     }, [route.params]),
   );
   return (

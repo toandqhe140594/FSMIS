@@ -1,22 +1,45 @@
 import { useNavigation } from "@react-navigation/native";
-import { useStoreState } from "easy-peasy";
+import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, Button, Center, Text } from "native-base";
-import PropTypes from "prop-types";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import QRCode from "react-native-qrcode-svg";
 
 import FLocationCard from "../components/FLocationCard";
 import CheckInModel from "../models/CheckInModel";
 import { goToCatchReportFormScreen } from "../navigations";
+import { showAlertConfirmBox, showToastMessage } from "../utilities";
 import store from "../utilities/Store";
 
 store.addModel("CheckInModel", CheckInModel);
+
 // After checkin successful at a location
 const CheckinSuccessScreen = () => {
+  const navigation = useNavigation();
+
   const locationInfo = useStoreState(
     (states) => states.CheckInModel.fishingLocationInfo,
   );
-  const navigation = useNavigation();
+  const personalCheckout = useStoreActions(
+    (actions) => actions.CheckInModel.personalCheckout,
+  );
+  const getAllFishes = useStoreActions(
+    (actions) => actions.CheckInModel.getAllFishes,
+  );
+
+  useEffect(() => {
+    getAllFishes();
+  }, []);
+
+  const showCheckoutAlert = () => {
+    showAlertConfirmBox(
+      "Checkout",
+      "Bạn có muốn checkout mà không báo kết quả câu?",
+      () => {
+        personalCheckout();
+      },
+    );
+  };
+
   return (
     <Box
       flex={1}
@@ -34,7 +57,7 @@ const CheckinSuccessScreen = () => {
           address={locationInfo.address}
           name={locationInfo.name}
           isVerifed={locationInfo.verify}
-          rate={3.5}
+          rate={locationInfo.score}
         />
       </Box>
       <Box w="70%">
@@ -47,61 +70,101 @@ const CheckinSuccessScreen = () => {
         >
           Báo kết quả câu
         </Button>
-        <Button size="lg">Check out</Button>
+        <Button
+          size="lg"
+          onPress={() => {
+            showCheckoutAlert();
+          }}
+        >
+          Checkout
+        </Button>
       </Box>
     </Box>
   );
 };
 
-const DefaultQRCodeScreen = ({ onRefreshHandler }) => {
-  const userProfile = useStoreState((states) => states.userProfile);
-  const [qrString, setQrString] = React.useState(null);
+const DefaultQRCodeScreen = () => {
+  const getCheckInState = useStoreActions(
+    (actions) => actions.CheckInModel.getCheckInState,
+  );
 
-  React.useEffect(() => {
+  const userProfile = useStoreState((states) => states.userProfile);
+  const [qrString, setQrString] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const onRefresh = () => {
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+    }, 5000);
+    getCheckInState({ setLoading });
+  };
+
+  useEffect(() => {
+    getCheckInState({ setLoading });
+  }, []);
+
+  useEffect(() => {
     if (userProfile && userProfile.qrString) setQrString(userProfile.qrString);
   }, [userProfile]);
 
   return (
-    <Center flex={1}>
-      <Center w="80%">
-        <Text bold textAlign="center" mb="10%">
-          Hãy để nhân viên được quét mã QR để được Checkin và Báo cá
-        </Text>
-        <QRCode
-          logo={require("../assets/images/logo.png")}
-          logoSize={50}
-          size={200}
-          value={qrString || "Default QR DATA"}
-        />
-        <Button mt={4} size="lg" px={10} onPress={onRefreshHandler}>
-          Tải lại
-        </Button>
-      </Center>
-    </Center>
-  );
-};
-
-const CheckinScreen = () => {
-  const [isCheckin, setCheckin] = useState(false);
-  const stateCheckIn = useStoreState(
-    (states) => states.CheckInModel.checkInState,
-  );
-  const refreshHandler = () => {
-    setCheckin(stateCheckIn);
-  };
-  return (
     <>
-      {isCheckin ? (
-        <CheckinSuccessScreen />
-      ) : (
-        <DefaultQRCodeScreen onRefreshHandler={refreshHandler} />
-      )}
+      <Center flex={1}>
+        <Center w="80%">
+          <Text bold textAlign="center" mb="10%">
+            Hãy để nhân viên được quét mã QR để được Checkin và Báo cá
+          </Text>
+          <QRCode
+            logo={require("../assets/images/logo.png")}
+            logoSize={50}
+            size={200}
+            value={qrString || "Default QR DATA"}
+          />
+        </Center>
+      </Center>
+      <Box justifyContent="flex-end" alignItems="center" mb={10}>
+        <Button
+          mt={4}
+          size="lg"
+          px={3}
+          onPress={() => {
+            onRefresh();
+          }}
+          w="50%"
+          isLoading={loading}
+        >
+          Lấy thông tin checkin
+        </Button>
+      </Box>
     </>
   );
 };
 
-DefaultQRCodeScreen.propTypes = {
-  onRefreshHandler: PropTypes.func,
+const CheckinScreen = () => {
+  const stateCheckIn = useStoreState(
+    (states) => states.CheckInModel.checkInState,
+  );
+  const setCheckInState = useStoreActions(
+    (actions) => actions.CheckInModel.setCheckInState,
+  );
+
+  const [isCheckin, setCheckin] = useState(false);
+
+  useEffect(() => {
+    if (stateCheckIn === false) {
+      showToastMessage("Bạn chưa checkin ở hồ câu");
+      setCheckin(false);
+      setCheckInState(null);
+    }
+    if (stateCheckIn === true) setCheckin(true);
+  }, [stateCheckIn]);
+
+  return (
+    <>
+      {isCheckin === true ? <CheckinSuccessScreen /> : <DefaultQRCodeScreen />}
+    </>
+  );
 };
-DefaultQRCodeScreen.defaultProps = { onRefreshHandler: () => {} };
+
 export default CheckinScreen;

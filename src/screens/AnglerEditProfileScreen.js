@@ -8,7 +8,7 @@ import {
 } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import { Button, Center, Icon, Input, Text, VStack } from "native-base";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import {
   Alert,
@@ -32,25 +32,23 @@ import store from "../utilities/Store";
 
 store.addModel("AddressModel", AddressModel);
 
-const validationSchema = yup.object().shape({
-  aName: yup.string().required("Họ và tên không thể bỏ trống"),
-  aGender: yup.bool(),
-  aAddress: yup.string(),
-  aProvinceId: yup.number(),
-  aDistrictId: yup.number(),
-  aWardId: yup.number(),
-});
-
-const genderData = [
-  { name: "Nam", id: true },
-  { name: "Nữ", id: false },
-];
-
 const EditProfileScreen = () => {
   const [date, setDate] = useState(null);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [formattedDate, setFormattedDate] = useState("");
   const [avatarImage, setAvatarImage] = useState(undefined);
+  const validationSchema = useMemo(
+    () =>
+      yup.object().shape({
+        aName: yup.string().required("Họ và tên không thể bỏ trống"),
+        aGender: yup.bool(),
+        aAddress: yup.string(),
+        aProvinceId: yup.number(),
+        aDistrictId: yup.number(),
+        aWardId: yup.number(),
+      }),
+    [],
+  );
   const navigation = useNavigation();
   const route = useRoute();
   const userInfo = useStoreState((state) => state.ProfileModel.userInfo);
@@ -64,8 +62,9 @@ const EditProfileScreen = () => {
     getWardByDistrictId,
   } = useStoreActions((actions) => actions.AddressModel);
   const methods = useForm({
-    mode: "onChange",
-    reValidateMode: "onChange",
+    // avoid change mode and reValidationMode to onChange to save re-render
+    mode: "onSubmit",
+    reValidateMode: "onSbumit",
     defaultValues: {
       aName: userInfo.fullName,
       aGender: userInfo.gender,
@@ -76,70 +75,26 @@ const EditProfileScreen = () => {
     },
     resolver: yupResolver(validationSchema),
   });
-  const { handleSubmit, formState, getValues } = methods;
-
-  /**
-   * Run first time when the screen inits
-   * get all province list for select dropdown
-   * and set custome date picker value
-   * When component unmoute, reset district list and ward list
-   */
-  useEffect(() => {
-    getAllProvince();
-    setFormattedDate(userInfo.dob.split(" ")[0]);
-    setAvatarImage(userInfo.avatarUrl);
-    return () => {
-      resetDataList();
-    };
-  }, []);
-
-  /*
-   * Fire when the formState changed (field is touch or dirty)
-   * Get value from select dropdown province and district field
-   * to update district list and ward list
-   */
-  useEffect(() => {
-    (async () => {
-      const selectedProvinceId = getValues("aProvinceId");
-      const selectedDistrictId = getValues("aDistrictId");
-      await getDisctrictByProvinceId({ id: selectedProvinceId });
-      getWardByDistrictId({ id: selectedDistrictId });
-    })();
-  }, [formState]);
-
-  useEffect(() => {
-    if (date) {
-      setFormattedDate(moment(date).format("DD/MM/YYYY").toString());
+  const { handleSubmit, getValues } = methods;
+  const generateAddressDropdown = useCallback((name, value) => {
+    if (name === "aProvinceId") {
+      getDisctrictByProvinceId({ id: value });
+    } else if (name === "aDistrictId") {
+      getWardByDistrictId({ id: value });
     }
-  }, [date]);
-
-  useEffect(() => {
-    if (userInfo.avatarUrl) setAvatarImage(userInfo.avatarUrl);
-  }, [userInfo]);
-
+  }, []);
   const onDateChange = (e, selectedDate) => {
     const currentDate = selectedDate || date;
     setShowDatePicker(false);
     setDate(currentDate);
   };
-
-  /**
-   * When navigate from MediaSelectScreen back to Edit Form
-   * the callback listen to route params and set
-   * avatar image to what had been previously chosen in MediaSelectScreen
-   */
-  useFocusEffect(
-    // useCallback will listen to route.param
-    useCallback(() => {
-      if (route.params?.base64Array && route.params.base64Array[0]) {
-        setAvatarImage(route.params?.base64Array[0].base64);
-      }
-      return () => {
-        setAvatarImage([]);
-      };
-    }, [route.params]),
+  const genderList = useMemo(
+    () => [
+      { id: true, name: "Nam" },
+      { id: false, name: "Nữ" },
+    ],
+    [],
   );
-
   /**
    * Call an alert box to reset avatar image back to default avatar
    */
@@ -155,10 +110,7 @@ const EditProfileScreen = () => {
         },
         {
           text: "Đồng ý",
-          onPress: () => {
-            setAvatarImage(userInfo.avatarUrl);
-            navigation.setParams({ base64Array: [] });
-          },
+          onPress: () => setAvatarImage(userInfo.avatarUrl),
         },
       ],
       {
@@ -170,10 +122,50 @@ const EditProfileScreen = () => {
   const onSubmit = (data) => {
     console.log(data); // Test submit
   };
+  /**
+   * Run first time when the screen inits
+   * get all province list for select dropdown
+   * and set custome date picker value
+   * When component unmoute, reset distric list and ward list
+   */
+  useEffect(() => {
+    getAllProvince();
+    getDisctrictByProvinceId({ id: getValues("aProvinceId") });
+    getWardByDistrictId({ id: getValues("aDistrictId") });
+    setFormattedDate(userInfo.dob.split(" ")[0]);
+    setAvatarImage(userInfo.avatarUrl);
+    return () => {
+      resetDataList();
+    };
+  }, []);
 
+  useEffect(() => {
+    if (date) {
+      setFormattedDate(moment(date).format("DD/MM/YYYY").toString());
+    }
+  }, [date]);
+
+  useEffect(() => {
+    if (userInfo.avatarUrl) setAvatarImage(userInfo.avatarUrl);
+  }, [userInfo]);
+
+  /**
+   * When navigate from MediaSelectScreen back to Edit Form
+   * the callback listen to route params and set
+   * avatar image to what had been previously chosen in MediaSelectScreen
+   */
+  useFocusEffect(
+    // useCallback will listen to route.param
+    useCallback(() => {
+      if (route.params?.base64Array && route.params.base64Array[0]) {
+        setAvatarImage(route.params?.base64Array[0].base64);
+        navigation.setParams({ base64Array: [] });
+      }
+    }, [route.params]),
+  );
   return (
     <KeyboardAvoidingView>
-      <ScrollView>
+      <ScrollView nestedScrollEnabled>
         {showDatePicker && (
           <DateTimePicker
             display="default"
@@ -183,8 +175,8 @@ const EditProfileScreen = () => {
             onChange={onDateChange}
           />
         )}
-        <HeaderTab name="Thông tin cá nhân" />
         <Center flex={1} minHeight={Math.round(useWindowDimensions().height)}>
+          <HeaderTab name="Thông tin cá nhân" />
           <FormProvider {...methods}>
             <VStack
               flex={1}
@@ -250,8 +242,8 @@ const EditProfileScreen = () => {
                 label="Giới tính"
                 isTitle
                 placeholder="Chọn giới tính"
-                data={genderData}
                 controllerName="aGender"
+                data={genderList}
               />
 
               {/* Address input field */}
@@ -269,6 +261,7 @@ const EditProfileScreen = () => {
                 placeholder="Chọn tỉnh/thành phố"
                 data={provinceList}
                 controllerName="aProvinceId"
+                handleDataIfValChanged={generateAddressDropdown}
               />
 
               {/* District select box */}
@@ -278,6 +271,7 @@ const EditProfileScreen = () => {
                 placeholder="Chọn quận/huyện"
                 data={districtList}
                 controllerName="aDistrictId"
+                handleDataIfValChanged={generateAddressDropdown}
               />
 
               {/* Ward select box */}

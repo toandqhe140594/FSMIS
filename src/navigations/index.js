@@ -84,16 +84,25 @@ const goToFManageLocationPickScreen = (navigation, params) => {
     ...params,
   });
 };
+
 const goToFManageAddStaffScreen = (navigation, params) => {
   navigation.navigate(ROUTE_NAMES.FMANAGE_STAFF_ADD, {
     ...params,
   });
 };
+
 const goToFManageStaffDetailScreen = (navigation, params) => {
   navigation.navigate(ROUTE_NAMES.FMANAGE_STAFF_DETAIL, {
     ...params,
   });
 };
+
+const goToFManageVerifyCheckinScreen = (navigation, params) => {
+  navigation.navigate(ROUTE_NAMES.FMANAGE_CHECKIN_VERIFY, {
+    ...params,
+  });
+};
+
 const goToPostEditScreen = (navigation, params) => {
   navigation.navigate(ROUTE_NAMES.FMANAGE_POST_EDIT, { ...params });
 };
@@ -178,6 +187,7 @@ export {
   goToFManageMainScreen,
   goToFManageSelectScreen,
   goToFManageStaffDetailScreen,
+  goToFManageVerifyCheckinScreen,
   goToForgotPasswordScreen,
   goToLakeDetailScreen,
   goToLakeEditScreen,
