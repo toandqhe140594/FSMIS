@@ -17,7 +17,7 @@ import {
 } from "native-base";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
-import { Alert, ScrollView, StyleSheet } from "react-native";
+import { ScrollView, StyleSheet } from "react-native";
 import * as yup from "yup";
 
 import CatchReportSection from "../components/CatchReport/CatchReportSection";
@@ -26,6 +26,7 @@ import SelectComponent from "../components/common/SelectComponent";
 import TextAreaComponent from "../components/common/TextAreaComponent";
 import HeaderTab from "../components/HeaderTab";
 import { ROUTE_NAMES } from "../constants";
+import { showAlertBox } from "../utilities";
 
 const styles = StyleSheet.create({
   sectionWrapper: {
@@ -117,25 +118,17 @@ const AnglerCatchReportScreen = () => {
         images: imagesStringArray,
         lakeId: aLakeType,
       });
-      return Alert.alert("Gửi thành công", "Thông tin gửi thành công", [
-        {
-          text: "OK",
-          onPress: () => console.log("Cancel Pressed"),
-          style: "cancel",
-        },
-      ]);
+      return showAlertBox(
+        "Gửi thành công",
+        "Thông tin buổi câu được gửi thành công",
+      );
     }
-    return Alert.alert("Thiếu thông tin", "Vui lòng thêm ảnh buổi câu.", [
-      {
-        text: "OK",
-        onPress: () => console.log("Cancel Pressed"),
-        style: "cancel",
-      },
-    ]);
+    return showAlertBox("Thiếu thông tin", "Vui lòng thêm ảnh buổi câu");
   };
   const updateImageArray = (id) => {
     setImageArray(imageArray.filter((image) => image.id !== id));
   };
+
   // Fire when navigates back to this screen
   useFocusEffect(
     // useCallback will listen to route.param
@@ -146,6 +139,11 @@ const AnglerCatchReportScreen = () => {
       }
     }, [route.params]),
   );
+
+  useEffect(() => {
+    getLakeList();
+  }, []);
+
   useEffect(() => {
     const filter = listFishModel.filter(
       (item) => item.id === watchALakeTypeField,
@@ -154,9 +152,6 @@ const AnglerCatchReportScreen = () => {
       setListFish(filter[0].fishList);
     }
   }, [watchALakeTypeField]);
-  useEffect(() => {
-    getLakeList();
-  }, []);
 
   return (
     <>

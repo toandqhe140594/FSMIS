@@ -22,14 +22,18 @@ export const PERSONAL_INFORMATION = "personal";
 export const PERSONAL_OWNED_LOCATION = "location/manager";
 
 export const LOCATION_OVERVIEW = "location";
+export const LOCATION_CHECKIN_STATUS = "checkin/status";
+export const LOCATION_FISHES_ALL = "location/fishes";
 export const LOCATION_CLOSE = "location/close";
 export const LOCATION_NEARBY = "location/nearby";
 export const LOCATION_LAKE_ALL = "lake";
+export const LOCATION_LAKE_CLOSE = "lake/close";
 export const LOCATION_REVIEW_SCORE = "review/score";
 export const LOCATION_REVIEW_PERSONAL = "review/me";
 export const LOCATION_REVIEW_PERSONAL_DELETE = "review/me/delete";
 export const LOCATION_REVIEW_PERSONAL_POST = "review/me/post";
 export const LOCATION_ADD = "location/add";
+export const LOCATION_CATCH_REPORT_UNRESOLVED = "catch/pending";
 
 export const ADDRESS_ALL_PROVINCE = "address/province";
 export const ADDRESS_PROVINCE_DISTRICT = "address/district";
@@ -37,3 +41,6 @@ export const ADDRESS_DISTRICT_WARD = "address/ward";
 
 export const SEND_CATCH_REPORT = "catches/report";
 export const REPORT_WRITE = "report/add";
+export const CHECKIN = "checkin";
+export const CHECKIN_STATUS = "personal/availability";
+export const CHECKOUT = "location/checkout";
