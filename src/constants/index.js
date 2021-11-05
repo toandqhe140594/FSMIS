@@ -1,11 +1,16 @@
 import * as apis from "./api";
 import * as routes from "./route";
+import * as validationSchema from "./validationSchema";
 
 export const ROUTE_NAMES = {
   ...routes,
 };
 export const API_URL = {
   ...apis,
+};
+
+export const SCHEMA = {
+  ...validationSchema,
 };
 
 export const phoneRegExp =
