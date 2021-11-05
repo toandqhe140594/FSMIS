@@ -39,6 +39,7 @@ export const FMANAGE_STAFF_ADD = "FManage Add Staff";
 export const FMANAGE_STAFF_DETAIL = "FManage Staff Detail";
 export const FMANAGE_POST_MANAGEMENT = "FManage Post List Of Fishing Location";
 export const FMANAGE_POST_EDIT = "FManage Edit Post";
+export const FMANAGE_POST_CREATE = "FManage Create Post";
 export const FMANAGE_LOCATION_OVERVIEW = "FManage View Location Overview";
 export const FMANAGE_LOCATION_CLOSE = "Close Personal Fishing Location";
 

@@ -25,6 +25,7 @@ const SelectComponent = ({
   hasAsterisk,
   isTitle,
   controllerName,
+  defaultValue,
 }) => {
   const {
     control,
@@ -46,6 +47,7 @@ const SelectComponent = ({
             onValueChange={onChange}
             selectedValue={value}
             fontSize="md"
+            defaultValue={defaultValue}
           >
             {data.map((item) => (
               <Select.Item
@@ -75,6 +77,7 @@ SelectComponent.propTypes = {
   hasAsterisk: PropTypes.bool,
   isTitle: PropTypes.bool,
   controllerName: PropTypes.string.isRequired,
+  defaultValue: PropTypes.string,
 };
 
 SelectComponent.defaultProps = {
@@ -82,6 +85,7 @@ SelectComponent.defaultProps = {
   hasAsterisk: false,
   isTitle: false,
   data: [],
+  defaultValue: "",
 };
 
 export default SelectComponent;

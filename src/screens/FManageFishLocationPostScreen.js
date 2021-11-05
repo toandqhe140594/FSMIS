@@ -7,7 +7,7 @@ import { Divider } from "react-native-elements";
 
 import EventPostCard from "../components/EventPostCard";
 import HeaderTab from "../components/HeaderTab";
-import { goToPostEditScreen } from "../navigations";
+import { goToPostCreateScreen, goToPostEditScreen } from "../navigations";
 
 const PostListContainerComponent = () => {
   const navigation = useNavigation();
@@ -19,6 +19,9 @@ const PostListContainerComponent = () => {
   const locationPostList = useStoreState(
     (states) => states.FManageModel.locationPostList,
   );
+  const setCurrentPost = useStoreActions(
+    (actions) => actions.FManageModel.setCurrentPost,
+  );
 
   useEffect(() => {
     getLocationPostListByPage({ pageNo: lakePostPage });
@@ -29,8 +32,8 @@ const PostListContainerComponent = () => {
     getLocationPostListByPage({ pageNo: lakePostPage });
     setTotalPostPage(lakePostPage + 1);
   };
-
-  const editPostHandler = (id) => {
+  const editPostHandler = (id, item) => {
+    setCurrentPost(item);
     goToPostEditScreen(navigation, { id });
   };
 
@@ -55,6 +58,7 @@ const PostListContainerComponent = () => {
             iconEvent={listEvent}
             id={item.id}
             image={item.url}
+            itemData={item}
             lakePost={{
               badge: item.postType === "STOCKING" ? "Bồi cá" : "Thông báo",
               content: item.content,
@@ -79,7 +83,7 @@ const FManageFishLocationPostScreen = () => {
   );
 
   const onPress = () => {
-    goToPostEditScreen(navigation);
+    goToPostCreateScreen(navigation);
   };
 
   const { id, name, verify } = locationDetails;

@@ -87,6 +87,7 @@ const model = {
   locationCatchList: [], // List of public catch report to display on overview screen
   totalCatchPage: 1,
 
+  currentPost: {},
   postDetail: {},
 
   setCurrentId: action((state, payload) => {
@@ -274,6 +275,40 @@ const model = {
     });
   }),
 
+  createNewPost: thunk(async (actions, payload) => {
+    const { attachmentType, content, id, postType, url } = payload;
+    const { status } = await http.post(
+      `location/${id}/post/add
+    `,
+      {
+        attachmentType,
+        content,
+        id,
+        postType,
+        url,
+      },
+    );
+    if (status === 200) {
+      console.log(`status>>>`, status);
+    }
+  }),
+  editPost: thunk(async (actions, payload) => {
+    const { attachmentType, content, id, postType, url } = payload;
+    const { status } = await http.put(`location/${id}/post/edit`, {
+      attachmentType,
+      content,
+      id,
+      postType,
+      url,
+    });
+    if (status === 200) {
+      console.log(`status>>>`, status);
+    }
+  }),
+
+  setCurrentPost: action((state, payload) => {
+    state.currentPost = payload;
+  }),
   // END OF POST RELATED SECTION
 
   // START OF CATCH REPORT RELATED SECTION
