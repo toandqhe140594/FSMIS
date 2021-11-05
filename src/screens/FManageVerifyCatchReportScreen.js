@@ -18,49 +18,16 @@ const VerifyCatchReportScreen = () => {
     (actions) => actions.FManageModel.getUnresolvedCatchReportList,
   );
 
-  const dummyMenu = [
-    {
-      id: 1,
-      userFullName: "Lê Tuấn Anh",
-      message: "Ngoi ca sang",
-      caches: "Ro dong, Diec",
-      time: "09:00 01/01/2021",
-    },
-    {
-      id: 2,
-      userFullName: "Lê Tuấn Anh",
-      message: "Ngoi ca sang",
-      caches: "Ro dong, Diec",
-      time: "09:00 01/02/2021",
-    },
-    {
-      id: 3,
-      userFullName: "Lê Tuấn Anh",
-      message: "Ngoi ca sang",
-      caches: "Ro dong, Diec",
-      time: "09:00 01/03/2021",
-    },
-    {
-      id: 4,
-      userFullName: "Lê Tuấn Anh",
-      message: "Ngoi ca sang",
-      caches: "Ro dong, Diec",
-      time: "09:00 01/04/2021",
-    },
-  ];
-
   const goToDetailHandler = (id) => {
     goToCatchReportVerifyDetailScreen(navigation, { id });
   };
 
   const onEndReached = () => {
-    console.log("end reach, load more");
     getUnresolvedCatchReportList({ status: "APPEND" });
   };
 
   useEffect(() => {
-    if (unresolvedCatchReportList.length === 0)
-      getUnresolvedCatchReportList({ status: "OVERWRITE" });
+    getUnresolvedCatchReportList({ status: "OVERWRITE" });
   }, []);
 
   return (
@@ -74,7 +41,7 @@ const VerifyCatchReportScreen = () => {
       >
         <FlatList
           pt="0.5"
-          data={dummyMenu}
+          data={unresolvedCatchReportList}
           renderItem={({ item }) => (
             <Box
               borderBottomWidth="1"
@@ -91,17 +58,18 @@ const VerifyCatchReportScreen = () => {
                 <Box width="65%">
                   <AvatarCard
                     avatarSize="md"
-                    nameUser={item.userFullName}
-                    subText={item.time}
+                    nameUser={item.name}
+                    subText={item.postTime}
                     subTextFontSize="xs"
+                    image={item.avatar}
                   />
                   <Box mt={2}>
                     <Text italic isTruncated numberOfLines={1}>
-                      {item.message}
+                      {item.description}
                     </Text>
                     <Text numberOfLines={2} isTruncated>
                       <Text bold>Đã câu được: </Text>
-                      {item.caches}
+                      {item.fishList}
                     </Text>
                   </Box>
                 </Box>
