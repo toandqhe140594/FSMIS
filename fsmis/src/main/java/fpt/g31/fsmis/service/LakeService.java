@@ -101,7 +101,7 @@ public class LakeService {
         if (!fishingLocationOptional.isPresent() || Boolean.FALSE.equals(fishingLocationOptional.get().getActive())) {
             throw new NotFoundException("Không tìm thấy khu hồ!");
         }
-        List<Lake> lakeList = lakeRepos.findByFishingLocationId(locationId);
+        List<Lake> lakeList = lakeRepos.findByFishingLocationIdAndActiveIsTrue(locationId);
         List<LakeOverviewDtoOut> lakeOverviewDtoOutList = new ArrayList<>();
         for (Lake lake : lakeList) {
             LakeOverviewDtoOut lakeOverviewDtoOut = modelMapper.map(lake, LakeOverviewDtoOut.class);

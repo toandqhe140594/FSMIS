@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface LakeRepos extends JpaRepository<Lake, Long> {
-    List<Lake> findByFishingLocationId(Long id);
+    List<Lake> findByFishingLocationIdAndActiveIsTrue(Long id);
 }
