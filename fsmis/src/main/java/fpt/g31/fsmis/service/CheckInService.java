@@ -64,7 +64,7 @@ public class CheckInService {
             throw new ValidationException("Địa chỉ không tồn tại");
         }
         User user = jwtFilter.getUserFromToken(request);
-        Page<CheckIn> checkInList = checkInRepos.findFirstByUserIdOrderByCheckInTimeDesc(user.getId(), PageRequest.of(pageNo - 1, 10));
+        Page<CheckIn> checkInList = checkInRepos.findByUserIdOrderByCheckInTimeDesc(user.getId(), PageRequest.of(pageNo - 1, 10));
         List<CheckInHistoryPersonalDtoOut> output = new ArrayList<>();
         for (CheckIn checkIn : checkInList) {
             CheckInHistoryPersonalDtoOut item = CheckInHistoryPersonalDtoOut.builder()
@@ -106,6 +106,6 @@ public class CheckInService {
         if (!fishingLocationRepos.existsById(locationId)) {
             throw new NotFoundException("Không tìm thấy khu hồ!");
         }
-        return new ResponseTextDtoOut(checkInRepos.existsByUserIdAndFishingLocationIdAndCheckOutTimeIsNull(user.getId(), locationId)?"true":"false");
+        return new ResponseTextDtoOut(checkInRepos.existsByUserIdAndFishingLocationId(user.getId(), locationId)?"true":"false");
     }
 }

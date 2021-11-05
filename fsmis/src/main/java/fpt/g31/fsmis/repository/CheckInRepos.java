@@ -9,9 +9,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CheckInRepos extends JpaRepository<CheckIn, Long> {
 
-    Page<CheckIn> findFirstByUserIdOrderByCheckInTimeDesc(Long id, Pageable pageable);
+    Page<CheckIn> findByUserIdOrderByCheckInTimeDesc(Long id, Pageable pageable);
 
     CheckIn findFirstByUserIdOrderByCheckInTimeDesc(Long userId);
 
-    boolean existsByUserIdAndFishingLocationIdAndCheckOutTimeIsNull(Long userId, Long fishingLocationId);
+    boolean existsByUserIdAndFishingLocationId(Long userId, Long fishingLocationId);
 }
