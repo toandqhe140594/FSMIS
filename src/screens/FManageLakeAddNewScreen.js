@@ -29,6 +29,7 @@ import { ROUTE_NAMES, SCHEMA } from "../constants";
 import FishingMethodModel from "../models/FishingMethodModel";
 import FishModel from "../models/FishModel";
 import FManageModel from "../models/FManageModel";
+import { showAlertAbsoluteBox, showAlertBox } from "../utilities";
 import store from "../utilities/Store";
 
 store.addModel("FManageModel", FManageModel);
@@ -91,9 +92,18 @@ const LakeAddNewScreen = () => {
   }, []);
 
   useEffect(() => {
-    // console.log(addStatus);
-    // if addStatus === "SUCCESS"
-    // else
+    if (addStatus === "SUCCESS") {
+      showAlertAbsoluteBox(
+        "Thông báo",
+        "Hồ bé thêm thành công!",
+        () => {
+          navigation.goBack();
+        },
+        "Xác nhận",
+      );
+    } else if (addStatus === "FAILED") {
+      showAlertBox("Thông báo", "Đã có lỗi xảy ra, vui lòng thử lại");
+    }
   }, [addStatus]);
   // Fire when navigates back to the screen
   useFocusEffect(

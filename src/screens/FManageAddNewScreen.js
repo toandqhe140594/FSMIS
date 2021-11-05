@@ -8,7 +8,7 @@ import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, Button, Center, Divider, Stack, Text, VStack } from "native-base";
 import React, { useCallback, useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { Alert, ScrollView, StyleSheet } from "react-native";
+import { ScrollView, StyleSheet } from "react-native";
 
 import InputComponent from "../components/common/InputComponent";
 import MultiImageSection from "../components/common/MultiImageSection";
@@ -19,6 +19,7 @@ import HeaderTab from "../components/HeaderTab";
 import { ROUTE_NAMES, SCHEMA } from "../constants";
 import AddressModel from "../models/AddressModel";
 import FManageModel from "../models/FManageModel";
+import { showAlertAbsoluteBox, showAlertBox } from "../utilities";
 import store from "../utilities/Store";
 
 store.addModel("AddressModel", AddressModel);
@@ -78,9 +79,18 @@ const FManageAddNewScreen = () => {
     };
   }, []);
   useEffect(() => {
-    console.log(addStatus);
-    // if addStatus === "SUCCESS"
-    // else
+    if (addStatus === "SUCCESS") {
+      showAlertAbsoluteBox(
+        "Thông báo",
+        "Hồ bé thêm thành công!",
+        () => {
+          navigation.goBack();
+        },
+        "Xác nhận",
+      );
+    } else if (addStatus === "FAILED") {
+      showAlertBox("Thông báo", "Đã có lỗi xảy ra, vui lòng thử lại");
+    }
   }, [addStatus]);
   useFocusEffect(
     // useCallback will listen to route.param
@@ -98,7 +108,6 @@ const FManageAddNewScreen = () => {
         <FormProvider {...methods}>
           <VStack space={3} divider={<Divider />}>
             <Center>
-              {/* Image Picker section */}
               <Stack space={2} style={styles.sectionWrapper}>
                 <Text bold fontSize="md" mt={2}>
                   Ảnh bìa (nhiều nhất là 5)
@@ -109,7 +118,6 @@ const FManageAddNewScreen = () => {
                   deleteImage={updateImageArray}
                   selectLimit={5}
                 />
-                {/* Input location name */}
                 <InputComponent
                   isTitle
                   label="Tên địa điểm câu"
@@ -124,12 +132,12 @@ const FManageAddNewScreen = () => {
                 <Text fontSize="md" bold>
                   Thông tin liên hệ
                 </Text>
-                {/* Information input and select fields */}
                 <InputComponent
                   label="Số điện thoại"
                   placeholder="Nhập số điện thoại"
                   hasAsterisk
                   controllerName="phone"
+                  useNumPad
                 />
 
                 <InputComponent
