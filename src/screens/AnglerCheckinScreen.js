@@ -1,14 +1,13 @@
 import { useNavigation } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, Button, Center, Text } from "native-base";
-import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
-import { Alert, ToastAndroid } from "react-native";
 import QRCode from "react-native-qrcode-svg";
 
 import FLocationCard from "../components/FLocationCard";
 import CheckInModel from "../models/CheckInModel";
 import { goToCatchReportFormScreen } from "../navigations";
+import { showAlertConfirmBox, showToastMessage } from "../utilities";
 import store from "../utilities/Store";
 
 store.addModel("CheckInModel", CheckInModel);
@@ -23,20 +22,20 @@ const CheckinSuccessScreen = () => {
   const personalCheckout = useStoreActions(
     (actions) => actions.CheckInModel.personalCheckout,
   );
+  const getAllFishes = useStoreActions(
+    (actions) => actions.CheckInModel.getAllFishes,
+  );
+
+  useEffect(() => {
+    getAllFishes();
+  }, []);
 
   const showCheckoutAlert = () => {
-    Alert.alert(
+    showAlertConfirmBox(
       "Checkout",
       "Bạn có muốn checkout mà không báo kết quả câu?",
-      [
-        {
-          text: "Cancel",
-          style: "cancel",
-        },
-        { text: "OK", onPress: () => personalCheckout() },
-      ],
-      {
-        cancelable: true,
+      () => {
+        personalCheckout();
       },
     );
   };
@@ -84,9 +83,26 @@ const CheckinSuccessScreen = () => {
   );
 };
 
-const DefaultQRCodeScreen = ({ onRefreshHandler }) => {
+const DefaultQRCodeScreen = () => {
+  const getCheckInState = useStoreActions(
+    (actions) => actions.CheckInModel.getCheckInState,
+  );
+
   const userProfile = useStoreState((states) => states.userProfile);
-  const [qrString, setQrString] = React.useState(null);
+  const [qrString, setQrString] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const onRefresh = () => {
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+    }, 5000);
+    getCheckInState({ setLoading });
+  };
+
+  useEffect(() => {
+    getCheckInState({ setLoading });
+  }, []);
 
   useEffect(() => {
     if (userProfile && userProfile.qrString) setQrString(userProfile.qrString);
@@ -108,7 +124,16 @@ const DefaultQRCodeScreen = ({ onRefreshHandler }) => {
         </Center>
       </Center>
       <Box justifyContent="flex-end" alignItems="center" mb={10}>
-        <Button mt={4} size="lg" px={3} onPress={onRefreshHandler} w="50%">
+        <Button
+          mt={4}
+          size="lg"
+          px={3}
+          onPress={() => {
+            onRefresh();
+          }}
+          w="50%"
+          isLoading={loading}
+        >
           Lấy thông tin checkin
         </Button>
       </Box>
@@ -120,46 +145,26 @@ const CheckinScreen = () => {
   const stateCheckIn = useStoreState(
     (states) => states.CheckInModel.checkInState,
   );
-  const getCheckInState = useStoreActions(
-    (actions) => actions.CheckInModel.getCheckInState,
+  const setCheckInState = useStoreActions(
+    (actions) => actions.CheckInModel.setCheckInState,
   );
 
   const [isCheckin, setCheckin] = useState(false);
 
-  const refreshHandler = () => {
-    getCheckInState();
-  };
-
   useEffect(() => {
-    getCheckInState();
-  }, []);
-
-  useEffect(() => {
-    setCheckin(stateCheckIn);
-    if (!stateCheckIn) {
-      ToastAndroid.showWithGravityAndOffset(
-        "Bạn chưa checkin ở hồ câu",
-        ToastAndroid.LONG,
-        ToastAndroid.BOTTOM,
-        25,
-        50,
-      );
+    if (stateCheckIn === false) {
+      showToastMessage("Bạn chưa checkin ở hồ câu");
+      setCheckin(false);
+      setCheckInState(null);
     }
+    if (stateCheckIn === true) setCheckin(true);
   }, [stateCheckIn]);
 
   return (
     <>
-      {isCheckin ? (
-        <CheckinSuccessScreen />
-      ) : (
-        <DefaultQRCodeScreen onRefreshHandler={refreshHandler} />
-      )}
+      {isCheckin === true ? <CheckinSuccessScreen /> : <DefaultQRCodeScreen />}
     </>
   );
 };
 
-DefaultQRCodeScreen.propTypes = {
-  onRefreshHandler: PropTypes.func,
-};
-DefaultQRCodeScreen.defaultProps = { onRefreshHandler: () => {} };
 export default CheckinScreen;
