@@ -9,7 +9,7 @@ const showToastMessage = (message) => {
     message,
     ToastAndroid.LONG,
     ToastAndroid.BOTTOM,
-    25,
+    0,
     50,
   );
 };
