@@ -5,20 +5,7 @@ import http from "../utilities/Http";
 
 const model = {
   // State contains list of fishing method
-  fishingMethodList: [
-    {
-      id: 1,
-      name: "Câu đơn",
-    },
-    {
-      id: 2,
-      name: "Câu đài",
-    },
-    {
-      id: 3,
-      name: "Câu lăng xê",
-    },
-  ],
+  fishingMethodList: [],
   /**
    * Set data for list of fishing methods
    */
