@@ -1,5 +1,14 @@
 import * as yup from "yup";
 
+export const ANGLER_PROFILE_FORM = yup.object().shape({
+  fullName: yup.string().required("Họ và tên không thể bỏ trống"),
+  gender: yup.bool(),
+  aAddress: yup.string(),
+  provinceId: yup.number(),
+  districtId: yup.number(),
+  wardId: yup.number(),
+});
+
 export const FMANAGE_LAKE_FORM = yup.object().shape({
   name: yup.string().required("Tên hồ không thể bỏ trống"),
   price: yup.string().required("Miêu tả giá vé ở hồ này"),
