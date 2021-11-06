@@ -105,7 +105,7 @@ const FManageEmployeeManagementScreen = () => {
             buttonStyle={{ backgroundColor: "#2089DC" }}
             containerStyle={{ width: "40%" }}
             onPress={() => {
-              goToFManageLakeEditScreen(navigation, { id: lakeDetail.id });
+              goToFManageLakeEditScreen(navigation);
             }}
           />
           <Button title="Thêm loại cá" containerStyle={{ width: "40%" }} />
