@@ -35,7 +35,6 @@ public class Catches {
     @NotNull
     private Boolean hidden;
 
-    @NotNull
     private Boolean approved;
 
     @ManyToOne

@@ -22,6 +22,13 @@ public class CatchesController {
         return new ResponseEntity<>(catchesService.getCatchesDetail(request, catchesId), HttpStatus.OK);
     }
 
+    @PostMapping("/approve/{catchesId}")
+    public ResponseEntity<Object> approveCatch(HttpServletRequest request,
+                                               @PathVariable Long catchesId,
+                                               @RequestParam boolean isApprove){
+        return new ResponseEntity<>(catchesService.approveCatch(request, catchesId, isApprove), HttpStatus.OK);
+    }
+
     @PostMapping("/report")
     public ResponseEntity<Object> catchReport(HttpServletRequest request, @RequestBody @Valid CatchReportDtoIn catchReportDtoIn) {
         return new ResponseEntity<>(catchesService.catchReport(request, catchReportDtoIn), HttpStatus.OK);
