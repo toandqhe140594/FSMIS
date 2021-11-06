@@ -17,7 +17,6 @@ const InputComponent = ({
   isTitle,
   hasAsterisk,
   myStyles,
-  type,
   leftIcon,
   controllerName,
   useNumPad,
@@ -40,7 +39,7 @@ const InputComponent = ({
         render={({ field: { onChange, onBlur, value } }) => (
           <Input
             InputLeftElement={leftIcon}
-            type={type}
+            type="text"
             placeholder={placeholder}
             onChangeText={onChange}
             onBlur={onBlur}
@@ -65,7 +64,6 @@ InputComponent.propTypes = {
   ),
   hasAsterisk: PropTypes.bool,
   isTitle: PropTypes.bool,
-  type: PropTypes.string,
   leftIcon: PropTypes.element,
   controllerName: PropTypes.string,
   useNumPad: PropTypes.bool,
@@ -77,7 +75,6 @@ InputComponent.defaultProps = {
   myStyles: {},
   hasAsterisk: false,
   isTitle: false,
-  type: "text",
   leftIcon: <></>,
   controllerName: "",
   useNumPad: false,
