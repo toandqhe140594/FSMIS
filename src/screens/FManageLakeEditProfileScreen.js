@@ -17,7 +17,8 @@ import {
 } from "native-base";
 import React, { useCallback, useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { StyleSheet } from "react-native";
+import { ActivityIndicator, StyleSheet } from "react-native";
+import { Overlay } from "react-native-elements";
 
 import InputComponent from "../components/common/InputComponent";
 import MultiImageSection from "../components/common/MultiImageSection";
@@ -47,27 +48,21 @@ const LakeEditProfileScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
   const [imageArray, setImageArray] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [visible, setVisible] = usestate(true);
+  const [updateStatus, setUpdateStatus] = useState("");
   const { fishingMethodList } = useStoreState(
     (state) => state.FishingMethodModel,
   );
   const { lakeDetail } = useStoreState((states) => states.FManageModel);
-  const { getLakeDetailByLakeId, closeLakeByLakeId } = useStoreActions(
-    (actions) => actions.FManageModel,
-  );
+  const { getLakeDetailByLakeId, editLakeDetail, closeLakeByLakeId } =
+    useStoreActions((actions) => actions.FManageModel);
   const methods = useForm({
     mode: "onSubmit",
     reValidateMode: "onSubmit",
-    defaultValues: {
-      name: lakeDetail.name,
-      methods: lakeDetail.methods,
-      price: lakeDetail.price,
-      length: lakeDetail.length,
-      width: lakeDetail.width,
-      depth: lakeDetail.depth,
-    },
     resolver: yupResolver(SCHEMA.FMANAGE_LAKE_FORM),
   });
-  const { handleSubmit } = methods;
+  const { handleSubmit, setValue } = methods;
   const [deleteSuccess, setDeleteSuccess] = useState(false);
 
   /**
@@ -76,8 +71,9 @@ const LakeEditProfileScreen = () => {
    */
   const onSubmit = (data) => {
     const imageUrl = imageArray[0].base64;
-    const addData = { ...data, imageUrl };
-    console.log(addData);
+    const updateData = { ...data, imageUrl };
+    // editLakeDetail({updateData, setUpdateStatus, id});
+    console.log(updateData);
   };
 
   const onDeleteLake = (id, name) => {
@@ -98,6 +94,36 @@ const LakeEditProfileScreen = () => {
     setImageArray(imageArray.filter((image) => image.id !== id));
   };
 
+  useEffect(() => {
+    if (route.params.id) {
+      getLakeDetailByLakeId({ id: route.params.id, setIsLoading });
+    }
+  }, []);
+
+  /**
+   * When isLoading return false, setValue to controller and image
+   */
+  useEffect(() => {
+    if (isLoading === false) {
+      // Filter an array of id (value) from list of fishing methods name
+      const selectedMethodVal = fishingMethodList.reduce(
+        (acc, { id, name }) => {
+          if (lakeDetail.fishingMethodList.includes(name)) acc.push(id);
+          return acc;
+        },
+        [],
+      );
+      setValue("name", lakeDetail.name);
+      setValue("methods", selectedMethodVal);
+      setValue("price", lakeDetail.price);
+      setValue("depth", lakeDetail.depth);
+      setValue("width", lakeDetail.name);
+      setValue("length", lakeDetail.name);
+      setImageArray([{ id: 1, base64: lakeDetail.imageUrl }]);
+      setVisible(false);
+    }
+  }, [setIsLoading]);
+
   /**
    * Fire when navigates back to the screen
    */
@@ -111,12 +137,10 @@ const LakeEditProfileScreen = () => {
     }, [route.params]),
   );
 
-  useEffect(() => {
-    if (route.params.id) {
-      getLakeDetailByLakeId({ id: route.params.id });
-      setImageArray([lakeDetail.imageUrl]);
-    }
-  }, []);
+  /**
+   * When updateState return, open Alert
+   */
+  useEffect(() => {}, [updateStatus]);
 
   useEffect(() => {
     if (deleteSuccess) {
@@ -129,6 +153,9 @@ const LakeEditProfileScreen = () => {
     <>
       <HeaderTab name="Chỉnh sửa hồ bé" />
       <ScrollView>
+        <Overlay isVisible={visible}>
+          <ActivityIndicator size="large" />
+        </Overlay>
         <FormProvider {...methods}>
           <VStack space={3} divider={<Divider />}>
             <Center mt={1}>
@@ -182,16 +209,19 @@ const LakeEditProfileScreen = () => {
                   label="Chiều dài (m)"
                   placeholder="Nhập chiều dài của hồ"
                   controllerName="length"
+                  useNumPad
                 />
                 <InputComponent
                   label="Chiều rộng (m)"
                   placeholder="Nhập chiều rộng của hồ"
                   controllerName="width"
+                  useNumPad
                 />
                 <InputComponent
                   label="Độ sâu (m)"
                   placeholder="Nhập độ sâu của hồ"
                   controllerName="depth"
+                  useNumPad
                 />
               </VStack>
             </Center>
