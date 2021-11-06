@@ -1,4 +1,4 @@
-import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import { FontAwesome5, MaterialIcons } from "@expo/vector-icons";
 import { Box, Center, HStack, Icon, Pressable, Text } from "native-base";
 import PropTypes from "prop-types";
 import React, { useState } from "react";
@@ -49,7 +49,7 @@ const FooterTabsView = () => {
           position={1}
         />
         <TabElement
-          IconElement={<MaterialCommunityIcons name="fish" />}
+          IconElement={<FontAwesome5 name="fish" />}
           name="Báo cá"
           position={2}
         />

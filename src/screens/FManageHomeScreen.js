@@ -65,7 +65,7 @@ const menuCategoryForOwner = [
         title: "Xác nhận báo cá",
         route: ROUTE_NAMES.FMANAGE_CATCH_VERIFY,
         icon: "fish",
-        type: "material-community",
+        type: "font-awesome-5",
       },
       {
         id: 6,
@@ -107,7 +107,7 @@ const menuCategoryForStaff = [
     title: "Xác nhận báo cá",
     route: ROUTE_NAMES.FMANAGE_CATCH_VERIFY,
     icon: "fish",
-    type: "material-community",
+    type: "font-awesome-5",
   },
   {
     id: 9,

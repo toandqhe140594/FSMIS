@@ -11,7 +11,7 @@ const menuCategory = [
     id: 1,
     title: "Lịch sử Báo cá",
     icon: "fish",
-    type: "material-community",
+    type: "font-awesome-5",
     route: ROUTE_NAMES.PROFILE_CATCHES_REPORT_HISTORY,
   },
   {
