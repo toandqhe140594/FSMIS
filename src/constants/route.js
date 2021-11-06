@@ -25,8 +25,11 @@ export const PROFILE_LOGOUT = "Logout";
 export const MANAGEMENT_MODE = "Change to management mode";
 
 export const FMANAGE_LAKE_MANAGEMENT = "FManage Lake List";
+export const FMANAGE_LAKE_PROFILE = "FManage Lake Profile Screen";
 export const FMANAGE_LAKE_ADD = "FManage Add Lake";
 export const FMANAGE_LAKE_EDIT = "FManage Edit Lake";
+export const FMANAGE_LAKE_FISH_ADD = "FManage Add Fish To Lake";
+export const FMANAGE_LAKE_FISH_RESTOCK = "FManage Restock Fish In Lake";
 export const FMANAGE_CATCH_HISTORY = "FManage Catch History";
 export const FMANAGE_CATCH_VERIFY = "FManage Verify Catch Report";
 export const FMANAGE_CATCH_DETAIL = "FManage Detail Catch Report";
