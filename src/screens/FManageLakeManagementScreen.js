@@ -5,7 +5,7 @@ import React from "react";
 
 import HeaderTab from "../components/HeaderTab";
 import LakeCard from "../components/LakeCard";
-import { goToLakeEditScreen } from "../navigations";
+import { goToFManageLakeAddNewScreen } from "../navigations";
 
 const LakeListManagementScreen = () => {
   const navigation = useNavigation();
@@ -22,7 +22,7 @@ const LakeListManagementScreen = () => {
         <Center w="80%" my={5}>
           <Button
             onPress={() => {
-              goToLakeEditScreen(navigation, { id: null });
+              goToFManageLakeAddNewScreen(navigation);
             }}
           >
             Thêm hồ câu
