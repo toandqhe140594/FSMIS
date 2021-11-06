@@ -9,12 +9,15 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PostDtoOut {
+public class PersonalCheckInHistoryDtoOut {
+
     private Long id;
-    private String content;
-    private String postTime;
-    private String postType;
-    private String url;
-    private String attachmentType;
-    private boolean edited;
+
+    private Long locationId;
+
+    private String locationName;
+
+    private String checkInTime;
+
+    private String checkOutTime;
 }

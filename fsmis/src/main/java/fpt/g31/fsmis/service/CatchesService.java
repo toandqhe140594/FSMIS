@@ -105,7 +105,7 @@ public class CatchesService {
         if (!isOwnerOrStaff(locationId, jwtFilter.getUserFromToken(request))) {
             throw new ValidationException("Không có quyền truy cập");
         }
-        Page<Catches> catchesList = catchesRepos.findByFishingLocationIdAndApprovedIsFalseOrderByTimeDesc(locationId, PageRequest.of(pageNo - 1, 10));
+        Page<Catches> catchesList = catchesRepos.findByFishingLocationIdAndApprovedIsNullOrderByTimeDesc(locationId, PageRequest.of(pageNo - 1, 10));
         List<PendingCatchReportItemDtoOut> output = new ArrayList<>();
         for (Catches catches : catchesList) {
             List<String> fishList = new ArrayList<>();
@@ -134,7 +134,7 @@ public class CatchesService {
             throw new ValidationException("Địa chỉ không tồn tại");
         }
         User user = jwtFilter.getUserFromToken(request);
-        Page<Catches> catchesList = catchesRepos.findByUserId(user.getId(), PageRequest.of(pageNo - 1, 10));
+        Page<Catches> catchesList = catchesRepos.findByUserIdOrderByTimeDesc(user.getId(), PageRequest.of(pageNo - 1, 10));
         List<CatchesOverviewNoImageDtoOut> output = new ArrayList<>();
         for (Catches catches : catchesList) {
             CatchesOverviewNoImageDtoOut item = CatchesOverviewNoImageDtoOut.builder()
@@ -230,12 +230,25 @@ public class CatchesService {
                 .imageUrl(ServiceUtils.mergeString(catchReportDtoIn.getImages()))
                 .time(LocalDateTime.now())
                 .hidden(catchReportDtoIn.isHidden())
-                .approved(false)
+                .approved(null)
                 .user(user)
                 .fishingLocation(fishingLocation)
                 .catchesDetailList(catchesDetailList)
                 .build();
         catchesRepos.save(catches);
         return new ResponseTextDtoOut("Báo cá thành công, vui lòng chờ hồ câu duyệt!");
+    }
+
+    public ResponseTextDtoOut approveCatch(HttpServletRequest request, Long catchesId, boolean isApprove) {
+        User user = jwtFilter.getUserFromToken(request);
+        Catches catches = catchesRepos.findById(catchesId)
+                .orElseThrow(() -> new NotFoundException("Không tìm thấy bản ghi"));
+        if (!catches.getFishingLocation().getOwner().equals(user)
+                &&!catches.getFishingLocation().getEmployeeList().contains(user)) {
+            throw new ValidationException("Không có quyền truy cập");
+        }
+        catches.setApproved(isApprove);
+        catchesRepos.save(catches);
+        return new ResponseTextDtoOut("Phê duyệt thành công");
     }
 }

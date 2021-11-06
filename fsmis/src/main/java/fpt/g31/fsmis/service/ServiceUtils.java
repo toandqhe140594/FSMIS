@@ -10,7 +10,8 @@ import java.util.List;
 
 public class ServiceUtils {
 
-    private static final String DATE_FORMAT = "dd/MM/yyyy HH:mm:ss";
+    private static final String OUTPUT_DATE_FORMAT = "dd/MM/yyyy HH:mm:ss";
+    private static final String INPUT_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
 
     private ServiceUtils() {
         throw new IllegalStateException("Utility class");
@@ -35,11 +36,11 @@ public class ServiceUtils {
     }
 
     public static String convertDateToString(LocalDateTime date) {
-        return date.format(DateTimeFormatter.ofPattern(DATE_FORMAT));
+        return date.format(DateTimeFormatter.ofPattern(OUTPUT_DATE_FORMAT));
     }
 
     public static LocalDateTime convertStringToDate(String date) {
-        return LocalDateTime.parse(date, DateTimeFormatter.ofPattern(DATE_FORMAT));
+        return LocalDateTime.parse(date, DateTimeFormatter.ofPattern(INPUT_DATE_FORMAT));
     }
 
     public static List<String> splitString(String input) {

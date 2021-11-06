@@ -9,11 +9,11 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CatchesRepos extends JpaRepository<Catches, Long> {
 
-    Page<Catches> findByUserId(Long id, Pageable pageable);
+    Page<Catches> findByUserIdOrderByTimeDesc(Long id, Pageable pageable);
 
     Page<Catches> findByFishingLocationIdAndHiddenIsFalseOrderByTimeDesc(Long id, Pageable pageable);
 
-    Page<Catches> findByFishingLocationIdAndApprovedIsFalseOrderByTimeDesc(Long locationId, Pageable pageable);
+    Page<Catches> findByFishingLocationIdAndApprovedIsNullOrderByTimeDesc(Long locationId, Pageable pageable);
 
     long countByUserId(Long userId);
 }

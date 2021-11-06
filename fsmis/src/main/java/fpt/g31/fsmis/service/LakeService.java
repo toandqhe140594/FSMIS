@@ -52,13 +52,7 @@ public class LakeService {
             fishInLakeList.add(fishInLake);
         }
         lake.setFishInLakeList(fishInLakeList);
-        Set<FishingMethod> fishingMethodSet = new HashSet<>();
-        for (Long methodId : lakeDtoIn.getMethods()) {
-            FishingMethod fishingMethod = methodRepos.findById(methodId)
-                    .orElseThrow(() -> new NotFoundException("Không tìm thấy loại hình câu!"));
-            fishingMethodSet.add(fishingMethod);
-        }
-        lake.setFishingMethodSet(fishingMethodSet);
+        lake.setFishingMethodSet(getFishingMethodSet(lakeDtoIn));
         lakeRepos.save(lake);
         return new ResponseTextDtoOut("Tạo hồ câu thành công!");
     }
@@ -107,7 +101,7 @@ public class LakeService {
         if (!fishingLocationOptional.isPresent() || Boolean.FALSE.equals(fishingLocationOptional.get().getActive())) {
             throw new NotFoundException("Không tìm thấy khu hồ!");
         }
-        List<Lake> lakeList = lakeRepos.findByFishingLocationId(locationId);
+        List<Lake> lakeList = lakeRepos.findByFishingLocationIdAndActiveIsTrue(locationId);
         List<LakeOverviewDtoOut> lakeOverviewDtoOutList = new ArrayList<>();
         for (Lake lake : lakeList) {
             LakeOverviewDtoOut lakeOverviewDtoOut = modelMapper.map(lake, LakeOverviewDtoOut.class);
@@ -139,14 +133,13 @@ public class LakeService {
         return new ResponseTextDtoOut("Đóng cửa hồ câu thành công!");
     }
 
-    public ResponseTextDtoOut editLake(LakeDtoIn lakeDtoIn, Long lakeId, HttpServletRequest request) {
+    public ResponseTextDtoOut editLakeInformation(LakeDtoIn lakeDtoIn, Long lakeId, HttpServletRequest request) {
         Lake lake = lakeRepos.findById(lakeId)
                 .orElseThrow(() -> new NotFoundException("Không tìm thấy hồ câu!"));
         User user = jwtFilter.getUserFromToken(request);
         if (!lake.getFishingLocation().getOwner().equals(user)) {
             throw new ValidationException("Không có quyền truy cập!");
         }
-        checkValidFishInLakeList(lakeDtoIn);
         lake.setName(lakeDtoIn.getName());
         lake.setLength(lakeDtoIn.getLength());
         lake.setWidth(lakeDtoIn.getWidth());
@@ -154,29 +147,35 @@ public class LakeService {
         lake.setLastEditTime(LocalDateTime.now());
         lake.setPrice(lakeDtoIn.getPrice());
         lake.setImageUrl(lakeDtoIn.getImageUrl());
-        List<FishInLake> fishInLakeList = new ArrayList<>();
-        for (FishInLakeDtoIn fishInLakeDtoIn : lakeDtoIn.getFishInLakeList()) {
-            FishInLake fishInLake = FishInLake.builder()
-                    .id(fishInLakeDtoIn.getId())
-                    .fishSpecies(fishSpeciesRepos.getById(fishInLakeDtoIn.getFishSpeciesId()))
-                    .lake(lake)
-                    .maxWeight(fishInLakeDtoIn.getMaxWeight())
-                    .minWeight(fishInLakeDtoIn.getMinWeight())
-                    .quantity(fishInLakeDtoIn.getQuantity())
-                    .totalWeight(fishInLakeDtoIn.getTotalWeight())
-                    .build();
-            fishInLakeList.add(fishInLake);
-        }
-        lake.setFishInLakeList(fishInLakeList);
+//        List<FishInLake> fishInLakeList = new ArrayList<>();
+//        for (FishInLakeDtoIn fishInLakeDtoIn : lakeDtoIn.getFishInLakeList()) {
+//            FishInLake fishInLake = FishInLake.builder()
+//                    .id(fishInLakeDtoIn.getId())
+//                    .fishSpecies(fishSpeciesRepos.getById(fishInLakeDtoIn.getFishSpeciesId()))
+//                    .lake(lake)
+//                    .maxWeight(fishInLakeDtoIn.getMaxWeight())
+//                    .minWeight(fishInLakeDtoIn.getMinWeight())
+//                    .quantity(fishInLakeDtoIn.getQuantity())
+//                    .totalWeight(fishInLakeDtoIn.getTotalWeight())
+//                    .build();
+//            fishInLakeList.add(fishInLake);
+//        }
+//        lake.setFishInLakeList(fishInLakeList);
+        lake.setFishingMethodSet(getFishingMethodSet(lakeDtoIn));
+        lakeRepos.save(lake);
+        return new ResponseTextDtoOut("Chỉnh sửa thông tin hồ câu thành công!");
+    }
+
+    private Set<FishingMethod> getFishingMethodSet(LakeDtoIn lakeDtoIn) {
         Set<FishingMethod> fishingMethodSet = new HashSet<>();
         for (Long methodId : lakeDtoIn.getMethods()) {
             FishingMethod fishingMethod = methodRepos.findById(methodId)
                     .orElseThrow(() -> new NotFoundException("Không tìm thấy loại hình câu!"));
             fishingMethodSet.add(fishingMethod);
         }
-        lake.setFishingMethodSet(fishingMethodSet);
-        lakeRepos.save(lake);
-        return new ResponseTextDtoOut("Chỉnh sửa thông tin hồ câu thành công!");
+        return fishingMethodSet;
+//        lake.setFishingMethodSet(fishingMethodSet);
+//        lakeRepos.save(lake);
     }
 
     private void checkValidFishInLakeList(LakeDtoIn lakeDtoIn) {
@@ -206,12 +205,8 @@ public class LakeService {
         FishingLocation location = fishingLocationRepos.findById(locationId)
                 .orElseThrow(() -> new NotFoundException("Không tìm thấy khu hồ!"));
         List<LakeWithFishInLakeDtoOut> output = new ArrayList<>();
-//        List<Lake> lakeList = lakeRepos.findByFishingLocationId(locationId);
-//        for (Lake lake : lakeList) {
         for (Lake lake : location.getLakeList()) {
             List<FishDtoOut> fishDtoOutList = new ArrayList<>();
-//            List<FishInLake> fishInLakeList = fishInLakeRepos.findByLakeId(lake.getId());
-//            for (FishInLake fishInLake: fishInLakeList){
             for (FishInLake fishInLake : lake.getFishInLakeList()) {
                 FishDtoOut fishDtoOut = FishDtoOut.builder()
                         .id(fishInLake.getId())

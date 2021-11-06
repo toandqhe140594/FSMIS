@@ -13,6 +13,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -26,7 +27,7 @@ public class GlobalAdvice {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     ResponseTextDtoOut globalExceptionHandler(Exception ex) {
         ex.printStackTrace();
-        return new ResponseTextDtoOut(ex.getMessage());
+        return new ResponseTextDtoOut("Server gặp lỗi không xác định rùi onii-chan :<< báo back-end để xử lý nhé :<<");
     }
 
     @ResponseBody
@@ -81,19 +82,11 @@ public class GlobalAdvice {
     }
 
     @ResponseBody
-    @ExceptionHandler(IllegalArgumentException.class)
+    @ExceptionHandler({MethodArgumentTypeMismatchException.class, MissingServletRequestParameterException.class, IllegalArgumentException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    ResponseTextDtoOut illegalArgumentExceptionHandler(IllegalArgumentException ex) {
+    ResponseTextDtoOut methodArgumentTypeMismatchExceptionHandler(Exception ex) {
         ex.printStackTrace();
-        return new ResponseTextDtoOut(ex.getMessage());
-    }
-
-    @ResponseBody
-    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    ResponseTextDtoOut methodArgumentTypeMismatchExceptionHandler(MethodArgumentTypeMismatchException ex) {
-        ex.printStackTrace();
-        return new ResponseTextDtoOut("Tham số truyền vào sai định dạng");
+        return new ResponseTextDtoOut("Tham số truyền vào thiếu/sai định dạng");
     }
 
     @ResponseBody
@@ -115,7 +108,7 @@ public class GlobalAdvice {
     @ResponseBody
     @ExceptionHandler({ExpiredJwtException.class, MalformedJwtException.class})
     @ResponseStatus(HttpStatus.FORBIDDEN)
-    ResponseTextDtoOut jwtExceptionHandler(HttpMessageNotReadableException ex) {
+    ResponseTextDtoOut jwtExceptionHandler(Exception ex) {
         ex.printStackTrace();
         return new ResponseTextDtoOut("Lỗi jwt");
     }

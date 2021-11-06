@@ -1,9 +1,6 @@
 package fpt.g31.fsmis.service;
 
-import fpt.g31.fsmis.dto.output.CheckInHistoryPersonalDtoOut;
-import fpt.g31.fsmis.dto.output.PaginationDtoOut;
-import fpt.g31.fsmis.dto.output.ResponseTextDtoOut;
-import fpt.g31.fsmis.dto.output.UserCheckInDtoOut;
+import fpt.g31.fsmis.dto.output.*;
 import fpt.g31.fsmis.entity.CheckIn;
 import fpt.g31.fsmis.entity.FishingLocation;
 import fpt.g31.fsmis.entity.User;
@@ -64,10 +61,10 @@ public class CheckInService {
             throw new ValidationException("Địa chỉ không tồn tại");
         }
         User user = jwtFilter.getUserFromToken(request);
-        Page<CheckIn> checkInList = checkInRepos.findFirstByUserIdOrderByCheckInTimeDesc(user.getId(), PageRequest.of(pageNo - 1, 10));
-        List<CheckInHistoryPersonalDtoOut> output = new ArrayList<>();
+        Page<CheckIn> checkInList = checkInRepos.findByUserIdOrderByCheckInTimeDesc(user.getId(), PageRequest.of(pageNo - 1, 10));
+        List<PersonalCheckInHistoryDtoOut> output = new ArrayList<>();
         for (CheckIn checkIn : checkInList) {
-            CheckInHistoryPersonalDtoOut item = CheckInHistoryPersonalDtoOut.builder()
+            PersonalCheckInHistoryDtoOut item = PersonalCheckInHistoryDtoOut.builder()
                     .id(checkIn.getId())
                     .locationId(checkIn.getFishingLocation().getId())
                     .locationName(checkIn.getFishingLocation().getName())
@@ -106,6 +103,45 @@ public class CheckInService {
         if (!fishingLocationRepos.existsById(locationId)) {
             throw new NotFoundException("Không tìm thấy khu hồ!");
         }
-        return new ResponseTextDtoOut(checkInRepos.existsByUserIdAndFishingLocationIdAndCheckOutTimeIsNull(user.getId(), locationId)?"true":"false");
+        return new ResponseTextDtoOut(checkInRepos.existsByUserIdAndFishingLocationId(user.getId(), locationId) ? "true" : "false");
+    }
+
+    public PaginationDtoOut getLocationCheckInHistory(Long locationId, HttpServletRequest request, Integer pageNo, String beginDateString, String endDateString) {
+        if (pageNo <= 0) {
+            throw new ValidationException("Số trang không hợp lệ");
+        }
+        User user = jwtFilter.getUserFromToken(request);
+        FishingLocation location = fishingLocationRepos.findById(locationId)
+                .orElseThrow(() -> new NotFoundException("Không tìm thấy khu hồ"));
+        if (!location.getOwner().equals(user)
+                && !location.getEmployeeList().contains(user)) {
+            throw new ValidationException("Không có quyền truy cập");
+        }
+        LocalDateTime beginDate = beginDateString == null ?
+                LocalDateTime.of(1970, 1, 1, 0, 0)
+                : ServiceUtils.convertStringToDate(beginDateString);
+        LocalDateTime endDate = endDateString == null ?
+                LocalDateTime.now()
+                : ServiceUtils.convertStringToDate(endDateString);
+        Page<CheckIn> checkInList = checkInRepos.findByFishingLocationIdAndCheckInTimeBetweenOrderByCheckInTimeDesc
+                (locationId, beginDate, endDate, PageRequest.of(pageNo - 1, 10));
+        List<LocationCheckInHistoryDtoOut> output = new ArrayList<>();
+        for (CheckIn checkIn : checkInList) {
+            LocationCheckInHistoryDtoOut item = LocationCheckInHistoryDtoOut.builder()
+                    .id(checkIn.getId())
+                    .name(checkIn.getUser().getFullName())
+                    .avatar(checkIn.getUser().getAvatarUrl())
+                    .checkInTime(ServiceUtils.convertDateToString(checkIn.getCheckInTime()))
+                    .checkOutTime(checkIn.getCheckOutTime() == null
+                            ? "Bạn chưa check-out"
+                            : ServiceUtils.convertDateToString(checkIn.getCheckOutTime()))
+                    .build();
+            output.add(item);
+        }
+        return PaginationDtoOut.builder()
+                .totalPage(checkInList.getTotalPages())
+                .pageNo(pageNo)
+                .items(output)
+                .build();
     }
 }
