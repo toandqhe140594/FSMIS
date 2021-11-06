@@ -6,18 +6,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@Builder
-@NoArgsConstructor
 @AllArgsConstructor
-public class CheckInHistoryPersonalDtoOut {
-
+@NoArgsConstructor
+@Builder
+public class LocationCheckInHistoryDtoOut {
     private Long id;
-
-    private Long locationId;
-
-    private String locationName;
-
+    private String name;
+    private String avatar;
     private String checkInTime;
-
     private String checkOutTime;
 }

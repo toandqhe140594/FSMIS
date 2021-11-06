@@ -126,6 +126,15 @@ public class FishingLocationController {
         return new ResponseEntity<>(checkInService.isCheckedIn(locationId, request), HttpStatus.OK);
     }
 
+    @GetMapping("/{locationId}/checkin/history")
+    public ResponseEntity<Object> getLocationCheckInHistory(@PathVariable Long locationId,
+                                                            HttpServletRequest request,
+                                                            @RequestParam(required = false, defaultValue = "1") Integer pageNo,
+                                                            @RequestParam(required = false) String startDate,
+                                                            @RequestParam(required = false) String endDate) {
+        return new ResponseEntity<>(checkInService.getLocationCheckInHistory(locationId, request, pageNo, startDate, endDate), HttpStatus.OK);
+    }
+
     // CHECK-OUT
     @PostMapping("/checkout")
     public ResponseEntity<Object> checkOut(HttpServletRequest request) {
