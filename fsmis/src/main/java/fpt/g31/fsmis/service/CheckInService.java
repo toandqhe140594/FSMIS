@@ -1,5 +1,6 @@
 package fpt.g31.fsmis.service;
 
+import fpt.g31.fsmis.dto.input.CheckInDtoIn;
 import fpt.g31.fsmis.dto.output.*;
 import fpt.g31.fsmis.entity.CheckIn;
 import fpt.g31.fsmis.entity.FishingLocation;
@@ -28,8 +29,8 @@ public class CheckInService {
     private final FishingLocationRepos fishingLocationRepos;
     private final JwtFilter jwtFilter;
 
-    public UserCheckInDtoOut checkIn(String qrString, Long fishingLocationId) {
-        User user = userRepos.findByQrString(qrString)
+    public UserCheckInDtoOut checkIn(CheckInDtoIn checkInDtoIn, Long fishingLocationId) {
+        User user = userRepos.findByQrString(checkInDtoIn.getQr())
                 .orElseThrow(() -> new NotFoundException("Không tìm thấy tài khoản!"));
         if (!user.isAvailable()) {
             throw new ValidationException("Không được check-in tại điểm khác khi đang câu!");
