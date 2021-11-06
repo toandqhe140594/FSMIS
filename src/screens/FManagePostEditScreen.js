@@ -17,6 +17,7 @@ import SelectComponent from "../components/common/SelectComponent";
 import TextAreaComponent from "../components/common/TextAreaComponent";
 import HeaderTab from "../components/HeaderTab";
 import { ROUTE_NAMES } from "../constants";
+import { showAlertBox } from "../utilities";
 
 const validationSchema = yup.object().shape({
   postType: yup.number().default(1),
@@ -99,6 +100,7 @@ const PostEditScreen = () => {
       postType: typePost.type,
       url: attachment.base64,
     });
+    return showAlertBox("Gửi thành công", "Thông tin thay đổi gửi thành công");
   };
 
   const updateImageArray = (id) => {
