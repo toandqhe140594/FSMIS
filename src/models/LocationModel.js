@@ -40,28 +40,11 @@ const model = {
   setCurrentId: action((state, payload) => {
     state.currentId = payload;
   }),
-  setLocationReviewScore: action((state, payload) => {
-    state.locationReviewScore = payload;
-  }),
 
   setCatchReportDetail: action((state, payload) => {
     state.catchReportDetail = payload;
   }),
 
-  setPersonalReview: action((state, payload) => {
-    state.personalReview = payload;
-  }),
-  setLocationReviewList: action((state, payload) => {
-    if (payload.status === "Overwrite") state.locationReviewList = payload.data;
-    else
-      state.locationReviewList = state.locationReviewList.concat(payload.data);
-  }),
-  setTotalReviewPage: action((state, payload) => {
-    state.totalReviewPage = payload < 1 ? 1 : payload;
-  }),
-  resetPersonalReview: action((state) => {
-    state.personalReview = { ...initialPersonalReviewShape };
-  }),
   setLocationPostPageNumber: action((state, payload) => {
     state.locationPostPageNumber = payload;
   }),
@@ -88,12 +71,58 @@ const model = {
   setTotalCatchPage: action((state, payload) => {
     state.totalCatchPage = payload < 1 ? 1 : payload;
   }),
+  // START OF REVIEW RELATED STUFF
+
+  /**
+   * Set data for location review score
+   * @param {Object} [payload] params pass to function
+   * @param {Number} [payload.score] average score of location
+   * @param {Number} [payload.totalReviews] total number of reviews
+   */
+  setLocationReviewScore: action((state, payload) => {
+    state.locationReviewScore = payload;
+  }),
+  /**
+   * Set data for personal review of current user in fishing location
+   */
+  setPersonalReview: action((state, payload) => {
+    state.personalReview = payload;
+  }),
+  /**
+   * Set data for location review list
+   * @param {Object} [payload] params pass to function
+   * @param {String} [payload.status] property indicates that overwrite the list or append new data
+   */
+  setLocationReviewList: action((state, payload) => {
+    if (payload.status === "Overwrite") state.locationReviewList = payload.data;
+    else
+      state.locationReviewList = state.locationReviewList.concat(payload.data);
+  }),
+  /**
+   * Set total review page
+   * Total review page can not be less than 1
+   */
+  setTotalReviewPage: action((state, payload) => {
+    state.totalReviewPage = payload < 1 ? 1 : payload;
+  }),
+  /**
+   * Reset personal review data
+   */
+  resetPersonalReview: action((state) => {
+    state.personalReview = { ...initialPersonalReviewShape };
+  }),
+  /**
+   * Get location review score
+   */
   getLocationReviewScore: thunk(async (actions, payload, { getState }) => {
     const { data } = await http.get(
       `location/${getState().currentId}/${API_URL.LOCATION_REVIEW_SCORE}`,
     );
     actions.setLocationReviewScore(data);
   }),
+  /**
+   * Get personal review data by call API
+   */
   getPersonalReview: thunk(async (actions, payload, { getState }) => {
     const { data } = await http.get(
       `location/${getState().currentId}/${API_URL.LOCATION_REVIEW_PERSONAL}`,
@@ -101,6 +130,12 @@ const model = {
     if (data.id) actions.setPersonalReview(data);
     else actions.setPersonalReview({});
   }),
+  /**
+   * Get list of reviews by page
+   * @param {Object} payload - params pass to function
+   * @param {number} payload.pageNo - current page value
+   * @param {string} payload.filter - filter type of list
+   */
   getLocationReviewListByPage: thunk(async (actions, payload, { getState }) => {
     const { pageNo, filter } = payload;
     const { currentId, totalReviewPage } = getState();
@@ -115,6 +150,12 @@ const model = {
       status: pageNo === 1 ? "Overwrite" : "Append",
     });
   }),
+  /**
+   * Vote a review
+   * @param {Object} payload - params pass to function
+   * @param {number} payload.reviewId - id of the review that need to be vote
+   * @param {number} payload.vote - type of vote (0 or 1)
+   */
   voteReview: thunk(async (actions, payload, { getState }) => {
     const { reviewId, vote } = payload;
     const { currentId } = getState();
@@ -126,7 +167,9 @@ const model = {
       },
     );
     const { userVoteType, upvote, downvote } = data;
+    // If vote success
     if (status === 200)
+      // Reset vote count of the voted review
       actions.resetVoteOfReview({
         id: reviewId,
         userVoteType,
@@ -134,6 +177,14 @@ const model = {
         downvote,
       });
   }),
+  /**
+   * Reset vote count of a review in review list
+   * @param {Object} payload - new data of the review
+   * @param {number} payload.id - id of the review
+   * @param {boolean} payload.userVoteType - new vote type of the review
+   * @param {number} payload.upvote - new upvote count of the review
+   * @param {number} payload.downvote - new downvote count of the review
+   */
   resetVoteOfReview: action((state, payload) => {
     const { id, userVoteType, upvote, downvote } = payload;
     const review =
@@ -144,6 +195,9 @@ const model = {
     review.upvote = upvote;
     review.downvote = downvote;
   }),
+  /**
+   * Delete personal review
+   */
   deletePersonalReview: thunk(async (actions, payload, { getState }) => {
     const { currentId } = getState();
     const { status } = await http.delete(
@@ -151,6 +205,12 @@ const model = {
     );
     if (status === 200) actions.setPersonalReview({ id: null });
   }),
+  /**
+   * Post new review
+   * @param {Object} payload params pass to function
+   * @param {string} payload.description description of the vote
+   * @param {number} payload.score score for the vote
+   */
   postReview: thunk(async (actions, payload, { getState }) => {
     const { description, score } = payload;
     const { currentId } = getState();
@@ -164,6 +224,8 @@ const model = {
     if (status === 200) actions.setPersonalReview({ ...data, id: null });
     return status;
   }),
+
+  // END OF REVIEW RELATED STUFF
 
   getLocationOverview: thunk(async (actions, payload, { getState }) => {
     const { data } = await http.get(`location/${getState().currentId}`);
