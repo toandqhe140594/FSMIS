@@ -531,6 +531,25 @@ const model = {
     }
   }),
   // DucHM ADD_END 5/11/2021
+
+  // DucHM ADD_START 6/11/2021
+  /**
+   * Update lake detail (methods, dimensions, name, price)
+   * @param {Number} [payload.id] lake id
+   * @param {Object} [payload.updateData] updated information
+   * @param {Function} [payload.setUpdateStatus] the function set status
+   */
+  editLakeDetail: thunk(async (actions, payload, { getState }) => {
+    const { udpateData, setUpdateStatus, id } = payload;
+    const { currentId } = getState();
+    try {
+      await http.put(`location/${currentId}/lake/edit/${id}`, udpateData);
+      setUpdateStatus("SUCCESS");
+    } catch (error) {
+      setUpdateStatus("FAILED");
+    }
+  }),
+  // DucHM ADD_END 6/11/2021
   // END OF FISHING LOCATION MANAGEMENT RELATED SECTION
 
   // START UNRESOLVED CATCH REPORT RELATED SECTION
