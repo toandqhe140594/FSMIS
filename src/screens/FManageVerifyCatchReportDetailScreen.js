@@ -132,11 +132,11 @@ const AnglerCatchReportDetailScreen = () => {
           </VStack>
         </Box>
       </ScrollView>
-      <HStack justifyContent="space-around" opacity="100">
-        <Button w="49%" borderRadius="0" colorScheme="danger" size="lg">
+      <HStack justifyContent="space-around" opacity="100" mb={3}>
+        <Button w="40%" borderRadius="0" colorScheme="danger" size="lg">
           Từ chối
         </Button>
-        <Button w="49%" borderRadius="0" colorScheme="tertiary" size="lg">
+        <Button w="40%" borderRadius="0" colorScheme="tertiary" size="lg">
           Xác nhận
         </Button>
       </HStack>

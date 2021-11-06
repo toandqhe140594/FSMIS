@@ -585,11 +585,11 @@ const model = {
         unresolvedCatchReportCurrentPage: currentPage,
         unresolvedCatchReportTotalPage: totalPage,
       } = getState();
-      // If current page greater than total page or smaller than 1 then return
-      if (currentPage > totalPage || currentPage < 1) return;
       let pageNo = 1;
       // If this function is called to load more data to list
       if (status === "APPEND") {
+        // If current page greater than total page or smaller than 1 then return
+        if (currentPage > totalPage || currentPage < 1) return;
         pageNo = currentPage;
         actions.setUnresolvedCatchReportCurrentPage(currentPage + 1);
       } else {
@@ -599,7 +599,7 @@ const model = {
       }
       try {
         const { data, status: httpResponseStatus } = await http.get(
-          `${API_URL.LOCATION_CLOSE}/${currentId}`,
+          `location/${currentId}/${API_URL.LOCATION_CATCH_REPORT_UNRESOLVED}`,
           {
             params: { pageNo },
           },

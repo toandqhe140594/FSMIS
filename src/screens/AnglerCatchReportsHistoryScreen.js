@@ -62,16 +62,27 @@ const AnglerCatchReportsHistoryScreen = () => {
                       subText={item.locationName}
                       image={item.avatar}
                     />
-                    <Box mt={2}>
-                      <Text italic>{item.description}</Text>
+                    <Box>
+                      <Text numberOfLines={1} isTruncated>
+                        {item.time}
+                      </Text>
+                      <Text numberOfLines={1} isTruncated>
+                        <Text bold>Đã câu được: </Text>
+                        {item.fishes.join(", ").toString()}
+                      </Text>
+                    </Box>
+                    <Box mt={2} ml={3}>
+                      <Text italic numberOfLines={2} isTruncated>
+                        {item.description}
+                      </Text>
                     </Box>
                   </Box>
                 </PressableCustomCard>
               </Box>
             )}
-            keyExtractor={(item, index) => index.toString()}
+            keyExtractor={(item) => item.id.toString()}
             onEndReached={() => {
-              getCatchReportHistory(0);
+              getCatchReportHistory();
             }}
           />
         )}

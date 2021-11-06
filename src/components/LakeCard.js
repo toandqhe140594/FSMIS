@@ -3,13 +3,16 @@ import { Box, Image, Pressable, Text } from "native-base";
 import PropTypes from "prop-types";
 import React from "react";
 
-import { goToLakeDetailScreen, goToLakeEditScreen } from "../navigations";
+import {
+  goToFManageLakeProfileScreen,
+  goToLakeDetailScreen,
+} from "../navigations";
 
 const LakeCard = ({ id, image, listOfFishes, name, isManaged }) => {
   const navigation = useNavigation();
 
   const onPress = () => {
-    if (isManaged) goToLakeEditScreen(navigation, { id });
+    if (isManaged) goToFManageLakeProfileScreen(navigation, { id });
     else goToLakeDetailScreen(navigation, { id });
   };
 
