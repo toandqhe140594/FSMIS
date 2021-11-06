@@ -48,16 +48,6 @@ MenuScreen.propTypes = {
 };
 MenuScreen.defaultProps = {
   menuTitle: null,
-  menuListItem: [
-    {
-      id: 1,
-      title: "Appointments",
-      icon: "av-timer",
-    },
-    {
-      id: 2,
-      title: "Trips",
-    },
-  ],
+  menuListItem: [],
 };
 export default MenuScreen;
