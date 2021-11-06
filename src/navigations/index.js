@@ -103,6 +103,24 @@ const goToFManageVerifyCheckinScreen = (navigation, params) => {
   });
 };
 
+const goToFManageLakeProfileScreen = (navigation, params) => {
+  navigation.navigate(ROUTE_NAMES.FMANAGE_LAKE_PROFILE, {
+    ...params,
+  });
+};
+
+const goToFManageLakeAddNewScreen = (navigation, params) => {
+  navigation.navigate(ROUTE_NAMES.FMANAGE_LAKE_ADD, {
+    ...params,
+  });
+};
+
+const goToFManageLakeEditScreen = (navigation, params) => {
+  navigation.navigate(ROUTE_NAMES.FMANAGE_LAKE_EDIT, {
+    ...params,
+  });
+};
+
 const goToPostEditScreen = (navigation, params) => {
   navigation.navigate(ROUTE_NAMES.FMANAGE_POST_EDIT, { ...params });
 };
@@ -180,6 +198,9 @@ export {
   goToFManageAddNewScreen,
   goToFManageAddStaffScreen,
   goToFManageEditProfileScreen,
+  goToFManageLakeAddNewScreen,
+  goToFManageLakeEditScreen,
+  goToFManageLakeProfileScreen,
   goToFManageLocationPickScreen,
   goToFManageMainScreen,
   goToFManageSelectScreen,
