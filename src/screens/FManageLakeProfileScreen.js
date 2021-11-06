@@ -8,7 +8,7 @@ import { Button, Card, Text } from "react-native-elements";
 
 import HeaderTab from "../components/HeaderTab";
 import colors from "../config/colors";
-import { goToLakeEditScreen } from "../navigations";
+import { goToFManageLakeEditScreen } from "../navigations";
 import { showAlertAbsoluteBox } from "../utilities";
 
 const CustomText = ({ title, text, mt }) => {
@@ -105,7 +105,7 @@ const FManageEmployeeManagementScreen = () => {
             buttonStyle={{ backgroundColor: "#2089DC" }}
             containerStyle={{ width: "40%" }}
             onPress={() => {
-              goToLakeEditScreen(navigation, { id: lakeDetail.id });
+              goToFManageLakeEditScreen(navigation, { id: lakeDetail.id });
             }}
           />
           <Button title="Thêm loại cá" containerStyle={{ width: "40%" }} />
