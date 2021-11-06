@@ -3,12 +3,13 @@ import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, Button, Center } from "native-base";
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Alert, FlatList } from "react-native";
+import { ActivityIndicator, FlatList } from "react-native";
 import { Avatar, Divider, SearchBar, Text } from "react-native-elements";
 
 import HeaderTab from "../components/HeaderTab";
 import FishModel from "../models/FishModel";
 import { goToAdminFishEditScreen } from "../navigations";
+import { showAlertConfirmBox } from "../utilities";
 import store from "../utilities/Store";
 
 store.addModel("FishModel", FishModel);
@@ -19,23 +20,14 @@ const FishManagementCard = ({ id, name, image, setIsLoading, getFishList }) => {
   const deleteFish = useStoreActions((actions) => actions.FishModel.deleteFish);
 
   const showDeleteAlert = () => {
-    Alert.alert(
+    showAlertConfirmBox(
       "Bạn muốn xóa loài cá này?",
       `"${name}" sẽ bị xóa vĩnh viễn. Bạn không thể hoàn tác hành động này`,
-      [
-        {
-          text: "Quay lại",
-          style: "cancel",
-        },
-        {
-          text: "Xác nhận",
-          onPress: () => {
-            deleteFish({ id });
-            setIsLoading(true);
-            getFishList();
-          },
-        },
-      ],
+      () => {
+        deleteFish({ id });
+        setIsLoading(true);
+        getFishList();
+      },
     );
   };
 
