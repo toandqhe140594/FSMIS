@@ -19,36 +19,32 @@ import {
   View,
 } from "react-native";
 import { Avatar } from "react-native-elements";
-import * as yup from "yup";
 
 import InputComponent from "../components/common/InputComponent";
 import SelectComponent from "../components/common/SelectComponent";
 import HeaderTab from "../components/HeaderTab";
 import moment from "../config/moment";
-import { ROUTE_NAMES } from "../constants";
+import { ROUTE_NAMES, SCHEMA } from "../constants";
 import AddressModel from "../models/AddressModel";
+import ProfileModel from "../models/ProfileModel";
 import { goToMediaSelectScreen } from "../navigations";
+import { showAlertBox } from "../utilities";
 import store from "../utilities/Store";
 
 store.addModel("AddressModel", AddressModel);
+store.addModel("ProfileModel", ProfileModel);
+
+const genderList = [
+  { id: true, name: "Nam" },
+  { id: false, name: "Nữ" },
+];
 
 const EditProfileScreen = () => {
   const [date, setDate] = useState(null);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [formattedDate, setFormattedDate] = useState("");
   const [avatarImage, setAvatarImage] = useState(undefined);
-  const validationSchema = useMemo(
-    () =>
-      yup.object().shape({
-        aName: yup.string().required("Họ và tên không thể bỏ trống"),
-        aGender: yup.bool(),
-        aAddress: yup.string(),
-        aProvinceId: yup.number(),
-        aDistrictId: yup.number(),
-        aWardId: yup.number(),
-      }),
-    [],
-  );
+  const [updateStatus, setUpdateStatus] = useState("");
   const navigation = useNavigation();
   const route = useRoute();
   const userInfo = useStoreState((state) => state.ProfileModel.userInfo);
@@ -61,25 +57,28 @@ const EditProfileScreen = () => {
     getDisctrictByProvinceId,
     getWardByDistrictId,
   } = useStoreActions((actions) => actions.AddressModel);
+  const { editPersonalInformation } = useStoreActions(
+    (actions) => actions.ProfileModel,
+  );
   const methods = useForm({
     // avoid change mode and reValidationMode to onChange to save re-render
     mode: "onSubmit",
     reValidateMode: "onSbumit",
     defaultValues: {
-      aName: userInfo.fullName,
-      aGender: userInfo.gender,
-      aAddress: userInfo.address,
-      aProvinceId: userInfo.addressFromWard.provinceId,
-      aDistrictId: userInfo.addressFromWard.districtId,
-      aWardId: userInfo.addressFromWard.wardId,
+      name: userInfo.fullName,
+      gender: userInfo.gender,
+      address: userInfo.address,
+      provinceId: userInfo.addressFromWard.provinceId,
+      districtId: userInfo.addressFromWard.districtId,
+      wardId: userInfo.addressFromWard.wardId,
     },
-    resolver: yupResolver(validationSchema),
+    resolver: yupResolver(SCHEMA.ANGLER_PROFILE_FORM),
   });
   const { handleSubmit, getValues } = methods;
   const generateAddressDropdown = useCallback((name, value) => {
-    if (name === "aProvinceId") {
+    if (name === "provinceId") {
       getDisctrictByProvinceId({ id: value });
-    } else if (name === "aDistrictId") {
+    } else if (name === "districtId") {
       getWardByDistrictId({ id: value });
     }
   }, []);
@@ -88,13 +87,6 @@ const EditProfileScreen = () => {
     setShowDatePicker(false);
     setDate(currentDate);
   };
-  const genderList = useMemo(
-    () => [
-      { id: true, name: "Nam" },
-      { id: false, name: "Nữ" },
-    ],
-    [],
-  );
   /**
    * Call an alert box to reset avatar image back to default avatar
    */
@@ -120,7 +112,9 @@ const EditProfileScreen = () => {
   };
 
   const onSubmit = (data) => {
-    console.log(data); // Test submit
+    // Did not have null or empty validation for avatarImage and formattedDate yet
+    const updateData = { ...data, avatarUrl: avatarImage, dob: formattedDate };
+    editPersonalInformation({ updateData, setUpdateStatus });
   };
   /**
    * Run first time when the screen inits
@@ -130,8 +124,8 @@ const EditProfileScreen = () => {
    */
   useEffect(() => {
     getAllProvince();
-    getDisctrictByProvinceId({ id: getValues("aProvinceId") });
-    getWardByDistrictId({ id: getValues("aDistrictId") });
+    getDisctrictByProvinceId({ id: getValues("provinceId") });
+    getWardByDistrictId({ id: getValues("districtId") });
     setFormattedDate(userInfo.dob.split(" ")[0]);
     setAvatarImage(userInfo.avatarUrl);
     return () => {
@@ -148,7 +142,6 @@ const EditProfileScreen = () => {
   useEffect(() => {
     if (userInfo.avatarUrl) setAvatarImage(userInfo.avatarUrl);
   }, [userInfo]);
-
   /**
    * When navigate from MediaSelectScreen back to Edit Form
    * the callback listen to route params and set
@@ -163,6 +156,11 @@ const EditProfileScreen = () => {
       }
     }, [route.params]),
   );
+  useEffect(() => {
+    if (updateStatus === "SUCCESS") {
+      showAlertBox("Thông báo", "Cập nhật thông tin cá nhân thành công!");
+    } else showAlertBox("Thông báo", "Đã xảy ra lỗi! Vui lòng thử lại sau.");
+  }, [updateStatus]);
   return (
     <KeyboardAvoidingView>
       <ScrollView nestedScrollEnabled>
@@ -211,7 +209,7 @@ const EditProfileScreen = () => {
                 placeholder="Nhập họ và tên"
                 type="text"
                 hasAsterisk
-                controllerName="aName"
+                controllerName="name"
               />
 
               {/* Date picker field */}
@@ -242,7 +240,7 @@ const EditProfileScreen = () => {
                 label="Giới tính"
                 isTitle
                 placeholder="Chọn giới tính"
-                controllerName="aGender"
+                controllerName="gender"
                 data={genderList}
               />
 
@@ -251,7 +249,7 @@ const EditProfileScreen = () => {
                 label="Địa chỉ"
                 isTitle
                 placeholder="Nhập địa chỉ thường trú"
-                controllerName="aAddress"
+                controllerName="address"
               />
 
               {/* Province select box */}
@@ -260,7 +258,7 @@ const EditProfileScreen = () => {
                 isTitle
                 placeholder="Chọn tỉnh/thành phố"
                 data={provinceList}
-                controllerName="aProvinceId"
+                controllerName="provinceId"
                 handleDataIfValChanged={generateAddressDropdown}
               />
 
@@ -270,7 +268,7 @@ const EditProfileScreen = () => {
                 isTitle
                 placeholder="Chọn quận/huyện"
                 data={districtList}
-                controllerName="aDistrictId"
+                controllerName="districtId"
                 handleDataIfValChanged={generateAddressDropdown}
               />
 
@@ -280,7 +278,7 @@ const EditProfileScreen = () => {
                 isTitle
                 placeholder="Chọn phường/xã"
                 data={wardList}
-                controllerName="aWardId"
+                controllerName="wardId"
               />
               {/* Save changes button */}
               <Button mt={2} size="lg" onPress={handleSubmit(onSubmit)}>
