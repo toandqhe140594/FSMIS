@@ -8,7 +8,7 @@ import {
 } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import { Button, Center, Icon, Input, Text, VStack } from "native-base";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import {
   Alert,
