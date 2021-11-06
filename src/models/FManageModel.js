@@ -579,13 +579,8 @@ const model = {
     const { currentId } = getState();
     try {
       const { status, data } = await http.post(
-        `checkin/${currentId}`,
+        `location/${currentId}/${API_URL.CHECKIN}`,
         qrString,
-        {
-          headers: {
-            "Content-type": "text/plain",
-          },
-        },
       );
       if (status === 200) {
         setSuccess(true);
