@@ -130,11 +130,20 @@ const model = {
   setLakeDetail: action((state, payload) => {
     state.lakeDetail = payload;
   }),
+  /**
+   * Get lake detail by id and update lakeDetail state
+   * @param {Number} [payload.id] lake id
+   * @param {Function} [payload.setIsLoading] set status when http.get finished
+   */
   getLakeDetailByLakeId: thunk(async (actions, payload, { getState }) => {
-    const { data } = await http.get(
-      `location/${getState().currentId}/lake/${payload.id}`,
-    );
-    actions.setLakeDetail(data);
+    const { id, setIsLoading } = payload;
+    try {
+      const { data } = await http.get(
+        `location/${getState().currentId}/lake/${id}`,
+      );
+      actions.setLakeDetail(data);
+      setIsLoading(false);
+    } catch (error) {}
   }),
 
   /**
