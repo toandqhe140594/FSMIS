@@ -28,7 +28,7 @@ const menuCategory = [
     id: 4,
     title: "Quản lý các loại cá",
     icon: "fish",
-    type: "material-community",
+    type: "font-awesome-5",
     route: ROUTE_NAMES.ADMIN_FISH_MANAGEMENT,
   },
   {
