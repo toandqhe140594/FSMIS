@@ -99,15 +99,12 @@ const model = {
   getDisctrictByProvinceId: thunk(async (actions, payload, { getState }) => {
     const { prevSelectedProvinceId } = getState();
     if (prevSelectedProvinceId !== payload.id) {
-      actions.resetDistrictList();
-      actions.resetWardList();
       const { data: districtData } = await http.get(
         `${API_URL.ADDRESS_PROVINCE_DISTRICT}`,
         {
           params: { provinceId: payload.id },
         },
       );
-      // Shape of data: {id: 1, name: "Hà Nội", type: "Quận/Huyện"}
       actions.setDistrictListByProvinceId({ districtData });
       actions.setPrevSelectedProvinceId({ id: payload.id });
     }
@@ -120,7 +117,6 @@ const model = {
   getWardByDistrictId: thunk(async (actions, payload, { getState }) => {
     const { prevSelectedDistrictId } = getState();
     if (prevSelectedDistrictId !== payload.id) {
-      actions.resetWardList();
       const { data: wardData } = await http.get(
         `${API_URL.ADDRESS_DISTRICT_WARD}`,
         {
