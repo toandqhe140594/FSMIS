@@ -49,7 +49,7 @@ const LakeEditProfileScreen = () => {
   const navigation = useNavigation();
   const [imageArray, setImageArray] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [visible, setVisible] = usestate(true);
+  const [visible, setVisible] = useState(true);
   const [updateStatus, setUpdateStatus] = useState("");
   const { fishingMethodList } = useStoreState(
     (state) => state.FishingMethodModel,
