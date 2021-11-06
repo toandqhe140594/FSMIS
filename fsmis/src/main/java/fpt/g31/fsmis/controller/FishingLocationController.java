@@ -1,10 +1,7 @@
 package fpt.g31.fsmis.controller;
 
 
-import fpt.g31.fsmis.dto.input.FishingLocationDtoIn;
-import fpt.g31.fsmis.dto.input.LakeDtoIn;
-import fpt.g31.fsmis.dto.input.PostDtoIn;
-import fpt.g31.fsmis.dto.input.ReviewDtoIn;
+import fpt.g31.fsmis.dto.input.*;
 import fpt.g31.fsmis.entity.FishingLocation;
 import fpt.g31.fsmis.service.*;
 import lombok.AllArgsConstructor;
@@ -117,8 +114,8 @@ public class FishingLocationController {
 
     // CHECK-IN
     @PostMapping("/{locationId}/checkin")
-    public ResponseEntity<Object> checkIn(@PathVariable Long locationId, @RequestBody String qrString) {
-        return new ResponseEntity<>(checkInService.checkIn(qrString, locationId), HttpStatus.OK);
+    public ResponseEntity<Object> checkIn(@PathVariable Long locationId, @RequestBody @Valid CheckInDtoIn checkInDtoIn) {
+        return new ResponseEntity<>(checkInService.checkIn(checkInDtoIn, locationId), HttpStatus.OK);
     }
 
     @GetMapping("/{locationId}/checkin/status")
