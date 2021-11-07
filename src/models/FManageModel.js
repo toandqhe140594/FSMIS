@@ -48,24 +48,7 @@ const model = {
   catchHistoryCurrentPage: 1,
   catchHistoryTotalPage: 1,
 
-  checkInHistoryList: [
-    {
-      id: 8,
-      name: "Dat Test",
-      locationId: 3,
-      locationName: "Hồ Câu Định Công",
-      checkInTime: "26/01/2021 06:30:00",
-      checkOutTime: "26/01/2021 11:00:00",
-    },
-    {
-      id: 7,
-      name: "Dat",
-      locationId: 3,
-      locationName: "Hồ Câu Định Công",
-      checkInTime: "25/01/2021 06:30:00",
-      checkOutTime: "26/01/2021 11:00:00",
-    },
-  ],
+  checkinHistoryList: [],
   anglerCheckinOverviewInfor: {},
 
   locationReviewScore: {
@@ -658,6 +641,9 @@ const model = {
   setCheckinHistoryList: action((state, payload) => {
     state.checkinHistoryList = state.checkinHistoryList.concat(payload);
   }),
+  rewriteCheckinHistory: action((state, payload) => {
+    state.checkinHistoryList = payload;
+  }),
   setCheckinHistoryCurrentPage: action((state, payload) => {
     state.checkinHistoryCurrentPage = payload;
   }),
@@ -665,8 +651,9 @@ const model = {
     state.checkinHistoryTotalPage = payload;
   }),
   getCheckinHistoryList: thunk(async (actions, payload, { getState }) => {
-    const { checkinHistoryCurrentPage, checkinHistoryTotalPage } = getState();
-
+    const { checkinHistoryCurrentPage, checkinHistoryTotalPage, currentId } =
+      getState();
+    // const { startDate, endDate } = payload;
     // If current page is smaller than 0 or larger than maximum page then return
     if (
       checkinHistoryCurrentPage <= 0 ||
@@ -674,13 +661,48 @@ const model = {
     )
       return;
 
-    const { data } = await http.get(`${API_URL.PERSONAL_CHECKIN}`, {
-      params: { pageNo: checkinHistoryCurrentPage },
+    const { data } = await http.get(`location/2/checkin/history`, {
+      params: checkinHistoryCurrentPage,
     });
+
     const { totalPage, items } = data;
     actions.setCheckinHistoryCurrentPage(checkinHistoryCurrentPage + 1);
     actions.setCheckinHistoryTotalPage(totalPage);
     actions.setCheckinHistoryList(items);
+  }),
+
+  getCheckinHistoryListByDate: thunk(async (actions, payload, { getState }) => {
+    const { checkinHistoryCurrentPage, checkinHistoryTotalPage, currentId } =
+      getState();
+    const { startDate, endDate } = payload;
+    // If current page is smaller than 0 or larger than maximum page then return
+    if (
+      checkinHistoryCurrentPage <= 0 ||
+      checkinHistoryCurrentPage > checkinHistoryTotalPage
+    )
+      return;
+    let endDateString = JSON.stringify(endDate);
+    endDateString = endDateString.replace(/\\/g, "");
+    endDateString = endDateString.replaceAll('"', "");
+    console.log("endDate :>> ", endDateString);
+
+    const { data } = await http.get(`location/2/checkin/history`, {
+      params: {
+        endDate: endDateString,
+        pageNo: checkinHistoryCurrentPage,
+      },
+    });
+    // console.log("data :>> ", data);
+    const { totalPage, items } = data;
+    actions.setCheckinHistoryCurrentPage(checkinHistoryCurrentPage + 1);
+    actions.setCheckinHistoryTotalPage(totalPage);
+    actions.setCheckinHistoryList(items);
+  }),
+
+  resetCheckinHistory: thunk(async (actions) => {
+    actions.setCheckinHistoryCurrentPage(1);
+    actions.setCheckinHistoryTotalPage(1);
+    actions.rewriteCheckinHistory([]);
   }),
 
   // END OF CHECKIN RELATED SECTION
