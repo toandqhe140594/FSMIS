@@ -102,6 +102,7 @@ const model = {
    */
   getDisctrictByProvinceId: thunk(async (actions, payload, { getState }) => {
     const { prevSelectedProvinceId } = getState();
+    const { wardList } = getState();
     try {
       if (prevSelectedProvinceId !== payload.id) {
         const { data: districtData } = await http.get(
@@ -110,6 +111,9 @@ const model = {
             params: { provinceId: payload.id },
           },
         );
+        if (wardList.length) {
+          actions.resetWardList();
+        }
         actions.setDistrictListByProvinceId({ districtData });
         actions.setPrevSelectedProvinceId({ id: payload.id });
       }
