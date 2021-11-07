@@ -60,6 +60,9 @@ const model = {
   setCatchReportHistory: action((state, payload) => {
     state.catchReportHistory = state.catchReportHistory.concat(payload);
   }),
+  rewriteCatchReportHistory: action((state, payload) => {
+    state.catchReportHistory = payload;
+  }),
   setCatchHistoryCurrentPage: action((state, payload) => {
     state.catchHistoryCurrentPage = payload;
   }),
@@ -68,7 +71,6 @@ const model = {
   }),
   getCatchReportHistory: thunk(async (actions, payload, { getState }) => {
     const { catchHistoryCurrentPage, catchHistoryTotalPage } = getState();
-
     // If current page is smaller than 0 or larger than maximum page then return
     if (
       catchHistoryCurrentPage <= 0 ||
@@ -84,11 +86,22 @@ const model = {
     actions.setCatchHistoryTotalPage(totalPage);
     actions.setCatchReportHistory(items);
   }),
+  /**
+   * Remove catch report history data
+   */
+  resetCatchReportHistory: thunk(async (actions) => {
+    actions.setCatchHistoryCurrentPage(1);
+    actions.setCatchHistoryTotalPage(1);
+    actions.rewriteCatchReportHistory([]);
+  }),
   // End of catch report history
 
   // Start of checkin history
   setCheckinHistoryList: action((state, payload) => {
     state.checkinHistoryList = state.checkinHistoryList.concat(payload);
+  }),
+  rewriteCheckinHistory: action((state, payload) => {
+    state.checkinHistoryList = payload;
   }),
   setCheckinHistoryCurrentPage: action((state, payload) => {
     state.checkinHistoryCurrentPage = payload;
@@ -113,6 +126,14 @@ const model = {
     actions.setCheckinHistoryCurrentPage(checkinHistoryCurrentPage + 1);
     actions.setCheckinHistoryTotalPage(totalPage);
     actions.setCheckinHistoryList(items);
+  }),
+  /**
+   * Remove catch report history data
+   */
+  resetCheckinHistory: thunk(async (actions) => {
+    actions.setCheckinHistoryCurrentPage(1);
+    actions.setCheckinHistoryTotalPage(1);
+    actions.rewriteCheckinHistory([]);
   }),
   // End of checkin history
 

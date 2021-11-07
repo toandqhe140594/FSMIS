@@ -7,18 +7,20 @@ import HeaderTab from "../components/HeaderTab";
 import PressableCustomCard from "../components/PressableCustomCard";
 
 const AnglerCheckInHistory = () => {
-  const getCheckinHistoryList = useStoreActions(
-    (actions) => actions.ProfileModel.getCheckinHistoryList,
-  );
-
   // Destructure checkinHistoryCurrentPage and checkinReportHistory list from ProfileModel
   const { checkinHistoryCurrentPage, checkinHistoryList } = useStoreState(
     (states) => states.ProfileModel,
+  );
+  const { getCheckinHistoryList, resetCheckinHistory } = useStoreActions(
+    (actions) => actions.ProfileModel,
   );
 
   useEffect(() => {
     // If the current page = 1 aka the list is empty then call api to init the list
     if (checkinHistoryCurrentPage === 1) getCheckinHistoryList();
+    return () => {
+      resetCheckinHistory(); // Clear list data when screen unmount
+    };
   }, []);
 
   return (
