@@ -155,9 +155,9 @@ const CheckinScreen = () => {
     if (stateCheckIn === false) {
       showToastMessage("Bạn chưa checkin ở hồ câu");
       setCheckin(false);
-      setCheckInState(null);
     }
     if (stateCheckIn === true) setCheckin(true);
+    setCheckInState(null);
   }, [stateCheckIn]);
 
   return (
