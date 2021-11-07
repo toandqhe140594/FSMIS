@@ -71,6 +71,27 @@ export const FMANAGE_LAKE_FORM = yup.object().shape({
     }),
   ),
 });
+
+export const FMANAGE_LAKE_FISH_FORM = yup.object().shape({
+  fishSpeciesId: yup.number().required("Trường này không được để trống"),
+  quantity: yup
+    .number()
+    .typeError("Trường này chỉ được nhập số")
+    .required("Số cá được không được để trống"),
+  totalWeight: yup
+    .number()
+    .typeError("Trường này chỉ được nhập số")
+    .required("Cân nặng không được để trống"),
+  minWeight: yup
+    .number()
+    .typeError("Trường này chỉ được nhập số")
+    .required("Biểu nhỏ không được để trống"),
+  maxWeight: yup
+    .number()
+    .typeError("Trường này chỉ được nhập số")
+    .required("Biểu lớn không được để trống"),
+});
+
 export const FMANAGE_PROFILE_FORM = yup.object().shape({
   name: yup.string().required("Tên địa điểm không thể bỏ trống"),
   phone: yup
