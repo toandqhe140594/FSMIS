@@ -15,17 +15,16 @@ import {
   Text,
   VStack,
 } from "native-base";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import { ScrollView, StyleSheet } from "react-native";
-import * as yup from "yup";
 
 import CatchReportSection from "../components/CatchReport/CatchReportSection";
 import MultiImageSection from "../components/common/MultiImageSection";
 import SelectComponent from "../components/common/SelectComponent";
 import TextAreaComponent from "../components/common/TextAreaComponent";
 import HeaderTab from "../components/HeaderTab";
-import { ROUTE_NAMES } from "../constants";
+import { ROUTE_NAMES, SCHEMA } from "../constants";
 import { showAlertAbsoluteBox, showAlertBox } from "../utilities";
 
 const styles = StyleSheet.create({
@@ -51,43 +50,11 @@ const AnglerCatchReportScreen = () => {
   );
   const listLake = useStoreState((states) => states.CheckInModel.lakeList);
   const listFishModel = useStoreState((states) => states.CheckInModel.fishList);
-  const validationSchema = useMemo(
-    () =>
-      yup.object().shape({
-        aCaption: yup
-          .string()
-          .required("Hãy viết suy nghĩ của bạn về ngày câu"),
-        aLakeType: yup
-          .number()
-          .typeError("Trường này chỉ được nhập số")
-          .required("Loại hồ không được để trống"),
-        isPublic: yup.bool(),
-        isReleased: yup.bool(),
-        cards: yup.array().of(
-          yup.object().shape({
-            fishType: yup
-              .number()
-              .typeError("Trường này chỉ được nhập số")
-              .required("Loại cá không được để trống"),
-            catches: yup
-              .number()
-              .typeError("Trường này chỉ được nhập số")
-              .required("Số cá bắt được không được để trống"),
-            totalWeight: yup
-              .number()
-              .typeError("Trường này chỉ được nhập số")
-              .required("Tổng cân nặng cá không được để trống"),
-            isReleased: yup.bool().default(false),
-          }),
-        ),
-      }),
-    [],
-  );
   const methods = useForm({
     mode: "onSubmit",
     reValidateMode: "onSubmit",
     defaultValues: { isPublic: false },
-    resolver: yupResolver(validationSchema),
+    resolver: yupResolver(SCHEMA.ANGLER_CATCH_REPORT_FORM),
   });
 
   const { control, handleSubmit, watch } = methods;
