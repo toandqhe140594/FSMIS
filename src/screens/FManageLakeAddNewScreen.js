@@ -26,15 +26,7 @@ import HeaderTab from "../components/HeaderTab";
 import CheckboxSelectorComponent from "../components/LakeEditProfile/CheckboxSelectorComponent";
 import FishCardSection from "../components/LakeEditProfile/FishCardSection";
 import { ROUTE_NAMES, SCHEMA } from "../constants";
-import FishingMethodModel from "../models/FishingMethodModel";
-import FishModel from "../models/FishModel";
-import FManageModel from "../models/FManageModel";
 import { showAlertAbsoluteBox, showAlertBox } from "../utilities";
-import store from "../utilities/Store";
-
-store.addModel("FManageModel", FManageModel);
-store.addModel("FishingMethodModel", FishingMethodModel);
-store.addModel("FishModel", FishModel);
 
 const styles = StyleSheet.create({
   sectionWrapper: {
