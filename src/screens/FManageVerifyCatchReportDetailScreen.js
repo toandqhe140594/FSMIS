@@ -1,6 +1,15 @@
+import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
-import { Box, Button, HStack, ScrollView, Text, VStack } from "native-base";
+import {
+  Box,
+  Button,
+  HStack,
+  Icon,
+  ScrollView,
+  Text,
+  VStack,
+} from "native-base";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator } from "react-native";
 import { Image } from "react-native-elements";
@@ -15,19 +24,38 @@ const AnglerCatchReportDetailScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
 
+  let verifyTimeout = null;
+
   const catchDetails = useStoreState(
     (state) => state.ProfileModel.catchReportDetail,
   );
   const getCatchReportDetailById = useStoreActions(
     (actions) => actions.ProfileModel.getCatchReportDetailById,
   );
+  const approveCatchReport = useStoreActions(
+    (actions) => actions.FManageModel.approveCatchReport,
+  );
 
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true); // Loading state of the screen
+  const [success, setSuccess] = useState(null);
+  const [buttonLoading, setButtonLoading] = useState(false); // Loading state when call api to verify catch report
 
   const openLocationOverviewScreen = () => {
     goToFishingLocationOverviewScreen(navigation, {
       id: catchDetails.locationId,
     });
+  };
+
+  /**
+   * Verify catch report button action
+   * @param {boolean} isApprove value indicate accept or denied catch report
+   */
+  const verifyHandler = (isApprove) => {
+    setButtonLoading(true);
+    verifyTimeout = setTimeout(() => {
+      setButtonLoading(false);
+    }, 5000);
+    approveCatchReport({ id: catchDetails.id, isApprove, setSuccess });
   };
 
   useEffect(() => {
@@ -40,8 +68,22 @@ const AnglerCatchReportDetailScreen = () => {
     }
     return () => {
       clearTimeout(timeOut);
+      // If user leave screen before timeout end
+      if (verifyTimeout !== null) clearTimeout(verifyTimeout);
     };
   }, []);
+
+  useEffect(() => {
+    // If verify report false
+    if (success === false) {
+      setButtonLoading(false);
+      setSuccess(null);
+    }
+    // If verify catch report success
+    if (success === true) {
+      setButtonLoading(false);
+    }
+  }, [success]);
 
   const { avatar } = catchDetails;
 
@@ -67,6 +109,7 @@ const AnglerCatchReportDetailScreen = () => {
     <>
       <ScrollView>
         <HeaderTab name="Chi Tiết" />
+        {/* Image section */}
         {catchDetails.images && catchDetails.images.length > 0 && (
           <Swiper height="auto" loadMinimal>
             {catchDetails.images.map((imageUri, index) => (
@@ -132,13 +175,46 @@ const AnglerCatchReportDetailScreen = () => {
           </VStack>
         </Box>
       </ScrollView>
+      {/* Verify buttons */}
       <HStack justifyContent="space-around" opacity="100" mb={3}>
-        <Button w="40%" borderRadius="0" colorScheme="danger" size="lg">
-          Từ chối
-        </Button>
-        <Button w="40%" borderRadius="0" colorScheme="tertiary" size="lg">
-          Xác nhận
-        </Button>
+        {success === true ? (
+          <Button
+            disabled
+            w="100%"
+            size="lg"
+            colorScheme="tertiary"
+            endIcon={<Icon as={Ionicons} name="checkmark-sharp" size="sm" />}
+          >
+            Đã duyệt
+          </Button>
+        ) : (
+          <>
+            <Button
+              w="40%"
+              borderRadius="0"
+              colorScheme="danger"
+              size="lg"
+              isLoading={buttonLoading}
+              onPress={() => {
+                verifyHandler(false);
+              }}
+            >
+              Từ chối
+            </Button>
+            <Button
+              w="40%"
+              borderRadius="0"
+              colorScheme="teal"
+              size="lg"
+              isLoading={buttonLoading}
+              onPress={() => {
+                verifyHandler(true);
+              }}
+            >
+              Xác nhận
+            </Button>
+          </>
+        )}
       </HStack>
     </>
   );

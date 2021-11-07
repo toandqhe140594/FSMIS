@@ -110,10 +110,14 @@ PersonalReviewSection.propTypes = {
 const ReviewListRoute = () => {
   const [reviewPage, setReviewPage] = useState(1);
   const [filterType, setFilterType] = useState("newest");
-  const [isCheckin, setIsCheckin] = useState(true); // Test
 
-  const { locationReviewScore, personalReview, locationReviewList, currentId } =
-    useStoreState((states) => states.LocationModel);
+  const {
+    checkinStatus,
+    currentId,
+    locationReviewScore,
+    locationReviewList,
+    personalReview,
+  } = useStoreState((states) => states.LocationModel);
 
   const {
     getLocationReviewScore,
@@ -170,7 +174,7 @@ const ReviewListRoute = () => {
         <Text style={{ fontWeight: "bold", marginTop: 12, marginLeft: 12 }}>
           Đánh giá của bạn
         </Text>
-        {isCheckin ? (
+        {checkinStatus ? (
           <PersonalReviewSection
             personalReview={personalReview}
             currentLocationId={currentId}

@@ -294,12 +294,22 @@ const model = {
    * Set value for checkin status
    */
   setCheckinStatus: action((state, payload) => {
-    state.locationReviewScore = payload;
+    state.checkinStatus = payload;
   }),
   /**
    * Get checkin status indicating that if angler is checked in at the fishing location before
    */
-  getCheckinStatus: thunk(async () => {}),
+  getCheckinStatus: thunk(async (actions, payload, { getState }) => {
+    const { currentId } = getState();
+    try {
+      const { data } = await http.get(
+        `location/${currentId}/${API_URL.LOCATION_CHECKIN_STATUS}`,
+      );
+      actions.setCheckinStatus(data.responseText);
+    } catch (error) {
+      actions.setCheckinStatus(false);
+    }
+  }),
 
   // END OF CHECKIN STATUS RELATED STUFF
 };

@@ -3,20 +3,12 @@ import { useStoreActions, useStoreState } from "easy-peasy";
 import * as Location from "expo-location";
 import { Box } from "native-base";
 import React, { useEffect, useRef, useState } from "react";
-import { Dimensions, StyleSheet } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 
 import HeaderWithButton from "../components/HeaderWithButton";
+import styles from "../config/styles";
 import { DEFAULT_LATLNG } from "../constants";
 import { goBack } from "../navigations";
-
-const styles = StyleSheet.create({
-  map: {
-    width: Dimensions.get("window").width,
-    height: Dimensions.get("window").height,
-    flex: 1,
-  },
-});
 
 const PickLocationScreen = () => {
   const navigation = useNavigation();
