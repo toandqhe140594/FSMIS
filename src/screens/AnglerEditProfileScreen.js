@@ -114,7 +114,7 @@ const EditProfileScreen = () => {
 
   const onSubmit = (data) => {
     // Did not have null or empty validation for avatarImage and formattedDate yet
-    const updateData = { ...data, avatarUrl: avatarImage, dob: formattedDate };
+    const updateData = { ...data, avatarUrl: avatarImage, dob: date.toJSON() };
     editPersonalInformation({ updateData, setUpdateStatus });
     setIsLoading(true);
   };
