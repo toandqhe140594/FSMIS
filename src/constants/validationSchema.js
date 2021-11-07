@@ -3,7 +3,7 @@ import * as yup from "yup";
 export const ANGLER_PROFILE_FORM = yup.object().shape({
   fullName: yup.string().required("Họ và tên không thể bỏ trống"),
   gender: yup.bool(),
-  aAddress: yup.string(),
+  address: yup.string(),
   provinceId: yup.number(),
   districtId: yup.number(),
   wardId: yup.number(),
