@@ -3,49 +3,7 @@ import React from "react";
 
 import AvatarCard from "../components/AvatarCard";
 import MenuScreen from "../components/MenuScreen";
-import { ROUTE_NAMES } from "../constants";
-
-const menuCategory = [
-  {
-    id: 1,
-    title: "Quản lý các tài khoản",
-    icon: "person",
-    route: ROUTE_NAMES.ADMIN_ACCOUNT_MANAGEMENT,
-  },
-  {
-    id: 2,
-    title: "Quản lý các điểm câu",
-    icon: "place",
-    route: ROUTE_NAMES.ADMIN_LOCATION_MANAGEMENT,
-  },
-  {
-    id: 3,
-    title: "Quản lý báo cáo",
-    icon: "report",
-    route: ROUTE_NAMES.ADMIN_REPORT_MANAGEMENT,
-  },
-  {
-    id: 4,
-    title: "Quản lý các loại cá",
-    icon: "fish",
-    type: "font-awesome-5",
-    route: ROUTE_NAMES.ADMIN_FISH_MANAGEMENT,
-  },
-  {
-    id: 5,
-    title: "Quản lý các loại hình câu",
-    icon: "list",
-    route: ROUTE_NAMES.ADMIN_FISHING_METHOD_MANAGEMENT,
-  },
-];
-const logOut = [
-  {
-    id: 1,
-    title: "Đăng xuất",
-    icon: "exit-to-app",
-    route: ROUTE_NAMES.PROFILE_LOGOUT,
-  },
-];
+import { MENU_ADMIN, MENU_LOGOUT } from "../constants";
 
 const AdminMainScreen = () => {
   return (
@@ -63,8 +21,8 @@ const AdminMainScreen = () => {
       </VStack>
       <Box maxHeight="80%">
         <VStack mt="4">
-          <MenuScreen menuListItem={menuCategory} />
-          <MenuScreen menuListItem={logOut} />
+          <MenuScreen menuListItem={MENU_ADMIN} />
+          <MenuScreen menuListItem={MENU_LOGOUT} />
         </VStack>
       </Box>
     </Box>
