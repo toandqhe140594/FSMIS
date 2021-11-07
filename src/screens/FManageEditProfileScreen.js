@@ -18,11 +18,7 @@ import TextAreaComponent from "../components/common/TextAreaComponent";
 import MapOverviewBox from "../components/FLocationEditProfile/MapOverviewBox";
 import HeaderTab from "../components/HeaderTab";
 import { ROUTE_NAMES, SCHEMA } from "../constants";
-import AddressModel from "../models/AddressModel";
 import { showAlertBox } from "../utilities";
-import store from "../utilities/Store";
-
-store.addModel("AddressModel", AddressModel);
 
 const styles = StyleSheet.create({
   sectionWrapper: {

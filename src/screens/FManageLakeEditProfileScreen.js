@@ -11,7 +11,6 @@ import {
   Center,
   Divider,
   ScrollView,
-  // Stack,
   Text,
   VStack,
 } from "native-base";
@@ -26,8 +25,6 @@ import TextAreaComponent from "../components/common/TextAreaComponent";
 import HeaderTab from "../components/HeaderTab";
 import CheckboxSelectorComponent from "../components/LakeEditProfile/CheckboxSelectorComponent";
 import { ROUTE_NAMES, SCHEMA } from "../constants";
-import FishingMethodModel from "../models/FishingMethodModel";
-import FManageModel from "../models/FManageModel";
 import { goBack } from "../navigations";
 import {
   showAlertAbsoluteBox,
@@ -35,10 +32,6 @@ import {
   showAlertConfirmBox,
   showToastMessage,
 } from "../utilities";
-import store from "../utilities/Store";
-
-store.addModel("FManageModel", FManageModel);
-store.addModel("FishingMethodModel", FishingMethodModel);
 
 const styles = StyleSheet.create({
   sectionWrapper: {
