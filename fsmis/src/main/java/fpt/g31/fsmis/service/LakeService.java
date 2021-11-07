@@ -47,9 +47,19 @@ public class LakeService {
                     .lake(lake)
                     .maxWeight(fishInLakeDtoIn.getMaxWeight())
                     .minWeight(fishInLakeDtoIn.getMinWeight())
-                    .quantity(fishInLakeDtoIn.getQuantity())
-                    .totalWeight(fishInLakeDtoIn.getTotalWeight())
+//                    .quantity(fishInLakeDtoIn.getQuantity())
+//                    .totalWeight(fishInLakeDtoIn.getTotalWeight())
                     .build();
+            if (fishInLakeDtoIn.getTotalWeight() == null) {
+                fishInLake.setQuantity(fishInLakeDtoIn.getQuantity());
+                fishInLake.setTotalWeight(fishInLakeDtoIn.getQuantity() * (fishInLake.getMinWeight() + fishInLake.getMaxWeight()) / 2);
+            } else if (fishInLakeDtoIn.getQuantity() == null) {
+                fishInLake.setQuantity((int) (fishInLakeDtoIn.getTotalWeight() / ((fishInLake.getMinWeight() + fishInLake.getMaxWeight()) / 2)));
+                fishInLake.setTotalWeight(fishInLakeDtoIn.getTotalWeight());
+            } else {
+                fishInLake.setQuantity(fishInLakeDtoIn.getQuantity());
+                fishInLake.setTotalWeight(fishInLakeDtoIn.getTotalWeight());
+            }
             fishInLakeList.add(fishInLake);
         }
         lake.setFishInLakeList(fishInLakeList);
@@ -155,20 +165,6 @@ public class LakeService {
         lake.setLastEditTime(LocalDateTime.now());
         lake.setPrice(lakeEditDtoIn.getPrice());
         lake.setImageUrl(lakeEditDtoIn.getImageUrl());
-//        List<FishInLake> fishInLakeList = new ArrayList<>();
-//        for (FishInLakeDtoIn fishInLakeDtoIn : lakeDtoIn.getFishInLakeList()) {
-//            FishInLake fishInLake = FishInLake.builder()
-//                    .id(fishInLakeDtoIn.getId())
-//                    .fishSpecies(fishSpeciesRepos.getById(fishInLakeDtoIn.getFishSpeciesId()))
-//                    .lake(lake)
-//                    .maxWeight(fishInLakeDtoIn.getMaxWeight())
-//                    .minWeight(fishInLakeDtoIn.getMinWeight())
-//                    .quantity(fishInLakeDtoIn.getQuantity())
-//                    .totalWeight(fishInLakeDtoIn.getTotalWeight())
-//                    .build();
-//            fishInLakeList.add(fishInLake);
-//        }
-//        lake.setFishInLakeList(fishInLakeList);
         Set<FishingMethod> fishingMethodSet = new HashSet<>();
         for (Long methodId : lakeEditDtoIn.getMethods()) {
             FishingMethod fishingMethod = methodRepos.findById(methodId)
@@ -240,10 +236,20 @@ public class LakeService {
                 .lake(lake)
                 .maxWeight(fishInLakeDtoIn.getMaxWeight())
                 .minWeight(fishInLakeDtoIn.getMinWeight())
-                .quantity(fishInLakeDtoIn.getQuantity())
-                .totalWeight(fishInLakeDtoIn.getTotalWeight())
+//                .quantity(fishInLakeDtoIn.getQuantity())
+//                .totalWeight(fishInLakeDtoIn.getTotalWeight())
                 .active(true)
                 .build();
+        if (fishInLakeDtoIn.getTotalWeight() == null) {
+            fishInLake.setQuantity(fishInLakeDtoIn.getQuantity());
+            fishInLake.setTotalWeight(fishInLakeDtoIn.getQuantity() * (fishInLake.getMinWeight() + fishInLake.getMaxWeight()) / 2);
+        } else if (fishInLakeDtoIn.getQuantity() == null) {
+            fishInLake.setQuantity((int) (fishInLakeDtoIn.getTotalWeight() / ((fishInLake.getMinWeight() + fishInLake.getMaxWeight()) / 2)));
+            fishInLake.setTotalWeight(fishInLakeDtoIn.getTotalWeight());
+        } else {
+            fishInLake.setQuantity(fishInLakeDtoIn.getQuantity());
+            fishInLake.setTotalWeight(fishInLakeDtoIn.getTotalWeight());
+        }
         List<FishInLake> fishInLakeList = lake.getFishInLakeList();
         fishInLakeList.add(fishInLake);
         lake.setFishInLakeList(fishInLakeList);
@@ -261,5 +267,29 @@ public class LakeService {
         fishInLake.setActive(false);
         fishInLakeRepos.save(fishInLake);
         return new ResponseTextDtoOut("Xóa cá khỏi hồ thành công!");
+    }
+
+    public ResponseTextDtoOut fishStocking(Long fishInLakeId, HttpServletRequest request, Float weight, Integer quantity) {
+        if (weight == null && quantity == null) {
+            throw new ValidationException("Cần điền khối lượng hoặc số lượng");
+        }
+        FishInLake fishInLake = fishInLakeRepos.findById(fishInLakeId)
+                .orElseThrow(() -> new NotFoundException("Không tìm thấy bản ghi"));
+        User user = jwtFilter.getUserFromToken(request);
+        if (!fishInLake.getLake().getFishingLocation().getOwner().equals(user)) {
+            throw new ValidationException("Không có quyền truy cập!");
+        }
+        if (weight == null) {
+            fishInLake.setQuantity(fishInLake.getQuantity() + quantity);
+            fishInLake.setTotalWeight(fishInLake.getTotalWeight() + quantity * (fishInLake.getMinWeight() + fishInLake.getMaxWeight()) / 2);
+        } else if (quantity == null) {
+            fishInLake.setQuantity(fishInLake.getQuantity() + (int) (weight / ((fishInLake.getMinWeight() + fishInLake.getMaxWeight()) / 2)));
+            fishInLake.setTotalWeight(fishInLake.getTotalWeight() + weight);
+        } else {
+            fishInLake.setQuantity(fishInLake.getQuantity() + quantity);
+            fishInLake.setTotalWeight(fishInLake.getTotalWeight() + weight);
+        }
+        fishInLakeRepos.save(fishInLake);
+        return new ResponseTextDtoOut("Bồi cá thành công!");
     }
 }

@@ -123,7 +123,7 @@ public class CheckInService {
                 : ServiceUtils.convertStringToDate(beginDateString);
         LocalDateTime endDate = endDateString == null ?
                 LocalDateTime.now()
-                : ServiceUtils.convertStringToDate(endDateString);
+                : ServiceUtils.convertStringToDate(endDateString).plusDays(1);
         Page<CheckIn> checkInList = checkInRepos.findByFishingLocationIdAndCheckInTimeBetweenOrderByCheckInTimeDesc
                 (locationId, beginDate, endDate, PageRequest.of(pageNo - 1, 10));
         List<LocationCheckInHistoryDtoOut> output = new ArrayList<>();
