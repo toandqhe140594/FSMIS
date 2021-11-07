@@ -11,7 +11,6 @@ import { goBack } from "../navigations";
 const FManageEmployeeDetailScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
-  const { id } = route.params;
 
   const { staffManagementErrorMsg, staffDetail } = useStoreState(
     (actions) => actions.FManageModel,
@@ -66,7 +65,7 @@ const FManageEmployeeDetailScreen = () => {
   }, [deleteSuccess]);
 
   useEffect(() => {
-    getStaffDetailById({ id });
+    if (route.params) getStaffDetailById({ id: route.params.id });
     return () => {
       setStaffManagementErrorMsg("");
     };
@@ -76,14 +75,16 @@ const FManageEmployeeDetailScreen = () => {
     <>
       <HeaderTab name="Quản lý nhân viên" />
       <Center flex={1} alignItems="center">
-        <EmployeeDetailBox
-          name={staffDetail.name}
-          dob={staffDetail.dob}
-          phoneNumber={staffDetail.phoneNumber}
-          gender={staffDetail.gender}
-          address={staffDetail.address}
-          isDetailed
-        />
+        {staffDetail.phone && (
+          <EmployeeDetailBox
+            name={staffDetail.fullName}
+            dob={staffDetail.dob ? staffDetail.dob.split(" ")[0] : ""}
+            phoneNumber={staffDetail.phone}
+            gender={staffDetail.gender}
+            address={staffDetail.address}
+            isDetailed
+          />
+        )}
 
         <Center w="70%" bg="lightBlue.100" mb={5}>
           <Button w="100%" onPress={onDeleteEmployee}>
