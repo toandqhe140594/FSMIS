@@ -5,10 +5,7 @@ import fpt.g31.fsmis.dto.input.CatchReportDtoIn;
 import fpt.g31.fsmis.dto.output.*;
 import fpt.g31.fsmis.entity.*;
 import fpt.g31.fsmis.exception.NotFoundException;
-import fpt.g31.fsmis.repository.CatchesRepos;
-import fpt.g31.fsmis.repository.FishSpeciesRepos;
-import fpt.g31.fsmis.repository.FishingLocationRepos;
-import fpt.g31.fsmis.repository.LakeRepos;
+import fpt.g31.fsmis.repository.*;
 import fpt.g31.fsmis.security.JwtFilter;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -29,6 +26,7 @@ public class CatchesService {
     private final CatchesRepos catchesRepos;
     private final LakeRepos lakeRepos;
     private final FishSpeciesRepos fishSpeciesRepos;
+    private final FishInLakeRepos fishInLakeRepos;
     private final JwtFilter jwtFilter;
 
     public PaginationDtoOut getLocationPublicCatchesList(Long locationId, int pageNo) {
@@ -76,7 +74,7 @@ public class CatchesService {
                 : ServiceUtils.convertStringToDate(beginDateString);
         LocalDateTime endDate = endDateString == null ?
                 LocalDateTime.now()
-                : ServiceUtils.convertStringToDate(endDateString);
+                : ServiceUtils.convertStringToDate(endDateString).plusDays(1);
         Page<Catches> catchesList = catchesRepos.findByFishingLocationIdAndTimeBetweenAndApprovedIsTrueOrderByTimeDesc
                 (locationId, beginDate, endDate, PageRequest.of(pageNo - 1, 10));
         List<CatchesOverviewNoImageDtoOut> output = new ArrayList<>();
@@ -172,8 +170,7 @@ public class CatchesService {
         User user = jwtFilter.getUserFromToken(request);
         Catches catches = catchesRepos.findById(catchesId)
                 .orElseThrow(() -> new NotFoundException("Không tìm thấy bản ghi này!"));
-        if (Boolean.TRUE.equals(catches.getHidden()) && catches.getUser() != user
-                && catches.getApproved() != null) {
+        if (Boolean.TRUE.equals(catches.getHidden()) && catches.getUser() != user && !isOwnerOrStaff(catches.getFishingLocation().getId(), user)) {
             throw new ValidationException("Không có quyền truy cập");
         }
         List<CatchesDetail> catchesDetailList = catches.getCatchesDetailList();
@@ -229,6 +226,7 @@ public class CatchesService {
                     .quantity(catchDetailDtoIn.getQuantity())
                     .weight(catchDetailDtoIn.getWeight())
                     .fishSpecies(fishSpecies)
+                    .fishInLakeId(catchDetailDtoIn.getFishInLakeId())
                     .returnToOwner(catchDetailDtoIn.isReturnToOwner())
                     .build();
             catchesDetailList.add(catchesDetail);
@@ -241,6 +239,7 @@ public class CatchesService {
                 .approved(null)
                 .user(user)
                 .fishingLocation(fishingLocation)
+                .lakeId(lake.getId())
                 .catchesDetailList(catchesDetailList)
                 .build();
         catchesRepos.save(catches);
@@ -254,6 +253,20 @@ public class CatchesService {
         if (!catches.getFishingLocation().getOwner().equals(user)
                 && !catches.getFishingLocation().getEmployeeList().contains(user)) {
             throw new ValidationException("Không có quyền truy cập");
+        }
+        Lake lake = lakeRepos.getById(catches.getLakeId());
+        List<FishInLake> fishInLakeList = lake.getFishInLakeList();
+        for (CatchesDetail catchesDetail : catches.getCatchesDetailList()) {
+            if (catchesDetail.isReturnToOwner()){
+                continue;
+            }
+            FishInLake fishInLake = fishInLakeRepos.findById(catchesDetail.getFishInLakeId())
+                    .orElseThrow(() -> new NotFoundException("Không tìm thấy bản ghi"));
+            if (fishInLakeList.contains(fishInLake)){
+                fishInLake.setQuantity(fishInLake.getQuantity() - catchesDetail.getQuantity());
+                fishInLake.setTotalWeight(fishInLake.getTotalWeight() - catchesDetail.getWeight());
+            }
+            fishInLakeRepos.save(fishInLake);
         }
         catches.setApproved(isApprove);
         catchesRepos.save(catches);

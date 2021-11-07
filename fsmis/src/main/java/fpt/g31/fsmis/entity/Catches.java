@@ -45,6 +45,8 @@ public class Catches {
     @JoinColumn
     private FishingLocation fishingLocation;
 
+    private Long lakeId;
+
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "catches_id")
     private List<CatchesDetail> catchesDetailList;

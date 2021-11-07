@@ -27,5 +27,7 @@ public class CatchesDetail {
     @OneToOne
     private FishSpecies fishSpecies;
 
+    private Long fishInLakeId;
+
     private boolean returnToOwner;
 }

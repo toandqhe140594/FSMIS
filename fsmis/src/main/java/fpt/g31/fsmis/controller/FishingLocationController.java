@@ -107,6 +107,14 @@ public class FishingLocationController {
         return new ResponseEntity<>(lakeService.addFishToLake(fishInLakeDtoIn, lakeId, request), HttpStatus.OK);
     }
 
+    @PostMapping("/lake/fish/stocking/{fishInLakeId}")
+    public ResponseEntity<Object> fishStocking(@PathVariable Long fishInLakeId,
+                                               HttpServletRequest request,
+                                               @RequestParam(required = false) Float weight,
+                                               @RequestParam(required = false) Integer quantity) {
+        return new ResponseEntity<>(lakeService.fishStocking(fishInLakeId, request, weight, quantity), HttpStatus.OK);
+    }
+
     @DeleteMapping("/lake/fish/delete/{fishInLakeId}")
     public ResponseEntity<Object> deleteFishFromLake(@PathVariable Long fishInLakeId,
                                                 HttpServletRequest request) {
