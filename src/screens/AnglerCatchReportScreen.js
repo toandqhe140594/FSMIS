@@ -26,7 +26,7 @@ import SelectComponent from "../components/common/SelectComponent";
 import TextAreaComponent from "../components/common/TextAreaComponent";
 import HeaderTab from "../components/HeaderTab";
 import { ROUTE_NAMES } from "../constants";
-import { showAlertBox } from "../utilities";
+import { showAlertAbsoluteBox, showAlertBox } from "../utilities";
 
 const validationSchema = yup.object().shape({
   aCaption: yup.string().required("Hãy viết suy nghĩ của bạn về ngày câu"),
@@ -57,15 +57,6 @@ const styles = StyleSheet.create({
 const AnglerCatchReportScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
-  const [imageArray, setImageArray] = useState([]);
-  const submitCatchReport = useStoreActions(
-    (actions) => actions.CheckInModel.submitCatchReport,
-  );
-  const getLakeList = useStoreActions(
-    (actions) => actions.CheckInModel.getLakeListByLocationId,
-  );
-  const listLake = useStoreState((states) => states.CheckInModel.lakeList);
-  const listFishModel = useStoreState((states) => states.CheckInModel.fishList);
 
   const methods = useForm({
     mode: "onChange",
@@ -74,11 +65,24 @@ const AnglerCatchReportScreen = () => {
     resolver: yupResolver(validationSchema),
   });
 
-  const { watch } = methods;
+  const { control, handleSubmit, watch } = methods;
   const watchALakeTypeField = watch("aLakeType");
-  const [listFish, setListFish] = useState([]);
 
-  const { control, handleSubmit } = methods;
+  const listLake = useStoreState((states) => states.CheckInModel.lakeList);
+  const listFishModel = useStoreState((states) => states.CheckInModel.fishList);
+  const submitCatchReport = useStoreActions(
+    (actions) => actions.CheckInModel.submitCatchReport,
+  );
+  const getLakeList = useStoreActions(
+    (actions) => actions.CheckInModel.getLakeListByLocationId,
+  );
+  const personalCheckout = useStoreActions(
+    (actions) => actions.CheckInModel.personalCheckout,
+  );
+
+  const [listFish, setListFish] = useState([]);
+  const [imageArray, setImageArray] = useState([]);
+  const [success, setSuccess] = useState(null);
 
   const onSubmit = (data) => {
     const { aCaption, aLakeType, isPublic, cards } = data;
@@ -103,13 +107,11 @@ const AnglerCatchReportScreen = () => {
         hidden: isPublic,
         images: imagesStringArray,
         lakeId: aLakeType,
+        setSuccess,
       });
-      return showAlertBox(
-        "Gửi thành công",
-        "Thông tin buổi câu được gửi thành công",
-      );
+      return;
     }
-    return showAlertBox("Thiếu thông tin", "Vui lòng thêm ảnh buổi câu");
+    showAlertBox("Thiếu thông tin", "Vui lòng thêm ảnh buổi câu");
   };
   const updateImageArray = (id) => {
     setImageArray(imageArray.filter((image) => image.id !== id));
@@ -138,6 +140,19 @@ const AnglerCatchReportScreen = () => {
       setListFish(filter[0].fishList);
     }
   }, [watchALakeTypeField]);
+
+  useEffect(() => {
+    if (success === true)
+      showAlertAbsoluteBox(
+        "Gửi thành công",
+        "Thông tin buổi câu được gửi thành công",
+        async () => {
+          await personalCheckout();
+          navigation.pop(1);
+        },
+      );
+    setSuccess(null);
+  }, [success]);
 
   return (
     <>
