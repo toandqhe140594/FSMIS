@@ -278,9 +278,12 @@ const model = {
     const { pageNo } = payload;
     const { currentId, totalCatchPage } = getState();
     if (pageNo > totalCatchPage || pageNo <= 0) return;
-    const { data } = await http.get(`location/${currentId}/catch`, {
-      params: { pageNo },
-    });
+    const { data } = await http.get(
+      `location/${currentId}/${API_URL.LOCATION_CATCH_REPORT_PUBLIC}`,
+      {
+        params: { pageNo },
+      },
+    );
     actions.setTotalCatchPage(data.totalPage);
     actions.setLocationCatchList({
       data: data.items,

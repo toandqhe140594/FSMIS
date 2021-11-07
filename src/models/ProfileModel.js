@@ -241,5 +241,19 @@ const model = {
       setSuccess(false);
     }
   }),
+  /**
+   * Update new edit to personal profile information
+   * @param {Object} [payload.updateData] body of the post request
+   * @param {Function} [payload.setUpdateStatus] set edit status back to the screen
+   */
+  editPersonalInformation: thunk(async (actions, payload) => {
+    const { updateData, setUpdateStatus } = payload;
+    try {
+      await http.post(API_URL.PERSONAL_EDIT_PROFILE, updateData);
+      setUpdateStatus("SUCCESS");
+    } catch (error) {
+      setUpdateStatus("FAILED");
+    }
+  }),
 };
 export default model;

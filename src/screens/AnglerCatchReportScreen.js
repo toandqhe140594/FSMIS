@@ -18,32 +18,14 @@ import {
 import React, { useCallback, useEffect, useState } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import { ScrollView, StyleSheet } from "react-native";
-import * as yup from "yup";
 
 import CatchReportSection from "../components/CatchReport/CatchReportSection";
 import MultiImageSection from "../components/common/MultiImageSection";
 import SelectComponent from "../components/common/SelectComponent";
 import TextAreaComponent from "../components/common/TextAreaComponent";
 import HeaderTab from "../components/HeaderTab";
-import { ROUTE_NAMES } from "../constants";
+import { ROUTE_NAMES, SCHEMA } from "../constants";
 import { showAlertAbsoluteBox, showAlertBox } from "../utilities";
-
-const validationSchema = yup.object().shape({
-  aCaption: yup.string().required("Hãy viết suy nghĩ của bạn về ngày câu"),
-  aLakeType: yup.number().required("Loại hồ không được để trống"),
-  isPublic: yup.bool(),
-  isReleased: yup.bool(),
-  cards: yup.array().of(
-    yup.object().shape({
-      fishType: yup.number().required("Loại cá không được để trống"),
-      catches: yup.number().required("Số cá bắt được không được để trống"),
-      totalWeight: yup
-        .number()
-        .required("Tổng cân nặng cá không được để trống"),
-      isReleased: yup.bool().default(false),
-    }),
-  ),
-});
 
 const styles = StyleSheet.create({
   sectionWrapper: {
@@ -57,33 +39,29 @@ const styles = StyleSheet.create({
 const AnglerCatchReportScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
-
-  const methods = useForm({
-    mode: "onChange",
-    reValidateMode: "onChange",
-    defaultValues: { isPublic: false },
-    resolver: yupResolver(validationSchema),
-  });
-
-  const { control, handleSubmit, watch } = methods;
-  const watchALakeTypeField = watch("aLakeType");
-
-  const listLake = useStoreState((states) => states.CheckInModel.lakeList);
-  const listFishModel = useStoreState((states) => states.CheckInModel.fishList);
+  const [imageArray, setImageArray] = useState([]);
+  const [listFish, setListFish] = useState([]);
+  const [success, setSuccess] = useState(null);
   const submitCatchReport = useStoreActions(
     (actions) => actions.CheckInModel.submitCatchReport,
   );
   const getLakeList = useStoreActions(
     (actions) => actions.CheckInModel.getLakeListByLocationId,
   );
+  const listLake = useStoreState((states) => states.CheckInModel.lakeList);
+  const listFishModel = useStoreState((states) => states.CheckInModel.fishList);
+  const methods = useForm({
+    mode: "onSubmit",
+    reValidateMode: "onSubmit",
+    defaultValues: { isPublic: false },
+    resolver: yupResolver(SCHEMA.ANGLER_CATCH_REPORT_FORM),
+  });
+
+  const { control, handleSubmit, watch } = methods;
+  const watchALakeTypeField = watch("aLakeType");
   const personalCheckout = useStoreActions(
     (actions) => actions.CheckInModel.personalCheckout,
   );
-
-  const [listFish, setListFish] = useState([]);
-  const [imageArray, setImageArray] = useState([]);
-  const [success, setSuccess] = useState(null);
-
   const onSubmit = (data) => {
     const { aCaption, aLakeType, isPublic, cards } = data;
     const catchesDetailList = cards.map(
