@@ -17,13 +17,8 @@ import TextAreaComponent from "../components/common/TextAreaComponent";
 import MapOverviewBox from "../components/FLocationEditProfile/MapOverviewBox";
 import HeaderTab from "../components/HeaderTab";
 import { ROUTE_NAMES, SCHEMA } from "../constants";
-import AddressModel from "../models/AddressModel";
-import FManageModel from "../models/FManageModel";
 import { showAlertAbsoluteBox, showAlertBox } from "../utilities";
-import store from "../utilities/Store";
 
-store.addModel("AddressModel", AddressModel);
-store.addModel("FManageModel", FManageModel);
 const styles = StyleSheet.create({
   sectionWrapper: {
     width: "90%",
