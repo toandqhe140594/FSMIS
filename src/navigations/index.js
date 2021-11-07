@@ -132,12 +132,6 @@ const goToCatchReportVerifyDetailScreen = (navigation, params) => {
   navigation.navigate(ROUTE_NAMES.FMANAGE_CATCH_DETAIL, { ...params });
 };
 
-const goToLakeEditScreen = (navigation, params) => {
-  if (params.id)
-    navigation.navigate(ROUTE_NAMES.FMANAGE_LAKE_EDIT, { ...params });
-  else navigation.navigate(ROUTE_NAMES.FMANAGE_LAKE_ADD, { ...params });
-};
-
 const goToMediaSelectScreen = (navigation, params) => {
   navigation.navigate(ROUTE_NAMES.MEDIA_SELECTOR, { ...params });
 };
@@ -211,7 +205,6 @@ export {
   goToFManageVerifyCheckinScreen,
   goToForgotPasswordScreen,
   goToLakeDetailScreen,
-  goToLakeEditScreen,
   goToLoginScreen,
   goToLogoScreen,
   goToMediaSelectScreen,

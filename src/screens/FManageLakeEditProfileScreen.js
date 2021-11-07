@@ -11,52 +11,27 @@ import {
   Center,
   Divider,
   ScrollView,
-  Stack,
   Text,
   VStack,
 } from "native-base";
 import React, { useCallback, useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { StyleSheet } from "react-native";
-import * as yup from "yup";
+import { ActivityIndicator, StyleSheet } from "react-native";
+import { Overlay } from "react-native-elements";
 
 import InputComponent from "../components/common/InputComponent";
 import MultiImageSection from "../components/common/MultiImageSection";
 import TextAreaComponent from "../components/common/TextAreaComponent";
 import HeaderTab from "../components/HeaderTab";
 import CheckboxSelectorComponent from "../components/LakeEditProfile/CheckboxSelectorComponent";
-import FishCardSection from "../components/LakeEditProfile/FishCardSection";
-import { ROUTE_NAMES } from "../constants";
+import { ROUTE_NAMES, SCHEMA } from "../constants";
 import { goBack } from "../navigations";
-import { showAlertConfirmBox, showToastMessage } from "../utilities";
-
-const validationSchema = yup.object().shape({
-  lakeName: yup.string().required("Tên hồ không thể bỏ trống"),
-  lakeDescription: yup.string().required("Miêu tả giá vé ở hồ này"),
-  lakeFishingMethods: yup
-    .array()
-    .test(
-      "isArrayEmpty?",
-      "Loại hình câu của hồ không được để trống",
-      (value) => value.length !== 0,
-    ),
-  lakeLength: yup.string().required("Chiều dài hồ không được để trống"),
-  lakeWidth: yup.string().required("Chiều rộng hồ không được để trống"),
-  lakeDepth: yup.string().required("Độ sâu của hồ không được để trống"),
-  cards: yup.array().of(
-    yup.object().shape({
-      fishType: yup.number().required("Loại cá không được để trống"),
-      amount: yup.number().required("Số cá bắt được không được để trống"),
-      totalWeight: yup
-        .number()
-        .required("Tổng cân nặng cá không được để trống"),
-      minWeight: yup.number().required("Biểu cá không được để trống"),
-      maxWeight: yup.number().required("Biểu cá không được để trống"),
-    }),
-  ),
-});
-
-const fishingMethodData = ["Câu đài", "Câu đơn", "Câu lục"];
+import {
+  showAlertAbsoluteBox,
+  showAlertBox,
+  showAlertConfirmBox,
+  showToastMessage,
+} from "../utilities";
 
 const styles = StyleSheet.create({
   sectionWrapper: {
@@ -70,26 +45,38 @@ const styles = StyleSheet.create({
 const LakeEditProfileScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
-
-  const lakeDetail = useStoreState((states) => states.FManageModel.lakeDetail);
-  const { getLakeDetailByLakeId, closeLakeByLakeId } = useStoreActions(
+  const [imageArray, setImageArray] = useState([]);
+  const [updateStatus, setUpdateStatus] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [showOverlay, setShowOverlay] = useState(true);
+  const [fullScreenMode, setFullScreenMode] = useState(true);
+  const { fishingMethodList } = useStoreState(
+    (state) => state.FishingMethodModel,
+  );
+  const { lakeDetail } = useStoreState((states) => states.FManageModel);
+  const { editLakeDetail, closeLakeByLakeId } = useStoreActions(
     (actions) => actions.FManageModel,
   );
-
+  const { getFishingMethodList } = useStoreActions(
+    (actions) => actions.FishingMethodModel,
+  );
   const methods = useForm({
     mode: "onSubmit",
     reValidateMode: "onSubmit",
-    defaultValues: { lakeFishingMethods: [] },
-    resolver: yupResolver(validationSchema),
+    resolver: yupResolver(SCHEMA.FMANAGE_LAKE_FORM),
   });
-  const { handleSubmit } = methods;
-
-  const [imageArray, setImageArray] = useState([]);
+  const { handleSubmit, setValue } = methods;
   const [deleteSuccess, setDeleteSuccess] = useState(false);
-
+  /**
+   * Submit lake changes
+   * @param {Object} data data from controller
+   */
   const onSubmit = (data) => {
-    // Test submit
-    console.log(data);
+    const id = lakeDetail.lakeId;
+    const imageUrl = imageArray[0].base64;
+    const updateData = { ...data, imageUrl };
+    editLakeDetail({ updateData, setUpdateStatus, id });
+    setShowOverlay(true);
   };
 
   const onDeleteLake = (id, name) => {
@@ -110,7 +97,37 @@ const LakeEditProfileScreen = () => {
     setImageArray(imageArray.filter((image) => image.id !== id));
   };
 
-  // Fire when navigates back to the screen
+  /**
+   * Call fishing method list api
+   */
+  useEffect(() => {
+    getFishingMethodList({ setIsLoading });
+  }, []);
+
+  /**
+   * After loading finished, setValue for each field
+   */
+  useEffect(() => {
+    if (!isLoading) {
+      setValue("name", lakeDetail.name);
+      setValue("price", lakeDetail.price);
+      setValue("width", lakeDetail.width.toString());
+      setValue("length", lakeDetail.length.toString());
+      setValue("depth", lakeDetail.depth.toString());
+      setImageArray([{ id: 1, base64: lakeDetail.imageUrl }]);
+      const selectedMethods = fishingMethodList.reduce((acc, { name, id }) => {
+        if (lakeDetail.fishingMethodList.includes(name)) acc.push(id);
+        return acc;
+      }, []);
+      setValue("methods", selectedMethods);
+      setShowOverlay(false);
+      setFullScreenMode(false);
+    }
+  }, [isLoading]);
+
+  /**
+   * Fire when navigates back to the screen
+   */
   useFocusEffect(
     // useCallback will listen to route.param
     useCallback(() => {
@@ -121,11 +138,25 @@ const LakeEditProfileScreen = () => {
     }, [route.params]),
   );
 
+  /**
+   * When updateState return, open Alert
+   */
   useEffect(() => {
-    if (route.params.id) {
-      getLakeDetailByLakeId({ id: route.params.id });
+    if (updateStatus === "SUCCESS") {
+      setShowOverlay(false);
+      showAlertAbsoluteBox(
+        "Thông báo",
+        "Hồ bé thêm thành công!",
+        () => {
+          navigation.goBack();
+        },
+        "Xác nhận",
+      );
+    } else if (updateStatus === "FAILED") {
+      setShowOverlay(false);
+      showAlertBox("Thông báo", "Đã xảy ra lỗi! Vui lòng thử lại sau.");
     }
-  }, []);
+  }, [updateStatus]);
 
   useEffect(() => {
     if (deleteSuccess) {
@@ -138,6 +169,17 @@ const LakeEditProfileScreen = () => {
     <>
       <HeaderTab name="Chỉnh sửa hồ bé" />
       <ScrollView>
+        <Overlay
+          isVisible={showOverlay}
+          fullScreen={fullScreenMode}
+          overlayStyle={
+            fullScreenMode
+              ? { alignItems: "center", justifyContent: "center" }
+              : null
+          }
+        >
+          <ActivityIndicator size="large" color="#2089DC" />
+        </Overlay>
         <FormProvider {...methods}>
           <VStack space={3} divider={<Divider />}>
             <Center mt={1}>
@@ -156,7 +198,7 @@ const LakeEditProfileScreen = () => {
                 label="Tên hồ câu"
                 isTitle
                 placeholder="Nhập tên hồ câu"
-                controllerName="lakeName"
+                controllerName="name"
               />
             </Center>
 
@@ -166,8 +208,8 @@ const LakeEditProfileScreen = () => {
                 label="Loại hình câu"
                 isTitle
                 placeholder="Chọn loại hình câu"
-                data={fishingMethodData}
-                controllerName="lakeFishingMethods" // this controller returns an array
+                data={fishingMethodList}
+                controllerName="methods"
               />
             </Center>
 
@@ -178,7 +220,7 @@ const LakeEditProfileScreen = () => {
                 isTitle
                 placeholder="Miêu tả giá vé hồ"
                 numberOfLines={3}
-                controllerName="lakeDescription"
+                controllerName="price"
               />
             </Center>
 
@@ -190,29 +232,24 @@ const LakeEditProfileScreen = () => {
                 <InputComponent
                   label="Chiều dài (m)"
                   placeholder="Nhập chiều dài của hồ"
-                  controllerName="lakeLength"
+                  controllerName="length"
+                  useNumPad
                 />
                 <InputComponent
                   label="Chiều rộng (m)"
                   placeholder="Nhập chiều rộng của hồ"
-                  controllerName="lakeWidth"
+                  controllerName="width"
+                  useNumPad
                 />
                 <InputComponent
                   label="Độ sâu (m)"
                   placeholder="Nhập độ sâu của hồ"
-                  controllerName="lakeDepth"
+                  controllerName="depth"
+                  useNumPad
                 />
               </VStack>
             </Center>
 
-            <Center>
-              <Stack space={2} style={styles.sectionWrapper}>
-                <Text fontSize="md" bold>
-                  Các loại cá
-                </Text>
-                <FishCardSection />
-              </Stack>
-            </Center>
             <Center>
               <Box style={styles.sectionWrapper} mb={5}>
                 {/* Submit button */}

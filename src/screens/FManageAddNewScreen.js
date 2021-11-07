@@ -4,11 +4,11 @@ import {
   useNavigation,
   useRoute,
 } from "@react-navigation/native";
+import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, Button, Center, Divider, Stack, Text, VStack } from "native-base";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { ScrollView, StyleSheet } from "react-native";
-import * as yup from "yup";
 
 import InputComponent from "../components/common/InputComponent";
 import MultiImageSection from "../components/common/MultiImageSection";
@@ -16,36 +16,8 @@ import SelectComponent from "../components/common/SelectComponent";
 import TextAreaComponent from "../components/common/TextAreaComponent";
 import MapOverviewBox from "../components/FLocationEditProfile/MapOverviewBox";
 import HeaderTab from "../components/HeaderTab";
-import { ROUTE_NAMES } from "../constants";
-
-const cityData = [
-  { name: "Hà Nội", id: 1 },
-  { name: "Hồ Chí Minh", id: 2 },
-];
-
-const districtData = [
-  { name: "Hai Bà Trưng", id: 1 },
-  { name: "Hoàng Mai", id: 2 },
-];
-
-const communeData = [
-  { name: "Vĩnh Hưng", id: 1 },
-  { name: "Thanh Lương", id: 2 },
-];
-
-const validationSchema = yup.object().shape({
-  fName: yup.string().required("Tên địa điểm không thể bỏ trống"),
-  fPhone: yup.string().required("Số điện thoại không dược bỏ trống"),
-  fWebsite: yup.string(),
-  fAddress: yup.string().required("Địa chỉ không được để trống"),
-  fCityAddress: yup.number().required("Tỉnh/Thành phố không được để trống"),
-  fDistrictAddress: yup.number().required("Quận/Huyện không được để trống"),
-  fCommuneAddress: yup.number().required("Phường/xã không được để trống"),
-  fDescription: yup.string().required("Hãy viết một vài điều về địa điểm"),
-  fRules: yup.string(),
-  fServices: yup.string(),
-  fSchedule: yup.string().required("Hãy nêu rõ lịch biểu của hồ"),
-});
+import { ROUTE_NAMES, SCHEMA } from "../constants";
+import { showAlertAbsoluteBox, showAlertBox } from "../utilities";
 
 const styles = StyleSheet.create({
   sectionWrapper: {
@@ -60,19 +32,61 @@ const FManageAddNewScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
   const [imageArray, setImageArray] = useState([]);
+  const [addStatus, setAddStatus] = useState("");
+  const { provinceList, districtList, wardList } = useStoreState(
+    (state) => state.AddressModel,
+  );
+  const { locationLatLng } = useStoreState((states) => states.FManageModel);
+  const {
+    resetDataList,
+    getAllProvince,
+    getDisctrictByProvinceId,
+    getWardByDistrictId,
+  } = useStoreActions((actions) => actions.AddressModel);
+  const { addNewLocation } = useStoreActions((actions) => actions.FManageModel);
   const methods = useForm({
-    mode: "onChange",
-    reValidateMode: "onChange",
-    resolver: yupResolver(validationSchema),
+    mode: "onSubmit",
+    reValidateMode: "onSubmit",
+    resolver: yupResolver(SCHEMA.FMANAGE_PROFILE_FORM),
   });
   const { handleSubmit } = methods;
+  const generateAddressDropdown = useCallback((name, value) => {
+    if (name === "provinceId") {
+      getDisctrictByProvinceId({ id: value });
+    } else if (name === "districtId") {
+      getWardByDistrictId({ id: value });
+    }
+  }, []);
+  //
   const onSubmit = (data) => {
-    console.log(data);
-    console.log(imageArray);
+    const images = imageArray.map((image) => image.base64);
+    const addData = { ...data, ...locationLatLng, images };
+    addNewLocation({ addData, setAddStatus });
   };
+  //
   const updateImageArray = (id) => {
     setImageArray(imageArray.filter((image) => image.id !== id));
   };
+  useEffect(() => {
+    getAllProvince();
+    return () => {
+      resetDataList();
+    };
+  }, []);
+  useEffect(() => {
+    if (addStatus === "SUCCESS") {
+      showAlertAbsoluteBox(
+        "Thông báo",
+        "Hồ bé thêm thành công!",
+        () => {
+          navigation.goBack();
+        },
+        "Xác nhận",
+      );
+    } else if (addStatus === "FAILED") {
+      showAlertBox("Thông báo", "Đã có lỗi xảy ra, vui lòng thử lại");
+    }
+  }, [addStatus]);
   useFocusEffect(
     // useCallback will listen to route.param
     useCallback(() => {
@@ -84,29 +98,27 @@ const FManageAddNewScreen = () => {
   );
   return (
     <>
-      <HeaderTab name="Thông tin điểm câu" />
+      <HeaderTab name="Tạo điểm câu mới" />
       <ScrollView>
         <FormProvider {...methods}>
           <VStack space={3} divider={<Divider />}>
             <Center>
-              {/* Image Picker section */}
               <Stack space={2} style={styles.sectionWrapper}>
                 <Text bold fontSize="md" mt={2}>
                   Ảnh bìa (nhiều nhất là 5)
                 </Text>
                 <MultiImageSection
-                  formRoute={ROUTE_NAMES.FMANAGE_PROFILE_EDIT}
+                  formRoute={ROUTE_NAMES.FMANAGE_PROFILE_ADD_NEW}
                   imageArray={imageArray}
                   deleteImage={updateImageArray}
                   selectLimit={5}
                 />
-                {/* Input location name */}
                 <InputComponent
                   isTitle
                   label="Tên địa điểm câu"
                   hasAsterisk
                   placeholder="Nhập tên địa điểm câu"
-                  controllerName="fName"
+                  controllerName="name"
                 />
               </Stack>
             </Center>
@@ -115,49 +127,51 @@ const FManageAddNewScreen = () => {
                 <Text fontSize="md" bold>
                   Thông tin liên hệ
                 </Text>
-                {/* Information input and select fields */}
                 <InputComponent
                   label="Số điện thoại"
                   placeholder="Nhập số điện thoại"
                   hasAsterisk
-                  controllerName="fPhone"
+                  controllerName="phone"
+                  useNumPad
                 />
 
                 <InputComponent
                   label="Website"
                   placeholder="Nhập website/facebook"
-                  controllerName="fWebsite"
+                  controllerName="website"
                 />
 
                 <InputComponent
                   label="Địa chỉ"
                   placeholder="Nhập địa chỉ"
                   hasAsterisk
-                  controllerName="fAddress"
+                  controllerName="address"
                 />
 
                 <SelectComponent
                   placeholder="Chọn tỉnh/thành phố"
                   label="Tỉnh/Thành phố"
                   hasAsterisk
-                  controllerName="fCityAddress"
-                  data={cityData}
+                  controllerName="provinceId"
+                  data={provinceList}
+                  handleDataIfValChanged={generateAddressDropdown}
                 />
 
                 <SelectComponent
                   placeholder="Chọn quận/huyện"
                   label="Quận/Huyện"
                   hasAsterisk
-                  controllerName="fDistrictAddress"
-                  data={districtData}
+                  controllerName="districtId"
+                  data={districtList}
+                  handleDataIfValChanged={generateAddressDropdown}
                 />
 
                 <SelectComponent
                   label="Phường/Xã"
                   placeholder="Chọn phường/xã"
                   hasAsterisk
-                  controllerName="fCommuneAddress"
-                  data={communeData}
+                  controllerName="wardId"
+                  data={wardList}
                 />
               </VStack>
             </Center>
@@ -180,7 +194,7 @@ const FManageAddNewScreen = () => {
                 isTitle
                 placeholder="Miêu tả khu hồ của bạn"
                 numberOfLines={6}
-                controllerName="fDescription"
+                controllerName="description"
               />
             </Center>
 
@@ -192,7 +206,7 @@ const FManageAddNewScreen = () => {
                 isTitle
                 placeholder="Miêu tả thời gian hoạt động của khu hồ"
                 numberOfLines={3}
-                controllerName="fSchedule"
+                controllerName="timetable"
               />
             </Center>
 
@@ -204,7 +218,7 @@ const FManageAddNewScreen = () => {
                 isTitle
                 placeholder="Miêu tả dịch vụ khu hồ"
                 numberOfLines={3}
-                controllerName="fService"
+                controllerName="service"
               />
             </Center>
 
@@ -216,7 +230,7 @@ const FManageAddNewScreen = () => {
                 isTitle
                 placeholder="Miêu tả nội quy khu hồ"
                 numberOfLines={3}
-                controllerName="fRules"
+                controllerName="rule"
               />
             </Center>
 

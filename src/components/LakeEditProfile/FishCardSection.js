@@ -1,3 +1,5 @@
+import { FontAwesome5, MaterialCommunityIcons } from "@expo/vector-icons";
+import { useStoreState } from "easy-peasy";
 import { Button, Input, Select } from "native-base";
 import React, { useEffect } from "react";
 import { Controller, useFieldArray, useFormContext } from "react-hook-form";
@@ -25,14 +27,15 @@ const styles = StyleSheet.create({
 });
 
 const FishCardSection = () => {
+  const { fishList } = useStoreState((state) => state.FishModel);
   const {
     control,
     formState: { errors },
   } = useFormContext();
   const { fields, append, remove } = useFieldArray({
     control,
-    name: "cards",
-    // Cards will be unregistered when unmount
+    name: "fishInLakeList",
+    // fishInLakeList will be unregistered when unmount
     shouldUnregister: true,
   });
   /**
@@ -44,11 +47,11 @@ const FishCardSection = () => {
   }, []);
   return (
     <>
-      {/* fields controls each object with field fishType, amount, totalWeight and isReleased */}
+      {/* fields controls each object with field fishSpeciesId, quantity, totalWeight and isReleased */}
       {fields.map(({ id }, index) => (
         <View style={styles.cardWrapper} key={id}>
           <Controller
-            name={`cards[${index}].fishType`}
+            name={`fishInLakeList[${index}].fishSpeciesId`}
             control={control}
             render={({ field: { onChange, value } }) => (
               <Select
@@ -58,94 +61,144 @@ const FishCardSection = () => {
                 onValueChange={onChange}
                 selectedValue={value}
               >
-                <Select.Item label="Cá diếc" value={1} />
-                <Select.Item label="Cá chép" value={2} />
+                {fishList.map((fish) => (
+                  <Select.Item
+                    key={fish.id}
+                    label={fish.name}
+                    value={fish.id}
+                  />
+                ))}
               </Select>
             )}
           />
-          {/* Check error message of fishType field of a specific object in the fieldArray */}
-          {errors.cards?.[index]?.fishType?.message && (
+          {/* Check error message of fishSpeciesId field of a specific object in the fieldArray */}
+          {errors.fishInLakeList?.[index]?.fishSpeciesId?.message && (
             <Text style={styles.error}>
-              {errors?.cards?.[index].fishType?.message}
+              {errors?.fishInLakeList?.[index].fishSpeciesId?.message}
             </Text>
           )}
           <View style={styles.rowWrapper}>
             <Controller
-              name={`cards[${index}].minWeight`}
+              name={`fishInLakeList[${index}].minWeight`}
               control={control}
-              render={() => (
+              render={({ field: { onChange, value, onBlur } }) => (
                 <Input
                   w="48%"
+                  type="number"
                   fontSize="md"
-                  placeholder="Biểu nhỏ nhất"
+                  placeholder="Min"
+                  value={value}
+                  onChangeText={onChange}
+                  onBlur={onBlur}
                   keyboardType="number-pad"
+                  InputLeftElement={
+                    <Text
+                      style={{
+                        marginLeft: 12,
+                        fontSize: 16,
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Biểu
+                    </Text>
+                  }
                 />
               )}
             />
             <Text style={{ fontWeight: "bold", fontSize: 16 }}>-</Text>
             <Controller
-              name={`cards[${index}].maxWeight`}
+              name={`fishInLakeList[${index}].maxWeight`}
               control={control}
-              render={() => (
+              render={({ field: { onChange, value, onBlur } }) => (
                 <Input
                   w="48%"
+                  type="text"
                   fontSize="md"
-                  placeholder="Biểu lớn nhất"
+                  placeholder="Max"
                   keyboardType="number-pad"
+                  value={value}
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                  InputLeftElement={
+                    <Text
+                      style={{
+                        marginLeft: 12,
+                        fontSize: 16,
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Biểu
+                    </Text>
+                  }
                 />
               )}
             />
           </View>
-          {(errors.cards?.[index]?.minWeight?.message && (
+          {(errors.fishInLakeList?.[index]?.minWeight?.message ||
+            errors.fishInLakeList?.[index]?.maxWeight?.message) && (
             <Text style={styles.error}>
-              {errors?.cards?.[index].minWeight?.message}
-            </Text>
-          )) ||
-            (errors.cards?.[index]?.maxWeight?.message && (
-              <Text style={styles.error}>
-                {errors?.cards?.[index].maxWeight?.message}
-              </Text>
-            ))}
-          <Controller
-            name={`cards[${index}].amount`}
-            control={control}
-            render={({ field: { value, onChange, onBlur } }) => (
-              <Input
-                mt={2}
-                fontSize="md"
-                placeholder="Nhập số cá (con)"
-                value={value}
-                onChangeText={onChange}
-                onBlur={onBlur}
-                keyboardType="number-pad"
-              />
-            )}
-          />
-          {/* Check error message of amount feld of a specific object in the fieldArray */}
-          {errors.cards?.[index]?.amount?.message && (
-            <Text style={styles.error}>
-              {errors.cards?.[index].amount?.message}
+              {errors?.fishInLakeList?.[index].minWeight?.message}{" "}
+              {errors?.fishInLakeList?.[index].maxWeight?.message}
             </Text>
           )}
           <Controller
-            name={`cards[${index}].totalWeight`}
+            name={`fishInLakeList[${index}].quantity`}
             control={control}
             render={({ field: { value, onChange, onBlur } }) => (
               <Input
                 mt={2}
+                type="text"
                 fontSize="md"
-                placeholder="Tổng cân nặng (kg)"
+                placeholder="Nhập số con thả hồ"
                 value={value}
                 onChangeText={onChange}
                 onBlur={onBlur}
                 keyboardType="number-pad"
+                InputLeftElement={
+                  <FontAwesome5
+                    style={{ marginLeft: 12 }}
+                    name="fish"
+                    size={24}
+                    color="black"
+                  />
+                }
+              />
+            )}
+          />
+          {/* Check error message of quantity feld of a specific object in the fieldArray */}
+          {errors.fishInLakeList?.[index]?.quantity?.message && (
+            <Text style={styles.error}>
+              {errors.fishInLakeList?.[index].quantity?.message}
+            </Text>
+          )}
+          <Controller
+            name={`fishInLakeList[${index}].totalWeight`}
+            control={control}
+            render={({ field: { value, onChange, onBlur } }) => (
+              <Input
+                mt={2}
+                type="text"
+                fontSize="md"
+                placeholder="Nhập tổng cân nặng (kg)"
+                value={value}
+                onChangeText={onChange}
+                onBlur={onBlur}
+                keyboardType="number-pad"
+                InputLeftElement={
+                  <MaterialCommunityIcons
+                    style={{ marginLeft: 12 }}
+                    name="weight-kilogram"
+                    size={28}
+                    color="#262626"
+                  />
+                }
               />
             )}
           />
           {/* Check error message of totalWeight field of a specific object in the fieldArray */}
-          {errors.cards?.[index]?.totalWeight?.message && (
+          {errors.fishInLakeList?.[index]?.totalWeight?.message && (
             <Text style={styles.error}>
-              {errors.cards?.[index].totalWeight?.message}
+              {errors.fishInLakeList?.[index].totalWeight?.message}
             </Text>
           )}
           <Button

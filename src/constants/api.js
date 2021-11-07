@@ -20,6 +20,7 @@ export const PERSONAL_SAVED_LOCATION = "personal/save";
 export const PERSONAL_NOTIFICATION = "personal/notification";
 export const PERSONAL_INFORMATION = "personal";
 export const PERSONAL_OWNED_LOCATION = "location/manager";
+export const PERSONAL_EDIT_PROFILE = "personal/edit";
 
 export const LOCATION_OVERVIEW = "location";
 export const LOCATION_CHECKIN_STATUS = "checkin/status";
@@ -32,6 +33,7 @@ export const LOCATION_REVIEW_SCORE = "review/score";
 export const LOCATION_REVIEW_PERSONAL = "review/me";
 export const LOCATION_REVIEW_PERSONAL_DELETE = "review/me/delete";
 export const LOCATION_REVIEW_PERSONAL_POST = "review/me/post";
+export const LOCATION_ADD = "location/add";
 export const LOCATION_CATCH_REPORT_UNRESOLVED = "catch/pending";
 export const LOCATION_CATCH_REPORT_APPROVE = "catches/approve";
 export const LOCATION_CATCH_REPORT_PUBLIC = "catch/public";
