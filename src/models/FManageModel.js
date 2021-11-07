@@ -45,8 +45,8 @@ const model = {
       fishes: ["Cá chày"],
     },
   ],
-  catchReportCurrentPage: 1,
-  catchTotalPage: 1,
+  catchHistoryCurrentPage: 1,
+  catchHistoryTotalPage: 1,
 
   checkInHistoryList: [
     {
@@ -81,7 +81,11 @@ const model = {
   locationCatchList: [], // List of public catch report to display on overview screen
   totalCatchPage: 1,
 
+  currentPost: {},
   postDetail: {},
+
+  checkinHistoryCurrentPage: 1,
+  checkinHistoryTotalPage: 1,
 
   setCurrentId: action((state, payload) => {
     state.currentId = payload;
@@ -304,6 +308,40 @@ const model = {
     });
   }),
 
+  createNewPost: thunk(async (actions, payload) => {
+    const { attachmentType, content, id, postType, url } = payload;
+    const { status } = await http.post(
+      `location/${id}/post/add
+    `,
+      {
+        attachmentType,
+        content,
+        id,
+        postType,
+        url,
+      },
+    );
+    if (status === 200) {
+      console.log(`status>>>`, status);
+    }
+  }),
+  editPost: thunk(async (actions, payload) => {
+    const { attachmentType, content, id, postType, url } = payload;
+    const { status } = await http.put(`location/${id}/post/edit`, {
+      attachmentType,
+      content,
+      id,
+      postType,
+      url,
+    });
+    if (status === 200) {
+      console.log(`status>>>`, status);
+    }
+  }),
+
+  setCurrentPost: action((state, payload) => {
+    state.currentPost = payload;
+  }),
   // END OF POST RELATED SECTION
 
   // START OF CATCH REPORT RELATED SECTION
@@ -642,8 +680,39 @@ const model = {
 
   // END UNRESOLVED CATCH REPORT RELATED SECTION
 
+  // LOCATION CATCH REPORT HISTORY
+  setCatchReportHistory: action((state, payload) => {
+    state.catchReportHistory = state.catchReportHistory.concat(payload);
+  }),
+  setCatchHistoryCurrentPage: action((state, payload) => {
+    state.catchHistoryCurrentPage = payload;
+  }),
+  setCatchHistoryTotalPage: action((state, payload) => {
+    state.catchHistoryTotalPage = payload;
+  }),
+  getCatchReportHistory: thunk(async (actions, payload, { getState }) => {
+    const { catchHistoryCurrentPage, catchHistoryTotalPage } = getState();
+
+    // If current page is smaller than 0 or larger than maximum page then return
+    if (
+      catchHistoryCurrentPage <= 0 ||
+      catchHistoryCurrentPage > catchHistoryTotalPage
+    )
+      return;
+
+    const { data } = await http.get(`${API_URL.PERSONAL_CATCH_REPORT}`, {
+      params: { pageNo: catchHistoryCurrentPage },
+    });
+    const { totalPage, items } = data;
+    actions.setCatchHistoryCurrentPage(catchHistoryCurrentPage + 1);
+    actions.setCatchHistoryTotalPage(totalPage);
+    actions.setCatchReportHistory(items);
+  }),
+  // END LOCATION CATCH REPORT HISTORY
+
   // START OF CHECKIN RELATED SECTION
 
+  // VERIFY CHECK-IN
   /**
    * Set Angler overview data to display after checkin success
    */
@@ -673,6 +742,37 @@ const model = {
       actions.setAnglerCheckinOverviewInfor({});
     }
   }),
+
+  // LOCATION CHECK-IN HISTORY
+  setCheckinHistoryList: action((state, payload) => {
+    state.checkinHistoryList = state.checkinHistoryList.concat(payload);
+  }),
+  setCheckinHistoryCurrentPage: action((state, payload) => {
+    state.checkinHistoryCurrentPage = payload;
+  }),
+  setCheckinHistoryTotalPage: action((state, payload) => {
+    state.checkinHistoryTotalPage = payload;
+  }),
+  getCheckinHistoryList: thunk(async (actions, payload, { getState }) => {
+    const { checkinHistoryCurrentPage, checkinHistoryTotalPage } = getState();
+
+    // If current page is smaller than 0 or larger than maximum page then return
+    if (
+      checkinHistoryCurrentPage <= 0 ||
+      checkinHistoryCurrentPage > checkinHistoryTotalPage
+    )
+      return;
+
+    const { data } = await http.get(`${API_URL.PERSONAL_CHECKIN}`, {
+      params: { pageNo: checkinHistoryCurrentPage },
+    });
+    const { totalPage, items } = data;
+    actions.setCheckinHistoryCurrentPage(checkinHistoryCurrentPage + 1);
+    actions.setCheckinHistoryTotalPage(totalPage);
+    actions.setCheckinHistoryList(items);
+  }),
+
   // END OF CHECKIN RELATED SECTION
 };
+
 export default model;

@@ -124,6 +124,9 @@ const goToFManageLakeEditScreen = (navigation, params) => {
 const goToPostEditScreen = (navigation, params) => {
   navigation.navigate(ROUTE_NAMES.FMANAGE_POST_EDIT, { ...params });
 };
+const goToPostCreateScreen = (navigation, params) => {
+  navigation.navigate(ROUTE_NAMES.FMANAGE_POST_CREATE, { ...params });
+};
 
 const goToCatchReportVerifyDetailScreen = (navigation, params) => {
   navigation.navigate(ROUTE_NAMES.FMANAGE_CATCH_DETAIL, { ...params });
@@ -206,6 +209,7 @@ export {
   goToLogoScreen,
   goToMediaSelectScreen,
   goToOTPScreen,
+  goToPostCreateScreen,
   goToPostEditScreen,
   goToRegisterInformationScreen,
   goToRegisterScreen,

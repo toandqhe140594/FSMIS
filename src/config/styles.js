@@ -4,6 +4,9 @@ export default StyleSheet.create({
   boldText: {
     fontWeight: "bold",
   },
+  mdText: {
+    fontSize: 16,
+  },
   nameTextLg: {
     fontSize: 20,
     fontWeight: "bold",

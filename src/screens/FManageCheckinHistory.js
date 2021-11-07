@@ -1,4 +1,4 @@
-import { useStoreState } from "easy-peasy";
+import { useStoreActions, useStoreState } from "easy-peasy";
 import {
   Box,
   Button,
@@ -19,6 +19,12 @@ import PressableCustomCard from "../components/PressableCustomCard";
 const FManageCheckinHistoryScreen = () => {
   const listCheckInModel = useStoreState(
     (actions) => actions.FManageModel.checkInHistoryList,
+  );
+  const getCheckinHistoryList = useStoreActions(
+    (actions) => actions.FManageModel.getCheckinHistoryList,
+  );
+  const { checkinHistoryCurrentPage, checkinHistoryList } = useStoreState(
+    (states) => states.FManageModel,
   );
   const [modalVisible, setModalVisible] = useState(false);
   const [startDate, setStartDate] = useState();

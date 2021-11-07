@@ -1,10 +1,12 @@
 import { useStoreActions, useStoreState } from "easy-peasy";
-import { Box, FlatList, Text } from "native-base";
+import { Box, FlatList } from "native-base";
 import React, { useEffect } from "react";
+import { Text } from "react-native-elements";
 
 import CheckInCard from "../components/CheckInCard";
 import HeaderTab from "../components/HeaderTab";
 import PressableCustomCard from "../components/PressableCustomCard";
+import styles from "../config/styles";
 
 const AnglerCheckInHistory = () => {
   // Destructure checkinHistoryCurrentPage and checkinReportHistory list from ProfileModel
@@ -51,7 +53,7 @@ const AnglerCheckInHistory = () => {
                     timeIn={item.checkInTime}
                     timeOut={item.checkOutTime}
                   >
-                    <Text bold fontSize="md">
+                    <Text style={[styles.boldText, styles.mdText]}>
                       {item.locationName}
                     </Text>
                   </CheckInCard>

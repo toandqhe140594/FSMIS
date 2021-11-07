@@ -20,7 +20,7 @@ import { ROUTE_NAMES } from "../constants";
 import { showAlertBox } from "../utilities";
 
 const validationSchema = yup.object().shape({
-  postType: yup.number().default(1),
+  postType: yup.number().default(-1),
   postDescription: yup
     .string()
     .required("Nội dung bài đăng không được để trống"),
@@ -47,38 +47,34 @@ const OFFSET_BOTTOM = 85;
 // Get window height without status bar height
 const CUSTOM_SCREEN_HEIGHT = Dimensions.get("window").height - OFFSET_BOTTOM;
 
-const PostEditScreen = () => {
-  const currentPost = useStoreState(
-    (states) => states.FManageModel.currentPost,
-  );
-  //   console.log(`currentPost`, currentPost);
+const PostCreateScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
   const [imageArray, setImageArray] = useState([]);
   const [showSection, setShowSection] = useState("NONE");
-  const editPost = useStoreActions((actions) => actions.FManageModel.editPost);
+  const currentID = useStoreState((states) => states.FManageModel.currentId);
+  const createPost = useStoreActions(
+    (actions) => actions.FManageModel.createNewPost,
+  );
   const methods = useForm({
     mode: "onSubmit",
     reValidateMode: "onSubmit",
     resolver: yupResolver(validationSchema),
-    defaultValues: {
-      postDescription: `${currentPost.content}`,
-    },
   });
   const { handleSubmit } = methods;
   /**
    *  Reset the image array if imageArray is not empty
    *  when switching to input link video
    */
-  //   console.log("currentPost :>> ", currentPost);
   useEffect(() => {
-    if (showSection !== "IMAGE" && imageArray?.length > 0) setImageArray([]);
+    if (showSection !== "image" && imageArray?.length > 0) setImageArray([]);
   }, [showSection]);
 
   const setAttachment = (type) => {
     switch (type) {
       case "NONE":
         return "none";
+
       case "IMAGE":
         return imageArray[0];
       case "VIDEO":
@@ -89,14 +85,14 @@ const PostEditScreen = () => {
   };
 
   const onSubmit = (data) => {
+    // console.log(imageArray);
     const { postDescription: content, postType } = data;
     const typePost = postTypeData.find((item) => item.id === postType);
     const attachment = setAttachment(showSection);
-
-    editPost({
+    createPost({
       attachmentType: showSection,
       content,
-      id: currentPost.id,
+      id: currentID,
       postType: typePost.type,
       url: attachment.base64,
     });
@@ -111,9 +107,12 @@ const PostEditScreen = () => {
     // useCallback will listen to route.param
     useCallback(() => {
       if (route.params?.base64Array && route.params.base64Array[0]) {
+        // Set imageArray state and reset navigation params
         setImageArray(route.params?.base64Array);
-        navigation.setParams({ base64Array: [] });
       }
+      return () => {
+        navigation.setParams({ base64Array: [] });
+      };
     }, [route.params]),
   );
   return (
@@ -135,7 +134,6 @@ const PostEditScreen = () => {
                 placeholder="Chọn sự kiện"
                 data={postTypeData}
                 controllerName="postType"
-                defaultValue={currentPost.postType}
               />
               <TextAreaComponent
                 label="Miêu tả"
@@ -185,4 +183,4 @@ const PostEditScreen = () => {
   );
 };
 
-export default PostEditScreen;
+export default PostCreateScreen;
