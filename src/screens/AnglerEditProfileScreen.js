@@ -26,14 +26,8 @@ import SelectComponent from "../components/common/SelectComponent";
 import HeaderTab from "../components/HeaderTab";
 import moment from "../config/moment";
 import { ROUTE_NAMES, SCHEMA } from "../constants";
-import AddressModel from "../models/AddressModel";
-import ProfileModel from "../models/ProfileModel";
 import { goToMediaSelectScreen } from "../navigations";
 import { showAlertBox } from "../utilities";
-import store from "../utilities/Store";
-
-store.addModel("AddressModel", AddressModel);
-store.addModel("ProfileModel", ProfileModel);
 
 const genderList = [
   { id: true, name: "Nam" },

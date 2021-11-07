@@ -636,6 +636,16 @@ const model = {
     state.unresolvedCatchReportTotalPage = payload < 1 ? 1 : payload;
   }),
   /**
+   * Remove a catch report from the unresolved catch report list by id
+   * @param {Object} [payload] params pass to function
+   * @param {number} [payload.id] id of the catch report that need to be remove
+   */
+  removeAnUnresolvedCatchReportById: action((state, payload) => {
+    state.unresolvedCatchReportList = state.unresolvedCatchReportList.filter(
+      (report) => report.id !== payload.id,
+    );
+  }),
+  /**
    * Get list data of unresolved catch eport
    * @param {Object} [payload] the payload pass to function
    */
@@ -677,6 +687,33 @@ const model = {
       }
     },
   ),
+  /**
+   * Verify a catch report
+   * @param {Object} [payload] params pass to function
+   * @param {number} [payload.id] id of the catch report
+   * @param {boolean} [payload.isApprove] value indicate that approve the catch report or not
+   * @param {Function} [payload.setSuccess] function indicate verify catch report success or not
+   */
+  approveCatchReport: thunk(async (actions, payload) => {
+    const { id, isApprove, setSuccess } = payload;
+    try {
+      const { status } = await http.post(
+        `${API_URL.LOCATION_CATCH_REPORT_APPROVE}/${id}`,
+        null,
+        {
+          params: {
+            isApprove,
+          },
+        },
+      );
+      if (status === 200) {
+        setSuccess(true);
+        await actions.removeAnUnresolvedCatchReportById({ id });
+      }
+    } catch (error) {
+      setSuccess(false);
+    }
+  }),
 
   // END UNRESOLVED CATCH REPORT RELATED SECTION
 
