@@ -41,6 +41,8 @@ const AnglerCatchReportScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
   const [imageArray, setImageArray] = useState([]);
+  const [listFish, setListFish] = useState([]);
+  const [success, setSuccess] = useState(null);
   const submitCatchReport = useStoreActions(
     (actions) => actions.CheckInModel.submitCatchReport,
   );
@@ -90,23 +92,9 @@ const AnglerCatchReportScreen = () => {
 
   const { control, handleSubmit, watch } = methods;
   const watchALakeTypeField = watch("aLakeType");
-
-  const listLake = useStoreState((states) => states.CheckInModel.lakeList);
-  const listFishModel = useStoreState((states) => states.CheckInModel.fishList);
-  const submitCatchReport = useStoreActions(
-    (actions) => actions.CheckInModel.submitCatchReport,
-  );
-  const getLakeList = useStoreActions(
-    (actions) => actions.CheckInModel.getLakeListByLocationId,
-  );
   const personalCheckout = useStoreActions(
     (actions) => actions.CheckInModel.personalCheckout,
   );
-
-  const [listFish, setListFish] = useState([]);
-  const [imageArray, setImageArray] = useState([]);
-  const [success, setSuccess] = useState(null);
-
   const onSubmit = (data) => {
     const { aCaption, aLakeType, isPublic, cards } = data;
     const catchesDetailList = cards.map(
