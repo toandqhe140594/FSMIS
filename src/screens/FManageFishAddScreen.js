@@ -1,14 +1,17 @@
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useNavigation } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import { Button, VStack } from "native-base";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { Dimensions, StyleSheet, View } from "react-native";
+import { ActivityIndicator, Dimensions, StyleSheet, View } from "react-native";
+import { Overlay } from "react-native-elements";
 
 import InputComponent from "../components/common/InputComponent";
 import SelectComponent from "../components/common/SelectComponent";
 import HeaderTab from "../components/HeaderTab";
 import { SCHEMA } from "../constants";
+import { showAlertAbsoluteBox, showAlertBox } from "../utilities";
 
 const OFFSET_BOTTOM = 85;
 // Get window height without status bar height
@@ -35,8 +38,12 @@ const styles = StyleSheet.create({
 });
 
 const FManageFishAddScreen = () => {
+  const navigation = useNavigation();
+  const [isLoading, setIsLoading] = useState(false);
+  const [addStatus, setAddStatus] = useState("");
   const { fishList } = useStoreState((state) => state.FishModel);
   const { getFishList } = useStoreActions((actions) => actions.FishModel);
+  const { addFishToLake } = useStoreActions((actions) => actions.FManageModel);
   const methods = useForm({
     mode: "onSubmit",
     reValidateMode: "onSubmit",
@@ -44,14 +51,35 @@ const FManageFishAddScreen = () => {
   });
   const { handleSubmit } = methods;
   const onSubmit = (data) => {
-    console.log(data);
+    const addData = { ...data };
+    addFishToLake({ addData, setAddStatus });
+    setIsLoading(true);
   };
   useEffect(() => {
     getFishList();
   }, []);
+  useEffect(() => {
+    if (addStatus === "SUCCESS") {
+      setIsLoading(false);
+      showAlertAbsoluteBox(
+        "Thông báo",
+        "Thêm cá thành công!",
+        () => {
+          navigation.goBack();
+        },
+        "Xác nhận",
+      );
+    } else if (addStatus === "FAILED") {
+      setIsLoading(false);
+      showAlertBox("Thông báo", "Đã có lỗi xảy ra, vui lòng thử lại");
+    }
+  }, [addStatus]);
   return (
     <>
       <HeaderTab name="Thêm cá vào hồ" />
+      <Overlay isVisible={isLoading}>
+        <ActivityIndicator color="#2089DC" />
+      </Overlay>
       <View style={styles.appContainer}>
         <FormProvider {...methods}>
           <VStack space={2} style={styles.sectionWrapper}>
