@@ -1,14 +1,8 @@
 import { Checkbox, Select } from "native-base";
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
-import { Controller, useFormContext } from "react-hook-form";
+import { Controller, useFormContext, useWatch } from "react-hook-form";
 import { StyleSheet, Text, View } from "react-native";
-
-let itemKey = 0;
-const generateKey = () => {
-  itemKey += 1;
-  return itemKey;
-};
 
 const styles = StyleSheet.create({
   error: { color: "#f43f5e", fontSize: 12, fontStyle: "italic" },
@@ -29,6 +23,21 @@ const CheckboxSelectorComponent = ({
     formState: { errors },
   } = useFormContext();
   const [userSelection, setUserSelection] = useState("");
+  const watchSelection = useWatch({
+    control,
+    name: controllerName,
+    defaultValue: [],
+  });
+  useEffect(() => {
+    if (watchSelection.length === 0) setUserSelection(placeholder);
+    else {
+      const selectMethods = data.reduce((acc, { name, id }) => {
+        if (watchSelection.includes(id)) return acc.concat(", ", name);
+        return acc;
+      }, "");
+      setUserSelection(selectMethods.slice(2));
+    }
+  }, [watchSelection]);
   return (
     <View style={myStyles}>
       {label.length > 0 && (
@@ -42,16 +51,7 @@ const CheckboxSelectorComponent = ({
               control={control}
               name={controllerName}
               render={({ field: { onChange, value } }) => {
-                useEffect(() => {
-                  if (value.length === 0) setUserSelection(placeholder);
-                  else {
-                    const selectMethods = data.reduce((acc, { name, id }) => {
-                      if (value.includes(id)) return acc.concat(", ", name);
-                      return acc;
-                    }, "");
-                    setUserSelection(selectMethods.slice(2));
-                  }
-                }, [value]);
+                // useEffect(() => {}, [value]);
                 return (
                   <Checkbox.Group
                     colorScheme="green"
@@ -61,12 +61,7 @@ const CheckboxSelectorComponent = ({
                   >
                     {/* Display list of checkbox options */}
                     {data.map((item) => (
-                      <Checkbox
-                        key={generateKey()}
-                        value={item.id}
-                        my={1}
-                        size="md"
-                      >
+                      <Checkbox key={item.id} value={item.id} my={1} size="md">
                         {item.name}
                       </Checkbox>
                     ))}
@@ -88,7 +83,7 @@ CheckboxSelectorComponent.propTypes = {
   label: PropTypes.string,
   isTitle: PropTypes.bool,
   placeholder: PropTypes.string,
-  data: PropTypes.arrayOf(PropTypes.string),
+  data: PropTypes.arrayOf(PropTypes.object),
   controllerName: PropTypes.string,
   myStyles: PropTypes.objectOf(PropTypes.string),
 };
