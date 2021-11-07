@@ -614,8 +614,25 @@ const model = {
   // DucHM ADD_END 7/11/2021
   // END OF FISHING LOCATION MANAGEMENT RELATED SECTION
 
-  // START UNRESOLVED CATCH REPORT RELATED SECTION
+  // START OF LAKE FISH MANAGEMENT SECTION
+  // DucHM ADD_START 8/11/2021
+  addFishToLake: thunk(async (actions, payload, { getState }) => {
+    const { addData, setAddStatus } = payload;
+    const {
+      lakeDetail: { id },
+    } = getState();
+    try {
+      await http.post(`location/lake/${id}/fish/add`, addData);
+      action.getLakeDetailByLakeId({ id });
+      setAddStatus("SUCCESS");
+    } catch (error) {
+      setAddStatus("FAILED");
+    }
+  }),
+  // DucHM ADD_END 8/11/2021
+  // END OF LAKE FISH MANAGEMENT SECTION
 
+  // START UNRESOLVED CATCH REPORT RELATED SECTION
   /**
    * Set list data of unresolved catch eport
    */
