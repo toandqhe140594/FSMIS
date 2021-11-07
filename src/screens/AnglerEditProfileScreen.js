@@ -11,6 +11,7 @@ import { Button, Center, Icon, Input, Text, VStack } from "native-base";
 import React, { useCallback, useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import {
+  ActivityIndicator,
   Alert,
   KeyboardAvoidingView,
   ScrollView,
@@ -18,7 +19,7 @@ import {
   useWindowDimensions,
   View,
 } from "react-native";
-import { Avatar } from "react-native-elements";
+import { Avatar, Overlay } from "react-native-elements";
 
 import InputComponent from "../components/common/InputComponent";
 import SelectComponent from "../components/common/SelectComponent";
@@ -44,6 +45,7 @@ const EditProfileScreen = () => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [formattedDate, setFormattedDate] = useState("");
   const [avatarImage, setAvatarImage] = useState(undefined);
+  const [isLoading, setIsLoading] = useState(false);
   const [updateStatus, setUpdateStatus] = useState("");
   const navigation = useNavigation();
   const route = useRoute();
@@ -64,17 +66,20 @@ const EditProfileScreen = () => {
     // avoid change mode and reValidationMode to onChange to save re-render
     mode: "onSubmit",
     reValidateMode: "onSbumit",
-    defaultValues: {
-      name: userInfo.fullName,
-      gender: userInfo.gender,
-      address: userInfo.address,
-      provinceId: userInfo.addressFromWard.provinceId,
-      districtId: userInfo.addressFromWard.districtId,
-      wardId: userInfo.addressFromWard.wardId,
-    },
+
     resolver: yupResolver(SCHEMA.ANGLER_PROFILE_FORM),
   });
-  const { handleSubmit, getValues } = methods;
+  const { handleSubmit, getValues, setValue } = methods;
+
+  const setDefaultValues = () => {
+    setValue("name", userInfo.fullName);
+    setValue("gender", userInfo.gender);
+    setValue("address", userInfo.address);
+    setValue("provinceId", userInfo.addressFromWard.provinceId);
+    setValue("districtId", userInfo.addressFromWard.districtId);
+    setValue("wardId", userInfo.addressFromWard.wardId);
+  };
+
   const generateAddressDropdown = useCallback((name, value) => {
     if (name === "provinceId") {
       getDisctrictByProvinceId({ id: value });
@@ -115,14 +120,17 @@ const EditProfileScreen = () => {
     // Did not have null or empty validation for avatarImage and formattedDate yet
     const updateData = { ...data, avatarUrl: avatarImage, dob: formattedDate };
     editPersonalInformation({ updateData, setUpdateStatus });
+    setIsLoading(true);
   };
   /**
    * Run first time when the screen inits
+   * setDefaultValue for fields
    * get all province list for select dropdown
    * and set custome date picker value
    * When component unmoute, reset distric list and ward list
    */
   useEffect(() => {
+    setDefaultValues();
     getAllProvince();
     getDisctrictByProvinceId({ id: getValues("provinceId") });
     getWardByDistrictId({ id: getValues("districtId") });
@@ -158,12 +166,20 @@ const EditProfileScreen = () => {
   );
   useEffect(() => {
     if (updateStatus === "SUCCESS") {
+      setIsLoading(false);
       showAlertBox("Thông báo", "Cập nhật thông tin cá nhân thành công!");
-    } else showAlertBox("Thông báo", "Đã xảy ra lỗi! Vui lòng thử lại sau.");
+    } else if (updateStatus === "FAILED") {
+      setIsLoading(false);
+      showAlertBox("Thông báo", "Đã xảy ra lỗi! Vui lòng thử lại sau.");
+    }
   }, [updateStatus]);
+
   return (
     <KeyboardAvoidingView>
-      <ScrollView nestedScrollEnabled>
+      <ScrollView>
+        <Overlay isVisible={isLoading}>
+          <ActivityIndicator size="large" color="#2089DC" />
+        </Overlay>
         {showDatePicker && (
           <DateTimePicker
             display="default"
