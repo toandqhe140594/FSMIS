@@ -34,7 +34,8 @@ const FManageEditProfileScreen = () => {
   const navigation = useNavigation();
   const [imageArray, setImageArray] = useState([]);
   const [updateStatus, setUpdateStatus] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [fullScreen, setFullScreen] = useState(true);
   const { provinceList, districtList, wardList } = useStoreState(
     (state) => state.AddressModel,
   );
@@ -94,10 +95,15 @@ const FManageEditProfileScreen = () => {
   };
 
   useEffect(() => {
+    setIsLoading(true);
     setDefaultValues();
-    getAllProvince();
-    getDisctrictByProvinceId({ id: getValues("provinceId") });
-    getWardByDistrictId({ id: getValues("districtId") });
+    (async () => {
+      getAllProvince();
+      getDisctrictByProvinceId({ id: getValues("provinceId") });
+      await getWardByDistrictId({ id: getValues("districtId") });
+      setIsLoading(false);
+      setFullScreen(false);
+    })();
     return () => {
       resetDataList();
     };
@@ -130,8 +136,16 @@ const FManageEditProfileScreen = () => {
     <>
       <HeaderTab name="Thông tin điểm câu" />
       <ScrollView>
-        <Overlay isVisible={isLoading}>
-          <ActivityIndicator size="large" color="#2089DC" />
+        <Overlay
+          isVisible={isLoading}
+          fullScreen={fullScreen}
+          overlayStyle={
+            fullScreen
+              ? { justifyContent: "center", alignItems: "center" }
+              : null
+          }
+        >
+          <ActivityIndicator size={60} color="#2089DC" />
         </Overlay>
         <FormProvider {...methods}>
           <VStack space={3} divider={<Divider />}>
