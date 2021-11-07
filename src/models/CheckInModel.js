@@ -104,7 +104,7 @@ const model = {
       fishList = fishList.concat({
         id,
         fishList: fishDtoOutList.map(
-          ({ id: fishId, name: fishName, quantity }) => ({
+          ({ speciesId: fishId, name: fishName, quantity }) => ({
             id: fishId,
             name: fishName,
             quantity,
