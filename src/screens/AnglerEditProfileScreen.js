@@ -39,7 +39,8 @@ const EditProfileScreen = () => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [formattedDate, setFormattedDate] = useState("");
   const [avatarImage, setAvatarImage] = useState(undefined);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [fullScreen, setFullScreen] = useState(true);
   const [updateStatus, setUpdateStatus] = useState("");
   const navigation = useNavigation();
   const route = useRoute();
@@ -57,21 +58,21 @@ const EditProfileScreen = () => {
     (actions) => actions.ProfileModel,
   );
   const methods = useForm({
-    // avoid change mode and reValidationMode to onChange to save re-render
     mode: "onSubmit",
-    reValidateMode: "onSbumit",
-
+    reValidateMode: "onSubmit",
     resolver: yupResolver(SCHEMA.ANGLER_PROFILE_FORM),
   });
   const { handleSubmit, getValues, setValue } = methods;
 
   const setDefaultValues = () => {
-    setValue("name", userInfo.fullName);
+    setValue("fullName", userInfo.fullName);
     setValue("gender", userInfo.gender);
     setValue("address", userInfo.address);
     setValue("provinceId", userInfo.addressFromWard.provinceId);
     setValue("districtId", userInfo.addressFromWard.districtId);
     setValue("wardId", userInfo.addressFromWard.wardId);
+    setFormattedDate(userInfo.dob.split(" ")[0]);
+    setAvatarImage(userInfo.avatarUrl);
   };
 
   const generateAddressDropdown = useCallback((name, value) => {
@@ -81,6 +82,7 @@ const EditProfileScreen = () => {
       getWardByDistrictId({ id: value });
     }
   }, []);
+
   const onDateChange = (e, selectedDate) => {
     const currentDate = selectedDate || date;
     setShowDatePicker(false);
@@ -125,11 +127,13 @@ const EditProfileScreen = () => {
    */
   useEffect(() => {
     setDefaultValues();
-    getAllProvince();
-    getDisctrictByProvinceId({ id: getValues("provinceId") });
-    getWardByDistrictId({ id: getValues("districtId") });
-    setFormattedDate(userInfo.dob.split(" ")[0]);
-    setAvatarImage(userInfo.avatarUrl);
+    (async () => {
+      getAllProvince();
+      getDisctrictByProvinceId({ id: getValues("provinceId") });
+      await getWardByDistrictId({ id: getValues("districtId") });
+      setIsLoading(false);
+      setFullScreen(false);
+    })();
     return () => {
       resetDataList();
     };
@@ -171,8 +175,16 @@ const EditProfileScreen = () => {
   return (
     <KeyboardAvoidingView>
       <ScrollView>
-        <Overlay isVisible={isLoading}>
-          <ActivityIndicator size="large" color="#2089DC" />
+        <Overlay
+          isVisible={isLoading}
+          fullScreen={fullScreen}
+          overlayStyle={
+            fullScreen
+              ? { justifyContent: "center", alignItems: "center" }
+              : null
+          }
+        >
+          <ActivityIndicator size={60} color="#2089DC" />
         </Overlay>
         {showDatePicker && (
           <DateTimePicker
