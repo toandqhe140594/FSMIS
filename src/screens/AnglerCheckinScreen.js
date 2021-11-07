@@ -134,7 +134,7 @@ const DefaultQRCodeScreen = () => {
           w="50%"
           isLoading={loading}
         >
-          Lấy thông tin checkin
+          Kiểm tra trạng thái
         </Button>
       </Box>
     </>
