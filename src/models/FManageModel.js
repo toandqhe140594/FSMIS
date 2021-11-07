@@ -653,19 +653,19 @@ const model = {
   getCheckinHistoryList: thunk(async (actions, payload, { getState }) => {
     const { checkinHistoryCurrentPage, checkinHistoryTotalPage, currentId } =
       getState();
-    // const { startDate, endDate } = payload;
     // If current page is smaller than 0 or larger than maximum page then return
     if (
       checkinHistoryCurrentPage <= 0 ||
       checkinHistoryCurrentPage > checkinHistoryTotalPage
     )
       return;
-
+    console.log(`checkinHistoryCurrentPage`, checkinHistoryCurrentPage);
     const { data } = await http.get(`location/${currentId}/checkin/history`, {
-      params: checkinHistoryCurrentPage,
+      params: { pageNo: checkinHistoryCurrentPage },
     });
 
     const { totalPage, items } = data;
+    console.log("items :>> ", items);
     actions.setCheckinHistoryCurrentPage(checkinHistoryCurrentPage + 1);
     actions.setCheckinHistoryTotalPage(totalPage);
     actions.setCheckinHistoryList(items);
