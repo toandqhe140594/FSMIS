@@ -21,7 +21,30 @@ const model = {
   unresolvedCatchReportList: [],
   unresolvedCatchReportTotalPage: 1,
   unresolvedCatchReportCurrentPage: 1,
-  catchReportHistory: [],
+  catchReportHistory: [
+    {
+      id: 4,
+      userId: 2,
+      userFullName: "Lê Test",
+      avatar: "https://picsum.photos/200/300",
+      locationId: 8,
+      locationName: "Hồ Câu Thiên Đường",
+      description: "Mẻ này ngon",
+      time: "20/10/2020 00:00:00",
+      fishes: ["Cá chày"],
+    },
+    {
+      id: 2,
+      userId: 2,
+      userFullName: "Lê Test",
+      avatar: "https://picsum.photos/200/300",
+      locationId: 8,
+      locationName: "Hồ Câu Thiên Đường",
+      description: "Mẻ này ngon",
+      time: "20/10/2020 00:00:00",
+      fishes: ["Cá chày"],
+    },
+  ],
   catchHistoryCurrentPage: 1,
   catchHistoryTotalPage: 1,
 
@@ -61,10 +84,6 @@ const model = {
     actions.setListOfFishingLocations(data);
   }),
 
-  /**
-   * Set location detail state
-   * @param {Object} [payload] new location details
-   */
   setLocationDetails: action((state, payload) => {
     state.locationDetails = payload;
   }),
@@ -91,19 +110,11 @@ const model = {
   setLakeDetail: action((state, payload) => {
     state.lakeDetail = payload;
   }),
-  /**
-   * Get lake detail by id and update lakeDetail state
-   * @param {Number} [payload.id] lake id
-   */
   getLakeDetailByLakeId: thunk(async (actions, payload, { getState }) => {
-    try {
-      const { data } = await http.get(
-        `location/${getState().currentId}/lake/${payload.id}`,
-      );
-      actions.setLakeDetail(data);
-    } catch (error) {
-      // Insert error handler
-    }
+    const { data } = await http.get(
+      `location/${getState().currentId}/lake/${payload.id}`,
+    );
+    actions.setLakeDetail(data);
   }),
 
   /**
@@ -495,83 +506,6 @@ const model = {
     }
   }),
 
-  // DucHM ADD_START 4/11/2021
-  /**
-   * Add new fishing location
-   * @param {Object} [payload.addData] an object pass to POST body
-   * @param {Function} [payload.setAddStatus] the function set status
-   */
-  addNewLocation: thunk(async (actions, payload) => {
-    const { addData, setAddStatus } = payload;
-    try {
-      await http.post(API_URL.LOCATION_ADD, addData, {
-        params: {},
-      });
-      setAddStatus("SUCCESS");
-      actions.getListOfFishingLocations();
-    } catch (error) {
-      setAddStatus("FAILED");
-    }
-  }),
-  // DucHM ADD_END 4/11/2021
-
-  // DucHM ADD_START 5/11/2021
-  /**
-   * Add new lake to a fishing location
-   * If there no fishing location id pass in, get current id in state
-   * @param {Object} [payload.addData] an object pass to POST body
-   * @param {Function} [payload.setAddStatus] the function set status
-   */
-  addNewLakeInLocation: thunk(async (actions, payload, { getState }) => {
-    const { addData, setAddStatus } = payload;
-    const { currentId } = getState();
-    try {
-      await http.post(`location/${currentId}/lake/add`, addData);
-      setAddStatus("SUCCESS");
-      actions.getListOfLake();
-    } catch (error) {
-      setAddStatus("FAILED");
-    }
-  }),
-  // DucHM ADD_END 5/11/2021
-
-  // DucHM ADD_START 6/11/2021
-  /**
-   * Update lake detail (methods, dimensions, name, price)
-   * @param {Number} [payload.id] lake id
-   * @param {Object} [payload.updateData] updated information
-   * @param {Function} [payload.setUpdateStatus] the function set status
-   */
-  editLakeDetail: thunk(async (actions, payload, { getState }) => {
-    const { udpateData, setUpdateStatus, id } = payload;
-    const { currentId } = getState();
-    try {
-      await http.put(`location/${currentId}/lake/edit/${id}`, udpateData);
-      setUpdateStatus("SUCCESS");
-    } catch (error) {
-      setUpdateStatus("FAILED");
-    }
-  }),
-  // DucHM ADD_END 6/11/2021
-
-  // DucHM ADD_START 7/11/2021
-  /**
-   * Update fishing location profile
-   * @param {Object} [payload.updateData] update information
-   * @param {Function} [payload.setUpdateStatus] the function set status
-   */
-  editFishingLocation: thunk(async (actions, payload, { getState }) => {
-    const { updateData, setUpdateStatus } = payload;
-    const { currentId } = getState();
-    try {
-      await http.put(`location/edit/${currentId}`, updateData);
-      actions.setLocationDetails(updateData);
-      setUpdateStatus("SUCCESS");
-    } catch (error) {
-      setUpdateStatus("FAILED");
-    }
-  }),
-  // DucHM ADD_END 7/11/2021
   // END OF FISHING LOCATION MANAGEMENT RELATED SECTION
 
   // START UNRESOLVED CATCH REPORT RELATED SECTION
@@ -594,16 +528,6 @@ const model = {
    */
   setUnresolvedCatchReportTotalPage: action((state, payload) => {
     state.unresolvedCatchReportTotalPage = payload < 1 ? 1 : payload;
-  }),
-  /**
-   * Remove a catch report from the unresolved catch report list by id
-   * @param {Object} [payload] params pass to function
-   * @param {number} [payload.id] id of the catch report that need to be remove
-   */
-  removeAnUnresolvedCatchReportById: action((state, payload) => {
-    state.unresolvedCatchReportList = state.unresolvedCatchReportList.filter(
-      (report) => report.id !== payload.id,
-    );
   }),
   /**
    * Get list data of unresolved catch eport
@@ -647,33 +571,6 @@ const model = {
       }
     },
   ),
-  /**
-   * Verify a catch report
-   * @param {Object} [payload] params pass to function
-   * @param {number} [payload.id] id of the catch report
-   * @param {boolean} [payload.isApprove] value indicate that approve the catch report or not
-   * @param {Function} [payload.setSuccess] function indicate verify catch report success or not
-   */
-  approveCatchReport: thunk(async (actions, payload) => {
-    const { id, isApprove, setSuccess } = payload;
-    try {
-      const { status } = await http.post(
-        `${API_URL.LOCATION_CATCH_REPORT_APPROVE}/${id}`,
-        null,
-        {
-          params: {
-            isApprove,
-          },
-        },
-      );
-      if (status === 200) {
-        setSuccess(true);
-        await actions.removeAnUnresolvedCatchReportById({ id });
-      }
-    } catch (error) {
-      setSuccess(false);
-    }
-  }),
 
   // END UNRESOLVED CATCH REPORT RELATED SECTION
 
@@ -685,49 +582,26 @@ const model = {
     state.catchHistoryCurrentPage = payload;
   }),
   setCatchHistoryTotalPage: action((state, payload) => {
-    state.catchHistoryTotalPage = payload < 1 ? 1 : payload;
+    state.catchHistoryTotalPage = payload;
   }),
+  getCatchReportHistory: thunk(async (actions, payload, { getState }) => {
+    const { catchHistoryCurrentPage, catchHistoryTotalPage } = getState();
 
-  rewriteCatchReportHistoryList: action((state, payload) => {
-    state.catchReportHistory = payload;
+    // If current page is smaller than 0 or larger than maximum page then return
+    if (
+      catchHistoryCurrentPage <= 0 ||
+      catchHistoryCurrentPage > catchHistoryTotalPage
+    )
+      return;
+
+    const { data } = await http.get(`${API_URL.PERSONAL_CATCH_REPORT}`, {
+      params: { pageNo: catchHistoryCurrentPage },
+    });
+    const { totalPage, items } = data;
+    actions.setCatchHistoryCurrentPage(catchHistoryCurrentPage + 1);
+    actions.setCatchHistoryTotalPage(totalPage);
+    actions.setCatchReportHistory(items);
   }),
-  getCatchReportHistoryOverwrite: thunk(
-    async (actions, payload, { getState }) => {
-      const { startDate, endDate, status } = payload;
-      const { catchHistoryCurrentPage, catchHistoryTotalPage, currentId } =
-        getState();
-      if (status === "APPEND") {
-        // If current page is smaller than 0 or larger than maximum page then return
-        if (
-          catchHistoryCurrentPage <= 0 ||
-          catchHistoryCurrentPage > catchHistoryTotalPage
-        )
-          return;
-
-        const { data } = await http.get(
-          `location/${currentId}/${API_URL.LOCATION_CATCH_REPORT_RESOLVED}`,
-          {
-            params: { pageNo: catchHistoryCurrentPage, startDate, endDate },
-          },
-        );
-        const { totalPage, items } = data;
-        actions.setCatchHistoryCurrentPage(catchHistoryCurrentPage + 1);
-        actions.setCatchHistoryTotalPage(totalPage);
-        actions.setCatchReportHistory(items);
-      } else {
-        const { data } = await http.get(
-          `location/${currentId}/${API_URL.LOCATION_CATCH_REPORT_RESOLVED}`,
-          {
-            params: { pageNo: 1, startDate, endDate },
-          },
-        );
-        const { totalPage, items } = data;
-        actions.setCatchHistoryCurrentPage(2);
-        actions.setCatchHistoryTotalPage(totalPage);
-        actions.rewriteCatchReportHistoryList(items);
-      }
-    },
-  ),
   // END LOCATION CATCH REPORT HISTORY
 
   // START OF CHECKIN RELATED SECTION
@@ -787,7 +661,7 @@ const model = {
     )
       return;
 
-    const { data } = await http.get(`location/2/checkin/history`, {
+    const { data } = await http.get(`location/${currentId}/checkin/history`, {
       params: checkinHistoryCurrentPage,
     });
 
@@ -800,25 +674,28 @@ const model = {
   getCheckinHistoryListByDate: thunk(async (actions, payload, { getState }) => {
     const { checkinHistoryCurrentPage, checkinHistoryTotalPage, currentId } =
       getState();
-    const { startDate, endDate } = payload;
+
     // If current page is smaller than 0 or larger than maximum page then return
     if (
       checkinHistoryCurrentPage <= 0 ||
       checkinHistoryCurrentPage > checkinHistoryTotalPage
     )
       return;
-    let endDateString = JSON.stringify(endDate);
-    endDateString = endDateString.replace(/\\/g, "");
-    endDateString = endDateString.replaceAll('"', "");
-    console.log("endDate :>> ", endDateString);
 
-    const { data } = await http.get(`location/2/checkin/history`, {
-      params: {
-        endDate: endDateString,
-        pageNo: checkinHistoryCurrentPage,
-      },
+    const objParams = { pageNo: checkinHistoryCurrentPage };
+    if (typeof payload === "object") {
+      if ("startDate" in payload) {
+        objParams.startDate = payload.startDate.toJSON();
+      }
+      if ("endDate" in payload) {
+        objParams.endDate = payload.endDate.toJSON();
+      }
+    }
+
+    const { data } = await http.get(`location/${currentId}/checkin/history`, {
+      params: objParams,
     });
-    // console.log("data :>> ", data);
+
     const { totalPage, items } = data;
     actions.setCheckinHistoryCurrentPage(checkinHistoryCurrentPage + 1);
     actions.setCheckinHistoryTotalPage(totalPage);
