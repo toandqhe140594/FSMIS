@@ -79,7 +79,7 @@ const LakeAddNewScreen = () => {
    * to get fishing method list and fish list
    */
   useEffect(() => {
-    getFishingMethodList();
+    getFishingMethodList({ setIsLoading: () => {} });
     getFishList();
   }, []);
 
