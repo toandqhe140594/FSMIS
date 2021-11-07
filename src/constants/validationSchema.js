@@ -9,6 +9,33 @@ export const ANGLER_PROFILE_FORM = yup.object().shape({
   wardId: yup.number(),
 });
 
+export const ANGLER_CATCH_REPORT_FORM = yup.object().shape({
+  aCaption: yup.string().required("Hãy viết suy nghĩ của bạn về ngày câu"),
+  aLakeType: yup
+    .number()
+    .typeError("Trường này chỉ được nhập số")
+    .required("Loại hồ không được để trống"),
+  isPublic: yup.bool(),
+  isReleased: yup.bool(),
+  cards: yup.array().of(
+    yup.object().shape({
+      fishType: yup
+        .number()
+        .typeError("Trường này chỉ được nhập số")
+        .required("Loại cá không được để trống"),
+      catches: yup
+        .number()
+        .typeError("Trường này chỉ được nhập số")
+        .required("Số cá bắt được không được để trống"),
+      totalWeight: yup
+        .number()
+        .typeError("Trường này chỉ được nhập số")
+        .required("Tổng cân nặng cá không được để trống"),
+      isReleased: yup.bool().default(false),
+    }),
+  ),
+});
+
 export const FMANAGE_LAKE_FORM = yup.object().shape({
   name: yup.string().required("Tên hồ không thể bỏ trống"),
   price: yup.string().required("Miêu tả giá vé ở hồ này"),
