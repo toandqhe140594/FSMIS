@@ -231,7 +231,7 @@ const EditProfileScreen = () => {
                 placeholder="Nhập họ và tên"
                 type="text"
                 hasAsterisk
-                controllerName="name"
+                controllerName="fullName"
               />
 
               {/* Date picker field */}
