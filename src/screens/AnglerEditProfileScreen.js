@@ -26,11 +26,7 @@ import SelectComponent from "../components/common/SelectComponent";
 import HeaderTab from "../components/HeaderTab";
 import moment from "../config/moment";
 import { ROUTE_NAMES } from "../constants";
-import AddressModel from "../models/AddressModel";
 import { goToMediaSelectScreen } from "../navigations";
-import store from "../utilities/Store";
-
-store.addModel("AddressModel", AddressModel);
 
 const EditProfileScreen = () => {
   const [date, setDate] = useState(null);
