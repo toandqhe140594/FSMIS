@@ -29,7 +29,12 @@ import { ROUTE_NAMES, SCHEMA } from "../constants";
 import FishingMethodModel from "../models/FishingMethodModel";
 import FManageModel from "../models/FManageModel";
 import { goBack } from "../navigations";
-import { showAlertConfirmBox, showToastMessage } from "../utilities";
+import {
+  showAlertAbsoluteBox,
+  showAlertBox,
+  showAlertConfirmBox,
+  showToastMessage,
+} from "../utilities";
 import store from "../utilities/Store";
 
 store.addModel("FManageModel", FManageModel);
@@ -48,15 +53,20 @@ const LakeEditProfileScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
   const [imageArray, setImageArray] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [visible, setVisible] = useState(true);
   const [updateStatus, setUpdateStatus] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [showOverlay, setShowOverlay] = useState(true);
+  const [fullScreenMode, setFullScreenMode] = useState(true);
   const { fishingMethodList } = useStoreState(
     (state) => state.FishingMethodModel,
   );
   const { lakeDetail } = useStoreState((states) => states.FManageModel);
-  const { getLakeDetailByLakeId, editLakeDetail, closeLakeByLakeId } =
-    useStoreActions((actions) => actions.FManageModel);
+  const { editLakeDetail, closeLakeByLakeId } = useStoreActions(
+    (actions) => actions.FManageModel,
+  );
+  const { getFishingMethodList } = useStoreActions(
+    (actions) => actions.FishingMethodModel,
+  );
   const methods = useForm({
     mode: "onSubmit",
     reValidateMode: "onSubmit",
@@ -64,16 +74,16 @@ const LakeEditProfileScreen = () => {
   });
   const { handleSubmit, setValue } = methods;
   const [deleteSuccess, setDeleteSuccess] = useState(false);
-
   /**
    * Submit lake changes
    * @param {Object} data data from controller
    */
   const onSubmit = (data) => {
+    const id = lakeDetail.lakeId;
     const imageUrl = imageArray[0].base64;
     const updateData = { ...data, imageUrl };
-    // editLakeDetail({updateData, setUpdateStatus, id});
-    console.log(updateData);
+    editLakeDetail({ updateData, setUpdateStatus, id });
+    setShowOverlay(true);
   };
 
   const onDeleteLake = (id, name) => {
@@ -94,35 +104,33 @@ const LakeEditProfileScreen = () => {
     setImageArray(imageArray.filter((image) => image.id !== id));
   };
 
+  /**
+   * Call fishing method list api
+   */
   useEffect(() => {
-    if (route.params.id) {
-      getLakeDetailByLakeId({ id: route.params.id, setIsLoading });
-    }
+    getFishingMethodList({ setIsLoading });
   }, []);
 
   /**
-   * When isLoading return false, setValue to controller and image
+   * After loading finished, setValue for each field
    */
   useEffect(() => {
-    if (isLoading === false) {
-      // Filter an array of id (value) from list of fishing methods name
-      const selectedMethodVal = fishingMethodList.reduce(
-        (acc, { id, name }) => {
-          if (lakeDetail.fishingMethodList.includes(name)) acc.push(id);
-          return acc;
-        },
-        [],
-      );
+    if (!isLoading) {
       setValue("name", lakeDetail.name);
-      setValue("methods", selectedMethodVal);
       setValue("price", lakeDetail.price);
-      setValue("depth", lakeDetail.depth);
-      setValue("width", lakeDetail.name);
-      setValue("length", lakeDetail.name);
+      setValue("width", lakeDetail.width.toString());
+      setValue("length", lakeDetail.length.toString());
+      setValue("depth", lakeDetail.depth.toString());
       setImageArray([{ id: 1, base64: lakeDetail.imageUrl }]);
-      setVisible(false);
+      const selectedMethods = fishingMethodList.reduce((acc, { name, id }) => {
+        if (lakeDetail.fishingMethodList.includes(name)) acc.push(id);
+        return acc;
+      }, []);
+      setValue("methods", selectedMethods);
+      setShowOverlay(false);
+      setFullScreenMode(false);
     }
-  }, [setIsLoading]);
+  }, [isLoading]);
 
   /**
    * Fire when navigates back to the screen
@@ -140,7 +148,22 @@ const LakeEditProfileScreen = () => {
   /**
    * When updateState return, open Alert
    */
-  useEffect(() => {}, [updateStatus]);
+  useEffect(() => {
+    if (updateStatus === "SUCCESS") {
+      setShowOverlay(false);
+      showAlertAbsoluteBox(
+        "Thông báo",
+        "Hồ bé thêm thành công!",
+        () => {
+          navigation.goBack();
+        },
+        "Xác nhận",
+      );
+    } else if (updateStatus === "FAILED") {
+      setShowOverlay(false);
+      showAlertBox("Thông báo", "Đã xảy ra lỗi! Vui lòng thử lại sau.");
+    }
+  }, [updateStatus]);
 
   useEffect(() => {
     if (deleteSuccess) {
@@ -153,8 +176,16 @@ const LakeEditProfileScreen = () => {
     <>
       <HeaderTab name="Chỉnh sửa hồ bé" />
       <ScrollView>
-        <Overlay isVisible={visible}>
-          <ActivityIndicator size="large" />
+        <Overlay
+          isVisible={showOverlay}
+          fullScreen={fullScreenMode}
+          overlayStyle={
+            fullScreenMode
+              ? { alignItems: "center", justifyContent: "center" }
+              : null
+          }
+        >
+          <ActivityIndicator size="large" color="#2089DC" />
         </Overlay>
         <FormProvider {...methods}>
           <VStack space={3} divider={<Divider />}>
