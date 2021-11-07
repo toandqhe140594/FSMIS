@@ -21,30 +21,7 @@ const model = {
   unresolvedCatchReportList: [],
   unresolvedCatchReportTotalPage: 1,
   unresolvedCatchReportCurrentPage: 1,
-  catchReportHistory: [
-    {
-      id: 4,
-      userId: 2,
-      userFullName: "Lê Test",
-      avatar: "https://picsum.photos/200/300",
-      locationId: 8,
-      locationName: "Hồ Câu Thiên Đường",
-      description: "Mẻ này ngon",
-      time: "20/10/2020 00:00:00",
-      fishes: ["Cá chày"],
-    },
-    {
-      id: 2,
-      userId: 2,
-      userFullName: "Lê Test",
-      avatar: "https://picsum.photos/200/300",
-      locationId: 8,
-      locationName: "Hồ Câu Thiên Đường",
-      description: "Mẻ này ngon",
-      time: "20/10/2020 00:00:00",
-      fishes: ["Cá chày"],
-    },
-  ],
+  catchReportHistory: [],
   catchHistoryCurrentPage: 1,
   catchHistoryTotalPage: 1,
 
@@ -636,26 +613,49 @@ const model = {
     state.catchHistoryCurrentPage = payload;
   }),
   setCatchHistoryTotalPage: action((state, payload) => {
-    state.catchHistoryTotalPage = payload;
+    state.catchHistoryTotalPage = payload < 1 ? 1 : payload;
   }),
-  getCatchReportHistory: thunk(async (actions, payload, { getState }) => {
-    const { catchHistoryCurrentPage, catchHistoryTotalPage } = getState();
 
-    // If current page is smaller than 0 or larger than maximum page then return
-    if (
-      catchHistoryCurrentPage <= 0 ||
-      catchHistoryCurrentPage > catchHistoryTotalPage
-    )
-      return;
-
-    const { data } = await http.get(`${API_URL.PERSONAL_CATCH_REPORT}`, {
-      params: { pageNo: catchHistoryCurrentPage },
-    });
-    const { totalPage, items } = data;
-    actions.setCatchHistoryCurrentPage(catchHistoryCurrentPage + 1);
-    actions.setCatchHistoryTotalPage(totalPage);
-    actions.setCatchReportHistory(items);
+  rewriteCatchReportHistoryList: action((state, payload) => {
+    state.catchReportHistory = payload;
   }),
+  getCatchReportHistoryOverwrite: thunk(
+    async (actions, payload, { getState }) => {
+      const { startDate, endDate, status } = payload;
+      const { catchHistoryCurrentPage, catchHistoryTotalPage, currentId } =
+        getState();
+      if (status === "APPEND") {
+        // If current page is smaller than 0 or larger than maximum page then return
+        if (
+          catchHistoryCurrentPage <= 0 ||
+          catchHistoryCurrentPage > catchHistoryTotalPage
+        )
+          return;
+
+        const { data } = await http.get(
+          `location/${currentId}/${API_URL.LOCATION_CATCH_REPORT_RESOLVED}`,
+          {
+            params: { pageNo: catchHistoryCurrentPage, startDate, endDate },
+          },
+        );
+        const { totalPage, items } = data;
+        actions.setCatchHistoryCurrentPage(catchHistoryCurrentPage + 1);
+        actions.setCatchHistoryTotalPage(totalPage);
+        actions.setCatchReportHistory(items);
+      } else {
+        const { data } = await http.get(
+          `location/${currentId}/${API_URL.LOCATION_CATCH_REPORT_RESOLVED}`,
+          {
+            params: { pageNo: 1, startDate, endDate },
+          },
+        );
+        const { totalPage, items } = data;
+        actions.setCatchHistoryCurrentPage(2);
+        actions.setCatchHistoryTotalPage(totalPage);
+        actions.rewriteCatchReportHistoryList(items);
+      }
+    },
+  ),
   // END LOCATION CATCH REPORT HISTORY
 
   // START OF CHECKIN RELATED SECTION
