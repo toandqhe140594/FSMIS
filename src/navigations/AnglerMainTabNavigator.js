@@ -1,4 +1,4 @@
-import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import { FontAwesome5, MaterialIcons } from "@expo/vector-icons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { useStoreActions } from "easy-peasy";
 import React, { useEffect } from "react";
@@ -62,9 +62,7 @@ const AnglerMainNavigator = () => {
         name="Báo cá"
         options={{
           tabBarIcon: ({ color, size }) => {
-            return (
-              <MaterialCommunityIcons name="fish" color={color} size={size} />
-            );
+            return <FontAwesome5 name="fish" color={color} size={size} />;
           },
         }}
         component={CheckinScreen}

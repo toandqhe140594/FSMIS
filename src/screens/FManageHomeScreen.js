@@ -7,127 +7,7 @@ import React, { useEffect, useState } from "react";
 import CloseFLocationComponent from "../components/CloseFLocationComponent";
 import HeaderTab from "../components/HeaderTab";
 import MenuScreen from "../components/MenuScreen";
-import { ROUTE_NAMES } from "../constants";
-
-const menuCategoryForOwner = [
-  {
-    id: 1,
-    category: [
-      {
-        id: 1,
-        title: "Xem trang điểm câu của bạn",
-        route: ROUTE_NAMES.FMANAGE_LOCATION_OVERVIEW,
-        icon: "waves",
-      },
-      {
-        id: 2,
-        title: "Chỉnh sửa thông tin điểm câu",
-        route: ROUTE_NAMES.FMANAGE_PROFILE_EDIT,
-        icon: "edit",
-      },
-      {
-        id: 3,
-        title: "Quản lý hồ câu",
-        route: ROUTE_NAMES.FMANAGE_LAKE_MANAGEMENT,
-        icon: "group-work",
-      },
-      {
-        id: 4,
-        title: "Quản lý nhân viên",
-        route: ROUTE_NAMES.FMANAGE_STAFF_MANAGEMENT,
-        icon: "people-alt",
-      },
-    ],
-  },
-  {
-    id: 2,
-    category: [
-      {
-        id: 7,
-        title: `Quét mã QR`,
-        route: ROUTE_NAMES.FMANAGE_QR_SCAN,
-        icon: "qr-code",
-      },
-      {
-        id: 8,
-        title: `Lịch sử Check-in`,
-        route: ROUTE_NAMES.FMANAGE_CHECKIN_HISTORY,
-        icon: "how-to-reg",
-      },
-    ],
-  },
-
-  {
-    id: 3,
-    category: [
-      {
-        id: 5,
-        title: "Xác nhận báo cá",
-        route: ROUTE_NAMES.FMANAGE_CATCH_VERIFY,
-        icon: "fish",
-        type: "material-community",
-      },
-      {
-        id: 6,
-        title: `Lịch sử báo cá`,
-        route: ROUTE_NAMES.FMANAGE_CATCH_HISTORY,
-        icon: "done",
-      },
-    ],
-  },
-
-  {
-    id: 4,
-    category: [
-      {
-        id: 9,
-        title: `Quản lý bài đăng`,
-        route: ROUTE_NAMES.FMANAGE_POST_MANAGEMENT,
-        icon: "post-add",
-      },
-    ],
-  },
-];
-const menuCategoryForStaff = [
-  {
-    id: 1,
-    title: "Xem trang điểm câu của bạn",
-    route: ROUTE_NAMES.FLOCATION_OVERVIEW,
-    icon: "waves",
-  },
-
-  {
-    id: 7,
-    title: `Quét mã QR`,
-    route: ROUTE_NAMES.FMANAGE_QR_SCAN,
-    icon: "qr-code",
-  },
-  {
-    id: 5,
-    title: "Xác nhận báo cá",
-    route: ROUTE_NAMES.FMANAGE_CATCH_VERIFY,
-    icon: "fish",
-    type: "material-community",
-  },
-  {
-    id: 9,
-    title: `Quản lý bài đăng`,
-    route: ROUTE_NAMES.FMANAGE_POST_MANAGEMENT,
-    icon: "post-add",
-  },
-  {
-    id: 3,
-    title: `Lịch sử báo cá`,
-    route: ROUTE_NAMES.FMANAGE_CATCH_HISTORY,
-    icon: "check",
-  },
-  {
-    id: 8,
-    title: `Lịch sử Check-in`,
-    route: ROUTE_NAMES.FMANAGE_CHECKIN_HISTORY,
-    icon: "how-to-reg",
-  },
-];
+import { MENU_OWNER, MENU_STAFF } from "../constants";
 
 const FManageHomeScreen = ({ typeString }) => {
   const route = useRoute();
@@ -146,10 +26,10 @@ const FManageHomeScreen = ({ typeString }) => {
 
   let menuCategory;
   if (typeString === "OWNER") {
-    menuCategory = [...menuCategoryForOwner];
+    menuCategory = [...MENU_OWNER];
   }
   if (typeString === "STAFF") {
-    menuCategory = [...menuCategoryForStaff];
+    menuCategory = [...MENU_STAFF];
   }
 
   const { setCurrentId, getLocationDetailsById, getListOfLake } =

@@ -15,14 +15,7 @@ const model = {
   staffManagementErrorMsg: "",
   listOfStaff: [],
   staffOverview: {},
-  staffDetail: {
-    id: 3,
-    name: "Đào Quốc Toản",
-    dob: "15/10/2021",
-    phoneNumber: "098764434",
-    gender: true,
-    address: "Số 1 hồ Hoàng Kiếm Việt Nam Hà Nội Châu Á",
-  },
+  staffDetail: {},
 
   catchReportDetail: {},
   unresolvedCatchReportList: [],
@@ -646,13 +639,8 @@ const model = {
     const { currentId } = getState();
     try {
       const { status, data } = await http.post(
-        `checkin/${currentId}`,
+        `location/${currentId}/${API_URL.CHECKIN}`,
         qrString,
-        {
-          headers: {
-            "Content-type": "text/plain",
-          },
-        },
       );
       if (status === 200) {
         setSuccess(true);

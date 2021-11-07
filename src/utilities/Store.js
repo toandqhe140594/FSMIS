@@ -76,7 +76,13 @@ const Store = createStore({
       authToken = data.authToken;
       await SecureStore.setItemAsync(AUTH_TOKEN, authToken);
       await SecureStore.setItemAsync(USER_ROLE, data.roles);
-      await SecureStore.setItemAsync(USER_PROFILE, JSON.stringify(data));
+      await SecureStore.setItemAsync(
+        USER_PROFILE,
+        JSON.stringify({
+          qrString: data.qrString,
+          fullName: data.fullName,
+        }),
+      );
       await setAuthToken(authToken);
 
       await setBeforeRequestFunction(() => {

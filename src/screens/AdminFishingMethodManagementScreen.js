@@ -3,12 +3,13 @@ import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, Button, Center } from "native-base";
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Alert, FlatList } from "react-native";
+import { ActivityIndicator, FlatList } from "react-native";
 import { Divider, SearchBar, Text } from "react-native-elements";
 
 import HeaderTab from "../components/HeaderTab";
 import FishingMethodModel from "../models/FishingMethodModel";
 import { goToAdminFishingMethodEditScreen } from "../navigations";
+import { showAlertConfirmBox } from "../utilities";
 import store from "../utilities/Store";
 
 store.addModel("FishingMethodModel", FishingMethodModel);
@@ -17,19 +18,10 @@ const FishingMethodManagementCard = ({ id, name }) => {
   const navigation = useNavigation();
 
   const showDeleteAlert = () => {
-    Alert.alert(
+    showAlertConfirmBox(
       "Bạn muốn xóa loại hình câu này?",
       `"${name}" sẽ bị xóa vĩnh viễn. Bạn không thể hoàn tác hành động này`,
-      [
-        {
-          text: "Quay lại",
-          style: "cancel",
-        },
-        {
-          text: "Xác nhận",
-          onPress: async () => {},
-        },
-      ],
+      () => {},
     );
   };
 

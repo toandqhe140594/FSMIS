@@ -4,55 +4,7 @@ import React, { useEffect } from "react";
 
 import AvatarCard from "../components/AvatarCard";
 import MenuScreen from "../components/MenuScreen";
-import { ROUTE_NAMES } from "../constants";
-
-const menuCategory = [
-  {
-    id: 1,
-    title: "Lịch sử Báo cá",
-    icon: "fish",
-    type: "material-community",
-    route: ROUTE_NAMES.PROFILE_CATCHES_REPORT_HISTORY,
-  },
-  {
-    id: 2,
-    title: "Lịch sử Check-in",
-    icon: "check",
-    route: ROUTE_NAMES.PROFILE_CHECKIN_REPORT_HISTORY,
-  },
-  {
-    id: 3,
-    title: "Chỉnh sửa thông tin cá nhân",
-    icon: "person",
-    route: ROUTE_NAMES.PROFILE_CHANGE_INFORMATION,
-  },
-  {
-    id: 4,
-    title: "Thay đổi số điện thoại",
-    icon: "call",
-    route: ROUTE_NAMES.PROFILE_CHANGE_PHONE_NUMBER,
-  },
-  {
-    id: 5,
-    title: "Thay đổi mật khẩu",
-    icon: "lock",
-    route: ROUTE_NAMES.PROFILE_CHANGE_PASSWORD,
-  },
-  {
-    id: 6,
-    title: `Chuyển sang "Chế độ Quản lý"`,
-    icon: "av-timer",
-    route: ROUTE_NAMES.MANAGEMENT_MODE,
-  },
-];
-const logOut = [
-  {
-    id: 1,
-    title: "Đăng xuất",
-    icon: "exit-to-app",
-    route: ROUTE_NAMES.PROFILE_LOGOUT,
-  },
-];
+import { MENU_ANGLER, MENU_LOGOUT } from "../constants";
 
 const AnglerProfileScreen = () => {
   const getUserInfo = useStoreActions(
@@ -86,8 +38,8 @@ const AnglerProfileScreen = () => {
       </VStack>
       <Box maxHeight="80%">
         <VStack mt="4">
-          <MenuScreen menuListItem={menuCategory} />
-          <MenuScreen menuListItem={logOut} />
+          <MenuScreen menuListItem={MENU_ANGLER} />
+          <MenuScreen menuListItem={MENU_LOGOUT} />
         </VStack>
       </Box>
     </Box>

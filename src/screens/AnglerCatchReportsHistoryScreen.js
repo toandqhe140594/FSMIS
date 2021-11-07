@@ -10,18 +10,22 @@ import { goToCatchReportDetailScreen } from "../navigations";
 
 const AnglerCatchReportsHistoryScreen = () => {
   const navigation = useNavigation();
-  const getCatchReportHistory = useStoreActions(
-    (actions) => actions.ProfileModel.getCatchReportHistory,
-  );
-
   // Destructure catchHistoryCurrentPage and catchReportHistory list from ProfileModel
   const { catchHistoryCurrentPage, catchReportHistory } = useStoreState(
     (states) => states.ProfileModel,
   );
+  const { getCatchReportHistory, resetCatchReportHistory } = useStoreActions(
+    (actions) => actions.ProfileModel,
+  );
+
   useEffect(() => {
     // If the current page = 1 aka the list is empty then call api to init the list
     if (catchHistoryCurrentPage === 1) getCatchReportHistory();
+    return () => {
+      resetCatchReportHistory(); // Clear list data when screen unmount
+    };
   }, []);
+
   return (
     <Box>
       <HeaderTab name="Lịch sử báo cá" />
