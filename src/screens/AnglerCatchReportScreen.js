@@ -64,23 +64,25 @@ const AnglerCatchReportScreen = () => {
   );
   const onSubmit = (data) => {
     const { aCaption, aLakeType, isPublic, cards } = data;
-    const catchesDetailList = cards.map(
-      ({
-        catches: quantity,
-        fishType: fishSpeciesId,
-        isReleased: returnToOwner,
-        totalWeight: weight,
-      }) => ({
-        quantity,
-        fishSpeciesId,
-        returnToOwner,
-        weight,
-      }),
-    );
+
     if (imageArray !== undefined && imageArray.length > 0) {
+      const reduced = cards.reduce((filtered, card) => {
+        const { fishInLakeId } = listFish.find(
+          ({ id }) => id === card.fishType,
+        );
+        filtered.push({
+          quantity: card.catches,
+          fishSpeciesId: card.fishType,
+          returnToOwner: card.isReleased,
+          weight: card.totalWeight,
+          fishInLakeId,
+        });
+        return filtered;
+      }, []);
+
       const imagesStringArray = imageArray.map((item) => item.base64);
       submitCatchReport({
-        catchesDetailList,
+        catchesDetailList: reduced,
         description: aCaption,
         hidden: isPublic,
         images: imagesStringArray,
