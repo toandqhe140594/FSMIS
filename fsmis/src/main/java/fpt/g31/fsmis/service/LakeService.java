@@ -71,7 +71,8 @@ public class LakeService {
         List<FishDtoOut> fishes = new ArrayList<>();
         for (FishInLake fishInLake : fishesInLake) {
             FishDtoOut fish = FishDtoOut.builder()
-                    .id(fishInLake.getFishSpecies().getId())
+                    .id(fishInLake.getId())
+                    .speciesId(fishInLake.getFishSpecies().getId())
                     .name(fishInLake.getFishSpecies().getName())
                     .imageUrl(fishInLake.getFishSpecies().getImageUrl())
                     .maxWeight(fishInLake.getMaxWeight())
@@ -211,6 +212,7 @@ public class LakeService {
                 FishDtoOut fishDtoOut = FishDtoOut.builder()
                         .id(fishInLake.getId())
                         .name(fishInLake.getFishSpecies().getName() + " biểu " + fishInLake.getMinWeight() + "-" + fishInLake.getMaxWeight())
+                        .speciesId(fishInLake.getFishSpecies().getId())
                         .build();
                 fishDtoOutList.add(fishDtoOut);
             }

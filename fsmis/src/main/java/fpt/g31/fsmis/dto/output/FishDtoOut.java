@@ -18,4 +18,5 @@ public class FishDtoOut {
     private Float minWeight;
     private Integer quantity;
     private Float totalWeight;
+    private Long speciesId;
 }
