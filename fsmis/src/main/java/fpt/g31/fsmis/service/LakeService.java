@@ -2,6 +2,7 @@ package fpt.g31.fsmis.service;
 
 import fpt.g31.fsmis.dto.input.FishInLakeDtoIn;
 import fpt.g31.fsmis.dto.input.LakeDtoIn;
+import fpt.g31.fsmis.dto.input.LakeEditDtoIn;
 import fpt.g31.fsmis.dto.output.*;
 import fpt.g31.fsmis.entity.*;
 import fpt.g31.fsmis.exception.NotFoundException;
@@ -52,7 +53,13 @@ public class LakeService {
             fishInLakeList.add(fishInLake);
         }
         lake.setFishInLakeList(fishInLakeList);
-        lake.setFishingMethodSet(getFishingMethodSet(lakeDtoIn));
+        Set<FishingMethod> fishingMethodSet = new HashSet<>();
+        for (Long methodId : lakeDtoIn.getMethods()) {
+            FishingMethod fishingMethod = methodRepos.findById(methodId)
+                    .orElseThrow(() -> new NotFoundException("Không tìm thấy loại hình câu!"));
+            fishingMethodSet.add(fishingMethod);
+        }
+        lake.setFishingMethodSet(fishingMethodSet);
         lakeRepos.save(lake);
         return new ResponseTextDtoOut("Tạo hồ câu thành công!");
     }
@@ -134,20 +141,20 @@ public class LakeService {
         return new ResponseTextDtoOut("Đóng cửa hồ câu thành công!");
     }
 
-    public ResponseTextDtoOut editLakeInformation(LakeDtoIn lakeDtoIn, Long lakeId, HttpServletRequest request) {
+    public ResponseTextDtoOut editLakeInformation(LakeEditDtoIn lakeEditDtoIn, Long lakeId, HttpServletRequest request) {
         Lake lake = lakeRepos.findById(lakeId)
                 .orElseThrow(() -> new NotFoundException("Không tìm thấy hồ câu!"));
         User user = jwtFilter.getUserFromToken(request);
         if (!lake.getFishingLocation().getOwner().equals(user)) {
             throw new ValidationException("Không có quyền truy cập!");
         }
-        lake.setName(lakeDtoIn.getName());
-        lake.setLength(lakeDtoIn.getLength());
-        lake.setWidth(lakeDtoIn.getWidth());
-        lake.setDepth(lakeDtoIn.getDepth());
+        lake.setName(lakeEditDtoIn.getName());
+        lake.setLength(lakeEditDtoIn.getLength());
+        lake.setWidth(lakeEditDtoIn.getWidth());
+        lake.setDepth(lakeEditDtoIn.getDepth());
         lake.setLastEditTime(LocalDateTime.now());
-        lake.setPrice(lakeDtoIn.getPrice());
-        lake.setImageUrl(lakeDtoIn.getImageUrl());
+        lake.setPrice(lakeEditDtoIn.getPrice());
+        lake.setImageUrl(lakeEditDtoIn.getImageUrl());
 //        List<FishInLake> fishInLakeList = new ArrayList<>();
 //        for (FishInLakeDtoIn fishInLakeDtoIn : lakeDtoIn.getFishInLakeList()) {
 //            FishInLake fishInLake = FishInLake.builder()
@@ -162,21 +169,15 @@ public class LakeService {
 //            fishInLakeList.add(fishInLake);
 //        }
 //        lake.setFishInLakeList(fishInLakeList);
-        lake.setFishingMethodSet(getFishingMethodSet(lakeDtoIn));
-        lakeRepos.save(lake);
-        return new ResponseTextDtoOut("Chỉnh sửa thông tin hồ câu thành công!");
-    }
-
-    private Set<FishingMethod> getFishingMethodSet(LakeDtoIn lakeDtoIn) {
         Set<FishingMethod> fishingMethodSet = new HashSet<>();
-        for (Long methodId : lakeDtoIn.getMethods()) {
+        for (Long methodId : lakeEditDtoIn.getMethods()) {
             FishingMethod fishingMethod = methodRepos.findById(methodId)
                     .orElseThrow(() -> new NotFoundException("Không tìm thấy loại hình câu!"));
             fishingMethodSet.add(fishingMethod);
         }
-        return fishingMethodSet;
-//        lake.setFishingMethodSet(fishingMethodSet);
-//        lakeRepos.save(lake);
+        lake.setFishingMethodSet(fishingMethodSet);
+        lakeRepos.save(lake);
+        return new ResponseTextDtoOut("Chỉnh sửa thông tin hồ câu thành công!");
     }
 
     private void checkValidFishInLakeList(LakeDtoIn lakeDtoIn) {
@@ -224,5 +225,41 @@ public class LakeService {
             output.add(lakeWithFishInLakeDtoOut);
         }
         return output;
+    }
+
+    public ResponseTextDtoOut addFishToLake(FishInLakeDtoIn fishInLakeDtoIn, Long lakeId, HttpServletRequest request) {
+        Lake lake = lakeRepos.findById(lakeId)
+                .orElseThrow(() -> new NotFoundException("Không tìm thấy hồ câu!"));
+        User user = jwtFilter.getUserFromToken(request);
+        if (!lake.getFishingLocation().getOwner().equals(user)) {
+            throw new ValidationException("Không có quyền truy cập!");
+        }
+        FishInLake fishInLake = FishInLake.builder()
+                .id(fishInLakeDtoIn.getId())
+                .fishSpecies(fishSpeciesRepos.getById(fishInLakeDtoIn.getFishSpeciesId()))
+                .lake(lake)
+                .maxWeight(fishInLakeDtoIn.getMaxWeight())
+                .minWeight(fishInLakeDtoIn.getMinWeight())
+                .quantity(fishInLakeDtoIn.getQuantity())
+                .totalWeight(fishInLakeDtoIn.getTotalWeight())
+                .active(true)
+                .build();
+        List<FishInLake> fishInLakeList = lake.getFishInLakeList();
+        fishInLakeList.add(fishInLake);
+        lake.setFishInLakeList(fishInLakeList);
+        lakeRepos.save(lake);
+        return new ResponseTextDtoOut("Thêm cá vào hồ thành công!");
+    }
+
+    public ResponseTextDtoOut deleteFishFromLake(Long fishInLakeId, HttpServletRequest request) {
+        FishInLake fishInLake = fishInLakeRepos.findById(fishInLakeId)
+                .orElseThrow(() -> new NotFoundException("Không tìm thấy bản ghi"));
+        User user = jwtFilter.getUserFromToken(request);
+        if (!fishInLake.getLake().getFishingLocation().getOwner().equals(user)) {
+            throw new ValidationException("Không có quyền truy cập!");
+        }
+        fishInLake.setActive(false);
+        fishInLakeRepos.save(fishInLake);
+        return new ResponseTextDtoOut("Xóa cá khỏi hồ thành công!");
     }
 }

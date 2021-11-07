@@ -94,10 +94,23 @@ public class FishingLocationController {
     }
 
     @PutMapping("{locationId}/lake/edit/{lakeId}")
-    public ResponseEntity<Object> editLake(@RequestBody @Valid LakeDtoIn lakeDtoIn,
+    public ResponseEntity<Object> editLake(@RequestBody @Valid LakeEditDtoIn lakeEditDtoIn,
                                            @PathVariable Long lakeId,
                                            HttpServletRequest request) {
-        return new ResponseEntity<>(lakeService.editLakeInformation(lakeDtoIn, lakeId, request), HttpStatus.OK);
+        return new ResponseEntity<>(lakeService.editLakeInformation(lakeEditDtoIn, lakeId, request), HttpStatus.OK);
+    }
+
+    @PostMapping("/lake/{lakeId}/fish/add")
+    public ResponseEntity<Object> addFishToLake(@RequestBody @Valid FishInLakeDtoIn fishInLakeDtoIn,
+                                                @PathVariable Long lakeId,
+                                                HttpServletRequest request) {
+        return new ResponseEntity<>(lakeService.addFishToLake(fishInLakeDtoIn, lakeId, request), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/lake/fish/delete/{fishInLakeId}")
+    public ResponseEntity<Object> deleteFishFromLake(@PathVariable Long fishInLakeId,
+                                                HttpServletRequest request) {
+        return new ResponseEntity<>(lakeService.deleteFishFromLake(fishInLakeId, request), HttpStatus.OK);
     }
 
     @DeleteMapping("/{locationId}/lake/close/{lakeId}")
