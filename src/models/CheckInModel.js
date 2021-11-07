@@ -49,18 +49,38 @@ const model = {
   setCatchReportDetail: action((state, payload) => {
     state.catchReportDetail = payload;
   }),
+  /**
+   * Submit catch report to server
+   * @param {Object} [payload] params pass to function
+   * @param {Array} [payload.catchesDetailList] list of catched fishes
+   * @param {string} [payload.description] description of the catch report
+   * @param {boolean} [payload.hidden] boolean indicate that this catch report should be made public or private
+   * @param {Array} [payload.images] list of images of catch report
+   * @param {number} [payload.lakeId] id of the lake
+   * @param {Function} [payload.setSuccess] function indicate submit success
+   */
   submitCatchReport: thunk(async (actions, payload) => {
-    const { description, lakeId, catchesDetailList, images } = payload;
-    const { status, data } = await http.post(`${API_URL.SEND_CATCH_REPORT}`, {
-      lakeId,
-      description,
+    const {
       catchesDetailList,
+      description,
+      hidden,
       images,
-    });
-    if (status === 200) {
+      lakeId,
+      setSuccess,
+    } = payload;
+    try {
+      const { data } = await http.post(`${API_URL.SEND_CATCH_REPORT}`, {
+        lakeId,
+        description,
+        catchesDetailList,
+        images,
+        hidden,
+      });
       actions.setCatchReportDetail({ ...data, id: null });
+      setSuccess(true);
+    } catch (error) {
+      setSuccess(false);
     }
-    return status;
   }),
   /**
    * Set list of fishes in the current checkin location
