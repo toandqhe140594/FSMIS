@@ -97,6 +97,10 @@ const model = {
     actions.setListOfFishingLocations(data);
   }),
 
+  /**
+   * Set location detail state
+   * @param {Object} [payload] new location details
+   */
   setLocationDetails: action((state, payload) => {
     state.locationDetails = payload;
   }),
@@ -126,17 +130,16 @@ const model = {
   /**
    * Get lake detail by id and update lakeDetail state
    * @param {Number} [payload.id] lake id
-   * @param {Function} [payload.setIsLoading] set status when http.get finished
    */
   getLakeDetailByLakeId: thunk(async (actions, payload, { getState }) => {
-    const { id, setIsLoading } = payload;
     try {
       const { data } = await http.get(
-        `location/${getState().currentId}/lake/${id}`,
+        `location/${getState().currentId}/lake/${payload.id}`,
       );
       actions.setLakeDetail(data);
-      setIsLoading(false);
-    } catch (error) {}
+    } catch (error) {
+      // Insert error handler
+    }
   }),
 
   /**
@@ -552,6 +555,25 @@ const model = {
     }
   }),
   // DucHM ADD_END 6/11/2021
+
+  // DucHM ADD_START 7/11/2021
+  /**
+   * Update fishing location profile
+   * @param {Object} [payload.updateData] update information
+   * @param {Function} [payload.setUpdateStatus] the function set status
+   */
+  editFishingLocation: thunk(async (actions, payload, { getState }) => {
+    const { updateData, setUpdateStatus } = payload;
+    const { currentId } = getState();
+    try {
+      await http.put(`location/edit/${currentId}`, updateData);
+      actions.setLocationDetails(updateData);
+      setUpdateStatus("SUCCESS");
+    } catch (error) {
+      setUpdateStatus("FAILED");
+    }
+  }),
+  // DucHM ADD_END 7/11/2021
   // END OF FISHING LOCATION MANAGEMENT RELATED SECTION
 
   // START UNRESOLVED CATCH REPORT RELATED SECTION
