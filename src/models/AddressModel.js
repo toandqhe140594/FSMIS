@@ -84,47 +84,59 @@ const model = {
   getAllProvince: thunk(async (actions, payload, { getState }) => {
     const { provinceList } = getState();
     // Get province list if it is empty
-    if (!provinceList.length) {
-      const { data: provinceData } = await http.get(
-        `${API_URL.ADDRESS_ALL_PROVINCE}`,
-      );
-      actions.setProvinceList({ provinceData });
+    try {
+      if (!provinceList.length) {
+        const { data: provinceData } = await http.get(
+          `${API_URL.ADDRESS_ALL_PROVINCE}`,
+        );
+        actions.setProvinceList({ provinceData });
+      }
+    } catch (error) {
+      // handler error
     }
   }),
 
   /**
    * Get all districts by province ID from api
-   * @param {Number} payload.id province id
+   * @param {Number} [payload.id] province id
    */
   getDisctrictByProvinceId: thunk(async (actions, payload, { getState }) => {
     const { prevSelectedProvinceId } = getState();
-    if (prevSelectedProvinceId !== payload.id) {
-      const { data: districtData } = await http.get(
-        `${API_URL.ADDRESS_PROVINCE_DISTRICT}`,
-        {
-          params: { provinceId: payload.id },
-        },
-      );
-      actions.setDistrictListByProvinceId({ districtData });
-      actions.setPrevSelectedProvinceId({ id: payload.id });
+    try {
+      if (prevSelectedProvinceId !== payload.id) {
+        const { data: districtData } = await http.get(
+          `${API_URL.ADDRESS_PROVINCE_DISTRICT}`,
+          {
+            params: { provinceId: payload.id },
+          },
+        );
+        actions.setDistrictListByProvinceId({ districtData });
+        actions.setPrevSelectedProvinceId({ id: payload.id });
+      }
+    } catch (error) {
+      // handle error
     }
   }),
 
   /**
    * Get all wards by district ID from api
-   * @param {Number} payload.id district id
+   * @param {Number} [payload.id] district id
    */
   getWardByDistrictId: thunk(async (actions, payload, { getState }) => {
     const { prevSelectedDistrictId } = getState();
-    if (prevSelectedDistrictId !== payload.id) {
-      const { data: wardData } = await http.get(
-        `${API_URL.ADDRESS_DISTRICT_WARD}`,
-        {
-          params: { districtId: payload.id },
-        },
-      );
-      actions.setWardListByDistrictId({ wardData });
-      actions.setPrevSelectedDistrictId({ id: payload.id });
+    try {
+      if (prevSelectedDistrictId !== payload.id) {
+        const { data: wardData } = await http.get(
+          `${API_URL.ADDRESS_DISTRICT_WARD}`,
+          {
+            params: { districtId: payload.id },
+          },
+        );
+        actions.setWardListByDistrictId({ wardData });
+        actions.setPrevSelectedDistrictId({ id: payload.id });
+      }
+    } catch (error) {
+      // handle error
     }
   }),
 };
