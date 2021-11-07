@@ -139,25 +139,24 @@ public class FishingLocationController {
     }
 
     // CATCH
-
-    @GetMapping("/{locationId}/catch")
-    public ResponseEntity<Object> getPostedCatchesListByLocationId(@PathVariable Long locationId, @RequestParam(defaultValue = "1") int pageNo) {
-        return new ResponseEntity<>(catchesService.getPostedCatchesListByLocationId(locationId, pageNo), HttpStatus.OK);
+    @GetMapping("/{locationId}/catch/public")
+    public ResponseEntity<Object> getLocationPublicCatchesList(@PathVariable Long locationId, @RequestParam(defaultValue = "1") int pageNo) {
+        return new ResponseEntity<>(catchesService.getLocationPublicCatchesList(locationId, pageNo), HttpStatus.OK);
     }
 
-    // TODO: chưa có filter
-    @GetMapping("/{locationId}/catch/manager")
-    public ResponseEntity<Object> getPublicCatchesListByLocationId(HttpServletRequest request, @PathVariable Long locationId, @RequestParam(defaultValue = "1") int pageNo) {
-        return new ResponseEntity<>(catchesService.getPublicCatchesListByLocationId(request, locationId, pageNo), HttpStatus.OK);
+    @GetMapping("/{locationId}/catch/history")
+    public ResponseEntity<Object> getLocationCatchesHistory(HttpServletRequest request,
+                                                                   @PathVariable Long locationId,
+                                                                   @RequestParam(defaultValue = "1") int pageNo,
+                                                                   @RequestParam(required = false) String startDate,
+                                                                   @RequestParam(required = false) String endDate) {
+        return new ResponseEntity<>(catchesService.getLocationCatchesHistory(request, locationId, pageNo, startDate, endDate), HttpStatus.OK);
     }
 
     @GetMapping("/{locationId}/catch/pending")
     public ResponseEntity<Object> getPendingCatchReportList(HttpServletRequest request, @PathVariable Long locationId, @RequestParam(defaultValue = "1") int pageNo) {
         return new ResponseEntity<>(catchesService.getPendingCatchReports(request, locationId, pageNo), HttpStatus.OK);
     }
-
-    // TODO: Báo cá
-//    @PostMapping("/{locationId}/catch/report")
 
     // REVIEW
 

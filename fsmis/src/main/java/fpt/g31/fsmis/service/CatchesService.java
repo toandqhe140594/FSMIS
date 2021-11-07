@@ -31,14 +31,14 @@ public class CatchesService {
     private final FishSpeciesRepos fishSpeciesRepos;
     private final JwtFilter jwtFilter;
 
-    public PaginationDtoOut getPostedCatchesListByLocationId(Long locationId, int pageNo) {
+    public PaginationDtoOut getLocationPublicCatchesList(Long locationId, int pageNo) {
         if (pageNo <= 0) {
-            throw new ValidationException("Địa chỉ không tồn tại");
+            throw new ValidationException("Số trang không hợp lệ");
         }
-        Page<Catches> catchesList = catchesRepos.findByFishingLocationIdAndHiddenIsFalseOrderByTimeDesc(locationId, PageRequest.of(pageNo - 1, 10));
-        List<CatchesOverviewHasImageDtoOut> output = new ArrayList<>();
+        Page<Catches> catchesList = catchesRepos.findByFishingLocationIdAndHiddenIsFalseAndApprovedIsTrueOrderByTimeDesc(locationId, PageRequest.of(pageNo - 1, 10));
+        List<CatchesOverViewDtoOut> output = new ArrayList<>();
         for (Catches catches : catchesList) {
-            CatchesOverviewHasImageDtoOut item = CatchesOverviewHasImageDtoOut.builder()
+            CatchesOverViewDtoOut item = CatchesOverViewDtoOut.builder()
                     .userId(catches.getUser().getId())
                     .userFullName(catches.getUser().getFullName())
                     .avatar(catches.getUser().getAvatarUrl())
@@ -63,15 +63,22 @@ public class CatchesService {
                 .build();
     }
 
-    // TODO: chưa có filter
-    public PaginationDtoOut getPublicCatchesListByLocationId(HttpServletRequest request, Long locationId, int pageNo) {
+    public PaginationDtoOut getLocationCatchesHistory(HttpServletRequest request, Long locationId, int pageNo,
+                                                      String beginDateString, String endDateString) {
         if (pageNo <= 0) {
             throw new ValidationException("Số trang không hợp lệ");
         }
         if (!isOwnerOrStaff(locationId, jwtFilter.getUserFromToken(request))) {
             throw new ValidationException("Không có quyền truy cập");
         }
-        Page<Catches> catchesList = catchesRepos.findByFishingLocationIdAndHiddenIsFalseOrderByTimeDesc(locationId, PageRequest.of(pageNo - 1, 10));
+        LocalDateTime beginDate = beginDateString == null ?
+                LocalDateTime.of(1970, 1, 1, 0, 0)
+                : ServiceUtils.convertStringToDate(beginDateString);
+        LocalDateTime endDate = endDateString == null ?
+                LocalDateTime.now()
+                : ServiceUtils.convertStringToDate(endDateString);
+        Page<Catches> catchesList = catchesRepos.findByFishingLocationIdAndTimeBetweenAndApprovedIsTrueOrderByTimeDesc
+                (locationId, beginDate, endDate, PageRequest.of(pageNo - 1, 10));
         List<CatchesOverviewNoImageDtoOut> output = new ArrayList<>();
         for (Catches catches : catchesList) {
             CatchesOverviewNoImageDtoOut item = CatchesOverviewNoImageDtoOut.builder()
@@ -166,7 +173,7 @@ public class CatchesService {
         Catches catches = catchesRepos.findById(catchesId)
                 .orElseThrow(() -> new NotFoundException("Không tìm thấy bản ghi này!"));
         if (Boolean.TRUE.equals(catches.getHidden()) && catches.getUser() != user
-        && catches.getApproved() != null) {
+                && catches.getApproved() != null) {
             throw new ValidationException("Không có quyền truy cập");
         }
         List<CatchesDetail> catchesDetailList = catches.getCatchesDetailList();
@@ -245,7 +252,7 @@ public class CatchesService {
         Catches catches = catchesRepos.findById(catchesId)
                 .orElseThrow(() -> new NotFoundException("Không tìm thấy bản ghi"));
         if (!catches.getFishingLocation().getOwner().equals(user)
-                &&!catches.getFishingLocation().getEmployeeList().contains(user)) {
+                && !catches.getFishingLocation().getEmployeeList().contains(user)) {
             throw new ValidationException("Không có quyền truy cập");
         }
         catches.setApproved(isApprove);
