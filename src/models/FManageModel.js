@@ -547,8 +547,8 @@ const model = {
       await http.post(API_URL.LOCATION_ADD, addData, {
         params: {},
       });
+      await actions.getListOfFishingLocations();
       setAddStatus("SUCCESS");
-      actions.getListOfFishingLocations();
     } catch (error) {
       setAddStatus("FAILED");
     }
@@ -628,7 +628,7 @@ const model = {
     } = getState();
     try {
       await http.post(`location/lake/${id}/fish/add`, addData);
-      action.getLakeDetailByLakeId({ id });
+      actions.getLakeDetailByLakeId({ id });
       setAddStatus("SUCCESS");
     } catch (error) {
       setAddStatus("FAILED");
@@ -643,7 +643,7 @@ const model = {
     const { id, setDeleteStatus } = payload;
     try {
       await http.delete(`location/lake/fish/delete/${id}`);
-      action.getLakeDetailByLakeId({ id }); // purpose to fetch new fishInLake in lakeDetail
+      actions.getLakeDetailByLakeId({ id }); // purpose to fetch new fishInLake in lakeDetail
       setDeleteStatus("SUCCESS");
     } catch (error) {
       // handle error
@@ -664,7 +664,7 @@ const model = {
       await http.post(`location/lake/fish/stocking/${id}`, null, {
         params: { quantity, weight },
       });
-      action.getLakeDetailByLakeId({ id }); // purpose to fetch new fishInLake in lakeDetail
+      actions.getLakeDetailByLakeId({ id }); // purpose to fetch new fishInLake in lakeDetail
       setUpdateStatus("SUCCESS");
     } catch (error) {
       // handle error
