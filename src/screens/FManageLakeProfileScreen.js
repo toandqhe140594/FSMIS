@@ -12,7 +12,6 @@ import HeaderTab from "../components/HeaderTab";
 // DucHM ADD_START 8/11/2021
 import OverlayInputSection from "../components/LakeProfile/OverlayInputSection";
 // DucHM ADD_END 8/11/2021
-import colors from "../config/colors";
 import {
   goToFManageFishAddScreen,
   goToFManageLakeEditScreen,
@@ -65,7 +64,7 @@ const FishCard = ({
         <Button
           title="Xóa"
           type="clear"
-          titleStyle={{ color: colors.defaultPrimaryButton }}
+          titleStyle={{ color: "#f43f5e" }}
           onPress={() => {
             // DucHM ADD_START 8/11/2021
             onDeleteFish(id);
@@ -170,7 +169,6 @@ const FManageEmployeeManagementScreen = () => {
         >
           <Button
             title="Thông tin hồ câu"
-            buttonStyle={{ backgroundColor: "#2089DC" }}
             containerStyle={{ width: "40%" }}
             onPress={() => {
               goToFManageLakeEditScreen(navigation);

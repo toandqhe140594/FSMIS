@@ -5,7 +5,7 @@ import {
   useRoute,
 } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
-import { Button, Select, Text, VStack } from "native-base";
+import { Button, VStack } from "native-base";
 import React, { useCallback, useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { Dimensions, ScrollView, StyleSheet, View } from "react-native";
@@ -18,22 +18,24 @@ import TextAreaComponent from "../components/common/TextAreaComponent";
 import HeaderTab from "../components/HeaderTab";
 import { ROUTE_NAMES } from "../constants";
 import { goToFManagePostScreen } from "../navigations";
-import { showAlertBox, showAlertConfirmBox } from "../utilities";
+import { showAlertAbsoluteBox, showAlertBox } from "../utilities";
 
 const validationSchema = yup.object().shape({
-  postType: yup.number().default(1),
-  postDescription: yup
-    .string()
-    .required("Nội dung bài đăng không được để trống"),
+  postType: yup.string().required("Loại bài đăng không được để trống"),
+  content: yup.string().required("Nội dung bài đăng không được để trống"),
   postVideoLink: yup.string(),
 });
 
 const postTypeData = [
-  { name: "Thông báo", type: "ANNOUNCING", id: 1 },
-  { name: "Bồi cá", type: "STOCKING", id: 2 },
-  { name: "Báo cá", type: "REPORTING", id: 3 },
+  { name: "Thông báo", id: "ANNOUNCING" },
+  { name: "Bồi cá", id: "STOCKING" },
+  { name: "Báo cá", id: "REPORTING" },
 ];
-
+const attachmentData = [
+  { id: "VIDEO", name: "Video" },
+  { id: "IMAGE", name: "Ảnh" },
+  { id: "NONE", name: "Không đính kèm" },
+];
 const styles = StyleSheet.create({
   sectionWrapper: {
     width: "90%",
@@ -52,14 +54,10 @@ const PostEditScreen = () => {
   const currentPost = useStoreState(
     (states) => states.FManageModel.currentPost,
   );
-  const defaultTypePost = postTypeData.find(
-    (item) => item.type === currentPost.postType,
-  );
 
   const route = useRoute();
   const navigation = useNavigation();
   const [imageArray, setImageArray] = useState([]);
-  const [showSection, setShowSection] = useState("NONE");
   const editPost = useStoreActions((actions) => actions.FManageModel.editPost);
   const [updateStatus, setUpdateStatus] = useState("");
   const methods = useForm({
@@ -67,46 +65,68 @@ const PostEditScreen = () => {
     reValidateMode: "onSubmit",
     resolver: yupResolver(validationSchema),
     defaultValues: {
-      postDescription: `${currentPost.content}`,
+      content: currentPost.content,
+      postType: currentPost.postType,
+      attachmentType: currentPost.attachmentType,
     },
   });
   const getLocationPostListByPage = useStoreActions(
     (actions) => actions.FManageModel.getLocationPostListByPage,
   );
-  const { handleSubmit } = methods;
+  const { handleSubmit, watch, setValue, getValues } = methods;
+  const watchAttachmentType = watch("attachmentType");
   /**
    *  Reset the image array if imageArray is not empty
    *  when switching to input link video
    */
-  //   console.log("currentPost :>> ", currentPost);
-  useEffect(() => {
-    if (showSection !== "IMAGE" && imageArray?.length > 0) setImageArray([]);
-  }, [showSection]);
 
-  const setAttachment = (type) => {
-    switch (type) {
-      case "NONE":
-        return "none";
+  const setDefaultValues = () => {
+    if (watchAttachmentType === "IMAGE") {
+      setImageArray([{ id: 1, base64: currentPost.url }]);
+    }
+    if (watchAttachmentType === "VIDEO") {
+      setValue("postVideoLink", currentPost.url);
+    }
+  };
+
+  useEffect(() => {
+    setDefaultValues();
+  }, []);
+  useEffect(() => {
+    switch (watchAttachmentType) {
       case "IMAGE":
-        return imageArray[0];
+        setValue(" postVideoLink", "");
+        break;
+
       case "VIDEO":
-        return "video";
+        if (imageArray?.length > 0) setImageArray([]);
+        break;
+
+      default:
+        if (imageArray?.length > 0) setImageArray([]);
+    }
+  }, [watchAttachmentType]);
+
+  const setAttachmentUrl = (type) => {
+    switch (type) {
+      case "IMAGE":
+        return imageArray[0].base64;
+      case "VIDEO":
+        return getValues("postVideoLink");
       default:
         return "";
     }
   };
 
   const onSubmit = (data) => {
-    const { postDescription: content, postType } = data;
-    const typePost = postTypeData.find((item) => item.id === postType);
-    const attachment = setAttachment(showSection);
-
-    editPost({
-      attachmentType: showSection,
-      content,
+    const url = setAttachmentUrl(watchAttachmentType);
+    const updateData = {
+      ...data,
       id: currentPost.id,
-      postType: typePost.type,
-      url: attachment.base64,
+      url,
+    };
+    editPost({
+      updateData,
       setUpdateStatus,
     });
   };
@@ -127,9 +147,9 @@ const PostEditScreen = () => {
 
   useEffect(() => {
     if (updateStatus === "SUCCESS") {
-      showAlertConfirmBox(
+      showAlertAbsoluteBox(
         "Thông báo",
-        "Cập nhật thông tin cá nhân thành công!",
+        "Cập nhật thông tin bài đăng thành công!",
         () => {
           getLocationPostListByPage({ pageNo: 1 });
           goToFManagePostScreen(navigation);
@@ -138,6 +158,7 @@ const PostEditScreen = () => {
     } else if (updateStatus === "FAILED") {
       showAlertBox("Thông báo", "Đã xảy ra lỗi! Vui lòng thử lại.");
     }
+    setUpdateStatus(null);
   }, [updateStatus]);
   return (
     <>
@@ -158,31 +179,21 @@ const PostEditScreen = () => {
                 placeholder="Chọn sự kiện"
                 data={postTypeData}
                 controllerName="postType"
-                defaultValue={defaultTypePost.name}
               />
               <TextAreaComponent
                 label="Miêu tả"
                 placeholder=""
                 numberOfLines={3}
-                controllerName="postDescription"
+                controllerName="content"
               />
-              <>
-                <Text fontSize="md" mb={1}>
-                  Đính kèm
-                </Text>
-                <Select
-                  placeholder="Chọn loại đính kèm"
-                  accessibilityLabel="Chọn loại đính kèm"
-                  onValueChange={setShowSection}
-                  defaultValue={showSection}
-                  fontSize="md"
-                >
-                  <Select.Item label="Không đính kèm" value="NONE" />
-                  <Select.Item label="Ảnh" value="IMAGE" />
-                  <Select.Item label="Link Video" value="VIDEO" />
-                </Select>
-              </>
-              {showSection === "link" && (
+              <SelectComponent
+                placeholder="Chọn đính kèm"
+                data={attachmentData}
+                label="Đính kèm"
+                controllerName="attachmentType"
+              />
+
+              {watchAttachmentType === "VIDEO" && (
                 <InputComponent
                   placeholder="Nhập link vào đây"
                   label="Đường dẫn"
@@ -190,7 +201,7 @@ const PostEditScreen = () => {
                 />
               )}
             </VStack>
-            {showSection === "IMAGE" && (
+            {watchAttachmentType === "IMAGE" && (
               <MultiImageSection
                 containerStyle={{ width: "100%" }}
                 formRoute={ROUTE_NAMES.FMANAGE_POST_EDIT}

@@ -273,37 +273,21 @@ const model = {
     });
   }),
 
-  createNewPost: thunk(async (actions, payload) => {
-    const { attachmentType, content, id, postType, url, setUpdateStatus } =
-      payload;
+  createNewPost: thunk(async (actions, payload, { getState }) => {
+    const { updateData, setUpdateStatus } = payload;
+    const { currentId } = getState();
     try {
-      await http.post(
-        `location/${id}/post/add
-    `,
-        {
-          attachmentType,
-          content,
-          id,
-          postType,
-          url,
-        },
-      );
+      await http.post(`location/${currentId}/post/add`, updateData);
       setUpdateStatus(true);
     } catch (error) {
       setUpdateStatus(false);
     }
   }),
-  editPost: thunk(async (actions, payload) => {
-    const { attachmentType, content, id, postType, url, setUpdateStatus } =
-      payload;
+  editPost: thunk(async (actions, payload, { getState }) => {
+    const { currentId } = getState();
+    const { updateData, setUpdateStatus } = payload;
     try {
-      await http.put(`location/${id}/post/edit`, {
-        attachmentType,
-        content,
-        id,
-        postType,
-        url,
-      });
+      await http.put(`location/${currentId}/post/edit`, updateData);
       setUpdateStatus("SUCCESS");
     } catch (error) {
       setUpdateStatus("FAILED");
@@ -311,15 +295,26 @@ const model = {
   }),
 
   deletePost: thunk(async (actions, payload, { getState }) => {
-    const { postId } = payload;
+    const { postId, setDeleteSuccess } = payload;
     const { currentId } = getState();
-    const { status } = await http.delete(
-      `location/${currentId}/post/delete/${postId}`,
-    );
-    if (status === 200) {
-      console.log(`status>>>`, status);
+    try {
+      await http.delete(`location/${currentId}/post/delete/${postId}`);
+      actions.removePostFromPostList(postId);
+      setDeleteSuccess(true);
+    } catch (error) {
+      setDeleteSuccess(false);
     }
   }),
+  /**
+   * Remove post from the post list state
+   * @param {number} payload id of the post that need to be remove
+   */
+  removePostFromPostList: action((state, payload) => {
+    state.locationPostList = state.locationPostList.filter(
+      (post) => post.id !== payload,
+    );
+  }),
+
   setCurrentPost: action((state, payload) => {
     state.currentPost = payload;
   }),
