@@ -60,6 +60,7 @@ const FLocationSaveScreen = () => {
                 rate={item.score}
                 key={item.id}
                 isVerifed={item.verify}
+                image={item.image}
               />
             )}
             keyExtractor={(item) => item.id.toString()}
