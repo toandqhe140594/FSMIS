@@ -71,7 +71,7 @@ const EditProfileScreen = () => {
     setValue("provinceId", userInfo.addressFromWard.provinceId);
     setValue("districtId", userInfo.addressFromWard.districtId);
     setValue("wardId", userInfo.addressFromWard.wardId);
-    setFormattedDate(userInfo.dob.split(" ")[0]);
+    setDate(moment(userInfo.dob.split(" ")[0], "DD/MM/YYYY").toDate());
     setAvatarImage(userInfo.avatarUrl);
   };
 
@@ -114,7 +114,11 @@ const EditProfileScreen = () => {
 
   const onSubmit = (data) => {
     // Did not have null or empty validation for avatarImage and formattedDate yet
-    const updateData = { ...data, avatarUrl: avatarImage, dob: date.toJSON() };
+    const updateData = {
+      ...data,
+      avatarUrl: avatarImage,
+      dob: moment(date).add(1, "days").toDate().toJSON(),
+    };
     editPersonalInformation({ updateData, setUpdateStatus });
     setIsLoading(true);
   };
@@ -145,9 +149,6 @@ const EditProfileScreen = () => {
     }
   }, [date]);
 
-  useEffect(() => {
-    if (userInfo.avatarUrl) setAvatarImage(userInfo.avatarUrl);
-  }, [userInfo]);
   /**
    * When navigate from MediaSelectScreen back to Edit Form
    * the callback listen to route params and set
@@ -166,15 +167,17 @@ const EditProfileScreen = () => {
     if (updateStatus === "SUCCESS") {
       setIsLoading(false);
       showAlertBox("Thông báo", "Cập nhật thông tin cá nhân thành công!");
+      setUpdateStatus(null);
     } else if (updateStatus === "FAILED") {
       setIsLoading(false);
       showAlertBox("Thông báo", "Đã xảy ra lỗi! Vui lòng thử lại sau.");
+      setUpdateStatus(null);
     }
   }, [updateStatus]);
 
   return (
-    <KeyboardAvoidingView>
-      <ScrollView>
+    <>
+      <KeyboardAvoidingView>
         <Overlay
           isVisible={isLoading}
           fullScreen={fullScreen}
@@ -186,131 +189,133 @@ const EditProfileScreen = () => {
         >
           <ActivityIndicator size={60} color="#2089DC" />
         </Overlay>
-        {showDatePicker && (
-          <DateTimePicker
-            display="default"
-            is24Hour
-            mode="date"
-            value={date || new Date()}
-            onChange={onDateChange}
-          />
-        )}
-        <Center flex={1} minHeight={Math.round(useWindowDimensions().height)}>
-          <HeaderTab name="Thông tin cá nhân" />
-          <FormProvider {...methods}>
-            <VStack
-              flex={1}
-              justifyContent="center"
-              mt={3}
-              mb={5}
-              space={4}
-              w={{ base: "70%", md: "50%", lg: "30%" }}
-            >
-              <Avatar
-                containerStyle={{ alignSelf: "center" }}
-                size={130}
-                rounded
-                source={{
-                  uri:
-                    avatarImage !== undefined
-                      ? avatarImage
-                      : userInfo.avatarUrl,
-                }}
-                onLongPress={() => deleteImage()}
-                onPress={() =>
-                  goToMediaSelectScreen(navigation, {
-                    returnRoute: ROUTE_NAMES.PROFILE_CHANGE_INFORMATION,
-                    maxSelectable: 1,
-                  })
-                }
-              />
+        <ScrollView>
+          {showDatePicker && (
+            <DateTimePicker
+              display="default"
+              is24Hour
+              mode="date"
+              value={date || new Date()}
+              onChange={onDateChange}
+            />
+          )}
+          <Center flex={1} minHeight={Math.round(useWindowDimensions().height)}>
+            <HeaderTab name="Thông tin cá nhân" />
+            <FormProvider {...methods}>
+              <VStack
+                flex={1}
+                justifyContent="center"
+                mt={3}
+                mb={5}
+                space={4}
+                w={{ base: "70%", md: "50%", lg: "30%" }}
+              >
+                <Avatar
+                  containerStyle={{ alignSelf: "center" }}
+                  size={130}
+                  rounded
+                  source={{
+                    uri:
+                      avatarImage !== undefined
+                        ? avatarImage
+                        : userInfo.avatarUrl,
+                  }}
+                  onLongPress={() => deleteImage()}
+                  onPress={() =>
+                    goToMediaSelectScreen(navigation, {
+                      returnRoute: ROUTE_NAMES.PROFILE_CHANGE_INFORMATION,
+                      maxSelectable: 1,
+                    })
+                  }
+                />
 
-              <InputComponent
-                label="Họ và tên"
-                isTitle
-                placeholder="Nhập họ và tên"
-                type="text"
-                hasAsterisk
-                controllerName="fullName"
-              />
+                <InputComponent
+                  label="Họ và tên"
+                  isTitle
+                  placeholder="Nhập họ và tên"
+                  type="text"
+                  hasAsterisk
+                  controllerName="fullName"
+                />
 
-              {/* Date picker field */}
-              <View>
-                <Text bold fontSize="md" mb={1}>
-                  Ngày sinh
-                </Text>
-                <TouchableOpacity onPress={() => setShowDatePicker(true)}>
-                  <Input
-                    InputRightElement={
-                      <Icon
-                        as={<Entypo name="calendar" />}
-                        size={5}
-                        mr={1}
-                        color="muted.500"
-                      />
-                    }
-                    placeholder="Chọn ngày sinh"
-                    size="lg"
-                    value={formattedDate ? formattedDate.toString() : ""}
-                    isDisabled
-                  />
-                </TouchableOpacity>
-              </View>
+                {/* Date picker field */}
+                <View>
+                  <Text bold fontSize="md" mb={1}>
+                    Ngày sinh
+                  </Text>
+                  <TouchableOpacity onPress={() => setShowDatePicker(true)}>
+                    <Input
+                      InputRightElement={
+                        <Icon
+                          as={<Entypo name="calendar" />}
+                          size={5}
+                          mr={1}
+                          color="muted.500"
+                        />
+                      }
+                      placeholder="Chọn ngày sinh"
+                      size="lg"
+                      value={formattedDate ? formattedDate.toString() : ""}
+                      isDisabled
+                    />
+                  </TouchableOpacity>
+                </View>
 
-              {/* Gender select box */}
-              <SelectComponent
-                label="Giới tính"
-                isTitle
-                placeholder="Chọn giới tính"
-                controllerName="gender"
-                data={genderList}
-              />
+                {/* Gender select box */}
+                <SelectComponent
+                  label="Giới tính"
+                  isTitle
+                  placeholder="Chọn giới tính"
+                  controllerName="gender"
+                  data={genderList}
+                />
 
-              {/* Address input field */}
-              <InputComponent
-                label="Địa chỉ"
-                isTitle
-                placeholder="Nhập địa chỉ thường trú"
-                controllerName="address"
-              />
+                {/* Address input field */}
+                <InputComponent
+                  label="Địa chỉ"
+                  isTitle
+                  placeholder="Nhập địa chỉ thường trú"
+                  controllerName="address"
+                />
 
-              {/* Province select box */}
-              <SelectComponent
-                label="Tỉnh/Thành phố"
-                isTitle
-                placeholder="Chọn tỉnh/thành phố"
-                data={provinceList}
-                controllerName="provinceId"
-                handleDataIfValChanged={generateAddressDropdown}
-              />
+                {/* Province select box */}
+                <SelectComponent
+                  label="Tỉnh/Thành phố"
+                  isTitle
+                  placeholder="Chọn tỉnh/thành phố"
+                  data={provinceList}
+                  controllerName="provinceId"
+                  handleDataIfValChanged={generateAddressDropdown}
+                />
 
-              {/* District select box */}
-              <SelectComponent
-                label="Quận/Huyện"
-                isTitle
-                placeholder="Chọn quận/huyện"
-                data={districtList}
-                controllerName="districtId"
-                handleDataIfValChanged={generateAddressDropdown}
-              />
+                {/* District select box */}
+                <SelectComponent
+                  label="Quận/Huyện"
+                  isTitle
+                  placeholder="Chọn quận/huyện"
+                  data={districtList}
+                  controllerName="districtId"
+                  handleDataIfValChanged={generateAddressDropdown}
+                />
 
-              {/* Ward select box */}
-              <SelectComponent
-                label="Phường/Xã"
-                isTitle
-                placeholder="Chọn phường/xã"
-                data={wardList}
-                controllerName="wardId"
-              />
-              {/* Save changes button */}
-              <Button mt={2} size="lg" onPress={handleSubmit(onSubmit)}>
-                Lưu thay đổi
-              </Button>
-            </VStack>
-          </FormProvider>
-        </Center>
-      </ScrollView>
-    </KeyboardAvoidingView>
+                {/* Ward select box */}
+                <SelectComponent
+                  label="Phường/Xã"
+                  isTitle
+                  placeholder="Chọn phường/xã"
+                  data={wardList}
+                  controllerName="wardId"
+                />
+                {/* Save changes button */}
+                <Button mt={2} size="lg" onPress={handleSubmit(onSubmit)}>
+                  Lưu thay đổi
+                </Button>
+              </VStack>
+            </FormProvider>
+          </Center>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </>
   );
 };
 
