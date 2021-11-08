@@ -2,7 +2,7 @@ import { useRoute } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, ScrollView, VStack } from "native-base";
 import PropTypes from "prop-types";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 
 import CloseFLocationComponent from "../components/CloseFLocationComponent";
 import HeaderTab from "../components/HeaderTab";
@@ -18,11 +18,6 @@ const FManageHomeScreen = ({ typeString }) => {
   const setLocationLatLng = useStoreActions(
     (actions) => actions.FManageModel.setLocationLatLng,
   );
-  const [shortLocationOverview, setShortLocationOverview] = useState({
-    name: "Hồ câu",
-    id: 0,
-    isVerified: false,
-  });
 
   let menuCategory;
   if (typeString === "OWNER") {
@@ -46,10 +41,9 @@ const FManageHomeScreen = ({ typeString }) => {
 
   useEffect(() => {
     if (route.params) {
-      const { id, name, isVerified } = route.params;
+      const { id } = route.params;
       setCurrentId(id);
       getLocationDetailsById({ id });
-      setShortLocationOverview({ id, name, isVerified });
       getListOfLake({ id });
     }
     return () => {
@@ -57,18 +51,20 @@ const FManageHomeScreen = ({ typeString }) => {
     };
   }, []);
 
-  const { id, name, isVerified } = shortLocationOverview;
-
   return (
     <Box>
-      <HeaderTab id={id} name={name} isVerified={isVerified} />
+      <HeaderTab
+        id={locationDetails.id}
+        name={locationDetails.name || "Hồ câu"}
+        isVerified={locationDetails.verify || false}
+      />
 
       <ScrollView maxHeight="97%">
         <VStack mt="1" mb="2">
           {menuCategory.map((item) => {
             return <MenuScreen menuListItem={item.category} key={item.id} />;
           })}
-          <CloseFLocationComponent name={name} />
+          <CloseFLocationComponent name={locationDetails.name || "Hồ câu"} />
         </VStack>
       </ScrollView>
     </Box>

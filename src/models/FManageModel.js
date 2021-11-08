@@ -534,6 +534,12 @@ const model = {
   }),
   // DucHM ADD_END 4/11/2021
 
+  editLakeDetailData: action((state, payload) => {
+    state.lakeDetail = {
+      ...state.lakeDetail,
+      ...payload,
+    };
+  }),
   // DucHM ADD_START 5/11/2021
   /**
    * Add new lake to a fishing location
@@ -562,10 +568,12 @@ const model = {
    * @param {Function} [payload.setUpdateStatus] the function set status
    */
   editLakeDetail: thunk(async (actions, payload, { getState }) => {
-    const { udpateData, setUpdateStatus, id } = payload;
+    const { updateData, setUpdateStatus, id } = payload;
     const { currentId } = getState();
     try {
-      await http.put(`location/${currentId}/lake/edit/${id}`, udpateData);
+      await http.put(`location/${currentId}/lake/edit/${id}`, updateData);
+      actions.editLakeDetailData({ ...updateData, id });
+      actions.getListOfLake({ id: currentId });
       setUpdateStatus("SUCCESS");
     } catch (error) {
       setUpdateStatus("FAILED");
@@ -574,6 +582,12 @@ const model = {
   // DucHM ADD_END 6/11/2021
 
   // DucHM ADD_START 7/11/2021
+  editFishingLocationDetailData: action((state, payload) => {
+    state.locationDetails = {
+      ...state.locationDetails,
+      ...payload,
+    };
+  }),
   /**
    * Update fishing location profile
    * @param {Object} [payload.updateData] update information
@@ -584,7 +598,7 @@ const model = {
     const { currentId } = getState();
     try {
       await http.put(`location/edit/${currentId}`, updateData);
-      actions.setLocationDetails(updateData);
+      actions.editFishingLocationDetailData(updateData);
       actions.getListOfFishingLocations();
       setUpdateStatus("SUCCESS");
     } catch (error) {
