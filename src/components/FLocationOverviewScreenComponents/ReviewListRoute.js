@@ -160,7 +160,7 @@ const ReviewListRoute = () => {
         <Divider />
         <Center flex={1} py={3}>
           {locationReviewScore.score && locationReviewScore.score % 1 !== 0 ? (
-            <Text h2>{locationReviewScore.score.toFixed(2) || 0}</Text>
+            <Text h2>{locationReviewScore.score.toFixed(1) || 0}</Text>
           ) : (
             <Text h2>{locationReviewScore.score || 0}</Text>
           )}
