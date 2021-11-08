@@ -657,13 +657,14 @@ const model = {
    * @param {Number} [payload.weight] weight for stocking
    * @param {Function} [payload.setUpdateStatus] the function to set status
    */
-  stockFishInLake: thunk(async (actions, payload) => {
+  stockFishInLake: thunk(async (actions, payload, { getState }) => {
     const { id, quantity, weight, setUpdateStatus } = payload;
+    const { id: lakeId } = getState().lakeDetail;
     try {
       await http.post(`location/lake/fish/stocking/${id}`, null, {
         params: { quantity, weight },
       });
-      action.getLakeDetailByLakeId({ id }); // purpose to fetch new fishInLake in lakeDetail
+      await actions.getLakeDetailByLakeId({ id: lakeId }); // purpose to fetch new fishInLake in lakeDetail
       setUpdateStatus("SUCCESS");
     } catch (error) {
       // handle error
