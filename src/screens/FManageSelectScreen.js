@@ -1,8 +1,15 @@
 import { useNavigation } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import { VStack } from "native-base";
-import React, { useEffect } from "react";
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import {
+  ActivityIndicator,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 
 import FLocationCard from "../components/FLocationCard";
 import HeaderTab from "../components/HeaderTab";
@@ -29,6 +36,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  loadingContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+    flex: 1,
+  },
 });
 
 const FManageSelectScreen = () => {
@@ -41,15 +53,48 @@ const FManageSelectScreen = () => {
     (actions) => actions.FManageModel.getListOfFishingLocations,
   );
 
+  const [success, setSuccess] = useState(null);
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
-    getListOfFishingLocations();
+    setLoading(true);
+    const timeout = setTimeout(() => {
+      setLoading(false);
+    }, 10000);
+    getListOfFishingLocations(setSuccess);
+    return () => {
+      clearTimeout(timeout);
+    };
   }, []);
+
+  useEffect(() => {
+    if (success !== null) {
+      setSuccess(null);
+      setLoading(false);
+    }
+  }, [success]);
 
   // Center the add button if the list is emtpy
   const getEmptyListStyling = () =>
     listOfFishingLocations.length === 0
       ? { flex: 1, justifyContent: "center" }
       : {};
+
+  const isStaffStyle = () => {
+    if (
+      listOfFishingLocations.length > 0 &&
+      listOfFishingLocations[0].role === "STAFF"
+    )
+      return { display: "none" };
+    return {};
+  };
+
+  if (loading)
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="blue" />
+      </View>
+    );
 
   return (
     <>
@@ -61,7 +106,7 @@ const FManageSelectScreen = () => {
               goToFManageAddNewScreen(navigation);
             }}
           >
-            <View style={styles.border}>
+            <View style={[styles.border, isStaffStyle()]}>
               <Text style={{ fontSize: 12 }}>Thêm điểm câu</Text>
             </View>
           </Pressable>
@@ -69,7 +114,8 @@ const FManageSelectScreen = () => {
           {listOfFishingLocations.length > 0 && (
             <VStack w="90%" space={2} my={2}>
               {listOfFishingLocations.map((location) => {
-                const { id, name, image, verify, score, address } = location;
+                const { id, name, image, verify, score, address, role } =
+                  location;
                 return (
                   <FLocationCard
                     id={id}
@@ -78,6 +124,7 @@ const FManageSelectScreen = () => {
                     isVerifed={verify}
                     rate={score}
                     address={address}
+                    role={role}
                     isManaged
                     key={id}
                   />
