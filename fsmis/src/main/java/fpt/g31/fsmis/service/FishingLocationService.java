@@ -21,20 +21,22 @@ import javax.validation.ValidationException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
 public class FishingLocationService {
     private static final String UNAUTHORIZED = "Không có quyền truy cập thông tin;";
     private static final String LOCATION_NOT_FOUND = "Không tìm thấy hồ câu!";
+    private static final String ACCOUNT_NOT_FOUND = "Không tìm thấy tài khoản!";
 
     private final JwtFilter jwtFilter;
+    private final CheckInRepos checkInRepos;
     private FishingLocationRepos fishingLocationRepos;
     private UserRepos userRepos;
     private WardRepos wardRepos;
     private ReviewRepos reviewRepos;
     private ModelMapper modelMapper;
-    private final CheckInRepos checkInRepos;
 
     public List<FishingLocation> findAllFishingLocations() {
         return fishingLocationRepos.findAll();
@@ -204,8 +206,16 @@ public class FishingLocationService {
 
     public List<FishingLocationItemDtoOut> getOwnedFishingLocation(HttpServletRequest request) {
         User user = jwtFilter.getUserFromToken(request);
-        List<FishingLocation> fishingLocationList = fishingLocationRepos.findByOwnerIdAndActiveIsTrue(user.getId());
         List<FishingLocationItemDtoOut> fishingLocationItemDtoOutList = new ArrayList<>();
+        List<FishingLocation> fishingLocationList = fishingLocationRepos.findByOwnerIdAndActiveIsTrue(user.getId());
+        String role;
+        if (fishingLocationList.isEmpty()) {
+            Optional<FishingLocation> location = fishingLocationRepos.findByEmployeeId(user.getId());
+            location.ifPresent(fishingLocationList::add);
+            role = "STAFF";
+        } else {
+            role = "OWNER";
+        }
         for (FishingLocation fishingLocation : fishingLocationList) {
             FishingLocationItemDtoOut fishingLocationItemDtoOut = FishingLocationItemDtoOut.builder()
                     .id(fishingLocation.getId())
@@ -214,6 +224,7 @@ public class FishingLocationService {
                     .verify(fishingLocation.getVerify())
                     .address(ServiceUtils.getAddress(fishingLocation.getAddress(), fishingLocation.getWard()))
                     .score(reviewRepos.getAverageScoreByFishingLocationIdAndActiveIsTrue(fishingLocation.getId()))
+                    .role(role)
                     .build();
             fishingLocationItemDtoOutList.add(fishingLocationItemDtoOut);
         }
@@ -251,7 +262,7 @@ public class FishingLocationService {
             throw new ValidationException("Không thể thêm tài khoản này làm nhân viên!");
         }
         User staff = userRepos.findById(userId)
-                .orElseThrow(() -> new ValidationException("Không tìm thấy tài khoản!"));
+                .orElseThrow(() -> new ValidationException(ACCOUNT_NOT_FOUND));
 
         List<User> staffList = location.getEmployeeList();
         staffList.add(staff);
@@ -273,7 +284,7 @@ public class FishingLocationService {
             throw new UnauthorizedException(UNAUTHORIZED);
         }
         User staff = userRepos.findById(staffId)
-                .orElseThrow(() -> new ValidationException("Không tìm thấy tài khoản!"));
+                .orElseThrow(() -> new ValidationException(ACCOUNT_NOT_FOUND));
         List<User> staffList = location.getEmployeeList();
         staffList.remove(staff);
         location.setEmployeeList(staffList);
@@ -291,11 +302,11 @@ public class FishingLocationService {
         FishingLocation location = fishingLocationRepos.findById(locationId)
                 .orElseThrow(() -> new NotFoundException("Không tìm thấy khu hồ!"));
         User staff = userRepos.findById(staffId)
-                .orElseThrow(() -> new NotFoundException("Không tìm thấy tài khoản!"));
-        if (!location.getOwner().equals(user)){
+                .orElseThrow(() -> new NotFoundException(ACCOUNT_NOT_FOUND));
+        if (!location.getOwner().equals(user)) {
             throw new ValidationException("Không phải chủ hồ, không có quyền truy cập!");
         }
-        if (!location.getEmployeeList().contains(staff)){
+        if (!location.getEmployeeList().contains(staff)) {
             throw new ValidationException("Tài khoản được tìm kiếm không phải nhân viên, không có quyền truy cập!");
         }
         return UserDtoOut.builder()

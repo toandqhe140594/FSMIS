@@ -22,4 +22,6 @@ public class FishingLocationItemDtoOut {
     private Double score;
 
     private String address;
+
+    private String role;
 }

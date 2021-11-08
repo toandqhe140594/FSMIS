@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface FishingLocationRepos extends JpaRepository<FishingLocation, Long> {
 
@@ -21,4 +22,9 @@ public interface FishingLocationRepos extends JpaRepository<FishingLocation, Lon
     List<FishingLocation> getNearByLocation(Float longitude, Float latitude, Integer distance, Long methodId, Integer minRating);
 
     List<FishingLocation> findByOwnerIdAndActiveIsTrue(Long ownerId);
+
+    @Query(nativeQuery = true, value = "select *\n" +
+            "from tbl_fishing_location tfl inner join tbl_employee_list tel on tfl.id = tel.fishing_location_id \n" +
+            "where tel.employee_id = ?1")
+    Optional<FishingLocation> findByEmployeeId(Long staffId);
 }
