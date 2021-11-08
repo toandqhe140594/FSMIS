@@ -174,7 +174,7 @@ const ReviewListRoute = () => {
         <Text style={{ fontWeight: "bold", marginTop: 12, marginLeft: 12 }}>
           Đánh giá của bạn
         </Text>
-        {checkinStatus === true ? (
+        {checkinStatus === "true" ? (
           <PersonalReviewSection
             personalReview={personalReview}
             currentLocationId={currentId}
