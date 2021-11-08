@@ -145,9 +145,6 @@ const EditProfileScreen = () => {
     }
   }, [date]);
 
-  useEffect(() => {
-    if (userInfo.avatarUrl) setAvatarImage(userInfo.avatarUrl);
-  }, [userInfo]);
   /**
    * When navigate from MediaSelectScreen back to Edit Form
    * the callback listen to route params and set
