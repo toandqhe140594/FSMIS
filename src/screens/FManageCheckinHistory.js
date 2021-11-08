@@ -141,7 +141,11 @@ const FManageCheckinHistoryScreen = () => {
                   timeIn={item.checkInTime}
                   timeOut={item.checkOutTime}
                 >
-                  <AvatarCard avatarSize="md" nameUser={item.name} />
+                  <AvatarCard
+                    avatarSize="md"
+                    nameUser={item.name}
+                    image={item.avatar}
+                  />
                 </CheckInCard>
               </PressableCustomCard>
             </Box>
