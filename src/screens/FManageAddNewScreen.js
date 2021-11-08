@@ -77,7 +77,7 @@ const FManageAddNewScreen = () => {
     if (addStatus === "SUCCESS") {
       showAlertAbsoluteBox(
         "Thông báo",
-        "Hồ bé thêm thành công!",
+        "Khu hồ thêm thành công!",
         () => {
           navigation.goBack();
         },
@@ -242,7 +242,7 @@ const FManageAddNewScreen = () => {
                   alignSelf="center"
                   onPress={handleSubmit(onSubmit)}
                 >
-                  Lưu thông tin
+                  Thêm khu hồ
                 </Button>
               </Box>
             </Center>
