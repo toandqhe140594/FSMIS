@@ -26,6 +26,7 @@ import HeaderTab from "../components/HeaderTab";
 import CheckboxSelectorComponent from "../components/LakeEditProfile/CheckboxSelectorComponent";
 import FishCardSection from "../components/LakeEditProfile/FishCardSection";
 import { ROUTE_NAMES, SCHEMA } from "../constants";
+import { goBack } from "../navigations";
 import { showAlertAbsoluteBox, showAlertBox } from "../utilities";
 
 const styles = StyleSheet.create({
@@ -79,7 +80,7 @@ const LakeAddNewScreen = () => {
    * to get fishing method list and fish list
    */
   useEffect(() => {
-    getFishingMethodList();
+    getFishingMethodList({ setIsLoading: () => {} });
     getFishList();
   }, []);
 
@@ -89,7 +90,7 @@ const LakeAddNewScreen = () => {
         "Thông báo",
         "Hồ bé thêm thành công!",
         () => {
-          navigation.goBack();
+          goBack(navigation);
         },
         "Xác nhận",
       );

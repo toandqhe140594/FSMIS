@@ -58,14 +58,18 @@ const OverlayInputSection = ({ id, name, visible, toggleOverlay }) => {
     stockFishInLake({ ...data, id, setUpdateStatus });
   };
   useEffect(() => {
-    if (updateStatus === "SUCESS") {
+    if (updateStatus === "SUCCESS") {
       setIsLoading(false);
       showToastMessage("Bồi cá thành công!");
+      setUpdateStatus(null);
+      handleOnExit();
     } else if (updateStatus === "FAILED") {
       setIsLoading(false);
-      showToastMessage("Đã có lỗi xảy ra! Vui lòng thử lại.");
+      setUpdateStatus(null);
+      handleOnExit();
     }
   }, [updateStatus]);
+
   return (
     <Overlay
       overlayStyle={styles.overlayContainer}

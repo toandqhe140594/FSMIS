@@ -90,7 +90,7 @@ export const MENU_OWNER = [
       },
       {
         id: 6,
-        title: `Lịch sử báo cá`,
+        title: `Báo cá đã duyệt`,
         route: ROUTE_NAMES.FMANAGE_CATCH_HISTORY,
         icon: "done",
       },
@@ -112,41 +112,62 @@ export const MENU_OWNER = [
 export const MENU_STAFF = [
   {
     id: 1,
-    title: "Xem trang điểm câu của bạn",
-    route: ROUTE_NAMES.FLOCATION_OVERVIEW,
-    icon: "waves",
+    category: [
+      {
+        id: 1,
+        title: "Xem trang điểm câu của bạn",
+        route: ROUTE_NAMES.FMANAGE_LOCATION_OVERVIEW,
+        icon: "waves",
+      },
+    ],
+  },
+  {
+    id: 2,
+    category: [
+      {
+        id: 7,
+        title: `Quét mã QR`,
+        route: ROUTE_NAMES.FMANAGE_QR_SCAN,
+        icon: "qr-code",
+      },
+      {
+        id: 8,
+        title: `Lịch sử Check-in`,
+        route: ROUTE_NAMES.FMANAGE_CHECKIN_HISTORY,
+        icon: "how-to-reg",
+      },
+    ],
   },
 
   {
-    id: 7,
-    title: `Quét mã QR`,
-    route: ROUTE_NAMES.FMANAGE_QR_SCAN,
-    icon: "qr-code",
-  },
-  {
-    id: 5,
-    title: "Xác nhận báo cá",
-    route: ROUTE_NAMES.FMANAGE_CATCH_VERIFY,
-    icon: "fish",
-    type: "font-awesome-5",
-  },
-  {
-    id: 9,
-    title: `Quản lý bài đăng`,
-    route: ROUTE_NAMES.FMANAGE_POST_MANAGEMENT,
-    icon: "post-add",
-  },
-  {
     id: 3,
-    title: `Lịch sử báo cá`,
-    route: ROUTE_NAMES.FMANAGE_CATCH_HISTORY,
-    icon: "check",
+    category: [
+      {
+        id: 5,
+        title: "Xác nhận báo cá",
+        route: ROUTE_NAMES.FMANAGE_CATCH_VERIFY,
+        icon: "fish",
+        type: "font-awesome-5",
+      },
+      {
+        id: 6,
+        title: `Báo cá đã duyệt`,
+        route: ROUTE_NAMES.FMANAGE_CATCH_HISTORY,
+        icon: "done",
+      },
+    ],
   },
+
   {
-    id: 8,
-    title: `Lịch sử Check-in`,
-    route: ROUTE_NAMES.FMANAGE_CHECKIN_HISTORY,
-    icon: "how-to-reg",
+    id: 4,
+    category: [
+      {
+        id: 9,
+        title: `Quản lý bài đăng`,
+        route: ROUTE_NAMES.FMANAGE_POST_MANAGEMENT,
+        icon: "post-add",
+      },
+    ],
   },
 ];
 export const MENU_ADMIN = [

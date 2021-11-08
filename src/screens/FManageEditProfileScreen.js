@@ -127,9 +127,11 @@ const FManageEditProfileScreen = () => {
     if (updateStatus === "SUCCESS") {
       setIsLoading(false);
       showAlertBox("Thông báo", "Cập nhật thông tin điểm câu thành công!");
+      setUpdateStatus(null);
     } else if (updateStatus === "FAILED") {
       setIsLoading(false);
       showAlertBox("Thông báo", "Đã xảy ra lỗi! Vui lòng thử lại sau.");
+      setUpdateStatus(null);
     }
   }, [updateStatus]);
   return (

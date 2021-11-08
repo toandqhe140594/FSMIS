@@ -36,6 +36,8 @@ export const LOCATION_REVIEW_PERSONAL_POST = "review/me/post";
 export const LOCATION_ADD = "location/add";
 export const LOCATION_CATCH_REPORT_UNRESOLVED = "catch/pending";
 export const LOCATION_CATCH_REPORT_APPROVE = "catches/approve";
+export const LOCATION_CATCH_REPORT_PUBLIC = "catch/public";
+export const LOCATION_CATCH_REPORT_RESOLVED = "catch/history";
 
 export const ADDRESS_ALL_PROVINCE = "address/province";
 export const ADDRESS_PROVINCE_DISTRICT = "address/district";

@@ -8,25 +8,34 @@ import { Divider } from "react-native-elements";
 import EventPostCard from "../components/EventPostCard";
 import HeaderTab from "../components/HeaderTab";
 import { goToPostCreateScreen, goToPostEditScreen } from "../navigations";
+import { showAlertConfirmBox } from "../utilities";
 
 const PostListContainerComponent = () => {
   const navigation = useNavigation();
   const [lakePostPage, setTotalPostPage] = useState(1);
-
   const getLocationPostListByPage = useStoreActions(
     (actions) => actions.FManageModel.getLocationPostListByPage,
   );
   const locationPostList = useStoreState(
     (states) => states.FManageModel.locationPostList,
   );
+  const reload = useStoreState((states) => states.FManageModel.reloadTest);
+
   const setCurrentPost = useStoreActions(
     (actions) => actions.FManageModel.setCurrentPost,
+  );
+  const deletePost = useStoreActions(
+    (actions) => actions.FManageModel.deletePost,
   );
 
   useEffect(() => {
     getLocationPostListByPage({ pageNo: lakePostPage });
+  }, [reload]);
+
+  useEffect(() => {
+    getLocationPostListByPage({ pageNo: lakePostPage });
     setTotalPostPage(lakePostPage + 1);
-  }, []);
+  }, [locationPostList]);
 
   const loadMoreLakeCatchData = () => {
     getLocationPostListByPage({ pageNo: lakePostPage });
@@ -38,8 +47,10 @@ const PostListContainerComponent = () => {
   };
 
   const removePostHandler = (id) => {
-    console.log(id);
-    console.log("xoa bai");
+    showAlertConfirmBox("Thông báo", "Bài đăng sẽ bị xóa", () => {
+      deletePost({ postId: id });
+      getLocationPostListByPage({ pageNo: 1 });
+    });
   };
 
   const listEvent = [
