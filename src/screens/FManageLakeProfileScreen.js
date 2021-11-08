@@ -2,17 +2,27 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, Center } from "native-base";
 import PropTypes from "prop-types";
-import React, { useEffect } from "react";
+// DucHM ADD_START 8/11/2021
+import React, { useEffect, useState } from "react";
+// DucHM ADD_START 8/11/2021
 import { FlatList } from "react-native";
 import { Button, Card, Text } from "react-native-elements";
 
 import HeaderTab from "../components/HeaderTab";
+// DucHM ADD_START 8/11/2021
+import OverlayInputSection from "../components/LakeProfile/OverlayInputSection";
+// DucHM ADD_END 8/11/2021
 import colors from "../config/colors";
 import {
   goToFManageFishAddScreen,
   goToFManageLakeEditScreen,
 } from "../navigations";
-import { showAlertAbsoluteBox } from "../utilities";
+import {
+  showAlertAbsoluteBox,
+  showAlertBox,
+  showAlertConfirmBox,
+  showToastMessage,
+} from "../utilities";
 
 const CustomText = ({ title, text, mt }) => {
   return (
@@ -39,6 +49,8 @@ const FishCard = ({
   maxWeight,
   quantity,
   totalWeight,
+  toggleEditOverlay,
+  onDeleteFish,
 }) => {
   return (
     <Card>
@@ -57,10 +69,20 @@ const FishCard = ({
           type="clear"
           titleStyle={{ color: colors.defaultPrimaryButton }}
           onPress={() => {
-            showAlertAbsoluteBox("Delete box", `Id ${id}`);
+            // DucHM ADD_START 8/11/2021
+            onDeleteFish(id);
+            // DucHM ADD_END 8/11/2021
           }}
         />
-        <Button title="Bồi cá" type="clear" />
+        <Button
+          title="Bồi cá"
+          type="clear"
+          // DucHM ADD_START 8/11/2021
+          onPress={() => {
+            toggleEditOverlay({ id, name, visible: true });
+          }}
+          // DucHM ADD_END 8/11/2021
+        />
       </Box>
     </Card>
   );
@@ -73,28 +95,58 @@ FishCard.propTypes = {
   maxWeight: PropTypes.number.isRequired,
   quantity: PropTypes.number,
   totalWeight: PropTypes.number,
+  toggleEditOverlay: PropTypes.func,
+  onDeleteFish: PropTypes.func,
 };
 FishCard.defaultProps = {
   quantity: 0,
   totalWeight: 0,
+  toggleEditOverlay: () => {},
+  onDeleteFish: () => {},
 };
 
 const FManageEmployeeManagementScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
-
+  const [overlayState, setOverlayState] = useState({ visible: false });
+  const [deleteStatus, setDeleteStatus] = useState("");
   const lakeDetail = useStoreState((states) => states.FManageModel.lakeDetail);
   const getLakeDetailByLakeId = useStoreActions(
     (actions) => actions.FManageModel.getLakeDetailByLakeId,
   );
+  // DucHM ADD_START 8/11/2021
+  const deleteFishFromLake = useStoreActions(
+    (actions) => actions.FManageModel.deleteFishFromLake,
+  );
 
+  const handleDeleteFish = (id) => {
+    showAlertConfirmBox(
+      "Thông báo",
+      "Bạn chắc chắn muốn xóa loài cá này khỏi hồ?",
+      () => deleteFishFromLake({ id, setDeleteStatus }),
+    );
+  };
+  // DucHM ADD_END 8/11/2021
   useEffect(() => {
     if (route.params.id) getLakeDetailByLakeId({ id: route.params.id });
   }, []);
 
+  // DucHM ADD_START 8/11/2021
+  useEffect(() => {
+    if (deleteStatus === "SUCCESS") {
+      showToastMessage("Cá đã được xóa khỏi hồ");
+    } else if (deleteStatus === "FAILED") {
+      showToastMessage("Đã xảy ra lỗi! Vui lòng thử lại.");
+    }
+  }, [deleteStatus]);
+  // DucHM ADD_END 8/11/2021
+
   return (
     <>
       <HeaderTab name="Hồ vip" />
+      {/* DucHM ADD_START 8/11/2021 */}
+      <OverlayInputSection {...overlayState} toggleOverlay={setOverlayState} />
+      {/* DucHM ADD_END 8/11/2021 */}
       <Box flex={1} alignItems="center">
         <Center
           w="100%"
@@ -120,7 +172,15 @@ const FManageEmployeeManagementScreen = () => {
         <Box flex={1} w="100%">
           <FlatList
             data={lakeDetail.fishInLake}
-            renderItem={({ item }) => <FishCard {...item} />}
+            // DucHM ADD_START 8/11/2021
+            renderItem={({ item }) => (
+              <FishCard
+                {...item}
+                toggleEditOverlay={setOverlayState}
+                onDeleteFish={handleDeleteFish}
+              />
+            )}
+            // DucHM ADD_END 8/11/2021
             keyExtractor={(item) => item.id.toString()}
           />
         </Box>
