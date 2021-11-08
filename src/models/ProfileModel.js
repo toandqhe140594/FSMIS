@@ -250,6 +250,7 @@ const model = {
     const { updateData, setUpdateStatus } = payload;
     try {
       await http.post(API_URL.PERSONAL_EDIT_PROFILE, updateData);
+      actions.getUserInfo();
       setUpdateStatus("SUCCESS");
     } catch (error) {
       setUpdateStatus("FAILED");
