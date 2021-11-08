@@ -19,6 +19,7 @@ const SpotCard = ({
   isVerifed,
   name,
   rate,
+  role,
   isManaged,
   isAdmin,
   showImage,
@@ -27,7 +28,12 @@ const SpotCard = ({
 
   const onPress = () => {
     if (isManaged)
-      goToFManageMainScreen(navigation, { id, name, isVerified: isVerifed });
+      goToFManageMainScreen(navigation, {
+        id,
+        name,
+        isVerified: isVerifed,
+        role,
+      });
     else if (isAdmin) goToAdminFLocationOverviewScreen(navigation, { id });
     else goToFishingLocationOverviewScreen(navigation, { id });
   };
@@ -72,6 +78,7 @@ SpotCard.propTypes = {
   id: PropTypes.number,
   showImage: PropTypes.bool,
   isAdmin: PropTypes.bool,
+  role: PropTypes.string,
 };
 SpotCard.defaultProps = {
   image: "https://picsum.photos/200",
@@ -81,6 +88,7 @@ SpotCard.defaultProps = {
   id: 1,
   showImage: true,
   isAdmin: false,
+  role: "ANGLER",
 };
 
 export default SpotCard;
