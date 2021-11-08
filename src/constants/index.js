@@ -90,7 +90,7 @@ export const MENU_OWNER = [
       },
       {
         id: 6,
-        title: `Lịch sử báo cá`,
+        title: `Báo cá đã duyệt`,
         route: ROUTE_NAMES.FMANAGE_CATCH_HISTORY,
         icon: "done",
       },
@@ -131,14 +131,8 @@ export const MENU_STAFF = [
     type: "font-awesome-5",
   },
   {
-    id: 9,
-    title: `Quản lý bài đăng`,
-    route: ROUTE_NAMES.FMANAGE_POST_MANAGEMENT,
-    icon: "post-add",
-  },
-  {
     id: 3,
-    title: `Lịch sử báo cá`,
+    title: `Báo cá đã duyệt`,
     route: ROUTE_NAMES.FMANAGE_CATCH_HISTORY,
     icon: "check",
   },
@@ -147,6 +141,12 @@ export const MENU_STAFF = [
     title: `Lịch sử Check-in`,
     route: ROUTE_NAMES.FMANAGE_CHECKIN_HISTORY,
     icon: "how-to-reg",
+  },
+  {
+    id: 9,
+    title: `Quản lý bài đăng`,
+    route: ROUTE_NAMES.FMANAGE_POST_MANAGEMENT,
+    icon: "post-add",
   },
 ];
 export const MENU_ADMIN = [
