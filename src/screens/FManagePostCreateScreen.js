@@ -5,7 +5,7 @@ import {
   useRoute,
 } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
-import { Button, Select, Text, VStack } from "native-base";
+import { Button, VStack } from "native-base";
 import React, { useCallback, useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { Dimensions, ScrollView, StyleSheet, View } from "react-native";
@@ -21,17 +21,20 @@ import { goToFManagePostScreen } from "../navigations";
 import { showAlertBox, showAlertConfirmBox } from "../utilities";
 
 const validationSchema = yup.object().shape({
-  postType: yup.number().default(-1),
-  postDescription: yup
-    .string()
-    .required("Nội dung bài đăng không được để trống"),
+  postType: yup.string().required("Loại bài đăng không được để trống"),
+  content: yup.string().required("Nội dung bài đăng không được để trống"),
   postVideoLink: yup.string(),
 });
 
 const postTypeData = [
-  { name: "Thông báo", type: "ANNOUNCING", id: 1 },
-  { name: "Bồi cá", type: "STOCKING", id: 2 },
-  { name: "Báo cá", type: "REPORTING", id: 3 },
+  { name: "Thông báo", id: "ANNOUNCING" },
+  { name: "Bồi cá", id: "STOCKING" },
+  { name: "Báo cá", id: "REPORTING" },
+];
+const attachmentData = [
+  { id: "VIDEO", name: "Video" },
+  { id: "IMAGE", name: "Ảnh" },
+  { id: "NONE", name: "Không đính kèm" },
 ];
 
 const styles = StyleSheet.create({
@@ -52,9 +55,8 @@ const PostCreateScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
   const [imageArray, setImageArray] = useState([]);
-  const [showSection, setShowSection] = useState("NONE");
   const currentID = useStoreState((states) => states.FManageModel.currentId);
-  const [updateStatus, setUpdateStatus] = useState("");
+  const [updateStatus, setUpdateStatus] = useState();
   const getLocationPostListByPage = useStoreActions(
     (actions) => actions.FManageModel.getLocationPostListByPage,
   );
@@ -66,40 +68,29 @@ const PostCreateScreen = () => {
     reValidateMode: "onSubmit",
     resolver: yupResolver(validationSchema),
   });
-  const { handleSubmit } = methods;
-  /**
-   *  Reset the image array if imageArray is not empty
-   *  when switching to input link video
-   */
-  useEffect(() => {
-    if (showSection !== "image" && imageArray?.length > 0) setImageArray([]);
-  }, [showSection]);
+  const { handleSubmit, watch, getValues } = methods;
+  const watchAttachmentType = watch("attachmentType");
 
-  const setAttachment = (type) => {
+  const setAttachmentUrl = (type) => {
     switch (type) {
-      case "NONE":
-        return "none";
-
       case "IMAGE":
-        return imageArray[0];
+        return imageArray[0].base64;
       case "VIDEO":
-        return "video";
+        return getValues("postVideoLink");
       default:
         return "";
     }
   };
 
   const onSubmit = (data) => {
-    // console.log(imageArray);
-    const { postDescription: content, postType } = data;
-    const typePost = postTypeData.find((item) => item.id === postType);
-    const attachment = setAttachment(showSection);
-    createPost({
-      attachmentType: showSection,
-      content,
+    const url = setAttachmentUrl(watchAttachmentType);
+    const updateData = {
+      ...data,
       id: currentID,
-      postType: typePost.type,
-      url: attachment.base64,
+      url,
+    };
+    createPost({
+      updateData,
       setUpdateStatus,
     });
   };
@@ -122,12 +113,12 @@ const PostCreateScreen = () => {
   );
 
   useEffect(() => {
-    if (updateStatus === "SUCCESS") {
-      showAlertConfirmBox("Thông báo", "Tạo bài thành công!", () => {
-        getLocationPostListByPage({ pageNo: 1 });
+    if (updateStatus === true) {
+      showAlertConfirmBox("Thông báo", "Tạo bài thành công!", async () => {
+        await getLocationPostListByPage({ pageNo: 1 });
         goToFManagePostScreen(navigation);
       });
-    } else if (updateStatus === "FAILED") {
+    } else if (updateStatus === false) {
       showAlertBox("Thông báo", "Đã xảy ra lỗi! Vui lòng thử lại.");
     }
   }, [updateStatus]);
@@ -155,25 +146,15 @@ const PostCreateScreen = () => {
                 label="Miêu tả"
                 placeholder=""
                 numberOfLines={3}
-                controllerName="postDescription"
+                controllerName="content"
               />
-              <>
-                <Text fontSize="md" mb={1}>
-                  Đính kèm
-                </Text>
-                <Select
-                  placeholder="Chọn loại đính kèm"
-                  accessibilityLabel="Chọn loại đính kèm"
-                  onValueChange={setShowSection}
-                  defaultValue={showSection}
-                  fontSize="md"
-                >
-                  <Select.Item label="Không đính kèm" value="NONE" />
-                  <Select.Item label="Ảnh" value="IMAGE" />
-                  <Select.Item label="Link Video" value="VIDEO" />
-                </Select>
-              </>
-              {showSection === "link" && (
+              <SelectComponent
+                placeholder="Chọn đính kèm"
+                data={attachmentData}
+                label="Đính kèm"
+                controllerName="attachmentType"
+              />
+              {watchAttachmentType === "VIDEO" && (
                 <InputComponent
                   placeholder="Nhập link vào đây"
                   label="Đường dẫn"
@@ -181,7 +162,7 @@ const PostCreateScreen = () => {
                 />
               )}
             </VStack>
-            {showSection === "IMAGE" && (
+            {watchAttachmentType === "IMAGE" && (
               <MultiImageSection
                 containerStyle={{ width: "100%" }}
                 formRoute={ROUTE_NAMES.FMANAGE_POST_CREATE}

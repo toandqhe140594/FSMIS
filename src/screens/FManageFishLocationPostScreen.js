@@ -47,8 +47,8 @@ const PostListContainerComponent = () => {
   };
 
   const removePostHandler = (id) => {
-    showAlertConfirmBox("Thông báo", "Bài đăng sẽ bị xóa", () => {
-      deletePost({ postId: id });
+    showAlertConfirmBox("Thông báo", "Bài đăng sẽ bị xóa", async () => {
+      await deletePost({ postId: id });
       getLocationPostListByPage({ pageNo: 1 });
     });
   };
