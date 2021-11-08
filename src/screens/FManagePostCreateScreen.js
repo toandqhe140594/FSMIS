@@ -154,7 +154,7 @@ const PostCreateScreen = () => {
                 label="Đính kèm"
                 controllerName="attachmentType"
               />
-              {watchAttachmentType === "link" && (
+              {watchAttachmentType === "VIDEO" && (
                 <InputComponent
                   placeholder="Nhập link vào đây"
                   label="Đường dẫn"

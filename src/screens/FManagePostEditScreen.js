@@ -153,7 +153,7 @@ const PostEditScreen = () => {
     if (updateStatus === "SUCCESS") {
       showAlertConfirmBox(
         "Thông báo",
-        "Cập nhật thông tin cá nhân thành công!",
+        "Cập nhật thông tin bài đăng thành công!",
         () => {
           getLocationPostListByPage({ pageNo: 1 });
           goToFManagePostScreen(navigation);
