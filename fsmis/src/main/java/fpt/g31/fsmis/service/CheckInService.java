@@ -29,24 +29,29 @@ public class CheckInService {
     private final FishingLocationRepos fishingLocationRepos;
     private final JwtFilter jwtFilter;
 
-    public UserCheckInDtoOut checkIn(CheckInDtoIn checkInDtoIn, Long fishingLocationId) {
+    public UserCheckInDtoOut checkIn(CheckInDtoIn checkInDtoIn, Long fishingLocationId, HttpServletRequest request) {
+        User performer = jwtFilter.getUserFromToken(request);
         User user = userRepos.findByQrString(checkInDtoIn.getQr())
                 .orElseThrow(() -> new NotFoundException("Không tìm thấy tài khoản!"));
         if (!user.isAvailable()) {
             throw new ValidationException("Không được check-in tại điểm khác khi đang câu!");
         }
-        FishingLocation fishingLocation = fishingLocationRepos.findById(fishingLocationId)
+        FishingLocation location = fishingLocationRepos.findById(fishingLocationId)
                 .orElseThrow(() -> new NotFoundException("Không tìm thấy hồ câu!"));
-        if (fishingLocation.getOwner().equals(user)) {
+        if (location.getOwner().equals(user)) {
             throw new ValidationException("Chủ hồ không được check in tại hồ của mình!");
         }
-        if (fishingLocation.getEmployeeList().contains(user)) {
+        if (location.getEmployeeList().contains(user)) {
             throw new ValidationException("Nhân viên không được check in tại nơi làm việc của mình!");
+        }
+        if (!location.getOwner().equals(performer) || !location.getEmployeeList().contains(performer)){
+            throw new ValidationException("Không có quyền thực hiện check in");
         }
         CheckIn checkIn = new CheckIn();
         checkIn.setUser(user);
-        checkIn.setFishingLocation(fishingLocation);
+        checkIn.setFishingLocation(location);
         checkIn.setCheckInTime(LocalDateTime.now());
+        checkIn.setPerfomrerId(performer.getId());
         checkInRepos.save(checkIn);
         user.setAvailable(false);
         userRepos.save(user);

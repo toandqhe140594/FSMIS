@@ -66,6 +66,7 @@ public class PostService {
                     .active(true)
                     .attachmentType(postDtoIn.getAttachmentType())
                     .url(postDtoIn.getUrl())
+                    .posterId(user.getId())
                     .fishingLocation(location)
                     .build();
             postRepos.save(post);

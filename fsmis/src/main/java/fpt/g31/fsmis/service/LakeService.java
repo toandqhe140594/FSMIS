@@ -28,9 +28,12 @@ public class LakeService {
     private FishingMethodRepos methodRepos;
     private JwtFilter jwtFilter;
 
+    private static final String LOCATION_NOT_FOUND = "Không tìm thấy hồ câu!";
+    private static final String UNAUTHORIZED = "Không có quyền truy cập!";
+
     public ResponseTextDtoOut createLake(LakeDtoIn lakeDtoIn, Long fishingLocationId, HttpServletRequest request) {
         FishingLocation fishingLocation = fishingLocationRepos.findById(fishingLocationId)
-                .orElseThrow(() -> new NotFoundException("Không tìm thấy hồ câu!"));
+                .orElseThrow(() -> new NotFoundException(LOCATION_NOT_FOUND));
         User owner = jwtFilter.getUserFromToken(request);
         if (!fishingLocation.getOwner().equals(owner)) {
             throw new ValidationException("Không phải chủ hồ, không có quyền tạo hồ con!");
@@ -84,7 +87,7 @@ public class LakeService {
             fishingMethodList.add(fishingMethod.getName());
         }
 
-        List<FishInLake> fishesInLake = fishInLakeRepos.findByLakeId(lakeId);
+        List<FishInLake> fishesInLake = fishInLakeRepos.findByLakeIdAndActiveIsTrue(lakeId);
         List<FishDtoOut> fishes = new ArrayList<>();
         for (FishInLake fishInLake : fishesInLake) {
             FishDtoOut fish = FishDtoOut.builder()
@@ -130,7 +133,7 @@ public class LakeService {
             }
             lakeOverviewDtoOut.setFishingMethodList(fishingMethodList);
             List<String> fishList = new ArrayList<>();
-            for (FishInLake fishInLake : fishInLakeRepos.findByLakeId(lake.getId())) {
+            for (FishInLake fishInLake : fishInLakeRepos.findByLakeIdAndActiveIsTrue(lake.getId())) {
                 fishList.add(fishInLake.getFishSpecies().getName());
             }
             lakeOverviewDtoOut.setFishList(fishList);
@@ -141,10 +144,10 @@ public class LakeService {
 
     public ResponseTextDtoOut closeLake(Long lakeId, HttpServletRequest request) {
         Lake lake = lakeRepos.findById(lakeId)
-                .orElseThrow(() -> new NotFoundException("Không tìm thấy hồ câu!"));
+                .orElseThrow(() -> new NotFoundException(LOCATION_NOT_FOUND));
         User user = jwtFilter.getUserFromToken(request);
         if (!lake.getFishingLocation().getOwner().equals(user)) {
-            throw new ValidationException("Không có quyền truy cập!");
+            throw new ValidationException(UNAUTHORIZED);
         }
         lake.setActive(false);
         lakeRepos.save(lake);
@@ -153,10 +156,10 @@ public class LakeService {
 
     public ResponseTextDtoOut editLakeInformation(LakeEditDtoIn lakeEditDtoIn, Long lakeId, HttpServletRequest request) {
         Lake lake = lakeRepos.findById(lakeId)
-                .orElseThrow(() -> new NotFoundException("Không tìm thấy hồ câu!"));
+                .orElseThrow(() -> new NotFoundException(LOCATION_NOT_FOUND));
         User user = jwtFilter.getUserFromToken(request);
         if (!lake.getFishingLocation().getOwner().equals(user)) {
-            throw new ValidationException("Không có quyền truy cập!");
+            throw new ValidationException(UNAUTHORIZED);
         }
         lake.setName(lakeEditDtoIn.getName());
         lake.setLength(lakeEditDtoIn.getLength());
@@ -225,10 +228,10 @@ public class LakeService {
 
     public ResponseTextDtoOut addFishToLake(FishInLakeDtoIn fishInLakeDtoIn, Long lakeId, HttpServletRequest request) {
         Lake lake = lakeRepos.findById(lakeId)
-                .orElseThrow(() -> new NotFoundException("Không tìm thấy hồ câu!"));
+                .orElseThrow(() -> new NotFoundException(LOCATION_NOT_FOUND));
         User user = jwtFilter.getUserFromToken(request);
         if (!lake.getFishingLocation().getOwner().equals(user)) {
-            throw new ValidationException("Không có quyền truy cập!");
+            throw new ValidationException(UNAUTHORIZED);
         }
         FishInLake fishInLake = FishInLake.builder()
                 .id(fishInLakeDtoIn.getId())
@@ -262,7 +265,7 @@ public class LakeService {
                 .orElseThrow(() -> new NotFoundException("Không tìm thấy bản ghi"));
         User user = jwtFilter.getUserFromToken(request);
         if (!fishInLake.getLake().getFishingLocation().getOwner().equals(user)) {
-            throw new ValidationException("Không có quyền truy cập!");
+            throw new ValidationException(UNAUTHORIZED);
         }
         fishInLake.setActive(false);
         fishInLakeRepos.save(fishInLake);
@@ -277,7 +280,7 @@ public class LakeService {
                 .orElseThrow(() -> new NotFoundException("Không tìm thấy bản ghi"));
         User user = jwtFilter.getUserFromToken(request);
         if (!fishInLake.getLake().getFishingLocation().getOwner().equals(user)) {
-            throw new ValidationException("Không có quyền truy cập!");
+            throw new ValidationException(UNAUTHORIZED);
         }
         if (weight == null) {
             fishInLake.setQuantity(fishInLake.getQuantity() + quantity);

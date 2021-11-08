@@ -38,4 +38,6 @@ public class Post {
 
     @ManyToOne
     private FishingLocation fishingLocation;
+
+    private Long posterId;
 }

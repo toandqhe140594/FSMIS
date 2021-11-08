@@ -31,4 +31,6 @@ public class CheckIn {
     private LocalDateTime checkInTime;
 
     private LocalDateTime checkOutTime;
+
+    private Long perfomrerId;
 }
