@@ -1,8 +1,10 @@
 import { action, thunk } from "easy-peasy";
+import moment from "moment";
 
 import { API_URL } from "../constants";
 import http from "../utilities/Http";
 
+// Need change in getCatchReportHistoryOverwrite about dates
 const model = {
   locationLatLng: {},
   currentId: 2,
@@ -786,9 +788,28 @@ const model = {
   rewriteCatchReportHistoryList: action((state, payload) => {
     state.catchReportHistory = payload;
   }),
+  /**
+   * Get resolved catch report list data
+   * @param {string} startDate start date with format "YYYY-MM-DDT17:00:00.000Z" - hours = 17
+   * @param {string} endDate end date with format "YYYY-MM-DDT17:00:00.000Z" - hours = 17
+   * @param {string} status APPEND or OVERWRITE - indicate load list from start or load more data
+   */
   getCatchReportHistoryOverwrite: thunk(
     async (actions, payload, { getState }) => {
       const { startDate, endDate, status } = payload;
+      let sDate = startDate;
+      let eDate = endDate;
+      // Convert start date and end date to format "YYYY-MM-DDT00:00:00.000Z"
+      if (startDate !== null) {
+        sDate = `${moment(startDate)
+          .utcOffset(-300)
+          .format("YYYY-MM-DDTHH:mm:ss.000")}Z`;
+      }
+      if (endDate !== null) {
+        eDate = `${moment(endDate)
+          .utcOffset(-300)
+          .format("YYYY-MM-DDTHH:mm:ss.000")}Z`;
+      }
       const { catchHistoryCurrentPage, catchHistoryTotalPage, currentId } =
         getState();
       if (status === "APPEND") {
@@ -802,7 +823,11 @@ const model = {
         const { data } = await http.get(
           `location/${currentId}/${API_URL.LOCATION_CATCH_REPORT_RESOLVED}`,
           {
-            params: { pageNo: catchHistoryCurrentPage, startDate, endDate },
+            params: {
+              pageNo: catchHistoryCurrentPage,
+              startDate: sDate,
+              endDate: eDate,
+            },
           },
         );
         const { totalPage, items } = data;
@@ -813,7 +838,7 @@ const model = {
         const { data } = await http.get(
           `location/${currentId}/${API_URL.LOCATION_CATCH_REPORT_RESOLVED}`,
           {
-            params: { pageNo: 1, startDate, endDate },
+            params: { pageNo: 1, startDate: sDate, endDate: eDate },
           },
         );
         const { totalPage, items } = data;
