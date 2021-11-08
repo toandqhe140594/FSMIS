@@ -268,37 +268,21 @@ const model = {
     });
   }),
 
-  createNewPost: thunk(async (actions, payload) => {
-    const { attachmentType, content, id, postType, url, setUpdateStatus } =
-      payload;
+  createNewPost: thunk(async (actions, payload, { getState }) => {
+    const { updateData, setUpdateStatus } = payload;
+    const { currentId } = getState();
     try {
-      await http.post(
-        `location/${id}/post/add
-    `,
-        {
-          attachmentType,
-          content,
-          id,
-          postType,
-          url,
-        },
-      );
+      await http.post(`location/${currentId}/post/add`, updateData);
       setUpdateStatus(true);
     } catch (error) {
       setUpdateStatus(false);
     }
   }),
-  editPost: thunk(async (actions, payload) => {
-    const { attachmentType, content, id, postType, url, setUpdateStatus } =
-      payload;
+  editPost: thunk(async (actions, payload, { getState }) => {
+    const { currentId } = getState();
+    const { updateData, setUpdateStatus } = payload;
     try {
-      await http.put(`location/${id}/post/edit`, {
-        attachmentType,
-        content,
-        id,
-        postType,
-        url,
-      });
+      await http.put(`location/${currentId}/post/edit`, updateData);
       setUpdateStatus("SUCCESS");
     } catch (error) {
       setUpdateStatus("FAILED");
