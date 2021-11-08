@@ -660,7 +660,7 @@ const model = {
   stockFishInLake: thunk(async (actions, payload) => {
     const { id, quantity, weight, setUpdateStatus } = payload;
     try {
-      await http.delete(`location/lake/fish/stocking/${id}`, null, {
+      await http.post(`location/lake/fish/stocking/${id}`, null, {
         params: { quantity, weight },
       });
       setUpdateStatus("SUCCESS");
