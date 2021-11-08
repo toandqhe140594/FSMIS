@@ -116,6 +116,9 @@ const FManageEmployeeManagementScreen = () => {
   const deleteFishFromLake = useStoreActions(
     (actions) => actions.FManageModel.deleteFishFromLake,
   );
+  const setLakeDetail = useStoreActions(
+    (actions) => actions.FManageModel.setLakeDetail,
+  );
 
   const handleDeleteFish = (id) => {
     showAlertConfirmBox(
@@ -127,6 +130,9 @@ const FManageEmployeeManagementScreen = () => {
   // DucHM ADD_END 8/11/2021
   useEffect(() => {
     if (route.params.id) getLakeDetailByLakeId({ id: route.params.id });
+    return () => {
+      setLakeDetail({ id: null });
+    };
   }, []);
 
   // DucHM ADD_START 8/11/2021
@@ -139,9 +145,9 @@ const FManageEmployeeManagementScreen = () => {
   }, [deleteStatus]);
   // DucHM ADD_END 8/11/2021
 
-  if (!lakeDetail.name)
+  if (!lakeDetail.id)
     return (
-      <Box flex={1}>
+      <Box flex={1} alignItems="center" justifyContent="center">
         <ActivityIndicator size="large" color="blue" />
       </Box>
     );
