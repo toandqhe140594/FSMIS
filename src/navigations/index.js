@@ -120,6 +120,11 @@ const goToFManageLakeEditScreen = (navigation, params) => {
     ...params,
   });
 };
+const goToFManagePostScreen = (navigation, params) => {
+  navigation.navigate(ROUTE_NAMES.FMANAGE_POST_MANAGEMENT, {
+    ...params,
+  });
+};
 
 const goToPostEditScreen = (navigation, params) => {
   navigation.navigate(ROUTE_NAMES.FMANAGE_POST_EDIT, { ...params });
@@ -200,6 +205,7 @@ export {
   goToFManageLakeProfileScreen,
   goToFManageLocationPickScreen,
   goToFManageMainScreen,
+  goToFManagePostScreen,
   goToFManageSelectScreen,
   goToFManageStaffDetailScreen,
   goToFManageVerifyCheckinScreen,

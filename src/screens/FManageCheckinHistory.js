@@ -30,7 +30,14 @@ const FManageCheckinHistoryScreen = () => {
   } = useStoreActions((actions) => actions.FManageModel);
 
   useEffect(() => {
-    getCheckinHistoryList();
+    // If the current page = 1 aka the list is empty then call api to init the list
+    if (checkinHistoryCurrentPage === 1) {
+      getCheckinHistoryList();
+    }
+
+    return () => {
+      resetCheckinHistory(); // Clear list data when screen unmount
+    };
   }, []);
 
   const selectedFilterHandler = (type) => {
@@ -57,7 +64,6 @@ const FManageCheckinHistoryScreen = () => {
     } else {
       getCheckinHistoryList();
     }
-    console.log(objParams);
   };
   const submitDateFilterHandler = () => {
     setModalVisible(false);

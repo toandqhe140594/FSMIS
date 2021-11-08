@@ -280,36 +280,52 @@ const model = {
   }),
 
   createNewPost: thunk(async (actions, payload) => {
-    const { attachmentType, content, id, postType, url } = payload;
-    const { status } = await http.post(
-      `location/${id}/post/add
+    const { attachmentType, content, id, postType, url, setUpdateStatus } =
+      payload;
+    try {
+      await http.post(
+        `location/${id}/post/add
     `,
-      {
+        {
+          attachmentType,
+          content,
+          id,
+          postType,
+          url,
+        },
+      );
+      setUpdateStatus(true);
+    } catch (error) {
+      setUpdateStatus(false);
+    }
+  }),
+  editPost: thunk(async (actions, payload) => {
+    const { attachmentType, content, id, postType, url, setUpdateStatus } =
+      payload;
+    try {
+      await http.put(`location/${id}/post/edit`, {
         attachmentType,
         content,
         id,
         postType,
         url,
-      },
+      });
+      setUpdateStatus("SUCCESS");
+    } catch (error) {
+      setUpdateStatus("FAILED");
+    }
+  }),
+
+  deletePost: thunk(async (actions, payload, { getState }) => {
+    const { postId } = payload;
+    const { currentId } = getState();
+    const { status } = await http.delete(
+      `location/${currentId}/post/delete/${postId}`,
     );
     if (status === 200) {
       console.log(`status>>>`, status);
     }
   }),
-  editPost: thunk(async (actions, payload) => {
-    const { attachmentType, content, id, postType, url } = payload;
-    const { status } = await http.put(`location/${id}/post/edit`, {
-      attachmentType,
-      content,
-      id,
-      postType,
-      url,
-    });
-    if (status === 200) {
-      console.log(`status>>>`, status);
-    }
-  }),
-
   setCurrentPost: action((state, payload) => {
     state.currentPost = payload;
   }),
@@ -659,13 +675,11 @@ const model = {
       checkinHistoryCurrentPage > checkinHistoryTotalPage
     )
       return;
-    console.log(`checkinHistoryCurrentPage`, checkinHistoryCurrentPage);
     const { data } = await http.get(`location/${currentId}/checkin/history`, {
       params: { pageNo: checkinHistoryCurrentPage },
     });
 
     const { totalPage, items } = data;
-    console.log("items :>> ", items);
     actions.setCheckinHistoryCurrentPage(checkinHistoryCurrentPage + 1);
     actions.setCheckinHistoryTotalPage(totalPage);
     actions.setCheckinHistoryList(items);
