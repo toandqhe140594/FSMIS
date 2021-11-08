@@ -23,7 +23,7 @@ const FManageEmployeeDetailScreen = () => {
   const onDeleteEmployee = () => {
     Alert.alert(
       "Bạn muốn xóa nhân viên này khỏi hồ",
-      `"${staffDetail.name}" sẽ bị xóa vĩnh viễn. Bạn không thể hoàn tác hành động này`,
+      `"${staffDetail.fullName}" sẽ bị xóa vĩnh viễn. Bạn không thể hoàn tác hành động này`,
       [
         {
           text: "Quay lại",
