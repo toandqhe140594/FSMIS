@@ -44,7 +44,7 @@ public class CheckInService {
         if (location.getEmployeeList().contains(user)) {
             throw new ValidationException("Nhân viên không được check in tại nơi làm việc của mình!");
         }
-        if (!location.getOwner().equals(performer) || !location.getEmployeeList().contains(performer)){
+        if (!location.getOwner().equals(performer) && !location.getEmployeeList().contains(performer)){
             throw new ValidationException("Không có quyền thực hiện check in");
         }
         CheckIn checkIn = new CheckIn();

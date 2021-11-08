@@ -50,6 +50,7 @@ public class LakeService {
                     .lake(lake)
                     .maxWeight(fishInLakeDtoIn.getMaxWeight())
                     .minWeight(fishInLakeDtoIn.getMinWeight())
+                    .active(true)
 //                    .quantity(fishInLakeDtoIn.getQuantity())
 //                    .totalWeight(fishInLakeDtoIn.getTotalWeight())
                     .build();
@@ -78,7 +79,8 @@ public class LakeService {
     }
 
     public LakeDtoOut getLakeById(Long locationId, long lakeId) {
-        Lake lake = lakeRepos.getById(lakeId);
+        Lake lake = lakeRepos.findById(lakeId)
+                .orElseThrow(() -> new NotFoundException("Không tìm thấy hồ câu"));
         if (lake.getFishingLocation().getId().equals(locationId) && !lake.isActive()) {
             throw new ValidationException("Hồ này không tồn tại");
         }
