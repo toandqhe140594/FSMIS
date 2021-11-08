@@ -8,7 +8,7 @@ import {
   Modal,
   Select,
 } from "native-base";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import CalendarPicker from "react-native-calendar-picker";
 
 import AvatarCard from "../components/AvatarCard";
@@ -17,19 +17,29 @@ import HeaderTab from "../components/HeaderTab";
 import PressableCustomCard from "../components/PressableCustomCard";
 
 const FManageCheckinHistoryScreen = () => {
-  const listCheckInModel = useStoreState(
-    (actions) => actions.FManageModel.checkInHistoryList,
-  );
-  const getCheckinHistoryList = useStoreActions(
-    (actions) => actions.FManageModel.getCheckinHistoryList,
-  );
   const { checkinHistoryCurrentPage, checkinHistoryList } = useStoreState(
     (states) => states.FManageModel,
   );
   const [modalVisible, setModalVisible] = useState(false);
-  const [startDate, setStartDate] = useState();
-  const [endDate, setEndDate] = useState();
-  const [listCheckIn, setListCheckIn] = useState(listCheckInModel);
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+  const {
+    getCheckinHistoryList,
+    getCheckinHistoryListByDate,
+    resetCheckinHistory,
+  } = useStoreActions((actions) => actions.FManageModel);
+
+  useEffect(() => {
+    // If the current page = 1 aka the list is empty then call api to init the list
+    if (checkinHistoryCurrentPage === 1) {
+      getCheckinHistoryList();
+    }
+
+    return () => {
+      resetCheckinHistory(); // Clear list data when screen unmount
+    };
+  }, []);
+
   const selectedFilterHandler = (type) => {
     if (type === "BY_DATE") {
       setModalVisible(true);
@@ -42,13 +52,23 @@ const FManageCheckinHistoryScreen = () => {
       setStartDate(date);
       setEndDate(null);
     }
-    console.log(`startDate`, startDate);
-    console.log(`endDate`, endDate);
   };
-
+  const onLoadMore = () => {
+    const objParams = {};
+    if (startDate !== null) {
+      if (endDate !== null) {
+        objParams.endDate = endDate;
+      }
+      objParams.startDate = startDate;
+      getCheckinHistoryListByDate(objParams);
+    } else {
+      getCheckinHistoryList();
+    }
+  };
   const submitDateFilterHandler = () => {
-    dateChangeHandler();
     setModalVisible(false);
+    resetCheckinHistory();
+    onLoadMore();
   };
   return (
     <Box>
@@ -59,6 +79,7 @@ const FManageCheckinHistoryScreen = () => {
           base: "100%",
           md: "25%",
         }}
+        backgroundColor="white"
       >
         <Modal
           isOpen={modalVisible}
@@ -75,7 +96,6 @@ const FManageCheckinHistoryScreen = () => {
                 todayBackgroundColor="#e6ffe6"
                 selectedDayColor="#66ff33"
                 selectedDayTextColor="#000000"
-                scaleFactor={375}
                 onDateChange={dateChangeHandler}
               />
               <Button size="lg" onPress={submitDateFilterHandler}>
@@ -90,7 +110,7 @@ const FManageCheckinHistoryScreen = () => {
           minWidth="200"
           accessibilityLabel="Chọn chế độ lọc"
           placeholder="Chọn chế độ lọc"
-          backgroundColor="white"
+          backgroundColor="light.500"
           _selectedItem={{
             bg: "teal.600",
             endIcon: <CheckIcon size="5" />,
@@ -104,7 +124,8 @@ const FManageCheckinHistoryScreen = () => {
         </Select>
 
         <FlatList
-          data={listCheckIn}
+          h="82%"
+          data={checkinHistoryList}
           renderItem={({ item }) => (
             <Box
               borderBottomWidth="1"
@@ -126,8 +147,9 @@ const FManageCheckinHistoryScreen = () => {
             </Box>
           )}
           keyExtractor={(item, index) => index.toString()}
+          onEndReached={onLoadMore}
         />
-        <Box my="10">
+        <Box mt="10">
           <Divider />
         </Box>
       </Box>

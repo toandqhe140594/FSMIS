@@ -6,6 +6,7 @@ import React, { useEffect, useState } from "react";
 import { FlatList, StyleSheet } from "react-native";
 import { Divider } from "react-native-elements";
 
+import { VIEW_ROLE_ANGLER } from "../../constants";
 import {
   goToCatchReportDetailScreen,
   goToWriteReportScreen,
@@ -28,21 +29,26 @@ const CatchReportRoute = () => {
   const navigation = useNavigation();
   const [lakeCatchPage, setLakeCatchPage] = useState(1);
 
-  const getLocationCatchListByPage = useStoreActions(
-    (actions) => actions.LocationModel.getLocationCatchListByPage,
-  );
   const locationCatchList = useStoreState(
     (states) => states.LocationModel.locationCatchList,
   );
+  const { role } = useStoreState(
+    (states) => states.LocationModel.locationOverview,
+  );
+
+  const getLocationCatchListByPage = useStoreActions(
+    (actions) => actions.LocationModel.getLocationCatchListByPage,
+  );
+
+  const loadMoreLakeCatchData = () => {
+    getLocationCatchListByPage({ pageNo: lakeCatchPage });
+    setLakeCatchPage(lakeCatchPage + 1);
+  };
 
   useEffect(() => {
     getLocationCatchListByPage({ pageNo: lakeCatchPage });
     setLakeCatchPage(lakeCatchPage + 1);
   }, []);
-  const loadMoreLakeCatchData = () => {
-    getLocationCatchListByPage({ pageNo: lakeCatchPage });
-    setLakeCatchPage(lakeCatchPage + 1);
-  };
 
   return (
     <>
@@ -69,6 +75,7 @@ const CatchReportRoute = () => {
                   imageAvatar={item.avatar}
                   image={item.images[0]}
                   numberOfImages={item.images.length}
+                  iconName={role === VIEW_ROLE_ANGLER ? "flag" : ""}
                 />
               </PressableCustomCard>
             );
@@ -88,6 +95,9 @@ const FLocationEventRoute = () => {
   const [lakePostPage, setLakePostPage] = useState(1);
   const locationPostList = useStoreState(
     (states) => states.LocationModel.locationPostList,
+  );
+  const { role } = useStoreState(
+    (states) => states.LocationModel.locationOverview,
   );
   const getLocationPostListByPage = useStoreActions(
     (actions) => actions.LocationModel.getLocationPostListByPage,
@@ -122,7 +132,7 @@ const FLocationEventRoute = () => {
               edited={item.edited}
               postTime={item.postTime}
               id={item.id}
-              iconName="flag"
+              iconName={role === VIEW_ROLE_ANGLER ? "flag" : ""}
               iconEvent={listEvent}
             />
           )}

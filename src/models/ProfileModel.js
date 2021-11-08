@@ -6,39 +6,16 @@ import http from "../utilities/Http";
 const model = {
   // Shape of useInfo from api return
   userInfo: {
-    id: "1",
-    fullName: "dat",
-    gender: true, // true for male, false for female
-    address: "ha dong-ha noi",
+    id: 1,
+    fullName: "Người dùng",
     avatarUrl: "",
-    dob: "",
-    addressFromWard: {
-      ward: "An Khánh",
-      wardId: 9877,
-      district: "Hoài Đức",
-      districtId: 274,
-      province: "Hà Nội",
-      provinceId: 1,
-    },
+    catchesCount: 0,
   },
   savedLocationList: [],
   notificationList: [],
   catchReportHistory: [],
   checkinHistoryList: [],
-  catchReportDetail: {
-    userId: "1",
-    message: "Ngồi cả sáng",
-    location: "Ho thuan viet",
-    listImages: [
-      "https://i.pinimg.com/originals/c4/6f/e1/c46fe1237fa5a04a2a2d6f127f191412.jpg",
-      "https://everythingisviral.com/wp-content/uploads/2020/10/polite-cat.png",
-    ],
-    listCatch: [
-      { id: "1", fishType: "Chep", quantity: "4", totalWeight: "8" },
-      { id: "2", fishType: "Ro", quantity: "15", totalWeight: "1" },
-      { id: "3", fishType: "Lang", quantity: "1", totalWeight: "8" },
-    ],
-  },
+  catchReportDetail: {},
   catchHistoryCurrentPage: 1,
   catchHistoryTotalPage: 1,
   checkinHistoryCurrentPage: 1,
@@ -250,6 +227,7 @@ const model = {
     const { updateData, setUpdateStatus } = payload;
     try {
       await http.post(API_URL.PERSONAL_EDIT_PROFILE, updateData);
+      actions.getUserInfo();
       setUpdateStatus("SUCCESS");
     } catch (error) {
       setUpdateStatus("FAILED");
