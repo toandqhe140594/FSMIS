@@ -95,7 +95,7 @@ const FishCardSection = () => {
                     <Text
                       style={{
                         marginLeft: 12,
-                        fontSize: 16,
+                        fontSize: 12,
                         fontWeight: "bold",
                       }}
                     >
@@ -123,7 +123,7 @@ const FishCardSection = () => {
                     <Text
                       style={{
                         marginLeft: 12,
-                        fontSize: 16,
+                        fontSize: 12,
                         fontWeight: "bold",
                       }}
                     >
