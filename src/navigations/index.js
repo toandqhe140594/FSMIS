@@ -121,6 +121,10 @@ const goToFManageLakeEditScreen = (navigation, params) => {
   });
 };
 
+const goToFManageFishAddScreen = (navigation, params) => {
+  navigation.navigate(ROUTE_NAMES.FMANAGE_LAKE_FISH_ADD, { ...params });
+};
+
 const goToPostEditScreen = (navigation, params) => {
   navigation.navigate(ROUTE_NAMES.FMANAGE_POST_EDIT, { ...params });
 };
@@ -195,6 +199,7 @@ export {
   goToFManageAddNewScreen,
   goToFManageAddStaffScreen,
   goToFManageEditProfileScreen,
+  goToFManageFishAddScreen,
   goToFManageLakeAddNewScreen,
   goToFManageLakeEditScreen,
   goToFManageLakeProfileScreen,
