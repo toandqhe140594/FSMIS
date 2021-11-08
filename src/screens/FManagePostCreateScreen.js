@@ -121,6 +121,7 @@ const PostCreateScreen = () => {
     } else if (updateStatus === false) {
       showAlertBox("Thông báo", "Đã xảy ra lỗi! Vui lòng thử lại.");
     }
+    setUpdateStatus("");
   }, [updateStatus]);
   return (
     <>
