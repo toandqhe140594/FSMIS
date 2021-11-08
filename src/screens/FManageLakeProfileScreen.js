@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 // DucHM ADD_START 8/11/2021
 import React, { useEffect, useState } from "react";
 // DucHM ADD_START 8/11/2021
-import { FlatList } from "react-native";
+import { ActivityIndicator, FlatList } from "react-native";
 import { Button, Card, Text } from "react-native-elements";
 
 import HeaderTab from "../components/HeaderTab";
@@ -29,8 +29,11 @@ const CustomText = ({ title, text, mt }) => {
 };
 CustomText.propTypes = {
   title: PropTypes.string.isRequired,
-  text: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
+  text: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   mt: PropTypes.number,
+};
+CustomText.defaultProps = {
+  text: "",
 };
 CustomText.defaultProps = {
   mt: 4,
@@ -136,9 +139,16 @@ const FManageEmployeeManagementScreen = () => {
   }, [deleteStatus]);
   // DucHM ADD_END 8/11/2021
 
+  if (!lakeDetail.name)
+    return (
+      <Box flex={1}>
+        <ActivityIndicator size="large" color="blue" />
+      </Box>
+    );
+
   return (
     <>
-      <HeaderTab name="Hồ vip" />
+      <HeaderTab name={lakeDetail.name || "Hồ "} />
       {/* DucHM ADD_START 8/11/2021 */}
       <OverlayInputSection {...overlayState} toggleOverlay={setOverlayState} />
       {/* DucHM ADD_END 8/11/2021 */}
