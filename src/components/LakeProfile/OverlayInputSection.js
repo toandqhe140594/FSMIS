@@ -61,7 +61,7 @@ const OverlayInputSection = ({ id, name, visible, toggleOverlay }) => {
     if (updateStatus === "SUCESS") {
       setIsLoading(false);
       showToastMessage("Bồi cá thành công!");
-    } else if (updateStatus === "SUCESS") {
+    } else if (updateStatus === "FAILED") {
       setIsLoading(false);
       showToastMessage("Đã có lỗi xảy ra! Vui lòng thử lại.");
     }
