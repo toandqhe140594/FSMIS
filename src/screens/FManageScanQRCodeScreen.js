@@ -62,15 +62,12 @@ const ScanQRCodeScreen = () => {
       showToastMessage("Checkin cần thủ thành công");
       goToFManageVerifyCheckinScreen(navigation);
     }
-    // If checkin false
-    if (success === false) {
-      setSuccess(null);
-    }
     // If success state is not null
     if (success !== null) {
       setLoading(false);
       clearLoadingTimeout();
     }
+    setSuccess(null);
   }, [success]);
 
   useEffect(() => {
