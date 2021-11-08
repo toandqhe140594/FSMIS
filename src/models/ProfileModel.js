@@ -9,6 +9,7 @@ const model = {
     id: 1,
     fullName: "Người dùng",
     avatarUrl: "",
+    catchesCount: 0,
   },
   savedLocationList: [],
   notificationList: [],
