@@ -643,6 +643,7 @@ const model = {
     const { id, setDeleteStatus } = payload;
     try {
       await http.delete(`location/lake/fish/delete/${id}`);
+      action.getLakeDetailByLakeId({ id }); // purpose to fetch new fishInLake in lakeDetail
       setDeleteStatus("SUCCESS");
     } catch (error) {
       // handle error
@@ -663,6 +664,7 @@ const model = {
       await http.post(`location/lake/fish/stocking/${id}`, null, {
         params: { quantity, weight },
       });
+      action.getLakeDetailByLakeId({ id }); // purpose to fetch new fishInLake in lakeDetail
       setUpdateStatus("SUCCESS");
     } catch (error) {
       // handle error
