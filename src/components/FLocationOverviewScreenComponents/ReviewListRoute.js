@@ -159,7 +159,11 @@ const ReviewListRoute = () => {
       <Box>
         <Divider />
         <Center flex={1} py={3}>
-          <Text h2>{locationReviewScore.score || 0}</Text>
+          {locationReviewScore.score && locationReviewScore.score % 1 !== 0 ? (
+            <Text h2>{locationReviewScore.score.toFixed(2) || 0}</Text>
+          ) : (
+            <Text h2>{locationReviewScore.score || 0}</Text>
+          )}
           <Rating
             imageSize={24}
             ratingCount={5}
@@ -227,6 +231,7 @@ const ReviewListRoute = () => {
                   rate={item.score}
                   id={item.id}
                   key={item.id}
+                  userImage={item.userAvatar}
                 />
                 <Divider />
               </Box>
