@@ -608,7 +608,7 @@ const model = {
     } = getState();
     try {
       await http.post(`location/lake/${id}/fish/add`, addData);
-      action.getLakeDetailByLakeId({ id });
+      actions.getLakeDetailByLakeId({ id });
       setAddStatus("SUCCESS");
     } catch (error) {
       setAddStatus("FAILED");
