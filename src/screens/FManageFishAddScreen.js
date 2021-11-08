@@ -51,13 +51,15 @@ const FManageFishAddScreen = () => {
   });
   const { handleSubmit } = methods;
   const onSubmit = (data) => {
+    setIsLoading(true);
     const addData = { ...data };
     addFishToLake({ addData, setAddStatus });
-    setIsLoading(true);
   };
+
   useEffect(() => {
     getFishList();
   }, []);
+
   useEffect(() => {
     if (addStatus === "SUCCESS") {
       setIsLoading(false);
