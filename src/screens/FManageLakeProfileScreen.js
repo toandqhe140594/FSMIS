@@ -139,8 +139,10 @@ const FManageEmployeeManagementScreen = () => {
   useEffect(() => {
     if (deleteStatus === "SUCCESS") {
       showToastMessage("Cá đã được xóa khỏi hồ");
+      setDeleteStatus(null);
     } else if (deleteStatus === "FAILED") {
       showToastMessage("Đã xảy ra lỗi! Vui lòng thử lại.");
+      setDeleteStatus(null);
     }
   }, [deleteStatus]);
   // DucHM ADD_END 8/11/2021
