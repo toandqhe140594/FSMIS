@@ -166,7 +166,7 @@ const EditProfileScreen = () => {
   useEffect(() => {
     if (updateStatus === "SUCCESS") {
       setIsLoading(false);
-      showAlertBox("Thông báo", "Cập nhật bài đăng thành công!");
+      showAlertBox("Thông báo", "Cập nhật thông tin cá nhân thành công!");
       setUpdateStatus(null);
     } else if (updateStatus === "FAILED") {
       setIsLoading(false);
