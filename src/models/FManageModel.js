@@ -56,9 +56,14 @@ const model = {
   setListOfFishingLocations: action((state, payload) => {
     state.listOfFishingLocations = payload;
   }),
-  getListOfFishingLocations: thunk(async (actions) => {
-    const { data } = await http.get(`${API_URL.PERSONAL_OWNED_LOCATION}`);
-    actions.setListOfFishingLocations(data);
+  getListOfFishingLocations: thunk(async (actions, payload = () => {}) => {
+    try {
+      const { data } = await http.get(`${API_URL.PERSONAL_OWNED_LOCATION}`);
+      payload(true);
+      actions.setListOfFishingLocations(data);
+    } catch (error) {
+      payload(false);
+    }
   }),
 
   /**
