@@ -616,6 +616,11 @@ const model = {
 
   // START OF LAKE FISH MANAGEMENT SECTION
   // DucHM ADD_START 8/11/2021
+  /**
+   * Add new fish to lake
+   * @param {Object} addData new fish information
+   * @param {Function} addData the function to set state
+   */
   addFishToLake: thunk(async (actions, payload, { getState }) => {
     const { addData, setAddStatus } = payload;
     const {
@@ -627,6 +632,41 @@ const model = {
       setAddStatus("SUCCESS");
     } catch (error) {
       setAddStatus("FAILED");
+    }
+  }),
+
+  /**
+   * Delete a fish from lake by id
+   * @param {Number} [payload.id] id of the fish to delete from lake
+   */
+  deleteFishFromLake: thunk(async (actions, payload) => {
+    const { id, setDeleteStatus } = payload;
+    try {
+      await http.delete(`location/lake/fish/delete/${id}`);
+      setDeleteStatus("SUCCESS");
+    } catch (error) {
+      // handle error
+      setDeleteStatus("FAILED");
+    }
+  }),
+
+  /**
+   * Restock fish quantity and totalWeight in lake by id
+   * @param {Number} [payload.id] id of the fish to stock
+   * @param {Object} [payload.quantity] quantiy for stocking
+   * @param {Number} [payload.weight] weight for stocking
+   * @param {Function} [payload.setUpdateStatus] the function to set status
+   */
+  stockFishInLake: thunk(async (actions, payload) => {
+    const { id, quantity, weight, setUpdateStatus } = payload;
+    try {
+      await http.delete(`location/lake/fish/stocking/${id}`, null, {
+        params: { quantity, weight },
+      });
+      setUpdateStatus("SUCCESS");
+    } catch (error) {
+      // handle error
+      setUpdateStatus("FAILED");
     }
   }),
   // DucHM ADD_END 8/11/2021
