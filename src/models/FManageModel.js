@@ -295,15 +295,26 @@ const model = {
   }),
 
   deletePost: thunk(async (actions, payload, { getState }) => {
-    const { postId } = payload;
+    const { postId, setDeleteSuccess } = payload;
     const { currentId } = getState();
-    const { status } = await http.delete(
-      `location/${currentId}/post/delete/${postId}`,
-    );
-    if (status === 200) {
-      console.log(`status>>>`, status);
+    try {
+      await http.delete(`location/${currentId}/post/delete/${postId}`);
+      actions.removePostFromPostList(postId);
+      setDeleteSuccess(true);
+    } catch (error) {
+      setDeleteSuccess(false);
     }
   }),
+  /**
+   * Remove post from the post list state
+   * @param {number} payload id of the post that need to be remove
+   */
+  removePostFromPostList: action((state, payload) => {
+    state.locationPostList = state.locationPostList.filter(
+      (post) => post.id !== payload,
+    );
+  }),
+
   setCurrentPost: action((state, payload) => {
     state.currentPost = payload;
   }),

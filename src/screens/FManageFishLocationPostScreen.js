@@ -8,7 +8,7 @@ import { Divider } from "react-native-elements";
 import EventPostCard from "../components/EventPostCard";
 import HeaderTab from "../components/HeaderTab";
 import { goToPostCreateScreen, goToPostEditScreen } from "../navigations";
-import { showAlertConfirmBox } from "../utilities";
+import { showAlertConfirmBox, showToastMessage } from "../utilities";
 
 const PostListContainerComponent = () => {
   const navigation = useNavigation();
@@ -19,7 +19,6 @@ const PostListContainerComponent = () => {
   const locationPostList = useStoreState(
     (states) => states.FManageModel.locationPostList,
   );
-  const reload = useStoreState((states) => states.FManageModel.reloadTest);
 
   const setCurrentPost = useStoreActions(
     (actions) => actions.FManageModel.setCurrentPost,
@@ -28,19 +27,13 @@ const PostListContainerComponent = () => {
     (actions) => actions.FManageModel.deletePost,
   );
 
-  useEffect(() => {
-    getLocationPostListByPage({ pageNo: lakePostPage });
-  }, [reload]);
-
-  useEffect(() => {
-    getLocationPostListByPage({ pageNo: lakePostPage });
-    setTotalPostPage(lakePostPage + 1);
-  }, [locationPostList]);
+  const [deleteSuccess, setDeleteSuccess] = useState(null);
 
   const loadMoreLakeCatchData = () => {
     getLocationPostListByPage({ pageNo: lakePostPage });
     setTotalPostPage(lakePostPage + 1);
   };
+
   const editPostHandler = (id, item) => {
     setCurrentPost(item);
     goToPostEditScreen(navigation, { id });
@@ -48,16 +41,25 @@ const PostListContainerComponent = () => {
 
   const removePostHandler = (id) => {
     showAlertConfirmBox("Thông báo", "Bài đăng sẽ bị xóa", async () => {
-      await deletePost({ postId: id });
-      getLocationPostListByPage({ pageNo: 1 });
+      await deletePost({ postId: id, setDeleteSuccess });
     });
   };
+
+  useEffect(() => {
+    getLocationPostListByPage({ pageNo: lakePostPage });
+    setTotalPostPage(lakePostPage + 1);
+  }, [locationPostList]);
+
+  useEffect(() => {
+    if (deleteSuccess === true) showToastMessage("Xóa thành công");
+    if (deleteSuccess === false) showToastMessage("Xóa thành công");
+    setDeleteSuccess(null);
+  }, [deleteSuccess]);
 
   const listEvent = [
     { name: "Chỉnh sửa bài đăng", onPress: editPostHandler },
     { name: "Xóa bài đăng", onPress: removePostHandler },
   ];
-
   return (
     <FlatList
       data={locationPostList}
