@@ -177,7 +177,11 @@ const goToAdminFLocationOverviewScreen = (navigation, params) => {
     ...params,
   });
 };
-
+const goToFManagePostScreen = (navigation, params) => {
+  navigation.navigate(ROUTE_NAMES.FMANAGE_POST_MANAGEMENT, {
+    ...params,
+  });
+};
 export {
   goBack,
   goToAdminAccountManagementDetailScreen,
@@ -200,6 +204,7 @@ export {
   goToFManageLakeProfileScreen,
   goToFManageLocationPickScreen,
   goToFManageMainScreen,
+  goToFManagePostScreen,
   goToFManageSelectScreen,
   goToFManageStaffDetailScreen,
   goToFManageVerifyCheckinScreen,
