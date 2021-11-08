@@ -158,6 +158,7 @@ const PostEditScreen = () => {
     } else if (updateStatus === "FAILED") {
       showAlertBox("Thông báo", "Đã xảy ra lỗi! Vui lòng thử lại.");
     }
+    setUpdateStatus(null);
   }, [updateStatus]);
   return (
     <>
