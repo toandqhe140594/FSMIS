@@ -17,7 +17,8 @@ import SelectComponent from "../components/common/SelectComponent";
 import TextAreaComponent from "../components/common/TextAreaComponent";
 import HeaderTab from "../components/HeaderTab";
 import { ROUTE_NAMES } from "../constants";
-import { showAlertBox } from "../utilities";
+import { goToFManagePostScreen } from "../navigations";
+import { showAlertBox, showAlertConfirmBox } from "../utilities";
 
 const validationSchema = yup.object().shape({
   postType: yup.number().default(1),
@@ -51,12 +52,16 @@ const PostEditScreen = () => {
   const currentPost = useStoreState(
     (states) => states.FManageModel.currentPost,
   );
-  //   console.log(`currentPost`, currentPost);
+  const defaultTypePost = postTypeData.find(
+    (item) => item.type === currentPost.postType,
+  );
+
   const route = useRoute();
   const navigation = useNavigation();
   const [imageArray, setImageArray] = useState([]);
   const [showSection, setShowSection] = useState("NONE");
   const editPost = useStoreActions((actions) => actions.FManageModel.editPost);
+  const [updateStatus, setUpdateStatus] = useState("");
   const methods = useForm({
     mode: "onSubmit",
     reValidateMode: "onSubmit",
@@ -65,6 +70,9 @@ const PostEditScreen = () => {
       postDescription: `${currentPost.content}`,
     },
   });
+  const getLocationPostListByPage = useStoreActions(
+    (actions) => actions.FManageModel.getLocationPostListByPage,
+  );
   const { handleSubmit } = methods;
   /**
    *  Reset the image array if imageArray is not empty
@@ -99,8 +107,8 @@ const PostEditScreen = () => {
       id: currentPost.id,
       postType: typePost.type,
       url: attachment.base64,
+      setUpdateStatus,
     });
-    return showAlertBox("Gửi thành công", "Thông tin thay đổi gửi thành công");
   };
 
   const updateImageArray = (id) => {
@@ -116,6 +124,21 @@ const PostEditScreen = () => {
       }
     }, [route.params]),
   );
+
+  useEffect(() => {
+    if (updateStatus === "SUCCESS") {
+      showAlertConfirmBox(
+        "Thông báo",
+        "Cập nhật thông tin cá nhân thành công!",
+        () => {
+          getLocationPostListByPage({ pageNo: 1 });
+          goToFManagePostScreen(navigation);
+        },
+      );
+    } else if (updateStatus === "FAILED") {
+      showAlertBox("Thông báo", "Đã xảy ra lỗi! Vui lòng thử lại.");
+    }
+  }, [updateStatus]);
   return (
     <>
       <HeaderTab name="Bài đăng" />
@@ -135,7 +158,7 @@ const PostEditScreen = () => {
                 placeholder="Chọn sự kiện"
                 data={postTypeData}
                 controllerName="postType"
-                defaultValue={currentPost.postType}
+                defaultValue={defaultTypePost.name}
               />
               <TextAreaComponent
                 label="Miêu tả"

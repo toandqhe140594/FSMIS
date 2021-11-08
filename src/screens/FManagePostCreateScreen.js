@@ -17,7 +17,8 @@ import SelectComponent from "../components/common/SelectComponent";
 import TextAreaComponent from "../components/common/TextAreaComponent";
 import HeaderTab from "../components/HeaderTab";
 import { ROUTE_NAMES } from "../constants";
-import { showAlertBox } from "../utilities";
+import { goToFManagePostScreen } from "../navigations";
+import { showAlertBox, showAlertConfirmBox } from "../utilities";
 
 const validationSchema = yup.object().shape({
   postType: yup.number().default(-1),
@@ -53,6 +54,10 @@ const PostCreateScreen = () => {
   const [imageArray, setImageArray] = useState([]);
   const [showSection, setShowSection] = useState("NONE");
   const currentID = useStoreState((states) => states.FManageModel.currentId);
+  const [updateStatus, setUpdateStatus] = useState("");
+  const getLocationPostListByPage = useStoreActions(
+    (actions) => actions.FManageModel.getLocationPostListByPage,
+  );
   const createPost = useStoreActions(
     (actions) => actions.FManageModel.createNewPost,
   );
@@ -95,8 +100,8 @@ const PostCreateScreen = () => {
       id: currentID,
       postType: typePost.type,
       url: attachment.base64,
+      setUpdateStatus,
     });
-    return showAlertBox("Gửi thành công", "Thông tin thay đổi gửi thành công");
   };
 
   const updateImageArray = (id) => {
@@ -115,6 +120,17 @@ const PostCreateScreen = () => {
       };
     }, [route.params]),
   );
+
+  useEffect(() => {
+    if (updateStatus === "SUCCESS") {
+      showAlertConfirmBox("Thông báo", "Tạo bài thành công!", () => {
+        getLocationPostListByPage({ pageNo: 1 });
+        goToFManagePostScreen(navigation);
+      });
+    } else if (updateStatus === "FAILED") {
+      showAlertBox("Thông báo", "Đã xảy ra lỗi! Vui lòng thử lại.");
+    }
+  }, [updateStatus]);
   return (
     <>
       <HeaderTab name="Bài đăng" />
@@ -168,7 +184,7 @@ const PostCreateScreen = () => {
             {showSection === "IMAGE" && (
               <MultiImageSection
                 containerStyle={{ width: "100%" }}
-                formRoute={ROUTE_NAMES.FMANAGE_POST_EDIT}
+                formRoute={ROUTE_NAMES.FMANAGE_POST_CREATE}
                 imageArray={imageArray}
                 deleteImage={updateImageArray}
               />

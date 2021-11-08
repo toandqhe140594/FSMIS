@@ -25,24 +25,7 @@ const model = {
   catchHistoryCurrentPage: 1,
   catchHistoryTotalPage: 1,
 
-  checkInHistoryList: [
-    {
-      id: 8,
-      name: "Dat Test",
-      locationId: 3,
-      locationName: "Hồ Câu Định Công",
-      checkInTime: "26/01/2021 06:30:00",
-      checkOutTime: "26/01/2021 11:00:00",
-    },
-    {
-      id: 7,
-      name: "Dat",
-      locationId: 3,
-      locationName: "Hồ Câu Định Công",
-      checkInTime: "25/01/2021 06:30:00",
-      checkOutTime: "26/01/2021 11:00:00",
-    },
-  ],
+  checkinHistoryList: [],
   anglerCheckinOverviewInfor: {},
 
   locationReviewScore: {
@@ -286,36 +269,52 @@ const model = {
   }),
 
   createNewPost: thunk(async (actions, payload) => {
-    const { attachmentType, content, id, postType, url } = payload;
-    const { status } = await http.post(
-      `location/${id}/post/add
+    const { attachmentType, content, id, postType, url, setUpdateStatus } =
+      payload;
+    try {
+      await http.post(
+        `location/${id}/post/add
     `,
-      {
+        {
+          attachmentType,
+          content,
+          id,
+          postType,
+          url,
+        },
+      );
+      setUpdateStatus(true);
+    } catch (error) {
+      setUpdateStatus(false);
+    }
+  }),
+  editPost: thunk(async (actions, payload) => {
+    const { attachmentType, content, id, postType, url, setUpdateStatus } =
+      payload;
+    try {
+      await http.put(`location/${id}/post/edit`, {
         attachmentType,
         content,
         id,
         postType,
         url,
-      },
+      });
+      setUpdateStatus("SUCCESS");
+    } catch (error) {
+      setUpdateStatus("FAILED");
+    }
+  }),
+
+  deletePost: thunk(async (actions, payload, { getState }) => {
+    const { postId } = payload;
+    const { currentId } = getState();
+    const { status } = await http.delete(
+      `location/${currentId}/post/delete/${postId}`,
     );
     if (status === 200) {
       console.log(`status>>>`, status);
     }
   }),
-  editPost: thunk(async (actions, payload) => {
-    const { attachmentType, content, id, postType, url } = payload;
-    const { status } = await http.put(`location/${id}/post/edit`, {
-      attachmentType,
-      content,
-      id,
-      postType,
-      url,
-    });
-    if (status === 200) {
-      console.log(`status>>>`, status);
-    }
-  }),
-
   setCurrentPost: action((state, payload) => {
     state.currentPost = payload;
   }),
@@ -432,14 +431,14 @@ const model = {
   /**
    * Get information of the staff by id
    * @param {Object} [payload] the payload pass to function
-   * @param {String} [payload.userId] the userId of the staff that need to get information
+   * @param {String} [payload.id] the userId of the staff that need to get information
    */
   getStaffDetailById: thunk(async (actions, payload, { getState }) => {
     const { currentId } = getState();
-    const { userId } = payload;
+    const { id } = payload;
     try {
       const { data, status } = await http.get(
-        `location/${currentId}/staff/${userId}`,
+        `location/${currentId}/staff/${id}`,
       );
 
       if (status === 200) actions.setStaffDetail(data);
@@ -788,6 +787,9 @@ const model = {
   setCheckinHistoryList: action((state, payload) => {
     state.checkinHistoryList = state.checkinHistoryList.concat(payload);
   }),
+  rewriteCheckinHistory: action((state, payload) => {
+    state.checkinHistoryList = payload;
+  }),
   setCheckinHistoryCurrentPage: action((state, payload) => {
     state.checkinHistoryCurrentPage = payload;
   }),
@@ -795,7 +797,27 @@ const model = {
     state.checkinHistoryTotalPage = payload;
   }),
   getCheckinHistoryList: thunk(async (actions, payload, { getState }) => {
-    const { checkinHistoryCurrentPage, checkinHistoryTotalPage } = getState();
+    const { checkinHistoryCurrentPage, checkinHistoryTotalPage, currentId } =
+      getState();
+    // If current page is smaller than 0 or larger than maximum page then return
+    if (
+      checkinHistoryCurrentPage <= 0 ||
+      checkinHistoryCurrentPage > checkinHistoryTotalPage
+    )
+      return;
+    const { data } = await http.get(`location/${currentId}/checkin/history`, {
+      params: { pageNo: checkinHistoryCurrentPage },
+    });
+
+    const { totalPage, items } = data;
+    actions.setCheckinHistoryCurrentPage(checkinHistoryCurrentPage + 1);
+    actions.setCheckinHistoryTotalPage(totalPage);
+    actions.setCheckinHistoryList(items);
+  }),
+
+  getCheckinHistoryListByDate: thunk(async (actions, payload, { getState }) => {
+    const { checkinHistoryCurrentPage, checkinHistoryTotalPage, currentId } =
+      getState();
 
     // If current page is smaller than 0 or larger than maximum page then return
     if (
@@ -804,15 +826,31 @@ const model = {
     )
       return;
 
-    const { data } = await http.get(`${API_URL.PERSONAL_CHECKIN}`, {
-      params: { pageNo: checkinHistoryCurrentPage },
+    const objParams = { pageNo: checkinHistoryCurrentPage };
+    if (typeof payload === "object") {
+      if ("startDate" in payload) {
+        objParams.startDate = payload.startDate.toJSON();
+      }
+      if ("endDate" in payload) {
+        objParams.endDate = payload.endDate.toJSON();
+      }
+    }
+
+    const { data } = await http.get(`location/${currentId}/checkin/history`, {
+      params: objParams,
     });
+
     const { totalPage, items } = data;
     actions.setCheckinHistoryCurrentPage(checkinHistoryCurrentPage + 1);
     actions.setCheckinHistoryTotalPage(totalPage);
     actions.setCheckinHistoryList(items);
   }),
 
+  resetCheckinHistory: thunk(async (actions) => {
+    actions.setCheckinHistoryCurrentPage(1);
+    actions.setCheckinHistoryTotalPage(1);
+    actions.rewriteCheckinHistory([]);
+  }),
   // END OF CHECKIN RELATED SECTION
 };
 
