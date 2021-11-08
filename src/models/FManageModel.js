@@ -638,11 +638,12 @@ const model = {
    * Delete a fish from lake by id
    * @param {Number} [payload.id] id of the fish to delete from lake
    */
-  deleteFishFromLake: thunk(async (actions, payload) => {
+  deleteFishFromLake: thunk(async (actions, payload, { getState }) => {
     const { id, setDeleteStatus } = payload;
+    const { id: lakeId } = getState().lakeDetail;
     try {
       await http.delete(`location/lake/fish/delete/${id}`);
-      action.getLakeDetailByLakeId({ id }); // purpose to fetch new fishInLake in lakeDetail
+      actions.getLakeDetailByLakeId({ lakeId }); // purpose to fetch new fishInLake in lakeDetail
       setDeleteStatus("SUCCESS");
     } catch (error) {
       // handle error
