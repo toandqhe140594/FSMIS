@@ -643,7 +643,7 @@ const model = {
     const { id: lakeId } = getState().lakeDetail;
     try {
       await http.delete(`location/lake/fish/delete/${id}`);
-      actions.getLakeDetailByLakeId({ lakeId }); // purpose to fetch new fishInLake in lakeDetail
+      actions.getLakeDetailByLakeId({ id: lakeId }); // purpose to fetch new fishInLake in lakeDetail
       setDeleteStatus("SUCCESS");
     } catch (error) {
       // handle error
