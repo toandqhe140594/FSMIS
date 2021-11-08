@@ -17,12 +17,7 @@ import {
   goToFManageFishAddScreen,
   goToFManageLakeEditScreen,
 } from "../navigations";
-import {
-  showAlertAbsoluteBox,
-  showAlertBox,
-  showAlertConfirmBox,
-  showToastMessage,
-} from "../utilities";
+import { showAlertConfirmBox, showToastMessage } from "../utilities";
 
 const CustomText = ({ title, text, mt }) => {
   return (
