@@ -18,7 +18,7 @@ import TextAreaComponent from "../components/common/TextAreaComponent";
 import HeaderTab from "../components/HeaderTab";
 import { ROUTE_NAMES } from "../constants";
 import { goToFManagePostScreen } from "../navigations";
-import { showAlertBox, showAlertConfirmBox } from "../utilities";
+import { showAlertAbsoluteBox, showAlertBox } from "../utilities";
 
 const validationSchema = yup.object().shape({
   postType: yup.string().required("Loại bài đăng không được để trống"),
@@ -103,18 +103,15 @@ const PostCreateScreen = () => {
     // useCallback will listen to route.param
     useCallback(() => {
       if (route.params?.base64Array && route.params.base64Array[0]) {
-        // Set imageArray state and reset navigation params
         setImageArray(route.params?.base64Array);
-      }
-      return () => {
         navigation.setParams({ base64Array: [] });
-      };
+      }
     }, [route.params]),
   );
 
   useEffect(() => {
     if (updateStatus === true) {
-      showAlertConfirmBox("Thông báo", "Tạo bài thành công!", async () => {
+      showAlertAbsoluteBox("Thông báo", "Tạo bài thành công!", async () => {
         await getLocationPostListByPage({ pageNo: 1 });
         goToFManagePostScreen(navigation);
       });
