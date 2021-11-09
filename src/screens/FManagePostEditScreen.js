@@ -18,7 +18,7 @@ import TextAreaComponent from "../components/common/TextAreaComponent";
 import HeaderTab from "../components/HeaderTab";
 import { ROUTE_NAMES } from "../constants";
 import { goToFManagePostScreen } from "../navigations";
-import { showAlertBox, showAlertConfirmBox } from "../utilities";
+import { showAlertAbsoluteBox, showAlertBox } from "../utilities";
 
 const validationSchema = yup.object().shape({
   postType: yup.string().required("Loại bài đăng không được để trống"),
@@ -54,9 +54,6 @@ const PostEditScreen = () => {
   const currentPost = useStoreState(
     (states) => states.FManageModel.currentPost,
   );
-  // const defaultTypePost = postTypeData.find(
-  //   (item) => item.id === currentPost.postType,
-  // );
 
   const route = useRoute();
   const navigation = useNavigation();
@@ -82,7 +79,6 @@ const PostEditScreen = () => {
    *  Reset the image array if imageArray is not empty
    *  when switching to input link video
    */
-  //   console.log("currentPost :>> ", currentPost);
 
   const setDefaultValues = () => {
     if (watchAttachmentType === "IMAGE") {
@@ -151,7 +147,7 @@ const PostEditScreen = () => {
 
   useEffect(() => {
     if (updateStatus === "SUCCESS") {
-      showAlertConfirmBox(
+      showAlertAbsoluteBox(
         "Thông báo",
         "Cập nhật thông tin bài đăng thành công!",
         () => {
@@ -162,7 +158,7 @@ const PostEditScreen = () => {
     } else if (updateStatus === "FAILED") {
       showAlertBox("Thông báo", "Đã xảy ra lỗi! Vui lòng thử lại.");
     }
-    setUpdateStatus("");
+    setUpdateStatus(null);
   }, [updateStatus]);
   return (
     <>

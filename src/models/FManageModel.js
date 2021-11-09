@@ -56,9 +56,14 @@ const model = {
   setListOfFishingLocations: action((state, payload) => {
     state.listOfFishingLocations = payload;
   }),
-  getListOfFishingLocations: thunk(async (actions) => {
-    const { data } = await http.get(`${API_URL.PERSONAL_OWNED_LOCATION}`);
-    actions.setListOfFishingLocations(data);
+  getListOfFishingLocations: thunk(async (actions, payload = () => {}) => {
+    try {
+      const { data } = await http.get(`${API_URL.PERSONAL_OWNED_LOCATION}`);
+      payload(true);
+      actions.setListOfFishingLocations(data);
+    } catch (error) {
+      payload(false);
+    }
   }),
 
   /**
@@ -290,15 +295,26 @@ const model = {
   }),
 
   deletePost: thunk(async (actions, payload, { getState }) => {
-    const { postId } = payload;
+    const { postId, setDeleteSuccess } = payload;
     const { currentId } = getState();
-    const { status } = await http.delete(
-      `location/${currentId}/post/delete/${postId}`,
-    );
-    if (status === 200) {
-      console.log(`status>>>`, status);
+    try {
+      await http.delete(`location/${currentId}/post/delete/${postId}`);
+      actions.removePostFromPostList(postId);
+      setDeleteSuccess(true);
+    } catch (error) {
+      setDeleteSuccess(false);
     }
   }),
+  /**
+   * Remove post from the post list state
+   * @param {number} payload id of the post that need to be remove
+   */
+  removePostFromPostList: action((state, payload) => {
+    state.locationPostList = state.locationPostList.filter(
+      (post) => post.id !== payload,
+    );
+  }),
+
   setCurrentPost: action((state, payload) => {
     state.currentPost = payload;
   }),
@@ -518,6 +534,12 @@ const model = {
   }),
   // DucHM ADD_END 4/11/2021
 
+  editLakeDetailData: action((state, payload) => {
+    state.lakeDetail = {
+      ...state.lakeDetail,
+      ...payload,
+    };
+  }),
   // DucHM ADD_START 5/11/2021
   /**
    * Add new lake to a fishing location
@@ -546,10 +568,12 @@ const model = {
    * @param {Function} [payload.setUpdateStatus] the function set status
    */
   editLakeDetail: thunk(async (actions, payload, { getState }) => {
-    const { udpateData, setUpdateStatus, id } = payload;
+    const { updateData, setUpdateStatus, id } = payload;
     const { currentId } = getState();
     try {
-      await http.put(`location/${currentId}/lake/edit/${id}`, udpateData);
+      await http.put(`location/${currentId}/lake/edit/${id}`, updateData);
+      actions.editLakeDetailData({ ...updateData, id });
+      actions.getListOfLake({ id: currentId });
       setUpdateStatus("SUCCESS");
     } catch (error) {
       setUpdateStatus("FAILED");
@@ -558,6 +582,12 @@ const model = {
   // DucHM ADD_END 6/11/2021
 
   // DucHM ADD_START 7/11/2021
+  editFishingLocationDetailData: action((state, payload) => {
+    state.locationDetails = {
+      ...state.locationDetails,
+      ...payload,
+    };
+  }),
   /**
    * Update fishing location profile
    * @param {Object} [payload.updateData] update information
@@ -568,7 +598,7 @@ const model = {
     const { currentId } = getState();
     try {
       await http.put(`location/edit/${currentId}`, updateData);
-      actions.setLocationDetails(updateData);
+      actions.editFishingLocationDetailData(updateData);
       actions.getListOfFishingLocations();
       setUpdateStatus("SUCCESS");
     } catch (error) {
@@ -603,11 +633,12 @@ const model = {
    * Delete a fish from lake by id
    * @param {Number} [payload.id] id of the fish to delete from lake
    */
-  deleteFishFromLake: thunk(async (actions, payload) => {
+  deleteFishFromLake: thunk(async (actions, payload, { getState }) => {
     const { id, setDeleteStatus } = payload;
+    const { id: lakeId } = getState().lakeDetail;
     try {
       await http.delete(`location/lake/fish/delete/${id}`);
-      action.getLakeDetailByLakeId({ id }); // purpose to fetch new fishInLake in lakeDetail
+      actions.getLakeDetailByLakeId({ id: lakeId }); // purpose to fetch new fishInLake in lakeDetail
       setDeleteStatus("SUCCESS");
     } catch (error) {
       // handle error
@@ -622,13 +653,14 @@ const model = {
    * @param {Number} [payload.weight] weight for stocking
    * @param {Function} [payload.setUpdateStatus] the function to set status
    */
-  stockFishInLake: thunk(async (actions, payload) => {
+  stockFishInLake: thunk(async (actions, payload, { getState }) => {
     const { id, quantity, weight, setUpdateStatus } = payload;
+    const { id: lakeId } = getState().lakeDetail;
     try {
       await http.post(`location/lake/fish/stocking/${id}`, null, {
         params: { quantity, weight },
       });
-      action.getLakeDetailByLakeId({ id }); // purpose to fetch new fishInLake in lakeDetail
+      await actions.getLakeDetailByLakeId({ id: lakeId }); // purpose to fetch new fishInLake in lakeDetail
       setUpdateStatus("SUCCESS");
     } catch (error) {
       // handle error

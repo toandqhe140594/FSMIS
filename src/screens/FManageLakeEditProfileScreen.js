@@ -72,7 +72,7 @@ const LakeEditProfileScreen = () => {
    * @param {Object} data data from controller
    */
   const onSubmit = (data) => {
-    const id = lakeDetail.lakeId;
+    const { id } = lakeDetail;
     const imageUrl = imageArray[0].base64;
     const updateData = { ...data, imageUrl };
     editLakeDetail({ updateData, setUpdateStatus, id });
@@ -146,9 +146,9 @@ const LakeEditProfileScreen = () => {
       setShowOverlay(false);
       showAlertAbsoluteBox(
         "Thông báo",
-        "Hồ bé thêm thành công!",
+        "Chỉnh sửa thành công",
         () => {
-          navigation.goBack();
+          goBack(navigation);
         },
         "Xác nhận",
       );
@@ -161,7 +161,7 @@ const LakeEditProfileScreen = () => {
   useEffect(() => {
     if (deleteSuccess) {
       showToastMessage("Xóa hồ thành công");
-      goBack(navigation);
+      navigation.pop(2);
     }
   }, [deleteSuccess]);
 

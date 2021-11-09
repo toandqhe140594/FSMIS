@@ -84,8 +84,10 @@ const PostCreateScreen = () => {
 
   const onSubmit = (data) => {
     const url = setAttachmentUrl(watchAttachmentType);
+    const attachmentType = watchAttachmentType || "NONE";
     const updateData = {
       ...data,
+      attachmentType,
       id: currentID,
       url,
     };
@@ -118,7 +120,7 @@ const PostCreateScreen = () => {
     } else if (updateStatus === false) {
       showAlertBox("Thông báo", "Đã xảy ra lỗi! Vui lòng thử lại.");
     }
-    setUpdateStatus("");
+    setUpdateStatus(null);
   }, [updateStatus]);
   return (
     <>

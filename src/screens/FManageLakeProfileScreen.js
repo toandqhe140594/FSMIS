@@ -5,14 +5,13 @@ import PropTypes from "prop-types";
 // DucHM ADD_START 8/11/2021
 import React, { useEffect, useState } from "react";
 // DucHM ADD_START 8/11/2021
-import { FlatList } from "react-native";
+import { ActivityIndicator, FlatList } from "react-native";
 import { Button, Card, Text } from "react-native-elements";
 
 import HeaderTab from "../components/HeaderTab";
 // DucHM ADD_START 8/11/2021
 import OverlayInputSection from "../components/LakeProfile/OverlayInputSection";
 // DucHM ADD_END 8/11/2021
-import colors from "../config/colors";
 import {
   goToFManageFishAddScreen,
   goToFManageLakeEditScreen,
@@ -29,8 +28,11 @@ const CustomText = ({ title, text, mt }) => {
 };
 CustomText.propTypes = {
   title: PropTypes.string.isRequired,
-  text: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
+  text: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   mt: PropTypes.number,
+};
+CustomText.defaultProps = {
+  text: "",
 };
 CustomText.defaultProps = {
   mt: 4,
@@ -62,7 +64,7 @@ const FishCard = ({
         <Button
           title="Xóa"
           type="clear"
-          titleStyle={{ color: colors.defaultPrimaryButton }}
+          titleStyle={{ color: "#f43f5e" }}
           onPress={() => {
             // DucHM ADD_START 8/11/2021
             onDeleteFish(id);
@@ -113,6 +115,9 @@ const FManageEmployeeManagementScreen = () => {
   const deleteFishFromLake = useStoreActions(
     (actions) => actions.FManageModel.deleteFishFromLake,
   );
+  const setLakeDetail = useStoreActions(
+    (actions) => actions.FManageModel.setLakeDetail,
+  );
 
   const handleDeleteFish = (id) => {
     showAlertConfirmBox(
@@ -124,21 +129,33 @@ const FManageEmployeeManagementScreen = () => {
   // DucHM ADD_END 8/11/2021
   useEffect(() => {
     if (route.params.id) getLakeDetailByLakeId({ id: route.params.id });
+    return () => {
+      setLakeDetail({ id: null });
+    };
   }, []);
 
   // DucHM ADD_START 8/11/2021
   useEffect(() => {
     if (deleteStatus === "SUCCESS") {
       showToastMessage("Cá đã được xóa khỏi hồ");
+      setDeleteStatus(null);
     } else if (deleteStatus === "FAILED") {
       showToastMessage("Đã xảy ra lỗi! Vui lòng thử lại.");
+      setDeleteStatus(null);
     }
   }, [deleteStatus]);
   // DucHM ADD_END 8/11/2021
 
+  if (!lakeDetail.id)
+    return (
+      <Box flex={1} alignItems="center" justifyContent="center">
+        <ActivityIndicator size="large" color="blue" />
+      </Box>
+    );
+
   return (
     <>
-      <HeaderTab name="Hồ vip" />
+      <HeaderTab name={lakeDetail.name || "Hồ "} />
       {/* DucHM ADD_START 8/11/2021 */}
       <OverlayInputSection {...overlayState} toggleOverlay={setOverlayState} />
       {/* DucHM ADD_END 8/11/2021 */}
@@ -152,7 +169,6 @@ const FManageEmployeeManagementScreen = () => {
         >
           <Button
             title="Thông tin hồ câu"
-            buttonStyle={{ backgroundColor: "#2089DC" }}
             containerStyle={{ width: "40%" }}
             onPress={() => {
               goToFManageLakeEditScreen(navigation);
