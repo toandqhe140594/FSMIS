@@ -75,12 +75,13 @@ export const FMANAGE_LAKE_FORM = yup.object().shape({
 export const FISH_EDIT_FORM = yup.object().shape({
   quantity: yup
     .number()
-    .typeError("Trường này chỉ được nhập số")
-    .required("Số cá không được để trống"),
+    .typeError("Không phải số")
+    .test("positive", "Phải là số dương", (value) => value >= 0)
+    .test("integer", "Phải là số nguyên", (value) => Number.isInteger(value)),
   weight: yup
     .number()
-    .typeError("Trường này chỉ được nhập số")
-    .required("Tổng cân nặng không được để trống"),
+    .typeError("Không phải số")
+    .test("positive", "Phải là số dương", (value) => value >= 0),
 });
 
 export const FMANAGE_LAKE_FISH_FORM = yup.object().shape({
@@ -109,13 +110,13 @@ export const FMANAGE_PROFILE_FORM = yup.object().shape({
     .string()
     .matches(/((09|03|07|08|05)+([0-9]{8})\b)/, "Số điện thoại không hợp lệ")
     .required("Số điện thoại không dược bỏ trống"),
-  website: yup.string(),
+  website: yup.string().typeError("Website không hợp lệ"),
   address: yup.string().required("Địa chỉ không được để trống"),
   provinceId: yup.number().required("Tỉnh/Thành phố không được để trống"),
   districtId: yup.number().required("Quận/Huyện không được để trống"),
   wardId: yup.number().required("Phường/xã không được để trống"),
   description: yup.string().required("Hãy viết một vài điều về địa điểm"),
-  rule: yup.string(),
-  service: yup.string(),
+  rule: yup.string().required("Ghi không có nếu để trống nội quy"),
+  service: yup.string().required("Ghi không có nếu để trống dịch vụ"),
   timetable: yup.string().required("Hãy nêu rõ lịch biểu của hồ"),
 });
