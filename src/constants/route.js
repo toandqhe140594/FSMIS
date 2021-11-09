@@ -43,10 +43,12 @@ export const FMANAGE_STAFF_DETAIL = "FManage Staff Detail";
 export const FMANAGE_POST_MANAGEMENT = "FManage Post List Of Fishing Location";
 export const FMANAGE_POST_EDIT = "FManage Edit Post";
 export const FMANAGE_POST_CREATE = "FManage Create Post";
+
 export const FMANAGE_LOCATION_OVERVIEW = "FManage View Location Overview";
 export const FMANAGE_LOCATION_CLOSE = "Close Personal Fishing Location";
-
 export const FMANAGE_LOCATION_PICK = "FManage Pick Location On Map";
+export const FMANAGE_LOCATION_SUGGEST = "Suggest Fishing Location";
+
 export const FMANAGE_CHECKIN_HISTORY = "FManage Checkin List";
 export const FMANAGE_CHECKIN_VERIFY = "FManage Verify Checkin";
 export const FMANAGE_QR_SCAN = "FManage Scan QR Code";

@@ -85,6 +85,12 @@ const goToFManageLocationPickScreen = (navigation, params) => {
   });
 };
 
+const goToFManageSuggestScreen = (navigation, params) => {
+  navigation.navigate(ROUTE_NAMES.FMANAGE_LOCATION_SUGGEST, {
+    ...params,
+  });
+};
+
 const goToFManageAddStaffScreen = (navigation, params) => {
   navigation.navigate(ROUTE_NAMES.FMANAGE_STAFF_ADD, {
     ...params,
@@ -181,11 +187,13 @@ const goToAdminFLocationOverviewScreen = (navigation, params) => {
     ...params,
   });
 };
+
 const goToFManagePostScreen = (navigation, params) => {
   navigation.navigate(ROUTE_NAMES.FMANAGE_POST_MANAGEMENT, {
     ...params,
   });
 };
+
 export {
   goBack,
   goToAdminAccountManagementDetailScreen,
@@ -212,6 +220,7 @@ export {
   goToFManagePostScreen,
   goToFManageSelectScreen,
   goToFManageStaffDetailScreen,
+  goToFManageSuggestScreen,
   goToFManageVerifyCheckinScreen,
   goToForgotPasswordScreen,
   goToLakeDetailScreen,

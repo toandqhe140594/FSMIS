@@ -22,6 +22,7 @@ import FManagePostCreateScreen from "../screens/FManagePostCreateScreen";
 import FManagePostEditScreen from "../screens/FManagePostEditScreen";
 import FManageScanQRCodeScreen from "../screens/FManageScanQRCodeScreen";
 import FManageSelectScreen from "../screens/FManageSelectScreen";
+import FManageSuggestLocationScreen from "../screens/FManageSuggestLocationScreen";
 import FManageVerifyCatchReportDetailScreen from "../screens/FManageVerifyCatchReportDetailScreen";
 import FManageVerifyCatchReportScreen from "../screens/FManageVerifyCatchReportScreen";
 import FManageVerifyCheckinScreen from "../screens/FManageVerifyCheckinScreen";
@@ -38,6 +39,10 @@ const ManageNavigator = () => {
       <ManageStack.Screen
         name={ROUTE_NAMES.FMANAGE_SELECTOR}
         component={FManageSelectScreen}
+      />
+      <ManageStack.Screen
+        name={ROUTE_NAMES.FMANAGE_LOCATION_SUGGEST}
+        component={FManageSuggestLocationScreen}
       />
       <ManageStack.Screen
         name={ROUTE_NAMES.FMANAGE_MAIN}

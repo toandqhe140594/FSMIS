@@ -16,7 +16,10 @@ import HeaderTab from "../components/HeaderTab";
 import FishingMethodModel from "../models/FishingMethodModel";
 import FishModel from "../models/FishModel";
 import FManageModel from "../models/FManageModel";
-import { goToFManageAddNewScreen } from "../navigations";
+import {
+  goToFManageAddNewScreen,
+  goToFManageSuggestScreen,
+} from "../navigations";
 import store from "../utilities/Store";
 
 store.addModel("FManageModel", FManageModel);
@@ -98,7 +101,17 @@ const FManageSelectScreen = () => {
 
   return (
     <>
-      <HeaderTab name="Chọn điểm câu làm việc" />
+      <HeaderTab
+        name="Chọn điểm câu làm việc"
+        customIcon={{
+          name: "info-outline",
+          color: "blue",
+          type: "material",
+          onPress: () => {
+            goToFManageSuggestScreen(navigation);
+          },
+        }}
+      />
       <ScrollView contentContainerStyle={getEmptyListStyling()}>
         <View style={[styles.center, getEmptyListStyling()]}>
           <Pressable
