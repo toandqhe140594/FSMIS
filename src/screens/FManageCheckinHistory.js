@@ -64,6 +64,8 @@ const FManageCheckinHistoryScreen = () => {
     } else {
       getCheckinHistoryList();
     }
+    setStartDate(null);
+    setEndDate(null);
   };
   const submitDateFilterHandler = () => {
     setModalVisible(false);
