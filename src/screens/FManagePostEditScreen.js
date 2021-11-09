@@ -60,6 +60,7 @@ const PostEditScreen = () => {
   const [imageArray, setImageArray] = useState([]);
   const editPost = useStoreActions((actions) => actions.FManageModel.editPost);
   const [updateStatus, setUpdateStatus] = useState("");
+  const [loadingButton, setLoadingButton] = useState(false);
   const methods = useForm({
     mode: "onSubmit",
     reValidateMode: "onSubmit",
@@ -129,6 +130,7 @@ const PostEditScreen = () => {
       updateData,
       setUpdateStatus,
     });
+    setLoadingButton(true);
   };
 
   const updateImageArray = (id) => {
@@ -149,14 +151,15 @@ const PostEditScreen = () => {
     if (updateStatus === "SUCCESS") {
       showAlertAbsoluteBox(
         "Thông báo",
-        "Cập nhật thông tin bài đăng thành công!",
-        () => {
-          getLocationPostListByPage({ pageNo: 1 });
+        "Gửi thông thành công! Đang chỉnh sửa bài viết.",
+        async () => {
+          await getLocationPostListByPage({ pageNo: 1 });
           goToFManagePostScreen(navigation);
         },
       );
     } else if (updateStatus === "FAILED") {
       showAlertBox("Thông báo", "Đã xảy ra lỗi! Vui lòng thử lại.");
+      setLoadingButton(false);
     }
     setUpdateStatus(null);
   }, [updateStatus]);
@@ -211,7 +214,13 @@ const PostEditScreen = () => {
             )}
           </View>
           <View style={styles.sectionWrapper}>
-            <Button onPress={handleSubmit(onSubmit)}>Đăng</Button>
+            <Button
+              onPress={handleSubmit(onSubmit)}
+              isLoading={loadingButton}
+              isLoadingText="Đang chỉnh sửa bài viết"
+            >
+              Đăng
+            </Button>
           </View>
         </ScrollView>
       </FormProvider>

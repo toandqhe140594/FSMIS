@@ -105,7 +105,7 @@ const FManageFishLocationPostScreen = () => {
     <Box style={{ flex: 1 }}>
       <HeaderTab id={id} name={name} isVerified={verify} />
       <Divider />
-      <Button colorScheme="blue" size="lg" onPress={onPress}>
+      <Button colorScheme="blue" size="lg" onPress={onPress} borderRadius="0">
         Tạo bài viết
       </Button>
       <PostListContainerComponent />
