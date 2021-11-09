@@ -45,6 +45,11 @@ const CatchReportRoute = () => {
     setLakeCatchPage(lakeCatchPage + 1);
   };
 
+  const reportHandler = (id, type) => {
+    goToWriteReportScreen(navigation, { id, type });
+  };
+  const listEvent = [{ name: "Báo cáo bài viết", onPress: reportHandler }];
+
   useEffect(() => {
     getLocationCatchListByPage({ pageNo: lakeCatchPage });
     setLakeCatchPage(lakeCatchPage + 1);
@@ -76,6 +81,7 @@ const CatchReportRoute = () => {
                   image={item.images[0]}
                   numberOfImages={item.images.length}
                   iconName={role === VIEW_ROLE_ANGLER ? "flag" : ""}
+                  iconEvent={listEvent}
                 />
               </PressableCustomCard>
             );
