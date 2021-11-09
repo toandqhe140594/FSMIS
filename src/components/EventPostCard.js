@@ -55,22 +55,25 @@ const EventPostCard = ({
             </Box>
 
             <Menu
+              style={{ position: "relative", top: -30, left: -10 }}
               trigger={(triggerProps) => {
                 return (
-                  <Pressable {...triggerProps}>
+                  <Pressable {...triggerProps} hitSlop={10}>
                     <Ionicons name={iconName} size={22} color="black" />
                   </Pressable>
                 );
               }}
             >
-              {iconEvent.map((item) => (
-                <Menu.Item
-                  onPress={() => item.onPress(id, itemData)}
-                  key={item.name}
-                >
-                  {item.name}
-                </Menu.Item>
-              ))}
+              <Menu.Group title="Báo cáo">
+                {iconEvent.map((item) => (
+                  <Menu.Item
+                    onPress={() => item.onPress(id, itemData)}
+                    key={item.name}
+                  >
+                    {item.name}
+                  </Menu.Item>
+                ))}
+              </Menu.Group>
             </Menu>
           </HStack>
 
@@ -83,13 +86,50 @@ const EventPostCard = ({
       )}
 
       {postStyle === "ANGLER_POST" && (
-        <VStack pb="1" mb={2} px="2">
-          <AvatarCard
-            avatarSize="lg"
-            nameUser={anglerName}
-            subText={postTime}
-            image={imageAvatar}
-          />
+        <VStack pb="1" mb={2} px="1.5">
+          <HStack px="2" space={2} mt={4} pb={3} justifyContent="space-between">
+            <Box justifyContent="flex-start" alignItems="flex-start">
+              <AvatarCard
+                avatarSize="lg"
+                nameUser={anglerName}
+                subText={postTime}
+                image={imageAvatar}
+              />
+              {postTime !== undefined && (
+                <Text style={styles.ml1}>
+                  {postTime} {edited && "(Đã chỉnh sửa)"}
+                </Text>
+              )}
+            </Box>
+
+            <Menu
+              style={{ position: "relative", top: -70, left: -10 }}
+              trigger={(triggerProps) => {
+                return (
+                  <Pressable {...triggerProps} hitSlop={20}>
+                    <Ionicons
+                      name={iconName}
+                      size={22}
+                      color="black"
+                      style={{ position: "relative", top: 15, left: 10 }}
+                    />
+                  </Pressable>
+                );
+              }}
+            >
+              <Menu.Group title="Báo cáo">
+                {iconEvent.map((item) => (
+                  <Menu.Item
+                    onPress={() => item.onPress(id, itemData)}
+                    key={item.name}
+                  >
+                    {item.name}
+                  </Menu.Item>
+                ))}
+              </Menu.Group>
+            </Menu>
+          </HStack>
+
           <Box mt={2}>
             <Text italic>{anglerContent}</Text>
             <Text>
@@ -98,7 +138,9 @@ const EventPostCard = ({
                 return <Text key={item}>{item}. </Text>;
               })}
 
-              {numberOfImages > 1 && `___ còn ${numberOfImages} ảnh.... `}
+              <Text i>
+                {numberOfImages > 1 && `___ còn ${numberOfImages} ảnh.... `}
+              </Text>
             </Text>
           </Box>
         </VStack>
