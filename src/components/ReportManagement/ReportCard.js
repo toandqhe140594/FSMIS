@@ -23,7 +23,6 @@ const styles = StyleSheet.create({
   badgeWrapper: {
     marginLeft: 10,
   },
-  badgeText: { fontSize: 14, color: "#27272a" },
   badgeStyle: {
     borderRadius: 4,
     width: "100%",
@@ -84,7 +83,6 @@ const ReportCard = ({
       <Badge
         status={getBadgeStatus()}
         value={getBadgeText()}
-        textStyle={styles.badgeText}
         containerStyle={[
           styles.badgeWrapper,
           { flex: isReviewReport ? 1.3 : 1 },
