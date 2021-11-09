@@ -84,7 +84,7 @@ const AnglerCatchReportScreen = () => {
       submitCatchReport({
         catchesDetailList: reduced,
         description: aCaption,
-        hidden: isPublic,
+        hidden: !isPublic,
         images: imagesStringArray,
         lakeId: aLakeType,
         setSuccess,
