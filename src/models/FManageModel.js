@@ -655,11 +655,11 @@ const model = {
    * @param {Function} [payload.setUpdateStatus] the function to set status
    */
   stockFishInLake: thunk(async (actions, payload, { getState }) => {
-    const { id, quantity, weight, setUpdateStatus } = payload;
+    const { id, updateData, setUpdateStatus } = payload;
     const { id: lakeId } = getState().lakeDetail;
     try {
       await http.post(`location/lake/fish/stocking/${id}`, null, {
-        params: { quantity, weight },
+        params: { ...updateData },
       });
       await actions.getLakeDetailByLakeId({ id: lakeId }); // purpose to fetch new fishInLake in lakeDetail
       setUpdateStatus("SUCCESS");
