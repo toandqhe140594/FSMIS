@@ -20,6 +20,7 @@ const InputComponent = ({
   leftIcon,
   controllerName,
   useNumPad,
+  shouldDisable,
 }) => {
   const {
     control,
@@ -46,6 +47,7 @@ const InputComponent = ({
             value={value}
             fontSize="md"
             keyboardType={useNumPad ? "number-pad" : "default"}
+            isDisabled={shouldDisable}
           />
         )}
       />
@@ -67,6 +69,7 @@ InputComponent.propTypes = {
   leftIcon: PropTypes.element,
   controllerName: PropTypes.string,
   useNumPad: PropTypes.bool,
+  shouldDisable: PropTypes.bool,
 };
 
 InputComponent.defaultProps = {
@@ -78,6 +81,7 @@ InputComponent.defaultProps = {
   leftIcon: <></>,
   controllerName: "",
   useNumPad: false,
+  shouldDisable: false,
 };
 
 export default InputComponent;
