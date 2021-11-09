@@ -9,27 +9,47 @@ import { Avatar, Divider, SearchBar, Text } from "react-native-elements";
 import HeaderTab from "../components/HeaderTab";
 import FishModel from "../models/FishModel";
 import { goToAdminFishEditScreen } from "../navigations";
-import { showAlertConfirmBox } from "../utilities";
+import { showAlertConfirmBox, showToastMessage } from "../utilities";
 import store from "../utilities/Store";
 
 store.addModel("FishModel", FishModel);
 
-const FishManagementCard = ({ id, name, image, setIsLoading, getFishList }) => {
+const FishManagementCard = ({ id, name, image }) => {
   const navigation = useNavigation();
 
   const deleteFish = useStoreActions((actions) => actions.FishModel.deleteFish);
+  const [deleteSuccess, setDeleteSuccess] = useState(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   const showDeleteAlert = () => {
     showAlertConfirmBox(
       "Bạn muốn xóa loài cá này?",
       `"${name}" sẽ bị xóa vĩnh viễn. Bạn không thể hoàn tác hành động này`,
       () => {
-        deleteFish({ id });
-        setIsLoading(true);
-        getFishList();
+        setDeleteLoading(true);
       },
     );
   };
+
+  useEffect(() => {
+    return () => {
+      if (deleteSuccess) {
+        showToastMessage("Xóa thành công");
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (deleteLoading === true) deleteFish({ id, setDeleteSuccess });
+  }, [deleteLoading]);
+
+  useEffect(() => {
+    if (deleteSuccess === false) {
+      showToastMessage("Xóa thất bại");
+    }
+    setDeleteLoading(false);
+    setDeleteSuccess(null);
+  }, [deleteSuccess]);
 
   return (
     <Box flexDirection="row" alignItems="center" justifyContent="space-between">
@@ -56,6 +76,7 @@ const FishManagementCard = ({ id, name, image, setIsLoading, getFishList }) => {
             onPress={() => {
               goToAdminFishEditScreen(navigation, { id, name, image });
             }}
+            isDisabled={deleteLoading}
           >
             Chỉnh sửa
           </Button>
@@ -63,6 +84,7 @@ const FishManagementCard = ({ id, name, image, setIsLoading, getFishList }) => {
             onPress={() => {
               showDeleteAlert();
             }}
+            isLoading={deleteLoading}
           >
             Xóa
           </Button>
@@ -76,8 +98,6 @@ FishManagementCard.propTypes = {
   id: PropTypes.number.isRequired,
   name: PropTypes.string.isRequired,
   image: PropTypes.string,
-  setIsLoading: PropTypes.func.isRequired,
-  getFishList: PropTypes.func.isRequired,
 };
 
 FishManagementCard.defaultProps = {
@@ -148,8 +168,6 @@ const AdminFishManagementScreen = () => {
               id={item.id}
               name={item.name}
               image={item.image}
-              setIsLoading={setIsLoading}
-              getFishList={getFishList}
             />
           )}
           keyExtractor={(item) => item.id.toString()}

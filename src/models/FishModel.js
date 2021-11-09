@@ -13,9 +13,14 @@ const model = {
     actions.setFishList(data);
   }),
   deleteFish: thunk(async (actions, payload) => {
-    // const { data } = await http.delete(`${API_URL.ADMIN_FISH_DELETE}`);
-    // actions.setFishList(data);
-    alert("fish deleted", payload.id);
+    const { id, setDeleteSuccess } = payload;
+    try {
+      // await http.delete(`${API_URL.ADMIN_FISH_DELETE}/${id}`);
+      setDeleteSuccess(true);
+      actions.removeFishFromList(id);
+    } catch (error) {
+      setDeleteSuccess(false);
+    }
   }),
   addNewFish: thunk(async (actions, payload) => {
     // const { data } = await http.post(`${API_URL.ADMIN_FISH_ADD}`);
@@ -23,9 +28,21 @@ const model = {
     alert("fish added", payload);
   }),
   editFish: thunk(async (actions, payload) => {
-    // const { data } = await http.post(`${API_URL.ADMIN_FISH_EDIT}`);
-    // actions.setFishList(data);
-    alert("fish edit", payload.id);
+    // const { id, setDeleteSuccess } = payload;
+    // try {
+    //   await http.delete(`${API_URL.ADMIN_FISH_EDIT}/${id}`);
+    //   await setDeleteSuccess(true);
+    //   actions.removeFishFromList(id);
+    // } catch (error) {
+    //   setDeleteSuccess(false);
+    // }
+  }),
+  /**
+   * Remove fish from the list data
+   * @param {number} payload id of the fish
+   */
+  removeFishFromList: action((state, payload) => {
+    state.fishList = state.fishList.filter((fish) => fish.id !== payload);
   }),
 };
 export default model;
