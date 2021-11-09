@@ -57,6 +57,7 @@ const PostCreateScreen = () => {
   const [imageArray, setImageArray] = useState([]);
   const currentID = useStoreState((states) => states.FManageModel.currentId);
   const [updateStatus, setUpdateStatus] = useState();
+  const [loadingButton, setLoadingButton] = useState(false);
   const getLocationPostListByPage = useStoreActions(
     (actions) => actions.FManageModel.getLocationPostListByPage,
   );
@@ -95,6 +96,7 @@ const PostCreateScreen = () => {
       updateData,
       setUpdateStatus,
     });
+    setLoadingButton(true);
   };
 
   const updateImageArray = (id) => {
@@ -113,12 +115,17 @@ const PostCreateScreen = () => {
 
   useEffect(() => {
     if (updateStatus === true) {
-      showAlertAbsoluteBox("Thông báo", "Tạo bài thành công!", async () => {
-        await getLocationPostListByPage({ pageNo: 1 });
-        goToFManagePostScreen(navigation);
-      });
+      showAlertAbsoluteBox(
+        "Thông báo",
+        "Gửi thông tin thành công! Bài viết đang được tạo",
+        async () => {
+          await getLocationPostListByPage({ pageNo: 1 });
+          goToFManagePostScreen(navigation);
+        },
+      );
     } else if (updateStatus === false) {
       showAlertBox("Thông báo", "Đã xảy ra lỗi! Vui lòng thử lại.");
+      setLoadingButton(false);
     }
     setUpdateStatus(null);
   }, [updateStatus]);
@@ -172,7 +179,13 @@ const PostCreateScreen = () => {
             )}
           </View>
           <View style={styles.sectionWrapper}>
-            <Button onPress={handleSubmit(onSubmit)}>Đăng</Button>
+            <Button
+              onPress={handleSubmit(onSubmit)}
+              isLoading={loadingButton}
+              isLoadingText="Đang tạo bài viết"
+            >
+              Đăng
+            </Button>
           </View>
         </ScrollView>
       </FormProvider>
