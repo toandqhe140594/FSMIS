@@ -146,17 +146,17 @@ const OverviewInformationRoute = () => {
                 {service &&
                   service
                     .split("\n")
-                    .map((ser) => <Text key={ser}>&#8226;{ser}</Text>)}
+                    .map((ser) => <Text key={ser}>&#8226; {ser}</Text>)}
               </Box>
               <Divider />
               <Box m={3}>
                 <Text bold fontSize="md">
                   Nội quy
                 </Text>
-                <Box flexDirection="row">
-                  &#8226;
-                  <Text>{rule}</Text>
-                </Box>
+                {rule &&
+                  rule
+                    .split("\n")
+                    .map((rul) => <Text key={rul}>&#8226; {rul}</Text>)}
               </Box>
             </Card>
           </Box>
