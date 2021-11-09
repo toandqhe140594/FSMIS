@@ -1,14 +1,13 @@
-import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { Box, Divider, Pressable } from "native-base";
 import PropTypes from "prop-types";
 import React from "react";
-import { Text } from "react-native-elements";
+import { Icon, Text } from "react-native-elements";
 
 import styles from "../config/styles";
 import { goBack, goToWriteReportScreen } from "../navigations";
 
-const HeaderTab = ({ name, isVerified, flagable, id }) => {
+const HeaderTab = ({ name, isVerified, flagable, id, customIcon }) => {
   const navigation = useNavigation();
 
   return (
@@ -27,30 +26,49 @@ const HeaderTab = ({ name, isVerified, flagable, id }) => {
             goBack(navigation);
           }}
         >
-          <Ionicons name="arrow-back" size={24} color="black" />
+          <Icon name="arrow-back" size={24} type="ionicon" color="black" />
         </Pressable>
         <Box flexDir="row" alignItems="center" alignSelf="center">
           <Text style={[styles.nameTextLg]}>{name}</Text>
           {isVerified && (
-            <MaterialIcons
+            <Icon
               name="verified"
-              color="blue"
               size={16}
+              type="material"
+              color="blue"
               style={styles.ml1}
             />
           )}
         </Box>
-        <Pressable
-          onPress={() => {
-            if (id) goToWriteReportScreen(navigation, { id, type: "location" });
-          }}
-        >
-          <Ionicons
-            name="flag"
-            size={24}
-            color={flagable ? "black" : "rgba(0,0,0,0)"}
-          />
-        </Pressable>
+        {customIcon.name === null && (
+          <Pressable
+            onPress={() => {
+              if (id)
+                goToWriteReportScreen(navigation, { id, type: "location" });
+            }}
+          >
+            <Icon
+              name="flag"
+              size={24}
+              color={flagable ? "black" : "rgba(0,0,0,0)"}
+              type="ionicon"
+            />
+          </Pressable>
+        )}
+        {customIcon.name !== null && (
+          <Pressable
+            onPress={() => {
+              customIcon.onPress();
+            }}
+          >
+            <Icon
+              name={customIcon.name}
+              size={24}
+              color={customIcon.color || "black"}
+              type={customIcon.type}
+            />
+          </Pressable>
+        )}
       </Box>
       <Divider />
     </>
@@ -62,12 +80,24 @@ HeaderTab.propTypes = {
   isVerified: PropTypes.bool,
   flagable: PropTypes.bool,
   id: PropTypes.number,
+  customIcon: PropTypes.shape({
+    name: PropTypes.string,
+    color: PropTypes.string,
+    type: PropTypes.string,
+    onPress: PropTypes.func,
+  }),
 };
 HeaderTab.defaultProps = {
   name: "",
   isVerified: false,
   flagable: false,
   id: null,
+  customIcon: {
+    name: null,
+    color: null,
+    type: null,
+    onPress: () => {},
+  },
 };
 
 export default HeaderTab;
