@@ -110,7 +110,7 @@ export const FMANAGE_PROFILE_FORM = yup.object().shape({
     .string()
     .matches(/((09|03|07|08|05)+([0-9]{8})\b)/, "Số điện thoại không hợp lệ")
     .required("Số điện thoại không dược bỏ trống"),
-  website: yup.string().typeError("Website không hợp lệ"),
+  website: yup.string().typeError("Website không hợp lệ").ensure(),
   address: yup.string().required("Địa chỉ không được để trống"),
   provinceId: yup.number().required("Tỉnh/Thành phố không được để trống"),
   districtId: yup.number().required("Quận/Huyện không được để trống"),
