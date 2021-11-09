@@ -1,7 +1,7 @@
 import { action, thunk } from "easy-peasy";
-import moment from "moment";
 
 import { API_URL } from "../constants";
+import { convertDateFormat } from "../utilities";
 import http from "../utilities/Http";
 
 // Need change in getCatchReportHistoryOverwrite about dates
@@ -801,14 +801,10 @@ const model = {
       let eDate = endDate;
       // Convert start date and end date to format "YYYY-MM-DDT00:00:00.000Z"
       if (startDate !== null) {
-        sDate = `${moment(startDate)
-          .utcOffset(-300)
-          .format("YYYY-MM-DDTHH:mm:ss.000")}Z`;
+        sDate = convertDateFormat(startDate);
       }
       if (endDate !== null) {
-        eDate = `${moment(endDate)
-          .utcOffset(-300)
-          .format("YYYY-MM-DDTHH:mm:ss.000")}Z`;
+        eDate = convertDateFormat(endDate);
       }
       const { catchHistoryCurrentPage, catchHistoryTotalPage, currentId } =
         getState();
@@ -935,6 +931,10 @@ const model = {
         objParams.endDate = payload.endDate.toJSON();
       }
     }
+    if (objParams.startDate !== null)
+      objParams.startDate = convertDateFormat(objParams.startDate);
+    if (objParams.endDate !== null)
+      objParams.endDate = convertDateFormat(objParams.endDate);
 
     const { data } = await http.get(`location/${currentId}/checkin/history`, {
       params: objParams,

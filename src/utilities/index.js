@@ -1,3 +1,4 @@
+import moment from "moment";
 import { Alert, ToastAndroid } from "react-native";
 
 /**
@@ -78,7 +79,17 @@ const showAlertAbsoluteBox = (
   );
 };
 
+/**
+ * Convert date to format 00:00:00
+ * @param {string} date date with format "YYYY-MM-DDT17:00:00.000Z" - hours = 17
+ * @returns date with format "YYYY-MM-DDT00:00:00.000Z" - hours = 0
+ */
+const convertDateFormat = (date) => {
+  return `${moment(date).utcOffset(-300).format("YYYY-MM-DDTHH:mm:ss.000")}Z`;
+};
+
 export {
+  convertDateFormat,
   showAlertAbsoluteBox,
   showAlertBox,
   showAlertConfirmBox,
