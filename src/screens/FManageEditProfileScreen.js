@@ -77,7 +77,7 @@ const FManageEditProfileScreen = () => {
   const setDefaultValues = () => {
     setValue("name", locationDetails.name);
     setValue("phone", locationDetails.phone);
-    setValue("website", locationDetails.website || "");
+    setValue("website", locationDetails.website);
     setValue("address", locationDetails.address);
     setValue("provinceId", locationDetails.addressFromWard.provinceId);
     setValue("districtId", locationDetails.addressFromWard.districtId);
