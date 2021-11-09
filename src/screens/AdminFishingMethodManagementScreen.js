@@ -98,7 +98,7 @@ const AdminFishingMethodManagementScreen = () => {
   };
 
   useEffect(() => {
-    getFishingMethodList();
+    getFishingMethodList({ setIsLoading });
     const loadingTimeout = setTimeout(() => {
       setIsLoading(false);
     }, 1000); // Test
