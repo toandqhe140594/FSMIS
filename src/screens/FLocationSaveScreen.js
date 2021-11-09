@@ -1,6 +1,7 @@
+import { useFocusEffect } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, VStack } from "native-base";
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { FlatList } from "react-native";
 
 import FLocationCard from "../components/FLocationCard";
@@ -10,6 +11,7 @@ const ItemSeparator = () => {
 };
 
 const FLocationSaveScreen = () => {
+  const [refreshing, setRefreshing] = useState(false);
   const { savedLocationCurrentPage, savedLocationList } = useStoreState(
     (states) => states.ProfileModel,
   );
@@ -19,8 +21,24 @@ const FLocationSaveScreen = () => {
   );
 
   useEffect(() => {
-    if (savedLocationCurrentPage === 1) getSavedLocationList();
+    if (savedLocationCurrentPage === 1)
+      getSavedLocationList({ mode: "loadmore" });
   }, []);
+
+  useFocusEffect(useCallback(() => {}, []));
+
+  useEffect(() => {
+    setRefreshing(false); // If the list is changed then hide refresh icon
+  }, [savedLocationList]);
+
+  const handleRefresh = () => {
+    setRefreshing(true);
+    getSavedLocationList({ mode: "refresh" });
+    // If the list is not changed then hide refresh icon after 5 seconds
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 5000);
+  };
 
   return (
     <Box
@@ -42,12 +60,17 @@ const FLocationSaveScreen = () => {
                 rate={item.score}
                 key={item.id}
                 isVerifed={item.verify}
+                image={item.image}
               />
             )}
             keyExtractor={(item) => item.id.toString()}
             ItemSeparatorComponent={ItemSeparator}
             onEndReached={() => {
               getSavedLocationList();
+            }}
+            refreshing={refreshing}
+            onRefresh={() => {
+              handleRefresh();
             }}
           />
         )}

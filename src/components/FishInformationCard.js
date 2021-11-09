@@ -13,18 +13,18 @@ const FishInformationCard = ({
   overview,
 }) => {
   return (
-    <Box flexDirection="row" mt={3}>
+    <Box flexDirection="row" py={1} bg="white" pl={3} alignItems="center">
       <Image
         alt="LW"
-        size={90}
+        size={100}
         mr={3}
         source={{
           uri: image,
         }}
         resizeMode="contain"
       />
-      <Box flex={1}>
-        <Text bold fontSize="md">
+      <Box flex={1} ml={3}>
+        <Text bold fontSize="lg">
           {name}
         </Text>
         {overview ? (

@@ -1,48 +1,139 @@
 import { useNavigation } from "@react-navigation/native";
+import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, Button, FlatList, HStack, Text, VStack } from "native-base";
 import PropTypes from "prop-types";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import AvatarCard from "../components/AvatarCard";
 import HeaderTab from "../components/HeaderTab";
-import PressableCustomCard from "../components/PressableCustomCard";
 import { goToCatchReportVerifyDetailScreen } from "../navigations";
 
-const VerifyCatchReportScreen = ({ angler }) => {
+const UnresolvedCatchReportComponent = ({
+  name,
+  postTime,
+  avatar,
+  description,
+  fishList,
+  id,
+}) => {
   const navigation = useNavigation();
 
-  const dummyMenu = [
-    {
-      id: 1,
-      message: "Ngoi ca sang",
-      caches: "Ro dong, Diec",
-      time: "09:00 01/01/2021",
-    },
-    {
-      id: 2,
-      message: "Ngoi ca sang",
-      caches: "Ro dong, Diec",
-      time: "09:00 01/02/2021",
-    },
-    {
-      id: 3,
-      message: "Ngoi ca sang",
-      caches: "Ro dong, Diec",
-      time: "09:00 01/03/2021",
-    },
-    {
-      id: 4,
-      message: "Ngoi ca sang",
-      caches: "Ro dong, Diec",
-      time: "09:00 01/04/2021",
-    },
-  ];
-  const onPressHandler = () => {
-    console.log("ahhh, you press me");
+  let timeOut = null;
+
+  const approveCatchReport = useStoreActions(
+    (actions) => actions.FManageModel.approveCatchReport,
+  );
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(null);
+
+  const goToDetailHandler = () => {
+    goToCatchReportVerifyDetailScreen(navigation, { id });
   };
+
+  const approveHandler = () => {
+    setLoading(true);
+    timeOut = setTimeout(() => {
+      setLoading(false);
+    }, 5000);
+    approveCatchReport({ id, isApprove: true, setSuccess });
+  };
+
+  useEffect(() => {
+    return () => {
+      if (timeOut !== null) clearTimeout(timeOut);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (success === false) {
+      setLoading(false);
+      setSuccess(null);
+    }
+  }, [success]);
+
+  return (
+    <Box
+      borderBottomWidth="1"
+      backgroundColor="white"
+      _dark={{
+        borderColor: "gray.600",
+      }}
+      borderColor="coolGray.200"
+      mb={1}
+      px={3}
+      pb={1}
+    >
+      <HStack pl="2" justifyContent="space-between">
+        <Box width="65%">
+          <AvatarCard
+            avatarSize="md"
+            nameUser={name}
+            subText={postTime}
+            subTextFontSize="xs"
+            image={avatar}
+          />
+          <Box mt={2}>
+            <Text italic isTruncated numberOfLines={1}>
+              {description}
+            </Text>
+            <Text numberOfLines={2} isTruncated>
+              <Text bold>Đã câu được: </Text>
+              {fishList.join(", ")}
+            </Text>
+          </Box>
+        </Box>
+        <VStack justifyContent="center" space={2.5} mt="4" width="33%">
+          <Button
+            colorScheme="teal"
+            isLoading={loading}
+            onPress={() => {
+              approveHandler();
+            }}
+          >
+            Đồng ý
+          </Button>
+          <Button
+            disabled={loading}
+            onPress={() => {
+              goToDetailHandler(id);
+            }}
+          >
+            Chi tiết
+          </Button>
+        </VStack>
+      </HStack>
+    </Box>
+  );
+};
+UnresolvedCatchReportComponent.propTypes = {
+  name: PropTypes.string.isRequired,
+  postTime: PropTypes.string.isRequired,
+  avatar: PropTypes.string.isRequired,
+  description: PropTypes.string.isRequired,
+  fishList: PropTypes.arrayOf(PropTypes.string).isRequired,
+  id: PropTypes.number.isRequired,
+};
+
+const VerifyCatchReportScreen = () => {
+  const unresolvedCatchReportList = useStoreState(
+    (states) => states.FManageModel.unresolvedCatchReportList,
+  );
+
+  const getUnresolvedCatchReportList = useStoreActions(
+    (actions) => actions.FManageModel.getUnresolvedCatchReportList,
+  );
+
+  const onEndReached = () => {
+    getUnresolvedCatchReportList({ status: "APPEND" });
+  };
+
+  useEffect(() => {
+    getUnresolvedCatchReportList({ status: "OVERWRITE" });
+  }, []);
+
   return (
     <Box>
-      <HeaderTab name="Xác báo cá" />
+      <HeaderTab name="Xác nhận báo cá" />
       <Box
         w={{
           base: "100%",
@@ -51,68 +142,16 @@ const VerifyCatchReportScreen = ({ angler }) => {
       >
         <FlatList
           pt="0.5"
-          data={dummyMenu}
+          data={unresolvedCatchReportList}
           renderItem={({ item }) => (
-            <Box
-              borderBottomWidth="1"
-              backgroundColor="white"
-              _dark={{
-                borderColor: "gray.600",
-              }}
-              borderColor="coolGray.200"
-              mb="0.5"
-            >
-              <PressableCustomCard
-                paddingX="3"
-                paddingY="1"
-                onPress={onPressHandler}
-              >
-                <HStack pl="2" justifyContent="space-between">
-                  <Box width="65%">
-                    <AvatarCard
-                      avatarSize="md"
-                      nameUser={angler.name}
-                      subText={item.time}
-                      subTextFontSize="xs"
-                    />
-                    <Box mt={2}>
-                      <Text italic>{item.message}</Text>
-                      <Text>
-                        <Text bold>Đã câu được :</Text>
-                        {item.caches}
-                      </Text>
-                    </Box>
-                  </Box>
-                  <VStack
-                    justifyContent="center"
-                    space={2.5}
-                    mt="4"
-                    width="33%"
-                  >
-                    <Button colorScheme="tertiary">Đồng ý</Button>
-                    <Button
-                      onPress={() =>
-                        goToCatchReportVerifyDetailScreen(navigation)
-                      }
-                    >
-                      Chi tiết
-                    </Button>
-                  </VStack>
-                </HStack>
-              </PressableCustomCard>
-            </Box>
+            <UnresolvedCatchReportComponent {...item} />
           )}
-          keyExtractor={(item, index) => index.toString()}
+          keyExtractor={(item) => item.id.toString()}
+          onEndReached={onEndReached}
         />
       </Box>
     </Box>
   );
 };
 
-VerifyCatchReportScreen.defaultProps = {
-  angler: { id: "1", name: "Dat" },
-};
-VerifyCatchReportScreen.propTypes = {
-  angler: PropTypes.objectOf(PropTypes.string, PropTypes.string),
-};
 export default VerifyCatchReportScreen;

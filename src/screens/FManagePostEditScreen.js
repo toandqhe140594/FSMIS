@@ -1,36 +1,46 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Box, Button, Select, Text, VStack } from "native-base";
-import React, { useState } from "react";
+import {
+  useFocusEffect,
+  useNavigation,
+  useRoute,
+} from "@react-navigation/native";
+import { useStoreActions, useStoreState } from "easy-peasy";
+import { Button, VStack } from "native-base";
+import React, { useCallback, useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { Dimensions, ScrollView, StyleSheet, View } from "react-native";
 import * as yup from "yup";
 
 import InputComponent from "../components/common/InputComponent";
+import MultiImageSection from "../components/common/MultiImageSection";
 import SelectComponent from "../components/common/SelectComponent";
-import SingleImageSection from "../components/common/SingleImageSection";
 import TextAreaComponent from "../components/common/TextAreaComponent";
 import HeaderTab from "../components/HeaderTab";
+import { ROUTE_NAMES } from "../constants";
+import { goToFManagePostScreen } from "../navigations";
+import { showAlertAbsoluteBox, showAlertBox } from "../utilities";
 
 const validationSchema = yup.object().shape({
-  postType: yup.number().default(-1),
-  postDescription: yup
-    .string()
-    .required("Nội dung bài đăng không được để trống"),
+  postType: yup.string().required("Loại bài đăng không được để trống"),
+  content: yup.string().required("Nội dung bài đăng không được để trống"),
   postVideoLink: yup.string(),
 });
 
 const postTypeData = [
-  { label: "Thông báo", val: -1 },
-  { label: "Bồi cá", val: 0 },
-  { label: "Báo cá", val: 1 },
+  { name: "Thông báo", id: "ANNOUNCING" },
+  { name: "Bồi cá", id: "STOCKING" },
+  { name: "Báo cá", id: "REPORTING" },
 ];
-
+const attachmentData = [
+  { id: "VIDEO", name: "Video" },
+  { id: "IMAGE", name: "Ảnh" },
+  { id: "NONE", name: "Không đính kèm" },
+];
 const styles = StyleSheet.create({
   sectionWrapper: {
     width: "90%",
   },
   center: {
-    flex: 1,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -40,73 +50,182 @@ const OFFSET_BOTTOM = 85;
 // Get window height without status bar height
 const CUSTOM_SCREEN_HEIGHT = Dimensions.get("window").height - OFFSET_BOTTOM;
 
-const PostEditorScreen = () => {
-  const [showImageSection, setShowImageSection] = useState(true);
+const PostEditScreen = () => {
+  const currentPost = useStoreState(
+    (states) => states.FManageModel.currentPost,
+  );
+
+  const route = useRoute();
+  const navigation = useNavigation();
+  const [imageArray, setImageArray] = useState([]);
+  const editPost = useStoreActions((actions) => actions.FManageModel.editPost);
+  const [updateStatus, setUpdateStatus] = useState("");
+  const [loadingButton, setLoadingButton] = useState(false);
   const methods = useForm({
     mode: "onSubmit",
     reValidateMode: "onSubmit",
     resolver: yupResolver(validationSchema),
+    defaultValues: {
+      content: currentPost.content,
+      postType: currentPost.postType,
+      attachmentType: currentPost.attachmentType,
+    },
   });
-  const { handleSubmit } = methods;
-  const handleValueChange = (value) => {
-    console.log(value);
-    setShowImageSection(value === "image");
+  const getLocationPostListByPage = useStoreActions(
+    (actions) => actions.FManageModel.getLocationPostListByPage,
+  );
+  const { handleSubmit, watch, setValue, getValues } = methods;
+  const watchAttachmentType = watch("attachmentType");
+  /**
+   *  Reset the image array if imageArray is not empty
+   *  when switching to input link video
+   */
+
+  const setDefaultValues = () => {
+    if (watchAttachmentType === "IMAGE") {
+      setImageArray([{ id: 1, base64: currentPost.url }]);
+    }
+    if (watchAttachmentType === "VIDEO") {
+      setValue("postVideoLink", currentPost.url);
+    }
   };
+
+  useEffect(() => {
+    setDefaultValues();
+  }, []);
+  useEffect(() => {
+    switch (watchAttachmentType) {
+      case "IMAGE":
+        setValue(" postVideoLink", "");
+        break;
+
+      case "VIDEO":
+        if (imageArray?.length > 0) setImageArray([]);
+        break;
+
+      default:
+        if (imageArray?.length > 0) setImageArray([]);
+    }
+  }, [watchAttachmentType]);
+
+  const setAttachmentUrl = (type) => {
+    switch (type) {
+      case "IMAGE":
+        return imageArray[0].base64;
+      case "VIDEO":
+        return getValues("postVideoLink");
+      default:
+        return "";
+    }
+  };
+
   const onSubmit = (data) => {
-    console.log(data);
+    const url = setAttachmentUrl(watchAttachmentType);
+    const updateData = {
+      ...data,
+      id: currentPost.id,
+      url,
+    };
+    editPost({
+      updateData,
+      setUpdateStatus,
+    });
+    setLoadingButton(true);
   };
+
+  const updateImageArray = (id) => {
+    setImageArray(imageArray.filter((image) => image.id !== id));
+  };
+  // Fire when navigates back to this screen
+  useFocusEffect(
+    // useCallback will listen to route.param
+    useCallback(() => {
+      if (route.params?.base64Array && route.params.base64Array[0]) {
+        setImageArray(route.params?.base64Array);
+        navigation.setParams({ base64Array: [] });
+      }
+    }, [route.params]),
+  );
+
+  useEffect(() => {
+    if (updateStatus === "SUCCESS") {
+      showAlertAbsoluteBox(
+        "Thông báo",
+        "Gửi thông thành công! Đang chỉnh sửa bài viết.",
+        async () => {
+          await getLocationPostListByPage({ pageNo: 1 });
+          goToFManagePostScreen(navigation);
+        },
+      );
+    } else if (updateStatus === "FAILED") {
+      showAlertBox("Thông báo", "Đã xảy ra lỗi! Vui lòng thử lại.");
+      setLoadingButton(false);
+    }
+    setUpdateStatus(null);
+  }, [updateStatus]);
   return (
-    <ScrollView>
-      {/* Without scrollview, it seems the keyboard will not hide if tap out of the component */}
+    <>
       <HeaderTab name="Bài đăng" />
       <FormProvider {...methods}>
-        <View style={[styles.center, { height: CUSTOM_SCREEN_HEIGHT }]} mt={2}>
-          <VStack flex={4} space={2} style={styles.sectionWrapper}>
-            <SelectComponent
-              label="Sự kiện"
-              placeholder="Chọn sự kiện"
-              data={postTypeData}
-              controllerName="postType"
-            />
-            <TextAreaComponent
-              label="Miêu tả"
-              placeholder=""
-              numberOfLines={3}
-              controllerName="postDescription"
-            />
-            <Box>
-              <Text fontSize="md" mb={1}>
-                Đính kèm
-              </Text>
-              <Select
-                placeholder="Chọn loại đính kèm"
-                accessibilityLabel="Chọn loại đính kèm"
-                onValueChange={handleValueChange}
-                defaultValue="Ảnh"
-                fontSize="md"
-              >
-                <Select.Item label="Ảnh" value="image" />
-                <Select.Item label="Link Video" value="linkVideo" />
-              </Select>
-            </Box>
-            <Box mt={4}>
-              {showImageSection && <SingleImageSection />}
-              {!showImageSection && (
+        <ScrollView
+          contentContainerStyle={{
+            justifyContent: "center",
+            alignItems: "center",
+            height: CUSTOM_SCREEN_HEIGHT,
+            marginTop: 8,
+          }}
+        >
+          <View style={[{ flex: 2 }, styles.sectionWrapper]}>
+            <VStack space={2} mb={2}>
+              <SelectComponent
+                label="Sự kiện"
+                placeholder="Chọn sự kiện"
+                data={postTypeData}
+                controllerName="postType"
+              />
+              <TextAreaComponent
+                label="Miêu tả"
+                placeholder=""
+                numberOfLines={3}
+                controllerName="content"
+              />
+              <SelectComponent
+                placeholder="Chọn đính kèm"
+                data={attachmentData}
+                label="Đính kèm"
+                controllerName="attachmentType"
+              />
+
+              {watchAttachmentType === "VIDEO" && (
                 <InputComponent
                   placeholder="Nhập link vào đây"
-                  label="Đính kèm link"
+                  label="Đường dẫn"
                   controllerName="postVideoLink"
                 />
               )}
-            </Box>
-          </VStack>
-          <View style={styles.sectionWrapper}>
-            <Button onPress={handleSubmit(onSubmit)}>Đăng</Button>
+            </VStack>
+            {watchAttachmentType === "IMAGE" && (
+              <MultiImageSection
+                containerStyle={{ width: "100%" }}
+                formRoute={ROUTE_NAMES.FMANAGE_POST_EDIT}
+                imageArray={imageArray}
+                deleteImage={updateImageArray}
+              />
+            )}
           </View>
-        </View>
+          <View style={styles.sectionWrapper}>
+            <Button
+              onPress={handleSubmit(onSubmit)}
+              isLoading={loadingButton}
+              isLoadingText="Đang chỉnh sửa bài viết"
+            >
+              Đăng
+            </Button>
+          </View>
+        </ScrollView>
       </FormProvider>
-    </ScrollView>
+    </>
   );
 };
 
-export default PostEditorScreen;
+export default PostEditScreen;

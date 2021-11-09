@@ -1,12 +1,11 @@
-import { useStoreState } from "easy-peasy";
-import { Box, Button, Text } from "native-base";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useStoreActions, useStoreState } from "easy-peasy";
+import { Box, Button, Icon, Text } from "native-base";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, ScrollView } from "react-native";
 import { Card, Divider } from "react-native-elements";
 import MapView, { Marker } from "react-native-maps";
 import Swiper from "react-native-swiper";
-
-import HeaderTab from "../HeaderTab";
 
 const OverviewInformationRoute = () => {
   const [loading, setLoading] = useState(true);
@@ -14,9 +13,11 @@ const OverviewInformationRoute = () => {
     (states) => states.LocationModel.locationOverview,
   );
 
+  const saveLocation = useStoreActions(
+    (actions) => actions.LocationModel.saveLocation,
+  );
+
   const {
-    name,
-    verify,
     address,
     description,
     phone,
@@ -27,62 +28,88 @@ const OverviewInformationRoute = () => {
     lastEditedDate,
     longitude,
     latitude,
+    image,
+    saved,
   } = locationOverview;
 
-  const serviceArr = service.split("\n");
-
   useEffect(() => {
-    if (locationOverview) setLoading(false);
+    if (locationOverview && locationOverview.id) setLoading(false);
   }, [locationOverview]);
+
+  if (loading)
+    return (
+      <Box flex={1} justifyContent="center" alignItems="center">
+        <ActivityIndicator size="large" color="blue" />
+      </Box>
+    );
 
   return (
     <>
-      {loading ? (
-        <Box flex={1} justifyContent="center" alignItems="center">
-          <ActivityIndicator size="large" color="blue" />
-        </Box>
-      ) : (
-        <Box>
-          <ScrollView>
-            <Box>
-              <HeaderTab name={name} isVerified={verify} flagable />
-              <Card containerStyle={{ width: "100%", margin: 0, padding: 0 }}>
-                <Swiper height="auto">
+      <Box>
+        <ScrollView>
+          <Box>
+            <Card containerStyle={{ width: "100%", margin: 0, padding: 0 }}>
+              <Swiper height="auto">
+                {image && image.length > 0 ? (
+                  image.map((item) => (
+                    <Card.Image
+                      source={{ uri: item }}
+                      key={item}
+                      style={{ height: 270 }}
+                    />
+                  ))
+                ) : (
                   <Card.Image source={{ uri: "https://picsum.photos/400" }} />
-                  <Card.Image source={{ uri: "https://picsum.photos/400" }} />
-                </Swiper>
-                <Button my={4} mx={10}>
-                  Lưu điểm câu
-                </Button>
-                <Card.Divider />
-                <Box>
-                  <Text bold ml={3} fontSize="md">
-                    Thông tin liên hệ
-                  </Text>
-                  <Box my={2} ml={8} mr={2}>
-                    <Text>
-                      <Text bold>Địa chỉ: </Text>
-                      {address}
-                    </Text>
-                    <Text>
-                      <Text bold>SĐT: </Text>
-                      <Text underline>{phone}</Text>
-                    </Text>
-                    <Text>
-                      <Text bold>Website: </Text>
-                      <Text underline>{website}</Text>
-                    </Text>
-                    <Text>
-                      <Text bold>Cập nhật lần cuối: </Text>
-                      {lastEditedDate}
-                    </Text>
-                  </Box>
-                </Box>
-                <Card.Divider />
+                )}
+              </Swiper>
+
+              <Button
+                my={4}
+                mx={10}
+                endIcon={
+                  <Icon
+                    as={MaterialCommunityIcons}
+                    name={saved ? "bookmark-off" : "bookmark"}
+                    size="sm"
+                  />
+                }
+                onPress={() => {
+                  saveLocation();
+                }}
+              >
+                {saved ? "Bỏ lưu" : "Lưu điểm câu"}
+              </Button>
+
+              <Card.Divider />
+              <Box>
                 <Text bold ml={3} fontSize="md">
-                  Bản đồ
+                  Thông tin liên hệ
                 </Text>
-                <Box m={3}>
+                <Box my={2} ml={8} mr={2}>
+                  <Text>
+                    <Text bold>Địa chỉ: </Text>
+                    {address}
+                  </Text>
+                  <Text>
+                    <Text bold>SĐT: </Text>
+                    <Text underline>{phone}</Text>
+                  </Text>
+                  <Text>
+                    <Text bold>Website: </Text>
+                    <Text underline>{website}</Text>
+                  </Text>
+                  <Text>
+                    <Text bold>Cập nhật lần cuối: </Text>
+                    {lastEditedDate}
+                  </Text>
+                </Box>
+              </Box>
+              <Card.Divider />
+              <Text bold ml={3} fontSize="md">
+                Bản đồ
+              </Text>
+              <Box m={3}>
+                {latitude && (
                   <MapView
                     initialRegion={{
                       latitude,
@@ -95,45 +122,46 @@ const OverviewInformationRoute = () => {
                   >
                     <Marker coordinate={{ latitude, longitude }} />
                   </MapView>
+                )}
+              </Box>
+              <Divider />
+              <Box m={3}>
+                <Text bold fontSize="md">
+                  Mô tả khu hồ
+                </Text>
+                <Text>{description}</Text>
+              </Box>
+              <Divider />
+              <Box m={3}>
+                <Text bold fontSize="md">
+                  Thời gian hoạt động
+                </Text>
+                <Text>{timetable}</Text>
+              </Box>
+              <Divider />
+              <Box m={3}>
+                <Text bold fontSize="md">
+                  Dịch vụ
+                </Text>
+                {service &&
+                  service
+                    .split("\n")
+                    .map((ser) => <Text key={ser}>&#8226;{ser}</Text>)}
+              </Box>
+              <Divider />
+              <Box m={3}>
+                <Text bold fontSize="md">
+                  Nội quy
+                </Text>
+                <Box flexDirection="row">
+                  &#8226;
+                  <Text>{rule}</Text>
                 </Box>
-                <Divider />
-                <Box m={3}>
-                  <Text bold fontSize="md">
-                    Mô tả khu hồ
-                  </Text>
-                  <Text>{description}</Text>
-                </Box>
-                <Divider />
-                <Box m={3}>
-                  <Text bold fontSize="md">
-                    Thời gian hoạt động
-                  </Text>
-                  <Text>{timetable}</Text>
-                </Box>
-                <Divider />
-                <Box m={3}>
-                  <Text bold fontSize="md">
-                    Dịch vụ
-                  </Text>
-                  {serviceArr.map((ser) => (
-                    <Text key={ser}>&#8226;{ser}</Text>
-                  ))}
-                </Box>
-                <Divider />
-                <Box m={3}>
-                  <Text bold fontSize="md">
-                    Nội quy
-                  </Text>
-                  <Box flexDirection="row">
-                    &#8226;
-                    <Text>{rule}</Text>
-                  </Box>
-                </Box>
-              </Card>
-            </Box>
-          </ScrollView>
-        </Box>
-      )}
+              </Box>
+            </Card>
+          </Box>
+        </ScrollView>
+      </Box>
     </>
   );
 };

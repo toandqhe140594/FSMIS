@@ -1,27 +1,30 @@
+import { useNavigation } from "@react-navigation/native";
+import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, Button, Center } from "native-base";
 import PropTypes from "prop-types";
-import React, { useState } from "react";
-import { FlatList } from "react-native";
+import React, { useEffect, useState } from "react";
+import { ActivityIndicator, FlatList } from "react-native";
 import { Divider, SearchBar, Text } from "react-native-elements";
 
 import HeaderTab from "../components/HeaderTab";
+import FishingMethodModel from "../models/FishingMethodModel";
+import { goToAdminFishingMethodEditScreen } from "../navigations";
+import { showAlertConfirmBox } from "../utilities";
+import store from "../utilities/Store";
 
-const fishList = [
-  {
-    id: 1,
-    name: "Câu đơn",
-  },
-  {
-    id: 2,
-    name: "Câu đài",
-  },
-  {
-    id: 3,
-    name: "Câu lăng xê",
-  },
-];
+store.addModel("FishingMethodModel", FishingMethodModel);
 
 const FishingMethodManagementCard = ({ id, name }) => {
+  const navigation = useNavigation();
+
+  const showDeleteAlert = () => {
+    showAlertConfirmBox(
+      "Bạn muốn xóa loại hình câu này?",
+      `"${name}" sẽ bị xóa vĩnh viễn. Bạn không thể hoàn tác hành động này`,
+      () => {},
+    );
+  };
+
   return (
     <Box
       flexDirection="row"
@@ -37,8 +40,20 @@ const FishingMethodManagementCard = ({ id, name }) => {
       </Box>
       <Box w="35%" alignItems="flex-end">
         <Button.Group>
-          <Button>Chỉnh sửa</Button>
-          <Button>Xóa</Button>
+          <Button
+            onPress={() => {
+              goToAdminFishingMethodEditScreen(navigation, { id, name });
+            }}
+          >
+            Chỉnh sửa
+          </Button>
+          <Button
+            onPress={() => {
+              showDeleteAlert();
+            }}
+          >
+            Xóa
+          </Button>
         </Button.Group>
       </Box>
     </Box>
@@ -51,11 +66,58 @@ FishingMethodManagementCard.propTypes = {
 };
 
 const AdminFishingMethodManagementScreen = () => {
+  const navigation = useNavigation();
+
+  const fishingMethodList = useStoreState(
+    (states) => states.FishingMethodModel.fishingMethodList,
+  );
+  const getFishingMethodList = useStoreActions(
+    (actions) => actions.FishingMethodModel.getFishingMethodList,
+  );
+
   const [search, setSearch] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [displayedList, setDisplayedList] = useState(fishingMethodList);
 
   const updateSearch = (searchKey) => {
     setSearch(searchKey);
   };
+
+  const onClear = () => {
+    setDisplayedList(fishingMethodList);
+  };
+
+  const onEndEditing = () => {
+    // If the list is empty
+    if (!fishingMethodList) return;
+    // Filter all element in the data list whose name includes search key
+    const filteredList = fishingMethodList.filter((method) =>
+      method.name.toUpperCase().includes(search.toUpperCase()),
+    );
+    setDisplayedList(filteredList);
+  };
+
+  useEffect(() => {
+    getFishingMethodList();
+    const loadingTimeout = setTimeout(() => {
+      setIsLoading(false);
+    }, 1000); // Test
+    return () => {
+      clearTimeout(loadingTimeout);
+    };
+  }, []);
+
+  useEffect(() => {
+    setDisplayedList(fishingMethodList);
+    if (fishingMethodList) setIsLoading(false);
+  }, [fishingMethodList]);
+
+  if (isLoading)
+    return (
+      <Center flex={1}>
+        <ActivityIndicator size="large" color="blue" />
+      </Center>
+    );
 
   return (
     <>
@@ -74,17 +136,25 @@ const AdminFishingMethodManagementScreen = () => {
             }}
             lightTheme
             blurOnSubmit
-            onEndEditing={() => {
-              console.log("end edit", search); // Test only
-            }}
+            onEndEditing={onEndEditing}
+            onClear={onClear}
           />
-          <Button my={2} w="70%">
-            Thêm loại cá
+          <Button
+            my={2}
+            w="70%"
+            onPress={() => {
+              goToAdminFishingMethodEditScreen(navigation, {
+                id: null,
+                name: null,
+              });
+            }}
+          >
+            Thêm loại hình câu
           </Button>
 
           <Box flex={1} w="100%">
             <FlatList
-              data={fishList}
+              data={displayedList}
               renderItem={({ item }) => (
                 <FishingMethodManagementCard id={item.id} name={item.name} />
               )}

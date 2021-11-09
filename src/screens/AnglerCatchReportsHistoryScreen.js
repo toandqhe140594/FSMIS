@@ -10,19 +10,20 @@ import { goToCatchReportDetailScreen } from "../navigations";
 
 const AnglerCatchReportsHistoryScreen = () => {
   const navigation = useNavigation();
-
-  const getCatchReportHistory = useStoreActions(
-    (actions) => actions.ProfileModel.getCatchReportHistory,
-  );
-
   // Destructure catchHistoryCurrentPage and catchReportHistory list from ProfileModel
   const { catchHistoryCurrentPage, catchReportHistory } = useStoreState(
     (states) => states.ProfileModel,
+  );
+  const { getCatchReportHistory, resetCatchReportHistory } = useStoreActions(
+    (actions) => actions.ProfileModel,
   );
 
   useEffect(() => {
     // If the current page = 1 aka the list is empty then call api to init the list
     if (catchHistoryCurrentPage === 1) getCatchReportHistory();
+    return () => {
+      resetCatchReportHistory(); // Clear list data when screen unmount
+    };
   }, []);
 
   return (
@@ -33,6 +34,7 @@ const AnglerCatchReportsHistoryScreen = () => {
           base: "100%",
           md: "25%",
         }}
+        pb="20%"
       >
         {catchReportHistory.length !== 0 && (
           <FlatList
@@ -53,7 +55,7 @@ const AnglerCatchReportsHistoryScreen = () => {
                   paddingX="3"
                   onPress={() => {
                     goToCatchReportDetailScreen(navigation, {
-                      id: item.catchId,
+                      id: item.id,
                     });
                   }}
                 >
@@ -62,17 +64,29 @@ const AnglerCatchReportsHistoryScreen = () => {
                       avatarSize="md"
                       nameUser={item.userFullName}
                       subText={item.locationName}
+                      image={item.avatar}
                     />
-                    <Box mt={2}>
-                      <Text italic>{item.description}</Text>
+                    <Box>
+                      <Text numberOfLines={1} isTruncated>
+                        {item.time}
+                      </Text>
+                      <Text numberOfLines={1} isTruncated>
+                        <Text bold>Đã câu được: </Text>
+                        {item.fishes.join(", ").toString()}
+                      </Text>
+                    </Box>
+                    <Box mt={2} ml={3}>
+                      <Text italic numberOfLines={2} isTruncated>
+                        {item.description}
+                      </Text>
                     </Box>
                   </Box>
                 </PressableCustomCard>
               </Box>
             )}
-            keyExtractor={(item, index) => index.toString()}
+            keyExtractor={(item) => item.id.toString()}
             onEndReached={() => {
-              getCatchReportHistory(0);
+              getCatchReportHistory();
             }}
           />
         )}

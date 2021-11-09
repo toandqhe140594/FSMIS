@@ -1,12 +1,17 @@
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+import { useNavigation } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box } from "native-base";
 import React, { useEffect, useState } from "react";
 import { FlatList, StyleSheet } from "react-native";
 import { Divider } from "react-native-elements";
 
+import { VIEW_ROLE_ANGLER } from "../../constants";
+import {
+  goToCatchReportDetailScreen,
+  goToWriteReportScreen,
+} from "../../navigations";
 import EventPostCard from "../EventPostCard";
-import HeaderTab from "../HeaderTab";
 import PressableCustomCard from "../PressableCustomCard";
 
 const styles = StyleSheet.create({
@@ -19,34 +24,80 @@ const styles = StyleSheet.create({
     marginTop: 0,
   },
 });
-const dummyMenu = [
-  { id: 1, name: "Hồ thuần việt" },
-  { id: 2, name: "Hồ không thuần việt" },
-  { id: 3, name: "Hồ Quản" },
-];
 
 const CatchReportRoute = () => {
+  const navigation = useNavigation();
+  const [lakeCatchPage, setLakeCatchPage] = useState(1);
+
+  const locationCatchList = useStoreState(
+    (states) => states.LocationModel.locationCatchList,
+  );
+  const { role } = useStoreState(
+    (states) => states.LocationModel.locationOverview,
+  );
+
+  const getLocationCatchListByPage = useStoreActions(
+    (actions) => actions.LocationModel.getLocationCatchListByPage,
+  );
+
+  const loadMoreLakeCatchData = () => {
+    getLocationCatchListByPage({ pageNo: lakeCatchPage });
+    setLakeCatchPage(lakeCatchPage + 1);
+  };
+
+  useEffect(() => {
+    getLocationCatchListByPage({ pageNo: lakeCatchPage });
+    setLakeCatchPage(lakeCatchPage + 1);
+  }, []);
+
   return (
-    <FlatList
-      data={dummyMenu}
-      renderItem={({ item }) => (
-        <PressableCustomCard paddingX="1">
-          <EventPostCard
-            postStyle="ANGLER_POST"
-            image="https://picsum.photos/500"
-            id={item.id}
-          />
-        </PressableCustomCard>
+    <>
+      {locationCatchList.length > 0 && (
+        <FlatList
+          data={locationCatchList}
+          renderItem={({ item }) => {
+            return (
+              <PressableCustomCard
+                paddingX="1"
+                onPress={() => {
+                  goToCatchReportDetailScreen(navigation, {
+                    id: item.id,
+                  });
+                }}
+              >
+                <EventPostCard
+                  postStyle="ANGLER_POST"
+                  anglerName={item.userFullName}
+                  anglerContent={item.description}
+                  postTime={item.time}
+                  fishList={item.fishes}
+                  id={item.id}
+                  imageAvatar={item.avatar}
+                  image={item.images[0]}
+                  numberOfImages={item.images.length}
+                  iconName={role === VIEW_ROLE_ANGLER ? "flag" : ""}
+                />
+              </PressableCustomCard>
+            );
+          }}
+          onEndReached={() => {
+            loadMoreLakeCatchData();
+          }}
+          keyExtractor={(item) => item.id.toString()}
+        />
       )}
-      keyExtractor={(item, index) => index.toString()}
-    />
+    </>
   );
 };
 
 const FLocationEventRoute = () => {
+  const navigation = useNavigation();
   const [lakePostPage, setLakePostPage] = useState(1);
   const locationPostList = useStoreState(
     (states) => states.LocationModel.locationPostList,
+  );
+  const { role } = useStoreState(
+    (states) => states.LocationModel.locationOverview,
   );
   const getLocationPostListByPage = useStoreActions(
     (actions) => actions.LocationModel.getLocationPostListByPage,
@@ -61,30 +112,29 @@ const FLocationEventRoute = () => {
     getLocationPostListByPage({ pageNo: lakePostPage });
     setLakePostPage(lakePostPage + 1);
   };
+  const reportHandler = (id, type) => {
+    goToWriteReportScreen(navigation, { id, type });
+  };
+  const listEvent = [{ name: "Báo cáo bài viết", onPress: reportHandler }];
   return (
     <>
       {locationPostList.length > 0 && (
         <FlatList
           data={locationPostList}
           renderItem={({ item }) => (
-            <PressableCustomCard
-              paddingX="1"
-              onPress={() => {
-                console.log(item.id);
+            <EventPostCard
+              lakePost={{
+                badge: item.postType === "STOCKING" ? "Bồi cá" : "Thông báo",
+                content: item.content,
               }}
-            >
-              <EventPostCard
-                lakePost={{
-                  badge: item.postType === "STOCKING" ? "Bồi cá" : "Thông báo",
-                  content: item.content,
-                }}
-                image={item.url}
-                postStyle="LAKE_POST"
-                edited={item.edited}
-                postTime={item.postTime}
-                id={item.id}
-              />
-            </PressableCustomCard>
+              image={item.url}
+              postStyle="LAKE_POST"
+              edited={item.edited}
+              postTime={item.postTime}
+              id={item.id}
+              iconName={role === VIEW_ROLE_ANGLER ? "flag" : ""}
+              iconEvent={listEvent}
+            />
           )}
           onEndReached={() => {
             loadMoreLakePostData();
@@ -101,7 +151,6 @@ const Tab = createMaterialTopTabNavigator();
 const EventListRoute = () => {
   return (
     <Box style={{ flex: 1 }}>
-      <HeaderTab name="Hồ câu thuần việt" isVerified flagable />
       <Divider />
       <Tab.Navigator
         sceneContainerStyle={{
@@ -111,6 +160,7 @@ const EventListRoute = () => {
           tabBarStyle: styles.tabBarStyle,
           tabBarLabelStyle: styles.tabBarLabelStyle,
         }}
+        initialRouteName="Bài viết"
       >
         <Tab.Screen name="Bài viết" component={FLocationEventRoute} />
         <Tab.Screen name="Lịch sử báo cá" component={CatchReportRoute} />

@@ -4,6 +4,9 @@ export default StyleSheet.create({
   boldText: {
     fontWeight: "bold",
   },
+  mdText: {
+    fontSize: 16,
+  },
   nameTextLg: {
     fontSize: 20,
     fontWeight: "bold",
@@ -42,5 +45,16 @@ export default StyleSheet.create({
   textBoldButton: { fontSize: 16, fontWeight: "bold", color: "white" },
   textwhite: {
     color: "white",
+  },
+  menuScreenListItemView: {
+    marginBottom: 6,
+  },
+  menuScreenListItemText: {
+    textAlign: "left",
+    padding: 2,
+    fontSize: 19,
+    marginBottom: 3,
+    marginTop: 5,
+    marginLeft: 11,
   },
 });

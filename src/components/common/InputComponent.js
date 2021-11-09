@@ -3,7 +3,6 @@ import PropTypes from "prop-types";
 import React from "react";
 import { Controller, useFormContext } from "react-hook-form";
 import { StyleSheet, Text, View } from "react-native";
-import { style } from "styled-system";
 
 const styles = StyleSheet.create({
   error: { color: "#f43f5e", fontSize: 12, fontStyle: "italic" },
@@ -18,9 +17,9 @@ const InputComponent = ({
   isTitle,
   hasAsterisk,
   myStyles,
-  type,
   leftIcon,
   controllerName,
+  useNumPad,
 }) => {
   const {
     control,
@@ -31,7 +30,7 @@ const InputComponent = ({
       {label.length > 0 && (
         <Text style={[styles.text, isTitle ? styles.bold : null]}>
           {label}
-          {hasAsterisk && <Text style={style.asterisk}>*</Text>}
+          {hasAsterisk && <Text style={styles.asterisk}>*</Text>}
         </Text>
       )}
       <Controller
@@ -40,12 +39,13 @@ const InputComponent = ({
         render={({ field: { onChange, onBlur, value } }) => (
           <Input
             InputLeftElement={leftIcon}
-            type={type}
+            type="text"
             placeholder={placeholder}
             onChangeText={onChange}
             onBlur={onBlur}
             value={value}
             fontSize="md"
+            keyboardType={useNumPad ? "number-pad" : "default"}
           />
         )}
       />
@@ -59,12 +59,14 @@ const InputComponent = ({
 InputComponent.propTypes = {
   label: PropTypes.string,
   placeholder: PropTypes.string,
-  myStyles: PropTypes.objectOf(PropTypes.string),
+  myStyles: PropTypes.objectOf(
+    PropTypes.oneOfType([PropTypes.string, PropTypes.number]), // Accept object with property of type string or number
+  ),
   hasAsterisk: PropTypes.bool,
   isTitle: PropTypes.bool,
-  type: PropTypes.string,
   leftIcon: PropTypes.element,
   controllerName: PropTypes.string,
+  useNumPad: PropTypes.bool,
 };
 
 InputComponent.defaultProps = {
@@ -73,9 +75,9 @@ InputComponent.defaultProps = {
   myStyles: {},
   hasAsterisk: false,
   isTitle: false,
-  type: "text",
   leftIcon: <></>,
   controllerName: "",
+  useNumPad: false,
 };
 
 export default InputComponent;

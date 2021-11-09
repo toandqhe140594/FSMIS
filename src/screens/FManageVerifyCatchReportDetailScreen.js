@@ -1,80 +1,223 @@
-import { Box, Button, HStack, ScrollView, Text, VStack } from "native-base";
-import PropTypes from "prop-types";
-import React from "react";
+import { Ionicons } from "@expo/vector-icons";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { useStoreActions, useStoreState } from "easy-peasy";
+import {
+  Box,
+  Button,
+  HStack,
+  Icon,
+  ScrollView,
+  Text,
+  VStack,
+} from "native-base";
+import React, { useEffect, useState } from "react";
+import { ActivityIndicator } from "react-native";
 import { Image } from "react-native-elements";
+import Swiper from "react-native-swiper";
 
 import AvatarCard from "../components/AvatarCard";
-import FishCard from "../components/FishCard";
+import FishInformationCard from "../components/FishInformationCard";
 import HeaderTab from "../components/HeaderTab";
+import { goToFishingLocationOverviewScreen } from "../navigations";
 
-const VerifyCatchReportDetailScreen = ({ catchDetails }) => (
-  <>
-    <ScrollView>
-      <HeaderTab name="Chi Tiết" />
+const AnglerCatchReportDetailScreen = () => {
+  const route = useRoute();
+  const navigation = useNavigation();
 
-      <Image
-        source={{
-          uri: "https://picsum.photos/400",
-        }}
-        style={{ width: "100%", height: 450 }}
-      />
-      <Box
-        _dark={{
-          borderColor: "gray.600",
-        }}
-        borderColor="coolGray.200"
-        pl="4"
-        pr="4"
-        py="2"
-      >
-        <AvatarCard
-          avatarSize="lg"
-          nameUser="Ngo"
-          nameFontSize="lg"
-          subText="(09:00 01/01/2021)"
-        />
-        {/* <Text textAlign="right">(09:00 01/01/2021)</Text> */}
+  let verifyTimeout = null;
 
-        <VStack space={2} mb={3} mt={4}>
-          <Text>
-            <Text bold fontSize="16">
-              Câu tại :{" "}
-            </Text>
-            <Text fontSize="18" underline>
-              {catchDetails.lakeName}
-            </Text>
-          </Text>
-          <Text italic>{catchDetails.message}</Text>
-        </VStack>
-        <VStack mt="4" space={2}>
-          <VStack space={1}>
-            <FishCard />
-            <FishCard />
-            <FishCard />
-            <FishCard />
-          </VStack>
-        </VStack>
+  const catchDetails = useStoreState(
+    (state) => state.ProfileModel.catchReportDetail,
+  );
+  const getCatchReportDetailById = useStoreActions(
+    (actions) => actions.ProfileModel.getCatchReportDetailById,
+  );
+  const approveCatchReport = useStoreActions(
+    (actions) => actions.FManageModel.approveCatchReport,
+  );
+
+  const [isLoading, setIsLoading] = useState(true); // Loading state of the screen
+  const [success, setSuccess] = useState(null);
+  const [buttonLoading, setButtonLoading] = useState(false); // Loading state when call api to verify catch report
+
+  const openLocationOverviewScreen = () => {
+    goToFishingLocationOverviewScreen(navigation, {
+      id: catchDetails.locationId,
+    });
+  };
+
+  /**
+   * Verify catch report button action
+   * @param {boolean} isApprove value indicate accept or denied catch report
+   */
+  const verifyHandler = (isApprove) => {
+    setButtonLoading(true);
+    verifyTimeout = setTimeout(() => {
+      setButtonLoading(false);
+    }, 5000);
+    approveCatchReport({ id: catchDetails.id, isApprove, setSuccess });
+  };
+
+  useEffect(() => {
+    const timeOut = setTimeout(() => {
+      setIsLoading(false);
+    }, 5000);
+    if (route.params) {
+      const { id } = route.params;
+      getCatchReportDetailById({ id, setIsLoading });
+    }
+    return () => {
+      clearTimeout(timeOut);
+      // If user leave screen before timeout end
+      if (verifyTimeout !== null) clearTimeout(verifyTimeout);
+    };
+  }, []);
+
+  useEffect(() => {
+    // If verify report false
+    if (success === false) {
+      setButtonLoading(false);
+      setSuccess(null);
+    }
+    // If verify catch report success
+    if (success === true) {
+      setButtonLoading(false);
+    }
+  }, [success]);
+
+  const { avatar } = catchDetails;
+
+  if (isLoading)
+    return (
+      <Box flex={1} justifyContent="center" alignItems="center">
+        <ActivityIndicator size="large" color="blue" />
       </Box>
-    </ScrollView>
+    );
 
-    <HStack justifyContent="space-around" h="60" opacity="100">
-      <Button w="49%" borderRadius="0" colorScheme="danger">
-        Hủy
-      </Button>
-      <Button w="49%" borderRadius="0" colorScheme="tertiary">
-        Xác nhận
-      </Button>
-    </HStack>
-  </>
-);
-VerifyCatchReportDetailScreen.defaultProps = {
-  catchDetails: {
-    lakeName: "Hồ thuần việt",
-    message:
-      " Ngồi cả sáng, Lorem ipsum dolor sit amet, consectetur adipisicing elit. Fuga aliquid quam maxime voluptatibus assumenda vero ab eos. Ad maiores dolore explicabo, excepturi eius at quibusdam libero maxime animi deserunt recusandae?",
-  },
+  if (!catchDetails.id) {
+    return (
+      <>
+        <HeaderTab name="Chi Tiết" />
+        <Box flex={1} justifyContent="center" alignItems="center">
+          Không có dữ liệu
+        </Box>
+      </>
+    );
+  }
+
+  return (
+    <>
+      <ScrollView>
+        <HeaderTab name="Chi Tiết" />
+        {/* Image section */}
+        {catchDetails.images && catchDetails.images.length > 0 && (
+          <Swiper height="auto" loadMinimal>
+            {catchDetails.images.map((imageUri, index) => (
+              <Image
+                key={index.toString()}
+                source={{
+                  uri: imageUri,
+                }}
+                style={{ width: "100%", height: 450 }}
+                resizeMode="contain"
+              />
+            ))}
+          </Swiper>
+        )}
+        <Box
+          _dark={{
+            borderColor: "gray.600",
+          }}
+          borderColor="coolGray.200"
+          px="4"
+          py="2"
+        >
+          {avatar !== undefined && (
+            <AvatarCard
+              avatarSize="lg"
+              nameUser={catchDetails.userFullName}
+              nameFontSize="lg"
+              subText={catchDetails.time}
+              image={avatar}
+            />
+          )}
+
+          <VStack space={2} my={4}>
+            <Text>
+              <Text bold fontSize="16">
+                Câu tại:{" "}
+              </Text>
+              <Text
+                fontSize="18"
+                underline
+                onPress={() => {
+                  openLocationOverviewScreen();
+                }}
+              >
+                {catchDetails.locationName}
+              </Text>
+            </Text>
+            <Text italic fontSize="md">
+              &quot;{catchDetails.description}&quot;
+            </Text>
+          </VStack>
+          <VStack space={1}>
+            {catchDetails.fishes !== undefined &&
+              catchDetails.fishes.map((item) => (
+                <FishInformationCard
+                  key={item.name}
+                  image={item.image}
+                  name={item.name}
+                  amount={item.quantity}
+                  totalWeight={item.weight}
+                />
+              ))}
+          </VStack>
+        </Box>
+      </ScrollView>
+      {/* Verify buttons */}
+      <HStack justifyContent="space-around" opacity="100" mb={3}>
+        {success === true ? (
+          <Button
+            disabled
+            w="100%"
+            size="lg"
+            colorScheme="tertiary"
+            endIcon={<Icon as={Ionicons} name="checkmark-sharp" size="sm" />}
+          >
+            Đã duyệt
+          </Button>
+        ) : (
+          <>
+            <Button
+              w="40%"
+              borderRadius="0"
+              colorScheme="danger"
+              size="lg"
+              isLoading={buttonLoading}
+              onPress={() => {
+                verifyHandler(false);
+              }}
+            >
+              Từ chối
+            </Button>
+            <Button
+              w="40%"
+              borderRadius="0"
+              colorScheme="teal"
+              size="lg"
+              isLoading={buttonLoading}
+              onPress={() => {
+                verifyHandler(true);
+              }}
+            >
+              Xác nhận
+            </Button>
+          </>
+        )}
+      </HStack>
+    </>
+  );
 };
-VerifyCatchReportDetailScreen.propTypes = {
-  catchDetails: PropTypes.objectOf(PropTypes.string, PropTypes.string),
-};
-export default VerifyCatchReportDetailScreen;
+
+export default AnglerCatchReportDetailScreen;

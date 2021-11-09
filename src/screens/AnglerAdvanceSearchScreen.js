@@ -51,7 +51,11 @@ const OFFSET_BOTTOM = 85;
 const CUSTOM_SCREEN_HEIGHT = Dimensions.get("window").height - OFFSET_BOTTOM;
 
 const AnglerAdvanceSearchScreen = () => {
-  const methods = useForm({ mode: "onChange", reValidateMode: "onChange" });
+  const methods = useForm({
+    mode: "onChange",
+    defaultValues: { fishingMethods: [], fishTypes: [] },
+    reValidateMode: "onChange",
+  });
   const { handleSubmit } = methods;
   const onSubmit = (data) => {
     console.log(data);

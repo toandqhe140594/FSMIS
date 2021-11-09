@@ -71,7 +71,7 @@ EmployeeDetailBox.propTypes = {
   gender: PropTypes.bool,
   image: PropTypes.string,
   isDetailed: PropTypes.bool,
-  status: PropTypes.oneOf(["active", "inactive"]),
+  status: PropTypes.oneOf(["active", "inactive", ""]),
 };
 EmployeeDetailBox.defaultProps = {
   dob: "",

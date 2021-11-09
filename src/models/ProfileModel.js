@@ -4,38 +4,26 @@ import { API_URL } from "../constants";
 import http from "../utilities/Http";
 
 const model = {
+  // Shape of useInfo from api return
   userInfo: {
-    id: "1",
-    name: "dat",
-    gender: "male",
-    address: "ha dong-ha noi",
-    city: "Ha Noi",
-    district: "Ha Dong",
-    wards: "none",
+    id: 1,
+    fullName: "Người dùng",
+    avatarUrl: "",
+    catchesCount: 0,
   },
   savedLocationList: [],
+  notificationList: [],
   catchReportHistory: [],
   checkinHistoryList: [],
-  catchReportDetail: {
-    userId: "1",
-    message: "Ngồi cả sáng",
-    location: "Ho thuan viet",
-    listImages: [
-      "https://i.pinimg.com/originals/c4/6f/e1/c46fe1237fa5a04a2a2d6f127f191412.jpg",
-      "https://everythingisviral.com/wp-content/uploads/2020/10/polite-cat.png",
-    ],
-    listCatch: [
-      { id: "1", fishType: "Chep", quantity: "4", totalWeight: "8" },
-      { id: "2", fishType: "Ro", quantity: "15", totalWeight: "1" },
-      { id: "3", fishType: "Lang", quantity: "1", totalWeight: "8" },
-    ],
-  },
+  catchReportDetail: {},
   catchHistoryCurrentPage: 1,
   catchHistoryTotalPage: 1,
   checkinHistoryCurrentPage: 1,
   checkinHistoryTotalPage: 1,
   savedLocationCurrentPage: 1,
   savedLocationTotalPage: 1,
+  notificationCurrentPage: 1,
+  notificationTotalPage: 1,
 
   setUserInfo: action((state, payload) => {
     state.userInfo = payload;
@@ -49,6 +37,9 @@ const model = {
   setCatchReportHistory: action((state, payload) => {
     state.catchReportHistory = state.catchReportHistory.concat(payload);
   }),
+  rewriteCatchReportHistory: action((state, payload) => {
+    state.catchReportHistory = payload;
+  }),
   setCatchHistoryCurrentPage: action((state, payload) => {
     state.catchHistoryCurrentPage = payload;
   }),
@@ -57,7 +48,6 @@ const model = {
   }),
   getCatchReportHistory: thunk(async (actions, payload, { getState }) => {
     const { catchHistoryCurrentPage, catchHistoryTotalPage } = getState();
-
     // If current page is smaller than 0 or larger than maximum page then return
     if (
       catchHistoryCurrentPage <= 0 ||
@@ -73,11 +63,22 @@ const model = {
     actions.setCatchHistoryTotalPage(totalPage);
     actions.setCatchReportHistory(items);
   }),
+  /**
+   * Remove catch report history data
+   */
+  resetCatchReportHistory: thunk(async (actions) => {
+    actions.setCatchHistoryCurrentPage(1);
+    actions.setCatchHistoryTotalPage(1);
+    actions.rewriteCatchReportHistory([]);
+  }),
   // End of catch report history
 
   // Start of checkin history
   setCheckinHistoryList: action((state, payload) => {
     state.checkinHistoryList = state.checkinHistoryList.concat(payload);
+  }),
+  rewriteCheckinHistory: action((state, payload) => {
+    state.checkinHistoryList = payload;
   }),
   setCheckinHistoryCurrentPage: action((state, payload) => {
     state.checkinHistoryCurrentPage = payload;
@@ -103,19 +104,42 @@ const model = {
     actions.setCheckinHistoryTotalPage(totalPage);
     actions.setCheckinHistoryList(items);
   }),
+  /**
+   * Remove catch report history data
+   */
+  resetCheckinHistory: thunk(async (actions) => {
+    actions.setCheckinHistoryCurrentPage(1);
+    actions.setCheckinHistoryTotalPage(1);
+    actions.rewriteCheckinHistory([]);
+  }),
   // End of checkin history
 
   setCatchReportDetail: action((state, payload) => {
     state.catchReportDetail = payload;
   }),
-  getCatchReportDetailById: thunk(async (actions, payload) => {
-    const { data } = await http.get(
-      `${API_URL.PERSONAL_CATCH_REPORT}/${payload.id}`,
-    );
 
-    actions.setCatchReportDetail(data);
+  /**
+   * Get catch report detail information by id
+   * @param {Object} [payload] the payload pass to function
+   * @param {String} [payload.id] id of the catch report
+   * @param {Function} [payload.setIsLoading] function indicate stop loading for data
+   */
+  getCatchReportDetailById: thunk(async (actions, payload) => {
+    try {
+      const { data, status } = await http.get(
+        `${API_URL.PERSONAL_CATCH_REPORT_DETAIL}/${payload.id}`,
+      );
+      if (status === 200) {
+        actions.setCatchReportDetail(data);
+        payload.setIsLoading(false);
+      }
+    } catch (error) {
+      actions.setCatchReportDetail({});
+      payload.setIsLoading(false);
+    }
   }),
 
+  // Start of saved location list
   setSavedLocationCurrentPage: action((state, payload) => {
     state.savedLocationCurrentPage = payload;
   }),
@@ -123,12 +147,15 @@ const model = {
     state.savedLocationTotalPage = payload;
   }),
   setSavedLocationList: action((state, payload) => {
-    state.savedLocationList = state.savedLocationList.concat(payload);
+    // If mode is overwrite then overwrite the list, else append the list with new data
+    if (payload.mode === "Overwrite") state.savedLocationList = payload.data;
+    else state.savedLocationList = state.savedLocationList.concat(payload.data);
   }),
   getSavedLocationList: thunk(async (actions, payload, { getState }) => {
-    const { savedLocationCurrentPage: pageNo, savedLocationTotalPage } =
-      getState();
-
+    const { savedLocationCurrentPage, savedLocationTotalPage } = getState();
+    let pageNo = savedLocationCurrentPage;
+    // If user pull to refresh the list, then load data only from page 1
+    if (payload && payload.mode && payload.mode === "refresh") pageNo = 1;
     // If current page is smaller than 0 or larger than maximum page then return
     if (pageNo <= 0 || pageNo > savedLocationTotalPage) return;
     const { data } = await http.get(`${API_URL.PERSONAL_SAVED_LOCATION}`, {
@@ -138,7 +165,73 @@ const model = {
     const { totalPage, items } = data;
     actions.setSavedLocationCurrentPage(pageNo + 1);
     actions.setSavedLocationTotalPage(totalPage);
-    actions.setSavedLocationList(items);
+    actions.setSavedLocationList({
+      data: items,
+      mode: pageNo === 1 ? "Overwrite" : "Append", // If page = 1 then overwrite the list
+    });
+  }),
+  // End of saved location list
+
+  setNotificationCurrentPage: action((state, payload) => {
+    state.notificationCurrentPage = payload;
+  }),
+  setNotificationTotalPage: action((state, payload) => {
+    state.notificationTotalPage = payload;
+  }),
+  setNotificationList: action((state, payload) => {
+    state.notificationList = state.notificationList.concat(payload);
+  }),
+  getNotificationList: thunk(async (actions, payload, { getState }) => {
+    const { notificationCurrentPage: pageNo, notificationTotalPage } =
+      getState();
+
+    // If current page is smaller than 0 or larger than maximum page then return
+    if (pageNo <= 0 || pageNo > notificationTotalPage) return;
+    const { data } = await http.get(`${API_URL.PERSONAL_NOTIFICATION}`, {
+      params: { pageNo },
+    });
+
+    const { totalPage, items } = data;
+    actions.setNotificationCurrentPage(pageNo + 1);
+    actions.setNotificationTotalPage(totalPage);
+    actions.setNotificationList(items);
+  }),
+
+  /**
+   * Submit new report to server
+   * @param {Object} [payload] the payload pass to function
+   * @param {Number} [payload.id] the id of the element that is reported
+   * @param {String} [payload.type] the type of the report
+   * @param {String} [payload.content] the content of the report
+   * @param {Function} [payload.setSuccess] the function to indicate success after request
+   */
+  writeNewReport: thunk(async (actions, payload) => {
+    const { id, type, content, setSuccess } = payload;
+    try {
+      const { status } = await http.post(`${API_URL.REPORT_WRITE}`, {
+        id,
+        type,
+        content,
+      });
+      if (status === 200) setSuccess(true);
+    } catch (error) {
+      setSuccess(false);
+    }
+  }),
+  /**
+   * Update new edit to personal profile information
+   * @param {Object} [payload.updateData] body of the post request
+   * @param {Function} [payload.setUpdateStatus] set edit status back to the screen
+   */
+  editPersonalInformation: thunk(async (actions, payload) => {
+    const { updateData, setUpdateStatus } = payload;
+    try {
+      await http.post(API_URL.PERSONAL_EDIT_PROFILE, updateData);
+      actions.getUserInfo();
+      setUpdateStatus("SUCCESS");
+    } catch (error) {
+      setUpdateStatus("FAILED");
+    }
   }),
 };
 export default model;

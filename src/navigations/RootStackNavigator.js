@@ -1,13 +1,14 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React from "react";
 
-import * as ROUTE_NAMES from "../config/routeNames";
+import { ROUTE_NAMES } from "../constants";
 import AnglerCatchReportDetailScreen from "../screens/AnglerCatchReportDetailScreen";
 import AnglerCatchReportScreen from "../screens/AnglerCatchReportScreen";
 import ChangePhoneNumberScreen from "../screens/AnglerChangePhoneNumberScreen";
 import EditProfileScreen from "../screens/AnglerEditProfileScreen";
 import FishingLocationOverviewScreen from "../screens/FLocationOverviewScreen";
 import LakeDetailScreen from "../screens/LakeDetailScreen";
+import MediaSelectScreen from "../screens/MediaSelectScreen";
 import ResetPasswordScreen from "../screens/ResetPasswordScreen";
 import WriteReportScreen from "../screens/WriteReportScreen";
 import WriteReviewScreen from "../screens/WriteReviewScreen";
@@ -71,6 +72,10 @@ const RootStackNavigator = () => {
       <RootStack.Screen
         name={ROUTE_NAMES.MANAGEMENT_MODE}
         component={FManageNavigator}
+      />
+      <RootStack.Screen
+        name={ROUTE_NAMES.MEDIA_SELECTOR}
+        component={MediaSelectScreen}
       />
     </RootStack.Navigator>
   );

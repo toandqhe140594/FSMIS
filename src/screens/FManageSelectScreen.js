@@ -1,77 +1,154 @@
-import { Box, Center, ScrollView, VStack } from "native-base";
-import React from "react";
+import { useNavigation } from "@react-navigation/native";
+import { useStoreActions, useStoreState } from "easy-peasy";
+import { VStack } from "native-base";
+import React, { useEffect, useState } from "react";
+import {
+  ActivityIndicator,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 
-import AddImageButton from "../components/common/AddImageButton";
-import SpotCard from "../components/FLocationCard";
+import FLocationCard from "../components/FLocationCard";
 import HeaderTab from "../components/HeaderTab";
+import FishingMethodModel from "../models/FishingMethodModel";
+import FishModel from "../models/FishModel";
+import FManageModel from "../models/FManageModel";
+import {
+  goToFManageAddNewScreen,
+  goToFManageSuggestScreen,
+} from "../navigations";
+import store from "../utilities/Store";
 
-const spotExample = [
-  {
-    id: 1,
-    address: "Hưng Yên",
-    image: "https://wallpaperaccess.com/full/317501.jpg",
-    isVerifed: true,
-    name: "Ho cau thuan viet",
-    rate: 4,
+store.addModel("FManageModel", FManageModel);
+store.addModel("FishModel", FishModel);
+store.addModel("FishingMethodModel", FishingMethodModel);
+const styles = StyleSheet.create({
+  center: {
+    alignItems: "center",
   },
-  {
-    id: 2,
-    address: "Hưng Yên",
-    image: "https://wallpaperaccess.com/full/317501.jpg",
-    isVerifed: true,
-    name: "Ho cau thuan viet",
-    rate: 4,
+  border: {
+    width: 110,
+    height: 110,
+    marginTop: 8,
+    borderRadius: 2,
+    borderWidth: 1,
+    borderStyle: "dashed",
+    alignItems: "center",
+    justifyContent: "center",
   },
-  {
-    id: 3,
-    address: "Hưng Yên",
-    image: "https://wallpaperaccess.com/full/317501.jpg",
-    isVerifed: true,
-    name: "Ho cau thuan viet",
-    rate: 4,
+  loadingContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+    flex: 1,
   },
-  {
-    id: 4,
-    address: "Hưng Yên",
-    image: "https://wallpaperaccess.com/full/317501.jpg",
-    isVerifed: true,
-    name: "Ho cau thuan viet",
-    rate: 4,
-  },
-  {
-    id: 5,
-    address: "Hưng Yên",
-    image: "https://wallpaperaccess.com/full/317501.jpg",
-    isVerifed: true,
-    name: "Ho cau thuan viet",
-    rate: 4,
-  },
-];
+});
 
-const FlocationSelectorScreen = () => {
+const FManageSelectScreen = () => {
+  const navigation = useNavigation();
+
+  const listOfFishingLocations = useStoreState(
+    (states) => states.FManageModel.listOfFishingLocations,
+  );
+  const getListOfFishingLocations = useStoreActions(
+    (actions) => actions.FManageModel.getListOfFishingLocations,
+  );
+
+  const [success, setSuccess] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setLoading(true);
+    const timeout = setTimeout(() => {
+      setLoading(false);
+    }, 10000);
+    getListOfFishingLocations(setSuccess);
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (success !== null) {
+      setSuccess(null);
+      setLoading(false);
+    }
+  }, [success]);
+
   // Center the add button if the list is emtpy
   const getEmptyListStyling = () =>
-    spotExample.length === 0 ? { flex: 1, justifyContent: "center" } : {};
+    listOfFishingLocations.length === 0
+      ? { flex: 1, justifyContent: "center" }
+      : {};
+
+  const isStaffStyle = () => {
+    if (
+      listOfFishingLocations.length > 0 &&
+      listOfFishingLocations[0].role === "STAFF"
+    )
+      return { display: "none" };
+    return {};
+  };
+
+  if (loading)
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="blue" />
+      </View>
+    );
 
   return (
     <>
-      <HeaderTab name="Chọn điểm câu làm việc" />
-      <ScrollView _contentContainerStyle={getEmptyListStyling()}>
-        <Center style={getEmptyListStyling()}>
-          <Box style={{ marginTop: 1 }}>
-            <AddImageButton />
-          </Box>
-          {spotExample.length > 0 && (
+      <HeaderTab
+        name="Chọn điểm câu làm việc"
+        customIcon={{
+          name: "info-outline",
+          color: "blue",
+          type: "material",
+          onPress: () => {
+            goToFManageSuggestScreen(navigation);
+          },
+        }}
+      />
+      <ScrollView contentContainerStyle={getEmptyListStyling()}>
+        <View style={[styles.center, getEmptyListStyling()]}>
+          <Pressable
+            onPress={() => {
+              goToFManageAddNewScreen(navigation);
+            }}
+          >
+            <View style={[styles.border, isStaffStyle()]}>
+              <Text style={{ fontSize: 12 }}>Thêm điểm câu</Text>
+            </View>
+          </Pressable>
+
+          {listOfFishingLocations.length > 0 && (
             <VStack w="90%" space={2} my={2}>
-              {spotExample.map((spot) => (
-                <SpotCard {...spot} isManaged key={spot.id} />
-              ))}
+              {listOfFishingLocations.map((location) => {
+                const { id, name, image, verify, score, address, role } =
+                  location;
+                return (
+                  <FLocationCard
+                    id={id}
+                    name={name}
+                    image={image}
+                    isVerifed={verify}
+                    rate={score}
+                    address={address}
+                    role={role}
+                    isManaged
+                    key={id}
+                  />
+                );
+              })}
             </VStack>
           )}
-        </Center>
+        </View>
       </ScrollView>
     </>
   );
 };
 
-export default FlocationSelectorScreen;
+export default FManageSelectScreen;

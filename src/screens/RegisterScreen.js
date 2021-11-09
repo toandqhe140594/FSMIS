@@ -1,5 +1,6 @@
 import { MaterialIcons } from "@expo/vector-icons";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useNavigation } from "@react-navigation/native";
 import {
   Box,
   Button,
@@ -20,7 +21,8 @@ import {
 } from "react-native";
 import * as yup from "yup";
 
-import { phoneRegExp } from "../config/constants";
+import { phoneRegExp } from "../constants";
+import { goToLoginScreen, goToRegisterInformationScreen } from "../navigations";
 
 const validationSchema = yup.object().shape({
   phoneNumber: yup
@@ -38,6 +40,7 @@ const validationSchema = yup.object().shape({
 });
 
 const RegisterScreen = () => {
+  const navigation = useNavigation();
   const {
     control,
     handleSubmit,
@@ -53,6 +56,7 @@ const RegisterScreen = () => {
   // Event fire when submit form
   const onSubmit = (data) => {
     console.log(data); // Test only
+    goToRegisterInformationScreen(navigation);
   };
 
   return (
@@ -61,7 +65,7 @@ const RegisterScreen = () => {
         <Center
           flex={1}
           justifyContent="center"
-          minHeight={Math.round(useWindowDimensions().height)}
+          minHeight={Math.round(useWindowDimensions().height - 50)}
         >
           <VStack
             flex={1}
@@ -215,7 +219,15 @@ const RegisterScreen = () => {
           </VStack>
 
           <Text mb={6}>
-            Bạn chưa có tài khoản? <Text underline>Đăng nhập</Text>
+            Bạn chưa có tài khoản?{" "}
+            <Text
+              underline
+              onPress={() => {
+                goToLoginScreen(navigation);
+              }}
+            >
+              Đăng nhập
+            </Text>
           </Text>
         </Center>
       </ScrollView>

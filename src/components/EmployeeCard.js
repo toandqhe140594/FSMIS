@@ -1,9 +1,13 @@
+import { useNavigation } from "@react-navigation/native";
 import { Box, Button } from "native-base";
 import PropTypes from "prop-types";
 import React from "react";
 import { Avatar, Text } from "react-native-elements";
 
-const EmployeeCard = ({ employee, deleteEmployee }) => {
+import { goToFManageStaffDetailScreen } from "../navigations";
+
+const EmployeeCard = ({ employee }) => {
+  const navigation = useNavigation();
   return (
     <Box flexDirection="row" alignItems="center" justifyContent="space-between">
       <Box flex={1} flexDirection="row">
@@ -25,10 +29,10 @@ const EmployeeCard = ({ employee, deleteEmployee }) => {
       <Box w="35%" mr={4}>
         <Button
           onPress={() => {
-            deleteEmployee(employee.id);
+            goToFManageStaffDetailScreen(navigation, { id: employee.id });
           }}
         >
-          Xóa nhân viên
+          Chi tiết
         </Button>
       </Box>
     </Box>
@@ -36,12 +40,11 @@ const EmployeeCard = ({ employee, deleteEmployee }) => {
 };
 EmployeeCard.propTypes = {
   employee: PropTypes.shape({
-    id: PropTypes.string,
+    id: PropTypes.number,
     name: PropTypes.string,
     phoneNumber: PropTypes.string,
     image: PropTypes.string,
   }).isRequired,
-  deleteEmployee: PropTypes.func.isRequired,
 };
 
 export default EmployeeCard;

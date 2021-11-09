@@ -1,21 +1,28 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React from "react";
 
-import * as ROUTE_NAMES from "../config/routeNames";
+import { ROUTE_NAMES } from "../constants";
+import FManageAddNewScreen from "../screens/FManageAddNewScreen";
 import FManageCatchReportHistory from "../screens/FManageCatchReportHistory";
 import FManageCheckinHistoryScreen from "../screens/FManageCheckinHistory";
 import FManageEditProfileScreen from "../screens/FManageEditProfileScreen";
 import FManageEmployeeAddScreen from "../screens/FManageEmployeeAddScreen";
 import FManageEmployeeDetailScreen from "../screens/FManageEmployeeDetailScreen";
 import FManageEmployeeManagementScreen from "../screens/FManageEmployeeManagementScreen";
+import FManageFishAddScreen from "../screens/FManageFishAddScreen";
 import FManageFishLocationPostScreen from "../screens/FManageFishLocationPostScreen";
 import FManageHomeScreen from "../screens/FManageHomeScreen";
+import FManageLakeAddNewScreen from "../screens/FManageLakeAddNewScreen";
 import FManageLakeEditProfileScreen from "../screens/FManageLakeEditProfileScreen";
 import FManageLakeManagementScreen from "../screens/FManageLakeManagementScreen";
+import FManageLakeProfileScreen from "../screens/FManageLakeProfileScreen";
+import FManageLocationViewScreen from "../screens/FManageLocationViewScreen";
 import FManagePickLocationScreen from "../screens/FManagePickLocationScreen";
+import FManagePostCreateScreen from "../screens/FManagePostCreateScreen";
 import FManagePostEditScreen from "../screens/FManagePostEditScreen";
 import FManageScanQRCodeScreen from "../screens/FManageScanQRCodeScreen";
 import FManageSelectScreen from "../screens/FManageSelectScreen";
+import FManageSuggestLocationScreen from "../screens/FManageSuggestLocationScreen";
 import FManageVerifyCatchReportDetailScreen from "../screens/FManageVerifyCatchReportDetailScreen";
 import FManageVerifyCatchReportScreen from "../screens/FManageVerifyCatchReportScreen";
 import FManageVerifyCheckinScreen from "../screens/FManageVerifyCheckinScreen";
@@ -34,8 +41,20 @@ const ManageNavigator = () => {
         component={FManageSelectScreen}
       />
       <ManageStack.Screen
+        name={ROUTE_NAMES.FMANAGE_LOCATION_SUGGEST}
+        component={FManageSuggestLocationScreen}
+      />
+      <ManageStack.Screen
         name={ROUTE_NAMES.FMANAGE_MAIN}
         component={FManageHomeScreen}
+      />
+      <ManageStack.Screen
+        name={ROUTE_NAMES.FMANAGE_LOCATION_OVERVIEW}
+        component={FManageLocationViewScreen}
+      />
+      <ManageStack.Screen
+        name={ROUTE_NAMES.FMANAGE_PROFILE_ADD_NEW}
+        component={FManageAddNewScreen}
       />
       <ManageStack.Screen
         name={ROUTE_NAMES.FMANAGE_PROFILE_EDIT}
@@ -50,8 +69,20 @@ const ManageNavigator = () => {
         component={FManageLakeManagementScreen}
       />
       <ManageStack.Screen
+        name={ROUTE_NAMES.FMANAGE_LAKE_PROFILE}
+        component={FManageLakeProfileScreen}
+      />
+      <ManageStack.Screen
+        name={ROUTE_NAMES.FMANAGE_LAKE_ADD}
+        component={FManageLakeAddNewScreen}
+      />
+      <ManageStack.Screen
         name={ROUTE_NAMES.FMANAGE_LAKE_EDIT}
         component={FManageLakeEditProfileScreen}
+      />
+      <ManageStack.Screen
+        name={ROUTE_NAMES.FMANAGE_LAKE_FISH_ADD}
+        component={FManageFishAddScreen}
       />
       <ManageStack.Screen
         name={ROUTE_NAMES.FMANAGE_STAFF_MANAGEMENT}
@@ -96,6 +127,10 @@ const ManageNavigator = () => {
       <ManageStack.Screen
         name={ROUTE_NAMES.FMANAGE_POST_EDIT}
         component={FManagePostEditScreen}
+      />
+      <ManageStack.Screen
+        name={ROUTE_NAMES.FMANAGE_POST_CREATE}
+        component={FManagePostCreateScreen}
       />
     </ManageStack.Navigator>
   );

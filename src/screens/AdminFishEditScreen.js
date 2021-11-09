@@ -1,6 +1,7 @@
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useRoute } from "@react-navigation/native";
 import { Box, Button, Center, Input, Text } from "native-base";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Avatar } from "react-native-elements";
 import * as yup from "yup";
@@ -12,9 +13,15 @@ const validationSchema = yup.object().shape({
   fishName: yup.string().required("Tên cá không thể bỏ trống"),
 });
 const AdminFishEditScreen = () => {
+  const route = useRoute();
+
+  const [isNew, setIsNew] = useState(true);
+  const [imageData, setImageData] = useState("");
+
   const {
     control,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm({
     mode: "all",
@@ -25,7 +32,15 @@ const AdminFishEditScreen = () => {
     console.log(data); // Test only
   };
 
-  const isNew = true;
+  useEffect(() => {
+    const { id } = route.params;
+    if (id) {
+      const { name, image } = route.params;
+      setIsNew(false);
+      setImageData(image);
+      setValue("fishName", name);
+    }
+  }, []);
 
   return (
     <>
@@ -35,7 +50,7 @@ const AdminFishEditScreen = () => {
           <Avatar
             size="xlarge"
             source={{
-              uri: "https://picsum.photos/200",
+              uri: imageData || "https://picsum.photos/200",
             }}
             containerStyle={{ padding: 10, margin: 5 }}
             imageProps={{

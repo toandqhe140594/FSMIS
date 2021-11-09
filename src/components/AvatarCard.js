@@ -9,10 +9,8 @@ const AvatarCard = ({
   subText,
   subTextFontSize,
   image,
-  onPress,
 }) => {
   return (
-    // <PressableCustomCard onPress={onPress}>
     <Box
       w={{
         base: "100%",
@@ -24,7 +22,7 @@ const AvatarCard = ({
         <Avatar
           size={avatarSize}
           source={{
-            uri: image,
+            uri: image !== "" ? image : undefined,
           }}
         />
         <VStack ml={1}>
@@ -52,7 +50,6 @@ const AvatarCard = ({
         </VStack>
       </HStack>
     </Box>
-    // </PressableCustomCard>
   );
 };
 AvatarCard.propTypes = {
@@ -62,7 +59,6 @@ AvatarCard.propTypes = {
   subText: PropTypes.string,
   subTextFontSize: PropTypes.string,
   image: PropTypes.string,
-  onPress: PropTypes.func,
 };
 AvatarCard.defaultProps = {
   avatarSize: "md",
@@ -70,8 +66,6 @@ AvatarCard.defaultProps = {
   nameFontSize: "md",
   subText: null,
   subTextFontSize: "sm",
-  image:
-    "https://pbs.twimg.com/profile_images/1369921787568422915/hoyvrUpc_400x400.jpg",
-  onPress: () => {},
+  image: "https://picsum.photos/seed/picsum/200/300",
 };
 export default AvatarCard;

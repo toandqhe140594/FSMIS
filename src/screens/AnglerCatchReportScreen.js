@@ -1,6 +1,10 @@
-import "react-native-get-random-values";
-
 import { yupResolver } from "@hookform/resolvers/yup";
+import {
+  useFocusEffect,
+  useNavigation,
+  useRoute,
+} from "@react-navigation/native";
+import { useStoreActions, useStoreState } from "easy-peasy";
 import {
   Box,
   Button,
@@ -11,23 +15,17 @@ import {
   Text,
   VStack,
 } from "native-base";
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import { ScrollView, StyleSheet } from "react-native";
-import { v4 as uuidv4 } from "uuid";
-import * as yup from "yup";
 
-import CatchReportCard from "../components/CatchReport/CatchReportCard";
+import CatchReportSection from "../components/CatchReport/CatchReportSection";
 import MultiImageSection from "../components/common/MultiImageSection";
 import SelectComponent from "../components/common/SelectComponent";
 import TextAreaComponent from "../components/common/TextAreaComponent";
 import HeaderTab from "../components/HeaderTab";
-
-const validationSchema = yup.object().shape({
-  aCaption: yup.string().required("Hãy viết suy nghĩ của bạn về ngày câu"),
-  aLakeType: yup.number().required("Loại hồ không được để trống"),
-  isPublic: yup.bool(),
-});
+import { ROUTE_NAMES, SCHEMA } from "../constants";
+import { showAlertAbsoluteBox, showAlertBox } from "../utilities";
 
 const styles = StyleSheet.create({
   sectionWrapper: {
@@ -39,41 +37,103 @@ const styles = StyleSheet.create({
 });
 
 const AnglerCatchReportScreen = () => {
-  const initCatchCard = {
-    id: uuidv4(),
-    fishType: "",
-    catches: "",
-    totalWeight: "",
-    isReleased: false,
-  };
-  const [cardList, setCardList] = useState([initCatchCard]);
+  const route = useRoute();
+  const navigation = useNavigation();
+  const [imageArray, setImageArray] = useState([]);
+  const [listFish, setListFish] = useState([]);
+  const [success, setSuccess] = useState(null);
+  const submitCatchReport = useStoreActions(
+    (actions) => actions.CheckInModel.submitCatchReport,
+  );
+  const getLakeList = useStoreActions(
+    (actions) => actions.CheckInModel.getLakeListByLocationId,
+  );
+  const listLake = useStoreState((states) => states.CheckInModel.lakeList);
+  const listFishModel = useStoreState((states) => states.CheckInModel.fishList);
   const methods = useForm({
-    mode: "onChange",
-    reValidateMode: "onChange",
-    resolver: yupResolver(validationSchema),
+    mode: "onSubmit",
+    reValidateMode: "onSubmit",
+    defaultValues: { isPublic: false },
+    resolver: yupResolver(SCHEMA.ANGLER_CATCH_REPORT_FORM),
   });
-  const { control, handleSubmit } = methods;
+
+  const { control, handleSubmit, watch } = methods;
+  const watchALakeTypeField = watch("aLakeType");
+  const personalCheckout = useStoreActions(
+    (actions) => actions.CheckInModel.personalCheckout,
+  );
   const onSubmit = (data) => {
-    console.log(data);
-    console.log(cardList);
+    const { aCaption, aLakeType, isPublic, cards } = data;
+
+    if (imageArray !== undefined && imageArray.length > 0) {
+      const reduced = cards.reduce((filtered, card) => {
+        const { fishInLakeId } = listFish.find(
+          ({ id }) => id === card.fishType,
+        );
+        filtered.push({
+          quantity: card.catches,
+          fishSpeciesId: card.fishType,
+          returnToOwner: card.isReleased,
+          weight: card.totalWeight,
+          fishInLakeId,
+        });
+        return filtered;
+      }, []);
+
+      const imagesStringArray = imageArray.map((item) => item.base64);
+      submitCatchReport({
+        catchesDetailList: reduced,
+        description: aCaption,
+        hidden: !isPublic,
+        images: imagesStringArray,
+        lakeId: aLakeType,
+        setSuccess,
+      });
+      return;
+    }
+    showAlertBox("Thiếu thông tin", "Vui lòng thêm ảnh buổi câu");
   };
-  const addCard = () => {
-    const newCard = initCatchCard;
-    setCardList((prev) => [...prev, newCard]);
+  const updateImageArray = (id) => {
+    setImageArray(imageArray.filter((image) => image.id !== id));
   };
-  const deleteCard = (id) => {
-    const newCardList = cardList.filter((card) => card.id !== id);
-    setCardList(newCardList);
-  };
-  const updateCard = (id, name, value) => {
-    const newCardList = cardList.map((card) => {
-      if (card.id === id) {
-        return { ...card, [name]: value };
+
+  // Fire when navigates back to this screen
+  useFocusEffect(
+    // useCallback will listen to route.param
+    useCallback(() => {
+      if (route.params?.base64Array && route.params.base64Array[0]) {
+        setImageArray(route.params.base64Array);
+        navigation.setParams({ base64Array: [] });
       }
-      return card;
-    });
-    setCardList(newCardList);
-  };
+    }, [route.params]),
+  );
+
+  useEffect(() => {
+    getLakeList();
+  }, []);
+
+  useEffect(() => {
+    const filter = listFishModel.filter(
+      (item) => item.id === watchALakeTypeField,
+    );
+    if (filter[0] !== undefined) {
+      setListFish(filter[0].fishList);
+    }
+  }, [watchALakeTypeField]);
+
+  useEffect(() => {
+    if (success === true)
+      showAlertAbsoluteBox(
+        "Gửi thành công",
+        "Thông tin buổi câu được gửi thành công",
+        async () => {
+          await personalCheckout();
+          navigation.pop(1);
+        },
+      );
+    setSuccess(null);
+  }, [success]);
+
   return (
     <>
       <HeaderTab name="Báo cá" />
@@ -83,7 +143,12 @@ const AnglerCatchReportScreen = () => {
             <Center>
               <Stack space={2} style={styles.sectionWrapper}>
                 {/* Impage picker section */}
-                <MultiImageSection imageLimit={3} />
+                <MultiImageSection
+                  formRoute={ROUTE_NAMES.CATCHES_REPORT_FORM}
+                  deleteImage={updateImageArray}
+                  imageArray={imageArray}
+                  selectLimit={3}
+                />
                 {/* Textarea input field */}
                 <TextAreaComponent
                   placeholder="Mô tả ngày câu của bạn"
@@ -99,10 +164,7 @@ const AnglerCatchReportScreen = () => {
                 isTitle
                 label="Vị trí hồ câu"
                 placeholder="Chọn hồ câu"
-                data={[
-                  { label: "Hồ thường", val: 1 },
-                  { label: "Hồ VIP", val: 2 },
-                ]}
+                data={listLake}
                 controllerName="aLakeType"
               />
             </Center>
@@ -112,25 +174,7 @@ const AnglerCatchReportScreen = () => {
                 <Text bold fontSize="md">
                   Thông tin cá
                 </Text>
-                {/* Catch Report card list */}
-                <VStack mb={1}>
-                  {cardList.map((card) => (
-                    <CatchReportCard
-                      key={card.id}
-                      id={card.id}
-                      deleteCard={deleteCard}
-                      updateCard={updateCard}
-                    />
-                  ))}
-                </VStack>
-                {/* Add catch report card button */}
-                <Button
-                  style={styles.button}
-                  alignSelf="center"
-                  onPress={addCard}
-                >
-                  Thêm loại cá
-                </Button>
+                <CatchReportSection fishList={listFish} />
               </Stack>
             </Center>
 

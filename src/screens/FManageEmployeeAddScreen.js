@@ -1,16 +1,71 @@
+import { useNavigation } from "@react-navigation/native";
+import { useStoreActions, useStoreState } from "easy-peasy";
 import { Button, Center } from "native-base";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { ToastAndroid } from "react-native";
 import { SearchBar } from "react-native-elements";
 
 import EmployeeDetailBox from "../components/EmployeeDetailBox";
 import HeaderTab from "../components/HeaderTab";
+import { goBack } from "../navigations";
+
+const showToastMessage = (message) => {
+  ToastAndroid.showWithGravityAndOffset(
+    message,
+    ToastAndroid.LONG,
+    ToastAndroid.BOTTOM,
+    25,
+    50,
+  );
+};
 
 const FManageEmployeeAddScreen = () => {
+  const navigation = useNavigation();
+
+  const { staffOverview, staffManagementErrorMsg } = useStoreState(
+    (states) => states.FManageModel,
+  );
+  const {
+    addStaffById,
+    setStaffManagementErrorMsg,
+    setStaffOverview,
+    findStaffByPhone,
+  } = useStoreActions((actions) => actions.FManageModel);
+
   const [search, setSearch] = useState("");
+  const [success, setSuccess] = useState(false);
 
   const updateSearch = (searchKey) => {
     setSearch(searchKey);
   };
+
+  const onEndEditing = () => {
+    if (search.trim()) findStaffByPhone({ phone: search });
+    else showToastMessage("Số điện thoại không thể để trống");
+  };
+
+  const addStaff = () => {
+    addStaffById({ userId: staffOverview.id, setSuccess });
+  };
+
+  useEffect(() => {
+    // If error occur
+    if (staffManagementErrorMsg) showToastMessage(staffManagementErrorMsg);
+  }, [staffManagementErrorMsg]);
+
+  useEffect(() => {
+    if (success) {
+      showToastMessage("Thêm nhân viên thành công");
+      goBack(navigation);
+    }
+  }, [success]);
+
+  useEffect(() => {
+    return () => {
+      setStaffOverview({});
+      setStaffManagementErrorMsg("");
+    };
+  }, []);
 
   return (
     <>
@@ -30,22 +85,31 @@ const FManageEmployeeAddScreen = () => {
             lightTheme
             blurOnSubmit
             keyboardType="phone-pad"
-            onEndEditing={() => {
-              console.log("end edit");
-            }}
+            onEndEditing={onEndEditing}
           />
         </Center>
-        <EmployeeDetailBox
-          name="Đào Quốc Toản"
-          dob="15/10/2021"
-          phoneNumber="098764434"
-          gender
-          address="Số 1 hồ Hoàng Kiếm Việt Nam Hà Nội Châu Á"
-        />
-
-        <Center w="70%" bg="lightBlue.100" mb={5}>
-          <Button w="100%">Thêm nhân viên</Button>
-        </Center>
+        {staffOverview.id ? (
+          <>
+            <EmployeeDetailBox
+              id={staffOverview.id}
+              name={staffOverview.name}
+              phoneNumber={staffOverview.phone}
+              image={staffOverview.avatar}
+            />
+            <Center w="70%" bg="lightBlue.100" mb={5}>
+              <Button
+                w="100%"
+                onPress={() => {
+                  addStaff();
+                }}
+              >
+                Thêm nhân viên
+              </Button>
+            </Center>
+          </>
+        ) : (
+          <Center flex={1} />
+        )}
       </Center>
     </>
   );

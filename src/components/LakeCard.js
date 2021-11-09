@@ -3,13 +3,16 @@ import { Box, Image, Pressable, Text } from "native-base";
 import PropTypes from "prop-types";
 import React from "react";
 
-import { goToLakeDetailScreen, goToLakeEditScreen } from "../navigations";
+import {
+  goToFManageLakeProfileScreen,
+  goToLakeDetailScreen,
+} from "../navigations";
 
 const LakeCard = ({ id, image, listOfFishes, name, isManaged }) => {
   const navigation = useNavigation();
 
   const onPress = () => {
-    if (isManaged) goToLakeEditScreen(navigation);
+    if (isManaged) goToFManageLakeProfileScreen(navigation, { id });
     else goToLakeDetailScreen(navigation, { id });
   };
 
@@ -57,13 +60,12 @@ LakeCard.propTypes = {
   name: PropTypes.string.isRequired,
   listOfFishes: PropTypes.arrayOf(PropTypes.string),
   isManaged: PropTypes.bool,
-  id: PropTypes.number,
+  id: PropTypes.number.isRequired,
 };
 LakeCard.defaultProps = {
   image: "https://picsum.photos/200",
   listOfFishes: [],
   isManaged: false,
-  id: 1,
 };
 
 export default LakeCard;
