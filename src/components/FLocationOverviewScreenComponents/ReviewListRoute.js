@@ -171,7 +171,7 @@ const ReviewListRoute = () => {
             showRating={false}
             startingValue={locationReviewScore.score || 0}
           />
-          <Text>({locationReviewScore.totalReviews || 0} đánh gía)</Text>
+          <Text>({locationReviewScore.totalReviews || 0} đánh giá)</Text>
         </Center>
 
         <Divider />
