@@ -65,10 +65,10 @@ const FManageEditProfileScreen = () => {
   }, []);
   const { handleSubmit, getValues, setValue } = methods;
   const onSubmit = (data) => {
+    setIsLoading(true);
     const images = imageArray.map((image) => image.base64);
     const updateData = { ...data, ...locationLatLng, images };
     editFishingLocation({ updateData, setUpdateStatus });
-    setIsLoading(true);
   };
   const updateImageArray = (id) => {
     setImageArray(imageArray.filter((image) => image.id !== id));
