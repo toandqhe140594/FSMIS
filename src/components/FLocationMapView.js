@@ -20,6 +20,8 @@ export default function FLocationMapView({ coordinates, locationList }) {
         mapType="standard"
         style={styles.map}
         showsUserLocation
+        showsMyLocationButton
+        showsCompass
       >
         {locationList &&
           locationList.map((location) => (
