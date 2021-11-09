@@ -2,11 +2,12 @@ import { useNavigation } from "@react-navigation/native";
 import { useStoreActions } from "easy-peasy";
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
-import { Alert, ToastAndroid, View } from "react-native";
+import { View } from "react-native";
 import { Icon, ListItem } from "react-native-elements";
 
 import styles from "../config/styles";
 import { goToFManageSelectScreen } from "../navigations";
+import { showAlertConfirmBox, showToastMessage } from "../utilities";
 
 const CloseFLocationComponent = ({ name }) => {
   const navigation = useNavigation();
@@ -18,33 +19,18 @@ const CloseFLocationComponent = ({ name }) => {
   const [deleteSuccess, setDeleteSuccess] = useState(false);
 
   const closeAction = () => {
-    Alert.alert(
-      "Bạn muốn đóng cửa khu hồ này?",
-      `"${name}" sẽ bị đóng. Bạn không thể hoàn tác hành động này\nBạn cần xóa hết nhân viên khỏi hồ để đóng`,
-      [
-        {
-          text: "Quay lại",
-          style: "cancel",
-        },
-        {
-          text: "Xác nhận",
-          onPress: () => {
-            closeFishingLocation({ setDeleteSuccess });
-          },
-        },
-      ],
+    showAlertConfirmBox(
+      "Bạn muốn xóa khu hồ này?",
+      `"${name}" sẽ bị xóa. Bạn không thể hoàn tác hành động này\nBạn cần xóa hết nhân viên khỏi hồ để đóng`,
+      () => {
+        closeFishingLocation({ setDeleteSuccess });
+      },
     );
   };
 
   useEffect(() => {
     if (deleteSuccess) {
-      ToastAndroid.showWithGravityAndOffset(
-        "Đóng cửa khu hồ thành công",
-        ToastAndroid.LONG,
-        ToastAndroid.BOTTOM,
-        25,
-        50,
-      );
+      showToastMessage("Đóng cửa khu hồ thành công");
       goToFManageSelectScreen(navigation);
     }
   }, [deleteSuccess]);
@@ -56,9 +42,9 @@ const CloseFLocationComponent = ({ name }) => {
           closeAction();
         }}
       >
-        <Icon name="cancel" size={26} type="material" />
+        <Icon name="delete" size={26} type="antdesign" color="red" />
         <ListItem.Content style={{ height: 40 }}>
-          <ListItem.Title>Đóng cửa khu hồ</ListItem.Title>
+          <ListItem.Title style={{ color: "red" }}>Xóa khu hồ</ListItem.Title>
         </ListItem.Content>
         <ListItem.Chevron />
       </ListItem>
