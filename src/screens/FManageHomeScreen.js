@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import { ActivityIndicator } from "react-native";
 
 import CloseFLocationComponent from "../components/CloseFLocationComponent";
+import CloseFLocationTemporaryComponent from "../components/CloseFLocationTemporaryComponent";
 import HeaderTab from "../components/HeaderTab";
 import MenuScreen from "../components/MenuScreen";
 import {
@@ -72,6 +73,9 @@ const FManageHomeScreen = () => {
               {MENU_OWNER.map((item) => (
                 <MenuScreen menuListItem={item.category} key={item.id} />
               ))}
+              <CloseFLocationTemporaryComponent
+                name={locationDetails.name || "Hồ câu"}
+              />
               <CloseFLocationComponent
                 name={locationDetails.name || "Hồ câu"}
               />

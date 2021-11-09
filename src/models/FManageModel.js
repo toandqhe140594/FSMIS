@@ -515,6 +515,28 @@ const model = {
       setDeleteSuccess(false);
     }
   }),
+  /**
+   * Close the fishing location temporary
+   * @param {Object} [payload] the payload pass to function
+   * @param {Function} [payload.setDeleteSuccess] the function to set delete success indicator
+   */
+  closeFishingLocationTemporary: thunk(
+    async (actions, payload, { getState }) => {
+      const { currentId } = getState();
+      const { setDeleteSuccess } = payload;
+      try {
+        const { status } = await http.delete(
+          `${API_URL.LOCATION_CLOSE_TEMPORARY}/${currentId}`,
+        );
+        if (status === 200) {
+          actions.getListOfFishingLocations();
+          setDeleteSuccess(true);
+        }
+      } catch (error) {
+        setDeleteSuccess(false);
+      }
+    },
+  ),
 
   // DucHM ADD_START 4/11/2021
   /**
