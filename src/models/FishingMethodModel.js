@@ -14,13 +14,14 @@ const model = {
   }),
   /**
    * Get all fishing methods from API
-   * @param {Function} [payload.setIsLoading] set status after api called
    */
   getFishingMethodList: thunk(async (actions, payload) => {
-    const { setIsLoading } = payload;
-    const { data } = await http.get(`${API_URL.ADMIN_FISHING_METHOD_LIST}`);
-    actions.setFishingMethodList(data);
-    setIsLoading(false);
+    try {
+      const { data } = await http.get(`${API_URL.ADMIN_FISHING_METHOD_LIST}`);
+      actions.setFishingMethodList(data);
+    } catch (error) {
+      // handler
+    }
   }),
 };
 export default model;

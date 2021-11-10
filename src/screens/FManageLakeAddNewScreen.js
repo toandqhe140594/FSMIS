@@ -17,7 +17,8 @@ import {
 } from "native-base";
 import React, { useCallback, useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { StyleSheet } from "react-native";
+import { ActivityIndicator, StyleSheet } from "react-native";
+import { Overlay } from "react-native-elements";
 
 import InputComponent from "../components/common/InputComponent";
 import MultiImageSection from "../components/common/MultiImageSection";
@@ -36,12 +37,22 @@ const styles = StyleSheet.create({
   button: {
     width: "90%",
   },
+  error: { color: "#f43f5e", fontSize: 12, fontStyle: "italic" },
+  loadOnStart: { justifyContent: "center", alignItems: "center" },
+  loadOnSubmit: {
+    backgroundColor: "transparent",
+    justifyContent: "center",
+    alignItems: "center",
+  },
 });
+
 const LakeAddNewScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
   const [imageArray, setImageArray] = useState([]);
   const [addStatus, setAddStatus] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [fullScreenMode, setFullScreenMode] = useState(true);
   const { fishingMethodList } = useStoreState(
     (state) => state.FishingMethodModel,
   );
@@ -58,12 +69,21 @@ const LakeAddNewScreen = () => {
     defaultValues: { methods: [] },
     resolver: yupResolver(SCHEMA.FMANAGE_LAKE_FORM),
   });
-  const { handleSubmit } = methods;
+  const {
+    handleSubmit,
+    formState: { errors },
+  } = methods;
   const onSubmit = (data) => {
+    setIsLoading(true);
+    // Remove in each object in fishInLake array any field has value 0
+    const cleanFishArray = data.fishInLakeList.map((fishCard) =>
+      Object.fromEntries(
+        Object.entries(fishCard).filter((keyValPair) => keyValPair[1] !== 0),
+      ),
+    );
     // Should check for empty images
     const imageUrl = imageArray[0].base64;
-    const addData = { ...data, imageUrl };
-    // console.log(`Sent with ${addData}`);
+    const addData = { ...data, imageUrl, fishInLakeList: cleanFishArray };
     addNewLakeInLocation({ addData, setAddStatus });
   };
 
@@ -80,12 +100,21 @@ const LakeAddNewScreen = () => {
    * to get fishing method list and fish list
    */
   useEffect(() => {
-    getFishingMethodList({ setIsLoading: () => {} });
-    getFishList();
+    (async () => {
+      getFishingMethodList();
+      await getFishList();
+      setIsLoading(false);
+      setFullScreenMode(false);
+    })();
   }, []);
 
+  /**
+   * Listen to addStatus state value return from api call
+   */
   useEffect(() => {
     if (addStatus === "SUCCESS") {
+      setIsLoading(false);
+      setAddStatus(null);
       showAlertAbsoluteBox(
         "Thông báo",
         "Hồ bé thêm thành công!",
@@ -95,6 +124,8 @@ const LakeAddNewScreen = () => {
         "Xác nhận",
       );
     } else if (addStatus === "FAILED") {
+      setIsLoading(false);
+      setAddStatus(null);
       showAlertBox("Thông báo", "Đã có lỗi xảy ra, vui lòng thử lại");
     }
   }, [addStatus]);
@@ -112,10 +143,18 @@ const LakeAddNewScreen = () => {
     <>
       <HeaderTab name="Thêm hồ bé" />
       <ScrollView>
+        <Overlay
+          isVisible={isLoading}
+          fullScreen
+          overlayStyle={
+            fullScreenMode ? styles.loadOnStart : styles.loadOnSubmit
+          }
+        >
+          <ActivityIndicator size={60} color="#2089DC" />
+        </Overlay>
         <FormProvider {...methods}>
           <VStack space={3} divider={<Divider />}>
             <Center mt={1}>
-              {/* Image Picker section */}
               <MultiImageSection
                 containerStyle={styles.sectionWrapper}
                 formRoute={ROUTE_NAMES.FMANAGE_LAKE_ADD}
@@ -187,6 +226,11 @@ const LakeAddNewScreen = () => {
                 <Text fontSize="md" bold>
                   Các loại cá
                 </Text>
+                {errors.fishInLakeList?.message && (
+                  <Text style={styles.error}>
+                    {errors.fishInLakeList?.message}
+                  </Text>
+                )}
                 <FishCardSection />
               </Stack>
             </Center>

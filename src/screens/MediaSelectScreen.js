@@ -93,7 +93,8 @@ const MediaSelectScreen = () => {
   // Manage selected iamge result
   const widgetResize = useMemo(
     () => ({
-      compress: 1.0,
+      width: 200,
+      compress: 0.7,
       base64: true,
       saveTo: FILE_EXTENSION,
     }),

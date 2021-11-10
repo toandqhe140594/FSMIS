@@ -40,6 +40,12 @@ const styles = StyleSheet.create({
   button: {
     width: "90%",
   },
+  loadOnStart: { alignItems: "center", justifyContent: "center" },
+  loadOnSubmit: {
+    backgroundColor: "transparent",
+    alignItems: "center",
+    justifyContent: "center",
+  },
 });
 
 const LakeEditProfileScreen = () => {
@@ -48,7 +54,6 @@ const LakeEditProfileScreen = () => {
   const [imageArray, setImageArray] = useState([]);
   const [updateStatus, setUpdateStatus] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-  const [showOverlay, setShowOverlay] = useState(true);
   const [fullScreenMode, setFullScreenMode] = useState(true);
   const { fishingMethodList } = useStoreState(
     (state) => state.FishingMethodModel,
@@ -72,7 +77,7 @@ const LakeEditProfileScreen = () => {
    * @param {Object} data data from controller
    */
   const onSubmit = (data) => {
-    setShowOverlay(true);
+    setIsLoading(true);
     const { id } = lakeDetail;
     const imageUrl = imageArray[0].base64;
     const updateData = { ...data, imageUrl };
@@ -97,33 +102,31 @@ const LakeEditProfileScreen = () => {
     setImageArray(imageArray.filter((image) => image.id !== id));
   };
 
+  const setDefaultValues = () => {
+    setValue("name", lakeDetail.name);
+    setValue("price", lakeDetail.price);
+    setValue("width", lakeDetail.width.toString());
+    setValue("length", lakeDetail.length.toString());
+    setValue("depth", lakeDetail.depth.toString());
+    setImageArray([{ id: 1, base64: lakeDetail.imageUrl }]);
+    const selectedMethods = fishingMethodList.reduce((acc, { name, id }) => {
+      if (lakeDetail.fishingMethodList.includes(name)) acc.push(id);
+      return acc;
+    }, []);
+    setValue("methods", selectedMethods);
+  };
+
   /**
    * Call fishing method list api
    */
   useEffect(() => {
-    getFishingMethodList({ setIsLoading });
-  }, []);
-
-  /**
-   * After loading finished, setValue for each field
-   */
-  useEffect(() => {
-    if (!isLoading) {
-      setValue("name", lakeDetail.name);
-      setValue("price", lakeDetail.price);
-      setValue("width", lakeDetail.width.toString());
-      setValue("length", lakeDetail.length.toString());
-      setValue("depth", lakeDetail.depth.toString());
-      setImageArray([{ id: 1, base64: lakeDetail.imageUrl }]);
-      const selectedMethods = fishingMethodList.reduce((acc, { name, id }) => {
-        if (lakeDetail.fishingMethodList.includes(name)) acc.push(id);
-        return acc;
-      }, []);
-      setValue("methods", selectedMethods);
-      setShowOverlay(false);
+    (async () => {
+      await getFishingMethodList();
+      setDefaultValues();
+      setIsLoading(false);
       setFullScreenMode(false);
-    }
-  }, [isLoading]);
+    })();
+  }, []);
 
   /**
    * Fire when navigates back to the screen
@@ -143,7 +146,8 @@ const LakeEditProfileScreen = () => {
    */
   useEffect(() => {
     if (updateStatus === "SUCCESS") {
-      setShowOverlay(false);
+      setIsLoading(false);
+      setUpdateStatus(null);
       showAlertAbsoluteBox(
         "Thông báo",
         "Chỉnh sửa thành công",
@@ -153,7 +157,8 @@ const LakeEditProfileScreen = () => {
         "Xác nhận",
       );
     } else if (updateStatus === "FAILED") {
-      setShowOverlay(false);
+      setIsLoading(false);
+      setUpdateStatus(null);
       showAlertBox("Thông báo", "Đã xảy ra lỗi! Vui lòng thử lại sau.");
     }
   }, [updateStatus]);
@@ -170,15 +175,13 @@ const LakeEditProfileScreen = () => {
       <HeaderTab name="Chỉnh sửa hồ bé" />
       <ScrollView>
         <Overlay
-          isVisible={showOverlay}
-          fullScreen={fullScreenMode}
+          isVisible={isLoading}
+          fullScreen
           overlayStyle={
-            fullScreenMode
-              ? { alignItems: "center", justifyContent: "center" }
-              : null
+            fullScreenMode ? styles.loadOnStart : styles.loadOnSubmit
           }
         >
-          <ActivityIndicator size="large" color="#2089DC" />
+          <ActivityIndicator size={60} color="#2089DC" />
         </Overlay>
         <FormProvider {...methods}>
           <VStack space={3} divider={<Divider />}>

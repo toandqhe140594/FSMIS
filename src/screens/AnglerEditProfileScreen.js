@@ -15,6 +15,7 @@ import {
   Alert,
   KeyboardAvoidingView,
   ScrollView,
+  StyleSheet,
   TouchableOpacity,
   useWindowDimensions,
   View,
@@ -33,6 +34,15 @@ const genderList = [
   { id: true, name: "Nam" },
   { id: false, name: "Nữ" },
 ];
+
+const styles = StyleSheet.create({
+  loadOnStart: { justifyContent: "center", alignItems: "center" },
+  loadOnSubmit: {
+    backgroundColor: "transparent",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+});
 
 const EditProfileScreen = () => {
   const [date, setDate] = useState(null);
@@ -181,11 +191,7 @@ const EditProfileScreen = () => {
         <Overlay
           isVisible={isLoading}
           fullScreen={fullScreen}
-          overlayStyle={
-            fullScreen
-              ? { justifyContent: "center", alignItems: "center" }
-              : null
-          }
+          overlayStyle={fullScreen ? styles.loadOnStart : styles.loadOnSubmit}
         >
           <ActivityIndicator size={60} color="#2089DC" />
         </Overlay>
