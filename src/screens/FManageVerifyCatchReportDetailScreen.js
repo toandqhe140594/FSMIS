@@ -178,7 +178,7 @@ const AnglerCatchReportDetailScreen = () => {
               fontSize="15"
               pl={0.5}
               textAlign="center"
-              style={{ color: "white", backgroundColor: "#77ACF1" }}
+              style={{ color: "white", backgroundColor: "#88E0EF" }}
             >
               Đã gửi lại cho hồ
             </Text>
