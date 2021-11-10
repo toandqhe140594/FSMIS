@@ -1,9 +1,31 @@
 import { FontAwesome5, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useStoreState } from "easy-peasy";
-import { Button, Input, Select } from "native-base";
+import { Button } from "native-base";
 import React, { useEffect } from "react";
-import { Controller, useFieldArray, useFormContext } from "react-hook-form";
+import { useFieldArray, useFormContext } from "react-hook-form";
 import { StyleSheet, Text, View } from "react-native";
+
+import InputComponent from "../common/InputComponent";
+import SelectComponent from "../common/SelectComponent";
+import FieldWatcher from "./FieldWatcher";
+
+const FishLeftIcon = () => (
+  <FontAwesome5
+    style={{ marginLeft: 12 }}
+    name="fish"
+    size={24}
+    color="black"
+  />
+);
+
+const WeightLeftIcon = () => (
+  <MaterialCommunityIcons
+    style={{ marginLeft: 12 }}
+    name="weight-kilogram"
+    size={28}
+    color="#262626"
+  />
+);
 
 const styles = StyleSheet.create({
   cardWrapper: {
@@ -20,199 +42,128 @@ const styles = StyleSheet.create({
   rowWrapper: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
     marginTop: 8,
   },
-  error: { color: "#f43f5e", fontSize: 12, fontStyle: "italic" },
+  leftIconText: { marginLeft: 12, fontSize: 12, fontWeight: "bold" },
+  hint: {
+    fontStyle: "italic",
+    fontSize: 12,
+    marginVertical: 6,
+    alignSelf: "center",
+  },
 });
 
 const FishCardSection = () => {
   const { fishList } = useStoreState((state) => state.FishModel);
   const {
     control,
+    setValue,
+    clearErrors,
     formState: { errors },
   } = useFormContext();
   const { fields, append, remove } = useFieldArray({
     control,
     name: "fishInLakeList",
-    // fishInLakeList will be unregistered when unmount
-    shouldUnregister: true,
+    shouldUnregister: true, // fishInLakeList will be unregistered when unmount
   });
+  const handleAppend = () => {
+    append({
+      quantity: 0,
+      totalWeight: 0,
+    });
+  };
+  const handleRemove = (index) => {
+    remove(index);
+  };
+  /**
+   * Reset a field and clear error
+   * @param {String} controllerName
+   * @param {Any} resetValue
+   */
+  const handleFieldReset = (controllerName, resetValue) => {
+    setValue(controllerName, resetValue);
+    clearErrors(controllerName);
+  };
   /**
    * Append a card ready to use
    */
   useEffect(() => {
-    const initCard = () => append({});
-    initCard();
+    handleAppend();
   }, []);
   return (
     <>
       {/* fields controls each object with field fishSpeciesId, quantity, totalWeight and isReleased */}
       {fields.map(({ id }, index) => (
         <View style={styles.cardWrapper} key={id}>
-          <Controller
-            name={`fishInLakeList[${index}].fishSpeciesId`}
-            control={control}
-            render={({ field: { onChange, value } }) => (
-              <Select
-                mt={2}
-                fontSize="md"
-                placeholder="Chọn loại cá"
-                onValueChange={onChange}
-                selectedValue={value}
-              >
-                {fishList.map((fish) => (
-                  <Select.Item
-                    key={fish.id}
-                    label={fish.name}
-                    value={fish.id}
-                  />
-                ))}
-              </Select>
-            )}
+          <SelectComponent
+            placeholder="Chọn loại cá"
+            data={fishList}
+            controllerName={`fishInLakeList[${index}].fishSpeciesId`}
+            useCustomError
+            myError={errors.fishInLakeList?.[index]?.fishSpeciesId}
           />
-          {/* Check error message of fishSpeciesId field of a specific object in the fieldArray */}
-          {errors.fishInLakeList?.[index]?.fishSpeciesId?.message && (
-            <Text style={styles.error}>
-              {errors?.fishInLakeList?.[index].fishSpeciesId?.message}
-            </Text>
-          )}
           <View style={styles.rowWrapper}>
-            <Controller
-              name={`fishInLakeList[${index}].minWeight`}
-              control={control}
-              render={({ field: { onChange, value, onBlur } }) => (
-                <Input
-                  w="48%"
-                  type="number"
-                  fontSize="md"
-                  placeholder="Min"
-                  value={value}
-                  onChangeText={onChange}
-                  onBlur={onBlur}
-                  keyboardType="number-pad"
-                  InputLeftElement={
-                    <Text
-                      style={{
-                        marginLeft: 12,
-                        fontSize: 12,
-                        fontWeight: "bold",
-                      }}
-                    >
-                      Biểu
-                    </Text>
-                  }
-                />
-              )}
+            <InputComponent
+              myStyles={{ width: "48%" }}
+              useNumPad
+              placeholder="Min"
+              leftIcon={<Text style={styles.leftIconText}>Biểu</Text>}
+              controllerName={`fishInLakeList[${index}].minWeight`}
+              useCustomError
+              myError={errors.fishInLakeList?.[index]?.minWeight}
             />
-            <Text style={{ fontWeight: "bold", fontSize: 16 }}>-</Text>
-            <Controller
-              name={`fishInLakeList[${index}].maxWeight`}
-              control={control}
-              render={({ field: { onChange, value, onBlur } }) => (
-                <Input
-                  w="48%"
-                  type="text"
-                  fontSize="md"
-                  placeholder="Max"
-                  keyboardType="number-pad"
-                  value={value}
-                  onChangeText={onChange}
-                  onBlur={onBlur}
-                  InputLeftElement={
-                    <Text
-                      style={{
-                        marginLeft: 12,
-                        fontSize: 12,
-                        fontWeight: "bold",
-                      }}
-                    >
-                      Biểu
-                    </Text>
-                  }
-                />
-              )}
+            <InputComponent
+              myStyles={{ width: "49%" }}
+              useNumPad
+              placeholder="Max"
+              leftIcon={<Text style={styles.leftIconText}>Biểu</Text>}
+              controllerName={`fishInLakeList[${index}].maxWeight`}
+              useCustomError
+              myError={errors.fishInLakeList?.[index]?.maxWeight}
             />
           </View>
-          {(errors.fishInLakeList?.[index]?.minWeight?.message ||
-            errors.fishInLakeList?.[index]?.maxWeight?.message) && (
-            <Text style={styles.error}>
-              {errors?.fishInLakeList?.[index].minWeight?.message}{" "}
-              {errors?.fishInLakeList?.[index].maxWeight?.message}
-            </Text>
-          )}
-          <Controller
+          <Text style={styles.hint}>
+            Lưu ý: Chỉ cần nhập một trong hai trường dưới đây
+          </Text>
+          <InputComponent
+            myStyles={{ marginBottom: 8 }}
+            useNumPad
+            placeholder="Nhập số con thả hồ"
+            leftIcon={<FishLeftIcon />}
+            controllerName={`fishInLakeList[${index}].quantity`}
+            useCustomError
+            myError={errors.fishInLakeList?.[index]?.quantity}
+          />
+          <FieldWatcher
+            control={control}
             name={`fishInLakeList[${index}].quantity`}
-            control={control}
-            render={({ field: { value, onChange, onBlur } }) => (
-              <Input
-                mt={2}
-                type="text"
-                fontSize="md"
-                placeholder="Nhập số con thả hồ"
-                value={value}
-                onChangeText={onChange}
-                onBlur={onBlur}
-                keyboardType="number-pad"
-                InputLeftElement={
-                  <FontAwesome5
-                    style={{ marginLeft: 12 }}
-                    name="fish"
-                    size={24}
-                    color="black"
-                  />
-                }
-              />
-            )}
+            onDeleteField={handleFieldReset}
           />
-          {/* Check error message of quantity feld of a specific object in the fieldArray */}
-          {errors.fishInLakeList?.[index]?.quantity?.message && (
-            <Text style={styles.error}>
-              {errors.fishInLakeList?.[index].quantity?.message}
-            </Text>
-          )}
-          <Controller
+          <InputComponent
+            useNumPad
+            placeholder="Nhập tổng cân nặng (kg)"
+            leftIcon={<WeightLeftIcon />}
+            controllerName={`fishInLakeList[${index}].totalWeight`}
+            useCustomError
+            myError={errors.fishInLakeList?.[index]?.totalWeight}
+          />
+          <FieldWatcher
+            control={control}
             name={`fishInLakeList[${index}].totalWeight`}
-            control={control}
-            render={({ field: { value, onChange, onBlur } }) => (
-              <Input
-                mt={2}
-                type="text"
-                fontSize="md"
-                placeholder="Nhập tổng cân nặng (kg)"
-                value={value}
-                onChangeText={onChange}
-                onBlur={onBlur}
-                keyboardType="number-pad"
-                InputLeftElement={
-                  <MaterialCommunityIcons
-                    style={{ marginLeft: 12 }}
-                    name="weight-kilogram"
-                    size={28}
-                    color="#262626"
-                  />
-                }
-              />
-            )}
+            onDeleteField={handleFieldReset}
           />
-          {/* Check error message of totalWeight field of a specific object in the fieldArray */}
-          {errors.fishInLakeList?.[index]?.totalWeight?.message && (
-            <Text style={styles.error}>
-              {errors.fishInLakeList?.[index].totalWeight?.message}
-            </Text>
-          )}
           <Button
             fontSize="md"
             w="45%"
             mt={2}
             alignSelf="flex-end"
-            onPress={() => remove(index)}
+            onPress={() => handleRemove(index)}
           >
             Xoá
           </Button>
         </View>
       ))}
-      <Button w="90%" mt={3} alignSelf="center" onPress={() => append({})}>
+      <Button w="90%" mt={3} alignSelf="center" onPress={handleAppend}>
         Thêm thẻ
       </Button>
     </>
