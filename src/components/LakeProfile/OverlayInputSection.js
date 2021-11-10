@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     alignSelf: "center",
-    marginBottom: 16,
+    marginBottom: 12,
   },
   inputWrapper: {
     flexDirection: "row",
@@ -28,6 +28,7 @@ const styles = StyleSheet.create({
   },
   input: { width: "65%" },
   text: { fontSize: 16, width: "35%" },
+  hint: { fontStyle: "italic", marginBottom: 6, alignSelf: "center" },
 });
 
 const OverlayInputSection = ({ id, name, visible, toggleOverlay }) => {
@@ -40,10 +41,9 @@ const OverlayInputSection = ({ id, name, visible, toggleOverlay }) => {
     mode: "onSubmit",
     reValidateMode: "onChange",
     defaultValues: { quantity: 0, weight: 0 },
-    resolver: yupResolver(SCHEMA.FISH_EDIT_FORM),
+    resolver: yupResolver(SCHEMA.FMANAGE_LAKE_FISH_EDIT_FORM),
   });
-  const { handleSubmit, clearErrors, reset, watch, setError, setValue } =
-    methods;
+  const { handleSubmit, clearErrors, reset, watch, setValue } = methods;
   const watchQuantity = watch("quantity", 0);
   const watchWeight = watch("weight", 0);
   /**
@@ -58,34 +58,14 @@ const OverlayInputSection = ({ id, name, visible, toggleOverlay }) => {
     toggleOverlay({ visible: false });
   };
 
-  /**
-   * Check if two field is empty
-   * Catch user presses submit without inputting
-   * @returns bool
-   */
-  const bothFieldNotEmpty = () => {
-    if (watchQuantity === 0 && watchWeight === 0) {
-      setError("quantity", {
-        type: "required",
-        message: "Phải nhập một trong hai trường",
-      });
-      setError("weight", {
-        type: "required",
-        message: "Phải nhập một trong hai trường",
-      });
-      return false;
-    }
-    return true;
-  };
-
   const onSubmit = (data) => {
-    if (bothFieldNotEmpty()) {
-      setIsLoading(true);
-      const updateData = Object.fromEntries(
-        Object.entries(data).filter((keyValPair) => keyValPair[1] !== 0),
-      );
-      stockFishInLake({ updateData, id, setUpdateStatus });
-    }
+    // if (bothFieldNotEmpty()) {
+    setIsLoading(true);
+    const updateData = Object.fromEntries(
+      Object.entries(data).filter((keyValPair) => keyValPair[1] !== 0),
+    );
+    stockFishInLake({ updateData, id, setUpdateStatus });
+    // }
   };
 
   /**
@@ -126,9 +106,7 @@ const OverlayInputSection = ({ id, name, visible, toggleOverlay }) => {
   return (
     <Overlay overlayStyle={styles.overlayContainer} isVisible={visible}>
       <Text style={styles.title}>Bồi cá</Text>
-      <Text style={{ fontStyle: "italic", marginBottom: 4 }}>
-        Nhập một trong hai Trường
-      </Text>
+      <Text style={styles.hint}>Lưu ý: Chỉ cần một trong hai trường</Text>
       <FormProvider {...methods}>
         <View style={styles.inputWrapper}>
           <Text style={styles.text}>Loại cá</Text>
