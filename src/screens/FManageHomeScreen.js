@@ -25,8 +25,12 @@ const FManageHomeScreen = () => {
     (actions) => actions.FManageModel.setLocationLatLng,
   );
 
-  const { setCurrentId, getLocationDetailsById, getListOfLake } =
-    useStoreActions((actions) => actions.FManageModel);
+  const {
+    setCurrentId,
+    getLocationDetailsById,
+    getListOfLake,
+    setLocationPostListFirstPage,
+  } = useStoreActions((actions) => actions.FManageModel);
   const [role, setRole] = useState(null);
 
   useEffect(() => {
@@ -48,6 +52,7 @@ const FManageHomeScreen = () => {
     }
     return () => {
       setLocationLatLng({ latitude: null, longitude: null });
+      setLocationPostListFirstPage([]);
     };
   }, []);
 
