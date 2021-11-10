@@ -1,14 +1,14 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
-import { Box, ScrollView, Text, VStack } from "native-base";
+import { Box, Divider, ScrollView, Text, VStack } from "native-base";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator } from "react-native";
-import { Image } from "react-native-elements";
 import Swiper from "react-native-swiper";
 
 import AvatarCard from "../components/AvatarCard";
 import FishInformationCard from "../components/FishInformationCard";
 import HeaderTab from "../components/HeaderTab";
+import ImageResizeMode from "../components/ImageResizeMode";
 import { goToFishingLocationOverviewScreen } from "../navigations";
 
 const AnglerCatchReportDetailScreen = () => {
@@ -69,13 +69,10 @@ const AnglerCatchReportDetailScreen = () => {
       {catchDetails.images && catchDetails.images.length > 0 && (
         <Swiper height="auto" loadMinimal>
           {catchDetails.images.map((imageUri, index) => (
-            <Image
+            <ImageResizeMode
+              imgUri={imageUri}
+              height={400}
               key={index.toString()}
-              source={{
-                uri: imageUri,
-              }}
-              style={{ width: "100%", height: 450 }}
-              resizeMode="contain"
             />
           ))}
         </Swiper>
@@ -98,7 +95,7 @@ const AnglerCatchReportDetailScreen = () => {
           />
         )}
 
-        <VStack space={2} my={4}>
+        <VStack space={1} my={4}>
           <Text>
             <Text bold fontSize="16">
               Câu tại:{" "}
@@ -113,8 +110,33 @@ const AnglerCatchReportDetailScreen = () => {
               {catchDetails.locationName}
             </Text>
           </Text>
-          <Text italic fontSize="md">
-            &quot;{catchDetails.description}&quot;
+          <Text pl={0.5}>
+            <Text bold fontSize="16">
+              Vị trí:{" "}
+            </Text>
+            <Text
+              fontSize="16"
+              onPress={() => {
+                openLocationOverviewScreen();
+              }}
+            >
+              Hồ thường
+            </Text>
+          </Text>
+          <Text italic fontSize="md" pl={2} pt={2}>
+            - &quot;{catchDetails.description}&quot;
+          </Text>
+
+          <Divider />
+          <Text
+            bold
+            italic
+            fontSize="15"
+            pl={0.5}
+            textAlign="center"
+            style={{ color: "white", backgroundColor: "#88E0EF" }}
+          >
+            Đã gửi lại cho hồ
           </Text>
         </VStack>
         <VStack space={1}>
