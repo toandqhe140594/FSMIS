@@ -51,6 +51,12 @@ public class FishingLocationController {
         return new ResponseEntity<>(fishingLocationService.disableFishingLocation(request, locationId), HttpStatus.OK);
     }
 
+    @PostMapping("/switch-state/{locationId}")
+    public ResponseEntity<Object> switchLocationState(HttpServletRequest request,
+                                                      @PathVariable Long locationId) {
+        return new ResponseEntity<>(fishingLocationService.switchLocationState(request, locationId), HttpStatus.OK);
+    }
+
     @PostMapping("/report/{locationId}")
     public ResponseEntity<Object> reportFishingLocation(HttpServletRequest request,
                                                         @PathVariable Long locationId,

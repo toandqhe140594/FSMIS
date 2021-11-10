@@ -29,9 +29,12 @@ public class CatchesService {
     private final FishInLakeRepos fishInLakeRepos;
     private final JwtFilter jwtFilter;
 
+    private static final String WRONG_PAGE_NUMBER = "Số trang không hợp lệ";
+    private static final String UNAUTHORIZED = "Không có quyền truy cập";
+
     public PaginationDtoOut getLocationPublicCatchesList(Long locationId, int pageNo) {
         if (pageNo <= 0) {
-            throw new ValidationException("Số trang không hợp lệ");
+            throw new ValidationException(WRONG_PAGE_NUMBER);
         }
         Page<Catches> catchesList = catchesRepos.findByFishingLocationIdAndHiddenIsFalseAndApprovedIsTrueOrderByTimeDesc(locationId, PageRequest.of(pageNo - 1, 10));
         List<CatchesOverViewDtoOut> output = new ArrayList<>();
@@ -57,6 +60,7 @@ public class CatchesService {
         return PaginationDtoOut.builder()
                 .totalPage(catchesList.getTotalPages())
                 .pageNo(pageNo)
+                .totalItem(catchesList.getTotalElements())
                 .items(output)
                 .build();
     }
@@ -64,10 +68,10 @@ public class CatchesService {
     public PaginationDtoOut getLocationCatchesHistory(HttpServletRequest request, Long locationId, int pageNo,
                                                       String beginDateString, String endDateString) {
         if (pageNo <= 0) {
-            throw new ValidationException("Số trang không hợp lệ");
+            throw new ValidationException(WRONG_PAGE_NUMBER);
         }
         if (!isOwnerOrStaff(locationId, jwtFilter.getUserFromToken(request))) {
-            throw new ValidationException("Không có quyền truy cập");
+            throw new ValidationException(UNAUTHORIZED);
         }
         LocalDateTime beginDate = beginDateString == null ?
                 LocalDateTime.of(1970, 1, 1, 0, 0)
@@ -99,16 +103,17 @@ public class CatchesService {
         return PaginationDtoOut.builder()
                 .totalPage(catchesList.getTotalPages())
                 .pageNo(pageNo)
+                .totalItem(catchesList.getTotalElements())
                 .items(output)
                 .build();
     }
 
     public PaginationDtoOut getPendingCatchReports(HttpServletRequest request, Long locationId, int pageNo) {
         if (pageNo <= 0) {
-            throw new ValidationException("Số trang không hợp lệ");
+            throw new ValidationException(WRONG_PAGE_NUMBER);
         }
         if (!isOwnerOrStaff(locationId, jwtFilter.getUserFromToken(request))) {
-            throw new ValidationException("Không có quyền truy cập");
+            throw new ValidationException(UNAUTHORIZED);
         }
         Page<Catches> catchesList = catchesRepos.findByFishingLocationIdAndApprovedIsNullOrderByTimeDesc(locationId, PageRequest.of(pageNo - 1, 10));
         List<PendingCatchReportItemDtoOut> output = new ArrayList<>();
@@ -130,6 +135,7 @@ public class CatchesService {
         return PaginationDtoOut.builder()
                 .totalPage(catchesList.getTotalPages())
                 .pageNo(pageNo)
+                .totalItem(catchesList.getTotalElements())
                 .items(output)
                 .build();
     }
@@ -162,6 +168,7 @@ public class CatchesService {
         return PaginationDtoOut.builder()
                 .totalPage(catchesList.getTotalPages())
                 .pageNo(pageNo)
+                .totalItem(catchesList.getTotalElements())
                 .items(output)
                 .build();
     }
@@ -171,7 +178,7 @@ public class CatchesService {
         Catches catches = catchesRepos.findById(catchesId)
                 .orElseThrow(() -> new NotFoundException("Không tìm thấy bản ghi này!"));
         if (Boolean.TRUE.equals(catches.getHidden()) && catches.getUser() != user && !isOwnerOrStaff(catches.getFishingLocation().getId(), user)) {
-            throw new ValidationException("Không có quyền truy cập");
+            throw new ValidationException(UNAUTHORIZED);
         }
         List<CatchesDetail> catchesDetailList = catches.getCatchesDetailList();
         List<CatchesFishDtoOut> fishes = new ArrayList<>();
@@ -212,7 +219,7 @@ public class CatchesService {
         return false;
     }
 
-    public Object catchReport(HttpServletRequest request, CatchReportDtoIn catchReportDtoIn) {
+    public ResponseTextDtoOut catchReport(HttpServletRequest request, CatchReportDtoIn catchReportDtoIn) {
         User user = jwtFilter.getUserFromToken(request);
         Lake lake = lakeRepos.findById(catchReportDtoIn.getLakeId())
                 .orElseThrow(() -> new NotFoundException("Hồ câu không tồn tại"));
@@ -252,7 +259,7 @@ public class CatchesService {
                 .orElseThrow(() -> new NotFoundException("Không tìm thấy bản ghi"));
         if (!catches.getFishingLocation().getOwner().equals(user)
                 && !catches.getFishingLocation().getEmployeeList().contains(user)) {
-            throw new ValidationException("Không có quyền truy cập");
+            throw new ValidationException(UNAUTHORIZED);
         }
         Lake lake = lakeRepos.getById(catches.getLakeId());
         List<FishInLake> fishInLakeList = lake.getFishInLakeList();

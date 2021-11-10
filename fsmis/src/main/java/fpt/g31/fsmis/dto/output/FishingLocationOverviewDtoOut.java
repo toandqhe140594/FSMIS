@@ -24,6 +24,7 @@ public class FishingLocationOverviewDtoOut {
     private String description;
     private String service;
     private String timetable;
+    private boolean closed;
     private String rule;
     private List<String> image;
     private boolean verify;

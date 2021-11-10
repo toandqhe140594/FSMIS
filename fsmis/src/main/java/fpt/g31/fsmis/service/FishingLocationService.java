@@ -186,8 +186,9 @@ public class FishingLocationService {
                     .id(fishingLocation.getId())
                     .name(fishingLocation.getName())
                     .image(ServiceUtils.splitString(fishingLocation.getImageUrl()).get(0))
-                    .verify(fishingLocation.getVerify())
+                    .verify(fishingLocation.isVerify())
                     .address(ServiceUtils.getAddress(fishingLocation.getAddress(), fishingLocation.getWard()))
+                    .closed(fishingLocation.isClosed())
                     .build();
             Double score = reviewRepos.getAverageScoreByFishingLocationIdAndActiveIsTrue(fishingLocation.getId());
             if (score == null) {
@@ -200,6 +201,7 @@ public class FishingLocationService {
         return PaginationDtoOut.builder()
                 .totalPage(savedFishingLocations.getTotalPages())
                 .pageNo(pageNo)
+                .totalItem(savedFishingLocations.getTotalElements())
                 .items(output)
                 .build();
     }
@@ -221,9 +223,10 @@ public class FishingLocationService {
                     .id(fishingLocation.getId())
                     .name(fishingLocation.getName())
                     .image(ServiceUtils.splitString(fishingLocation.getImageUrl()).get(0))
-                    .verify(fishingLocation.getVerify())
+                    .verify(fishingLocation.isVerify())
                     .address(ServiceUtils.getAddress(fishingLocation.getAddress(), fishingLocation.getWard()))
                     .score(reviewRepos.getAverageScoreByFishingLocationIdAndActiveIsTrue(fishingLocation.getId()))
+                    .closed(fishingLocation.isClosed())
                     .role(role)
                     .build();
             fishingLocationItemDtoOutList.add(fishingLocationItemDtoOut);
@@ -319,5 +322,17 @@ public class FishingLocationService {
                 .gender(staff.isGender())
                 .address(ServiceUtils.getAddress(staff.getAddress(), staff.getWard()))
                 .build();
+    }
+
+    public ResponseTextDtoOut switchLocationState(HttpServletRequest request, Long locationId) {
+        User user = jwtFilter.getUserFromToken(request);
+        FishingLocation location = fishingLocationRepos.findById(locationId)
+                .orElseThrow(() -> new NotFoundException(LOCATION_NOT_FOUND));
+        if (!location.getOwner().equals(user)) {
+            throw new UnauthorizedException("Không có quyền thực hiện hành động này");
+        }
+        location.setClosed(!location.isClosed());
+        fishingLocationRepos.save(location);
+        return new ResponseTextDtoOut("Chuyển trạng thái khu hồ thành công");
     }
 }

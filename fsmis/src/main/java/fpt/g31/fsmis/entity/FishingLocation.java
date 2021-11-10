@@ -65,9 +65,11 @@ public class FishingLocation {
 
     private LocalDateTime lastEditedDate;
 
-    private Boolean active;
+    private boolean active;
 
-    private Boolean verify;
+    private boolean verify;
+
+    private boolean closed;
 
     @JsonIgnore
     @OneToMany(mappedBy = "fishingLocation", cascade = CascadeType.ALL)

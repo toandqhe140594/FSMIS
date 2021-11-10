@@ -13,5 +13,6 @@ public class PaginationDtoOut {
 
     private int totalPage;
     private int pageNo;
+    private long totalItem;
     private Object items;
 }

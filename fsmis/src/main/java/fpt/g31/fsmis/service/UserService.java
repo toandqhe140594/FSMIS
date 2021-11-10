@@ -124,7 +124,7 @@ public class UserService {
                     .id(location.getId())
                     .name(location.getName())
                     .image(ServiceUtils.splitString(location.getImageUrl()).get(0))
-                    .verify(location.getVerify())
+                    .verify(location.isVerify())
                     .address(ServiceUtils.getAddress(location.getAddress(), location.getWard()))
                     .score(reviewRepos.getAverageScoreByFishingLocationIdAndActiveIsTrue(location.getId()))
                     .build();
