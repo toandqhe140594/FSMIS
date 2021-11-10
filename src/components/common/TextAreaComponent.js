@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
     textAlignVertical: "top",
     padding: 10,
     height: 100,
-    backgroundColor: "#fafafa",
+    backgroundColor: "white",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.8,
@@ -64,7 +64,6 @@ const TextAreaComponent = ({
               onChangeText={onChange}
               onBlur={onBlur}
               value={value}
-              backgroundColor="white"
             />
           </TouchableWithoutFeedback>
         )}
