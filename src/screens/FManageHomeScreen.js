@@ -71,7 +71,11 @@ const FManageHomeScreen = () => {
           {role === VIEW_ROLE_OWNER && (
             <>
               {MENU_OWNER.map((item) => (
-                <MenuScreen menuListItem={item.category} key={item.id} />
+                <MenuScreen
+                  menuListItem={item.category}
+                  key={item.id}
+                  locationId={locationDetails.id}
+                />
               ))}
               <CloseFLocationTemporaryComponent
                 name={locationDetails.name || "Hồ câu"}

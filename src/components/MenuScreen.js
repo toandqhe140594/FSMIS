@@ -7,15 +7,17 @@ import { Icon, ListItem, Text } from "react-native-elements";
 
 import styles from "../config/styles";
 import { ROUTE_NAMES } from "../constants";
-import { goToScreen } from "../navigations";
+import { goToFishingLocationOverviewScreen, goToScreen } from "../navigations";
 
-const MenuScreen = ({ menuTitle, menuListItem }) => {
+const MenuScreen = ({ menuTitle, menuListItem, locationId }) => {
   const navigation = useNavigation();
 
   const dispatch = useStoreDispatch();
 
   const navigateToScreen = (route) => {
     if (route === ROUTE_NAMES.PROFILE_LOGOUT) dispatch({ type: "LOGOUT" });
+    else if (route === ROUTE_NAMES.FMANAGE_LOCATION_OVERVIEW)
+      goToFishingLocationOverviewScreen(navigation, { id: locationId });
     else goToScreen(navigation, route);
   };
 
@@ -45,9 +47,11 @@ const MenuScreen = ({ menuTitle, menuListItem }) => {
 MenuScreen.propTypes = {
   menuTitle: PropTypes.string,
   menuListItem: PropTypes.arrayOf(PropTypes.object),
+  locationId: PropTypes.number,
 };
 MenuScreen.defaultProps = {
   menuTitle: null,
   menuListItem: [],
+  locationId: -1,
 };
 export default MenuScreen;
