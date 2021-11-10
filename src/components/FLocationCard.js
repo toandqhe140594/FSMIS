@@ -35,7 +35,11 @@ const SpotCard = ({
         isVerified: isVerifed,
         role,
       });
-    else if (isAdmin) goToAdminFLocationOverviewScreen(navigation, { id });
+    else if (isAdmin)
+      goToAdminFLocationOverviewScreen(navigation, {
+        id,
+        name,
+      });
     else goToFishingLocationOverviewScreen(navigation, { id });
   };
 
