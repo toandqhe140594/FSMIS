@@ -20,9 +20,17 @@ const PostListContainerComponent = () => {
     (states) => states.FManageModel.locationPostList,
   );
 
+  const totalPostPageModel = useStoreState(
+    (states) => states.FManageModel.totalPostPage,
+  );
+
   const setCurrentPost = useStoreActions(
     (actions) => actions.FManageModel.setCurrentPost,
   );
+  const setCurrentPageNo = useStoreActions(
+    (actions) => actions.FManageModel.setCurrentPageNo,
+  );
+
   const deletePost = useStoreActions(
     (actions) => actions.FManageModel.deletePost,
   );
@@ -31,7 +39,10 @@ const PostListContainerComponent = () => {
 
   const loadMoreLakeCatchData = () => {
     getLocationPostListByPage({ pageNo: lakePostPage });
-    setTotalPostPage(lakePostPage + 1);
+    if (lakePostPage < totalPostPageModel) {
+      setCurrentPageNo(lakePostPage);
+      setTotalPostPage(lakePostPage + 1);
+    }
   };
 
   const editPostHandler = (id, item) => {
@@ -48,7 +59,7 @@ const PostListContainerComponent = () => {
   useEffect(() => {
     getLocationPostListByPage({ pageNo: lakePostPage });
     setTotalPostPage(lakePostPage + 1);
-  }, [locationPostList]);
+  }, []);
 
   useEffect(() => {
     if (deleteSuccess === true) showToastMessage("Xóa thành công");

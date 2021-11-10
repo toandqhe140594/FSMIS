@@ -49,6 +49,10 @@ const model = {
   checkinHistoryCurrentPage: 1,
   checkinHistoryTotalPage: 1,
 
+  currentPageNo: 1,
+  setCurrentPageNo: action((state, payload) => {
+    state.currentPageNo = payload;
+  }),
   setCurrentId: action((state, payload) => {
     state.currentId = payload;
   }),
@@ -264,6 +268,8 @@ const model = {
   getLocationPostListByPage: thunk(async (actions, payload, { getState }) => {
     const { pageNo } = payload;
     const { currentId, totalPostPage } = getState();
+    console.log(`pageNo`, pageNo);
+    console.log(`totalPostPage`, totalPostPage);
     if (pageNo > totalPostPage || pageNo <= 0) return;
     const { data } = await http.get(`location/${currentId}/post`, {
       params: { pageNo },
@@ -285,6 +291,7 @@ const model = {
       setUpdateStatus(false);
     }
   }),
+
   editPost: thunk(async (actions, payload, { getState }) => {
     const { currentId } = getState();
     const { updateData, setUpdateStatus } = payload;

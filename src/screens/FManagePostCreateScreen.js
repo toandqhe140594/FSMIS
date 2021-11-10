@@ -122,7 +122,7 @@ const PostCreateScreen = () => {
         "Thông báo",
         "Gửi thông tin thành công! Bài viết đang được tạo",
         async () => {
-          await getLocationPostListByPage({ pageNo: 0 });
+          await getLocationPostListByPage({ pageNo: 1 });
           goToFManagePostScreen(navigation);
         },
       );
