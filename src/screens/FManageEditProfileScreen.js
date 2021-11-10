@@ -27,6 +27,12 @@ const styles = StyleSheet.create({
   button: {
     width: "90%",
   },
+  loadOnStart: { justifyContent: "center", alignItems: "center" },
+  loadOnSubmit: {
+    backgroundColor: "transparent",
+    justifyContent: "center",
+    alignItems: "center",
+  },
 });
 
 const FManageEditProfileScreen = () => {
@@ -140,12 +146,8 @@ const FManageEditProfileScreen = () => {
       <ScrollView>
         <Overlay
           isVisible={isLoading}
-          fullScreen={fullScreen}
-          overlayStyle={
-            fullScreen
-              ? { justifyContent: "center", alignItems: "center" }
-              : null
-          }
+          fullScreen
+          overlayStyle={fullScreen ? styles.loadOnStart : styles.loadOnSubmit}
         >
           <ActivityIndicator size={60} color="#2089DC" />
         </Overlay>
