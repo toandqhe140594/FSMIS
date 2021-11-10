@@ -622,7 +622,10 @@ const model = {
     const { currentId } = getState();
     try {
       await http.put(`location/edit/${currentId}`, updateData);
-      actions.editFishingLocationDetailData(updateData);
+      actions.editFishingLocationDetailData({
+        ...updateData,
+        image: [...updateData.images],
+      });
       actions.getListOfFishingLocations();
       setUpdateStatus("SUCCESS");
     } catch (error) {
