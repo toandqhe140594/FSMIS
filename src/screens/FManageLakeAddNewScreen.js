@@ -38,6 +38,12 @@ const styles = StyleSheet.create({
     width: "90%",
   },
   error: { color: "#f43f5e", fontSize: 12, fontStyle: "italic" },
+  loadOnStart: { justifyContent: "center", alignItems: "center" },
+  loadOnSubmit: {
+    backgroundColor: "transparent",
+    justifyContent: "center",
+    alignItems: "center",
+  },
 });
 
 const LakeAddNewScreen = () => {
@@ -95,8 +101,8 @@ const LakeAddNewScreen = () => {
    */
   useEffect(() => {
     (async () => {
-      await getFishingMethodList();
-      getFishList();
+      getFishingMethodList();
+      await getFishList();
       setIsLoading(false);
       setFullScreenMode(false);
     })();
@@ -139,19 +145,16 @@ const LakeAddNewScreen = () => {
       <ScrollView>
         <Overlay
           isVisible={isLoading}
-          fullScreen={fullScreenMode}
+          fullScreen
           overlayStyle={
-            fullScreenMode
-              ? { alignItems: "center", justifyContent: "center" }
-              : null
+            fullScreenMode ? styles.loadOnStart : styles.loadOnSubmit
           }
         >
-          <ActivityIndicator size="60" color="#2089DC" />
+          <ActivityIndicator size={60} color="#2089DC" />
         </Overlay>
         <FormProvider {...methods}>
           <VStack space={3} divider={<Divider />}>
             <Center mt={1}>
-              {/* Image Picker section */}
               <MultiImageSection
                 containerStyle={styles.sectionWrapper}
                 formRoute={ROUTE_NAMES.FMANAGE_LAKE_ADD}
