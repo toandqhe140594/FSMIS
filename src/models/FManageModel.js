@@ -262,7 +262,7 @@ const model = {
     else state.locationPostList = state.locationPostList.concat(payload.data);
   }),
 
-  setLocationPostListFistPage: action((state, payload) => {
+  setLocationPostListFirstPage: action((state, payload) => {
     state.locationPostList = payload.data;
   }),
 
@@ -285,24 +285,26 @@ const model = {
     });
   }),
 
-  getLocationPostListFistPage: thunk(async (actions, payload, { getState }) => {
-    const { currentId, lakePostPageNo } = getState();
-    actions.setLakePostPageNo(1);
-    const { data } = await http.get(`location/${currentId}/post`, {
-      params: { lakePostPageNo },
-    });
-    actions.setTotalPostPage(data.totalPage);
-    actions.setLocationPostListFistPage({
-      data: data.items,
-      status: lakePostPageNo === 1 ? "Overwrite" : "Append",
-    });
-  }),
+  getLocationPostListFirstPage: thunk(
+    async (actions, payload, { getState }) => {
+      const { currentId, lakePostPageNo } = getState();
+      actions.setLakePostPageNo(2);
+      const { data } = await http.get(`location/${currentId}/post`, {
+        params: { lakePostPageNo },
+      });
+      actions.setTotalPostPage(data.totalPage);
+      actions.setLocationPostListFirstPage({
+        data: data.items,
+      });
+    },
+  ),
 
   createNewPost: thunk(async (actions, payload, { getState }) => {
     const { updateData, setUpdateStatus } = payload;
     const { currentId } = getState();
     try {
       await http.post(`location/${currentId}/post/add`, updateData);
+      await actions.getLocationPostListFirstPage();
       setUpdateStatus(true);
     } catch (error) {
       setUpdateStatus(false);

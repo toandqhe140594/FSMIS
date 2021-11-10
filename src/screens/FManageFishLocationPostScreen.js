@@ -12,26 +12,19 @@ import { showAlertConfirmBox, showToastMessage } from "../utilities";
 
 const PostListContainerComponent = () => {
   const navigation = useNavigation();
-  const getLocationPostListByPage = useStoreActions(
-    (actions) => actions.FManageModel.getLocationPostListByPage,
-  );
+  const {
+    getLocationPostListByPage,
+    setLakePostPageNo,
+    setCurrentPost,
+    deletePost,
+    getLocationPostListFirstPage,
+  } = useStoreActions((actions) => actions.FManageModel);
+
   const lakePostPageNo = useStoreState(
     (states) => states.FManageModel.lakePostPageNo,
   );
-  const setLakePostPageNo = useStoreActions(
-    (actions) => actions.FManageModel.setLakePostPageNo,
-  );
-
   const locationPostList = useStoreState(
     (states) => states.FManageModel.locationPostList,
-  );
-
-  const setCurrentPost = useStoreActions(
-    (actions) => actions.FManageModel.setCurrentPost,
-  );
-
-  const deletePost = useStoreActions(
-    (actions) => actions.FManageModel.deletePost,
   );
 
   const [deleteSuccess, setDeleteSuccess] = useState(null);
@@ -53,8 +46,7 @@ const PostListContainerComponent = () => {
   };
 
   useEffect(() => {
-    getLocationPostListByPage({ pageNo: lakePostPageNo });
-    setLakePostPageNo(lakePostPageNo + 1);
+    getLocationPostListFirstPage();
   }, []);
 
   useEffect(() => {
