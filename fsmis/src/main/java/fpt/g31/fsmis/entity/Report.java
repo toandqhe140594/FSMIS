@@ -3,7 +3,6 @@ package fpt.g31.fsmis.entity;
 import lombok.*;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Entity
@@ -19,7 +18,6 @@ public class Report {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
     private LocalDateTime time;
 
     private boolean active;
@@ -35,6 +33,10 @@ public class Report {
     @ManyToOne
     @JoinColumn
     private Post post;
+
+    @ManyToOne
+    @JoinColumn
+    private Catches catches;
 
     @ManyToOne
     @JoinColumn

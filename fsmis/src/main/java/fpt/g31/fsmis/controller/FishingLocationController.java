@@ -25,6 +25,7 @@ public class FishingLocationController {
     private final CatchesService catchesService;
     private final ReviewService reviewService;
     private final VoteService voteService;
+    private final ReportService reportService;
 
     @GetMapping(path = "/all")
     public ResponseEntity<Object> getAll() {
@@ -48,6 +49,13 @@ public class FishingLocationController {
     @DeleteMapping("/close/{locationId}")
     public ResponseEntity<Object> closeFishingLocation(HttpServletRequest request, @PathVariable Long locationId) {
         return new ResponseEntity<>(fishingLocationService.disableFishingLocation(request, locationId), HttpStatus.OK);
+    }
+
+    @PostMapping("/report/{locationId}")
+    public ResponseEntity<Object> reportFishingLocation(HttpServletRequest request,
+                                                        @PathVariable Long locationId,
+                                                        @RequestBody ReportDtoIn reportDtoIn) {
+        return new ResponseEntity<>(reportService.reportFishingLocation(request, locationId, reportDtoIn), HttpStatus.OK);
     }
 
     @GetMapping("/nearby")
@@ -209,11 +217,6 @@ public class FishingLocationController {
         return new ResponseEntity<>(reviewService.postReview(request, locationId, reviewDtoIn), HttpStatus.OK);
     }
 
-//    @PostMapping("/{locationId}/review/me/edit")
-//    public ResponseEntity<Object> editReview(HttpServletRequest request, @PathVariable Long locationId, @RequestBody ReviewDtoIn reviewDtoIn) {
-//        return new ResponseEntity<>(reviewService.editReview(request, locationId, reviewDtoIn), HttpStatus.OK);
-//    }
-
     @DeleteMapping("/{locationId}/review/me/delete")
     public ResponseEntity<Object> deleteReview(HttpServletRequest request,
                                                @PathVariable Long locationId) {
@@ -222,10 +225,16 @@ public class FishingLocationController {
 
     @PostMapping("/{locationId}/review/{reviewId}")
     public ResponseEntity<Object> upvoteReview(HttpServletRequest request,
-                                               @PathVariable Long locationId,
                                                @PathVariable Long reviewId,
                                                @RequestParam(defaultValue = "1") Long vote) {
         return new ResponseEntity<>(voteService.vote(request, reviewId, vote), HttpStatus.OK);
+    }
+
+    @PostMapping("/review/report/{reviewId}")
+    public ResponseEntity<Object> reportReview(HttpServletRequest request,
+                                               @PathVariable Long reviewId,
+                                               @RequestBody @Valid ReportDtoIn reportDtoIn) {
+        return new ResponseEntity<>(reportService.reportReview(request, reviewId, reportDtoIn), HttpStatus.OK);
     }
 
     // POST
@@ -256,6 +265,13 @@ public class FishingLocationController {
                                              HttpServletRequest request) {
         return new ResponseEntity<>(postService.deletePost(postId, request), HttpStatus.OK);
     }
+
+    @PostMapping("/post/report/{postId}")
+    public ResponseEntity<Object> reportPost(HttpServletRequest request,
+                                             @PathVariable Long postId,
+                                             @RequestBody @Valid ReportDtoIn reportDtoIn) {
+        return new ResponseEntity<>(reportService.reportPost(request, postId, reportDtoIn), HttpStatus.OK);
+    }
     // STAFF
 
     @GetMapping("/{locationId}/staff")
@@ -282,9 +298,6 @@ public class FishingLocationController {
         return new ResponseEntity<>(fishingLocationService.addStaff(locationId, userId, request), HttpStatus.OK);
     }
 
-    //
-//    @GetMapping("/{locationId}/staff/{staffId}")
-//
     @DeleteMapping("/{locationId}/staff/delete/{staffId}")
     public ResponseEntity<Object> deleteStaff(@PathVariable Long locationId,
                                               @PathVariable Long staffId,
@@ -292,9 +305,4 @@ public class FishingLocationController {
         return new ResponseEntity<>(fishingLocationService.deleteStaff(locationId, staffId, request), HttpStatus.OK);
     }
 
-    // REPORT
-//    @PostMapping("/{locationId}/report")
-//    public ResponseEntity<Object> reportLocation(@PathVariable Long locationId, HttpServletRequest request, ReportDtoIn reportDtoIn){
-//        return new ResponseEntity<>()
-//    }
 }

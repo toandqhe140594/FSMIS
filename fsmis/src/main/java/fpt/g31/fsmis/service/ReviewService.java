@@ -5,13 +5,13 @@ import fpt.g31.fsmis.dto.output.PaginationDtoOut;
 import fpt.g31.fsmis.dto.output.ReviewDtoOut;
 import fpt.g31.fsmis.dto.output.ReviewScoreDtoOut;
 import fpt.g31.fsmis.entity.*;
+import fpt.g31.fsmis.exception.NotFoundException;
 import fpt.g31.fsmis.repository.FishingLocationRepos;
 import fpt.g31.fsmis.repository.ReviewRepos;
 import fpt.g31.fsmis.repository.VoteRepos;
 import fpt.g31.fsmis.security.JwtFilter;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.parsing.ReaderEventListener;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -49,7 +49,7 @@ public class ReviewService {
     public Object getMyReview(HttpServletRequest request, Long locationId) {
         User user = jwtFilter.getUserFromToken(request);
         Review review = reviewRepos.findByFishingLocationIdAndUserIdAndActiveIsTrue(locationId, user.getId());
-        if(review == null) {
+        if (review == null) {
             return "Bạn chưa đánh giá";
         } else {
             return ReviewDtoOut.builder()
@@ -72,7 +72,8 @@ public class ReviewService {
         if (reviewRepos.findByFishingLocationIdAndUserIdAndActiveIsTrue(locationId, user.getId()) != null) {
             throw new ValidationException("Đánh giá đã tồn tại");
         }
-        FishingLocation fishingLocation = fishingLocationRepos.getById(locationId);
+        FishingLocation fishingLocation = fishingLocationRepos.findById(locationId)
+                .orElseThrow(() -> new NotFoundException("Không tìm thấy điểm câu"));
         Review review = modelMapper.map(reviewDtoIn, Review.class);
         review.setTime(LocalDateTime.now());
         review.setActive(true);
@@ -93,20 +94,10 @@ public class ReviewService {
                 .build();
     }
 
-//    public String editReview(HttpServletRequest request, Long locationId, ReviewDtoIn reviewDtoIn) {
-//        User user = jwtFilter.getUserFromToken(request);
-//        Review review = reviewRepos.findByFishingLocationIdAndUserIdAndActiveIsTrue(locationId, user.getId());
-//        review.setTime(LocalDateTime.now());
-//        review.setScore(reviewDtoIn.getScore());
-//        review.setDescription(reviewDtoIn.getDescription());
-//        reviewRepos.save(review);
-//        return "Đánh giá thành công";
-//    }
-
     public String deleteReview(HttpServletRequest request, Long locationId) {
         User user = jwtFilter.getUserFromToken(request);
         Review review = reviewRepos.findByFishingLocationIdAndUserIdAndActiveIsTrue(locationId, user.getId());
-        if(review == null) {
+        if (review == null) {
             throw new ValidationException("Đánh giá không tồn tại");
         }
         review.setActive(false);
@@ -125,7 +116,7 @@ public class ReviewService {
         }
         User user = jwtFilter.getUserFromToken(request);
         Pageable pageable = PageRequest.of(pageNo - 1, 10);
-        Page<Review> reviews = null;
+        Page<Review> reviews;
         if (filter.equals("newest")) {
             reviews = reviewRepos.findByFishingLocationIdAndActiveIsTrueOrderByTimeDesc(locationId, pageable);
         } else if (filter.equals("highest")) {
@@ -135,7 +126,7 @@ public class ReviewService {
         }
         List<ReviewDtoOut> output = new ArrayList<>();
         for (Review review : reviews) {
-            if(review.getUser() == user) {
+            if (review.getUser() == user) {
                 continue;
             }
             ReviewDtoOut item = modelMapper.map(review, ReviewDtoOut.class);
@@ -146,7 +137,7 @@ public class ReviewService {
             item.setUpvote(voteRepos.getVoteCountByReviewId(review.getId(), 1));
             item.setDownvote(voteRepos.getVoteCountByReviewId(review.getId(), 0));
             Vote vote = voteRepos.findByReviewIdAndUserId(review.getId(), user.getId());
-            if(vote != null) {
+            if (vote != null) {
                 if (vote.getVoteType() == VoteType.UPVOTE) {
                     item.setUserVoteType(true);
                 } else if (vote.getVoteType() == VoteType.DOWNVOTE) {

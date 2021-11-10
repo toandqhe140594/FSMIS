@@ -44,7 +44,7 @@ public class CheckInService {
         if (location.getEmployeeList().contains(user)) {
             throw new ValidationException("Nhân viên không được check in tại nơi làm việc của mình!");
         }
-        if (!location.getOwner().equals(performer) && !location.getEmployeeList().contains(performer)){
+        if (!location.getOwner().equals(performer) && !location.getEmployeeList().contains(performer)) {
             throw new ValidationException("Không có quyền thực hiện check in");
         }
         CheckIn checkIn = new CheckIn();
@@ -76,7 +76,7 @@ public class CheckInService {
                     .locationName(checkIn.getFishingLocation().getName())
                     .checkInTime(ServiceUtils.convertDateToString(checkIn.getCheckInTime()))
                     .checkOutTime(checkIn.getCheckOutTime() == null
-                            ? "Bạn chưa check-out"
+                            ? "Chưa check-out"
                             : ServiceUtils.convertDateToString(checkIn.getCheckOutTime()))
                     .build();
             output.add(item);

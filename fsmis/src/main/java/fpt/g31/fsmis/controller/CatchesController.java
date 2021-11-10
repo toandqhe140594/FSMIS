@@ -1,7 +1,9 @@
 package fpt.g31.fsmis.controller;
 
 import fpt.g31.fsmis.dto.input.CatchReportDtoIn;
+import fpt.g31.fsmis.dto.input.ReportDtoIn;
 import fpt.g31.fsmis.service.CatchesService;
+import fpt.g31.fsmis.service.ReportService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +18,7 @@ import javax.validation.Valid;
 public class CatchesController {
 
     private final CatchesService catchesService;
+    private final ReportService reportService;
 
     @GetMapping("/{catchesId}")
     public ResponseEntity<Object> getCatchesDetails(HttpServletRequest request, @PathVariable Long catchesId) {
@@ -32,5 +35,12 @@ public class CatchesController {
     @PostMapping("/report")
     public ResponseEntity<Object> catchReport(HttpServletRequest request, @RequestBody @Valid CatchReportDtoIn catchReportDtoIn) {
         return new ResponseEntity<>(catchesService.catchReport(request, catchReportDtoIn), HttpStatus.OK);
+    }
+
+    @PostMapping("/report-improper/{catchesId}")
+    public ResponseEntity<Object> catchReport(HttpServletRequest request,
+                                              @PathVariable Long catchesId,
+                                              @RequestBody @Valid ReportDtoIn reportDtoIn) {
+        return new ResponseEntity<>(reportService.reportCatch(request, catchesId, reportDtoIn), HttpStatus.OK);
     }
 }
