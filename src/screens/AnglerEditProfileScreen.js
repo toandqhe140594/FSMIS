@@ -190,7 +190,7 @@ const EditProfileScreen = () => {
       <KeyboardAvoidingView>
         <Overlay
           isVisible={isLoading}
-          fullScreen={fullScreen}
+          fullScreen
           overlayStyle={fullScreen ? styles.loadOnStart : styles.loadOnSubmit}
         >
           <ActivityIndicator size={60} color="#2089DC" />
