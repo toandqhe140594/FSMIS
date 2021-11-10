@@ -21,6 +21,8 @@ const InputComponent = ({
   controllerName,
   useNumPad,
   shouldDisable,
+  myError,
+  useCustomError,
 }) => {
   const {
     control,
@@ -51,9 +53,11 @@ const InputComponent = ({
           />
         )}
       />
-      {errors[controllerName]?.message && (
-        <Text style={styles.error}>{errors[controllerName]?.message}</Text>
-      )}
+      {useCustomError
+        ? myError.message && <Text style={styles.error}>{myError.message}</Text>
+        : errors[controllerName]?.message && (
+            <Text style={styles.error}>{errors[controllerName]?.message}</Text>
+          )}
     </View>
   );
 };
@@ -70,6 +74,10 @@ InputComponent.propTypes = {
   controllerName: PropTypes.string,
   useNumPad: PropTypes.bool,
   shouldDisable: PropTypes.bool,
+  useCustomError: PropTypes.bool,
+  myError: PropTypes.objectOf(
+    PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
+  ),
 };
 
 InputComponent.defaultProps = {
@@ -82,6 +90,8 @@ InputComponent.defaultProps = {
   controllerName: "",
   useNumPad: false,
   shouldDisable: false,
+  useCustomError: false,
+  myError: {},
 };
 
 export default InputComponent;
