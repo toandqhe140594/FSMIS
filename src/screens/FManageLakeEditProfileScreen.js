@@ -71,7 +71,7 @@ const LakeEditProfileScreen = () => {
    * @param {Object} data data from controller
    */
   const onSubmit = (data) => {
-    setShowOverlay(true);
+    setIsLoading(true);
     const { id } = lakeDetail;
     const imageUrl = imageArray[0].base64;
     const updateData = { ...data, imageUrl };
