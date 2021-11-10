@@ -25,6 +25,7 @@ const FishCard = ({ image, fishType, quantity, totalWeight }) => {
         source={{
           uri: image,
         }}
+        key={image}
       />
 
       <Box flex={1} my={3} mx={4}>

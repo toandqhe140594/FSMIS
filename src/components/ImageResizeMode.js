@@ -17,6 +17,7 @@ const ImageResizeMode = ({ imgUri, height }) => {
       <Card.Image
         source={{ uri: imgUri }}
         style={{ height, width: "auto", resizeMode }}
+        key={imgUri}
       />
     </Pressable>
   );
