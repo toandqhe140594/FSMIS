@@ -54,7 +54,11 @@ const PostEditScreen = () => {
   const currentPost = useStoreState(
     (states) => states.FManageModel.currentPost,
   );
+  const locationPostList = useStoreState(
+    (states) => states.FManageModel.locationPostList,
+  );
 
+  const [editData, setEditData] = useState({});
   const route = useRoute();
   const navigation = useNavigation();
   const [imageArray, setImageArray] = useState([]);
@@ -71,9 +75,7 @@ const PostEditScreen = () => {
       attachmentType: currentPost.attachmentType,
     },
   });
-  const getLocationPostListByPage = useStoreActions(
-    (actions) => actions.FManageModel.getLocationPostListByPage,
-  );
+
   const { handleSubmit, watch, setValue, getValues } = methods;
   const watchAttachmentType = watch("attachmentType");
   /**
@@ -118,9 +120,9 @@ const PostEditScreen = () => {
         return "";
     }
   };
-
   const onSubmit = (data) => {
     const url = setAttachmentUrl(watchAttachmentType);
+
     const updateData = {
       ...data,
       id: currentPost.id,
@@ -130,6 +132,8 @@ const PostEditScreen = () => {
       updateData,
       setUpdateStatus,
     });
+    setEditData(updateData);
+
     setLoadingButton(true);
   };
 
@@ -147,13 +151,19 @@ const PostEditScreen = () => {
     }, [route.params]),
   );
 
+  const changeListPostItem = () => {
+    const foundIndex = locationPostList.findIndex(
+      (item) => item.id === editData.id,
+    );
+    locationPostList[foundIndex] = editData;
+  };
   useEffect(() => {
     if (updateStatus === "SUCCESS") {
       showAlertAbsoluteBox(
         "Thông báo",
         "Gửi thông thành công! Đang chỉnh sửa bài viết.",
         async () => {
-          await getLocationPostListByPage({ pageNo: 1 });
+          changeListPostItem();
           goToFManagePostScreen(navigation);
         },
       );
