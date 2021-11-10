@@ -49,40 +49,93 @@ export const FMANAGE_LAKE_FORM = yup.object().shape({
     .typeError("Trường này chỉ được nhập số")
     .required("Chiều rộng hồ không được để trống"),
   depth: yup.number().required("Độ sâu của hồ không được để trống"),
-  fishInLakeList: yup.array().of(
-    yup.object().shape({
-      fishSpeciesId: yup.number().required("Trường này không được để trống"),
-      quantity: yup
-        .number()
-        .typeError("Trường này chỉ được nhập số")
-        .required("Số cá được không được để trống"),
-      totalWeight: yup
-        .number()
-        .typeError("Trường này chỉ được nhập số")
-        .required("Cân nặng không được để trống"),
-      minWeight: yup
-        .number()
-        .typeError("Trường này chỉ được nhập số")
-        .required("Biểu nhỏ không được để trống"),
-      maxWeight: yup
-        .number()
-        .typeError("Trường này chỉ được nhập số")
-        .required("Biểu lớn không được để trống"),
-    }),
-  ),
+  fishInLakeList: yup
+    .array()
+    .min(1, "Phải có ít nhất một loại cá trong hồ")
+    .max(3, "Tối đa thẻ cá được tạo là 3")
+    .of(
+      yup.object().shape(
+        {
+          fishSpeciesId: yup
+            .number()
+            .required("Trường này không được để trống"),
+          minWeight: yup
+            .number()
+            .typeError("Trường này chỉ được nhập số")
+            .required("Biểu nhỏ không được để trống"),
+          maxWeight: yup
+            .number()
+            .typeError("Trường này chỉ được nhập số")
+            .required("Biểu lớn không được để trống"),
+          quantity: yup.number().when("totalWeight", {
+            is: 0,
+            then: yup
+              .number()
+              .test(
+                "shouldNotEmptyOrZero",
+                "Một trong hai trường không được để trống hay bằng 0",
+                (value) => value !== 0,
+              ),
+            otherwise: yup
+              .number()
+              .test("positive", "Phải là số dương", (value) => value >= 0)
+              .test("integer", "Phải là số nguyên", (value) =>
+                Number.isInteger(value),
+              ),
+          }),
+          totalWeight: yup.number().when("quantity", {
+            is: 0,
+            then: yup
+              .number()
+              .test(
+                "shouldNotEmptyOrZero",
+                "Một trong hai trường không được để trống hay bằng 0",
+                (value) => value !== 0,
+              ),
+            otherwise: yup
+              .number()
+              .test("positive", "Phải là số dương", (value) => value >= 0),
+          }),
+        },
+        ["totalWeight", "quantity"],
+      ),
+    ),
 });
 
-export const FISH_EDIT_FORM = yup.object().shape({
-  quantity: yup
-    .number()
-    .typeError("Không phải số")
-    .test("positive", "Phải là số dương", (value) => value >= 0)
-    .test("integer", "Phải là số nguyên", (value) => Number.isInteger(value)),
-  weight: yup
-    .number()
-    .typeError("Không phải số")
-    .test("positive", "Phải là số dương", (value) => value >= 0),
-});
+export const FISH_EDIT_FORM = yup.object().shape(
+  {
+    quantity: yup.number().when("weight", {
+      is: 0,
+      then: yup
+        .number()
+        .test(
+          "shouldNotEmptyOrZero",
+          "Một trong hai trường không được để trống hay bằng 0",
+          (value) => value !== 0,
+        ),
+      otherwise: yup
+        .number()
+        .test("positive", "Phải là số dương", (value) => value >= 0)
+        .test("integer", "Phải là số nguyên", (value) =>
+          Number.isInteger(value),
+        ),
+    }),
+    weight: yup.number().when("quantity", {
+      is: 0,
+      then: yup
+        .number()
+        .test(
+          "shouldNotEmptyOrZero",
+          "Một trong hai trường không được để trống hay bằng 0",
+          (value) => value !== 0,
+        ),
+      otherwise: yup
+        .number()
+        .test("positive", "Phải là số dương", (value) => value >= 0),
+    }),
+  },
+  ["quantity", "weight"],
+);
 
 export const FMANAGE_LAKE_FISH_FORM = yup.object().shape({
   fishSpeciesId: yup.number().required("Trường này không được để trống"),
