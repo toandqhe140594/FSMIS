@@ -550,8 +550,8 @@ const model = {
       await http.post(API_URL.LOCATION_ADD, addData, {
         params: {},
       });
+      await actions.getListOfFishingLocations();
       setAddStatus("SUCCESS");
-      actions.getListOfFishingLocations();
     } catch (error) {
       setAddStatus("FAILED");
     }
@@ -656,12 +656,13 @@ const model = {
   /**
    * Delete a fish from lake by id
    * @param {Number} [payload.id] id of the fish to delete from lake
+   * @param {Number} [payload.setDeleteStatus] the function to set delete status
    */
   deleteFishFromLake: thunk(async (actions, payload, { getState }) => {
-    const { id, setDeleteStatus } = payload;
+    const { id: fishId, setDeleteStatus } = payload;
     const { id: lakeId } = getState().lakeDetail;
     try {
-      await http.delete(`location/lake/fish/delete/${id}`);
+      await http.delete(`location/lake/fish/delete/${fishId}`);
       actions.getLakeDetailByLakeId({ id: lakeId }); // purpose to fetch new fishInLake in lakeDetail
       setDeleteStatus("SUCCESS");
     } catch (error) {
@@ -678,11 +679,11 @@ const model = {
    * @param {Function} [payload.setUpdateStatus] the function to set status
    */
   stockFishInLake: thunk(async (actions, payload, { getState }) => {
-    const { id, quantity, weight, setUpdateStatus } = payload;
+    const { id, updateData, setUpdateStatus } = payload;
     const { id: lakeId } = getState().lakeDetail;
     try {
       await http.post(`location/lake/fish/stocking/${id}`, null, {
-        params: { quantity, weight },
+        params: { ...updateData },
       });
       await actions.getLakeDetailByLakeId({ id: lakeId }); // purpose to fetch new fishInLake in lakeDetail
       setUpdateStatus("SUCCESS");
