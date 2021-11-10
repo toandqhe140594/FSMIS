@@ -68,13 +68,8 @@ public class AuthService {
         return AuthTokenDtoOut.builder()
                 .authToken(token)
                 .id(user.getId())
-                .fullName(user.getFullName())
                 .phone(user.getPhone())
-                .dob(user.getDob())
                 .qrString(user.getQrString())
-                .avatarUrl(user.getAvatarUrl())
-                .gender(user.isGender())
-                .status(user.isAvailable())
                 .roles(authentication.getAuthorities().iterator().next().toString())
                 .build();
     }
