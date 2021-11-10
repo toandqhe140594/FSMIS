@@ -30,6 +30,7 @@ const LakeCard = ({ id, image, listOfFishes, name, isManaged }) => {
           source={{
             uri: image,
           }}
+          key={image}
         />
         <Box
           flex={1}
