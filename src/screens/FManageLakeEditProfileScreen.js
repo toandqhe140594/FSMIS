@@ -40,6 +40,12 @@ const styles = StyleSheet.create({
   button: {
     width: "90%",
   },
+  loadOnStart: { alignItems: "center", justifyContent: "center" },
+  loadOnSubmit: {
+    backgroundColor: "transparent",
+    alignItems: "center",
+    justifyContent: "center",
+  },
 });
 
 const LakeEditProfileScreen = () => {
@@ -170,14 +176,12 @@ const LakeEditProfileScreen = () => {
       <ScrollView>
         <Overlay
           isVisible={isLoading}
-          fullScreen={fullScreenMode}
+          fullScreen
           overlayStyle={
-            fullScreenMode
-              ? { alignItems: "center", justifyContent: "center" }
-              : null
+            fullScreenMode ? styles.loadOnStart : styles.loadOnSubmit
           }
         >
-          <ActivityIndicator size="large" color="#2089DC" />
+          <ActivityIndicator size={60} color="#2089DC" />
         </Overlay>
         <FormProvider {...methods}>
           <VStack space={3} divider={<Divider />}>
