@@ -64,8 +64,8 @@ const PostCreateScreen = () => {
     (actions) => actions.FManageModel.createNewPost,
   );
 
-  const getLocationPostListByPage = useStoreActions(
-    (actions) => actions.FManageModel.getLocationPostListByPage,
+  const getLocationPostFistPage = useStoreActions(
+    (actions) => actions.FManageModel.getLocationPostListFistPage,
   );
   const methods = useForm({
     mode: "onSubmit",
@@ -122,7 +122,7 @@ const PostCreateScreen = () => {
         "Thông báo",
         "Gửi thông tin thành công! Bài viết đang được tạo",
         async () => {
-          await getLocationPostListByPage({ pageNo: 0 });
+          await getLocationPostFistPage();
           goToFManagePostScreen(navigation);
         },
       );

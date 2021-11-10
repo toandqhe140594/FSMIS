@@ -49,6 +49,11 @@ const model = {
   checkinHistoryCurrentPage: 1,
   checkinHistoryTotalPage: 1,
 
+  lakePostPageNo: 1,
+  setLakePostPageNo: action((state, payload) => {
+    state.lakePostPageNo = payload;
+  }),
+
   setCurrentId: action((state, payload) => {
     state.currentId = payload;
   }),
@@ -256,6 +261,11 @@ const model = {
     if (payload.status === "Overwrite") state.locationPostList = payload.data;
     else state.locationPostList = state.locationPostList.concat(payload.data);
   }),
+
+  setLocationPostListFistPage: action((state, payload) => {
+    state.locationPostList = payload.data;
+  }),
+
   /**
    * Get posts data by page
    * @param {Object} [payload] the payload pass to function
@@ -275,6 +285,19 @@ const model = {
     });
   }),
 
+  getLocationPostListFistPage: thunk(async (actions, payload, { getState }) => {
+    const { currentId, lakePostPageNo } = getState();
+    actions.setLakePostPageNo(1);
+    const { data } = await http.get(`location/${currentId}/post`, {
+      params: { lakePostPageNo },
+    });
+    actions.setTotalPostPage(data.totalPage);
+    actions.setLocationPostListFistPage({
+      data: data.items,
+      status: lakePostPageNo === 1 ? "Overwrite" : "Append",
+    });
+  }),
+
   createNewPost: thunk(async (actions, payload, { getState }) => {
     const { updateData, setUpdateStatus } = payload;
     const { currentId } = getState();
@@ -285,6 +308,7 @@ const model = {
       setUpdateStatus(false);
     }
   }),
+
   editPost: thunk(async (actions, payload, { getState }) => {
     const { currentId } = getState();
     const { updateData, setUpdateStatus } = payload;
