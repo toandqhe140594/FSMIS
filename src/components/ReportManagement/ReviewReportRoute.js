@@ -1,7 +1,10 @@
+import { useNavigation } from "@react-navigation/native";
+import { useStoreState } from "easy-peasy";
 import { Select } from "native-base";
 import React, { useEffect, useState } from "react";
-import { FlatList, StyleSheet, View } from "react-native";
+import { FlatList, StyleSheet, TouchableOpacity, View } from "react-native";
 
+import { goToAdminReviewReportDetailScreen } from "../../navigations";
 import HeaderTab from "../HeaderTab";
 import ReportCard from "./ReportCard";
 
@@ -9,48 +12,31 @@ const styles = StyleSheet.create({
   container: {},
 });
 
-const APIList = [
-  {
-    id: "1",
-    reportTarget: "Nguyễn Văn A",
-    isProcessed: true,
-  },
-  {
-    id: "2",
-    reportTarget: "Nguyễn Văn A",
-    isProcessed: true,
-  },
-  {
-    id: "3",
-    reportTarget: "Nguyễn Văn A",
-    isProcessed: false,
-  },
-  {
-    id: "4",
-    reportTarget: "Nguyễn Văn A",
-    isProcessed: true,
-  },
-  {
-    id: "5",
-    reportTarget: "Nguyễn Văn A",
-    isProcessed: false,
-  },
-];
-
-const renderItem = ({ item }) => <ReportCard {...item} isReviewReport />;
-
 const ReviewReportRoute = () => {
+  const reportListModel = useStoreState(
+    (states) => states.ReportModel.ListReviewReport,
+  );
   const [filter, setFilter] = useState("");
-  const [reportList, setReportList] = useState(APIList);
+  const navigation = useNavigation();
+  const [reportList, setReportList] = useState(reportListModel);
+  const renderItem = ({ item }) => (
+    <TouchableOpacity
+      onPress={() => {
+        goToAdminReviewReportDetailScreen(navigation);
+      }}
+    >
+      <ReportCard {...item} isReviewReport />
+    </TouchableOpacity>
+  );
   useEffect(() => {
     const getFilteredList = () => {
       switch (filter) {
         case "Tất cả":
-          return APIList;
+          return reportListModel;
         case "Chưa xử lý":
-          return APIList.filter(({ isProcessed }) => !isProcessed);
+          return reportListModel.filter(({ isProcessed }) => !isProcessed);
         case "Đã xử lý":
-          return APIList.filter(({ isProcessed }) => isProcessed);
+          return reportListModel.filter(({ isProcessed }) => isProcessed);
         default:
           return reportList;
       }

@@ -59,23 +59,23 @@ const ReportCard = ({
       <View style={styles.textContainer}>
         <Text style={styles.textWrapper}>
           {isReviewReport && (
-            <>
+            <Text>
               Đánh giá của <Text style={styles.bold}>{reportTarget}</Text> là
               thông tin sai lệch
-            </>
+            </Text>
           )}
           {isFLocationReport && (
-            <>
+            <Text>
               <Text style={styles.bold}>{reportTarget}</Text> đã bị báo cáo về
               thông tin sai lệch
-            </>
+            </Text>
           )}
           {isPostReport && (
-            <>
+            <Text>
               Bài đăng sự kiện <Text style={styles.bold}>{postType}</Text> của{" "}
               <Text style={styles.bold}>{reportTarget}</Text> là thông tin sai
               lệch
-            </>
+            </Text>
           )}
         </Text>
         <Text>09:00 01/10/2021</Text>
