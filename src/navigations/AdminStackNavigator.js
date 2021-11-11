@@ -15,6 +15,7 @@ import AdminMainScreen from "../screens/AdminMainScreen";
 import AdminReportEventPostScreen from "../screens/AdminReportEventPostScreen";
 import AdminReportManagementScreen from "../screens/AdminReportManagementScreen";
 import AdminReportReviewDetailScreen from "../screens/AdminReportReviewDetailScreen";
+import MediaSelectScreen from "../screens/MediaSelectScreen";
 
 const AdminStack = createNativeStackNavigator();
 
@@ -78,6 +79,10 @@ const AdminStackNavigator = () => {
       <AdminStack.Screen
         name={ROUTE_NAMES.ADMIN_REPORT_MANAGEMENT}
         component={AdminReportManagementScreen}
+      />
+      <AdminStack.Screen
+        name={ROUTE_NAMES.MEDIA_SELECTOR}
+        component={MediaSelectScreen}
       />
     </AdminStack.Navigator>
   );
