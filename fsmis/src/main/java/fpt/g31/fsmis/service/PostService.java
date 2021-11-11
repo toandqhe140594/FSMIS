@@ -38,8 +38,8 @@ public class PostService {
         if (pageNo <= 0) {
             throw new ValidationException("Không tìm thấy hồ câu!");
         }
-        Page<Post> postList = postRepos.findByFishingLocationIdAndActiveIsTrueOrderByPostTimeDesc(locationId, PageRequest.of(pageNo - 1, 10));
         List<PostDtoOut> output = new ArrayList<>();
+        Page<Post> postList = postRepos.findByFishingLocationIdAndActiveIsTrueOrderByPostTimeDesc(locationId, PageRequest.of(pageNo - 1, 10));
         for (Post post : postList) {
             PostDtoOut item = modelMapper.map(post, PostDtoOut.class);
             item.setPostTime(ServiceUtils.convertDateToString(post.getPostTime()));
@@ -48,6 +48,7 @@ public class PostService {
         return PaginationDtoOut.builder()
                 .totalPage(postList.getTotalPages())
                 .pageNo(pageNo)
+                .totalItem(postList.getTotalElements())
                 .items(output)
                 .build();
     }
@@ -126,5 +127,23 @@ public class PostService {
         post.setPinned(true);
         postRepos.save(post);
         return new ResponseTextDtoOut("Ghim bài viết thành công");
+    }
+
+    public PostDtoOut getPinnedPost(Long locationId) {
+        PostDtoOut output = null;
+        Optional<Post> pinnedPostOptional = postRepos.findByFishingLocationIdAndPinnedIsTrue(locationId);
+        if (pinnedPostOptional.isPresent()) {
+            Post pinnedPost = pinnedPostOptional.get();
+            output = PostDtoOut.builder()
+                    .id(pinnedPost.getId())
+                    .content(pinnedPost.getContent())
+                    .postTime(ServiceUtils.convertDateToString(pinnedPost.getPostTime()))
+                    .postType(pinnedPost.getPostType().toString())
+                    .url(pinnedPost.getUrl())
+                    .attachmentType(pinnedPost.getAttachmentType().toString())
+                    .pinned(true)
+                    .edited(pinnedPost.isEdited()).build();
+        }
+        return output;
     }
 }

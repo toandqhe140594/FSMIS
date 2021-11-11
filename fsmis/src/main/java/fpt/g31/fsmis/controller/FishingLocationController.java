@@ -253,9 +253,16 @@ public class FishingLocationController {
     // POST
 
     @GetMapping("/{locationId}/post")
+    @ApiOperation(value = "Get location's post list")
     public ResponseEntity<Object> getPostListByLocationId(@PathVariable Long locationId,
                                                           @RequestParam(defaultValue = "1") Integer pageNo) {
         return new ResponseEntity<>(postService.getPostByLocationId(locationId, pageNo), HttpStatus.OK);
+    }
+
+    @GetMapping("/{locationId}/post/pinned")
+    @ApiOperation(value = "Get location's pinned post")
+    public ResponseEntity<Object> getPinnedPost(@PathVariable Long locationId) {
+        return new ResponseEntity<>(postService.getPinnedPost(locationId), HttpStatus.OK);
     }
 
     @PostMapping("/{locationId}/post/add")
