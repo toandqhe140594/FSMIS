@@ -1,4 +1,3 @@
-import { useNavigation } from "@react-navigation/native";
 import { useStoreActions } from "easy-peasy";
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
@@ -6,12 +5,9 @@ import { View } from "react-native";
 import { Icon, ListItem } from "react-native-elements";
 
 import styles from "../config/styles";
-import { goToFManageSelectScreen } from "../navigations";
 import { showAlertConfirmBox, showToastMessage } from "../utilities";
 
 const CloseFLocationTemporaryComponent = ({ name, isClosed }) => {
-  const navigation = useNavigation();
-
   const closeFishingLocation = useStoreActions(
     (actions) => actions.FManageModel.closeFishingLocationTemporary,
   );
@@ -20,8 +16,8 @@ const CloseFLocationTemporaryComponent = ({ name, isClosed }) => {
 
   const closeAction = () => {
     showAlertConfirmBox(
-      "Bạn muốn tạm đóng khu hồ này?",
-      `"${name}" sẽ bị tạm đóng.`,
+      `Bạn muốn ${isClosed ? "mở lại" : "tạm đóng"} khu hồ này?`,
+      `"${name}" ${isClosed ? "được mở lại" : "sẽ bị tạm đóng"}.`,
       () => {
         closeFishingLocation({ setDeleteSuccess });
       },
@@ -30,9 +26,10 @@ const CloseFLocationTemporaryComponent = ({ name, isClosed }) => {
 
   useEffect(() => {
     if (deleteSuccess) {
-      showToastMessage("Đóng cửa khu hồ thành công");
-      goToFManageSelectScreen(navigation);
+      const message = isClosed ? "Đóng hồ thành công" : "Mở cửa thành công";
+      showToastMessage(message);
     }
+    setDeleteSuccess(null);
   }, [deleteSuccess]);
 
   return (
@@ -42,9 +39,14 @@ const CloseFLocationTemporaryComponent = ({ name, isClosed }) => {
           closeAction();
         }}
       >
-        <Icon name={isClosed ? "unlock" : "lock"} size={26} type="antdesign" />
+        <Icon
+          name={isClosed ? "unlock" : "lock"}
+          size={26}
+          type="antdesign"
+          key={isClosed}
+        />
         <ListItem.Content style={{ height: 40 }}>
-          <ListItem.Title>
+          <ListItem.Title key={isClosed}>
             {isClosed ? "Mở lại khu hồ" : "Đóng hồ tạm thời"}
           </ListItem.Title>
         </ListItem.Content>

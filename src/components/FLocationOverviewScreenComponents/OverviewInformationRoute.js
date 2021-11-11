@@ -30,6 +30,7 @@ const OverviewInformationRoute = () => {
     latitude,
     image,
     saved,
+    closed,
   } = locationOverview;
 
   useEffect(() => {
@@ -70,8 +71,8 @@ const OverviewInformationRoute = () => {
                     paddingVertical: 10,
                     paddingHorizontal: 8,
                   }}
-                  value="Mở cửa"
-                  status="success"
+                  value={closed ? "Đóng cửa" : "Mở cửa"}
+                  status={closed ? "error" : "success"}
                 />
               </Box>
 

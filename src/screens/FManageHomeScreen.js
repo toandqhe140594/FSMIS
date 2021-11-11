@@ -56,7 +56,7 @@ const FManageHomeScreen = () => {
     };
   }, []);
 
-  if (!role)
+  if (!role || !locationDetails.id)
     return (
       <Box flex={1} justifyContent="center" alignItems="center">
         <ActivityIndicator size="large" color="blue" />
@@ -84,6 +84,7 @@ const FManageHomeScreen = () => {
               ))}
               <CloseFLocationTemporaryComponent
                 name={locationDetails.name || "Hồ câu"}
+                isClosed={locationDetails.closed}
               />
               <CloseFLocationComponent
                 name={locationDetails.name || "Hồ câu"}

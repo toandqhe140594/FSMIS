@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { FlatList, View } from "react-native";
 
 import FLocationCard from "../components/FLocationCard";
+import styles from "../config/styles";
 
 const ItemSeparator = () => {
   return <View style={{ height: 6 }} />;
@@ -49,6 +50,7 @@ const FLocationSaveScreen = () => {
       name={item.name}
       rate={item.score}
       key={item.id}
+      isClosed={item.closed}
     />
   );
 
@@ -72,6 +74,7 @@ const FLocationSaveScreen = () => {
           refreshing={refreshing}
           onRefresh={handleRefresh}
           initialNumToRender={5}
+          style={styles.wfull}
         />
       )}
     </View>

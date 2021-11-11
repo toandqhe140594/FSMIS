@@ -551,11 +551,12 @@ const model = {
       const { currentId } = getState();
       const { setDeleteSuccess } = payload;
       try {
-        const { status } = await http.delete(
+        const { status } = await http.post(
           `${API_URL.LOCATION_CLOSE_TEMPORARY}/${currentId}`,
         );
         if (status === 200) {
-          actions.getListOfFishingLocations();
+          // actions.getListOfFishingLocations();
+          actions.switchFishingLocationClosedState({ id: currentId });
           setDeleteSuccess(true);
         }
       } catch (error) {
@@ -563,6 +564,18 @@ const model = {
       }
     },
   ),
+
+  switchFishingLocationClosedState: action((state, payload) => {
+    const { closed } = state.locationDetails;
+    state.locationDetails = { ...state.locationDetails, closed: !closed };
+    const foundIndex = state.listOfFishingLocations.findIndex(
+      (location) => location.id === payload.id,
+    );
+    state.listOfFishingLocations[foundIndex] = {
+      ...state.listOfFishingLocations[foundIndex],
+      closed: !closed,
+    };
+  }),
 
   // DucHM ADD_START 4/11/2021
   /**
