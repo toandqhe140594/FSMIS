@@ -193,6 +193,21 @@ const goToFManagePostScreen = (navigation, params) => {
     ...params,
   });
 };
+const goToAdminFLocationReportDetailScreen = (navigation, params) => {
+  navigation.navigate(ROUTE_NAMES.ADMIN_REPORT_MANAGEMENT_LOCATION_DETAIL, {
+    ...params,
+  });
+};
+const goToAdminReviewReportDetailScreen = (navigation, params) => {
+  navigation.navigate(ROUTE_NAMES.ADMIN_REPORT_MANAGEMENT_REVIEW_DETAIL, {
+    ...params,
+  });
+};
+const goToAdminPostReportDetailScreen = (navigation, params) => {
+  navigation.navigate(ROUTE_NAMES.ADMIN_REPORT_MANAGEMENT_POST_DETAIL, {
+    ...params,
+  });
+};
 
 export {
   goBack,
@@ -203,6 +218,9 @@ export {
   goToAdminFishingMethodManagementScreen,
   goToAdminFishManagementScreen,
   goToAdminFLocationOverviewScreen,
+  goToAdminFLocationReportDetailScreen,
+  goToAdminPostReportDetailScreen,
+  goToAdminReviewReportDetailScreen,
   goToCatchReportDetailScreen,
   goToCatchReportFormScreen,
   goToCatchReportVerifyDetailScreen,
