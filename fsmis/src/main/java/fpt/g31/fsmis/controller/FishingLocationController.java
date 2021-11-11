@@ -4,6 +4,7 @@ package fpt.g31.fsmis.controller;
 import fpt.g31.fsmis.dto.input.*;
 import fpt.g31.fsmis.entity.FishingLocation;
 import fpt.g31.fsmis.service.*;
+import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -71,6 +72,7 @@ public class FishingLocationController {
         return new ResponseEntity<>(fishingLocationService.getNearBy(longitude, latitude, distance, methodId, minRating), HttpStatus.OK);
     }
 
+
     // FISHING LOCATION
 
     @GetMapping(path = "/{locationId}")
@@ -82,6 +84,7 @@ public class FishingLocationController {
     public ResponseEntity<Object> getOwnedFishingLocation(HttpServletRequest request) {
         return new ResponseEntity<>(fishingLocationService.getOwnedFishingLocation(request), HttpStatus.OK);
     }
+
 
     // LAKE
 
@@ -131,7 +134,7 @@ public class FishingLocationController {
 
     @DeleteMapping("/lake/fish/delete/{fishInLakeId}")
     public ResponseEntity<Object> deleteFishFromLake(@PathVariable Long fishInLakeId,
-                                                HttpServletRequest request) {
+                                                     HttpServletRequest request) {
         return new ResponseEntity<>(lakeService.deleteFishFromLake(fishInLakeId, request), HttpStatus.OK);
     }
 
@@ -140,6 +143,7 @@ public class FishingLocationController {
                                             HttpServletRequest request) {
         return new ResponseEntity<>(lakeService.closeLake(lakeId, request), HttpStatus.OK);
     }
+
 
     // SAVE
     @PostMapping("/{locationId}/save")
@@ -169,6 +173,7 @@ public class FishingLocationController {
         return new ResponseEntity<>(checkInService.getLocationCheckInHistory(locationId, request, pageNo, startDate, endDate), HttpStatus.OK);
     }
 
+
     // CHECK-OUT
     @PostMapping("/checkout")
     public ResponseEntity<Object> checkOut(HttpServletRequest request) {
@@ -183,10 +188,10 @@ public class FishingLocationController {
 
     @GetMapping("/{locationId}/catch/history")
     public ResponseEntity<Object> getLocationCatchesHistory(HttpServletRequest request,
-                                                                   @PathVariable Long locationId,
-                                                                   @RequestParam(defaultValue = "1") int pageNo,
-                                                                   @RequestParam(required = false) String startDate,
-                                                                   @RequestParam(required = false) String endDate) {
+                                                            @PathVariable Long locationId,
+                                                            @RequestParam(defaultValue = "1") int pageNo,
+                                                            @RequestParam(required = false) String startDate,
+                                                            @RequestParam(required = false) String endDate) {
         return new ResponseEntity<>(catchesService.getLocationCatchesHistory(request, locationId, pageNo, startDate, endDate), HttpStatus.OK);
     }
 
@@ -194,6 +199,7 @@ public class FishingLocationController {
     public ResponseEntity<Object> getPendingCatchReportList(HttpServletRequest request, @PathVariable Long locationId, @RequestParam(defaultValue = "1") int pageNo) {
         return new ResponseEntity<>(catchesService.getPendingCatchReports(request, locationId, pageNo), HttpStatus.OK);
     }
+
 
     // REVIEW
 
@@ -243,6 +249,7 @@ public class FishingLocationController {
         return new ResponseEntity<>(reportService.reportReview(request, reviewId, reportDtoIn), HttpStatus.OK);
     }
 
+
     // POST
 
     @GetMapping("/{locationId}/post")
@@ -278,6 +285,15 @@ public class FishingLocationController {
                                              @RequestBody @Valid ReportDtoIn reportDtoIn) {
         return new ResponseEntity<>(reportService.reportPost(request, postId, reportDtoIn), HttpStatus.OK);
     }
+
+    @PostMapping("post/pin/{postId}")
+    @ApiOperation(value = "Pin post", notes = "Pass a pinned post's id to unpin it")
+    public ResponseEntity<Object> pinPost(HttpServletRequest request,
+                                          @PathVariable Long postId) {
+        return new ResponseEntity<>(postService.pinPost(request, postId), HttpStatus.OK);
+    }
+
+
     // STAFF
 
     @GetMapping("/{locationId}/staff")

@@ -125,6 +125,7 @@ public class UserService {
                     .name(location.getName())
                     .image(ServiceUtils.splitString(location.getImageUrl()).get(0))
                     .verify(location.isVerify())
+                    .closed(location.isClosed())
                     .address(ServiceUtils.getAddress(location.getAddress(), location.getWard()))
                     .score(reviewRepos.getAverageScoreByFishingLocationIdAndActiveIsTrue(location.getId()))
                     .build();

@@ -8,6 +8,8 @@ import fpt.g31.fsmis.entity.FishingLocation;
 import fpt.g31.fsmis.entity.Post;
 import fpt.g31.fsmis.entity.Role;
 import fpt.g31.fsmis.entity.User;
+import fpt.g31.fsmis.exception.NotFoundException;
+import fpt.g31.fsmis.exception.UnauthorizedException;
 import fpt.g31.fsmis.repository.FishingLocationRepos;
 import fpt.g31.fsmis.repository.PostRepos;
 import fpt.g31.fsmis.security.JwtFilter;
@@ -22,6 +24,7 @@ import javax.validation.ValidationException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -88,15 +91,40 @@ public class PostService {
     public ResponseTextDtoOut deletePost(Long postId, HttpServletRequest request) {
         User user = jwtFilter.getUserFromToken(request);
         Post post = postRepos.findById(postId)
-                .orElseThrow(() -> new ValidationException("Không tìm thấy bài viết!"));
+                .orElseThrow(() -> new NotFoundException("Không tìm thấy bài viết!"));
         FishingLocation location = post.getFishingLocation();
         if (!location.getOwner().equals(user)
                 && !location.getEmployeeList().contains(user)
                 && !user.getRoles().contains(Role.ROLE_ADMIN)) {
-            throw new ValidationException("Không có quyền xóa bài viết!");
+            throw new UnauthorizedException("Không có quyền xóa bài viết!");
         }
         post.setActive(false);
         postRepos.save(post);
         return new ResponseTextDtoOut("Xóa bài viết thành công!");
+    }
+
+    public ResponseTextDtoOut pinPost(HttpServletRequest request, Long postId) {
+        User user = jwtFilter.getUserFromToken(request);
+        Post post = postRepos.findById(postId)
+                .orElseThrow(() -> new ValidationException("Không tìm thấy bài viết!"));
+        FishingLocation location = post.getFishingLocation();
+        if (!location.getOwner().equals(user)
+                && !location.getEmployeeList().contains(user)) {
+            throw new UnauthorizedException("Không có quyền ghim bài viết!");
+        }
+        if (post.isPinned()) {
+            post.setPinned(false);
+            postRepos.save(post);
+            return new ResponseTextDtoOut("Bỏ ghim bài viết thành công");
+        }
+        Optional<Post> pinnedPostOptional = postRepos.findByFishingLocationIdAndPinnedIsTrue(post.getFishingLocation().getId());
+        if (pinnedPostOptional.isPresent()) {
+            Post pinnedPost = pinnedPostOptional.get();
+            pinnedPost.setPinned(false);
+            postRepos.save(pinnedPost);
+        }
+        post.setPinned(true);
+        postRepos.save(post);
+        return new ResponseTextDtoOut("Ghim bài viết thành công");
     }
 }

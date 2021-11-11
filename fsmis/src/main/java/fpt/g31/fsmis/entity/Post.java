@@ -30,6 +30,8 @@ public class Post {
     private boolean edited;
 
     private boolean active;
+
+    private boolean pinned;
     
     @Column(columnDefinition = "TEXT")
     private String url;
