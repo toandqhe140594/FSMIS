@@ -2,18 +2,13 @@ import { Entypo } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { Icon } from "native-base";
 import PropTypes from "prop-types";
-import React from "react";
+import React, { useMemo } from "react";
 import { Alert, Pressable, StyleSheet, View } from "react-native";
 import { Image } from "react-native-elements/dist/image/Image";
 
 import { goToMediaSelectScreen } from "../../navigations";
 
 const styles = StyleSheet.create({
-  container: {
-    flexWrap: "wrap",
-    flexDirection: "row",
-    marginTop: 2,
-  },
   multipleImagesWrapper: {
     width: 110,
     height: 110,
@@ -41,6 +36,14 @@ const MultiImageSection = ({
   formRoute,
 }) => {
   const navigation = useNavigation();
+  const sectionWrapper = useMemo(() => {
+    return {
+      flexWrap: "wrap",
+      flexDirection: "row",
+      marginTop: 2,
+      justifyContent: imageArray.length > 0 ? "flex-start" : "center",
+    };
+  }, [imageArray]);
   /**
    * Displays an pop-up before delete an image
    * @param {Number} id: id of the image
@@ -66,12 +69,7 @@ const MultiImageSection = ({
     );
   };
   return (
-    <View
-      style={[
-        styles.container,
-        { justifyContent: imageArray.length > 0 ? null : "center" },
-      ]}
-    >
+    <View style={sectionWrapper}>
       {imageArray.map((image) => {
         return (
           <View
