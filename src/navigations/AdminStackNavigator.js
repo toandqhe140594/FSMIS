@@ -14,8 +14,8 @@ import AdminFLocationManagementScreen from "../screens/AdminFLocationManagementS
 import AdminFLocationReportDetailScreen from "../screens/AdminFLocationReportDetailScreen";
 import AdminFLocationVerifyScreen from "../screens/AdminFLocationVerifyScreen";
 import AdminMainScreen from "../screens/AdminMainScreen";
-import AdminReportEventPostScreen from "../screens/AdminReportEventPostScreen";
 import AdminReportManagementScreen from "../screens/AdminReportManagementScreen";
+import AdminReportPostDetailScreen from "../screens/AdminReportPostDetailScreen";
 import AdminReportReviewDetailScreen from "../screens/AdminReportReviewDetailScreen";
 import store from "../utilities/Store";
 
@@ -64,7 +64,7 @@ const AdminStackNavigator = () => {
       />
       <AdminStack.Screen
         name={ROUTE_NAMES.ADMIN_REPORT_MANAGEMENT_POST_DETAIL}
-        component={AdminReportEventPostScreen}
+        component={AdminReportPostDetailScreen}
       />
       <AdminStack.Screen
         name={ROUTE_NAMES.ADMIN_REPORT_MANAGEMENT_REVIEW_DETAIL}

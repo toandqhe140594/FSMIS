@@ -77,4 +77,5 @@ export const ADMIN_FISHING_METHOD_MANAGEMENT_EDIT =
 export const ADMIN_BLACKLIST_PHONE_MANAGEMENT =
   "Admin Phone Blacklist Management Screen";
 
+export const ADMIN_REVIEW_REPORT_DETAIL = "Admin Review Report Detail Screen";
 export const MEDIA_SELECTOR = "Media Select Screen";

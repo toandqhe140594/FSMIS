@@ -6,7 +6,7 @@ import AvatarCard from "../components/AvatarCard";
 import EventPostCard from "../components/EventPostCard";
 import styles from "../config/styles";
 
-const AdminReportEventPostScreen = () => {
+const AdminReportPostDetailScreen = () => {
   const reportData = [
     { userName: "Cưởng", content: "Hồ thả lân ,tôi đã căng" },
     {
@@ -70,6 +70,7 @@ const AdminReportEventPostScreen = () => {
         "Hồ vẫn thả lân ,tôi lại căng  Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis quam nihil vel adipisci facere? Cupiditate fugit ratione facilis atque ullam minus provident, velit quia, dolor corporis, laborum ipsa laboriosam doloribus. ",
     },
   ];
+  const listEvent = [{ name: "Xóa bài viết", onPress: () => {} }];
   return (
     <AdminReport>
       <ScrollView>
@@ -83,7 +84,11 @@ const AdminReportEventPostScreen = () => {
             <Text bold>Thời gian báo cáo :</Text> 0/0/0
           </Text>
           <Divider />
-          <EventPostCard id={1} />
+          <EventPostCard
+            id={1}
+            iconEvent={listEvent}
+            iconName="ellipsis-vertical"
+          />
           <Text bold style={styles.textContentType}>
             Danh sách báo cáo :
           </Text>
@@ -125,4 +130,4 @@ const AdminReportEventPostScreen = () => {
   );
 };
 
-export default AdminReportEventPostScreen;
+export default AdminReportPostDetailScreen;

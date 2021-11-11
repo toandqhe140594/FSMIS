@@ -37,7 +37,6 @@ const EventPostCard = ({
                   paddingHorizontal: 1,
                   width: "auto",
                   height: 30,
-                  marginBottom: 2,
                   paddingLeft: 15,
                   paddingRight: 15,
                   paddingTop: 18,
@@ -64,7 +63,7 @@ const EventPostCard = ({
                 );
               }}
             >
-              <Menu.Group title="Báo cáo">
+              <Menu.Group title="Tùy chọn">
                 {iconEvent.map((item) => (
                   <Menu.Item
                     onPress={() => item.onPress(id, itemData)}
@@ -88,18 +87,13 @@ const EventPostCard = ({
       {postStyle === "ANGLER_POST" && (
         <VStack pb="1" mb={2} px="1.5">
           <HStack px="2" space={2} mt={4} pb={3} justifyContent="space-between">
-            <Box justifyContent="flex-start" alignItems="flex-start">
+            <Box justifyContent="flex-start" alignItems="flex-start" flex={1}>
               <AvatarCard
                 avatarSize="lg"
                 nameUser={anglerName}
                 subText={postTime}
                 image={imageAvatar}
               />
-              {postTime !== undefined && (
-                <Text style={styles.ml1}>
-                  {postTime} {edited && "(Đã chỉnh sửa)"}
-                </Text>
-              )}
             </Box>
 
             <Menu
@@ -117,7 +111,7 @@ const EventPostCard = ({
                 );
               }}
             >
-              <Menu.Group title="Báo cáo">
+              <Menu.Group title="Tùy chọn">
                 {iconEvent.map((item) => (
                   <Menu.Item
                     onPress={() => item.onPress(id, itemData)}
@@ -147,9 +141,7 @@ const EventPostCard = ({
       )}
 
       <VStack py={1} px={1} backgroundColor="gray.100">
-        {image !== null && image.length > 100 && (
-          <ImageResizeMode imgUri={image} height={400} />
-        )}
+        {image !== null && <ImageResizeMode imgUri={image} height={400} />}
       </VStack>
       <Divider />
     </Box>
