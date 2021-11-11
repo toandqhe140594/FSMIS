@@ -57,4 +57,7 @@ export default StyleSheet.create({
     marginTop: 5,
     marginLeft: 11,
   },
+  wfull: {
+    width: "100%",
+  },
 });
