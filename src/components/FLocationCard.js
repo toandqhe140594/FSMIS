@@ -12,7 +12,7 @@ import {
   goToFManageMainScreen,
 } from "../navigations";
 
-const SpotCard = ({
+const FLocationCard = ({
   id,
   address,
   image,
@@ -88,7 +88,7 @@ const SpotCard = ({
   );
 };
 
-SpotCard.propTypes = {
+FLocationCard.propTypes = {
   address: PropTypes.string.isRequired,
   image: PropTypes.string,
   isVerifed: PropTypes.bool,
@@ -101,7 +101,7 @@ SpotCard.propTypes = {
   role: PropTypes.string,
   isClosed: PropTypes.bool,
 };
-SpotCard.defaultProps = {
+FLocationCard.defaultProps = {
   image: "https://picsum.photos/200",
   isVerifed: false,
   rate: 0,
@@ -113,4 +113,4 @@ SpotCard.defaultProps = {
   isClosed: false,
 };
 
-export default SpotCard;
+export default FLocationCard;
