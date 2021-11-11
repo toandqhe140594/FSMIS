@@ -5,7 +5,8 @@ import { ROUTE_NAMES } from "../constants";
 import AccountManagementModel from "../models/AccountManagementModel";
 import AdminAccountDetailScreen from "../screens/AdminAccountDetailScreen";
 import AdminAccountManagementScreen from "../screens/AdminAccountManagementScreen";
-import AdminBlacklistPhoneScreen from "../screens/AdminBlacklistPhoneScreen";
+import AdminBlacklistPhoneAddScreen from "../screens/AdminBlacklistPhoneAddScreen";
+import AdminBlacklistManagementScreen from "../screens/AdminBlacklistPhoneScreen";
 import AdminFishEditScreen from "../screens/AdminFishEditScreen";
 import AdminFishingMethodEditScreen from "../screens/AdminFishingMethodEditScreen";
 import AdminFishingMethodManagementScreen from "../screens/AdminFishingMethodManagementScreen";
@@ -84,7 +85,11 @@ const AdminStackNavigator = () => {
       />
       <AdminStack.Screen
         name={ROUTE_NAMES.ADMIN_BLACKLIST_PHONE_MANAGEMENT}
-        component={AdminBlacklistPhoneScreen}
+        component={AdminBlacklistManagementScreen}
+      />
+      <AdminStack.Screen
+        name={ROUTE_NAMES.ADMIN_BLACKLIST_PHONE_MANAGEMENT_ADD}
+        component={AdminBlacklistPhoneAddScreen}
       />
     </AdminStack.Navigator>
   );
