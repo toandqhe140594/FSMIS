@@ -36,7 +36,7 @@ public class PostService {
 
     public PaginationDtoOut getPostByLocationId(Long locationId, int pageNo) {
         if (pageNo <= 0) {
-            throw new ValidationException("Không tìm thấy hồ câu!");
+            throw new ValidationException("Số trang không hợp lệ");
         }
         List<PostDtoOut> output = new ArrayList<>();
         Page<Post> postList = postRepos.findByFishingLocationIdAndActiveIsTrueOrderByPostTimeDesc(locationId, PageRequest.of(pageNo - 1, 10));

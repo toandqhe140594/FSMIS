@@ -46,9 +46,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                        "/configuration/security",
                        "/swagger-ui.html",
                        "/webjars/**").permitAll()
+               .antMatchers("/api/admin/**").hasRole("ADMIN")
                .anyRequest().authenticated();
-
-        // http.authorizeRequests().anyRequest().permitAll();
 
         // JwtFilter
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
