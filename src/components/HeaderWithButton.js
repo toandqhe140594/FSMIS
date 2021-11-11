@@ -1,9 +1,8 @@
-import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { Box, Button, Divider, Pressable } from "native-base";
 import PropTypes from "prop-types";
 import React from "react";
-import { Text } from "react-native-elements";
+import { Icon, Text } from "react-native-elements";
 
 import styles from "../config/styles";
 import { goBack } from "../navigations";
@@ -27,7 +26,7 @@ const HeaderWithButton = ({ name, isVerified, buttonName, onSuccess }) => {
           }}
           flex={1}
         >
-          <Ionicons name="arrow-back" size={24} color="black" />
+          <Icon name="arrow-back" size={24} type="ionicon" color="black" />
         </Pressable>
         <Box
           flexDir="row"
@@ -46,17 +45,17 @@ const HeaderWithButton = ({ name, isVerified, buttonName, onSuccess }) => {
             {name}
           </Text>
           {isVerified && (
-            <MaterialIcons
+            <Icon
               name="verified"
-              color="blue"
               size={16}
+              type="material"
+              color="blue"
               style={styles.ml1}
             />
           )}
         </Box>
         <Box flex={1} justifyContent="flex-end" alignItems="flex-end">
           <Button
-            // position="absolute"
             onPress={onSuccess}
             _text={{
               fontSize: 10,
