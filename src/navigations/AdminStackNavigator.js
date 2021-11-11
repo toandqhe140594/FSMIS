@@ -2,8 +2,10 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React from "react";
 
 import { ROUTE_NAMES } from "../constants";
+import AccountManagementModel from "../models/AccountManagementModel";
 import AdminAccountDetailScreen from "../screens/AdminAccountDetailScreen";
 import AdminAccountManagementScreen from "../screens/AdminAccountManagementScreen";
+import AdminBlacklistPhoneScreen from "../screens/AdminBlacklistPhoneScreen";
 import AdminFishEditScreen from "../screens/AdminFishEditScreen";
 import AdminFishingMethodEditScreen from "../screens/AdminFishingMethodEditScreen";
 import AdminFishingMethodManagementScreen from "../screens/AdminFishingMethodManagementScreen";
@@ -15,9 +17,11 @@ import AdminMainScreen from "../screens/AdminMainScreen";
 import AdminReportEventPostScreen from "../screens/AdminReportEventPostScreen";
 import AdminReportManagementScreen from "../screens/AdminReportManagementScreen";
 import AdminReportReviewDetailScreen from "../screens/AdminReportReviewDetailScreen";
+import store from "../utilities/Store";
 
 const AdminStack = createNativeStackNavigator();
 
+store.addModel("AccountManagementModel", AccountManagementModel);
 const AdminStackNavigator = () => {
   return (
     <AdminStack.Navigator
@@ -54,7 +58,6 @@ const AdminStackNavigator = () => {
         name={ROUTE_NAMES.ADMIN_FISHING_METHOD_MANAGEMENT_EDIT}
         component={AdminFishingMethodEditScreen}
       />
-
       <AdminStack.Screen
         name={ROUTE_NAMES.ADMIN_REPORT_MANAGEMENT_LOCATION_DETAIL}
         component={AdminFLocationReportDetailScreen}
@@ -78,6 +81,10 @@ const AdminStackNavigator = () => {
       <AdminStack.Screen
         name={ROUTE_NAMES.ADMIN_REPORT_MANAGEMENT}
         component={AdminReportManagementScreen}
+      />
+      <AdminStack.Screen
+        name={ROUTE_NAMES.ADMIN_BLACKLIST_PHONE_MANAGEMENT}
+        component={AdminBlacklistPhoneScreen}
       />
     </AdminStack.Navigator>
   );

@@ -1,66 +1,95 @@
-import { useNavigation } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
-import { Box, Center, Divider } from "native-base";
+import { Box, Button, Center, Divider, Text } from "native-base";
+import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, FlatList } from "react-native";
 import { SearchBar } from "react-native-elements";
 
-import AvatarCard from "../components/AvatarCard";
 import HeaderTab from "../components/HeaderTab";
 import PressableCustomCard from "../components/PressableCustomCard";
-import { goToAdminAccountManagementDetailScreen } from "../navigations";
+
+const BlacklistPhoneComponent = ({ phone, description }) => {
+  return (
+    <PressableCustomCard onPress={() => {}}>
+      <Box py={2} px={3} flex={1} flexDir="row">
+        <Box flex={2} justifyContent="center">
+          <Text bold fontSize="lg">
+            {phone}
+          </Text>
+          {description ? (
+            <Text flex={1} isTruncated numberOfLines={1}>
+              {description}{" "}
+            </Text>
+          ) : (
+            <></>
+          )}
+        </Box>
+        <Box justifyContent="center">
+          <Button>Xóa</Button>
+        </Box>
+      </Box>
+    </PressableCustomCard>
+  );
+};
+BlacklistPhoneComponent.propTypes = {
+  phone: PropTypes.string.isRequired,
+  description: PropTypes.string,
+};
+BlacklistPhoneComponent.defaultProps = {
+  description: "",
+};
+
+const renderItem = ({ item }) => (
+  <BlacklistPhoneComponent phone={item.phone} description={item.description} />
+);
 
 const AdminAccountManagementScreen = () => {
-  const navigation = useNavigation();
-
-  const userList = useStoreState(
-    (states) => states.AccountManagementModel.userList,
+  const blacklist = useStoreState(
+    (states) => states.AccountManagementModel.blacklist,
   );
-  const { setUserList, getUserList } = useStoreActions(
+  const { setBlacklist, getBlacklist } = useStoreActions(
     (actions) => actions.AccountManagementModel,
   );
 
   const [search, setSearch] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [page, setPage] = useState(2);
-  const [displayedList, setDisplayedList] = useState(userList);
+  const [displayedList, setDisplayedList] = useState(blacklist);
 
   const updateSearch = (searchKey) => {
     setSearch(searchKey);
   };
 
   const loadMoreUserData = () => {
-    getUserList({ pageNo: page });
+    getBlacklist({ pageNo: page });
     setPage(page + 1);
   };
 
   const onClear = () => {
-    setDisplayedList(userList);
+    setDisplayedList(blacklist);
   };
 
   const onEndEditing = () => {
-    if (!userList) return;
-    const filteredList = userList.filter(
-      (user) =>
-        user.name.toUpperCase().includes(search.toUpperCase()) ||
-        user.phone.includes(search),
+    if (!blacklist) return;
+    const filteredList = blacklist.filter((user) =>
+      user.phone.includes(search),
     );
     setDisplayedList(filteredList);
   };
 
   useEffect(() => {
-    setDisplayedList(userList);
-    if (userList) setIsLoading(false);
-  }, [userList]);
+    setDisplayedList(blacklist);
+    if (blacklist) setIsLoading(false);
+  }, [blacklist]);
 
   useEffect(() => {
-    getUserList({ pageNo: 1 });
+    getBlacklist({ pageNo: 1 });
     const loadingTimeout = setTimeout(() => {
       setIsLoading(false);
     }, 1000); // Test
     return () => {
       clearTimeout(loadingTimeout);
-      setUserList([]);
+      setBlacklist([]);
     };
   }, []);
 
@@ -77,7 +106,7 @@ const AdminAccountManagementScreen = () => {
       <Center flex={1} alignItems="center">
         <Box w="100%" alignItems="center" flex={1}>
           <SearchBar
-            placeholder="Nhập tên hoặc số điện thoại"
+            placeholder="Nhập số điện thoại"
             onChangeText={updateSearch}
             value={search}
             containerStyle={{
@@ -91,26 +120,15 @@ const AdminAccountManagementScreen = () => {
             onEndEditing={onEndEditing}
             onClear={onClear}
           />
+          <Button size="lg" my={3}>
+            Chặn số điện thoại
+          </Button>
 
           <Box w="90%">
             <FlatList
               data={displayedList}
-              renderItem={({ item }) => (
-                <PressableCustomCard
-                  onPress={() => {
-                    goToAdminAccountManagementDetailScreen(navigation, {
-                      id: item.id,
-                    });
-                  }}
-                >
-                  <AvatarCard
-                    nameUser={item.name}
-                    subText={`SĐT: ${item.phone}`}
-                    image={item.image}
-                  />
-                </PressableCustomCard>
-              )}
-              keyExtractor={(item) => item.id.toString()}
+              renderItem={renderItem}
+              keyExtractor={(item) => item.phone.toString()}
               ItemSeparatorComponent={Divider}
               onEndReached={() => {
                 loadMoreUserData();

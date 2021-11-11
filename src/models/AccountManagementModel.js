@@ -28,6 +28,20 @@ const initialUserList = [
   },
 ];
 
+const initialBlacklist = [
+  {
+    phone: "0985043311",
+    description: "vippro",
+  },
+  {
+    phone: "0985043312",
+    description: "clone",
+  },
+  {
+    phone: "098504331992",
+  },
+];
+
 // initial state for test purpose only since there wasnot api for get account information
 const initialAccountInformation = {
   id: 1,
@@ -43,8 +57,12 @@ const model = {
   userList: [...initialUserList],
   accountInformation: {},
   totalPage: 1,
+  blacklist: null,
   setUserList: action((state, payload) => {
     state.userList = payload;
+  }),
+  setBlacklist: action((state, payload) => {
+    state.blacklist = payload;
   }),
   setAccountInformation: action((state, payload) => {
     state.accountInformation = payload;
@@ -60,6 +78,10 @@ const model = {
   getAccountInformation: thunk(async (actions) => {
     // const { data } = await http.get(`${API_URL.ADMIN_ACCOUNT_INFORMATION}`);
     actions.setAccountInformation({ ...initialAccountInformation });
+  }),
+  getBlacklist: thunk(async (actions) => {
+    // const { data } = await http.get(`${API_URL.ADMIN_ACCOUNT_LIST}`);
+    actions.setBlacklist(initialBlacklist);
   }),
 };
 export default model;
