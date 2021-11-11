@@ -11,22 +11,31 @@ const HeaderWithButton = ({ name, isVerified, buttonName, onSuccess }) => {
   const navigation = useNavigation();
 
   return (
-    <Box position="relative" justifyContent="center">
+    <>
       <Box
         style={{ height: 40 }}
+        bg="white"
         flexDir="row"
+        justifyContent="space-between"
         alignItems="center"
         px={4}
         w="100%"
-        bg="white"
       >
         <Pressable
           onPress={() => {
             goBack(navigation);
           }}
           flex={1}
+          alignItems="flex-start"
+          hitSlop={10}
         >
-          <Icon name="arrow-back" size={24} type="ionicon" color="black" />
+          <Icon
+            name="arrow-back"
+            size={24}
+            type="ionicon"
+            color="black"
+            containerStyle={styles.ml1}
+          />
         </Pressable>
         <Box
           flexDir="row"
@@ -67,7 +76,7 @@ const HeaderWithButton = ({ name, isVerified, buttonName, onSuccess }) => {
         </Box>
       </Box>
       <Divider />
-    </Box>
+    </>
   );
 };
 

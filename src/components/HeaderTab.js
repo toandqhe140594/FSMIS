@@ -25,6 +25,7 @@ const HeaderTab = ({ name, isVerified, flagable, id, customIcon }) => {
           onPress={() => {
             goBack(navigation);
           }}
+          hitSlop={10}
         >
           <Icon name="arrow-back" size={24} type="ionicon" color="black" />
         </Pressable>
@@ -46,6 +47,7 @@ const HeaderTab = ({ name, isVerified, flagable, id, customIcon }) => {
               if (id)
                 goToWriteReportScreen(navigation, { id, type: "location" });
             }}
+            hitSlop={10}
           >
             <Icon
               name="flag"
@@ -60,6 +62,7 @@ const HeaderTab = ({ name, isVerified, flagable, id, customIcon }) => {
             onPress={() => {
               customIcon.onPress();
             }}
+            hitSlop={10}
           >
             <Icon
               name={customIcon.name}
