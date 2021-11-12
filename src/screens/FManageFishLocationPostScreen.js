@@ -1,9 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
-import { Box, Button, ScrollView, Text, FlatList } from "native-base";
+import { Box, Button, Divider, FlatList, Text } from "native-base";
 import React, { useEffect, useState } from "react";
-import { View } from "react-native";
-import { Divider } from "react-native-elements";
 
 import EventPostCard from "../components/EventPostCard";
 import HeaderTab from "../components/HeaderTab";
@@ -20,7 +18,6 @@ const PostListContainerComponent = () => {
     getLocationPostListFirstPage,
     pinFLocationPost,
     getPinPost,
-    setCurrentPinPost,
   } = useStoreActions((actions) => actions.FManageModel);
 
   const lakePostPageNo = useStoreState(
@@ -98,7 +95,7 @@ const PostListContainerComponent = () => {
   );
 
   return (
-    <View>
+    <Box>
       <FlatList
         ListHeaderComponent={() => (
           <>
@@ -108,7 +105,7 @@ const PostListContainerComponent = () => {
                 <EventPostCard
                   postStyle="LAKE_POST"
                   iconName="ellipsis-vertical"
-                  iconEvent={listEvent}
+                  iconEvent={[...pinPostEvent, ...listEvent]}
                   id={pinPost.id}
                   image={pinPost.url}
                   itemData={pinPost}
@@ -134,7 +131,7 @@ const PostListContainerComponent = () => {
         }}
         keyExtractor={(item) => item.id.toString()}
       />
-    </View>
+    </Box>
   );
 };
 
