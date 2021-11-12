@@ -4,11 +4,10 @@ import {
   useNavigation,
   useRoute,
 } from "@react-navigation/native";
-import { Box, Button, Text, VStack } from "native-base";
+import { Box, Button, VStack } from "native-base";
 import React, { useCallback, useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { Dimensions } from "react-native";
-import * as yup from "yup";
 
 // DucHM ADD_START 11/11/2021
 import InputComponent from "../components/common/InputComponent";
@@ -21,11 +20,6 @@ const OFFSET_BOTTOM = 85;
 // Get window height without status bar height
 const CUSTOM_SCREEN_HEIGHT = Dimensions.get("window").height - OFFSET_BOTTOM;
 
-// Validation schema for form
-const validationSchema = yup.object().shape({
-  fishName: yup.string().required("Tên cá không thể bỏ trống"),
-  fishImage: yup.array().min(1, "Hãy chọn ảnh cho loại cá"),
-});
 const AdminFishEditScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
@@ -33,7 +27,7 @@ const AdminFishEditScreen = () => {
   const methods = useForm({
     mode: "onChange",
     defaultValues: { fishImage: [] },
-    resolver: yupResolver(validationSchema),
+    resolver: yupResolver(SCHEMA.ADMIN_FISH_ADD_EDIT_FORM),
   });
   const { handleSubmit, setValue } = methods;
   const onSubmit = (data) => {
