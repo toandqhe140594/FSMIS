@@ -1017,6 +1017,28 @@ const model = {
     actions.rewriteCheckinHistory([]);
   }),
   // END OF CHECKIN RELATED SECTION
+  currentPinPost: {},
+  setCurrentPinPost: action((state, payload) => {
+    state.currentPinPost = payload;
+  }),
+  getPinPost: thunk(async (actions, payload, { getState }) => {
+    const { currentId } = getState();
+    const { data } = await http.get(`/location/${currentId}/post/pinned`);
+    actions.setCurrentPinPost(data);
+  }),
+  pinFLocationPost: thunk(async (actions, payload) => {
+    const { postId } = payload;
+    try {
+      const { status, data } = await http.post(`/location/post/pin/${postId}`);
+      if (status === 200) {
+        // setSuccess(true);
+        actions.setCurrentPinPost(data);
+      }
+    } catch (error) {
+      // setSuccess(false);
+      actions.setCurrentPinPost({});
+    }
+  }),
 };
 
 export default model;

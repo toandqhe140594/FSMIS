@@ -54,38 +54,42 @@ const CatchReportRoute = () => {
     getLocationCatchListByPage({ pageNo: lakeCatchPage });
     setLakeCatchPage(lakeCatchPage + 1);
   }, []);
-
+  const renderItem = ({ item }) => {
+    return (
+      <PressableCustomCard
+        paddingX="1"
+        onPress={() => {
+          goToCatchReportDetailScreen(navigation, {
+            id: item.id,
+          });
+        }}
+      >
+        <EventPostCard
+          postStyle="ANGLER_POST"
+          anglerName={item.userFullName}
+          anglerContent={item.description}
+          postTime={item.time}
+          fishList={item.fishes}
+          id={item.id}
+          imageAvatar={item.avatar}
+          image={item.images[0]}
+          numberOfImages={item.images.length}
+          iconName={role === VIEW_ROLE_ANGLER ? "flag" : ""}
+          iconEvent={listEvent}
+        />
+      </PressableCustomCard>
+    );
+  };
   return (
     <>
       {locationCatchList.length > 0 && (
         <FlatList
+          removeClippedSubviews
+          initialNumToRender={5}
+          updateCellsBatchingPeriod={10}
+          maxToRenderPerBatch={20}
           data={locationCatchList}
-          renderItem={({ item }) => {
-            return (
-              <PressableCustomCard
-                paddingX="1"
-                onPress={() => {
-                  goToCatchReportDetailScreen(navigation, {
-                    id: item.id,
-                  });
-                }}
-              >
-                <EventPostCard
-                  postStyle="ANGLER_POST"
-                  anglerName={item.userFullName}
-                  anglerContent={item.description}
-                  postTime={item.time}
-                  fishList={item.fishes}
-                  id={item.id}
-                  imageAvatar={item.avatar}
-                  image={item.images[0]}
-                  numberOfImages={item.images.length}
-                  iconName={role === VIEW_ROLE_ANGLER ? "flag" : ""}
-                  iconEvent={listEvent}
-                />
-              </PressableCustomCard>
-            );
-          }}
+          renderItem={renderItem}
           onEndReached={() => {
             loadMoreLakeCatchData();
           }}
@@ -122,26 +126,31 @@ const FLocationEventRoute = () => {
     goToWriteReportScreen(navigation, { id, type });
   };
   const listEvent = [{ name: "Báo cáo bài viết", onPress: reportHandler }];
+  const renderItem = ({ item }) => (
+    <EventPostCard
+      lakePost={{
+        badge: item.postType === "STOCKING" ? "Bồi cá" : "Thông báo",
+        content: item.content,
+      }}
+      image={item.url}
+      postStyle="LAKE_POST"
+      edited={item.edited}
+      postTime={item.postTime}
+      id={item.id}
+      iconName={role === VIEW_ROLE_ANGLER ? "flag" : ""}
+      iconEvent={listEvent}
+    />
+  );
   return (
     <>
       {locationPostList.length > 0 && (
         <FlatList
+          removeClippedSubviews
+          initialNumToRender={5}
+          updateCellsBatchingPeriod={10}
+          maxToRenderPerBatch={20}
           data={locationPostList}
-          renderItem={({ item }) => (
-            <EventPostCard
-              lakePost={{
-                badge: item.postType === "STOCKING" ? "Bồi cá" : "Thông báo",
-                content: item.content,
-              }}
-              image={item.url}
-              postStyle="LAKE_POST"
-              edited={item.edited}
-              postTime={item.postTime}
-              id={item.id}
-              iconName={role === VIEW_ROLE_ANGLER ? "flag" : ""}
-              iconEvent={listEvent}
-            />
-          )}
+          renderItem={renderItem}
           onEndReached={() => {
             loadMoreLakePostData();
           }}

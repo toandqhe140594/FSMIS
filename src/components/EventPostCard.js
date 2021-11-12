@@ -30,7 +30,7 @@ const EventPostCard = ({
       {postStyle === "LAKE_POST" && (
         <>
           <HStack px="2" space={2} mt={4} pb={3} justifyContent="space-between">
-            <Box justifyContent="flex-start" alignItems="flex-start">
+            <HStack alignItems="baseline" space={1}>
               <Badge
                 badgeStyle={{
                   borderRadius: 7,
@@ -48,10 +48,16 @@ const EventPostCard = ({
               />
               {postTime !== undefined && (
                 <Text style={styles.ml1}>
-                  {postTime} {edited && "(Đã chỉnh sửa)"}
+                  {postTime}
+                  {edited && (
+                    <Text style={{ fontWeight: "bold", fontSize: 12 }}>
+                      {" "}
+                      (chỉnh sửa){" "}
+                    </Text>
+                  )}
                 </Text>
               )}
-            </Box>
+            </HStack>
 
             <Menu
               style={{ position: "relative", top: -30, left: -10 }}
@@ -141,7 +147,9 @@ const EventPostCard = ({
       )}
 
       <VStack py={1} px={1} backgroundColor="gray.100">
-        {image !== null && <ImageResizeMode imgUri={image} height={400} />}
+        {image !== null && image.length > 10 && (
+          <ImageResizeMode imgUri={image} height={400} />
+        )}
       </VStack>
       <Divider />
     </Box>
