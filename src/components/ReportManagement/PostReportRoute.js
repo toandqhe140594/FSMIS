@@ -1,42 +1,12 @@
+import { useNavigation } from "@react-navigation/native";
+import { useStoreState } from "easy-peasy";
 import { Select } from "native-base";
 import React, { useEffect, useState } from "react";
-import { FlatList, StyleSheet, View } from "react-native";
+import { FlatList, StyleSheet, TouchableOpacity, View } from "react-native";
 
+import { goToAdminPostReportDetailScreen } from "../../navigations";
 import HeaderTab from "../HeaderTab";
 import ReportCard from "./ReportCard";
-
-const APIList = [
-  {
-    id: "1",
-    userName: "Hồ câu Thuần Việt",
-    postType: "Báo cá",
-    isProcessed: true,
-  },
-  {
-    id: "2",
-    userName: "Hồ câu Thuần Việt",
-    postType: "Thông báo",
-    isProcessed: true,
-  },
-  {
-    id: "3",
-    userName: "Hồ câu Thuần Việt",
-    postType: "Bồi cá",
-    isProcessed: false,
-  },
-  {
-    id: "4",
-    userName: "Hồ câu Thuần Việt",
-    postType: "Báo cá",
-    isProcessed: true,
-  },
-  {
-    id: "5",
-    userName: "Hồ câu Thuần Việt",
-    postType: "Báo cá",
-    isProcessed: false,
-  },
-];
 
 const styles = StyleSheet.create({
   flatList: {
@@ -44,20 +14,32 @@ const styles = StyleSheet.create({
   },
 });
 
-const renderItem = ({ item }) => <ReportCard {...item} isPostReport />;
-
 const PostReportRoute = () => {
   const [filter, setFilter] = useState("");
-  const [reportList, setReportList] = useState(APIList);
+  const reportListModel = useStoreState(
+    (states) => states.ReportModel.listReportLocation,
+  );
+  const [reportList, setReportList] = useState(reportListModel);
+  const navigation = useNavigation();
+
+  const renderItem = ({ item }) => (
+    <TouchableOpacity
+      onPress={() => {
+        goToAdminPostReportDetailScreen(navigation);
+      }}
+    >
+      <ReportCard {...item} isPostReport />
+    </TouchableOpacity>
+  );
   useEffect(() => {
     const getFilteredList = () => {
       switch (filter) {
         case "Tất cả":
-          return APIList;
+          return reportListModel;
         case "Chưa xử lý":
-          return APIList.filter(({ isProcessed }) => !isProcessed);
+          return reportListModel.filter(({ isProcessed }) => !isProcessed);
         case "Đã xử lý":
-          return APIList.filter(({ isProcessed }) => isProcessed);
+          return reportListModel.filter(({ isProcessed }) => isProcessed);
         default:
           return reportList;
       }

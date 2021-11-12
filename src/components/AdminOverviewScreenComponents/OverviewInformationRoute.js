@@ -2,7 +2,7 @@ import { useStoreState } from "easy-peasy";
 import { Box, Text } from "native-base";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, ScrollView } from "react-native";
-import { Card, Divider } from "react-native-elements";
+import { Badge, Card, Divider } from "react-native-elements";
 import MapView, { Marker } from "react-native-maps";
 import Swiper from "react-native-swiper";
 
@@ -26,10 +26,8 @@ const OverviewInformationRoute = () => {
     image,
   } = locationOverview;
 
-  const serviceArr = service.split("\n");
-
   useEffect(() => {
-    if (locationOverview) setLoading(false);
+    if (locationOverview.name) setLoading(false);
   }, [locationOverview]);
 
   return (
@@ -43,19 +41,33 @@ const OverviewInformationRoute = () => {
           <ScrollView>
             <Box>
               <Card containerStyle={{ width: "100%", margin: 0, padding: 0 }}>
-                <Swiper height="auto">
-                  {image && image.length > 0 ? (
-                    image.map((item) => (
+                <Box>
+                  <Swiper height="auto">
+                    {image && image.length > 0 ? (
+                      image.map((item) => (
+                        <Card.Image
+                          source={{ uri: item }}
+                          key={item}
+                          style={{ height: 270 }}
+                        />
+                      ))
+                    ) : (
                       <Card.Image
-                        source={{ uri: item }}
-                        key={item}
-                        style={{ height: 270 }}
+                        source={{ uri: "https://picsum.photos/400" }}
                       />
-                    ))
-                  ) : (
-                    <Card.Image source={{ uri: "https://picsum.photos/400" }} />
-                  )}
-                </Swiper>
+                    )}
+                  </Swiper>
+                  <Badge
+                    containerStyle={{ position: "absolute", top: 4, left: 4 }}
+                    badgeStyle={{
+                      borderRadius: 0,
+                      paddingVertical: 10,
+                      paddingHorizontal: 8,
+                    }}
+                    value="Mở cửa"
+                    status="success"
+                  />
+                </Box>
 
                 <Card.Divider />
                 <Box>
@@ -86,18 +98,21 @@ const OverviewInformationRoute = () => {
                   Bản đồ
                 </Text>
                 <Box m={3}>
-                  <MapView
-                    initialRegion={{
-                      latitude,
-                      longitude,
-                      latitudeDelta: 0.0922,
-                      longitudeDelta: 0.0421,
-                    }}
-                    style={{ height: 150, width: "100%" }}
-                    liteMode
-                  >
-                    <Marker coordinate={{ latitude, longitude }} />
-                  </MapView>
+                  {latitude && (
+                    <MapView
+                      initialRegion={{
+                        latitude,
+                        longitude,
+                        latitudeDelta: 0.05,
+                        longitudeDelta: 0.05,
+                      }}
+                      style={{ height: 150, width: "100%" }}
+                      liteMode
+                      showsMyLocationButton
+                    >
+                      <Marker coordinate={{ latitude, longitude }} />
+                    </MapView>
+                  )}
                 </Box>
                 <Divider />
                 <Box m={3}>
@@ -118,19 +133,20 @@ const OverviewInformationRoute = () => {
                   <Text bold fontSize="md">
                     Dịch vụ
                   </Text>
-                  {serviceArr.map((ser) => (
-                    <Text key={ser}>&#8226;{ser}</Text>
-                  ))}
+                  {service &&
+                    service
+                      .split("\n")
+                      .map((ser) => <Text key={ser}>&#8226; {ser}</Text>)}
                 </Box>
                 <Divider />
                 <Box m={3}>
                   <Text bold fontSize="md">
                     Nội quy
                   </Text>
-                  <Box flexDirection="row">
-                    &#8226;
-                    <Text>{rule}</Text>
-                  </Box>
+                  {rule &&
+                    rule
+                      .split("\n")
+                      .map((rul) => <Text key={rul}>&#8226; {rul}</Text>)}
                 </Box>
               </Card>
             </Box>

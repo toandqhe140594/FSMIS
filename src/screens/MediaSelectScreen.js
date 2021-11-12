@@ -90,7 +90,7 @@ const MediaSelectScreen = () => {
     [],
   );
 
-  // Manage selected iamge result
+  // Manage selected image result
   const widgetResize = useMemo(
     () => ({
       width: 750,

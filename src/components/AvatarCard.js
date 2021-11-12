@@ -24,8 +24,9 @@ const AvatarCard = ({
           source={{
             uri: image !== "" ? image : undefined,
           }}
+          key={image}
         />
-        <VStack ml={1}>
+        <VStack ml={1} flex={1}>
           <Text
             _dark={{
               color: "warmGray.50",
@@ -33,6 +34,9 @@ const AvatarCard = ({
             color="coolGray.800"
             bold
             fontSize={nameFontSize || "md"}
+            key={nameUser}
+            isTruncated
+            numberOfLines={1}
           >
             {nameUser}
           </Text>
@@ -43,6 +47,7 @@ const AvatarCard = ({
                 color: "warmGray.200",
               }}
               fontSize={subTextFontSize || "md"}
+              key={subText}
             >
               {subText}
             </Text>

@@ -4,6 +4,10 @@ import React from "react";
 import FLocationReportRoute from "../components/ReportManagement/FLocationReportRoute";
 import PostReportRoute from "../components/ReportManagement/PostReportRoute";
 import ReviewReportRoute from "../components/ReportManagement/ReviewReportRoute";
+import ReportModel from "../models/ReportModel";
+import store from "../utilities/Store";
+
+store.addModel("ReportModel", ReportModel);
 
 const Tab = createBottomTabNavigator();
 

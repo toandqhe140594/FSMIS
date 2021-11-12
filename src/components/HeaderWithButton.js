@@ -1,9 +1,8 @@
-import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { Box, Button, Divider, Pressable } from "native-base";
 import PropTypes from "prop-types";
 import React from "react";
-import { Text } from "react-native-elements";
+import { Icon, Text } from "react-native-elements";
 
 import styles from "../config/styles";
 import { goBack } from "../navigations";
@@ -12,22 +11,31 @@ const HeaderWithButton = ({ name, isVerified, buttonName, onSuccess }) => {
   const navigation = useNavigation();
 
   return (
-    <Box position="relative" justifyContent="center">
+    <>
       <Box
         style={{ height: 40 }}
+        bg="white"
         flexDir="row"
+        justifyContent="space-between"
         alignItems="center"
         px={4}
         w="100%"
-        bg="white"
       >
         <Pressable
           onPress={() => {
             goBack(navigation);
           }}
           flex={1}
+          alignItems="flex-start"
+          hitSlop={10}
         >
-          <Ionicons name="arrow-back" size={24} color="black" />
+          <Icon
+            name="arrow-back"
+            size={24}
+            type="ionicon"
+            color="black"
+            containerStyle={styles.ml1}
+          />
         </Pressable>
         <Box
           flexDir="row"
@@ -46,17 +54,17 @@ const HeaderWithButton = ({ name, isVerified, buttonName, onSuccess }) => {
             {name}
           </Text>
           {isVerified && (
-            <MaterialIcons
+            <Icon
               name="verified"
-              color="blue"
               size={16}
+              type="material"
+              color="blue"
               style={styles.ml1}
             />
           )}
         </Box>
         <Box flex={1} justifyContent="flex-end" alignItems="flex-end">
           <Button
-            // position="absolute"
             onPress={onSuccess}
             _text={{
               fontSize: 10,
@@ -68,7 +76,7 @@ const HeaderWithButton = ({ name, isVerified, buttonName, onSuccess }) => {
         </Box>
       </Box>
       <Divider />
-    </Box>
+    </>
   );
 };
 

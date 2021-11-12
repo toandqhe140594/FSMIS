@@ -49,6 +49,11 @@ const model = {
   checkinHistoryCurrentPage: 1,
   checkinHistoryTotalPage: 1,
 
+  lakePostPageNo: 1,
+  setLakePostPageNo: action((state, payload) => {
+    state.lakePostPageNo = payload;
+  }),
+
   setCurrentId: action((state, payload) => {
     state.currentId = payload;
   }),
@@ -256,6 +261,11 @@ const model = {
     if (payload.status === "Overwrite") state.locationPostList = payload.data;
     else state.locationPostList = state.locationPostList.concat(payload.data);
   }),
+
+  setLocationPostListFirstPage: action((state, payload) => {
+    state.locationPostList = payload.data;
+  }),
+
   /**
    * Get posts data by page
    * @param {Object} [payload] the payload pass to function
@@ -275,16 +285,32 @@ const model = {
     });
   }),
 
+  getLocationPostListFirstPage: thunk(
+    async (actions, payload, { getState }) => {
+      const { currentId, lakePostPageNo } = getState();
+      actions.setLakePostPageNo(2);
+      const { data } = await http.get(`location/${currentId}/post`, {
+        params: { lakePostPageNo },
+      });
+      actions.setTotalPostPage(data.totalPage);
+      actions.setLocationPostListFirstPage({
+        data: data.items,
+      });
+    },
+  ),
+
   createNewPost: thunk(async (actions, payload, { getState }) => {
     const { updateData, setUpdateStatus } = payload;
     const { currentId } = getState();
     try {
       await http.post(`location/${currentId}/post/add`, updateData);
+      await actions.getLocationPostListFirstPage();
       setUpdateStatus(true);
     } catch (error) {
       setUpdateStatus(false);
     }
   }),
+
   editPost: thunk(async (actions, payload, { getState }) => {
     const { currentId } = getState();
     const { updateData, setUpdateStatus } = payload;
@@ -525,11 +551,12 @@ const model = {
       const { currentId } = getState();
       const { setDeleteSuccess } = payload;
       try {
-        const { status } = await http.delete(
+        const { status } = await http.post(
           `${API_URL.LOCATION_CLOSE_TEMPORARY}/${currentId}`,
         );
         if (status === 200) {
-          actions.getListOfFishingLocations();
+          // actions.getListOfFishingLocations();
+          actions.switchFishingLocationClosedState({ id: currentId });
           setDeleteSuccess(true);
         }
       } catch (error) {
@@ -537,6 +564,18 @@ const model = {
       }
     },
   ),
+
+  switchFishingLocationClosedState: action((state, payload) => {
+    const { closed } = state.locationDetails;
+    state.locationDetails = { ...state.locationDetails, closed: !closed };
+    const foundIndex = state.listOfFishingLocations.findIndex(
+      (location) => location.id === payload.id,
+    );
+    state.listOfFishingLocations[foundIndex] = {
+      ...state.listOfFishingLocations[foundIndex],
+      closed: !closed,
+    };
+  }),
 
   // DucHM ADD_START 4/11/2021
   /**
@@ -622,7 +661,10 @@ const model = {
     const { currentId } = getState();
     try {
       await http.put(`location/edit/${currentId}`, updateData);
-      actions.editFishingLocationDetailData(updateData);
+      actions.editFishingLocationDetailData({
+        ...updateData,
+        image: [...updateData.images],
+      });
       actions.getListOfFishingLocations();
       setUpdateStatus("SUCCESS");
     } catch (error) {

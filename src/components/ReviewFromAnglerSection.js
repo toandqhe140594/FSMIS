@@ -116,6 +116,7 @@ const ReviewFromAnglerSection = ({
             marginLeft: 0,
             marginTop: 0,
           }}
+          key={userImage}
         />
         <Box justifyContent="center">
           <Text style={{ fontWeight: "bold" }}>{name}</Text>

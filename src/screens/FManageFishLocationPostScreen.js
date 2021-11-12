@@ -12,26 +12,26 @@ import { showAlertConfirmBox, showToastMessage } from "../utilities";
 
 const PostListContainerComponent = () => {
   const navigation = useNavigation();
-  const [lakePostPage, setTotalPostPage] = useState(1);
-  const getLocationPostListByPage = useStoreActions(
-    (actions) => actions.FManageModel.getLocationPostListByPage,
+  const {
+    getLocationPostListByPage,
+    setLakePostPageNo,
+    setCurrentPost,
+    deletePost,
+    getLocationPostListFirstPage,
+  } = useStoreActions((actions) => actions.FManageModel);
+
+  const lakePostPageNo = useStoreState(
+    (states) => states.FManageModel.lakePostPageNo,
   );
   const locationPostList = useStoreState(
     (states) => states.FManageModel.locationPostList,
   );
 
-  const setCurrentPost = useStoreActions(
-    (actions) => actions.FManageModel.setCurrentPost,
-  );
-  const deletePost = useStoreActions(
-    (actions) => actions.FManageModel.deletePost,
-  );
-
   const [deleteSuccess, setDeleteSuccess] = useState(null);
 
   const loadMoreLakeCatchData = () => {
-    getLocationPostListByPage({ pageNo: lakePostPage });
-    setTotalPostPage(lakePostPage + 1);
+    getLocationPostListByPage({ pageNo: lakePostPageNo });
+    setLakePostPageNo(lakePostPageNo + 1);
   };
 
   const editPostHandler = (id, item) => {
@@ -46,9 +46,8 @@ const PostListContainerComponent = () => {
   };
 
   useEffect(() => {
-    getLocationPostListByPage({ pageNo: lakePostPage });
-    setTotalPostPage(lakePostPage + 1);
-  }, [locationPostList]);
+    getLocationPostListFirstPage();
+  }, []);
 
   useEffect(() => {
     if (deleteSuccess === true) showToastMessage("Xóa thành công");

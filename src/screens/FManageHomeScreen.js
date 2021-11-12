@@ -25,8 +25,12 @@ const FManageHomeScreen = () => {
     (actions) => actions.FManageModel.setLocationLatLng,
   );
 
-  const { setCurrentId, getLocationDetailsById, getListOfLake } =
-    useStoreActions((actions) => actions.FManageModel);
+  const {
+    setCurrentId,
+    getLocationDetailsById,
+    getListOfLake,
+    setLocationPostListFirstPage,
+  } = useStoreActions((actions) => actions.FManageModel);
   const [role, setRole] = useState(null);
 
   useEffect(() => {
@@ -48,10 +52,11 @@ const FManageHomeScreen = () => {
     }
     return () => {
       setLocationLatLng({ latitude: null, longitude: null });
+      setLocationPostListFirstPage([]);
     };
   }, []);
 
-  if (!role)
+  if (!role || !locationDetails.id)
     return (
       <Box flex={1} justifyContent="center" alignItems="center">
         <ActivityIndicator size="large" color="blue" />
@@ -71,10 +76,15 @@ const FManageHomeScreen = () => {
           {role === VIEW_ROLE_OWNER && (
             <>
               {MENU_OWNER.map((item) => (
-                <MenuScreen menuListItem={item.category} key={item.id} />
+                <MenuScreen
+                  menuListItem={item.category}
+                  key={item.id}
+                  locationId={locationDetails.id}
+                />
               ))}
               <CloseFLocationTemporaryComponent
                 name={locationDetails.name || "Hồ câu"}
+                isClosed={locationDetails.closed}
               />
               <CloseFLocationComponent
                 name={locationDetails.name || "Hồ câu"}

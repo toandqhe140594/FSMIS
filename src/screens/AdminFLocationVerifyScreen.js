@@ -26,6 +26,9 @@ const FishingSpotDetailScreen = () => {
   const getLocationOverviewById = useStoreActions(
     (actions) => actions.LocationModel.getLocationOverviewById,
   );
+  const setLakeList = useStoreActions(
+    (actions) => actions.LocationModel.setLakeList,
+  );
 
   useEffect(() => {
     if (route.params) {
@@ -33,6 +36,9 @@ const FishingSpotDetailScreen = () => {
       setCurrentId(id);
       getLocationOverviewById({ id });
     }
+    return () => {
+      setLakeList(null);
+    };
   }, []);
 
   const { id, name, verify } = locationOverview;
@@ -41,7 +47,7 @@ const FishingSpotDetailScreen = () => {
     <>
       <HeaderWithButton
         id={id}
-        name={name}
+        name={name || route.params.name}
         isVerified={verify}
         buttonName={verify ? "Hủy xác thực" : "Xác thực"}
         onSuccess={() => {

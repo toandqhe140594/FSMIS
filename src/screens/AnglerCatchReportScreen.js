@@ -42,6 +42,9 @@ const AnglerCatchReportScreen = () => {
   const [imageArray, setImageArray] = useState([]);
   const [listFish, setListFish] = useState([]);
   const [success, setSuccess] = useState(null);
+  const increaseCatchesCount = useStoreActions(
+    (actions) => actions.ProfileModel.increaseCatchesCount,
+  );
   const submitCatchReport = useStoreActions(
     (actions) => actions.CheckInModel.submitCatchReport,
   );
@@ -128,6 +131,7 @@ const AnglerCatchReportScreen = () => {
         "Thông tin buổi câu được gửi thành công",
         async () => {
           await personalCheckout();
+          increaseCatchesCount();
           navigation.pop(1);
         },
       );

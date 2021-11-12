@@ -8,11 +8,8 @@ import { SearchBar } from "react-native-elements";
 import AvatarCard from "../components/AvatarCard";
 import HeaderTab from "../components/HeaderTab";
 import PressableCustomCard from "../components/PressableCustomCard";
-import AccountManagementModel from "../models/AccountManagementModel";
+import styles from "../config/styles";
 import { goToAdminAccountManagementDetailScreen } from "../navigations";
-import store from "../utilities/Store";
-
-store.addModel("AccountManagementModel", AccountManagementModel);
 
 const AdminAccountManagementScreen = () => {
   const navigation = useNavigation();
@@ -84,12 +81,7 @@ const AdminAccountManagementScreen = () => {
             placeholder="Nhập tên hoặc số điện thoại"
             onChangeText={updateSearch}
             value={search}
-            containerStyle={{
-              width: "100%",
-              marginTop: 12,
-              backgroundColor: "white",
-              paddingHorizontal: 12,
-            }}
+            containerStyle={styles.searchBar}
             lightTheme
             blurOnSubmit
             onEndEditing={onEndEditing}

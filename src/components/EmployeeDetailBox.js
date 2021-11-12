@@ -26,6 +26,7 @@ const EmployeeDetailBox = ({
             uri: image,
           }}
           containerStyle={[styles.p1, styles.mb1]}
+          key={image}
         />
         <Text style={[styles.nameTextLg]}>{name}</Text>
         {!isDetailed && (

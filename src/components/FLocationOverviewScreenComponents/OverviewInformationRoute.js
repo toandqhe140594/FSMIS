@@ -3,7 +3,7 @@ import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, Button, Icon, Text } from "native-base";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, ScrollView } from "react-native";
-import { Card, Divider } from "react-native-elements";
+import { Badge, Card, Divider } from "react-native-elements";
 import MapView, { Marker } from "react-native-maps";
 import Swiper from "react-native-swiper";
 
@@ -30,6 +30,7 @@ const OverviewInformationRoute = () => {
     latitude,
     image,
     saved,
+    closed,
   } = locationOverview;
 
   useEffect(() => {
@@ -49,19 +50,31 @@ const OverviewInformationRoute = () => {
         <ScrollView>
           <Box>
             <Card containerStyle={{ width: "100%", margin: 0, padding: 0 }}>
-              <Swiper height="auto">
-                {image && image.length > 0 ? (
-                  image.map((item) => (
-                    <Card.Image
-                      source={{ uri: item }}
-                      key={item}
-                      style={{ height: 270 }}
-                    />
-                  ))
-                ) : (
-                  <Card.Image source={{ uri: "https://picsum.photos/400" }} />
-                )}
-              </Swiper>
+              <Box>
+                <Swiper height="auto">
+                  {image && image.length > 0 ? (
+                    image.map((item) => (
+                      <Card.Image
+                        source={{ uri: item }}
+                        key={item}
+                        style={{ height: 270 }}
+                      />
+                    ))
+                  ) : (
+                    <Card.Image source={{ uri: "https://picsum.photos/400" }} />
+                  )}
+                </Swiper>
+                <Badge
+                  containerStyle={{ position: "absolute", top: 4, left: 4 }}
+                  badgeStyle={{
+                    borderRadius: 0,
+                    paddingVertical: 10,
+                    paddingHorizontal: 8,
+                  }}
+                  value={closed ? "Đóng cửa" : "Mở cửa"}
+                  status={closed ? "error" : "success"}
+                />
+              </Box>
 
               <Button
                 my={4}
@@ -114,11 +127,12 @@ const OverviewInformationRoute = () => {
                     initialRegion={{
                       latitude,
                       longitude,
-                      latitudeDelta: 0.0922,
-                      longitudeDelta: 0.0421,
+                      latitudeDelta: 0.05,
+                      longitudeDelta: 0.05,
                     }}
                     style={{ height: 150, width: "100%" }}
                     liteMode
+                    showsMyLocationButton
                   >
                     <Marker coordinate={{ latitude, longitude }} />
                   </MapView>

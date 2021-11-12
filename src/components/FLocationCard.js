@@ -12,7 +12,7 @@ import {
   goToFManageMainScreen,
 } from "../navigations";
 
-const SpotCard = ({
+const FLocationCard = ({
   id,
   address,
   image,
@@ -35,7 +35,11 @@ const SpotCard = ({
         isVerified: isVerifed,
         role,
       });
-    else if (isAdmin) goToAdminFLocationOverviewScreen(navigation, { id });
+    else if (isAdmin)
+      goToAdminFLocationOverviewScreen(navigation, {
+        id,
+        name,
+      });
     else goToFishingLocationOverviewScreen(navigation, { id });
   };
 
@@ -43,7 +47,7 @@ const SpotCard = ({
     <Pressable onPress={() => onPress()}>
       <Card containerStyle={{ width: "100%", padding: 0, margin: 0 }}>
         {showImage && (
-          <Card.Image source={{ uri: image }}>
+          <Card.Image source={{ uri: image }} key={image}>
             <Badge
               containerStyle={{ position: "absolute", top: 4, left: 4 }}
               badgeStyle={{
@@ -84,7 +88,7 @@ const SpotCard = ({
   );
 };
 
-SpotCard.propTypes = {
+FLocationCard.propTypes = {
   address: PropTypes.string.isRequired,
   image: PropTypes.string,
   isVerifed: PropTypes.bool,
@@ -97,7 +101,7 @@ SpotCard.propTypes = {
   role: PropTypes.string,
   isClosed: PropTypes.bool,
 };
-SpotCard.defaultProps = {
+FLocationCard.defaultProps = {
   image: "https://picsum.photos/200",
   isVerifed: false,
   rate: 0,
@@ -109,4 +113,4 @@ SpotCard.defaultProps = {
   isClosed: false,
 };
 
-export default SpotCard;
+export default FLocationCard;

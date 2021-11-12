@@ -18,6 +18,7 @@ const EmployeeCard = ({ employee }) => {
             uri: employee.image || "https://picsum.photos/200",
           }}
           containerStyle={{ padding: 10, margin: 5 }}
+          key={employee.image}
         />
         <Box flex={1} justifyContent="center" pr={1}>
           <Text style={{ fontWeight: "bold", fontSize: 16 }} numberOfLines={2}>

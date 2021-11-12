@@ -24,6 +24,7 @@ const validationSchema = yup.object().shape({
   postType: yup.string().required("Loại bài đăng không được để trống"),
   content: yup.string().required("Nội dung bài đăng không được để trống"),
   postVideoLink: yup.string(),
+  attachmentType: yup.string().required("Chọn loại đính kèm"),
 });
 
 const postTypeData = [
@@ -58,12 +59,11 @@ const PostCreateScreen = () => {
   const currentID = useStoreState((states) => states.FManageModel.currentId);
   const [updateStatus, setUpdateStatus] = useState();
   const [loadingButton, setLoadingButton] = useState(false);
-  const getLocationPostListByPage = useStoreActions(
-    (actions) => actions.FManageModel.getLocationPostListByPage,
-  );
+
   const createPost = useStoreActions(
     (actions) => actions.FManageModel.createNewPost,
   );
+
   const methods = useForm({
     mode: "onSubmit",
     reValidateMode: "onSubmit",
@@ -118,8 +118,7 @@ const PostCreateScreen = () => {
       showAlertAbsoluteBox(
         "Thông báo",
         "Gửi thông tin thành công! Bài viết đang được tạo",
-        async () => {
-          await getLocationPostListByPage({ pageNo: 1 });
+        () => {
           goToFManagePostScreen(navigation);
         },
       );

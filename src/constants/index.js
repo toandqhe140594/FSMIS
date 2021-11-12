@@ -202,6 +202,13 @@ export const MENU_ADMIN = [
     icon: "list",
     route: ROUTE_NAMES.ADMIN_FISHING_METHOD_MANAGEMENT,
   },
+  {
+    id: 6,
+    title: "Danh sách đen",
+    icon: "ban",
+    type: "font-awesome",
+    route: ROUTE_NAMES.ADMIN_BLACKLIST_PHONE_MANAGEMENT,
+  },
 ];
 export const MENU_ANGLER = [
   {

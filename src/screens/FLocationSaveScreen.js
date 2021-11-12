@@ -1,13 +1,12 @@
-import { useFocusEffect } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
-import { Box, VStack } from "native-base";
-import React, { useCallback, useEffect, useState } from "react";
-import { FlatList } from "react-native";
+import React, { useEffect, useState } from "react";
+import { FlatList, View } from "react-native";
 
 import FLocationCard from "../components/FLocationCard";
+import styles from "../config/styles";
 
 const ItemSeparator = () => {
-  return <Box h={5} />;
+  return <View style={{ height: 6 }} />;
 };
 
 const FLocationSaveScreen = () => {
@@ -25,8 +24,6 @@ const FLocationSaveScreen = () => {
       getSavedLocationList({ mode: "loadmore" });
   }, []);
 
-  useFocusEffect(useCallback(() => {}, []));
-
   useEffect(() => {
     setRefreshing(false); // If the list is changed then hide refresh icon
   }, [savedLocationList]);
@@ -40,42 +37,47 @@ const FLocationSaveScreen = () => {
     }, 5000);
   };
 
+  /**
+   * Render item function for flatlist
+   * Leave outside for optimization
+   */
+  const renderItem = ({ item }) => (
+    <FLocationCard
+      id={item.id}
+      address={item.address}
+      isVerifed={item.verify}
+      image={item.image}
+      name={item.name}
+      rate={item.score}
+      key={item.id}
+      isClosed={item.closed}
+    />
+  );
+
   return (
-    <Box
-      flex={1}
-      alignItems="center"
-      w={{ base: "90%", md: "50%", lg: "30%" }}
-      alignSelf="center"
-      py={3}
+    <View
+      style={{
+        flex: 1,
+        alignItems: "center",
+        width: "100%",
+        paddingVertical: 3,
+        paddingHorizontal: "5%",
+      }}
     >
-      <VStack w="100%" space={3}>
-        {savedLocationList && (
-          <FlatList
-            data={savedLocationList}
-            renderItem={({ item }) => (
-              <FLocationCard
-                id={item.id}
-                address={item.address}
-                name={item.name}
-                rate={item.score}
-                key={item.id}
-                isVerifed={item.verify}
-                image={item.image}
-              />
-            )}
-            keyExtractor={(item) => item.id.toString()}
-            ItemSeparatorComponent={ItemSeparator}
-            onEndReached={() => {
-              getSavedLocationList();
-            }}
-            refreshing={refreshing}
-            onRefresh={() => {
-              handleRefresh();
-            }}
-          />
-        )}
-      </VStack>
-    </Box>
+      {savedLocationList && (
+        <FlatList
+          data={savedLocationList}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id.toString()}
+          ItemSeparatorComponent={ItemSeparator}
+          onEndReached={getSavedLocationList}
+          refreshing={refreshing}
+          onRefresh={handleRefresh}
+          initialNumToRender={5}
+          style={styles.wfull}
+        />
+      )}
+    </View>
   );
 };
 

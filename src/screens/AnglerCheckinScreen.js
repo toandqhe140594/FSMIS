@@ -58,6 +58,8 @@ const CheckinSuccessScreen = () => {
           name={locationInfo.name}
           isVerifed={locationInfo.verify}
           rate={locationInfo.score}
+          isClosed={locationInfo.closed}
+          image={locationInfo.image}
         />
       </Box>
       <Box w="70%">

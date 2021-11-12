@@ -127,8 +127,16 @@ const FManageSelectScreen = () => {
           {listOfFishingLocations.length > 0 && (
             <VStack w="90%" space={2} my={2}>
               {listOfFishingLocations.map((location) => {
-                const { id, name, image, verify, score, address, role } =
-                  location;
+                const {
+                  id,
+                  name,
+                  image,
+                  verify,
+                  score,
+                  address,
+                  role,
+                  closed,
+                } = location;
                 return (
                   <FLocationCard
                     id={id}
@@ -139,6 +147,7 @@ const FManageSelectScreen = () => {
                     address={address}
                     role={role}
                     isManaged
+                    isClosed={closed}
                     key={id}
                   />
                 );

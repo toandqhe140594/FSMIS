@@ -57,4 +57,13 @@ export default StyleSheet.create({
     marginTop: 5,
     marginLeft: 11,
   },
+  wfull: {
+    width: "100%",
+  },
+  searchBar: {
+    width: "100%",
+    marginTop: 12,
+    backgroundColor: "white",
+    paddingHorizontal: 12,
+  },
 });
