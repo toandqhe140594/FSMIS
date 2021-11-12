@@ -32,14 +32,13 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "#f43f5e",
     fontStyle: "italic",
+    marginTop: 4,
   },
 });
 
 const MultiImageSection = ({
   containerStyle,
-  // imageArray,
   selectLimit,
-  // deleteImage,
   formRoute,
   controllerName,
 }) => {
@@ -125,18 +124,14 @@ MultiImageSection.propTypes = {
   containerStyle: PropTypes.objectOf(
     PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   ),
-  // imageArray: PropTypes.arrayOf(PropTypes.object),
   selectLimit: PropTypes.number,
-  // deleteImage: PropTypes.func,
   formRoute: PropTypes.string,
   controllerName: PropTypes.string,
 };
 
 MultiImageSection.defaultProps = {
   containerStyle: {},
-  // imageArray: [],
   selectLimit: 1,
-  // deleteImage: () => {},
   formRoute: "",
   controllerName: "",
 };
