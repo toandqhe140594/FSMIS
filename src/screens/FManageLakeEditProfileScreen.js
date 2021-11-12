@@ -51,6 +51,7 @@ const styles = StyleSheet.create({
 const LakeEditProfileScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
+  const [getStatus, setGetStatus] = useState("");
   const [updateStatus, setUpdateStatus] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [fullScreenMode, setFullScreenMode] = useState(true);
@@ -61,7 +62,7 @@ const LakeEditProfileScreen = () => {
   const { editLakeDetail, closeLakeByLakeId } = useStoreActions(
     (actions) => actions.FManageModel,
   );
-  const { getFishingMethodList } = useStoreActions(
+  const { getFishingMethodList, clearFishingMethodList } = useStoreActions(
     (actions) => actions.FishingMethodModel,
   );
   const methods = useForm({
@@ -111,13 +112,28 @@ const LakeEditProfileScreen = () => {
    * Call fishing method list api
    */
   useEffect(() => {
-    (async () => {
-      await getFishingMethodList();
+    getFishingMethodList({ setGetStatus });
+    return () => {
+      clearFishingMethodList();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (getStatus === "SUCCESS") {
       setDefaultValues();
       setIsLoading(false);
       setFullScreenMode(false);
-    })();
-  }, []);
+      setGetStatus(null);
+    } else if (getStatus === "FAILED") {
+      showAlertAbsoluteBox(
+        "Thông báo",
+        "Đã xảy ra lỗi! Vui lòng thử lại sau.",
+        () => {
+          navigation.goBack();
+        },
+      );
+    }
+  }, [getStatus]);
 
   /**
    * Fire when navigates back to the screen
