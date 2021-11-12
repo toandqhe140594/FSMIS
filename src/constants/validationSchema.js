@@ -229,5 +229,16 @@ export const ADMIN_FISH_ADD_EDIT_FORM = yup.object().shape({
 
 export const FMANAGE_SUGGESTION_FORM = yup.object().shape({
   locationName: yup.string().required("Tên khu hồ không thể bỏ trống"),
-  ownerPhone: yup.string().required("Số điện thoại chủ hồ không thể bỏ trống"),
+  ownerPhone: yup
+    .string()
+    .matches(/((09|03|07|08|05)+([0-9]{8})\b)/, "Số điện thoại không hợp lệ")
+    .required("Số điện thoại chủ hồ không dược bỏ trống"),
+});
+
+export const ADMIN_BLACKLIST_ADD_FORM = yup.object().shape({
+  description: yup.string().max(255, "Mô tả tối đa 255 ký tự"),
+  phone: yup
+    .string()
+    .matches(/((09|03|07|08|05)+([0-9]{8})\b)/, "Số điện thoại không hợp lệ")
+    .required("Số điện thoại không dược bỏ trống"),
 });
