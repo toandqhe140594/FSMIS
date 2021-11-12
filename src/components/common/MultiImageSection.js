@@ -94,7 +94,7 @@ const MultiImageSection = ({
                 source={{ uri: image.base64 }}
                 alt="Alternate Text"
                 onLongPress={() => handleDelete(image.id)}
-                key={image.base64}
+                key={image.id}
               />
             </View>
           );
