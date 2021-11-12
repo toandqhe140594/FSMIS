@@ -30,22 +30,12 @@ const AdminFishEditScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
   const [isNew, setIsNew] = useState(true);
-  const [imageData, setImageData] = useState([]);
-
   const methods = useForm({
     mode: "onChange",
+    defaultValues: { fishImage: [] },
     resolver: yupResolver(validationSchema),
   });
-  const {
-    handleSubmit,
-    setValue,
-    formState: { errors },
-  } = methods;
-  // DucHM ADD_START 11/11/2021
-  const updateImageArray = (id) => {
-    setImageData(imageData.filter((image) => image.id !== id));
-  };
-  // DucHM ADD_END 11/11/2021
+  const { handleSubmit, setValue } = methods;
   const onSubmit = (data) => {
     console.log(data); // Test only
   };
@@ -55,21 +45,17 @@ const AdminFishEditScreen = () => {
     if (id) {
       const { name, image } = route.params;
       setIsNew(false);
-      setImageData([{ id: 1, base64: image }]);
       setValue("fishName", name);
+      setValue("fishImage", [{ id: 1, base64: image }]);
     }
   }, []);
-
-  useEffect(() => {
-    setValue("fishImage", imageData);
-  }, [imageData]);
 
   // DucHM ADD_START 11/11/2021
   useFocusEffect(
     // useCallback will listen to route.param
     useCallback(() => {
       if (route.params?.base64Array && route.params.base64Array.length) {
-        setImageData(route.params?.base64Array);
+        setValue("fishImage", route.params?.base64Array);
         navigation.setParams({ base64Array: [] });
       }
     }, [route.params]),
@@ -93,14 +79,8 @@ const AdminFishEditScreen = () => {
             <MultiImageSection
               containerStyle={{ width: "90%" }}
               formRoute={ROUTE_NAMES.ADMIN_FISH_MANAGEMENT_EDIT}
-              imageArray={imageData}
-              deleteImage={updateImageArray}
+              controllerName="fishImage"
             />
-            {errors.fishImage?.message && (
-              <Text color="danger.500" italic fontSize="xs">
-                {errors.fishImage?.message}
-              </Text>
-            )}
             <InputComponent
               myStyles={{ width: "90%" }}
               label="Tên cá"
