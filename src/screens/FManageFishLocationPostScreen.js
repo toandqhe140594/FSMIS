@@ -1,8 +1,8 @@
 import { useNavigation } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
-import { Box, Button } from "native-base";
+import { Box, Button, ScrollView, Text, FlatList } from "native-base";
 import React, { useEffect, useState } from "react";
-import { FlatList } from "react-native";
+import { View } from "react-native";
 import { Divider } from "react-native-elements";
 
 import EventPostCard from "../components/EventPostCard";
@@ -18,6 +18,9 @@ const PostListContainerComponent = () => {
     setCurrentPost,
     deletePost,
     getLocationPostListFirstPage,
+    pinFLocationPost,
+    getPinPost,
+    setCurrentPinPost,
   } = useStoreActions((actions) => actions.FManageModel);
 
   const lakePostPageNo = useStoreState(
@@ -27,8 +30,12 @@ const PostListContainerComponent = () => {
     (states) => states.FManageModel.locationPostList,
   );
 
+  const currentPinPost = useStoreState(
+    (states) => states.FManageModel.currentPinPost,
+  );
   const [deleteSuccess, setDeleteSuccess] = useState(null);
 
+  const [pinPost, setPinPost] = useState({});
   const loadMoreLakeCatchData = () => {
     getLocationPostListByPage({ pageNo: lakePostPageNo });
     setLakePostPageNo(lakePostPageNo + 1);
@@ -37,6 +44,10 @@ const PostListContainerComponent = () => {
   const editPostHandler = (id, item) => {
     setCurrentPost(item);
     goToPostEditScreen(navigation, { id });
+  };
+  const pinFLocationPostHandler = (id, item) => {
+    pinFLocationPost({ postId: id });
+    setPinPost(item);
   };
 
   const removePostHandler = (id) => {
@@ -47,43 +58,83 @@ const PostListContainerComponent = () => {
 
   useEffect(() => {
     getLocationPostListFirstPage();
+    getPinPost();
+    setPinPost(currentPinPost);
   }, []);
 
   useEffect(() => {
     if (deleteSuccess === true) showToastMessage("Xóa thành công");
-    if (deleteSuccess === false) showToastMessage("Xóa thành công");
+    if (deleteSuccess === false) showToastMessage("Xóa thất bại");
     setDeleteSuccess(null);
   }, [deleteSuccess]);
 
+  const pinPostEvent = [
+    { name: "Ghim bài viết", onPress: pinFLocationPostHandler },
+  ];
+  const unPinPostEvent = [
+    { name: "Ghim bài viết", onPress: pinFLocationPostHandler },
+  ];
   const listEvent = [
     { name: "Chỉnh sửa bài đăng", onPress: editPostHandler },
     { name: "Xóa bài đăng", onPress: removePostHandler },
   ];
+
+  const renderItem = ({ item }) => (
+    <Box backgroundColor="white" my="1">
+      <EventPostCard
+        postStyle="LAKE_POST"
+        iconName="ellipsis-vertical"
+        iconEvent={[...unPinPostEvent, ...listEvent]}
+        id={item.id}
+        image={item.url}
+        itemData={item}
+        lakePost={{
+          badge: item.postType === "STOCKING" ? "Bồi cá" : "Thông báo",
+          content: item.content,
+        }}
+        postTime={item.postTime}
+      />
+    </Box>
+  );
+
   return (
-    <FlatList
-      data={locationPostList}
-      renderItem={({ item }) => (
-        <Box backgroundColor="white" my="1">
-          <EventPostCard
-            postStyle="LAKE_POST"
-            iconName="ellipsis-vertical"
-            iconEvent={listEvent}
-            id={item.id}
-            image={item.url}
-            itemData={item}
-            lakePost={{
-              badge: item.postType === "STOCKING" ? "Bồi cá" : "Thông báo",
-              content: item.content,
-            }}
-            postTime={item.postTime}
-          />
-        </Box>
-      )}
-      onEndReached={() => {
-        loadMoreLakeCatchData();
-      }}
-      keyExtractor={(item) => item.id.toString()}
-    />
+    <View>
+      <FlatList
+        ListHeaderComponent={() => (
+          <>
+            {pinPost.id !== undefined && (
+              <Box backgroundColor="white" mb={5}>
+                <Text>Bài được ghim </Text>
+                <EventPostCard
+                  postStyle="LAKE_POST"
+                  iconName="ellipsis-vertical"
+                  iconEvent={listEvent}
+                  id={pinPost.id}
+                  image={pinPost.url}
+                  itemData={pinPost}
+                  lakePost={{
+                    badge:
+                      pinPost.postType === "STOCKING" ? "Bồi cá" : "Thông báo",
+                    content: pinPost.content,
+                  }}
+                  postTime={pinPost.postTime}
+                />
+              </Box>
+            )}
+          </>
+        )}
+        removeClippedSubviews
+        initialNumToRender={5}
+        updateCellsBatchingPeriod={10}
+        maxToRenderPerBatch={20}
+        data={locationPostList}
+        renderItem={renderItem}
+        onEndReached={() => {
+          loadMoreLakeCatchData();
+        }}
+        keyExtractor={(item) => item.id.toString()}
+      />
+    </View>
   );
 };
 
