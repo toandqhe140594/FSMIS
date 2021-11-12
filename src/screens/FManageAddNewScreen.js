@@ -31,7 +31,6 @@ const styles = StyleSheet.create({
 const FManageAddNewScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
-  const [imageArray, setImageArray] = useState([]);
   const [addStatus, setAddStatus] = useState("");
   const { provinceList, districtList, wardList } = useStoreState(
     (state) => state.AddressModel,
@@ -49,7 +48,7 @@ const FManageAddNewScreen = () => {
     reValidateMode: "onSubmit",
     resolver: yupResolver(SCHEMA.FMANAGE_PROFILE_FORM),
   });
-  const { handleSubmit } = methods;
+  const { handleSubmit, setValue } = methods;
   const generateAddressDropdown = useCallback((name, value) => {
     if (name === "provinceId") {
       getDisctrictByProvinceId({ id: value });
@@ -57,22 +56,20 @@ const FManageAddNewScreen = () => {
       getWardByDistrictId({ id: value });
     }
   }, []);
-  //
+
   const onSubmit = (data) => {
-    const images = imageArray.map((image) => image.base64);
+    const images = data.imageArray.map((image) => image.base64);
     const addData = { ...data, ...locationLatLng, images };
     addNewLocation({ addData, setAddStatus });
   };
-  //
-  const updateImageArray = (id) => {
-    setImageArray(imageArray.filter((image) => image.id !== id));
-  };
+
   useEffect(() => {
     getAllProvince();
     return () => {
       resetDataList();
     };
   }, []);
+
   useEffect(() => {
     if (addStatus === "SUCCESS") {
       showAlertAbsoluteBox(
@@ -91,7 +88,7 @@ const FManageAddNewScreen = () => {
     // useCallback will listen to route.param
     useCallback(() => {
       if (route.params?.base64Array && route.params.base64Array.length) {
-        setImageArray(route.params?.base64Array);
+        setValue("imageArray", route.params?.base64Array);
         navigation.setParams({ base64Array: [] });
       }
     }, [route.params]),
@@ -109,9 +106,8 @@ const FManageAddNewScreen = () => {
                 </Text>
                 <MultiImageSection
                   formRoute={ROUTE_NAMES.FMANAGE_PROFILE_ADD_NEW}
-                  imageArray={imageArray}
-                  deleteImage={updateImageArray}
                   selectLimit={5}
+                  controllerName="imageArray"
                 />
                 <InputComponent
                   isTitle

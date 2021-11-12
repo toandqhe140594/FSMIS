@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
 const LakeEditProfileScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
-  const [imageArray, setImageArray] = useState([]);
+  const [getStatus, setGetStatus] = useState("");
   const [updateStatus, setUpdateStatus] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [fullScreenMode, setFullScreenMode] = useState(true);
@@ -62,7 +62,7 @@ const LakeEditProfileScreen = () => {
   const { editLakeDetail, closeLakeByLakeId } = useStoreActions(
     (actions) => actions.FManageModel,
   );
-  const { getFishingMethodList } = useStoreActions(
+  const { getFishingMethodList, clearFishingMethodList } = useStoreActions(
     (actions) => actions.FishingMethodModel,
   );
   const methods = useForm({
@@ -79,7 +79,7 @@ const LakeEditProfileScreen = () => {
   const onSubmit = (data) => {
     setIsLoading(true);
     const { id } = lakeDetail;
-    const imageUrl = imageArray[0].base64;
+    const imageUrl = data.imageArray[0].base64;
     const updateData = { ...data, imageUrl };
     editLakeDetail({ updateData, setUpdateStatus, id });
   };
@@ -94,21 +94,13 @@ const LakeEditProfileScreen = () => {
     );
   };
 
-  /**
-   * Remove an image and update the image array
-   * @param {number} id id of the deleted image
-   */
-  const updateImageArray = (id) => {
-    setImageArray(imageArray.filter((image) => image.id !== id));
-  };
-
   const setDefaultValues = () => {
     setValue("name", lakeDetail.name);
     setValue("price", lakeDetail.price);
     setValue("width", lakeDetail.width.toString());
     setValue("length", lakeDetail.length.toString());
     setValue("depth", lakeDetail.depth.toString());
-    setImageArray([{ id: 1, base64: lakeDetail.imageUrl }]);
+    setValue("imageArray", [{ id: 1, base64: lakeDetail.imageUrl }]);
     const selectedMethods = fishingMethodList.reduce((acc, { name, id }) => {
       if (lakeDetail.fishingMethodList.includes(name)) acc.push(id);
       return acc;
@@ -120,13 +112,28 @@ const LakeEditProfileScreen = () => {
    * Call fishing method list api
    */
   useEffect(() => {
-    (async () => {
-      await getFishingMethodList();
+    getFishingMethodList({ setGetStatus });
+    return () => {
+      clearFishingMethodList();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (getStatus === "SUCCESS") {
       setDefaultValues();
       setIsLoading(false);
       setFullScreenMode(false);
-    })();
-  }, []);
+      setGetStatus(null);
+    } else if (getStatus === "FAILED") {
+      showAlertAbsoluteBox(
+        "Thông báo",
+        "Đã xảy ra lỗi! Vui lòng thử lại sau.",
+        () => {
+          navigation.goBack();
+        },
+      );
+    }
+  }, [getStatus]);
 
   /**
    * Fire when navigates back to the screen
@@ -135,7 +142,7 @@ const LakeEditProfileScreen = () => {
     // useCallback will listen to route.param
     useCallback(() => {
       if (route.params?.base64Array && route.params.base64Array[0]) {
-        setImageArray(route.params?.base64Array);
+        setValue("imageArray", route.params?.base64Array);
         navigation.setParams({ base64Array: [] });
       }
     }, [route.params]),
@@ -190,8 +197,7 @@ const LakeEditProfileScreen = () => {
               <MultiImageSection
                 containerStyle={styles.sectionWrapper}
                 formRoute={ROUTE_NAMES.FMANAGE_LAKE_EDIT}
-                imageArray={imageArray}
-                deleteImage={updateImageArray}
+                controllerName="imageArray"
               />
             </Center>
 

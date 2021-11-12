@@ -18,6 +18,7 @@ import AdminMainScreen from "../screens/AdminMainScreen";
 import AdminReportManagementScreen from "../screens/AdminReportManagementScreen";
 import AdminReportPostDetailScreen from "../screens/AdminReportPostDetailScreen";
 import AdminReportReviewDetailScreen from "../screens/AdminReportReviewDetailScreen";
+import MediaSelectScreen from "../screens/MediaSelectScreen";
 import store from "../utilities/Store";
 
 const AdminStack = createNativeStackNavigator();
@@ -82,6 +83,10 @@ const AdminStackNavigator = () => {
       <AdminStack.Screen
         name={ROUTE_NAMES.ADMIN_REPORT_MANAGEMENT}
         component={AdminReportManagementScreen}
+      />
+      <AdminStack.Screen
+        name={ROUTE_NAMES.MEDIA_SELECTOR}
+        component={MediaSelectScreen}
       />
       <AdminStack.Screen
         name={ROUTE_NAMES.ADMIN_BLACKLIST_PHONE_MANAGEMENT}

@@ -13,15 +13,27 @@ const model = {
     state.fishingMethodList = payload;
   }),
   /**
-   * Get all fishing methods from API
+   * Clear fishing method list for next get
    */
-  getFishingMethodList: thunk(async (actions, payload) => {
-    try {
-      const { data } = await http.get(`${API_URL.ADMIN_FISHING_METHOD_LIST}`);
-      actions.setFishingMethodList(data);
-    } catch (error) {
-      // handler
-    }
+  clearFishingMethodList: action((state) => {
+    state.fishingMethodList = null;
   }),
+  /**
+   * Get all fishing methods from API
+   * @param {Function} [payload.setGetStatus] function to set get status
+   */
+  getFishingMethodList: thunk(
+    async (actions, payload = { setGetStatus: () => {} }) => {
+      const { setGetStatus } = payload;
+      try {
+        const { data } = await http.get(API_URL.ADMIN_FISHING_METHOD_LIST);
+        actions.setFishingMethodList(data);
+        setGetStatus("SUCCESS");
+      } catch (error) {
+        // handler
+        setGetStatus("FAILED");
+      }
+    },
+  ),
 };
 export default model;

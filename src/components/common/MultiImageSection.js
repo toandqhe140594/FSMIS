@@ -2,18 +2,15 @@ import { Entypo } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { Icon } from "native-base";
 import PropTypes from "prop-types";
-import React from "react";
-import { Alert, Pressable, StyleSheet, View } from "react-native";
+import React, { useMemo } from "react";
+import { useFormContext, useWatch } from "react-hook-form";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import { Image } from "react-native-elements/dist/image/Image";
 
 import { goToMediaSelectScreen } from "../../navigations";
+import { showAlertConfirmBox } from "../../utilities";
 
 const styles = StyleSheet.create({
-  container: {
-    flexWrap: "wrap",
-    flexDirection: "row",
-    marginTop: 2,
-  },
   multipleImagesWrapper: {
     width: 110,
     height: 110,
@@ -31,83 +28,95 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  error: {
+    fontSize: 12,
+    color: "#f43f5e",
+    fontStyle: "italic",
+    marginTop: 4,
+  },
 });
 
 const MultiImageSection = ({
   containerStyle,
-  imageArray,
   selectLimit,
-  deleteImage,
   formRoute,
+  controllerName,
 }) => {
   const navigation = useNavigation();
+  const {
+    control,
+    setValue,
+    formState: { errors },
+  } = useFormContext();
+  const imageArray = useWatch({
+    control,
+    name: controllerName,
+    defaultValue: [],
+  });
+  const sectionWrapper = useMemo(() => {
+    return {
+      flexWrap: "wrap",
+      flexDirection: "row",
+      marginTop: 2,
+      justifyContent: imageArray.length > 0 ? "flex-start" : "center",
+    };
+  }, [imageArray]);
+  const deleteImage = (id) => {
+    const newImageArray = imageArray.filter((image) => image.id !== id);
+    setValue(controllerName, newImageArray);
+  };
   /**
    * Displays an pop-up before delete an image
    * @param {Number} id: id of the image
    */
   const handleDelete = (id) => {
-    Alert.alert(
-      "Thông báo",
-      "Bạn chắc chắn muốn xóa ảnh này?",
-      [
-        {
-          text: "Hủy",
-          onPress: () => {},
-          style: "cancel",
-        },
-        {
-          text: "Đồng ý",
-          onPress: () => deleteImage(id),
-        },
-      ],
-      {
-        cancelable: true,
-      },
+    showAlertConfirmBox("Thông báo", "Bạn chắc chắn muốn xóa ảnh này?", () =>
+      deleteImage(id),
     );
   };
   return (
-    <View
-      style={[
-        styles.container,
-        { justifyContent: imageArray.length > 0 ? null : "center" },
-      ]}
-    >
-      {imageArray.map((image) => {
-        return (
-          <View
-            // If there is only one image, make it takes up hold space
-            style={
-              selectLimit === 1
-                ? { ...containerStyle, height: 210 }
-                : styles.multipleImagesWrapper
+    <>
+      <View style={sectionWrapper}>
+        {imageArray.map((image) => {
+          return (
+            <View
+              // If there is only one image, make it takes up hold space
+              style={
+                selectLimit === 1
+                  ? { ...containerStyle, height: 210 }
+                  : styles.multipleImagesWrapper
+              }
+              key={image.id}
+            >
+              <Image
+                style={styles.image}
+                source={{ uri: image.base64 }}
+                alt="Alternate Text"
+                onLongPress={() => handleDelete(image.id)}
+                key={image.id}
+              />
+            </View>
+          );
+        })}
+        {imageArray.length !== selectLimit && (
+          <Pressable
+            onPress={() =>
+              goToMediaSelectScreen(navigation, {
+                returnRoute: formRoute,
+                maxSelectable: selectLimit,
+              })
             }
-            key={image.id}
           >
-            <Image
-              style={styles.image}
-              source={{ uri: image.base64 }}
-              alt="Alternate Text"
-              onLongPress={() => handleDelete(image.id)}
-              key={image.base64}
-            />
-          </View>
-        );
-      })}
-      {imageArray.length !== selectLimit && (
-        <Pressable
-          onPress={() =>
-            goToMediaSelectScreen(navigation, {
-              returnRoute: formRoute,
-              maxSelectable: selectLimit,
-            })
-          }
-        >
-          <View style={[styles.multipleImagesWrapper, styles.border]}>
-            <Icon as={<Entypo name="plus" />} size={10} mr={1} />
-          </View>
-        </Pressable>
+            <View style={[styles.multipleImagesWrapper, styles.border]}>
+              <Icon as={<Entypo name="plus" />} size={10} mr={1} />
+            </View>
+          </Pressable>
+        )}
+      </View>
+      {errors[controllerName]?.message && (
+        <Text style={styles.error}>{errors[controllerName]?.message}</Text>
       )}
-    </View>
+    </>
   );
 };
 
@@ -115,18 +124,16 @@ MultiImageSection.propTypes = {
   containerStyle: PropTypes.objectOf(
     PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   ),
-  imageArray: PropTypes.arrayOf(PropTypes.object),
   selectLimit: PropTypes.number,
-  deleteImage: PropTypes.func,
   formRoute: PropTypes.string,
+  controllerName: PropTypes.string,
 };
 
 MultiImageSection.defaultProps = {
   containerStyle: {},
-  imageArray: [],
   selectLimit: 1,
-  deleteImage: () => {},
   formRoute: "",
+  controllerName: "",
 };
 
 export default MultiImageSection;

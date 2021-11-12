@@ -37,6 +37,7 @@ export const ANGLER_CATCH_REPORT_FORM = yup.object().shape({
 });
 
 export const FMANAGE_LAKE_FORM = yup.object().shape({
+  imageArray: yup.array().min(1, "Hãy chọn một ảnh cho hồ"),
   name: yup.string().required("Tên hồ không thể bỏ trống"),
   price: yup.string().required("Miêu tả giá vé ở hồ này"),
   methods: yup.array().min(1, "Trường này kia không được để trống"),
@@ -204,6 +205,7 @@ export const FMANAGE_LAKE_FISH_ADD_FORM = yup.object().shape(
 );
 
 export const FMANAGE_PROFILE_FORM = yup.object().shape({
+  imageArray: yup.array().min(1, "Hãy chọn tối đa 5 ảnh cho hồ"),
   name: yup.string().required("Tên địa điểm không thể bỏ trống"),
   phone: yup
     .string()
@@ -218,4 +220,9 @@ export const FMANAGE_PROFILE_FORM = yup.object().shape({
   rule: yup.string().required("Ghi không có nếu để trống nội quy"),
   service: yup.string().required("Ghi không có nếu để trống dịch vụ"),
   timetable: yup.string().required("Hãy nêu rõ lịch biểu của hồ"),
+});
+
+export const ADMIN_FISH_ADD_EDIT_FORM = yup.object().shape({
+  fishName: yup.string().required("Tên cá không thể bỏ trống"),
+  fishImage: yup.array().min(1, "Hãy chọn ảnh cho loại cá"),
 });
