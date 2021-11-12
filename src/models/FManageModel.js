@@ -596,6 +596,23 @@ const model = {
     }
   }),
   // DucHM ADD_END 4/11/2021
+  /**
+   * Suggest a new location to admin
+   * @param {Object} [payload] params pass to function
+   * @param {Object} [payload.data] some data of the fishing location
+   * @param {string} [payload.data.locationName] name of the fishing location
+   * @param {string} [payload.data.ownerPhone] phone of the owner of the fishing location
+   * @param {Function} [payload.setSuccess] function to indicate request success
+   */
+  suggestNewLocation: thunk(async (actions, payload) => {
+    const { data, setSuccess } = payload;
+    try {
+      await http.post(API_URL.LOCATION_SUGGEST, data);
+      setSuccess(true);
+    } catch (error) {
+      setSuccess(false);
+    }
+  }),
 
   editLakeDetailData: action((state, payload) => {
     state.lakeDetail = {

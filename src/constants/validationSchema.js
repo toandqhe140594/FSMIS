@@ -226,3 +226,8 @@ export const ADMIN_FISH_ADD_EDIT_FORM = yup.object().shape({
   fishName: yup.string().required("Tên cá không thể bỏ trống"),
   fishImage: yup.array().min(1, "Hãy chọn ảnh cho loại cá"),
 });
+
+export const FMANAGE_SUGGESTION_FORM = yup.object().shape({
+  locationName: yup.string().required("Tên khu hồ không thể bỏ trống"),
+  ownerPhone: yup.string().required("Số điện thoại chủ hồ không thể bỏ trống"),
+});
