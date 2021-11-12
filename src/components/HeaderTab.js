@@ -10,6 +10,14 @@ import { goBack, goToWriteReportScreen } from "../navigations";
 const HeaderTab = ({ name, isVerified, flagable, id, customIcon }) => {
   const navigation = useNavigation();
 
+  const goToWriteReportScreenAction = () => {
+    if (id) goToWriteReportScreen(navigation, { id, type: "location" });
+  };
+
+  const goBackAction = () => {
+    goBack(navigation);
+  };
+
   return (
     <>
       <Box
@@ -21,12 +29,7 @@ const HeaderTab = ({ name, isVerified, flagable, id, customIcon }) => {
         px={4}
         w="100%"
       >
-        <Pressable
-          onPress={() => {
-            goBack(navigation);
-          }}
-          hitSlop={10}
-        >
+        <Pressable onPress={goBackAction} hitSlop={10}>
           <Icon name="arrow-back" size={24} type="ionicon" color="black" />
         </Pressable>
         <Box flexDir="row" alignItems="center" alignSelf="center">
@@ -42,13 +45,7 @@ const HeaderTab = ({ name, isVerified, flagable, id, customIcon }) => {
           )}
         </Box>
         {customIcon.name === null && (
-          <Pressable
-            onPress={() => {
-              if (id)
-                goToWriteReportScreen(navigation, { id, type: "location" });
-            }}
-            hitSlop={10}
-          >
+          <Pressable onPress={goToWriteReportScreenAction} hitSlop={10}>
             <Icon
               name="flag"
               size={24}
@@ -58,12 +55,7 @@ const HeaderTab = ({ name, isVerified, flagable, id, customIcon }) => {
           </Pressable>
         )}
         {customIcon.name !== null && (
-          <Pressable
-            onPress={() => {
-              customIcon.onPress();
-            }}
-            hitSlop={10}
-          >
+          <Pressable onPress={customIcon.onPress} hitSlop={10}>
             <Icon
               name={customIcon.name}
               size={24}
