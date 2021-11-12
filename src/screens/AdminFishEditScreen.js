@@ -4,7 +4,7 @@ import {
   useNavigation,
   useRoute,
 } from "@react-navigation/native";
-import { Box, Button, VStack } from "native-base";
+import { Box, Button, Text, VStack } from "native-base";
 import React, { useCallback, useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { Dimensions } from "react-native";
@@ -24,6 +24,7 @@ const CUSTOM_SCREEN_HEIGHT = Dimensions.get("window").height - OFFSET_BOTTOM;
 // Validation schema for form
 const validationSchema = yup.object().shape({
   fishName: yup.string().required("Tên cá không thể bỏ trống"),
+  fishImage: yup.array().min(1, "Hãy chọn ảnh cho loại cá"),
 });
 const AdminFishEditScreen = () => {
   const route = useRoute();
@@ -32,10 +33,14 @@ const AdminFishEditScreen = () => {
   const [imageData, setImageData] = useState([]);
 
   const methods = useForm({
-    mode: "onSubmit",
+    mode: "onChange",
     resolver: yupResolver(validationSchema),
   });
-  const { handleSubmit, setValue } = methods;
+  const {
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = methods;
   // DucHM ADD_START 11/11/2021
   const updateImageArray = (id) => {
     setImageData(imageData.filter((image) => image.id !== id));
@@ -54,6 +59,11 @@ const AdminFishEditScreen = () => {
       setValue("fishName", name);
     }
   }, []);
+
+  useEffect(() => {
+    setValue("fishImage", imageData);
+  }, [imageData]);
+
   // DucHM ADD_START 11/11/2021
   useFocusEffect(
     // useCallback will listen to route.param
@@ -68,12 +78,13 @@ const AdminFishEditScreen = () => {
   return (
     <>
       <HeaderTab name="Quản lý loại cá" />
-      <Box height={CUSTOM_SCREEN_HEIGHT} borderWidth={1}>
+      <Box height={CUSTOM_SCREEN_HEIGHT}>
         <FormProvider {...methods}>
           <VStack
             w="100%"
             flexGrow={1}
             flexBasis={1}
+            paddingTop={2}
             justifyContent="flex-start"
             alignItems="center"
             space={2}
@@ -85,6 +96,11 @@ const AdminFishEditScreen = () => {
               imageArray={imageData}
               deleteImage={updateImageArray}
             />
+            {errors.fishImage?.message && (
+              <Text color="danger.500" italic fontSize="xs">
+                {errors.fishImage?.message}
+              </Text>
+            )}
             <InputComponent
               myStyles={{ width: "90%" }}
               label="Tên cá"
@@ -95,11 +111,7 @@ const AdminFishEditScreen = () => {
             {/* DucHM ADD_END 11/11/2021 */}
           </VStack>
 
-          <Button
-            w="100%"
-            alignSelf="flex-end"
-            onPress={handleSubmit(onSubmit)}
-          >
+          <Button w="80%" alignSelf="center" onPress={handleSubmit(onSubmit)}>
             {isNew ? "Thêm loại cá" : "Lưu thay đổi"}
           </Button>
         </FormProvider>
