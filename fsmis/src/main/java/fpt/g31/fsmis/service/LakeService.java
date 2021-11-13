@@ -20,6 +20,9 @@ import java.util.*;
 @Service
 @AllArgsConstructor
 public class LakeService {
+    private static final String LOCATION_NOT_FOUND = "Không tìm thấy hồ câu!";
+    private static final String UNAUTHORIZED = "Không có quyền truy cập!";
+    private static final String INVALID_WEIGHT_RANGE = "Lỗi do biểu nhập ngược!";
     private LakeRepos lakeRepos;
     private FishingLocationRepos fishingLocationRepos;
     private FishSpeciesRepos fishSpeciesRepos;
@@ -27,10 +30,6 @@ public class LakeService {
     private FishInLakeRepos fishInLakeRepos;
     private FishingMethodRepos methodRepos;
     private JwtFilter jwtFilter;
-
-    private static final String LOCATION_NOT_FOUND = "Không tìm thấy hồ câu!";
-    private static final String UNAUTHORIZED = "Không có quyền truy cập!";
-    private static final String INVALID_WEIGHT_RANGE = "Lỗi do biểu nhập ngược!";
 
     public ResponseTextDtoOut createLake(LakeDtoIn lakeDtoIn, Long fishingLocationId, HttpServletRequest request) {
         FishingLocation fishingLocation = fishingLocationRepos.findById(fishingLocationId)
@@ -207,6 +206,24 @@ public class LakeService {
         }
     }
 
+    private void checkValidFishInLake(FishInLakeDtoIn fishInLakeDtoIn) {
+        if (!fishSpeciesRepos.existsById(fishInLakeDtoIn.getFishSpeciesId())) {
+            throw new NotFoundException("Không tìm thấy loài cá này!");
+        }
+        if (fishInLakeDtoIn.getMinWeight() > fishInLakeDtoIn.getMaxWeight()) {
+            throw new ValidationException(INVALID_WEIGHT_RANGE);
+        }
+        if (fishInLakeDtoIn.getQuantity() == null && fishInLakeDtoIn.getTotalWeight() == null) {
+            throw new ValidationException("Cần điền thông tin về số lượng hoặc tổng khối lượng cá");
+        }
+//            if user fill both quantity and total weight field, check if total weight is between
+//            min weight * quantity and max weight * quantity
+        if (fishInLakeDtoIn.getQuantity() != null && fishInLakeDtoIn.getTotalWeight() != null
+                && (fishInLakeDtoIn.getTotalWeight() < fishInLakeDtoIn.getMinWeight() * fishInLakeDtoIn.getQuantity()
+                || fishInLakeDtoIn.getTotalWeight() > fishInLakeDtoIn.getMaxWeight() * fishInLakeDtoIn.getQuantity())) {
+            throw new ValidationException("Tương quan khối lượng và số lượng không hợp lệ");
+        }
+    }
     public List<LakeWithFishInLakeDtoOut> getAllLakeWithFishInLake(Long locationId) {
         FishingLocation location = fishingLocationRepos.findById(locationId)
                 .orElseThrow(() -> new NotFoundException("Không tìm thấy khu hồ!"));
@@ -238,9 +255,7 @@ public class LakeService {
         if (!lake.getFishingLocation().getOwner().equals(user)) {
             throw new ValidationException(UNAUTHORIZED);
         }
-        if (fishInLakeDtoIn.getMaxWeight() < fishInLakeDtoIn.getMinWeight()) {
-            throw new ValidationException(INVALID_WEIGHT_RANGE);
-        }
+        checkValidFishInLake(fishInLakeDtoIn);
         FishInLake fishInLake = FishInLake.builder()
                 .id(fishInLakeDtoIn.getId())
                 .fishSpecies(fishSpeciesRepos.getById(fishInLakeDtoIn.getFishSpeciesId()))
@@ -278,6 +293,13 @@ public class LakeService {
         User user = jwtFilter.getUserFromToken(request);
         if (!fishInLake.getLake().getFishingLocation().getOwner().equals(user)) {
             throw new ValidationException(UNAUTHORIZED);
+        }
+//            if user fill both quantity and total weight field, check if total weight is between
+//            min weight * quantity and max weight * quantity
+        if (quantity != null && weight != null
+                && (weight < fishInLake.getMinWeight() * quantity
+                || weight > fishInLake.getMaxWeight() * quantity)) {
+            throw new ValidationException("Tương quan khối lượng và số lượng không hợp lệ");
         }
         if (weight == null) {
             fishInLake.setQuantity(fishInLake.getQuantity() + quantity);
