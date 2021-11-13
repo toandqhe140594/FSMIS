@@ -76,6 +76,7 @@ const FManageSuggestLocationScreen = () => {
               hasAsterisk
               placeholder="Nhập số điện thoại"
               controllerName="phone"
+              useNumPad
             />
 
             {/* Description textarea */}
