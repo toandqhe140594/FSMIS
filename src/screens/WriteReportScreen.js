@@ -6,6 +6,7 @@ import { Button, Divider } from "react-native-elements";
 
 import HeaderTab from "../components/HeaderTab";
 import { goBack } from "../navigations";
+import { showToastMessage } from "../utilities";
 
 const ReportScreen = () => {
   const route = useRoute();
@@ -22,13 +23,7 @@ const ReportScreen = () => {
     const trimmedContent = content.trim();
     // If the content is empty or only contains blank characters
     if (!trimmedContent) {
-      ToastAndroid.showWithGravityAndOffset(
-        "Nội đung báo cáo không thể bỏ trống",
-        ToastAndroid.LONG,
-        ToastAndroid.BOTTOM,
-        25,
-        50,
-      );
+      showToastMessage("Nội đung báo cáo không thể bỏ trống");
     }
     writeNewReport({
       id: reportParams.id,

@@ -134,21 +134,37 @@ const FLocationEventRoute = () => {
     goToWriteReportScreen(navigation, { id, type });
   };
   const listEvent = [{ name: "Báo cáo bài viết", onPress: reportHandler }];
-  const renderItem = ({ item }) => (
-    <EventPostCard
-      lakePost={{
-        badge: item.postType === "STOCKING" ? "Bồi cá" : "Thông báo",
-        content: item.content,
-      }}
-      image={item.url}
-      postStyle="LAKE_POST"
-      edited={item.edited}
-      postTime={item.postTime}
-      id={item.id}
-      iconName={role === VIEW_ROLE_ANGLER ? "flag" : ""}
-      iconEvent={listEvent}
-    />
-  );
+
+  const renderItem = ({ item }) => {
+    let typeBadge = "";
+    switch (item.postType) {
+      case "STOCKING":
+        typeBadge = "Bồi cá";
+        break;
+      case "REPORTING":
+        typeBadge = "Báo cá";
+        break;
+      default:
+        typeBadge = "Thông báo";
+    }
+    return (
+      <Box backgroundColor="white" my="1">
+        <EventPostCard
+          postStyle="LAKE_POST"
+          iconName={role === VIEW_ROLE_ANGLER ? "flag" : ""}
+          iconEvent={listEvent}
+          id={item.id}
+          image={item.url}
+          itemData={item}
+          lakePost={{
+            badge: typeBadge,
+            content: item.content,
+          }}
+          postTime={item.postTime}
+        />
+      </Box>
+    );
+  };
 
   const pinPostComponent = () => (
     <>

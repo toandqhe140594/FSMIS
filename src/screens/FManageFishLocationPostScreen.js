@@ -70,23 +70,36 @@ const PostListContainerComponent = () => {
     { name: "Xóa bài đăng", onPress: removePostHandler },
   ];
 
-  const renderItem = ({ item }) => (
-    <Box backgroundColor="white" my="1">
-      <EventPostCard
-        postStyle="LAKE_POST"
-        iconName="ellipsis-vertical"
-        iconEvent={[...pinPostEvent, ...listEvent]}
-        id={item.id}
-        image={item.url}
-        itemData={item}
-        lakePost={{
-          badge: item.postType === "STOCKING" ? "Bồi cá" : "Thông báo",
-          content: item.content,
-        }}
-        postTime={item.postTime}
-      />
-    </Box>
-  );
+  const renderItem = ({ item }) => {
+    let typeBadge = "";
+    switch (item.postType) {
+      case "STOCKING":
+        typeBadge = "Bồi cá";
+        break;
+      case "REPORTING":
+        typeBadge = "Báo cá";
+        break;
+      default:
+        typeBadge = "Thông báo";
+    }
+    return (
+      <Box backgroundColor="white" my="1">
+        <EventPostCard
+          postStyle="LAKE_POST"
+          iconName="ellipsis-vertical"
+          iconEvent={[...pinPostEvent, ...listEvent]}
+          id={item.id}
+          image={item.url}
+          itemData={item}
+          lakePost={{
+            badge: typeBadge,
+            content: item.content,
+          }}
+          postTime={item.postTime}
+        />
+      </Box>
+    );
+  };
 
   const pinPostComponent = () => (
     <>
