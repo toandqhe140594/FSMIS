@@ -14,7 +14,7 @@ const styles = StyleSheet.create({
 
 const ReviewReportRoute = () => {
   const reportListModel = useStoreState(
-    (states) => states.ReportModel.ListReviewReport,
+    (states) => states.ReportModel.listReviewReport,
   );
   const [filter, setFilter] = useState("");
   const navigation = useNavigation();

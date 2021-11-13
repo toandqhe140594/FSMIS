@@ -75,6 +75,9 @@ const PostEditScreen = () => {
       attachmentType: currentPost.attachmentType,
     },
   });
+  const setCurrentPinPost = useStoreActions(
+    (actions) => actions.FManageModel.setCurrentPinPost,
+  );
 
   const { handleSubmit, watch, setValue, getValues } = methods;
   const watchAttachmentType = watch("attachmentType");
@@ -133,6 +136,9 @@ const PostEditScreen = () => {
       setUpdateStatus,
     });
     setEditData(updateData);
+    if (currentPost.pinned) {
+      setCurrentPinPost(updateData);
+    }
 
     setLoadingButton(true);
   };

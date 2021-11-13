@@ -18,6 +18,7 @@ const PostListContainerComponent = () => {
     getLocationPostListFirstPage,
     pinFLocationPost,
     getPinPost,
+    setCurrentPinPost,
   } = useStoreActions((actions) => actions.FManageModel);
 
   const lakePostPageNo = useStoreState(
@@ -32,7 +33,6 @@ const PostListContainerComponent = () => {
   );
   const [deleteSuccess, setDeleteSuccess] = useState(null);
 
-  const [pinPost, setPinPost] = useState({});
   const loadMoreLakeCatchData = () => {
     getLocationPostListByPage({ pageNo: lakePostPageNo });
     setLakePostPageNo(lakePostPageNo + 1);
@@ -42,9 +42,15 @@ const PostListContainerComponent = () => {
     setCurrentPost(item);
     goToPostEditScreen(navigation, { id });
   };
+
   const pinFLocationPostHandler = (id, item) => {
     pinFLocationPost({ postId: id });
-    setPinPost(item);
+    setCurrentPinPost(item);
+  };
+
+  const unPinFLocationPostHandler = (id) => {
+    pinFLocationPost({ postId: id });
+    setCurrentPinPost({});
   };
 
   const removePostHandler = (id) => {
@@ -53,23 +59,11 @@ const PostListContainerComponent = () => {
     });
   };
 
-  useEffect(() => {
-    getLocationPostListFirstPage();
-    getPinPost();
-    setPinPost(currentPinPost);
-  }, []);
-
-  useEffect(() => {
-    if (deleteSuccess === true) showToastMessage("Xóa thành công");
-    if (deleteSuccess === false) showToastMessage("Xóa thất bại");
-    setDeleteSuccess(null);
-  }, [deleteSuccess]);
-
   const pinPostEvent = [
     { name: "Ghim bài viết", onPress: pinFLocationPostHandler },
   ];
   const unPinPostEvent = [
-    { name: "Ghim bài viết", onPress: pinFLocationPostHandler },
+    { name: "Bỏ ghim bài viết", onPress: unPinFLocationPostHandler },
   ];
   const listEvent = [
     { name: "Chỉnh sửa bài đăng", onPress: editPostHandler },
@@ -81,7 +75,7 @@ const PostListContainerComponent = () => {
       <EventPostCard
         postStyle="LAKE_POST"
         iconName="ellipsis-vertical"
-        iconEvent={[...unPinPostEvent, ...listEvent]}
+        iconEvent={[...pinPostEvent, ...listEvent]}
         id={item.id}
         image={item.url}
         itemData={item}
@@ -94,41 +88,72 @@ const PostListContainerComponent = () => {
     </Box>
   );
 
+  const pinPostComponent = () => (
+    <>
+      {currentPinPost.id !== undefined && (
+        <Box
+          backgroundColor="white"
+          mb={5}
+          mt={1}
+          flexDirection="column"
+          style={{
+            borderColor: "#88E0EF",
+            borderWidth: 3,
+          }}
+        >
+          <Text
+            bold
+            italic
+            fontSize="15"
+            pl={0.5}
+            textAlign="center"
+            style={{ color: "white", backgroundColor: "#88E0EF" }}
+          >
+            Bài ghim
+          </Text>
+          <EventPostCard
+            postStyle="LAKE_POST"
+            iconName="ellipsis-vertical"
+            iconEvent={[...unPinPostEvent, ...listEvent]}
+            id={currentPinPost.id}
+            image={currentPinPost.url}
+            itemData={currentPinPost}
+            lakePost={{
+              badge:
+                currentPinPost.postType === "STOCKING" ? "Bồi cá" : "Thông báo",
+              content: currentPinPost.content,
+            }}
+            postTime={currentPinPost.postTime}
+          />
+        </Box>
+      )}
+    </>
+  );
+  const footerComponent = () => <Divider mt={20} />;
+  console.log(`currentPinPost`, currentPinPost.id);
+  useEffect(() => {
+    getLocationPostListFirstPage();
+    getPinPost();
+  }, []);
+
+  useEffect(() => {
+    if (deleteSuccess === true) showToastMessage("Xóa thành công");
+    if (deleteSuccess === false) showToastMessage("Xóa thất bại");
+    setDeleteSuccess(null);
+  }, [deleteSuccess]);
+
   return (
     <Box>
       <FlatList
-        ListHeaderComponent={() => (
-          <>
-            {pinPost.id !== undefined && (
-              <Box backgroundColor="white" mb={5}>
-                <Text>Bài được ghim </Text>
-                <EventPostCard
-                  postStyle="LAKE_POST"
-                  iconName="ellipsis-vertical"
-                  iconEvent={[...pinPostEvent, ...listEvent]}
-                  id={pinPost.id}
-                  image={pinPost.url}
-                  itemData={pinPost}
-                  lakePost={{
-                    badge:
-                      pinPost.postType === "STOCKING" ? "Bồi cá" : "Thông báo",
-                    content: pinPost.content,
-                  }}
-                  postTime={pinPost.postTime}
-                />
-              </Box>
-            )}
-          </>
-        )}
+        ListHeaderComponent={pinPostComponent}
+        ListFooterComponent={footerComponent}
         removeClippedSubviews
         initialNumToRender={5}
         updateCellsBatchingPeriod={10}
         maxToRenderPerBatch={20}
         data={locationPostList}
         renderItem={renderItem}
-        onEndReached={() => {
-          loadMoreLakeCatchData();
-        }}
+        onEndReached={loadMoreLakeCatchData}
         keyExtractor={(item) => item.id.toString()}
       />
     </Box>
@@ -141,7 +166,6 @@ const FManageFishLocationPostScreen = () => {
   const locationDetails = useStoreState(
     (states) => states.FManageModel.locationDetails,
   );
-
   const onPress = () => {
     goToPostCreateScreen(navigation);
   };

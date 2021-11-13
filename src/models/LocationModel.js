@@ -36,6 +36,7 @@ const model = {
   totalPostPage: 1,
   totalCatchPage: 1,
   catchReportDetail: {},
+  currentPinPost: {},
 
   setCurrentId: action((state, payload) => {
     state.currentId = payload;
@@ -313,7 +314,19 @@ const model = {
       actions.setCheckinStatus(false);
     }
   }),
-
   // END OF CHECKIN STATUS RELATED STUFF
+
+  // PIN POST
+  setCurrentPinPost: action((state, payload) => {
+    state.currentPinPost = payload;
+  }),
+  getPinPost: thunk(async (actions, payload, { getState }) => {
+    const { currentId } = getState();
+    const { data } = await http.get(`/location/${currentId}/post/pinned`);
+    actions.setCurrentPinPost(data);
+  }),
+  // END PIN POST
+
+  
 };
 export default model;
