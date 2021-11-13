@@ -182,13 +182,14 @@ public class CatchesService {
             throw new ValidationException(UNAUTHORIZED);
         }
         List<CatchesDetail> catchesDetailList = catches.getCatchesDetailList();
-        List<CatchesFishDtoOut> fishes = new ArrayList<>();
+        List<CaughtFishDtoOut> fishes = new ArrayList<>();
         for (CatchesDetail catchesDetail : catchesDetailList) {
-            CatchesFishDtoOut item = CatchesFishDtoOut.builder()
+            CaughtFishDtoOut item = CaughtFishDtoOut.builder()
                     .name(catchesDetail.getFishSpecies().getName())
                     .image(catchesDetail.getFishSpecies().getImageUrl())
                     .quantity(catchesDetail.getQuantity())
                     .weight(catchesDetail.getWeight())
+                    .returnToOwner(catchesDetail.isReturnToOwner())
                     .build();
             fishes.add(item);
         }
@@ -200,6 +201,7 @@ public class CatchesService {
                 .avatar(catches.getUser().getAvatarUrl())
                 .locationId(catches.getFishingLocation().getId())
                 .locationName(catches.getFishingLocation().getName())
+                .lakeName(lakeRepos.getById(catches.getLakeId()).getName())
                 .description(catches.getDescription())
                 .images(ServiceUtils.splitString(catches.getImageUrl()))
                 .time(ServiceUtils.convertDateToString(catches.getTime()))

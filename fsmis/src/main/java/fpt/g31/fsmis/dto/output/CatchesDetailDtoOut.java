@@ -22,11 +22,13 @@ public class CatchesDetailDtoOut {
 
     private String locationName;
 
+    private String lakeName;
+
     private String description;
 
     private List<String> images;
 
     private String time;
 
-    private List<CatchesFishDtoOut> fishes;
+    private List<CaughtFishDtoOut> fishes;
 }

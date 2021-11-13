@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CatchesFishDtoOut {
+public class CaughtFishDtoOut {
 
     private String name;
 
@@ -18,4 +18,6 @@ public class CatchesFishDtoOut {
     private Integer quantity;
 
     private Float weight;
+
+    private boolean returnToOwner;
 }
