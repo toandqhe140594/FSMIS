@@ -5,30 +5,33 @@ import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
-  StyleSheet,
   TouchableOpacity,
   View,
 } from "react-native";
+import { Overlay } from "react-native-elements";
 
 import { goToAdminFLocationReportDetailScreen } from "../../navigations";
 import HeaderTab from "../HeaderTab";
 import ReportCard from "./ReportCard";
 
-const styles = StyleSheet.create({
-  flatList: { marginTop: 12 },
-});
+const OFF_SET = 105;
+const FILTER_TOUCHED_TYPE = "Đã xử lý";
+const FILTER_UNTOUCHED_TYPE = "Chưa xử lý";
 
 const FLocationReportRoute = () => {
   const navigation = useNavigation();
   const [isLoading, setIsLoading] = useState(true);
+  const [bigLoading, setBigLoading] = useState(false);
+  const [getStatus, setGetStatus] = useState("");
   const [pageNo, setPageNo] = useState(1);
-  const [momentumScrollBegin, setMomentumScrollBegin] = useState(true);
-  // const [filter, setFilter] = useState("");
-  const { listLocationReport } = useStoreState((state) => state.ReportModel);
+  const [active, setActive] = useState(true);
+  const [filter, setFilter] = useState(FILTER_TOUCHED_TYPE);
+  const { listLocationReport, totalLocationReportPage } = useStoreState(
+    (state) => state.ReportModel,
+  );
   const { getListLocationReportLocation, resetReportList } = useStoreActions(
     (actions) => actions.ReportModel,
   );
-  // const [reportList, setReportList] = useState(listLocationReport);
   const renderItem = ({ item }) => {
     return (
       <TouchableOpacity
@@ -41,84 +44,103 @@ const FLocationReportRoute = () => {
     );
   };
   const renderFooter = () =>
-    isLoading ? <ActivityIndicator size="large" color="#2089DC" /> : <></>;
+    isLoading && !bigLoading ? (
+      <ActivityIndicator size={30} color="#2089DC" />
+    ) : null;
+  /**
+   * Change to new list
+   * @param {String} value selected value
+   */
+  const handleValueChange = (value) => {
+    if (value !== filter) {
+      setIsLoading(true);
+      setFilter(value);
+      setActive(value !== FILTER_UNTOUCHED_TYPE); // Change active based on list type
+      setPageNo(1); // Reset pageNo to 1 for new list
+      setBigLoading(true); // When change between each list type, use bigLoading
+    }
+  };
   /**
    * When FlatList scroll to bottom,
    * process to the next location report page
    */
   const handleLoadMore = () => {
-    if (!momentumScrollBegin) {
-      setPageNo(pageNo + 1);
+    if (pageNo < totalLocationReportPage) {
       setIsLoading(true);
-      setMomentumScrollBegin(true);
+      setPageNo(pageNo + 1);
     }
   };
   /**
-   * When pageCurrent change, get next location report page
+   * Use only to reset list when unmount
    */
   useEffect(() => {
-    getListLocationReportLocation({ pageNo, setIsLoading });
     return () => {
       resetReportList({ type: "LOCATION" });
     };
-  }, [pageNo]);
+  }, []);
   /**
-   * Listen to isLoading state
-   * When the loading stops, set new location report list
-   * to report list state
+   * When pageNo or active changed, get next location report page
    */
-  // useEffect(() => {
-  //   if (!isLoading) {
-  //     setReportList(listLocationReport);
-  //   }
-  // }, [isLoading]);
+  useEffect(() => {
+    getListLocationReportLocation({ pageNo, setGetStatus, active });
+  }, [pageNo, active]);
   /**
-   * Filter list based on select option
+   * Trigger on getStatus return
    */
-  // useEffect(() => {
-  //   const getFilteredList = () => {
-  //     switch (filter) {
-  //       case "ALL":
-  //         return reportList;
-  //       case "UNTOUCHED":
-  //         return reportList.filter(({ active }) => !active);
-  //       case "TOUCHED":
-  //         return reportList.filter(({ active }) => active);
-  //       default:
-  //         return reportList;
-  //     }
-  //   };
-  //   setReportList(getFilteredList());
-  // }, [filter]);
+  useEffect(() => {
+    if (getStatus === "SUCCESS") {
+      setIsLoading(false);
+      if (bigLoading) setBigLoading(false);
+      setGetStatus(null);
+    } else if (getStatus === "FAILED") {
+      setIsLoading(false);
+      if (bigLoading) setBigLoading(false);
+      setGetStatus(null);
+    }
+  }, [getStatus]);
   return (
     <>
       <HeaderTab name="Quản lý báo cáo" />
-      <View>
+      <Overlay
+        isVisible={isLoading && bigLoading}
+        fullScreen
+        overlayStyle={{
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "transparent",
+        }}
+      >
+        <ActivityIndicator size={60} color="#2089DC" />
+      </Overlay>
+      <View style={{ marginBottom: OFF_SET }}>
         <Select
           w="90%"
           my={2}
           alignSelf="center"
           placeholder="Lọc hiển thị báo cáo"
-          defaultValue="ALL"
-          value="ALL"
-          onValueChange={() => {}}
+          defaultValue={filter}
+          value={filter}
+          onValueChange={handleValueChange}
           fontSize="md"
         >
-          <Select.Item label="Tất cả" value="ALL" />
-          <Select.Item label="Chưa xử lý" value="UNTOUCHED" />
-          <Select.Item label="Đã xử lý" value="TOUCHED" />
+          <Select.Item
+            label={FILTER_TOUCHED_TYPE}
+            value={FILTER_TOUCHED_TYPE}
+          />
+          <Select.Item
+            label={FILTER_UNTOUCHED_TYPE}
+            value={FILTER_UNTOUCHED_TYPE}
+          />
         </Select>
-
         <FlatList
-          style={styles.flatList}
+          style={{ marginTop: 8 }}
           keyExtractor={(item) => `${item.id}`}
           renderItem={renderItem}
           ListFooterComponent={renderFooter}
+          bounces={false}
           data={listLocationReport}
-          onMomentumScrollBegin={() => {
-            setMomentumScrollBegin(false);
-          }}
           onEndReached={handleLoadMore}
+          onEndReachedThreshold={0.2}
         />
       </View>
     </>
