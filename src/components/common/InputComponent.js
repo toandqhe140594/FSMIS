@@ -9,6 +9,17 @@ const styles = StyleSheet.create({
   asterisk: { color: "#f43f5e", fontSize: 16 },
   bold: { fontWeight: "bold" },
   text: { fontSize: 16, marginBottom: 4 },
+  inputComponent: {
+    borderWidth: 1,
+    borderColor: "#e5e5e5",
+    borderRadius: 5,
+    backgroundColor: "white",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.8,
+    shadowRadius: 1,
+    elevation: 5,
+  },
 });
 
 const InputComponent = ({
@@ -50,6 +61,7 @@ const InputComponent = ({
             fontSize="md"
             keyboardType={useNumPad ? "number-pad" : "default"}
             isDisabled={shouldDisable}
+            style={styles.inputComponent}
           />
         )}
       />
