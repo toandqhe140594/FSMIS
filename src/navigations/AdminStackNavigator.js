@@ -18,6 +18,7 @@ import AdminMainScreen from "../screens/AdminMainScreen";
 import AdminReportManagementScreen from "../screens/AdminReportManagementScreen";
 import AdminReportPostDetailScreen from "../screens/AdminReportPostDetailScreen";
 import AdminReportReviewDetailScreen from "../screens/AdminReportReviewDetailScreen";
+import LakeDetailScreen from "../screens/LakeDetailScreen";
 import MediaSelectScreen from "../screens/MediaSelectScreen";
 import store from "../utilities/Store";
 
@@ -95,6 +96,10 @@ const AdminStackNavigator = () => {
       <AdminStack.Screen
         name={ROUTE_NAMES.ADMIN_BLACKLIST_PHONE_MANAGEMENT_ADD}
         component={AdminBlacklistPhoneAddScreen}
+      />
+      <AdminStack.Screen
+        name={ROUTE_NAMES.LAKE_DETAIL}
+        component={LakeDetailScreen}
       />
     </AdminStack.Navigator>
   );

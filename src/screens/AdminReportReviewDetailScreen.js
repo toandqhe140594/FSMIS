@@ -1,4 +1,4 @@
-import { Box, Divider, FlatList, ScrollView, Text, VStack } from "native-base";
+import { Box, Button, Divider, FlatList, Text, VStack } from "native-base";
 import React from "react";
 
 import AdminReport from "../components/AdminReport";
@@ -71,63 +71,72 @@ const reportData = [
 ];
 
 const AdminReportReviewDetailScreen = () => {
+  const headerListComponent = () => (
+    <VStack space={3} mt={4} px={3}>
+      <ReviewFromAnglerSection
+        name="Dao Quoc Toan"
+        content="Rất tốt, ae hãy đến"
+        isPositive={false}
+        date="01/01/2022"
+        isDisabled
+        rate={5}
+      />
+      <Divider />
+      <Box
+        style={styles.textContentType}
+        flexDirection="row"
+        alignItems="center"
+        justifyContent="space-between"
+      >
+        <Box>
+          <Text bold>Điểm câu</Text>
+          <Text>Hồ thuần việt</Text>
+        </Box>
+        <Button>Đi tới trang</Button>
+      </Box>
+      <Divider />
+      <Text style={styles.textContentType}>
+        <Text bold>Thời gian báo cáo :</Text> 0/0/0
+      </Text>
+      <Divider />
+      <Text bold style={styles.textContentType}>
+        Danh sách báo cáo :
+      </Text>
+    </VStack>
+  );
+  const footerComponent = () => <Divider mt={20} />;
+  const renderItem = ({ item }) => (
+    <Box
+      borderTopWidth="1"
+      _dark={{
+        borderColor: "gray.600",
+      }}
+      borderColor="coolGray.200"
+      backgroundColor="white"
+      mt="0.5"
+      mb="1"
+      // keyExtractor={(item.id) => item.index_id.toString()}
+      pl="2"
+      pb="1"
+    >
+      <AvatarCard avatarSize="md" nameUser={item.userName} />
+      <Box mt={2}>
+        <Text italic style={styles.textContentType}>
+          {item.content}
+        </Text>
+      </Box>
+    </Box>
+  );
   return (
     <AdminReport>
-      <ScrollView>
-        <VStack space={3} mt={4} px={3}>
-          <ReviewFromAnglerSection
-            name="Dao Quoc Toan"
-            content="Rất tốt, ae hãy đến"
-            isPositive={false}
-            date="01/01/2022"
-            isDisabled
-            rate={5}
-          />
-          <Divider />
-          <Box style={styles.textContentType}>
-            <Text bold>Diem cau </Text>
-            <Text>Thuan Viet</Text>
-          </Box>
-          <Divider />
-          <Text style={styles.textContentType}>
-            <Text bold>Thời gian báo cáo :</Text> 0/0/0
-          </Text>
-          <Divider />
-          <Text bold style={styles.textContentType}>
-            Danh sách báo cáo :
-          </Text>
-          <FlatList
-            pt="0.5"
-            data={reportData}
-            renderItem={({ item }) => (
-              <Box
-                borderTopWidth="1"
-                _dark={{
-                  borderColor: "gray.600",
-                }}
-                borderColor="coolGray.200"
-                backgroundColor="white"
-                mt="0.5"
-                mb="1"
-                // keyExtractor={(item.id) => item.index_id.toString()}
-                pl="2"
-                pb="1"
-              >
-                <AvatarCard avatarSize="md" nameUser={item.userName} />
-                <Box mt={2}>
-                  <Text italic style={styles.textContentType}>
-                    {item.content}
-                  </Text>
-                </Box>
-              </Box>
-            )}
-            keyExtractor={(item, index) => index.toString()}
-          />
-          <Box my="9">
-            <Divider />
-          </Box>
-        </VStack>
-      </ScrollView>
+      <FlatList
+        pt="0.5"
+        data={reportData}
+        ListHeaderComponent={headerListComponent}
+        ListFooterComponent={footerComponent}
+        renderItem={renderItem}
+        keyExtractor={(item, index) => index.toString()}
+      />
     </AdminReport>
   );
 };
