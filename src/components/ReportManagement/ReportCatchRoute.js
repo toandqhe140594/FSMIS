@@ -10,42 +10,36 @@ import {
   View,
 } from "react-native";
 
-import { goToAdminFLocationReportDetailScreen } from "../../navigations";
+import { goToAdminReviewReportDetailScreen } from "../../navigations";
 import HeaderTab from "../HeaderTab";
 import ReportCard from "./ReportCard";
 
 const styles = StyleSheet.create({
-  flatList: { marginTop: 12 },
+  container: {},
 });
 
-const FLocationReportRoute = () => {
+const ReportCatchRoute = () => {
   const navigation = useNavigation();
   const [isLoading, setIsLoading] = useState(true);
   const [pageNo, setPageNo] = useState(1);
   const [momentumScrollBegin, setMomentumScrollBegin] = useState(true);
   // const [filter, setFilter] = useState("");
-  const { listLocationReport } = useStoreState((state) => state.ReportModel);
-  const { getListLocationReportLocation, resetReportList } = useStoreActions(
+  const { listCatchReport } = useStoreState((state) => state.ReportModel);
+  const { getListReportCatch, resetReportList } = useStoreActions(
     (actions) => actions.ReportModel,
   );
-  // const [reportList, setReportList] = useState(listLocationReport);
-  const renderItem = ({ item }) => {
-    return (
-      <TouchableOpacity
-        onPress={() => {
-          goToAdminFLocationReportDetailScreen(navigation);
-        }}
-      >
-        <ReportCard {...item} isFLocationReport />
-      </TouchableOpacity>
-    );
-  };
+  // const [reportList, setReportList] = useState(reportListModel);
+  const renderItem = ({ item }) => (
+    <TouchableOpacity
+      onPress={() => {
+        goToAdminReviewReportDetailScreen(navigation);
+      }}
+    >
+      <ReportCard {...item} isCatchReportType />
+    </TouchableOpacity>
+  );
   const renderFooter = () =>
     isLoading ? <ActivityIndicator size="large" color="#2089DC" /> : <></>;
-  /**
-   * When FlatList scroll to bottom,
-   * process to the next location report page
-   */
   const handleLoadMore = () => {
     if (!momentumScrollBegin) {
       setPageNo(pageNo + 1);
@@ -53,37 +47,21 @@ const FLocationReportRoute = () => {
       setMomentumScrollBegin(true);
     }
   };
-  /**
-   * When pageCurrent change, get next location report page
-   */
   useEffect(() => {
-    getListLocationReportLocation({ pageNo, setIsLoading });
+    getListReportCatch({ pageNo, setIsLoading });
     return () => {
-      resetReportList({ type: "LOCATION" });
+      resetReportList({ type: "CATCH" });
     };
   }, [pageNo]);
-  /**
-   * Listen to isLoading state
-   * When the loading stops, set new location report list
-   * to report list state
-   */
-  // useEffect(() => {
-  //   if (!isLoading) {
-  //     setReportList(listLocationReport);
-  //   }
-  // }, [isLoading]);
-  /**
-   * Filter list based on select option
-   */
   // useEffect(() => {
   //   const getFilteredList = () => {
   //     switch (filter) {
   //       case "ALL":
-  //         return reportList;
+  //         return reportListModel;
   //       case "UNTOUCHED":
-  //         return reportList.filter(({ active }) => !active);
+  //         return reportListModel.filter(({ active }) => !active);
   //       case "TOUCHED":
-  //         return reportList.filter(({ active }) => active);
+  //         return reportListModel.filter(({ active }) => active);
   //       default:
   //         return reportList;
   //     }
@@ -93,7 +71,7 @@ const FLocationReportRoute = () => {
   return (
     <>
       <HeaderTab name="Quản lý báo cáo" />
-      <View>
+      <View style={styles.container}>
         <Select
           w="90%"
           my={2}
@@ -110,11 +88,11 @@ const FLocationReportRoute = () => {
         </Select>
 
         <FlatList
-          style={styles.flatList}
+          style={{ marginTop: 12 }}
           keyExtractor={(item) => `${item.id}`}
+          data={listCatchReport}
           renderItem={renderItem}
           ListFooterComponent={renderFooter}
-          data={listLocationReport}
           onMomentumScrollBegin={() => {
             setMomentumScrollBegin(false);
           }}
@@ -125,4 +103,4 @@ const FLocationReportRoute = () => {
   );
 };
 
-export default FLocationReportRoute;
+export default ReportCatchRoute;
