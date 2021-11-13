@@ -71,9 +71,9 @@ const FishingSpotDetailScreen = () => {
         <Tab.Screen name="Sự kiện" component={EventListRoute} />
       </Tab.Navigator>
       <Button
-        title={verify ? "Xác thực" : "Hủy xác thực"}
+        title={verify ? "Hủy xác thực" : "Xác thực"}
         buttonStyle={
-          !verify && {
+          verify && {
             backgroundColor: colors.defaultDanger,
           }
         }
