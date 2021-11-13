@@ -30,6 +30,7 @@ public class ReportService {
     private final JwtFilter jwtFilter;
 
     private static final String INVALID_PAGE_NUMBER = "Số trang không hợp lệ";
+    private static final String REPORT_NOT_FOUND = "Không tìm thấy báo cáo";
 
     public ResponseTextDtoOut reportFishingLocation(HttpServletRequest request, Long locationId, ReportDtoIn reportDtoIn) {
         User user = jwtFilter.getUserFromToken(request);
@@ -236,7 +237,7 @@ public class ReportService {
 
     public ResponseTextDtoOut markReportAsSolved(Long reportId) {
         Report report = reportRepos.findById(reportId)
-                .orElseThrow(() -> new NotFoundException("Không tìm thấy báo cáo"));
+                .orElseThrow(() -> new NotFoundException(REPORT_NOT_FOUND));
         report.setActive(true);
         reportRepos.save(report);
         return new ResponseTextDtoOut("Xử lý báo cáo thành công");
@@ -244,7 +245,7 @@ public class ReportService {
 
     public LocationReportDetailDtoOut getLocationReportDetail(Long reportId) {
         Report report = reportRepos.findById(reportId)
-                .orElseThrow(() -> new NotFoundException("Không tìm thấy báo cáo"));
+                .orElseThrow(() -> new NotFoundException(REPORT_NOT_FOUND));
         List<ReportUser> reportDetailList = reportUserRepos.findAllByReportId(reportId);
         List<ReportDetailItemDtoOut> reportDetailDtoOutList = getReportDetailDtoList(reportDetailList);
         return LocationReportDetailDtoOut.builder()
@@ -273,7 +274,7 @@ public class ReportService {
 
     public PostReportDetailDtoOut getPostReportDetail(Long reportId) {
         Report report = reportRepos.findById(reportId)
-                .orElseThrow(() -> new NotFoundException("Không tìm thấy báo cáo"));
+                .orElseThrow(() -> new NotFoundException(REPORT_NOT_FOUND));
         List<ReportUser> reportDetailList = reportUserRepos.findAllByReportId(reportId);
         List<ReportDetailItemDtoOut> reportDetailDtoOutList = getReportDetailDtoList(reportDetailList);
         Post post = report.getPost();
@@ -291,6 +292,51 @@ public class ReportService {
                 .locationId(report.getPost().getFishingLocation().getId())
                 .locationName(report.getPost().getFishingLocation().getName())
                 .postDtoOut(postDtoOut)
+                .reportDetailList(reportDetailDtoOutList)
+                .build();
+    }
+
+    public ReviewReportDetailDtoOut getReviewReportDetail(Long reportId) {
+        Report report = reportRepos.findById(reportId)
+                .orElseThrow(() -> new NotFoundException(REPORT_NOT_FOUND));
+        List<ReportUser> reportDetailList = reportUserRepos.findAllByReportId(reportId);
+        List<ReportDetailItemDtoOut> reportDetailDtoOutList = getReportDetailDtoList(reportDetailList);
+        Review review = report.getReview();
+        ReviewDtoOut reviewDtoOut = ReviewDtoOut.builder()
+                .id(review.getId())
+                .userFullName(review.getUser().getFullName())
+                .userAvatar(review.getUser().getAvatarUrl())
+                .score(review.getScore())
+                .description(review.getDescription())
+                .time(ServiceUtils.convertDateToString(report.getTime()))
+                .build();
+        return ReviewReportDetailDtoOut.builder()
+                .reportTime(ServiceUtils.convertDateToString(report.getTime()))
+                .locationId(report.getReview().getFishingLocation().getId())
+                .locationName(report.getReview().getFishingLocation().getName())
+                .reviewDtoOut(reviewDtoOut)
+                .reportDetailList(reportDetailDtoOutList)
+                .build();
+    }
+
+    public ImproperCatchReportDtoOut getImproperCatchReportDetail(Long reportId) {
+        Report report = reportRepos.findById(reportId)
+                .orElseThrow(() -> new NotFoundException(REPORT_NOT_FOUND));
+        List<ReportUser> reportDetailList = reportUserRepos.findAllByReportId(reportId);
+        List<ReportDetailItemDtoOut> reportDetailDtoOutList = getReportDetailDtoList(reportDetailList);
+        Catches catches = report.getCatches();
+        CatchesOverviewNoImageDtoOut catchesOverviewNoImageDtoOut = CatchesOverviewNoImageDtoOut.builder()
+                .id(catches.getId())
+                .userFullName(catches.getUser().getFullName())
+                .avatar(catches.getUser().getAvatarUrl())
+                .description(catches.getDescription())
+                .time(ServiceUtils.convertDateToString(catches.getTime()))
+                .build();
+        return ImproperCatchReportDtoOut.builder()
+                .reportTime(ServiceUtils.convertDateToString(report.getTime()))
+                .locationId(report.getCatches().getFishingLocation().getId())
+                .locationName(report.getCatches().getFishingLocation().getName())
+                .catchesOverviewNoImageDtoOut(catchesOverviewNoImageDtoOut)
                 .reportDetailList(reportDetailDtoOutList)
                 .build();
     }

@@ -41,11 +41,20 @@ public class AdminReportController {
     public ResponseEntity<Object> getLocationReportDetail(@PathVariable Long reportId) {
         return new ResponseEntity<>(reportService.getLocationReportDetail(reportId), HttpStatus.OK);
     }
-    // @GetMapping("/review/{reportId}")
+
+    @GetMapping("/review/{reportId}")
+    public ResponseEntity<Object> getReviewReportDetail(@PathVariable Long reportId) {
+        return new ResponseEntity<>(reportService.getReviewReportDetail(reportId), HttpStatus.OK);
+    }
 
     @GetMapping("/post/{reportId}")
-     public ResponseEntity<Object> getPostReportDetail(@PathVariable Long reportId) {
+    public ResponseEntity<Object> getPostReportDetail(@PathVariable Long reportId) {
         return new ResponseEntity<>(reportService.getPostReportDetail(reportId), HttpStatus.OK);
+    }
+
+    @GetMapping("/catch/{reportId}")
+    public ResponseEntity<Object> getImproperCatchReportDetail(@PathVariable Long reportId) {
+        return new ResponseEntity<>(reportService.getImproperCatchReportDetail(reportId), HttpStatus.OK);
     }
 
     @PostMapping("/solved/{reportId}")
