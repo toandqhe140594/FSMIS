@@ -57,6 +57,7 @@ public class UserController {
 
     @GetMapping("/catch")
     public ResponseEntity<Object> getPersonalCatchesList(HttpServletRequest request, @RequestParam(defaultValue = "1") int pageNo) {
+        checkInService.checkOut(request);
         return new ResponseEntity<>(catchesService.getPersonalCatchesList(request, pageNo), HttpStatus.OK);
     }
 
