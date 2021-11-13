@@ -191,8 +191,8 @@ public class ReportService {
             throw new ValidationException(INVALID_PAGE_NUMBER);
         }
         List<ReportDtoOut> output = new ArrayList<>();
-        Page<Report> locationReportList = reportRepos.findAllByPostIdNotNullAndActiveOrderByTimeDesc(active, PageRequest.of(pageNo - 1, 10));
-        for (Report report : locationReportList) {
+        Page<Report> postReportList = reportRepos.findAllByPostIdNotNullAndActiveOrderByTimeDesc(active, PageRequest.of(pageNo - 1, 10));
+        for (Report report : postReportList) {
             ReportDtoOut dtoOut = ReportDtoOut.builder()
                     .id(report.getId())
                     .name(report.getPost().getFishingLocation().getName())
@@ -203,9 +203,9 @@ public class ReportService {
             output.add(dtoOut);
         }
         return PaginationDtoOut.builder()
-                .totalPage(locationReportList.getTotalPages())
+                .totalPage(postReportList.getTotalPages())
                 .pageNo(pageNo)
-                .totalItem(locationReportList.getTotalElements())
+                .totalItem(postReportList.getTotalElements())
                 .items(output)
                 .build();
     }
@@ -242,10 +242,21 @@ public class ReportService {
         return new ResponseTextDtoOut("Xử lý báo cáo thành công");
     }
 
-    public LocationReportDetailDtoOut getLocationReport(Long reportId) {
+    public LocationReportDetailDtoOut getLocationReportDetail(Long reportId) {
         Report report = reportRepos.findById(reportId)
                 .orElseThrow(() -> new NotFoundException("Không tìm thấy báo cáo"));
         List<ReportUser> reportDetailList = reportUserRepos.findAllByReportId(reportId);
+        List<ReportDetailItemDtoOut> reportDetailDtoOutList = getReportDetailDtoList(reportDetailList);
+        return LocationReportDetailDtoOut.builder()
+                .locationId(report.getFishingLocation().getId())
+                .locationName(report.getFishingLocation().getName())
+                .time(ServiceUtils.convertDateToString(report.getTime()))
+                .reportDetailList(reportDetailDtoOutList)
+                .build();
+
+    }
+
+    private List<ReportDetailItemDtoOut> getReportDetailDtoList(List<ReportUser> reportDetailList){
         List<ReportDetailItemDtoOut> reportDetailDtoOutList = new ArrayList<>();
         for (ReportUser reportDetail: reportDetailList) {
             ReportDetailItemDtoOut reportDetailItemDtoOut = ReportDetailItemDtoOut.builder()
@@ -257,12 +268,30 @@ public class ReportService {
                     .build();
             reportDetailDtoOutList.add(reportDetailItemDtoOut);
         }
-        return LocationReportDetailDtoOut.builder()
-                .locationId(report.getFishingLocation().getId())
-                .locationName(report.getFishingLocation().getName())
-                .time(ServiceUtils.convertDateToString(report.getTime()))
+        return reportDetailDtoOutList;
+    }
+
+    public PostReportDetailDtoOut getPostReportDetail(Long reportId) {
+        Report report = reportRepos.findById(reportId)
+                .orElseThrow(() -> new NotFoundException("Không tìm thấy báo cáo"));
+        List<ReportUser> reportDetailList = reportUserRepos.findAllByReportId(reportId);
+        List<ReportDetailItemDtoOut> reportDetailDtoOutList = getReportDetailDtoList(reportDetailList);
+        Post post = report.getPost();
+        PostDtoOut postDtoOut = PostDtoOut.builder()
+                .id(post.getId())
+                .content(post.getContent())
+                .postTime(ServiceUtils.convertDateToString(post.getPostTime()))
+                .postType(post.getPostType().toString())
+                .url(post.getUrl())
+                .attachmentType(post.getAttachmentType().toString())
+                .edited(post.isEdited())
+                .build();
+        return PostReportDetailDtoOut.builder()
+                .reportTime(ServiceUtils.convertDateToString(report.getTime()))
+                .locationId(report.getPost().getFishingLocation().getId())
+                .locationName(report.getPost().getFishingLocation().getName())
+                .postDtoOut(postDtoOut)
                 .reportDetailList(reportDetailDtoOutList)
                 .build();
-
     }
 }

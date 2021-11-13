@@ -21,32 +21,35 @@ public class AdminReportController {
 
     @GetMapping("/review")
     public ResponseEntity<Object> getReviewReportList(@RequestParam(defaultValue = "1", required = false) int pageNo,
-                                                   @RequestParam(defaultValue = "true", required = false) boolean active) {
+                                                      @RequestParam(defaultValue = "true", required = false) boolean active) {
         return new ResponseEntity<>(reportService.getReviewReports(pageNo, active), HttpStatus.OK);
     }
 
-     @GetMapping("/post")
-     public ResponseEntity<Object> getPostReportList(@RequestParam(defaultValue = "1", required = false) int pageNo,
-                                                  @RequestParam(defaultValue = "true", required = false) boolean active) {
-         return new ResponseEntity<>(reportService.getPostReports(pageNo, active), HttpStatus.OK);
-     }
+    @GetMapping("/post")
+    public ResponseEntity<Object> getPostReportList(@RequestParam(defaultValue = "1", required = false) int pageNo,
+                                                    @RequestParam(defaultValue = "true", required = false) boolean active) {
+        return new ResponseEntity<>(reportService.getPostReports(pageNo, active), HttpStatus.OK);
+    }
 
     @GetMapping("/catch")
     public ResponseEntity<Object> getImproperCatchReportList(@RequestParam(defaultValue = "1", required = false) int pageNo,
-                                                          @RequestParam(defaultValue = "true", required = false) boolean active) {
+                                                             @RequestParam(defaultValue = "true", required = false) boolean active) {
         return new ResponseEntity<>(reportService.getImproperCatchReports(pageNo, active), HttpStatus.OK);
     }
 
     @GetMapping("/location/{reportId}")
     public ResponseEntity<Object> getLocationReportDetail(@PathVariable Long reportId) {
-        return new ResponseEntity<>(reportService.getLocationReport(reportId), HttpStatus.OK);
+        return new ResponseEntity<>(reportService.getLocationReportDetail(reportId), HttpStatus.OK);
     }
     // @GetMapping("/review/{reportId}")
 
-    // @GetMapping("/post/{reportId}")
+    @GetMapping("/post/{reportId}")
+     public ResponseEntity<Object> getPostReportDetail(@PathVariable Long reportId) {
+        return new ResponseEntity<>(reportService.getPostReportDetail(reportId), HttpStatus.OK);
+    }
 
-     @PostMapping("/solved/{reportId}")
+    @PostMapping("/solved/{reportId}")
     public ResponseEntity<Object> markReportAsSolved(@PathVariable Long reportId) {
         return new ResponseEntity<>(reportService.markReportAsSolved(reportId), HttpStatus.OK);
-     }
+    }
 }

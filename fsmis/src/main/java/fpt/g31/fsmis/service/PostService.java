@@ -100,6 +100,7 @@ public class PostService {
             throw new UnauthorizedException("Không có quyền xóa bài viết!");
         }
         post.setActive(false);
+        post.setPinned(false);
         postRepos.save(post);
         return new ResponseTextDtoOut("Xóa bài viết thành công!");
     }
