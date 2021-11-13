@@ -233,6 +233,7 @@ export const FMANAGE_SUGGESTION_FORM = yup.object().shape({
     .string()
     .matches(/((09|03|07|08|05)+([0-9]{8})\b)/, "Số điện thoại không hợp lệ")
     .required("Số điện thoại chủ hồ không dược bỏ trống"),
+  description: yup.string().max(255, "Mô tả tối đa 255 ký tự"),
 });
 
 export const ADMIN_BLACKLIST_ADD_FORM = yup.object().shape({
