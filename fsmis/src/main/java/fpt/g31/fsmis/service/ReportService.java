@@ -141,12 +141,12 @@ public class ReportService {
         return new ResponseTextDtoOut("Báo cáo báo cá thành công");
     }
 
-    public PaginationDtoOut getLocationReports(int pageNo) {
+    public PaginationDtoOut getLocationReports(int pageNo, boolean active) {
         if (pageNo <= 0) {
             throw new ValidationException(INVALID_PAGE_NUMBER);
         }
         List<ReportDtoOut> output = new ArrayList<>();
-        Page<Report> locationReportList = reportRepos.findAllByFishingLocationIdNotNullOrderByActiveDescTimeDesc(PageRequest.of(pageNo - 1, 10));
+        Page<Report> locationReportList = reportRepos.findAllByFishingLocationIdNotNullAndActiveOrderByTimeDesc(active, PageRequest.of(pageNo - 1, 10));
         for (Report report : locationReportList) {
             ReportDtoOut dtoOut = ReportDtoOut.builder()
                     .id(report.getId())
@@ -164,12 +164,12 @@ public class ReportService {
                 .build();
     }
 
-    public PaginationDtoOut getReviewReports(int pageNo) {
+    public PaginationDtoOut getReviewReports(int pageNo, boolean active) {
         if (pageNo <= 0) {
             throw new ValidationException(INVALID_PAGE_NUMBER);
         }
         List<ReportDtoOut> output = new ArrayList<>();
-        Page<Report> locationReportList = reportRepos.findAllByReviewIdNotNullOrderByActiveDescTimeDesc(PageRequest.of(pageNo - 1, 10));
+        Page<Report> locationReportList = reportRepos.findAllByReviewIdNotNullAndActiveOrderByTimeDesc(active, PageRequest.of(pageNo - 1, 10));
         for (Report report : locationReportList) {
             ReportDtoOut dtoOut = ReportDtoOut.builder()
                     .id(report.getId())
@@ -188,12 +188,12 @@ public class ReportService {
                 .build();
     }
 
-    public PaginationDtoOut getPostReport(int pageNo) {
+    public PaginationDtoOut getPostReports(int pageNo, boolean active) {
         if (pageNo <= 0) {
             throw new ValidationException(INVALID_PAGE_NUMBER);
         }
         List<ReportDtoOut> output = new ArrayList<>();
-        Page<Report> locationReportList = reportRepos.findAllByPostIdNotNullOrderByActiveDescTimeDesc(PageRequest.of(pageNo - 1, 10));
+        Page<Report> locationReportList = reportRepos.findAllByPostIdNotNullAndActiveOrderByTimeDesc(active, PageRequest.of(pageNo - 1, 10));
         for (Report report : locationReportList) {
             ReportDtoOut dtoOut = ReportDtoOut.builder()
                     .id(report.getId())
@@ -212,12 +212,12 @@ public class ReportService {
                 .build();
     }
 
-    public PaginationDtoOut getImproperCatchReports(int pageNo) {
+    public PaginationDtoOut getImproperCatchReports(int pageNo, boolean active) {
         if (pageNo <= 0) {
             throw new ValidationException(INVALID_PAGE_NUMBER);
         }
         List<ReportDtoOut> output = new ArrayList<>();
-        Page<Report> locationReportList = reportRepos.findAllByCatchesIdNotNullOrderByActiveDescTimeDesc(PageRequest.of(pageNo - 1, 10));
+        Page<Report> locationReportList = reportRepos.findAllByCatchesIdNotNullAndActiveOrderByTimeDesc(active, PageRequest.of(pageNo - 1, 10));
         for (Report report : locationReportList) {
             ReportDtoOut dtoOut = ReportDtoOut.builder()
                     .id(report.getId())
@@ -234,5 +234,13 @@ public class ReportService {
                 .totalItem(locationReportList.getTotalElements())
                 .items(output)
                 .build();
+    }
+
+    public ResponseTextDtoOut markReportAsSolved(Long reportId) {
+        Report report = reportRepos.findById(reportId)
+                .orElseThrow(() -> new NotFoundException("Không tìm thấy báo cáo"));
+        report.setActive(true);
+        reportRepos.save(report);
+        return new ResponseTextDtoOut("Xử lý báo cáo thành công");
     }
 }
