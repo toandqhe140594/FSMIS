@@ -14,9 +14,11 @@ import { goToAdminReviewReportDetailScreen } from "../../navigations";
 import HeaderTab from "../HeaderTab";
 import ReportCard from "./ReportCard";
 
-const OFF_SET = 105;
-const FILTER_TOUCHED_TYPE = "Đã xử lý";
-const FILTER_UNTOUCHED_TYPE = "Chưa xử lý";
+const OFF_SET = 120;
+const FILTER_TOUCHED_LABEL = "Đã xử lý";
+const FILTER_TOUCHED_VALUE = "ACTIVE";
+const FILTER_UNTOUCHED_LABEL = "Chưa xử lý";
+const FILTER_UNTOUCHED_VALUE = "INACTIVE";
 
 const ReviewReportRoute = () => {
   const navigation = useNavigation();
@@ -24,7 +26,7 @@ const ReviewReportRoute = () => {
   const [bigLoading, setBigLoading] = useState(false);
   const [pageNo, setPageNo] = useState(1);
   const [active, setActive] = useState(true);
-  const [filter, setFilter] = useState(FILTER_TOUCHED_TYPE);
+  const [filter, setFilter] = useState(FILTER_TOUCHED_VALUE);
   const [getStatus, setGetStatus] = useState("");
   const { listReviewReport, totalReviewReportPage } = useStoreState(
     (state) => state.ReportModel,
@@ -53,7 +55,7 @@ const ReviewReportRoute = () => {
     if (value !== filter) {
       setIsLoading(true);
       setFilter(value);
-      setActive(value !== FILTER_UNTOUCHED_TYPE); // Change active based on list type
+      setActive(value !== FILTER_UNTOUCHED_VALUE); // Change active based on list type
       setPageNo(1); // Reset pageNo to 1 for new list
       setBigLoading(true); // When change between each list type, use bigLoading
     }
@@ -112,17 +114,17 @@ const ReviewReportRoute = () => {
           my={2}
           alignSelf="center"
           placeholder="Lọc hiển thị báo cáo"
-          defaultValue={FILTER_TOUCHED_TYPE}
+          defaultValue={FILTER_TOUCHED_VALUE}
           onValueChange={handleValueChange}
           fontSize="md"
         >
           <Select.Item
-            label={FILTER_TOUCHED_TYPE}
-            value={FILTER_TOUCHED_TYPE}
+            label={FILTER_TOUCHED_LABEL}
+            value={FILTER_TOUCHED_VALUE}
           />
           <Select.Item
-            label={FILTER_UNTOUCHED_TYPE}
-            value={FILTER_UNTOUCHED_TYPE}
+            label={FILTER_UNTOUCHED_LABEL}
+            value={FILTER_UNTOUCHED_VALUE}
           />
         </Select>
 
