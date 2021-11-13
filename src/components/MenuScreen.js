@@ -1,5 +1,5 @@
 import { useNavigation } from "@react-navigation/native";
-import { useStoreDispatch } from "easy-peasy";
+import { useStoreActions } from "easy-peasy";
 import PropTypes from "prop-types";
 import React from "react";
 import { View } from "react-native";
@@ -12,10 +12,10 @@ import { goToFishingLocationOverviewScreen, goToScreen } from "../navigations";
 const MenuScreen = ({ menuTitle, menuListItem, locationId }) => {
   const navigation = useNavigation();
 
-  const dispatch = useStoreDispatch();
+  const logOut = useStoreActions((actions) => actions.logOut);
 
   const navigateToScreen = (route) => {
-    if (route === ROUTE_NAMES.PROFILE_LOGOUT) dispatch({ type: "LOGOUT" });
+    if (route === ROUTE_NAMES.PROFILE_LOGOUT) logOut();
     else if (route === ROUTE_NAMES.FMANAGE_LOCATION_OVERVIEW)
       goToFishingLocationOverviewScreen(navigation, { id: locationId });
     else goToScreen(navigation, route);

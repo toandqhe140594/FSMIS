@@ -46,6 +46,12 @@ const model = {
   setCatchHistoryTotalPage: action((state, payload) => {
     state.catchHistoryTotalPage = payload;
   }),
+  setTotalCatchesCount: action((state, payload) => {
+    state.userInfo.catchesCount = payload;
+  }),
+  increaseCatchesCount: action((state) => {
+    state.userInfo.catchesCount += 1;
+  }),
   getCatchReportHistory: thunk(async (actions, payload, { getState }) => {
     const { catchHistoryCurrentPage, catchHistoryTotalPage } = getState();
     // If current page is smaller than 0 or larger than maximum page then return
@@ -58,10 +64,11 @@ const model = {
     const { data } = await http.get(`${API_URL.PERSONAL_CATCH_REPORT}`, {
       params: { pageNo: catchHistoryCurrentPage },
     });
-    const { totalPage, items } = data;
+    const { totalPage, items, totalItem } = data;
     actions.setCatchHistoryCurrentPage(catchHistoryCurrentPage + 1);
     actions.setCatchHistoryTotalPage(totalPage);
     actions.setCatchReportHistory(items);
+    actions.setTotalCatchesCount(totalItem);
   }),
   /**
    * Remove catch report history data

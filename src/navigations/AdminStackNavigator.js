@@ -5,7 +5,8 @@ import { ROUTE_NAMES } from "../constants";
 import AccountManagementModel from "../models/AccountManagementModel";
 import AdminAccountDetailScreen from "../screens/AdminAccountDetailScreen";
 import AdminAccountManagementScreen from "../screens/AdminAccountManagementScreen";
-import AdminBlacklistPhoneScreen from "../screens/AdminBlacklistPhoneScreen";
+import AdminBlacklistPhoneAddScreen from "../screens/AdminBlacklistPhoneAddScreen";
+import AdminBlacklistManagementScreen from "../screens/AdminBlacklistPhoneScreen";
 import AdminFishEditScreen from "../screens/AdminFishEditScreen";
 import AdminFishingMethodEditScreen from "../screens/AdminFishingMethodEditScreen";
 import AdminFishingMethodManagementScreen from "../screens/AdminFishingMethodManagementScreen";
@@ -17,6 +18,8 @@ import AdminMainScreen from "../screens/AdminMainScreen";
 import AdminReportManagementScreen from "../screens/AdminReportManagementScreen";
 import AdminReportPostDetailScreen from "../screens/AdminReportPostDetailScreen";
 import AdminReportReviewDetailScreen from "../screens/AdminReportReviewDetailScreen";
+import LakeDetailScreen from "../screens/LakeDetailScreen";
+import MediaSelectScreen from "../screens/MediaSelectScreen";
 import store from "../utilities/Store";
 
 const AdminStack = createNativeStackNavigator();
@@ -83,8 +86,20 @@ const AdminStackNavigator = () => {
         component={AdminReportManagementScreen}
       />
       <AdminStack.Screen
+        name={ROUTE_NAMES.MEDIA_SELECTOR}
+        component={MediaSelectScreen}
+      />
+      <AdminStack.Screen
         name={ROUTE_NAMES.ADMIN_BLACKLIST_PHONE_MANAGEMENT}
-        component={AdminBlacklistPhoneScreen}
+        component={AdminBlacklistManagementScreen}
+      />
+      <AdminStack.Screen
+        name={ROUTE_NAMES.ADMIN_BLACKLIST_PHONE_MANAGEMENT_ADD}
+        component={AdminBlacklistPhoneAddScreen}
+      />
+      <AdminStack.Screen
+        name={ROUTE_NAMES.LAKE_DETAIL}
+        component={LakeDetailScreen}
       />
     </AdminStack.Navigator>
   );

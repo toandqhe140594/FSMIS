@@ -35,9 +35,6 @@ const styles = StyleSheet.create({
   buttonContainer: {
     marginHorizontal: "15%",
   },
-  button: {
-    backgroundColor: colors.defaultPrimaryButton,
-  },
   error: {
     color: "#f43f5e",
     fontSize: 12,
@@ -159,7 +156,6 @@ const WriteReviewScreen = () => {
       </View>
       <Button
         containerStyle={styles.buttonContainer}
-        buttonStyle={styles.button}
         onPress={handleSubmit(onSubmit)}
         title="Đăng"
       />

@@ -37,16 +37,30 @@ const showAlertConfirmBox = (title, message, onSuccess) => {
 };
 
 /**
- * Display an alert box with option to cancel and accept
+ * Display an alert box with button to close
  * @param {String} title title of the alert box
  * @param {String} message message to display
+ * @param {String} buttonTitle button's title
+ * @param {boolean} cancelable if alertbox can be close by click outside
  */
-const showAlertBox = (title, message) => {
-  Alert.alert(title, message, [
+const showAlertBox = (
+  title,
+  message,
+  buttonTitle = "Xác nhận",
+  cancelable = true,
+) => {
+  Alert.alert(
+    title,
+    message,
+    [
+      {
+        text: buttonTitle,
+      },
+    ],
     {
-      text: "Xác nhận",
+      cancelable,
     },
-  ]);
+  );
 };
 
 /**

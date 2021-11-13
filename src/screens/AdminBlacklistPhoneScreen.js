@@ -1,68 +1,40 @@
+import { useNavigation } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
-import { Box, Button, Center, Divider, Text } from "native-base";
-import PropTypes from "prop-types";
+import { Box, Button, Center } from "native-base";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, FlatList } from "react-native";
+import { ActivityIndicator, Divider, FlatList } from "react-native";
 import { SearchBar } from "react-native-elements";
 
+import BlacklistPhoneCard from "../components/BlacklistPhoneCard";
 import HeaderTab from "../components/HeaderTab";
-import PressableCustomCard from "../components/PressableCustomCard";
-
-const BlacklistPhoneComponent = ({ phone, description }) => {
-  return (
-    <PressableCustomCard onPress={() => {}}>
-      <Box py={2} px={3} flex={1} flexDir="row">
-        <Box flex={2} justifyContent="center">
-          <Text bold fontSize="lg">
-            {phone}
-          </Text>
-          {description ? (
-            <Text flex={1} isTruncated numberOfLines={1}>
-              {description}{" "}
-            </Text>
-          ) : (
-            <></>
-          )}
-        </Box>
-        <Box justifyContent="center">
-          <Button>Xóa</Button>
-        </Box>
-      </Box>
-    </PressableCustomCard>
-  );
-};
-BlacklistPhoneComponent.propTypes = {
-  phone: PropTypes.string.isRequired,
-  description: PropTypes.string,
-};
-BlacklistPhoneComponent.defaultProps = {
-  description: "",
-};
+import styles from "../config/styles";
+import { goToAdminBlacklistPhoneAddScreen } from "../navigations";
 
 const renderItem = ({ item }) => (
-  <BlacklistPhoneComponent phone={item.phone} description={item.description} />
+  <BlacklistPhoneCard
+    phone={item.phone}
+    description={item.description}
+    key={item.phone}
+  />
 );
 
-const AdminAccountManagementScreen = () => {
+const keyExtractor = (item) => item.phone.toString();
+
+const AdminBlacklistManagementScreen = () => {
+  const navigation = useNavigation();
   const blacklist = useStoreState(
     (states) => states.AccountManagementModel.blacklist,
   );
-  const { setBlacklist, getBlacklist } = useStoreActions(
-    (actions) => actions.AccountManagementModel,
+  const getBlacklist = useStoreActions(
+    (actions) => actions.AccountManagementModel.getBlacklist,
   );
 
   const [search, setSearch] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-  const [page, setPage] = useState(2);
   const [displayedList, setDisplayedList] = useState(blacklist);
 
   const updateSearch = (searchKey) => {
     setSearch(searchKey);
-  };
-
-  const loadMoreUserData = () => {
-    getBlacklist({ pageNo: page });
-    setPage(page + 1);
   };
 
   const onClear = () => {
@@ -77,68 +49,73 @@ const AdminAccountManagementScreen = () => {
     setDisplayedList(filteredList);
   };
 
+  const goToAddPhoneToBlacklistScreen = () => {
+    goToAdminBlacklistPhoneAddScreen(navigation);
+  };
+
   useEffect(() => {
-    setDisplayedList(blacklist);
-    if (blacklist) setIsLoading(false);
+    if (blacklist) {
+      setDisplayedList(blacklist);
+      setIsLoading(false);
+    }
   }, [blacklist]);
 
   useEffect(() => {
-    getBlacklist({ pageNo: 1 });
+    getBlacklist();
     const loadingTimeout = setTimeout(() => {
       setIsLoading(false);
     }, 1000); // Test
     return () => {
       clearTimeout(loadingTimeout);
-      setBlacklist([]);
     };
   }, []);
 
-  if (isLoading)
+  const ListView = () => {
+    if (isLoading)
+      return (
+        <>
+          <Center flex={1}>
+            <ActivityIndicator size="large" color="blue" />
+          </Center>
+        </>
+      );
+
     return (
-      <Center flex={1}>
-        <ActivityIndicator size="large" color="blue" />
-      </Center>
+      <Box w="90%" flex={1} mb={12}>
+        <FlatList
+          data={displayedList}
+          renderItem={renderItem}
+          keyExtractor={keyExtractor}
+          ItemSeparatorComponent={Divider}
+        />
+      </Box>
     );
+  };
 
   return (
     <>
-      <HeaderTab name="Quản lý tài khoản" />
-      <Center flex={1} alignItems="center">
+      <HeaderTab name="Quản lý danh sách đen" />
+      <Center flex={1}>
         <Box w="100%" alignItems="center" flex={1}>
           <SearchBar
             placeholder="Nhập số điện thoại"
             onChangeText={updateSearch}
             value={search}
-            containerStyle={{
-              width: "100%",
-              marginTop: 12,
-              backgroundColor: "white",
-              paddingHorizontal: 12,
-            }}
+            containerStyle={styles.searchBar}
             lightTheme
             blurOnSubmit
             onEndEditing={onEndEditing}
             onClear={onClear}
           />
-          <Button size="lg" my={3}>
+          <Button size="lg" my={3} onPress={goToAddPhoneToBlacklistScreen}>
             Chặn số điện thoại
           </Button>
 
-          <Box w="90%">
-            <FlatList
-              data={displayedList}
-              renderItem={renderItem}
-              keyExtractor={(item) => item.phone.toString()}
-              ItemSeparatorComponent={Divider}
-              onEndReached={() => {
-                loadMoreUserData();
-              }}
-            />
-          </Box>
+          <ListView />
         </Box>
       </Center>
     </>
   );
 };
 
-export default AdminAccountManagementScreen;
+export default AdminBlacklistManagementScreen;

@@ -7,6 +7,7 @@ import { ActivityIndicator, FlatList } from "react-native";
 import { Divider, SearchBar, Text } from "react-native-elements";
 
 import HeaderTab from "../components/HeaderTab";
+import styles from "../config/styles";
 import FishingMethodModel from "../models/FishingMethodModel";
 import { goToAdminFishingMethodEditScreen } from "../navigations";
 import { showAlertConfirmBox } from "../utilities";
@@ -128,12 +129,7 @@ const AdminFishingMethodManagementScreen = () => {
             placeholder="Tìm kiếm theo tên"
             onChangeText={updateSearch}
             value={search}
-            containerStyle={{
-              width: "100%",
-              marginTop: 12,
-              backgroundColor: "white",
-              paddingHorizontal: 12,
-            }}
+            containerStyle={styles.searchBar}
             lightTheme
             blurOnSubmit
             onEndEditing={onEndEditing}

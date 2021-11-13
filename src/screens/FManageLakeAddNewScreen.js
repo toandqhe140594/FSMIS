@@ -49,7 +49,6 @@ const styles = StyleSheet.create({
 const LakeAddNewScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
-  const [imageArray, setImageArray] = useState([]);
   const [addStatus, setAddStatus] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [fullScreenMode, setFullScreenMode] = useState(true);
@@ -71,6 +70,7 @@ const LakeAddNewScreen = () => {
   });
   const {
     handleSubmit,
+    setValue,
     formState: { errors },
   } = methods;
   const onSubmit = (data) => {
@@ -82,19 +82,10 @@ const LakeAddNewScreen = () => {
       ),
     );
     // Should check for empty images
-    const imageUrl = imageArray[0].base64;
+    const imageUrl = data.imageArray[0].base64;
     const addData = { ...data, imageUrl, fishInLakeList: cleanFishArray };
     addNewLakeInLocation({ addData, setAddStatus });
   };
-
-  /**
-   * Take id of the image and remove image from imageArray
-   * @param {Number} id: id in the object image
-   */
-  const updateImageArray = (id) => {
-    setImageArray(imageArray.filter((image) => image.id !== id));
-  };
-
   /**
    * Everytime enter the screen, call api
    * to get fishing method list and fish list
@@ -134,7 +125,7 @@ const LakeAddNewScreen = () => {
     // useCallback will listen to route.param
     useCallback(() => {
       if (route.params?.base64Array && route.params.base64Array.length) {
-        setImageArray(route.params?.base64Array);
+        setValue("imageArray", route.params?.base64Array);
         navigation.setParams({ base64Array: [] });
       }
     }, [route.params]),
@@ -158,8 +149,7 @@ const LakeAddNewScreen = () => {
               <MultiImageSection
                 containerStyle={styles.sectionWrapper}
                 formRoute={ROUTE_NAMES.FMANAGE_LAKE_ADD}
-                imageArray={imageArray}
-                deleteImage={updateImageArray}
+                controllerName="imageArray"
               />
             </Center>
 

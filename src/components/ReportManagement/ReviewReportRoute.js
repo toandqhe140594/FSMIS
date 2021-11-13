@@ -1,8 +1,14 @@
 import { useNavigation } from "@react-navigation/native";
-import { useStoreState } from "easy-peasy";
+import { useStoreActions, useStoreState } from "easy-peasy";
 import { Select } from "native-base";
 import React, { useEffect, useState } from "react";
-import { FlatList, StyleSheet, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  FlatList,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 import { goToAdminReviewReportDetailScreen } from "../../navigations";
 import HeaderTab from "../HeaderTab";
@@ -13,12 +19,16 @@ const styles = StyleSheet.create({
 });
 
 const ReviewReportRoute = () => {
-  const reportListModel = useStoreState(
-    (states) => states.ReportModel.listReviewReport,
-  );
-  const [filter, setFilter] = useState("");
   const navigation = useNavigation();
-  const [reportList, setReportList] = useState(reportListModel);
+  const [isLoading, setIsLoading] = useState(true);
+  const [pageNo, setPageNo] = useState(1);
+  const [momentumScrollBegin, setMomentumScrollBegin] = useState(true);
+  // const [filter, setFilter] = useState("");
+  const { listReviewReport } = useStoreState((state) => state.ReportModel);
+  const { getListReviewReport, resetReportList } = useStoreActions(
+    (actions) => actions.ReportModel,
+  );
+  // const [reportList, setReportList] = useState(reportListModel);
   const renderItem = ({ item }) => (
     <TouchableOpacity
       onPress={() => {
@@ -28,21 +38,37 @@ const ReviewReportRoute = () => {
       <ReportCard {...item} isReviewReport />
     </TouchableOpacity>
   );
+  const renderFooter = () =>
+    isLoading ? <ActivityIndicator size="large" color="#2089DC" /> : <></>;
+
+  const handleLoadMore = () => {
+    if (!momentumScrollBegin) {
+      setPageNo(pageNo + 1);
+      setIsLoading(true);
+      setMomentumScrollBegin(true);
+    }
+  };
   useEffect(() => {
-    const getFilteredList = () => {
-      switch (filter) {
-        case "Tất cả":
-          return reportListModel;
-        case "Chưa xử lý":
-          return reportListModel.filter(({ isProcessed }) => !isProcessed);
-        case "Đã xử lý":
-          return reportListModel.filter(({ isProcessed }) => isProcessed);
-        default:
-          return reportList;
-      }
+    getListReviewReport({ pageNo, setIsLoading });
+    return () => {
+      resetReportList({ type: "REVIEW" });
     };
-    setReportList(getFilteredList());
-  }, [filter]);
+  }, [pageNo]);
+  // useEffect(() => {
+  //   const getFilteredList = () => {
+  //     switch (filter) {
+  //       case "ALL":
+  //         return reportListModel;
+  //       case "UNTOUCHED":
+  //         return reportListModel.filter(({ active }) => !active);
+  //       case "TOUCHED":
+  //         return reportListModel.filter(({ active }) => active);
+  //       default:
+  //         return reportList;
+  //     }
+  //   };
+  //   setReportList(getFilteredList());
+  // }, [filter]);
   return (
     <>
       <HeaderTab name="Quản lý báo cáo" />
@@ -52,20 +78,26 @@ const ReviewReportRoute = () => {
           my={2}
           alignSelf="center"
           placeholder="Lọc hiển thị báo cáo"
-          defaultValue="Tất cả"
-          value={filter}
-          onValueChange={setFilter}
+          defaultValue="ALL"
+          value="ALL"
+          onValueChange={() => {}}
           fontSize="md"
         >
-          <Select.Item label="Tất cả" value="Tất cả" />
-          <Select.Item label="Chưa xử lý" value="Chưa xử lý" />
-          <Select.Item label="Đã xử lý" value="Đã xử lý" />
+          <Select.Item label="Tất cả" value="ALL" />
+          <Select.Item label="Chưa xử lý" value="UNTOUCHED" />
+          <Select.Item label="Đã xử lý" value="TOUCHED" />
         </Select>
 
         <FlatList
           style={{ marginTop: 12 }}
-          data={reportList}
+          keyExtractor={(item) => `${item.id}`}
+          data={listReviewReport}
           renderItem={renderItem}
+          ListFooterComponent={renderFooter}
+          onMomentumScrollBegin={() => {
+            setMomentumScrollBegin(false);
+          }}
+          onEndReached={handleLoadMore}
         />
       </View>
     </>

@@ -3,6 +3,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { useStoreActions } from "easy-peasy";
 import React, { useEffect } from "react";
 
+import colors from "../config/colors";
 import ProfileModel from "../models/ProfileModel";
 import CheckinScreen from "../screens/AnglerCheckinScreen";
 import FLocationSaveScreen from "../screens/FLocationSaveScreen";
@@ -30,7 +31,7 @@ const AnglerMainNavigator = () => {
         tabBarLabelPosition: "below-icon",
         headerShown: false,
         tabBarShowLabel: true,
-        tabBarActiveTintColor: "blue",
+        tabBarActiveTintColor: colors.primary["500"],
         tabBarInactiveTintColor: "gray",
       }}
     >

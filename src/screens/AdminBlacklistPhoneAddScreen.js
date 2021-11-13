@@ -7,6 +7,7 @@ import { View } from "react-native";
 import { Button, Text } from "react-native-elements";
 
 import InputComponent from "../components/common/InputComponent";
+import TextAreaComponent from "../components/common/TextAreaComponent";
 import HeaderTab from "../components/HeaderTab";
 import styles from "../config/styles";
 import { SCHEMA } from "../constants";
@@ -17,18 +18,18 @@ const FManageSuggestLocationScreen = () => {
   const navigation = useNavigation();
   const methods = useForm({
     mode: "onSubmit",
-    resolver: yupResolver(SCHEMA.FMANAGE_SUGGESTION_FORM),
+    resolver: yupResolver(SCHEMA.ADMIN_BLACKLIST_ADD_FORM),
   });
-  const { handleSubmit } = methods;
+  const { handleSubmit, getValues } = methods;
 
-  const suggestNewLocation = useStoreActions(
-    (actions) => actions.FManageModel.suggestNewLocation,
+  const blacklistPhoneNumber = useStoreActions(
+    (actions) => actions.AccountManagementModel.blacklistPhoneNumber,
   );
 
   const [success, setSuccess] = useState(null);
 
   const onSubmit = (data) => {
-    suggestNewLocation({ data, setSuccess });
+    blacklistPhoneNumber({ blacklistObj: data, setSuccess });
   };
 
   const goBackAfterSuccess = () => {
@@ -36,19 +37,20 @@ const FManageSuggestLocationScreen = () => {
   };
 
   useEffect(() => {
-    if (success)
+    if (success) {
+      const phoneNumber = getValues("phone");
       showAlertAbsoluteBox(
-        "Cảm ơn đóng góp của bạn",
-        "Chúng tôi sẽ liên lạc với chủ hồ sớm nhất có thể",
+        "Chặn số điện thoại thành công",
+        `Số điện thoại "${phoneNumber}"" đã bị thêm vào danh sách đen `,
         goBackAfterSuccess,
       );
-    else if (success === false) showToastMessage("Có lỗi xảy ra");
+    } else if (success === false) showToastMessage("Có lỗi xảy ra");
     setSuccess(null);
   }, [success]);
 
   return (
     <View style={{ flex: 1 }}>
-      <HeaderTab name="Gợi ý hồ câu cho hệ thống" />
+      <HeaderTab name="Chặn số điện thoại" />
       <FormProvider {...methods}>
         <View
           style={{
@@ -59,26 +61,32 @@ const FManageSuggestLocationScreen = () => {
           }}
         >
           <Text style={[styles.mdText, styles.boldText, styles.mb1]}>
-            Bạn biết hồ câu chưa có trong hệ thống?
+            Thêm số điện thoại vào danh sách đen
           </Text>
-          <Text style={[styles.mt1]}>Xin hãy giới thiệu cho chúng tôi</Text>
-          <View style={{ width: "80%", marginTop: 40 }}>
+          <Text
+            style={[styles.mt1, { textAlign: "center", marginHorizontal: 10 }]}
+          >
+            Số điện thoại trong danh sách đen sẽ không thể sử dụng trong ứng
+            dụng
+          </Text>
+          <View style={{ width: "80%", marginTop: 30 }}>
             <InputComponent
               isTitle
-              label="Tên địa điểm câu"
+              label="Số điện thoại cần chặn"
               hasAsterisk
-              placeholder="Nhập tên địa điểm câu"
-              controllerName="locationName"
+              placeholder="Nhập số điện thoại"
+              controllerName="phone"
+              useNumPad
             />
 
-            <InputComponent
+            {/* Description textarea */}
+            <TextAreaComponent
+              myStyles={styles.mt1}
+              label="Mô tả lý do"
               isTitle
-              label="Số điện thoại chủ hồ"
-              hasAsterisk
-              placeholder="Nhập số điện thoại chủ hồ"
-              controllerName="ownerPhone"
-              useNumPad
-              myStyles={{ marginTop: 20 }}
+              placeholder="Mô tả nguyên nhân chặn số điện thoại này"
+              numberOfLines={6}
+              controllerName="description"
             />
 
             <Button

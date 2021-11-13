@@ -38,7 +38,6 @@ const styles = StyleSheet.create({
 const FManageEditProfileScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
-  const [imageArray, setImageArray] = useState([]);
   const [updateStatus, setUpdateStatus] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [fullScreen, setFullScreen] = useState(true);
@@ -72,12 +71,9 @@ const FManageEditProfileScreen = () => {
   const { handleSubmit, getValues, setValue } = methods;
   const onSubmit = (data) => {
     setIsLoading(true);
-    const images = imageArray.map((image) => image.base64);
+    const images = data.imageArray.map((image) => image.base64);
     const updateData = { ...data, ...locationLatLng, images };
     editFishingLocation({ updateData, setUpdateStatus });
-  };
-  const updateImageArray = (id) => {
-    setImageArray(imageArray.filter((image) => image.id !== id));
   };
 
   const setDefaultValues = () => {
@@ -92,7 +88,8 @@ const FManageEditProfileScreen = () => {
     setValue("timetable", locationDetails.timetable);
     setValue("rule", locationDetails.rule);
     setValue("service", locationDetails.service);
-    setImageArray(
+    setValue(
+      "imageArray",
       locationDetails.image.map((image, index) => ({
         id: index,
         base64: image,
@@ -120,7 +117,7 @@ const FManageEditProfileScreen = () => {
     // useCallback will listen to route.param
     useCallback(() => {
       if (route.params?.base64Array && route.params.base64Array.length) {
-        setImageArray(route.params.base64Array);
+        setValue("imageArray", route.params.base64Array);
         navigation.setParams({ base64Array: [] });
       }
     }, [route.params]),
@@ -161,9 +158,8 @@ const FManageEditProfileScreen = () => {
                 </Text>
                 <MultiImageSection
                   formRoute={ROUTE_NAMES.FMANAGE_PROFILE_EDIT}
-                  imageArray={imageArray}
-                  deleteImage={updateImageArray}
                   selectLimit={5}
+                  controllerName="imageArray"
                 />
                 {/* Input location name */}
                 <InputComponent

@@ -60,4 +60,10 @@ export default StyleSheet.create({
   wfull: {
     width: "100%",
   },
+  searchBar: {
+    width: "100%",
+    marginTop: 12,
+    backgroundColor: "white",
+    paddingHorizontal: 12,
+  },
 });

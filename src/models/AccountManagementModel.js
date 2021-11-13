@@ -34,11 +34,22 @@ const initialBlacklist = [
     description: "vippro",
   },
   {
-    phone: "0985043312",
+    phone: "098504331322",
     description: "clone",
   },
   {
-    phone: "098504331992",
+    phone: "09892",
+  },
+  {
+    phone: "3467",
+    description: "vippro",
+  },
+  {
+    phone: "645",
+    description: "clone",
+  },
+  {
+    phone: "235",
   },
 ];
 
@@ -61,9 +72,7 @@ const model = {
   setUserList: action((state, payload) => {
     state.userList = payload;
   }),
-  setBlacklist: action((state, payload) => {
-    state.blacklist = payload;
-  }),
+
   setAccountInformation: action((state, payload) => {
     state.accountInformation = payload;
   }),
@@ -79,9 +88,56 @@ const model = {
     // const { data } = await http.get(`${API_URL.ADMIN_ACCOUNT_INFORMATION}`);
     actions.setAccountInformation({ ...initialAccountInformation });
   }),
+
+  // START OF BLACKLIST RELATED STUFF SECTION
+
+  /**
+   * Set list data for blacklist
+   */
+  setBlacklist: action((state, payload) => {
+    state.blacklist = payload;
+  }),
+  appendDataToBlacklist: action((state, payload) => {
+    state.blacklist = state.blacklist.concat(payload);
+  }),
+  /**
+   * Remove an element from blacklist data state
+   * @param {Object} [payload] params pass to function
+   * @param {string} [payload.phone] the phone of element that need to be remove
+   */
+  removeElementFromBlacklist: action((state, payload) => {
+    state.blacklist = state.blacklist.filter(
+      (blacklistObj) => blacklistObj.phone !== payload.phone,
+    );
+  }),
+
+  /**
+   * Get blacklist data
+   */
   getBlacklist: thunk(async (actions) => {
     // const { data } = await http.get(`${API_URL.ADMIN_ACCOUNT_LIST}`);
     actions.setBlacklist(initialBlacklist);
   }),
+  whitelistPhoneNumber: thunk(async (actions, payload) => {
+    const { phone, setSuccess } = payload;
+    try {
+      // const { data } = await http.get(`${API_URL.ADMIN_ACCOUNT_LIST}`);
+      actions.removeElementFromBlacklist({ phone });
+      setSuccess(true);
+    } catch (error) {
+      setSuccess(false);
+    }
+  }),
+  blacklistPhoneNumber: thunk(async (actions, payload) => {
+    const { blacklistObj, setSuccess } = payload;
+    try {
+      // const { data } = await http.get(`${API_URL.ADMIN_ACCOUNT_LIST}`);
+      actions.appendDataToBlacklist({ blacklistObj });
+      setSuccess(true);
+    } catch (error) {
+      setSuccess(false);
+    }
+  }),
+  // END OF BLACKLIST RELATED STUFF SECTION
 };
 export default model;
