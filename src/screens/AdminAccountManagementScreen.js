@@ -1,9 +1,9 @@
 import { useNavigation } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
-import { Box, Center, Divider } from "native-base";
+import { Box, Center } from "native-base";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, FlatList } from "react-native";
-import { SearchBar } from "react-native-elements";
+import { Divider, SearchBar } from "react-native-elements";
 
 import AvatarCard from "../components/AvatarCard";
 import HeaderTab from "../components/HeaderTab";
@@ -15,10 +15,14 @@ const AdminAccountManagementScreen = () => {
   const navigation = useNavigation();
 
   const userList = useStoreState(
-    (states) => states.AccountManagementModel.userList,
+    (states) => states.AccountManagementModel.accountList,
   );
-  const { setUserList, getUserList } = useStoreActions(
-    (actions) => actions.AccountManagementModel,
+
+  const clearAccountList = useStoreActions(
+    (actions) => actions.AccountManagementModel.clearAccountList,
+  );
+  const getUserList = useStoreActions(
+    (actions) => actions.AccountManagementModel.getAccountList,
   );
 
   const [search, setSearch] = useState("");
@@ -50,20 +54,38 @@ const AdminAccountManagementScreen = () => {
   };
 
   useEffect(() => {
+    getUserList({ pageNo: 1, setIsLoading });
+    const loadingTimeout = setTimeout(() => {
+      setIsLoading(false);
+    }, 5000); // Test
+    return () => {
+      clearTimeout(loadingTimeout);
+      clearAccountList();
+    };
+  }, []);
+
+  useEffect(() => {
     setDisplayedList(userList);
     if (userList) setIsLoading(false);
   }, [userList]);
 
-  useEffect(() => {
-    getUserList({ pageNo: 1 });
-    const loadingTimeout = setTimeout(() => {
-      setIsLoading(false);
-    }, 1000); // Test
-    return () => {
-      clearTimeout(loadingTimeout);
-      setUserList([]);
-    };
-  }, []);
+  const renderItem = ({ item }) => (
+    <PressableCustomCard
+      onPress={() => {
+        goToAdminAccountManagementDetailScreen(navigation, {
+          id: item.id,
+        });
+      }}
+    >
+      <AvatarCard
+        nameUser={item.name}
+        subText={`SĐT: ${item.phone}`}
+        image={item.image}
+      />
+    </PressableCustomCard>
+  );
+
+  const keyExtractor = (item) => item.id.toString();
 
   if (isLoading)
     return (
@@ -88,29 +110,16 @@ const AdminAccountManagementScreen = () => {
             onClear={onClear}
           />
 
-          <Box w="90%">
+          <Box w="90%" flex={1}>
             <FlatList
               data={displayedList}
-              renderItem={({ item }) => (
-                <PressableCustomCard
-                  onPress={() => {
-                    goToAdminAccountManagementDetailScreen(navigation, {
-                      id: item.id,
-                    });
-                  }}
-                >
-                  <AvatarCard
-                    nameUser={item.name}
-                    subText={`SĐT: ${item.phone}`}
-                    image={item.image}
-                  />
-                </PressableCustomCard>
-              )}
-              keyExtractor={(item) => item.id.toString()}
+              renderItem={renderItem}
+              keyExtractor={keyExtractor}
               ItemSeparatorComponent={Divider}
-              onEndReached={() => {
-                loadMoreUserData();
-              }}
+              onEndReached={loadMoreUserData}
+              initialNumToRender={10}
+              maxToRenderPerBatch={10}
+              windowSize={10}
             />
           </Box>
         </Box>
