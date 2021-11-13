@@ -1,6 +1,6 @@
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
-import { Box, Button, Center, ScrollView } from "native-base";
+import { Box, Button, Center, FlatList } from "native-base";
 import PropTypes from "prop-types";
 import React, { useCallback, useEffect, useState } from "react";
 import { Divider, Text } from "react-native-elements";
@@ -10,25 +10,13 @@ import styles from "../../config/styles";
 import { goToWriteReviewScreen } from "../../navigations";
 import ReviewFromAnglerSection from "../ReviewFromAnglerSection";
 
-const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
-  const paddingToBottom = 20;
-  return (
-    layoutMeasurement.height + contentOffset.y >=
-    contentSize.height - paddingToBottom
-  );
-};
-
 const FilterButton = ({ filterType, content, value, changeFilterAction }) => {
   const onPress = () => {
     changeFilterAction(value);
   };
 
   return (
-    <Button
-      onPress={() => {
-        onPress();
-      }}
-    >
+    <Button onPress={onPress}>
       <Text
         style={[
           styles.textwhite,
@@ -60,6 +48,10 @@ const PersonalReviewSection = ({ personalReview, currentLocationId }) => {
     userAvatar,
   } = personalReview;
 
+  const goToWriteReviewScreenAction = () => {
+    goToWriteReviewScreen(navigation, { id: currentLocationId });
+  };
+
   return (
     <>
       {reviewId && (
@@ -82,9 +74,7 @@ const PersonalReviewSection = ({ personalReview, currentLocationId }) => {
           <Button
             variant="outline"
             colorScheme="dark"
-            onPress={() => {
-              goToWriteReviewScreen(navigation, { id: currentLocationId });
-            }}
+            onPress={goToWriteReviewScreenAction}
           >
             Đăng đánh giá
           </Button>
@@ -148,97 +138,105 @@ const ReviewListRoute = () => {
     resetReviewData();
   }, [filterType]);
 
-  return (
-    <ScrollView
-      onScroll={({ nativeEvent }) => {
-        if (isCloseToBottom(nativeEvent)) {
-          loadMoreReviewData();
-        }
-      }}
-    >
-      <Box>
-        <Divider />
-        <Center flex={1} py={3}>
-          {locationReviewScore.score && locationReviewScore.score % 1 !== 0 ? (
-            <Text h2>{locationReviewScore.score.toFixed(1) || 0}</Text>
-          ) : (
-            <Text h2>{locationReviewScore.score || 0}</Text>
-          )}
-          <Rating
-            imageSize={24}
-            ratingCount={5}
-            readonly
-            showRating={false}
-            startingValue={locationReviewScore.score || 0}
-          />
-          <Text>({locationReviewScore.totalReviews || 0} đánh giá)</Text>
-        </Center>
+  const onEndReached = () => {
+    loadMoreReviewData();
+  };
 
+  const keyExtractor = (item) => item.id.toString();
+
+  const renderItem = ({ item }) => {
+    const { userVoteType } = item;
+    return (
+      <Box key={item.id}>
+        <ReviewFromAnglerSection
+          name={item.userFullName}
+          content={item.description}
+          isPositive={userVoteType === true}
+          isNeutral={userVoteType === null}
+          date={item.time}
+          positiveCount={item.upvote}
+          negativeCount={item.downvote}
+          rate={item.score}
+          id={item.id}
+          key={item.id}
+          userImage={item.userAvatar}
+        />
         <Divider />
-        <Text style={{ fontWeight: "bold", marginTop: 12, marginLeft: 12 }}>
-          Đánh giá của bạn
-        </Text>
-        {checkinStatus === "true" ? (
-          <PersonalReviewSection
-            personalReview={personalReview}
-            currentLocationId={currentId}
-          />
-        ) : (
-          <Box w="100%" px={3} mt={2}>
-            <Text>Bạn cần checkin để đăng đánh giá ở hồ này</Text>
-          </Box>
-        )}
-        <Box my={2} />
-        <Divider />
-        <Box p={3}>
-          <Text style={{ fontWeight: "bold" }}>Đánh giá từ cộng đồng</Text>
-          <Button.Group mt={4}>
-            <FilterButton
-              filterType={filterType}
-              content="Mới nhất"
-              value="newest"
-              changeFilterAction={setFilterType}
-            />
-            <FilterButton
-              filterType={filterType}
-              content="Cao nhất"
-              value="highest"
-              changeFilterAction={setFilterType}
-            />
-            <FilterButton
-              filterType={filterType}
-              content="Thấp nhất"
-              value="lowest"
-              changeFilterAction={setFilterType}
-            />
-          </Button.Group>
-        </Box>
-        <Divider />
-        {locationReviewList &&
-          locationReviewList.length > 0 &&
-          locationReviewList.map((item) => {
-            const { userVoteType } = item;
-            return (
-              <Box key={item.id}>
-                <ReviewFromAnglerSection
-                  name={item.userFullName}
-                  content={item.description}
-                  isPositive={userVoteType === true}
-                  isNeutral={userVoteType === null}
-                  date={item.time}
-                  positiveCount={item.upvote}
-                  negativeCount={item.downvote}
-                  rate={item.score}
-                  id={item.id}
-                  key={item.id}
-                  userImage={item.userAvatar}
-                />
-                <Divider />
-              </Box>
-            );
-          })}
       </Box>
-    </ScrollView>
+    );
+  };
+
+  const ListHeaderComponent = () => (
+    <>
+      <Center py={3}>
+        {locationReviewScore.score && locationReviewScore.score % 1 !== 0 ? (
+          <Text h2>{locationReviewScore.score.toFixed(1) || 0}</Text>
+        ) : (
+          <Text h2>{locationReviewScore.score || 0}</Text>
+        )}
+        <Rating
+          imageSize={24}
+          ratingCount={5}
+          readonly
+          showRating={false}
+          startingValue={locationReviewScore.score || 0}
+        />
+        <Text>({locationReviewScore.totalReviews || 0} đánh giá)</Text>
+      </Center>
+
+      <Divider />
+      <Text style={{ fontWeight: "bold", marginTop: 12, marginLeft: 12 }}>
+        Đánh giá của bạn
+      </Text>
+      {checkinStatus === "true" ? (
+        <PersonalReviewSection
+          personalReview={personalReview}
+          currentLocationId={currentId}
+        />
+      ) : (
+        <Box w="100%" px={3} mt={2}>
+          <Text>Bạn cần checkin để đăng đánh giá ở hồ này</Text>
+        </Box>
+      )}
+      <Box my={2} />
+      <Divider />
+      <Box p={3}>
+        <Text style={styles.boldText}>Đánh giá từ cộng đồng</Text>
+        <Button.Group mt={4}>
+          <FilterButton
+            filterType={filterType}
+            content="Mới nhất"
+            value="newest"
+            changeFilterAction={setFilterType}
+          />
+          <FilterButton
+            filterType={filterType}
+            content="Cao nhất"
+            value="highest"
+            changeFilterAction={setFilterType}
+          />
+          <FilterButton
+            filterType={filterType}
+            content="Thấp nhất"
+            value="lowest"
+            changeFilterAction={setFilterType}
+          />
+        </Button.Group>
+      </Box>
+      <Divider />
+    </>
+  );
+
+  return (
+    <Box flex={1}>
+      <FlatList
+        data={locationReviewList}
+        renderItem={renderItem}
+        keyExtractor={keyExtractor}
+        ListHeaderComponent={ListHeaderComponent}
+        onEndReached={onEndReached}
+      />
+    </Box>
   );
 };
 

@@ -7,8 +7,19 @@ import { Icon, Text } from "react-native-elements";
 import styles from "../config/styles";
 import { goBack } from "../navigations";
 
-const HeaderWithButton = ({ name, isVerified, buttonName, onSuccess }) => {
+const HeaderWithButton = ({
+  name,
+  isVerified,
+  buttonName,
+  onSuccess,
+  isDanger,
+  isLoading,
+}) => {
   const navigation = useNavigation();
+
+  const goBackAction = () => {
+    goBack(navigation);
+  };
 
   return (
     <>
@@ -22,9 +33,7 @@ const HeaderWithButton = ({ name, isVerified, buttonName, onSuccess }) => {
         w="100%"
       >
         <Pressable
-          onPress={() => {
-            goBack(navigation);
-          }}
+          onPress={goBackAction}
           flex={1}
           alignItems="flex-start"
           hitSlop={10}
@@ -70,6 +79,8 @@ const HeaderWithButton = ({ name, isVerified, buttonName, onSuccess }) => {
               fontSize: 10,
             }}
             w="80%"
+            colorScheme={isDanger ? "danger" : "primary"}
+            isLoading={isLoading}
           >
             {buttonName}
           </Button>
@@ -85,9 +96,13 @@ HeaderWithButton.propTypes = {
   isVerified: PropTypes.bool,
   buttonName: PropTypes.string.isRequired,
   onSuccess: PropTypes.func.isRequired,
+  isDanger: PropTypes.bool,
+  isLoading: PropTypes.bool,
 };
 HeaderWithButton.defaultProps = {
   isVerified: false,
+  isDanger: false,
+  isLoading: false,
 };
 
 export default HeaderWithButton;

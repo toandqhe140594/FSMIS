@@ -128,6 +128,16 @@ const model = {
       setSuccess(false);
     }
   }),
+  blacklistPhoneNumber: thunk(async (actions, payload) => {
+    const { blacklistObj, setSuccess } = payload;
+    try {
+      // const { data } = await http.get(`${API_URL.ADMIN_ACCOUNT_LIST}`);
+      actions.appendDataToBlacklist({ blacklistObj });
+      setSuccess(true);
+    } catch (error) {
+      setSuccess(false);
+    }
+  }),
   // END OF BLACKLIST RELATED STUFF SECTION
 };
 export default model;

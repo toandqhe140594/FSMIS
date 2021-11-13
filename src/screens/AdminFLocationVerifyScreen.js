@@ -2,12 +2,14 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { useRoute } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import React, { useEffect } from "react";
+import { Button } from "react-native-elements";
 
 import EventListRoute from "../components/AdminOverviewScreenComponents/EventListRoute";
 import LakeListViewRoute from "../components/AdminOverviewScreenComponents/LakeListViewRoute";
 import OverviewInformationRoute from "../components/AdminOverviewScreenComponents/OverviewInformationRoute";
 import ReviewListRoute from "../components/AdminOverviewScreenComponents/ReviewListRoute";
 import HeaderWithButton from "../components/HeaderWithButton";
+import colors from "../config/colors";
 import LocationModel from "../models/LocationModel";
 import store from "../utilities/Store";
 
@@ -20,15 +22,13 @@ const FishingSpotDetailScreen = () => {
   const locationOverview = useStoreState(
     (states) => states.LocationModel.locationOverview,
   );
-  const setCurrentId = useStoreActions(
-    (actions) => actions.LocationModel.setCurrentId,
-  );
-  const getLocationOverviewById = useStoreActions(
-    (actions) => actions.LocationModel.getLocationOverviewById,
-  );
-  const setLakeList = useStoreActions(
-    (actions) => actions.LocationModel.setLakeList,
-  );
+  const {
+    setCurrentId,
+    getLocationOverviewById,
+    setLakeList,
+    setLocationReviewList,
+    setLocationOverview,
+  } = useStoreActions((actions) => actions.LocationModel);
 
   useEffect(() => {
     if (route.params) {
@@ -38,21 +38,23 @@ const FishingSpotDetailScreen = () => {
     }
     return () => {
       setLakeList(null);
+      setLocationReviewList({ data: [], status: "Overwrite" });
+      setLocationOverview({});
     };
   }, []);
 
   const { id, name, verify } = locationOverview;
-
   return (
     <>
       <HeaderWithButton
         id={id}
         name={name || route.params.name}
         isVerified={verify}
-        buttonName={verify ? "Hủy xác thực" : "Xác thực"}
+        buttonName="Vô hiệu hóa"
         onSuccess={() => {
           console.log(id);
         }}
+        isDanger
       />
       <Tab.Navigator
         sceneContainerStyle={{ backgroundColor: "white" }}
@@ -68,6 +70,14 @@ const FishingSpotDetailScreen = () => {
         <Tab.Screen name="Đánh giá" component={ReviewListRoute} />
         <Tab.Screen name="Sự kiện" component={EventListRoute} />
       </Tab.Navigator>
+      <Button
+        title={verify ? "Hủy xác thực" : "Xác thực"}
+        buttonStyle={
+          verify && {
+            backgroundColor: colors.defaultDanger,
+          }
+        }
+      />
     </>
   );
 };

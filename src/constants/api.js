@@ -39,6 +39,7 @@ export const LOCATION_REVIEW_PERSONAL = "review/me";
 export const LOCATION_REVIEW_PERSONAL_DELETE = "review/me/delete";
 export const LOCATION_REVIEW_PERSONAL_POST = "review/me/post";
 export const LOCATION_ADD = "location/add";
+export const LOCATION_SUGGEST = "location/suggest";
 export const LOCATION_CATCH_REPORT_UNRESOLVED = "catch/pending";
 export const LOCATION_CATCH_REPORT_APPROVE = "catches/approve";
 export const LOCATION_CATCH_REPORT_PUBLIC = "catch/public";

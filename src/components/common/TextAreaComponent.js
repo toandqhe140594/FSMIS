@@ -82,7 +82,9 @@ TextAreaComponent.propTypes = {
   label: PropTypes.string,
   placeholder: PropTypes.string.isRequired,
   numberOfLines: PropTypes.number.isRequired,
-  myStyles: PropTypes.objectOf(PropTypes.string.isRequired),
+  myStyles: PropTypes.objectOf(
+    PropTypes.oneOfType([PropTypes.string, PropTypes.number]), // Accept object with property of type string or number
+  ),
   isTitle: PropTypes.bool,
   controllerName: PropTypes.string.isRequired,
 };
