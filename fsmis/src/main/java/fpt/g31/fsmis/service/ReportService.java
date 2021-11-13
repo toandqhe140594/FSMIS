@@ -146,7 +146,7 @@ public class ReportService {
             throw new ValidationException(INVALID_PAGE_NUMBER);
         }
         List<ReportDtoOut> output = new ArrayList<>();
-        Page<Report> locationReportList = reportRepos.findAllByFishingLocationIdNotNull(PageRequest.of(pageNo - 1, 10));
+        Page<Report> locationReportList = reportRepos.findAllByFishingLocationIdNotNullOrderByActiveDescTimeDesc(PageRequest.of(pageNo - 1, 10));
         for (Report report : locationReportList) {
             ReportDtoOut dtoOut = ReportDtoOut.builder()
                     .id(report.getId())
@@ -169,7 +169,7 @@ public class ReportService {
             throw new ValidationException(INVALID_PAGE_NUMBER);
         }
         List<ReportDtoOut> output = new ArrayList<>();
-        Page<Report> locationReportList = reportRepos.findAllByReviewIdNotNull(PageRequest.of(pageNo - 1, 10));
+        Page<Report> locationReportList = reportRepos.findAllByReviewIdNotNullOrderByActiveDescTimeDesc(PageRequest.of(pageNo - 1, 10));
         for (Report report : locationReportList) {
             ReportDtoOut dtoOut = ReportDtoOut.builder()
                     .id(report.getId())
@@ -193,7 +193,7 @@ public class ReportService {
             throw new ValidationException(INVALID_PAGE_NUMBER);
         }
         List<ReportDtoOut> output = new ArrayList<>();
-        Page<Report> locationReportList = reportRepos.findAllByPostIdNotNull(PageRequest.of(pageNo - 1, 10));
+        Page<Report> locationReportList = reportRepos.findAllByPostIdNotNullOrderByActiveDescTimeDesc(PageRequest.of(pageNo - 1, 10));
         for (Report report : locationReportList) {
             ReportDtoOut dtoOut = ReportDtoOut.builder()
                     .id(report.getId())
@@ -217,7 +217,7 @@ public class ReportService {
             throw new ValidationException(INVALID_PAGE_NUMBER);
         }
         List<ReportDtoOut> output = new ArrayList<>();
-        Page<Report> locationReportList = reportRepos.findAllByCatchesIdNotNull(PageRequest.of(pageNo - 1, 10));
+        Page<Report> locationReportList = reportRepos.findAllByCatchesIdNotNullOrderByActiveDescTimeDesc(PageRequest.of(pageNo - 1, 10));
         for (Report report : locationReportList) {
             ReportDtoOut dtoOut = ReportDtoOut.builder()
                     .id(report.getId())
