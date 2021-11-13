@@ -54,6 +54,9 @@ const PostEditScreen = () => {
   const currentPost = useStoreState(
     (states) => states.FManageModel.currentPost,
   );
+  const currentPinPost = useStoreState(
+    (states) => states.LocationModel.currentPinPost,
+  );
   const locationPostList = useStoreState(
     (states) => states.FManageModel.locationPostList,
   );
@@ -77,6 +80,9 @@ const PostEditScreen = () => {
   });
   const setCurrentPinPost = useStoreActions(
     (actions) => actions.FManageModel.setCurrentPinPost,
+  );
+  const getPinPost = useStoreActions(
+    (actions) => actions.FManageModel.getPinPost,
   );
 
   const { handleSubmit, watch, setValue, getValues } = methods;
@@ -136,9 +142,6 @@ const PostEditScreen = () => {
       setUpdateStatus,
     });
     setEditData(updateData);
-    if (currentPost.pinned) {
-      setCurrentPinPost(updateData);
-    }
 
     setLoadingButton(true);
   };
@@ -158,6 +161,7 @@ const PostEditScreen = () => {
   );
 
   const changeListPostItem = () => {
+    getPinPost();
     const foundIndex = locationPostList.findIndex(
       (item) => item.id === editData.id,
     );
@@ -171,6 +175,9 @@ const PostEditScreen = () => {
         async () => {
           changeListPostItem();
           goToFManagePostScreen(navigation);
+          if (currentPost.id === currentPinPost.id || currentPost.pinned) {
+            setCurrentPinPost(editData);
+          }
         },
       );
     } else if (updateStatus === "FAILED") {

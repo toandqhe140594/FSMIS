@@ -44,8 +44,8 @@ const CatchReportRoute = () => {
     setLakeCatchPage(lakeCatchPage + 1);
   };
 
-  const reportHandler = (id, type) => {
-    goToWriteReportScreen(navigation, { id, type });
+  const reportHandler = (id) => {
+    goToWriteReportScreen(navigation, { id, type: "CATCH" });
   };
   const listEvent = [{ name: "Báo cáo bài viết", onPress: reportHandler }];
 
@@ -118,20 +118,12 @@ const FLocationEventRoute = () => {
     (actions) => actions.LocationModel.getPinPost,
   );
 
-  useEffect(() => {
-    getLocationPostListByPage({ pageNo: lakePostPage });
-    setLakePostPage(lakePostPage + 1);
-  }, []);
-  useEffect(() => {
-    getPinPost();
-  }, []);
-
   const loadMoreLakePostData = () => {
     getLocationPostListByPage({ pageNo: lakePostPage });
     setLakePostPage(lakePostPage + 1);
   };
-  const reportHandler = (id, type) => {
-    goToWriteReportScreen(navigation, { id, type });
+  const reportHandler = (id) => {
+    goToWriteReportScreen(navigation, { id, type: "POST" });
   };
   const listEvent = [{ name: "Báo cáo bài viết", onPress: reportHandler }];
 
@@ -213,6 +205,15 @@ const FLocationEventRoute = () => {
     </>
   );
   const footerComponent = () => <Divider mt={20} />;
+
+  useEffect(() => {
+    getLocationPostListByPage({ pageNo: lakePostPage });
+    setLakePostPage(lakePostPage + 1);
+  }, []);
+  useEffect(() => {
+    getPinPost();
+  }, []);
+
   return (
     <>
       {locationPostList.length > 0 && (

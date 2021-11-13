@@ -11,7 +11,7 @@ const HeaderTab = ({ name, isVerified, flagable, id, customIcon }) => {
   const navigation = useNavigation();
 
   const goToWriteReportScreenAction = () => {
-    if (id) goToWriteReportScreen(navigation, { id, type: "location" });
+    if (id) goToWriteReportScreen(navigation, { id, type: "LOCATION" });
   };
 
   const goBackAction = () => {

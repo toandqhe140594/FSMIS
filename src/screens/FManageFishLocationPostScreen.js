@@ -32,7 +32,8 @@ const PostListContainerComponent = () => {
     (states) => states.FManageModel.currentPinPost,
   );
   const [deleteSuccess, setDeleteSuccess] = useState(null);
-
+  const [pinSuccess, setPinSuccess] = useState(null);
+  const [newPinPost, setNewPinPost] = useState({});
   const loadMoreLakeCatchData = () => {
     getLocationPostListByPage({ pageNo: lakePostPageNo });
     setLakePostPageNo(lakePostPageNo + 1);
@@ -44,13 +45,13 @@ const PostListContainerComponent = () => {
   };
 
   const pinFLocationPostHandler = (id, item) => {
-    pinFLocationPost({ postId: id });
-    setCurrentPinPost(item);
+    pinFLocationPost({ postId: id, setPinSuccess });
+    setNewPinPost(item);
   };
 
   const unPinFLocationPostHandler = (id) => {
-    pinFLocationPost({ postId: id });
-    setCurrentPinPost({});
+    pinFLocationPost({ postId: id, setPinSuccess });
+    setNewPinPost({});
   };
 
   const removePostHandler = (id) => {
@@ -143,17 +144,31 @@ const PostListContainerComponent = () => {
     </>
   );
   const footerComponent = () => <Divider mt={20} />;
-  console.log(`currentPinPost`, currentPinPost.id);
+
+  useEffect(() => {
+    if (deleteSuccess === true) {
+      showToastMessage("Xóa thành công");
+      setCurrentPinPost({});
+    }
+    if (deleteSuccess === false) showToastMessage("Xóa thất bại");
+    setDeleteSuccess(null);
+  }, [deleteSuccess]);
+
+  useEffect(() => {
+    if (pinSuccess === true) {
+      setCurrentPinPost(newPinPost);
+      showToastMessage("Xử lý thành công");
+    }
+    if (pinSuccess === false) {
+      showToastMessage("Thất bại");
+    }
+    setPinSuccess(null);
+  }, [pinSuccess]);
+
   useEffect(() => {
     getLocationPostListFirstPage();
     getPinPost();
   }, []);
-
-  useEffect(() => {
-    if (deleteSuccess === true) showToastMessage("Xóa thành công");
-    if (deleteSuccess === false) showToastMessage("Xóa thất bại");
-    setDeleteSuccess(null);
-  }, [deleteSuccess]);
 
   return (
     <Box>
