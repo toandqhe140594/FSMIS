@@ -2,13 +2,15 @@ package fpt.g31.fsmis.controller;
 
 import fpt.g31.fsmis.dto.input.AuthDtoIn;
 import fpt.g31.fsmis.dto.input.RegistrationDtoIn;
-import fpt.g31.fsmis.dto.input.ValidateOtpDtoIn;
 import fpt.g31.fsmis.service.AuthService;
 import fpt.g31.fsmis.service.TwilioOtpService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -34,23 +36,5 @@ public class AuthController {
     @PostMapping("/forgot")
     public ResponseEntity<Object> changeForgotPassword(@RequestBody AuthDtoIn authDtoIn) {
         return new ResponseEntity<>(authService.changeForgotPassword(authDtoIn), HttpStatus.OK);
-    }
-
-    // UC-02.1: Send OTP for Register
-    @PostMapping("/otp/register")
-    public ResponseEntity<Object> sendOtpRegister(@RequestParam String phone) {
-        return new ResponseEntity<>(twilioOtpService.sendOtpForNonExistedUser(phone), HttpStatus.OK);
-    }
-
-    // UC-03.1: Send OTP for Forgot Password
-    @PostMapping("/otp/forgot")
-    public ResponseEntity<Object> sendOtpForgotPassword(@RequestParam String phone) {
-        return new ResponseEntity<>(twilioOtpService.sendOtpForExistedUser(phone), HttpStatus.OK);
-    }
-
-    // UC-02.2, UC-03.3: Validate OTP
-    @PostMapping("/otp/validate")
-    public ResponseEntity<Object> validateOtp(@RequestBody ValidateOtpDtoIn validateOtpDtoIn) {
-        return new ResponseEntity<>(twilioOtpService.validateOtp(validateOtpDtoIn), HttpStatus.OK);
     }
 }

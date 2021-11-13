@@ -18,7 +18,7 @@ public class AdminFishingLocationController {
 
     @GetMapping()
     public ResponseEntity<Object> getLocationList(@RequestParam(required = false, defaultValue = "1") int pageNo) {
-        return new ResponseEntity<>(locationService.getLocationList(pageNo), HttpStatus.OK);
+        return new ResponseEntity<>(locationService.adminGetLocationList(pageNo), HttpStatus.OK);
     }
 
     @GetMapping("/banned")

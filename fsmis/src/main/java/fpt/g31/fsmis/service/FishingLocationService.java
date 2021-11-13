@@ -334,7 +334,7 @@ public class FishingLocationService {
         return new ResponseTextDtoOut("Chuyển trạng thái khu hồ thành công");
     }
 
-    public PaginationDtoOut getLocationList(int pageNo) {
+    public PaginationDtoOut adminGetLocationList(int pageNo) {
         if (pageNo <= 0) {
             throw new ValidationException(INVALID_PAGE_NUMBER);
         }
@@ -346,6 +346,7 @@ public class FishingLocationService {
                     .id(location.getId())
                     .name(location.getName())
                     .active(location.isActive())
+                    .verified(location.isVerify())
                     .address(ServiceUtils.getAddress(location.getAddress(), location.getWard()))
                     .rating(avgScore == null ? 0 : avgScore)
                     .build();

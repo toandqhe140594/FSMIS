@@ -25,10 +25,10 @@ public class UserController {
         return new ResponseEntity<>(userService.getPersonalInformation(request), HttpStatus.OK);
     }
 
-     @GetMapping("/availability")
-     public ResponseEntity<Object> isAvailable(HttpServletRequest request){
+    @GetMapping("/availability")
+    public ResponseEntity<Object> isAvailable(HttpServletRequest request) {
         return new ResponseEntity<>(userService.isAvailable(request), HttpStatus.OK);
-     }
+    }
 
     @GetMapping("/notification")
     public ResponseEntity<Object> getPersonalNotification(HttpServletRequest request, @RequestParam(defaultValue = "1") int pageNo) {
@@ -48,11 +48,6 @@ public class UserController {
     @PostMapping("/changephone")
     public ResponseEntity<Object> changePhone(HttpServletRequest request, @RequestParam String newPhone) {
         return new ResponseEntity<>(userService.changePhone(request, newPhone), HttpStatus.OK);
-    }
-
-    @PostMapping("/changephone/otp")
-    public ResponseEntity<Object> sendOtpChangePhone(@RequestParam String newPhone) {
-        return new ResponseEntity<>(twilioOtpService.sendOtpForNonExistedUser(newPhone), HttpStatus.OK);
     }
 
     @GetMapping("/catch")

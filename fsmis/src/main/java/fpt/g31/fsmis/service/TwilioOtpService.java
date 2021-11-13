@@ -1,28 +1,26 @@
 package fpt.g31.fsmis.service;
 
-import java.text.DecimalFormat;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
-import javax.validation.ValidationException;
-
 import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.type.PhoneNumber;
-import fpt.g31.fsmis.dto.output.ResponseTextDtoOut;
-import org.springframework.stereotype.Service;
 import fpt.g31.fsmis.config.TwilioConfig;
 import fpt.g31.fsmis.dto.input.ValidateOtpDtoIn;
+import fpt.g31.fsmis.dto.output.ResponseTextDtoOut;
 import fpt.g31.fsmis.repository.UserRepos;
 import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import javax.validation.ValidationException;
+import java.text.DecimalFormat;
+import java.util.Map;
+import java.util.Random;
 
 @Service
 @AllArgsConstructor
 public class TwilioOtpService {
 
+    Map<String, String> otpMap;
     private UserRepos userRepos;
     private TwilioConfig twilioConfig;
-
-    Map<String, String> otpMap = new HashMap<>();
 
     public ResponseTextDtoOut sendOtpForExistedUser(String phone) {
         if (!userRepos.existsByPhone(phone)) {
@@ -38,7 +36,7 @@ public class TwilioOtpService {
         return sendOtp(phone);
     }
 
-    private ResponseTextDtoOut sendOtp(String phone) {
+    public ResponseTextDtoOut sendOtp(String phone) {
         phone = "+84" + phone.substring(1);
         PhoneNumber to = new PhoneNumber(phone);
         PhoneNumber from = new PhoneNumber(twilioConfig.getTrialNumber());

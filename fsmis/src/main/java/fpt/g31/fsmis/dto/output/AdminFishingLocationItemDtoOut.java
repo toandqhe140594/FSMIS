@@ -15,4 +15,5 @@ public class AdminFishingLocationItemDtoOut {
     private Double rating;
     private String address;
     private boolean active;
+    private boolean verified;
 }
