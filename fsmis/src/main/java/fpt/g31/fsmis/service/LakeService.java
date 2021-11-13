@@ -30,6 +30,7 @@ public class LakeService {
 
     private static final String LOCATION_NOT_FOUND = "Không tìm thấy hồ câu!";
     private static final String UNAUTHORIZED = "Không có quyền truy cập!";
+    private static final String INVALID_WEIGHT_RANGE = "Lỗi do biểu nhập ngược!";
 
     public ResponseTextDtoOut createLake(LakeDtoIn lakeDtoIn, Long fishingLocationId, HttpServletRequest request) {
         FishingLocation fishingLocation = fishingLocationRepos.findById(fishingLocationId)
@@ -45,37 +46,46 @@ public class LakeService {
         lake.setFishingLocation(fishingLocation);
         List<FishInLake> fishInLakeList = new ArrayList<>();
         for (FishInLakeDtoIn fishInLakeDtoIn : lakeDtoIn.getFishInLakeList()) {
+            if (fishInLakeDtoIn.getMaxWeight() < fishInLakeDtoIn.getMinWeight()) {
+                throw new ValidationException(INVALID_WEIGHT_RANGE);
+            }
             FishInLake fishInLake = FishInLake.builder()
                     .fishSpecies(fishSpeciesRepos.getById(fishInLakeDtoIn.getFishSpeciesId()))
                     .lake(lake)
                     .maxWeight(fishInLakeDtoIn.getMaxWeight())
                     .minWeight(fishInLakeDtoIn.getMinWeight())
                     .active(true)
-//                    .quantity(fishInLakeDtoIn.getQuantity())
-//                    .totalWeight(fishInLakeDtoIn.getTotalWeight())
                     .build();
-            if (fishInLakeDtoIn.getTotalWeight() == null) {
-                fishInLake.setQuantity(fishInLakeDtoIn.getQuantity());
-                fishInLake.setTotalWeight(fishInLakeDtoIn.getQuantity() * (fishInLake.getMinWeight() + fishInLake.getMaxWeight()) / 2);
-            } else if (fishInLakeDtoIn.getQuantity() == null) {
-                fishInLake.setQuantity((int) (fishInLakeDtoIn.getTotalWeight() / ((fishInLake.getMinWeight() + fishInLake.getMaxWeight()) / 2)));
-                fishInLake.setTotalWeight(fishInLakeDtoIn.getTotalWeight());
-            } else {
-                fishInLake.setQuantity(fishInLakeDtoIn.getQuantity());
-                fishInLake.setTotalWeight(fishInLakeDtoIn.getTotalWeight());
-            }
+            setWeightAndQuantity(fishInLakeDtoIn, fishInLake);
             fishInLakeList.add(fishInLake);
         }
         lake.setFishInLakeList(fishInLakeList);
+        setMethodSet(lake, lakeDtoIn.getMethods());
+        return new ResponseTextDtoOut("Tạo hồ câu thành công!");
+    }
+
+    private void setMethodSet(Lake lake, Long[] methods) {
         Set<FishingMethod> fishingMethodSet = new HashSet<>();
-        for (Long methodId : lakeDtoIn.getMethods()) {
+        for (Long methodId : methods) {
             FishingMethod fishingMethod = methodRepos.findById(methodId)
                     .orElseThrow(() -> new NotFoundException("Không tìm thấy loại hình câu!"));
             fishingMethodSet.add(fishingMethod);
         }
         lake.setFishingMethodSet(fishingMethodSet);
         lakeRepos.save(lake);
-        return new ResponseTextDtoOut("Tạo hồ câu thành công!");
+    }
+
+    private void setWeightAndQuantity(FishInLakeDtoIn fishInLakeDtoIn, FishInLake fishInLake) {
+        if (fishInLakeDtoIn.getTotalWeight() == null) {
+            fishInLake.setQuantity(fishInLakeDtoIn.getQuantity());
+            fishInLake.setTotalWeight(fishInLakeDtoIn.getQuantity() * (fishInLake.getMinWeight() + fishInLake.getMaxWeight()) / 2);
+        } else if (fishInLakeDtoIn.getQuantity() == null) {
+            fishInLake.setQuantity((int) (fishInLakeDtoIn.getTotalWeight() / ((fishInLake.getMinWeight() + fishInLake.getMaxWeight()) / 2)));
+            fishInLake.setTotalWeight(fishInLakeDtoIn.getTotalWeight());
+        } else {
+            fishInLake.setQuantity(fishInLakeDtoIn.getQuantity());
+            fishInLake.setTotalWeight(fishInLakeDtoIn.getTotalWeight());
+        }
     }
 
     public LakeDtoOut getLakeById(Long locationId, long lakeId) {
@@ -170,14 +180,7 @@ public class LakeService {
         lake.setLastEditTime(LocalDateTime.now());
         lake.setPrice(lakeEditDtoIn.getPrice());
         lake.setImageUrl(lakeEditDtoIn.getImageUrl());
-        Set<FishingMethod> fishingMethodSet = new HashSet<>();
-        for (Long methodId : lakeEditDtoIn.getMethods()) {
-            FishingMethod fishingMethod = methodRepos.findById(methodId)
-                    .orElseThrow(() -> new NotFoundException("Không tìm thấy loại hình câu!"));
-            fishingMethodSet.add(fishingMethod);
-        }
-        lake.setFishingMethodSet(fishingMethodSet);
-        lakeRepos.save(lake);
+        setMethodSet(lake, lakeEditDtoIn.getMethods());
         return new ResponseTextDtoOut("Chỉnh sửa thông tin hồ câu thành công!");
     }
 
@@ -189,7 +192,7 @@ public class LakeService {
                 throw new NotFoundException("Không tìm thấy loài cá này!, dòng " + row);
             }
             if (fishInLakeDtoIn.getMinWeight() > fishInLakeDtoIn.getMaxWeight()) {
-                throw new ValidationException("Biểu không hợp lý, dòng " + row);
+                throw new ValidationException(INVALID_WEIGHT_RANGE + ", dòng " + row);
             }
             if (fishInLakeDtoIn.getQuantity() == null && fishInLakeDtoIn.getTotalWeight() == null) {
                 throw new ValidationException("Cần điền thông tin về số lượng hoặc tổng khối lượng cá, dòng " + row);
@@ -235,26 +238,18 @@ public class LakeService {
         if (!lake.getFishingLocation().getOwner().equals(user)) {
             throw new ValidationException(UNAUTHORIZED);
         }
+        if (fishInLakeDtoIn.getMaxWeight() < fishInLakeDtoIn.getMinWeight()) {
+            throw new ValidationException(INVALID_WEIGHT_RANGE);
+        }
         FishInLake fishInLake = FishInLake.builder()
                 .id(fishInLakeDtoIn.getId())
                 .fishSpecies(fishSpeciesRepos.getById(fishInLakeDtoIn.getFishSpeciesId()))
                 .lake(lake)
                 .maxWeight(fishInLakeDtoIn.getMaxWeight())
                 .minWeight(fishInLakeDtoIn.getMinWeight())
-//                .quantity(fishInLakeDtoIn.getQuantity())
-//                .totalWeight(fishInLakeDtoIn.getTotalWeight())
                 .active(true)
                 .build();
-        if (fishInLakeDtoIn.getTotalWeight() == null) {
-            fishInLake.setQuantity(fishInLakeDtoIn.getQuantity());
-            fishInLake.setTotalWeight(fishInLakeDtoIn.getQuantity() * (fishInLake.getMinWeight() + fishInLake.getMaxWeight()) / 2);
-        } else if (fishInLakeDtoIn.getQuantity() == null) {
-            fishInLake.setQuantity((int) (fishInLakeDtoIn.getTotalWeight() / ((fishInLake.getMinWeight() + fishInLake.getMaxWeight()) / 2)));
-            fishInLake.setTotalWeight(fishInLakeDtoIn.getTotalWeight());
-        } else {
-            fishInLake.setQuantity(fishInLakeDtoIn.getQuantity());
-            fishInLake.setTotalWeight(fishInLakeDtoIn.getTotalWeight());
-        }
+        setWeightAndQuantity(fishInLakeDtoIn, fishInLake);
         List<FishInLake> fishInLakeList = lake.getFishInLakeList();
         fishInLakeList.add(fishInLake);
         lake.setFishInLakeList(fishInLakeList);
