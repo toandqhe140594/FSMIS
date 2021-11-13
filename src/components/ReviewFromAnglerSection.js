@@ -30,6 +30,7 @@ const ReviewFromAnglerSection = ({
   rate,
   userImage,
   id,
+  isAdminView,
 }) => {
   const navigation = useNavigation();
 
@@ -40,7 +41,19 @@ const ReviewFromAnglerSection = ({
     voteReview({ reviewId: id, vote });
   };
 
-  const deleteReview = () => {
+  const goToWriteReportScreenAction = () => {
+    goToWriteReportScreen(navigation, { id, type: "review" });
+  };
+
+  const upvoteReview = () => {
+    onPressVoteActtion(1);
+  };
+
+  const downvoteReview = () => {
+    onPressVoteActtion(0);
+  };
+
+  const deletePersonalReviewAction = () => {
     Alert.alert(
       "Bạn muốn xóa bài đánh giá?",
       "Bài đánh giá sẽ bị xóa vĩnh viễn. Bạn không thể hoàn tác hành động này",
@@ -62,7 +75,7 @@ const ReviewFromAnglerSection = ({
 
   return (
     <Box flex={1} m={3} pos="relative">
-      {isDisabled ? (
+      {isDisabled && !isAdminView && (
         <>
           <Box style={{ position: "absolute", top: 0, right: 0 }}>
             <Menu
@@ -82,25 +95,20 @@ const ReviewFromAnglerSection = ({
                 );
               }}
             >
-              <Menu.Item
-                onPress={() => {
-                  deleteReview();
-                }}
-              >
+              <Menu.Item onPress={deletePersonalReviewAction}>
                 Xóa đánh giá
               </Menu.Item>
             </Menu>
           </Box>
         </>
-      ) : (
+      )}
+      {!isDisabled && !isAdminView && (
         <Ionicons
           color="black"
           name="flag"
           size={24}
           style={{ position: "absolute", top: 0, right: 0 }}
-          onPress={() => {
-            goToWriteReportScreen(navigation, { id, type: "review" });
-          }}
+          onPress={goToWriteReportScreenAction}
         />
       )}
 
@@ -151,11 +159,7 @@ const ReviewFromAnglerSection = ({
         </Button.Group>
       ) : (
         <Button.Group mt={2}>
-          <Button
-            onPress={() => {
-              onPressVoteActtion(1);
-            }}
-          >
+          <Button onPress={upvoteReview}>
             <Text
               style={[
                 styles.buttonText,
@@ -166,11 +170,7 @@ const ReviewFromAnglerSection = ({
               {positiveCount ? positiveCount > 0 && `(${positiveCount})` : ""}
             </Text>
           </Button>
-          <Button
-            onPress={() => {
-              onPressVoteActtion(0);
-            }}
-          >
+          <Button onPress={downvoteReview}>
             <Text
               style={[
                 styles.buttonText,
@@ -199,6 +199,7 @@ ReviewFromAnglerSection.propTypes = {
   isAdminStyle: PropTypes.bool,
   userImage: PropTypes.string,
   id: PropTypes.number.isRequired,
+  isAdminView: PropTypes.bool,
 };
 ReviewFromAnglerSection.defaultProps = {
   isDisabled: false,
@@ -208,5 +209,6 @@ ReviewFromAnglerSection.defaultProps = {
   positiveCount: 0,
   isAdminStyle: false,
   userImage: "https://picsum.photos/200",
+  isAdminView: false,
 };
 export default ReviewFromAnglerSection;
