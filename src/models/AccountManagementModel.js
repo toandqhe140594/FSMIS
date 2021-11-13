@@ -28,31 +28,6 @@ const initialUserList = [
   },
 ];
 
-const initialBlacklist = [
-  {
-    phone: "0985043311",
-    description: "vippro",
-  },
-  {
-    phone: "098504331322",
-    description: "clone",
-  },
-  {
-    phone: "09892",
-  },
-  {
-    phone: "3467",
-    description: "vippro",
-  },
-  {
-    phone: "645",
-    description: "clone",
-  },
-  {
-    phone: "235",
-  },
-];
-
 // initial state for test purpose only since there wasnot api for get account information
 const initialAccountInformation = {
   id: 1,
@@ -98,7 +73,7 @@ const model = {
     state.blacklist = payload;
   }),
   appendDataToBlacklist: action((state, payload) => {
-    state.blacklist = state.blacklist.concat(payload);
+    state.blacklist = [payload, ...state.blacklist];
   }),
   /**
    * Remove an element from blacklist data state
@@ -115,8 +90,14 @@ const model = {
    * Get blacklist data
    */
   getBlacklist: thunk(async (actions) => {
-    // const { data } = await http.get(`${API_URL.ADMIN_ACCOUNT_LIST}`);
-    actions.setBlacklist(initialBlacklist);
+    try {
+      const { data } = await http.get(
+        `${API_URL.ADMIN_ACCOUNT_BANNED_PHONE_LIST}`,
+      );
+      actions.setBlacklist(data);
+    } catch (error) {
+      actions.setBlacklist(null);
+    }
   }),
   whitelistPhoneNumber: thunk(async (actions, payload) => {
     const { phone, setSuccess } = payload;
