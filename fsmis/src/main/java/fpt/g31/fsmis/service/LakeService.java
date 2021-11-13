@@ -256,6 +256,9 @@ public class LakeService {
             throw new ValidationException(UNAUTHORIZED);
         }
         checkValidFishInLake(fishInLakeDtoIn);
+        if (fishInLakeRepos.existsByFishSpeciesIdAndMinWeightAndMaxWeight(fishInLakeDtoIn.getFishSpeciesId(), fishInLakeDtoIn.getMinWeight(), fishInLakeDtoIn.getMaxWeight())){
+            throw new ValidationException("Đã tồn tại 1 bản ghi với cùng loài cá và biểu");
+        }
         FishInLake fishInLake = FishInLake.builder()
                 .id(fishInLakeDtoIn.getId())
                 .fishSpecies(fishSpeciesRepos.getById(fishInLakeDtoIn.getFishSpeciesId()))
