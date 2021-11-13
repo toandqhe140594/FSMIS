@@ -3,31 +3,6 @@ import { action, thunk } from "easy-peasy";
 import { API_URL } from "../constants";
 import http from "../utilities/Http";
 
-// initial state for test purpose only since there wasnot api for get userlist
-const initialUserList = [
-  {
-    id: 1,
-    name: "Nguyễn Văn A",
-    phone: "0987654321",
-    image:
-      "https://cdns-images.dzcdn.net/images/artist/4099da261a61666f58bb3598f0c4c37f/264x264.jpg",
-  },
-  {
-    id: 2,
-    name: "Nguyễn Văn B",
-    phone: "0987654322",
-    image:
-      "https://i.zoomtventertainment.com/story/Lisa_0.png?tr=w-400,h-300,fo-auto",
-  },
-  {
-    id: 3,
-    name: "Nguyễn Văn C",
-    phone: "0987654323",
-    image:
-      "http://pm1.narvii.com/7145/8e99f6f6f2e12a708ea03fcbe8264f311d859842r1-409-512v2_uhq.jpg",
-  },
-];
-
 // initial state for test purpose only since there wasnot api for get account information
 const initialAccountInformation = {
   id: 1,
@@ -40,24 +15,48 @@ const initialAccountInformation = {
 };
 
 const model = {
-  userList: [...initialUserList],
+  accountList: [],
   accountInformation: {},
-  totalPage: 1,
+  accountTotalPage: 1,
+  accountTotalCounts: null,
   blacklist: null,
-  setUserList: action((state, payload) => {
-    state.userList = payload;
+  setAccountList: action((state, payload) => {
+    state.accountList = state.accountList.concat(payload);
   }),
 
   setAccountInformation: action((state, payload) => {
     state.accountInformation = payload;
   }),
-  setTotalPage: action((state, payload) => {
-    state.totalPage = payload < 1 ? 1 : payload;
+  setAccountTotalPage: action((state, payload) => {
+    state.accountTotalPage = payload < 1 ? 1 : payload;
   }),
-  // Test
-  getUserList: thunk(async (actions) => {
-    // const { data } = await http.get(`${API_URL.ADMIN_ACCOUNT_LIST}`);
-    actions.setUserList(initialUserList);
+  setAccountTotalCounts: action((state, payload) => {
+    state.accountTotalCounts = payload;
+  }),
+  getAccountList: thunk(async (actions, payload, { getState }) => {
+    const pageNo = payload.pageNo || 1;
+    const setIsLoading = payload.setIsLoading || (() => {});
+    const { accountTotalPage } = getState();
+    if (pageNo < 1 || pageNo > accountTotalPage) return;
+    try {
+      const { data } = await http.get(`${API_URL.ADMIN_ACCOUNT_LIST}`, {
+        params: {
+          pageNo,
+        },
+      });
+      const { totalPage, totalItem, items } = data;
+      await actions.setAccountList(items);
+      actions.setAccountTotalCounts(totalItem);
+      actions.setAccountTotalPage(totalPage);
+      setIsLoading(false);
+    } catch (error) {
+      setIsLoading(false);
+      actions.setAccountList([]);
+      actions.setAccountTotalCounts(null);
+    }
+  }),
+  clearAccountList: action((state) => {
+    state.accountList = [];
   }),
   getAccountInformation: thunk(async (actions) => {
     // const { data } = await http.get(`${API_URL.ADMIN_ACCOUNT_INFORMATION}`);
