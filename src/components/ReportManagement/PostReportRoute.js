@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
 const PostReportRoute = () => {
   const [filter, setFilter] = useState("");
   const reportListModel = useStoreState(
-    (states) => states.ReportModel.listReportLocation,
+    (states) => states.ReportModel.listPostReport,
   );
   const [reportList, setReportList] = useState(reportListModel);
   const navigation = useNavigation();

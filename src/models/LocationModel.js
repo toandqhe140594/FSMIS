@@ -36,6 +36,7 @@ const model = {
   totalPostPage: 1,
   totalCatchPage: 1,
   catchReportDetail: {},
+  currentPinPost: {},
 
   setCurrentId: action((state, payload) => {
     state.currentId = payload;
@@ -314,7 +315,8 @@ const model = {
     }
   }),
   // END OF CHECKIN STATUS RELATED STUFF
-  currentPinPost: {},
+
+  // PIN POST
   setCurrentPinPost: action((state, payload) => {
     state.currentPinPost = payload;
   }),
@@ -323,5 +325,8 @@ const model = {
     const { data } = await http.get(`/location/${currentId}/post/pinned`);
     actions.setCurrentPinPost(data);
   }),
+  // END PIN POST
+
+  
 };
 export default model;
