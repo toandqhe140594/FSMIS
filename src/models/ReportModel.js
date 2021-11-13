@@ -29,26 +29,26 @@ const model = {
       case "LOCATION":
         state.listLocationReport =
           setMode === "NEW"
-            ? [...items]
-            : [...state.listLocationReport, ...items];
+            ? [].concat(items)
+            : state.listLocationReport.concat(items);
         break;
       case "POST":
         state.listPostReport =
           setMode === "NEW"
-            ? [...items]
-            : state.listPostReport.concat(...items);
+            ? [].concat(items)
+            : state.listPostReport.concat(items);
         break;
       case "REVIEW":
         state.listReviewReport =
           setMode === "NEW"
-            ? [...items]
-            : state.listReviewReport.concat(...items);
+            ? [].concat(items)
+            : state.listReviewReport.concat(items);
         break;
       case "CATCH":
         state.listCatchReport =
           setMode === "NEW"
-            ? [...items]
-            : state.listCatchReport.concat(...items);
+            ? [].concat(items)
+            : state.listCatchReport.concat(items);
         break;
       default:
     }
