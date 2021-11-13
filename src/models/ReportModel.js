@@ -3,137 +3,6 @@ import { action, thunk } from "easy-peasy";
 import { API_URL } from "../constants";
 import http from "../utilities/Http";
 
-const listLocationReport = [
-  {
-    id: "1",
-    name: "Hồ Câu Thuần Việt",
-    active: true,
-    time: "10/11/2021 22:04:08",
-  },
-  {
-    id: "2",
-    name: "Hồ Câu Thuần Việt",
-    active: true,
-    time: "10/11/2021 22:04:08",
-  },
-  {
-    id: "3",
-    name: "Hồ Câu Thuần Việt",
-    active: false,
-    time: "10/11/2021 22:04:08",
-  },
-  {
-    id: "4",
-    name: "Hồ Câu Thuần Việt",
-    active: true,
-    time: "10/11/2021 22:04:08",
-  },
-  {
-    id: "5",
-    name: "Hồ Câu Thuần Việt",
-    active: false,
-    time: "10/11/2021 22:04:08",
-  },
-];
-const listPostReport = [
-  {
-    id: "1",
-    name: "Hồ câu Thuần Việt",
-    postType: "Báo cá",
-    active: true,
-    time: "10/11/2021 22:04:08",
-  },
-  {
-    id: "2",
-    name: "Hồ câu Thuần Việt",
-    postType: "Thông báo",
-    active: true,
-    time: "10/11/2021 22:04:08",
-  },
-  {
-    id: "3",
-    name: "Hồ câu Thuần Việt",
-    postType: "Bồi cá",
-    active: false,
-    time: "10/11/2021 22:04:08",
-  },
-  {
-    id: "4",
-    name: "Hồ câu Thuần Việt",
-    postType: "Báo cá",
-    active: true,
-    time: "10/11/2021 22:04:08",
-  },
-  {
-    id: "5",
-    name: "Hồ câu Thuần Việt",
-    postType: "Báo cá",
-    active: false,
-    time: "10/11/2021 22:04:08",
-  },
-];
-
-const listReviewReport = [
-  {
-    id: "1",
-    name: "Nguyễn Văn A",
-    active: true,
-    time: "10/11/2021 22:04:08",
-  },
-  {
-    id: "2",
-    name: "Nguyễn Văn A",
-    active: true,
-    time: "10/11/2021 22:04:08",
-  },
-  {
-    id: "3",
-    name: "Nguyễn Văn A",
-    active: false,
-    time: "10/11/2021 22:04:08",
-  },
-  {
-    id: "4",
-    name: "Nguyễn Văn A",
-    active: true,
-    time: "10/11/2021 22:04:08",
-  },
-  {
-    id: "5",
-    name: "Nguyễn Văn A",
-    active: false,
-    time: "10/11/2021 22:04:08",
-  },
-];
-
-const listCatchReport = [
-  {
-    id: "1",
-    name: "Nguyễn Văn A",
-    active: true,
-  },
-  {
-    id: "2",
-    name: "Nguyễn Văn A",
-    active: true,
-  },
-  {
-    id: "3",
-    name: "Nguyễn Văn A",
-    active: false,
-  },
-  {
-    id: "4",
-    name: "Nguyễn Văn A",
-    active: true,
-  },
-  {
-    id: "5",
-    name: "Nguyễn Văn A",
-    active: false,
-  },
-];
-
 const model = {
   listLocationReport: [],
   listPostReport: [],
@@ -147,7 +16,7 @@ const model = {
   /**
    * Append new location report list to current list
    * @param {String} [payload.type] type of the report
-   * @param {Array} [payload.list] new array to append to current list
+   * @param {Array} [payload.items] new array to append to current list
    */
   setReportList: action((state, payload) => {
     const { type, items } = payload;
