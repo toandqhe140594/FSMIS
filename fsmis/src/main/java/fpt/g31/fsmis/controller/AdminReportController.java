@@ -20,24 +20,27 @@ public class AdminReportController {
     }
 
     @GetMapping("/review")
-    public ResponseEntity<Object> getReviewReports(@RequestParam(defaultValue = "1", required = false) int pageNo,
+    public ResponseEntity<Object> getReviewReportList(@RequestParam(defaultValue = "1", required = false) int pageNo,
                                                    @RequestParam(defaultValue = "true", required = false) boolean active) {
         return new ResponseEntity<>(reportService.getReviewReports(pageNo, active), HttpStatus.OK);
     }
 
      @GetMapping("/post")
-     public ResponseEntity<Object> getPostReports(@RequestParam(defaultValue = "1", required = false) int pageNo,
+     public ResponseEntity<Object> getPostReportList(@RequestParam(defaultValue = "1", required = false) int pageNo,
                                                   @RequestParam(defaultValue = "true", required = false) boolean active) {
          return new ResponseEntity<>(reportService.getPostReports(pageNo, active), HttpStatus.OK);
      }
 
     @GetMapping("/catch")
-    public ResponseEntity<Object> getImproperCatchReports(@RequestParam(defaultValue = "1", required = false) int pageNo,
+    public ResponseEntity<Object> getImproperCatchReportList(@RequestParam(defaultValue = "1", required = false) int pageNo,
                                                           @RequestParam(defaultValue = "true", required = false) boolean active) {
         return new ResponseEntity<>(reportService.getImproperCatchReports(pageNo, active), HttpStatus.OK);
     }
-    // @GetMapping("/location/{reportId}")
 
+    @GetMapping("/location/{reportId}")
+    public ResponseEntity<Object> getLocationReportDetail(@PathVariable Long reportId) {
+        return new ResponseEntity<>(reportService.getLocationReport(reportId), HttpStatus.OK);
+    }
     // @GetMapping("/review/{reportId}")
 
     // @GetMapping("/post/{reportId}")

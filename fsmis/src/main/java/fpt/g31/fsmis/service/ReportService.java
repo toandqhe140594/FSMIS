@@ -1,9 +1,7 @@
 package fpt.g31.fsmis.service;
 
 import fpt.g31.fsmis.dto.input.ReportDtoIn;
-import fpt.g31.fsmis.dto.output.PaginationDtoOut;
-import fpt.g31.fsmis.dto.output.ReportDtoOut;
-import fpt.g31.fsmis.dto.output.ResponseTextDtoOut;
+import fpt.g31.fsmis.dto.output.*;
 import fpt.g31.fsmis.entity.*;
 import fpt.g31.fsmis.exception.NotFoundException;
 import fpt.g31.fsmis.repository.*;
@@ -242,5 +240,29 @@ public class ReportService {
         report.setActive(true);
         reportRepos.save(report);
         return new ResponseTextDtoOut("Xử lý báo cáo thành công");
+    }
+
+    public LocationReportDetailDtoOut getLocationReport(Long reportId) {
+        Report report = reportRepos.findById(reportId)
+                .orElseThrow(() -> new NotFoundException("Không tìm thấy báo cáo"));
+        List<ReportUser> reportDetailList = reportUserRepos.findAllByReportId(reportId);
+        List<ReportDetailItemDtoOut> reportDetailDtoOutList = new ArrayList<>();
+        for (ReportUser reportDetail: reportDetailList) {
+            ReportDetailItemDtoOut reportDetailItemDtoOut = ReportDetailItemDtoOut.builder()
+                    .reportDetailId(reportDetail.getId())
+                    .time(ServiceUtils.convertDateToString(reportDetail.getTime()))
+                    .userFullName(reportDetail.getUser().getFullName())
+                    .userAvatar(reportDetail.getUser().getAvatarUrl())
+                    .description(reportDetail.getDescription())
+                    .build();
+            reportDetailDtoOutList.add(reportDetailItemDtoOut);
+        }
+        return LocationReportDetailDtoOut.builder()
+                .locationId(report.getFishingLocation().getId())
+                .locationName(report.getFishingLocation().getName())
+                .time(ServiceUtils.convertDateToString(report.getTime()))
+                .reportDetailList(reportDetailDtoOutList)
+                .build();
+
     }
 }
