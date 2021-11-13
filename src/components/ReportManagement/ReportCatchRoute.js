@@ -113,8 +113,7 @@ const ReportCatchRoute = () => {
           my={2}
           alignSelf="center"
           placeholder="Lọc hiển thị báo cáo"
-          defaultValue={filter}
-          value={filter}
+          defaultValue={FILTER_TOUCHED_TYPE}
           onValueChange={handleValueChange}
           fontSize="md"
         >

@@ -50,11 +50,13 @@ const ReviewReportRoute = () => {
    * @param {String} value selected value
    */
   const handleValueChange = (value) => {
-    setIsLoading(true);
-    setFilter(value);
-    setActive(value !== FILTER_UNTOUCHED_TYPE); // Change active based on list type
-    setPageNo(1); // Reset pageNo to 1 for new list
-    setBigLoading(true); // When change between each list type, use bigLoading
+    if (value !== filter) {
+      setIsLoading(true);
+      setFilter(value);
+      setActive(value !== FILTER_UNTOUCHED_TYPE); // Change active based on list type
+      setPageNo(1); // Reset pageNo to 1 for new list
+      setBigLoading(true); // When change between each list type, use bigLoading
+    }
   };
   const handleLoadMore = () => {
     if (pageNo < totalReviewReportPage) {
@@ -110,8 +112,7 @@ const ReviewReportRoute = () => {
           my={2}
           alignSelf="center"
           placeholder="Lọc hiển thị báo cáo"
-          defaultValue={filter}
-          value={filter}
+          defaultValue={FILTER_TOUCHED_TYPE}
           onValueChange={handleValueChange}
           fontSize="md"
         >
