@@ -29,12 +29,12 @@ public class CatchesService {
     private final FishInLakeRepos fishInLakeRepos;
     private final JwtFilter jwtFilter;
 
-    private static final String WRONG_PAGE_NUMBER = "Số trang không hợp lệ";
     private static final String UNAUTHORIZED = "Không có quyền truy cập";
+    private static final String INVALID_PAGE_NUMBER = "SỐ trang không hợp lệ";
 
     public PaginationDtoOut getLocationPublicCatchesList(Long locationId, int pageNo) {
         if (pageNo <= 0) {
-            throw new ValidationException(WRONG_PAGE_NUMBER);
+            throw new ValidationException(INVALID_PAGE_NUMBER);
         }
         Page<Catches> catchesList = catchesRepos.findByFishingLocationIdAndHiddenIsFalseAndApprovedIsTrueOrderByTimeDesc(locationId, PageRequest.of(pageNo - 1, 10));
         List<CatchesOverViewDtoOut> output = new ArrayList<>();
@@ -68,7 +68,7 @@ public class CatchesService {
     public PaginationDtoOut getLocationCatchesHistory(HttpServletRequest request, Long locationId, int pageNo,
                                                       String beginDateString, String endDateString) {
         if (pageNo <= 0) {
-            throw new ValidationException(WRONG_PAGE_NUMBER);
+            throw new ValidationException(INVALID_PAGE_NUMBER);
         }
         if (!isOwnerOrStaff(locationId, jwtFilter.getUserFromToken(request))) {
             throw new ValidationException(UNAUTHORIZED);
@@ -110,7 +110,7 @@ public class CatchesService {
 
     public PaginationDtoOut getPendingCatchReports(HttpServletRequest request, Long locationId, int pageNo) {
         if (pageNo <= 0) {
-            throw new ValidationException(WRONG_PAGE_NUMBER);
+            throw new ValidationException(INVALID_PAGE_NUMBER);
         }
         if (!isOwnerOrStaff(locationId, jwtFilter.getUserFromToken(request))) {
             throw new ValidationException(UNAUTHORIZED);
@@ -142,7 +142,7 @@ public class CatchesService {
 
     public PaginationDtoOut getPersonalCatchesList(HttpServletRequest request, int pageNo) {
         if (pageNo <= 0) {
-            throw new ValidationException("Địa chỉ không tồn tại");
+            throw new ValidationException(INVALID_PAGE_NUMBER);
         }
         User user = jwtFilter.getUserFromToken(request);
         Page<Catches> catchesList = catchesRepos.findByUserIdOrderByTimeDesc(user.getId(), PageRequest.of(pageNo - 1, 10));
@@ -155,6 +155,7 @@ public class CatchesService {
                     .locationId(catches.getFishingLocation().getId())
                     .locationName(catches.getFishingLocation().getName())
                     .id(catches.getId())
+                    .approved(catches.getApproved())
                     .description(catches.getDescription())
                     .time(ServiceUtils.convertDateToString(catches.getTime()))
                     .build();
