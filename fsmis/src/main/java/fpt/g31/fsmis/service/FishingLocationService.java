@@ -2,6 +2,7 @@ package fpt.g31.fsmis.service;
 
 import fpt.g31.fsmis.dto.input.FishingLocationDtoIn;
 import fpt.g31.fsmis.dto.output.*;
+import fpt.g31.fsmis.entity.BannedPhone;
 import fpt.g31.fsmis.entity.FishingLocation;
 import fpt.g31.fsmis.entity.User;
 import fpt.g31.fsmis.entity.address.Ward;
@@ -29,18 +30,15 @@ public class FishingLocationService {
     private static final String UNAUTHORIZED = "Không có quyền truy cập thông tin;";
     private static final String LOCATION_NOT_FOUND = "Không tìm thấy hồ câu!";
     private static final String ACCOUNT_NOT_FOUND = "Không tìm thấy tài khoản!";
-
+    private static final String INVALID_PAGE_NUMBER = "Số trang không hợp lệ";
     private final JwtFilter jwtFilter;
     private final CheckInRepos checkInRepos;
-    private FishingLocationRepos fishingLocationRepos;
-    private UserRepos userRepos;
-    private WardRepos wardRepos;
-    private ReviewRepos reviewRepos;
-    private ModelMapper modelMapper;
-
-    public List<FishingLocation> findAllFishingLocations() {
-        return fishingLocationRepos.findAll();
-    }
+    private final FishingLocationRepos fishingLocationRepos;
+    private final UserRepos userRepos;
+    private final WardRepos wardRepos;
+    private final ReviewRepos reviewRepos;
+    private final ModelMapper modelMapper;
+    private final BannedPhoneRepos bannedPhoneRepos;
 
     public ResponseTextDtoOut createFishingLocation(FishingLocationDtoIn fishingLocationDtoIn,
                                                     HttpServletRequest request) {
@@ -136,13 +134,13 @@ public class FishingLocationService {
         return dtoOut;
     }
 
-    public List<LocationPinDtoOut> getNearBy(Float longitude, Float latitude, Integer distance, Long methodId, Integer minRating) {
+    public List<FishingLocationPinDtoOut> getNearBy(Float longitude, Float latitude, Integer distance, Long methodId, Integer minRating) {
         List<FishingLocation> fishingLocationList = fishingLocationRepos.getNearByLocation(longitude, latitude, distance, methodId, minRating);
-        List<LocationPinDtoOut> locationPinDtoOutList = new ArrayList<>();
+        List<FishingLocationPinDtoOut> fishingLocationPinDtoOutList = new ArrayList<>();
         for (FishingLocation fishingLocation : fishingLocationList) {
-            locationPinDtoOutList.add(modelMapper.map(fishingLocation, LocationPinDtoOut.class));
+            fishingLocationPinDtoOutList.add(modelMapper.map(fishingLocation, FishingLocationPinDtoOut.class));
         }
-        return locationPinDtoOutList;
+        return fishingLocationPinDtoOutList;
     }
 
     public SaveStatusDtoOut saveFishingLocation(HttpServletRequest request, Long locationId) {
@@ -334,5 +332,42 @@ public class FishingLocationService {
         location.setClosed(!location.isClosed());
         fishingLocationRepos.save(location);
         return new ResponseTextDtoOut("Chuyển trạng thái khu hồ thành công");
+    }
+
+    public PaginationDtoOut getLocationList(int pageNo) {
+        if (pageNo <= 0) {
+            throw new ValidationException(INVALID_PAGE_NUMBER);
+        }
+        List<AdminFishingLocationItemDtoOut> output = new ArrayList<>();
+        Page<FishingLocation> locationList = fishingLocationRepos.findAll(PageRequest.of(pageNo - 1, 10));
+        for (FishingLocation location : locationList) {
+            Double avgScore = reviewRepos.getAverageScoreByFishingLocationIdAndActiveIsTrue(location.getId());
+            AdminFishingLocationItemDtoOut dtoOut = AdminFishingLocationItemDtoOut.builder()
+                    .id(location.getId())
+                    .name(location.getName())
+                    .active(location.isActive())
+                    .address(ServiceUtils.getAddress(location.getAddress(), location.getWard()))
+                    .rating(avgScore == null ? 0 : avgScore)
+                    .build();
+            output.add(dtoOut);
+        }
+        return PaginationDtoOut.builder()
+                .totalPage(locationList.getTotalPages())
+                .totalItem(locationList.getTotalElements())
+                .items(output)
+                .build();
+    }
+
+    public List<BannedPhoneDtoOut> getBannedPhone() {
+        List<BannedPhoneDtoOut> output = new ArrayList<>();
+        List<BannedPhone> bannedPhoneList = bannedPhoneRepos.findAll();
+        for (BannedPhone bannedPhone: bannedPhoneList) {
+            BannedPhoneDtoOut dto = BannedPhoneDtoOut.builder()
+                    .phone(bannedPhone.getPhone())
+                    .description(bannedPhone.getDescription())
+                    .build();
+            output.add(dto);
+        }
+        return output;
     }
 }

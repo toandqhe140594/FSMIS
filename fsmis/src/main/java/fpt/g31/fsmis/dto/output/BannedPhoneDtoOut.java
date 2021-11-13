@@ -9,11 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class LocationPinDtoOut {
-    private Long id;
-    private String name;
-    private boolean verify;
-    private Double score;
-    private Float longitude;
-    private Float latitude;
+public class BannedPhoneDtoOut {
+    private String phone;
+    private String description;
 }

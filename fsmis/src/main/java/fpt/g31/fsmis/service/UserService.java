@@ -25,6 +25,7 @@ import java.util.List;
 @AllArgsConstructor
 public class UserService {
 
+    private static final String INVALID_PAGE_NUMBER = "Số trang không hợp lệ";
     private final UserRepos userRepos;
     private final WardRepos wardRepos;
     private final CatchesRepos catchesRepos;
@@ -133,6 +134,29 @@ public class UserService {
         return IsAvailableDtoOut.builder()
                 .isAvailable(user.isAvailable())
                 .fishingLocationItemDtoOut(fishingLocationItemDtoOut)
+                .build();
+    }
+
+    public PaginationDtoOut getAccountList(int pageNo) {
+        if (pageNo <= 0) {
+            throw new ValidationException(INVALID_PAGE_NUMBER);
+        }
+        List<AdminAccountItemDtoOut> output = new ArrayList<>();
+        Page<User> accountList = userRepos.findAll(PageRequest.of(pageNo - 1, 10));
+        for (User account : accountList) {
+            AdminAccountItemDtoOut dtoOut = AdminAccountItemDtoOut.builder()
+                    .id(account.getId())
+                    .name(account.getFullName())
+                    .active(account.isActive())
+                    .avatar(account.getAvatarUrl())
+                    .phone(account.getPhone())
+                    .build();
+            output.add(dtoOut);
+        }
+        return PaginationDtoOut.builder()
+                .totalPage(accountList.getTotalPages())
+                .totalItem(accountList.getTotalElements())
+                .items(output)
                 .build();
     }
 }

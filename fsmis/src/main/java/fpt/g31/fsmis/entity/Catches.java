@@ -4,7 +4,6 @@ import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import org.springframework.lang.Nullable;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -21,11 +20,9 @@ public class Catches {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Nullable
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    @Nullable
     @Column(columnDefinition = "TEXT")
     private String imageUrl;
 

@@ -2,7 +2,6 @@ package fpt.g31.fsmis.controller;
 
 
 import fpt.g31.fsmis.dto.input.*;
-import fpt.g31.fsmis.entity.FishingLocation;
 import fpt.g31.fsmis.service.*;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
@@ -12,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.List;
 
 @RestController
 @RequestMapping(path = "/api/location")
@@ -27,12 +25,6 @@ public class FishingLocationController {
     private final ReviewService reviewService;
     private final VoteService voteService;
     private final ReportService reportService;
-
-    @GetMapping(path = "/all")
-    public ResponseEntity<Object> getAll() {
-        List<FishingLocation> fishingLocations = fishingLocationService.findAllFishingLocations();
-        return new ResponseEntity<>(fishingLocations, HttpStatus.OK);
-    }
 
     @PostMapping("/add")
     public ResponseEntity<Object> createFishingLocation(@Valid @RequestBody FishingLocationDtoIn fishingLocationDtoIn,
