@@ -1,8 +1,14 @@
 import { useNavigation } from "@react-navigation/native";
-import { useStoreState } from "easy-peasy";
+import { useStoreActions, useStoreState } from "easy-peasy";
 import { Select } from "native-base";
 import React, { useEffect, useState } from "react";
-import { FlatList, StyleSheet, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  FlatList,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 import { goToAdminPostReportDetailScreen } from "../../navigations";
 import HeaderTab from "../HeaderTab";
@@ -15,12 +21,16 @@ const styles = StyleSheet.create({
 });
 
 const PostReportRoute = () => {
-  const [filter, setFilter] = useState("");
-  const reportListModel = useStoreState(
-    (states) => states.ReportModel.listReportLocation,
-  );
-  const [reportList, setReportList] = useState(reportListModel);
   const navigation = useNavigation();
+  const [isLoading, setIsLoading] = useState(true);
+  const [pageNo, setPageNo] = useState(1);
+  const [momentumScrollBegin, setMomentumScrollBegin] = useState(true);
+  // const [filter, setFilter] = useState("");
+  const { listPostReport } = useStoreState((state) => state.ReportModel);
+  const { getListPostReport, resetReportList } = useStoreActions(
+    (actions) => actions.ReportModel,
+  );
+  // const [reportList, setReportList] = useState(reportListModel);
 
   const renderItem = ({ item }) => (
     <TouchableOpacity
@@ -31,21 +41,36 @@ const PostReportRoute = () => {
       <ReportCard {...item} isPostReport />
     </TouchableOpacity>
   );
+  const renderFooter = () =>
+    isLoading ? <ActivityIndicator size="large" color="#2089DC" /> : <></>;
+  const handleLoadMore = () => {
+    if (!momentumScrollBegin) {
+      setPageNo(pageNo + 1);
+      setIsLoading(true);
+      setMomentumScrollBegin(true);
+    }
+  };
   useEffect(() => {
-    const getFilteredList = () => {
-      switch (filter) {
-        case "Tất cả":
-          return reportListModel;
-        case "Chưa xử lý":
-          return reportListModel.filter(({ isProcessed }) => !isProcessed);
-        case "Đã xử lý":
-          return reportListModel.filter(({ isProcessed }) => isProcessed);
-        default:
-          return reportList;
-      }
+    getListPostReport({ pageNo, setIsLoading });
+    return () => {
+      resetReportList({ type: "CATCH" });
     };
-    setReportList(getFilteredList());
-  }, [filter]);
+  }, [pageNo]);
+  // useEffect(() => {
+  //   const getFilteredList = () => {
+  //     switch (filter) {
+  //       case "ALL":
+  //         return reportListModel;
+  //       case "UNTOUCHED":
+  //         return reportListModel.filter(({ active }) => !active);
+  //       case "TOUCHED":
+  //         return reportListModel.filter(({ active }) => active);
+  //       default:
+  //         return reportList;
+  //     }
+  //   };
+  //   setReportList(getFilteredList());
+  // }, [filter]);
   return (
     <>
       <HeaderTab name="Quản lý báo cáo" />
@@ -55,21 +80,24 @@ const PostReportRoute = () => {
           my={2}
           alignSelf="center"
           placeholder="Lọc hiển thị báo cáo"
-          defaultValue="Tất cả"
-          value={filter}
-          onValueChange={setFilter}
+          defaultValue="ALL"
+          value="ALL"
+          onValueChange={() => {}}
           fontSize="md"
         >
-          <Select.Item label="Tất cả" value="Tất cả" />
-          <Select.Item label="Chưa xử lý" value="Chưa xử lý" />
-          <Select.Item label="Đã xử lý" value="Đã xử lý" />
+          <Select.Item label="Tất cả" value="ALL" />
+          <Select.Item label="Chưa xử lý" value="UNTOUCHED" />
+          <Select.Item label="Đã xử lý" value="TOUCHED" />
         </Select>
 
         <FlatList
           style={styles.flatList}
-          data={reportList}
+          keyExtractor={(item) => `${item.id}`}
+          data={listPostReport}
           renderItem={renderItem}
-          keyExtractor={(item) => item.id}
+          ListFooterComponent={renderFooter}
+          onMomentumScrollBegin={() => {}}
+          onEndReached={handleLoadMore}
         />
       </View>
     </>
