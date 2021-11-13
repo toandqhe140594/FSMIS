@@ -313,7 +313,15 @@ const model = {
       actions.setCheckinStatus(false);
     }
   }),
-
   // END OF CHECKIN STATUS RELATED STUFF
+  currentPinPost: {},
+  setCurrentPinPost: action((state, payload) => {
+    state.currentPinPost = payload;
+  }),
+  getPinPost: thunk(async (actions, payload, { getState }) => {
+    const { currentId } = getState();
+    const { data } = await http.get(`/location/${currentId}/post/pinned`);
+    actions.setCurrentPinPost(data);
+  }),
 };
 export default model;

@@ -1,10 +1,9 @@
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { useNavigation } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
-import { Box } from "native-base";
+import { Box, Divider, Text } from "native-base";
 import React, { useEffect, useState } from "react";
 import { FlatList, StyleSheet } from "react-native";
-import { Divider } from "react-native-elements";
 
 import { VIEW_ROLE_ANGLER } from "../../constants";
 import {
@@ -109,13 +108,22 @@ const FLocationEventRoute = () => {
   const { role } = useStoreState(
     (states) => states.LocationModel.locationOverview,
   );
+  const currentPinPost = useStoreState(
+    (states) => states.LocationModel.currentPinPost,
+  );
   const getLocationPostListByPage = useStoreActions(
     (actions) => actions.LocationModel.getLocationPostListByPage,
+  );
+  const getPinPost = useStoreActions(
+    (actions) => actions.LocationModel.getPinPost,
   );
 
   useEffect(() => {
     getLocationPostListByPage({ pageNo: lakePostPage });
     setLakePostPage(lakePostPage + 1);
+  }, []);
+  useEffect(() => {
+    getPinPost();
   }, []);
 
   const loadMoreLakePostData = () => {
@@ -141,19 +149,67 @@ const FLocationEventRoute = () => {
       iconEvent={listEvent}
     />
   );
+
+  const pinPostComponent = () => (
+    <>
+      {currentPinPost.id !== undefined && (
+        <>
+          <Box
+            backgroundColor="white"
+            mb={5}
+            flexDirection="column"
+            style={{
+              borderColor: "#88E0EF",
+              borderWidth: 2,
+              borderBottomWidth: 8,
+            }}
+          >
+            <Text
+              bold
+              italic
+              fontSize="15"
+              pl={0.5}
+              textAlign="center"
+              style={{ color: "white", backgroundColor: "#88E0EF" }}
+            >
+              Bài ghim
+            </Text>
+            <EventPostCard
+              postStyle="LAKE_POST"
+              iconName={role === VIEW_ROLE_ANGLER ? "flag" : ""}
+              iconEvent={listEvent}
+              id={currentPinPost.id}
+              image={currentPinPost.url}
+              itemData={currentPinPost}
+              lakePost={{
+                badge:
+                  currentPinPost.postType === "STOCKING"
+                    ? "Bồi cá"
+                    : "Thông báo",
+                content: currentPinPost.content,
+              }}
+              postTime={currentPinPost.postTime}
+            />
+          </Box>
+          <Divider />
+        </>
+      )}
+    </>
+  );
+  const footerComponent = () => <Divider mt={20} />;
   return (
     <>
       {locationPostList.length > 0 && (
         <FlatList
+          ListHeaderComponent={pinPostComponent}
+          ListFooterComponent={footerComponent}
           removeClippedSubviews
           initialNumToRender={5}
           updateCellsBatchingPeriod={10}
           maxToRenderPerBatch={20}
           data={locationPostList}
           renderItem={renderItem}
-          onEndReached={() => {
-            loadMoreLakePostData();
-          }}
+          onEndReached={loadMoreLakePostData}
           keyExtractor={(item) => item.id.toString()}
         />
       )}

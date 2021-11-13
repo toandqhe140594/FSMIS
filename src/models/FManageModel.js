@@ -50,6 +50,7 @@ const model = {
   checkinHistoryTotalPage: 1,
 
   lakePostPageNo: 1,
+  currentPinPost: {},
   setLakePostPageNo: action((state, payload) => {
     state.lakePostPageNo = payload;
   }),
@@ -1017,26 +1018,34 @@ const model = {
     actions.rewriteCheckinHistory([]);
   }),
   // END OF CHECKIN RELATED SECTION
-  currentPinPost: {},
+
   setCurrentPinPost: action((state, payload) => {
+    console.log(`payload.id`, payload.id);
     state.currentPinPost = payload;
   }),
   getPinPost: thunk(async (actions, payload, { getState }) => {
     const { currentId } = getState();
-    const { data } = await http.get(`/location/${currentId}/post/pinned`);
-    actions.setCurrentPinPost(data);
+    try {
+      const { status, data } = await http.get(
+        `/location/${currentId}/post/pinned`,
+      );
+      if (status === 200) {
+        actions.setCurrentPinPost(data);
+      }
+    } catch (error) {
+      actions.setCurrentPinPost({});
+    }
   }),
   pinFLocationPost: thunk(async (actions, payload) => {
     const { postId } = payload;
     try {
       const { status, data } = await http.post(`/location/post/pin/${postId}`);
       if (status === 200) {
-        // setSuccess(true);
-        actions.setCurrentPinPost(data);
+        console.log("status pin :>> ", status);
+        console.log("pin data :>> ", data.id);
       }
     } catch (error) {
-      // setSuccess(false);
-      actions.setCurrentPinPost({});
+      console.log("status :>> ", error);
     }
   }),
 };
