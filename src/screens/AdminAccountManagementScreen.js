@@ -1,8 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
-import { Box, Center } from "native-base";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, FlatList } from "react-native";
+import { ActivityIndicator, FlatList, View } from "react-native";
 import { Divider, SearchBar } from "react-native-elements";
 
 import AvatarCard from "../components/AvatarCard";
@@ -53,6 +52,12 @@ const AdminAccountManagementScreen = () => {
     setDisplayedList(filteredList);
   };
 
+  const goToAccountDetailScreen = (id) => () => {
+    goToAdminAccountManagementDetailScreen(navigation, {
+      id,
+    });
+  };
+
   useEffect(() => {
     getUserList({ pageNo: 1, setIsLoading });
     const loadingTimeout = setTimeout(() => {
@@ -69,36 +74,25 @@ const AdminAccountManagementScreen = () => {
     if (userList) setIsLoading(false);
   }, [userList]);
 
-  const renderItem = ({ item }) => (
-    <PressableCustomCard
-      onPress={() => {
-        goToAdminAccountManagementDetailScreen(navigation, {
-          id: item.id,
-        });
-      }}
-    >
-      <AvatarCard
-        nameUser={item.name}
-        subText={`SĐT: ${item.phone}`}
-        image={item.image}
-      />
-    </PressableCustomCard>
-  );
+  const renderItem = ({ item }) => {
+    return (
+      <PressableCustomCard onPress={goToAccountDetailScreen(item.id)}>
+        <AvatarCard
+          nameUser={item.name}
+          subText={`SĐT: ${item.phone}`}
+          image={item.image}
+        />
+      </PressableCustomCard>
+    );
+  };
 
   const keyExtractor = (item) => item.id.toString();
-
-  if (isLoading)
-    return (
-      <Center flex={1}>
-        <ActivityIndicator size="large" color="blue" />
-      </Center>
-    );
 
   return (
     <>
       <HeaderTab name="Quản lý tài khoản" />
-      <Center flex={1} alignItems="center">
-        <Box w="100%" alignItems="center" flex={1}>
+      <View style={styles.flexBox}>
+        <View style={[styles.flexBox, styles.wfull, { alignItems: "center" }]}>
           <SearchBar
             placeholder="Nhập tên hoặc số điện thoại"
             onChangeText={updateSearch}
@@ -110,20 +104,25 @@ const AdminAccountManagementScreen = () => {
             onClear={onClear}
           />
 
-          <Box w="90%" flex={1}>
-            <FlatList
-              data={displayedList}
-              renderItem={renderItem}
-              keyExtractor={keyExtractor}
-              ItemSeparatorComponent={Divider}
-              onEndReached={loadMoreUserData}
-              initialNumToRender={10}
-              maxToRenderPerBatch={10}
-              windowSize={10}
-            />
-          </Box>
-        </Box>
-      </Center>
+          {isLoading ? (
+            <View style={styles.centerBox}>
+              <ActivityIndicator size="large" color="blue" />
+            </View>
+          ) : (
+            <View style={[styles.flexBox, { width: "90%" }]}>
+              <FlatList
+                data={displayedList}
+                renderItem={renderItem}
+                keyExtractor={keyExtractor}
+                ItemSeparatorComponent={Divider}
+                onEndReached={loadMoreUserData}
+                initialNumToRender={10}
+                maxToRenderPerBatch={10}
+              />
+            </View>
+          )}
+        </View>
+      </View>
     </>
   );
 };

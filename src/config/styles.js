@@ -66,4 +66,11 @@ export default StyleSheet.create({
     backgroundColor: "white",
     paddingHorizontal: 12,
   },
+  flexBox: {
+    flex: 1,
+  },
+  centerBox: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
 });
