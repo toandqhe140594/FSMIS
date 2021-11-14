@@ -6,6 +6,7 @@ import { SearchBar, Text } from "react-native-elements";
 
 import FLocationCard from "../components/FLocationCard";
 import HeaderTab from "../components/HeaderTab";
+import colors from "../config/colors";
 import styles from "../config/styles";
 
 const AdminFLocationManagementScreen = () => {
@@ -50,7 +51,18 @@ const AdminFLocationManagementScreen = () => {
   };
 
   const renderItem = ({ item }) => (
-    <View style={styles.mt2} key={item.id}>
+    <View
+      style={[
+        styles.mt2,
+        {
+          borderColor: item.active
+            ? colors.defaultSuccess
+            : colors.defaultDanger,
+          borderWidth: 1,
+        },
+      ]}
+      key={item.id}
+    >
       <FLocationCard
         {...item}
         id={item.id}
@@ -59,6 +71,7 @@ const AdminFLocationManagementScreen = () => {
         rate={item.rating}
         showImage={false}
         isAdmin
+        isVerifed={item.verified}
       />
     </View>
   );
