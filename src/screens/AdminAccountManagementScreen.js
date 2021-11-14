@@ -2,7 +2,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, FlatList, View } from "react-native";
-import { Divider, SearchBar } from "react-native-elements";
+import { Badge, Divider, SearchBar } from "react-native-elements";
 
 import AvatarCard from "../components/AvatarCard";
 import HeaderTab from "../components/HeaderTab";
@@ -73,11 +73,27 @@ const AdminAccountManagementScreen = () => {
   const renderItem = ({ item }) => {
     return (
       <PressableCustomCard onPress={goToAccountDetailScreen(item.id)}>
-        <AvatarCard
-          nameUser={item.name}
-          subText={`SĐT: ${item.phone}`}
-          image={item.image}
-        />
+        <View
+          style={[
+            styles.flexBox,
+            { justifyContent: "space-between", flexDirection: "row" },
+          ]}
+        >
+          <View style={{ flex: 3 }}>
+            <AvatarCard
+              nameUser={item.name}
+              subText={`SĐT: ${item.phone}`}
+              image={item.image}
+            />
+          </View>
+          <View style={[styles.centerBox, styles.flexBox]}>
+            <Badge
+              value={item.active ? "Hoạt động" : "Bị vô hiệu"}
+              status={item.active ? "success" : "error"}
+              badgeStyle={{ borderRadius: 0 }}
+            />
+          </View>
+        </View>
       </PressableCustomCard>
     );
   };
