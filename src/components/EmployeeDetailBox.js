@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import React from "react";
 import { Avatar, Text } from "react-native-elements";
 
+import colors from "../config/colors";
 import styles from "../config/styles";
 
 const EmployeeDetailBox = ({
@@ -51,7 +52,8 @@ const EmployeeDetailBox = ({
           </Text>
           {status === "active" && (
             <Text style={styles.boldText}>
-              Trạng thái: <Text style={{ color: "green" }}>Hoạt động</Text>
+              Trạng thái:{" "}
+              <Text style={{ color: colors.defaultSuccess }}>Hoạt động</Text>
             </Text>
           )}
           {status === "inactive" && (
