@@ -26,6 +26,13 @@ public class FishingLocationController {
     private final VoteService voteService;
     private final ReportService reportService;
 
+
+    @GetMapping("/search")
+    public ResponseEntity<Object> searchFishingLocation(@RequestBody FilterDtoIn filterDtoIn,
+                                                        @RequestParam(required = false, defaultValue = "1") int pageNo){
+        return new ResponseEntity<>(fishingLocationService.searchFishingLocation(filterDtoIn, pageNo), HttpStatus.OK);
+    }
+
     @PostMapping("/add")
     public ResponseEntity<Object> createFishingLocation(@Valid @RequestBody FishingLocationDtoIn fishingLocationDtoIn,
                                                         HttpServletRequest request) {

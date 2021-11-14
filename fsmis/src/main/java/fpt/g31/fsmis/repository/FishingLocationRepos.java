@@ -2,12 +2,13 @@ package fpt.g31.fsmis.repository;
 
 import fpt.g31.fsmis.entity.FishingLocation;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface FishingLocationRepos extends JpaRepository<FishingLocation, Long> {
+public interface FishingLocationRepos extends JpaRepository<FishingLocation, Long>, JpaSpecificationExecutor<FishingLocation> {
 
     @Query(nativeQuery = true, value = "SELECT * FROM\n" +
             " (\n" +

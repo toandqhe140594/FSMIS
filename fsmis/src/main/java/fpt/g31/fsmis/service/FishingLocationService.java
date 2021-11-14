@@ -1,10 +1,11 @@
 package fpt.g31.fsmis.service;
 
+import fpt.g31.fsmis.dto.input.FilterDtoIn;
 import fpt.g31.fsmis.dto.input.FishingLocationDtoIn;
 import fpt.g31.fsmis.dto.output.*;
-import fpt.g31.fsmis.entity.BannedPhone;
-import fpt.g31.fsmis.entity.FishingLocation;
-import fpt.g31.fsmis.entity.User;
+import fpt.g31.fsmis.entity.*;
+import fpt.g31.fsmis.entity.address.District;
+import fpt.g31.fsmis.entity.address.Province;
 import fpt.g31.fsmis.entity.address.Ward;
 import fpt.g31.fsmis.exception.NotFoundException;
 import fpt.g31.fsmis.exception.UnauthorizedException;
@@ -15,14 +16,18 @@ import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.criteria.Join;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ValidationException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import static org.springframework.data.jpa.domain.Specification.where;
 
 @Service
 @AllArgsConstructor
@@ -362,7 +367,7 @@ public class FishingLocationService {
     public List<BannedPhoneDtoOut> getBannedPhone() {
         List<BannedPhoneDtoOut> output = new ArrayList<>();
         List<BannedPhone> bannedPhoneList = bannedPhoneRepos.findAll();
-        for (BannedPhone bannedPhone: bannedPhoneList) {
+        for (BannedPhone bannedPhone : bannedPhoneList) {
             BannedPhoneDtoOut dto = BannedPhoneDtoOut.builder()
                     .phone(bannedPhone.getPhone())
                     .description(bannedPhone.getDescription())
@@ -370,5 +375,71 @@ public class FishingLocationService {
             output.add(dto);
         }
         return output;
+    }
+
+    public PaginationDtoOut searchFishingLocation(FilterDtoIn filterDtoIn, int pageNo) {
+        Specification<FishingLocation> specification = where(fishingMethodIdIn(filterDtoIn.getFishingMethodIdList()))
+                .and(provinceIdIn(filterDtoIn.getProvinceIdList()))
+                .and(fishSpeciesIdIn(filterDtoIn.getFishSpeciesIdList()));
+        Page<FishingLocation> fishingLocationList = fishingLocationRepos.findAll(specification, PageRequest.of(pageNo - 1, 10));
+        List<FishingLocationItemDtoOut> output = new ArrayList<>();
+        for (FishingLocation location :
+                fishingLocationList) {
+            Double score = reviewRepos.getAverageScoreByFishingLocationIdAndActiveIsTrue(location.getId());
+            if (score == null) {
+                score = 0.0;
+            }
+            FishingLocationItemDtoOut fishingLocationItemDtoOut = FishingLocationItemDtoOut.builder()
+                    .id(location.getId())
+                    .name(location.getName())
+                    .image(ServiceUtils.splitString(location.getImageUrl()).get(0))
+                    .verify(location.isVerify())
+                    .score(score)
+                    .address(location.getAddress())
+                    .closed(location.isClosed())
+                    .build();
+            output.add(fishingLocationItemDtoOut);
+        }
+        return PaginationDtoOut.builder()
+                .totalItem(fishingLocationList.getTotalElements())
+                .totalPage(fishingLocationList.getTotalPages())
+                .items(output)
+                .build();
+    }
+
+    private Specification<FishingLocation> fishingMethodIdIn(List<Long> fishingMethodIdList) {
+        if (fishingMethodIdList.isEmpty()) {
+            return null;
+        }
+        return (root, criteriaQuery, criteriaBuilder) -> {
+            criteriaQuery.distinct(true);
+            Join<FishingLocation, Lake> lakeJoin = root.join("lakeList");
+            Join<Lake, FishingMethod> fishingMethodJoin = lakeJoin.join("fishingMethodSet");
+            return criteriaBuilder.in(fishingMethodJoin.get("id")).value(fishingMethodIdList);
+        };
+    }
+
+    private Specification<FishingLocation> provinceIdIn(List<Long> provinceIdList) {
+        if (provinceIdList.isEmpty()) {
+            return null;
+        }
+        return (root, criteriaQuery, criteriaBuilder) -> {
+            Join<FishingLocation, Ward> wardJoin = root.join("ward");
+            Join<Ward, District> districtJoin = wardJoin.join("district");
+            Join<District, Province> provinceJoin = districtJoin.join("province");
+            return criteriaBuilder.in(provinceJoin.get("id")).value(provinceIdList);
+        };
+    }
+
+    private Specification<FishingLocation> fishSpeciesIdIn(List<Long> fishSpeciesIdList) {
+        if (fishSpeciesIdList.isEmpty()) {
+            return null;
+        }
+        return (root, criteriaQuery, criteriaBuilder) -> {
+            Join<FishingLocation, Lake> lakeJoin = root.join("lakeList");
+            Join<Lake, FishInLake> fishInLakeJoin = lakeJoin.join("fishInLakeList");
+            Join<FishInLake, FishSpecies> fishSpeciesJoin = fishInLakeJoin.join("fishSpecies");
+            return criteriaBuilder.in(fishSpeciesJoin.get("id")).value(fishSpeciesIdList);
+        };
     }
 }
