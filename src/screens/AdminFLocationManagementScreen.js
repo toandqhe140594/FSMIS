@@ -60,8 +60,7 @@ const AdminFLocationManagementScreen = () => {
     </View>
   );
 
-  const onEndReached = ({ distanceFromEnd }) => {
-    if (distanceFromEnd > 100) return;
+  const onEndReached = () => {
     getFishingLocationList({ keyword: search, filterType: filter });
   };
 
@@ -70,7 +69,7 @@ const AdminFLocationManagementScreen = () => {
   return (
     <>
       <HeaderTab name="Quản lý xác thực Điểm câu" />
-      <View style={[styles.centerBox, { marginBottom: 24 }]}>
+      <View style={[styles.centerBox, { marginBottom: 125 }]}>
         <SearchBar
           placeholder="Nhập số điện thoại"
           onChangeText={updateSearch}
