@@ -30,6 +30,7 @@ const FManageHomeScreen = () => {
     getLocationDetailsById,
     getListOfLake,
     setLocationPostListFirstPage,
+    resetLocationDetails,
   } = useStoreActions((actions) => actions.FManageModel);
   const [role, setRole] = useState(null);
 
@@ -53,8 +54,13 @@ const FManageHomeScreen = () => {
     return () => {
       setLocationLatLng({ latitude: null, longitude: null });
       setLocationPostListFirstPage([]);
+      resetLocationDetails();
     };
   }, []);
+
+  useEffect(() => {
+    console.log(locationDetails.closed);
+  }, [locationDetails]);
 
   if (!role || !locationDetails.id)
     return (
@@ -85,6 +91,7 @@ const FManageHomeScreen = () => {
               <CloseFLocationTemporaryComponent
                 name={locationDetails.name || "Hồ câu"}
                 isClosed={locationDetails.closed}
+                key={locationDetails.closed}
               />
               <CloseFLocationComponent
                 name={locationDetails.name || "Hồ câu"}

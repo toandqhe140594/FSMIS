@@ -85,6 +85,9 @@ const model = {
     const { data } = await http.get(`location/${payload.id}`);
     actions.setLocationDetails(data);
   }),
+  resetLocationDetails: action((state) => {
+    state.locationDetails = {};
+  }),
 
   setListOfLake: action((state, payload) => {
     state.listOfLake = payload;
@@ -567,15 +570,14 @@ const model = {
   ),
 
   switchFishingLocationClosedState: action((state, payload) => {
-    const { closed } = state.locationDetails;
-    state.locationDetails = { ...state.locationDetails, closed: !closed };
     const foundIndex = state.listOfFishingLocations.findIndex(
       (location) => location.id === payload.id,
     );
     state.listOfFishingLocations[foundIndex] = {
       ...state.listOfFishingLocations[foundIndex],
-      closed: !closed,
+      closed: !state.locationDetails.closed,
     };
+    state.locationDetails.closed = !state.locationDetails.closed;
   }),
 
   // DucHM ADD_START 4/11/2021

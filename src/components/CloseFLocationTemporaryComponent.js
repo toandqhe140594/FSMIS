@@ -34,19 +34,10 @@ const CloseFLocationTemporaryComponent = ({ name, isClosed }) => {
 
   return (
     <View style={styles.menuScreenListItemView}>
-      <ListItem
-        onPress={() => {
-          closeAction();
-        }}
-      >
-        <Icon
-          name={isClosed ? "unlock" : "lock"}
-          size={26}
-          type="antdesign"
-          key={isClosed}
-        />
+      <ListItem onPress={closeAction} key={isClosed}>
+        <Icon name={isClosed ? "unlock" : "lock"} size={26} type="antdesign" />
         <ListItem.Content style={{ height: 40 }}>
-          <ListItem.Title key={isClosed}>
+          <ListItem.Title>
             {isClosed ? "Mở lại khu hồ" : "Đóng hồ tạm thời"}
           </ListItem.Title>
         </ListItem.Content>
@@ -57,10 +48,7 @@ const CloseFLocationTemporaryComponent = ({ name, isClosed }) => {
 };
 CloseFLocationTemporaryComponent.propTypes = {
   name: PropTypes.string.isRequired,
-  isClosed: PropTypes.bool,
-};
-CloseFLocationTemporaryComponent.defaultProps = {
-  isClosed: false,
+  isClosed: PropTypes.bool.isRequired,
 };
 
 export default CloseFLocationTemporaryComponent;
