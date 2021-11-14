@@ -60,7 +60,7 @@ const AnglerCatchReportScreen = () => {
   });
 
   const { control, handleSubmit, watch, setValue } = methods;
-  const watchALakeTypeField = watch("aLakeType");
+  const watchLakeIdField = watch("lakeId");
   const personalCheckout = useStoreActions(
     (actions) => actions.CheckInModel.personalCheckout,
   );
@@ -105,13 +105,11 @@ const AnglerCatchReportScreen = () => {
   }, []);
 
   useEffect(() => {
-    const filter = listFishModel.filter(
-      (item) => item.id === watchALakeTypeField,
-    );
+    const filter = listFishModel.filter((item) => item.id === watchLakeIdField);
     if (filter[0] !== undefined) {
       setListFish(filter[0].fishList);
     }
-  }, [watchALakeTypeField]);
+  }, [watchLakeIdField]);
 
   useEffect(() => {
     if (success === true)
