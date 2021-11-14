@@ -1,9 +1,10 @@
-import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { useStoreState } from "easy-peasy";
-import { Box, Button, Icon, ScrollView, VStack } from "native-base";
 import React from "react";
+import { FlatList, View } from "react-native";
+import { Button, Icon } from "react-native-elements";
 
+import styles from "../../config/styles";
 import { goToAdvanceSearchScreen } from "../../navigations";
 import FLocationCard from "../FLocationCard";
 
@@ -18,38 +19,53 @@ const ListViewRoute = () => {
     goToAdvanceSearchScreen(navigation);
   };
 
-  return (
-    <ScrollView>
-      <Box
-        flex={1}
-        alignItems="center"
-        w={{ base: "90%", md: "50%", lg: "30%" }}
-        alignSelf="center"
-      >
-        <Button
-          mt={5}
-          leftIcon={<Icon as={Ionicons} name="search" size="sm" />}
-          onPress={goToAdvanceSearchFilterScreen}
-        >
-          Tìm kiếm
-        </Button>
+  const ItemSeparatorComponent = () => <View style={styles.mt2} />;
 
-        {/* Draft view only */}
-        <VStack mt={3} space={3} w="100%">
-          {advancedLocationList.map((location) => (
-            <FLocationCard
-              id={location.id}
-              address={location.address}
-              name={location.name}
-              rate={location.rate}
-              isVerifed={location.isVerifed}
-              image={location.mainImage}
-              key={location.id}
-            />
-          ))}
-        </VStack>
-      </Box>
-    </ScrollView>
+  const renderItem = ({ item: location }) => (
+    <FLocationCard
+      id={location.id}
+      address={location.address}
+      name={location.name}
+      rate={location.score}
+      isVerifed={location.verify}
+      image={location.image}
+      isClosed={location.closed}
+      key={location.id}
+    />
+  );
+
+  const keyExtractor = (item) => item.id.toString();
+
+  return (
+    <View style={[styles.centerBox, styles.flexBox, styles.wfull]}>
+      <Button
+        containerStyle={styles.mt3}
+        icon={<Icon type="ionicons" name="search" color="white" />}
+        onPress={goToAdvanceSearchFilterScreen}
+        title="Tìm kiếm"
+      />
+
+      {/* Draft view only */}
+      <View
+        style={[
+          styles.wfull,
+          styles.mt2,
+          styles.mb1,
+          styles.flexBox,
+          { width: "90%" },
+        ]}
+      >
+        <FlatList
+          style={{ height: "100%" }}
+          data={advancedLocationList}
+          renderItem={renderItem}
+          keyExtractor={keyExtractor}
+          ItemSeparatorComponent={ItemSeparatorComponent}
+          initialNumToRender={3}
+          maxToRenderPerBatch={5}
+        />
+      </View>
+    </View>
   );
 };
 
