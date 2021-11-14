@@ -27,35 +27,26 @@ const AdminAccountManagementScreen = () => {
   const [search, setSearch] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [page, setPage] = useState(2);
-  const [displayedList, setDisplayedList] = useState(userList);
 
   const updateSearch = (searchKey) => {
     setSearch(searchKey);
   };
 
   const loadMoreUserData = () => {
-    getUserList({ pageNo: page });
+    getUserList({ pageNo: page, keyword: search, setIsLoading });
     setPage(page + 1);
   };
 
   const onClear = () => {
-    setDisplayedList(userList);
+    setIsLoading(true);
+    getUserList({ pageNo: 1, setIsLoading });
+    setPage(2);
   };
 
   const onEndEditing = () => {
-    if (!userList) return;
-    const filteredList = userList.filter(
-      (user) =>
-        user.name.toUpperCase().includes(search.toUpperCase()) ||
-        user.phone.includes(search),
-    );
-    setDisplayedList(filteredList);
-  };
-
-  const goToAccountDetailScreen = (id) => () => {
-    goToAdminAccountManagementDetailScreen(navigation, {
-      id,
-    });
+    setIsLoading(true);
+    getUserList({ keyword: search, pageNo: 1, setIsLoading });
+    setPage(2);
   };
 
   useEffect(() => {
@@ -70,9 +61,14 @@ const AdminAccountManagementScreen = () => {
   }, []);
 
   useEffect(() => {
-    setDisplayedList(userList);
     if (userList) setIsLoading(false);
   }, [userList]);
+
+  const goToAccountDetailScreen = (id) => () => {
+    goToAdminAccountManagementDetailScreen(navigation, {
+      id,
+    });
+  };
 
   const renderItem = ({ item }) => {
     return (
@@ -111,7 +107,7 @@ const AdminAccountManagementScreen = () => {
           ) : (
             <View style={[styles.flexBox, { width: "90%" }]}>
               <FlatList
-                data={displayedList}
+                data={userList}
                 renderItem={renderItem}
                 keyExtractor={keyExtractor}
                 ItemSeparatorComponent={Divider}

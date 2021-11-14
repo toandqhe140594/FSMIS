@@ -21,9 +21,9 @@ const model = {
   accountTotalCounts: null,
   blacklist: null,
   setAccountList: action((state, payload) => {
-    state.accountList = state.accountList.concat(payload);
+    if (payload.isOverwrite) state.accountList = payload.data;
+    else state.accountList = state.accountList.concat(payload.data);
   }),
-
   setAccountInformation: action((state, payload) => {
     state.accountInformation = payload;
   }),
@@ -35,6 +35,7 @@ const model = {
   }),
   getAccountList: thunk(async (actions, payload, { getState }) => {
     const pageNo = payload.pageNo || 1;
+    const keyword = payload.keyword || "";
     const setIsLoading = payload.setIsLoading || (() => {});
     const { accountTotalPage } = getState();
     if (pageNo < 1 || pageNo > accountTotalPage) return;
@@ -42,16 +43,17 @@ const model = {
       const { data } = await http.get(`${API_URL.ADMIN_ACCOUNT_LIST}`, {
         params: {
           pageNo,
+          keyword,
         },
       });
       const { totalPage, totalItem, items } = data;
-      await actions.setAccountList(items);
+      await actions.setAccountList({ data: items, isOverwrite: pageNo === 1 });
       actions.setAccountTotalCounts(totalItem);
       actions.setAccountTotalPage(totalPage);
       setIsLoading(false);
     } catch (error) {
       setIsLoading(false);
-      actions.setAccountList([]);
+      actions.setAccountList({ data: [], isOverwrite: true });
       actions.setAccountTotalCounts(null);
     }
   }),
