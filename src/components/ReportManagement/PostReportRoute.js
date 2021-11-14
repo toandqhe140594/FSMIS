@@ -5,33 +5,35 @@ import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
-  StyleSheet,
   TouchableOpacity,
   View,
 } from "react-native";
+import { Overlay } from "react-native-elements";
 
 import { goToAdminPostReportDetailScreen } from "../../navigations";
 import HeaderTab from "../HeaderTab";
 import ReportCard from "./ReportCard";
 
-const styles = StyleSheet.create({
-  flatList: {
-    marginTop: 12,
-  },
-});
+const OFF_SET = 120;
+const FILTER_TOUCHED_LABEL = "Đã xử lý";
+const FILTER_TOUCHED_VALUE = "ACTIVE";
+const FILTER_UNTOUCHED_LABEL = "Chưa xử lý";
+const FILTER_UNTOUCHED_VALUE = "INACTIVE";
 
 const PostReportRoute = () => {
   const navigation = useNavigation();
   const [isLoading, setIsLoading] = useState(true);
+  const [bigLoading, setBigLoading] = useState(false);
+  const [getStatus, setGetStatus] = useState("");
   const [pageNo, setPageNo] = useState(1);
-  const [momentumScrollBegin, setMomentumScrollBegin] = useState(true);
-  // const [filter, setFilter] = useState("");
-  const { listPostReport } = useStoreState((state) => state.ReportModel);
+  const [active, setActive] = useState(true);
+  const [filter, setFilter] = useState(FILTER_TOUCHED_VALUE);
+  const { listPostReport, totalPostReportPage } = useStoreState(
+    (state) => state.ReportModel,
+  );
   const { getListPostReport, resetReportList } = useStoreActions(
     (actions) => actions.ReportModel,
   );
-  // const [reportList, setReportList] = useState(reportListModel);
-
   const renderItem = ({ item }) => (
     <TouchableOpacity
       onPress={() => {
@@ -42,62 +44,103 @@ const PostReportRoute = () => {
     </TouchableOpacity>
   );
   const renderFooter = () =>
-    isLoading ? <ActivityIndicator size="large" color="#2089DC" /> : <></>;
-  const handleLoadMore = () => {
-    if (!momentumScrollBegin) {
-      setPageNo(pageNo + 1);
+    isLoading && !bigLoading ? (
+      <ActivityIndicator size="large" color="#2089DC" />
+    ) : null;
+  /**
+   * Change to new list
+   * @param {String} value selected value
+   */
+  const handleValueChange = (value) => {
+    if (value !== filter) {
       setIsLoading(true);
-      setMomentumScrollBegin(true);
+      setFilter(value);
+      setActive(value !== FILTER_UNTOUCHED_VALUE); // Change active based on list type
+      setPageNo(1); // Reset pageNo to 1 for new list
+      setBigLoading(true); // When change between each list type, use bigLoading
     }
   };
+  /**
+   * When FlatList scroll to bottom,
+   * process to the next post report page
+   */
+  const handleLoadMore = () => {
+    if (pageNo < totalPostReportPage) {
+      setIsLoading(true);
+      setPageNo(pageNo + 1);
+    }
+  };
+  /**
+   * Use only to reset list when unmount
+   */
   useEffect(() => {
-    getListPostReport({ pageNo, setIsLoading });
     return () => {
-      resetReportList({ type: "CATCH" });
+      resetReportList({ type: "POST" });
     };
-  }, [pageNo]);
-  // useEffect(() => {
-  //   const getFilteredList = () => {
-  //     switch (filter) {
-  //       case "ALL":
-  //         return reportListModel;
-  //       case "UNTOUCHED":
-  //         return reportListModel.filter(({ active }) => !active);
-  //       case "TOUCHED":
-  //         return reportListModel.filter(({ active }) => active);
-  //       default:
-  //         return reportList;
-  //     }
-  //   };
-  //   setReportList(getFilteredList());
-  // }, [filter]);
+  }, []);
+  /**
+   * When pageNo or active changed, get next location report page
+   */
+  useEffect(() => {
+    getListPostReport({ pageNo, setGetStatus, active });
+  }, [pageNo, active]);
+  /**
+   * Trigger on getStatus return
+   */
+  useEffect(() => {
+    if (getStatus === "SUCCESS") {
+      setIsLoading(false);
+      if (bigLoading) setBigLoading(false);
+      setGetStatus(null);
+    } else if (getStatus === "FAILED") {
+      setIsLoading(false);
+      if (bigLoading) setBigLoading(false);
+      setGetStatus(null);
+    }
+  }, [getStatus]);
   return (
     <>
       <HeaderTab name="Quản lý báo cáo" />
-      <View>
+      <Overlay
+        isVisible={isLoading && bigLoading}
+        fullScreen
+        overlayStyle={{
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "transparent",
+        }}
+      >
+        <ActivityIndicator size={60} color="#2089DC" />
+      </Overlay>
+      <View style={{ marginBottom: OFF_SET }}>
         <Select
           w="90%"
           my={2}
           alignSelf="center"
           placeholder="Lọc hiển thị báo cáo"
-          defaultValue="ALL"
-          value="ALL"
-          onValueChange={() => {}}
+          defaultValue={FILTER_TOUCHED_VALUE}
+          onValueChange={handleValueChange}
           fontSize="md"
         >
-          <Select.Item label="Tất cả" value="ALL" />
-          <Select.Item label="Chưa xử lý" value="UNTOUCHED" />
-          <Select.Item label="Đã xử lý" value="TOUCHED" />
+          <Select.Item
+            label={FILTER_TOUCHED_LABEL}
+            value={FILTER_TOUCHED_VALUE}
+          />
+          <Select.Item
+            label={FILTER_UNTOUCHED_LABEL}
+            value={FILTER_UNTOUCHED_VALUE}
+          />
         </Select>
 
         <FlatList
-          style={styles.flatList}
+          style={{ marginTop: 8 }}
           keyExtractor={(item) => `${item.id}`}
           data={listPostReport}
           renderItem={renderItem}
           ListFooterComponent={renderFooter}
-          onMomentumScrollBegin={() => {}}
+          bounces={false}
           onEndReached={handleLoadMore}
+          onEndReachedThreshold={0.2}
         />
       </View>
     </>
