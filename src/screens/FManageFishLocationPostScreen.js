@@ -130,7 +130,6 @@ const PostListContainerComponent = () => {
     </>
   );
   const footerComponent = () => <Divider mt={20} />;
-  console.log(`currentPinPost`, currentPinPost.id);
   useEffect(() => {
     getLocationPostListFirstPage();
     getPinPost();
