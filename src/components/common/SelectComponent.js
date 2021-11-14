@@ -83,7 +83,7 @@ SelectComponent.propTypes = {
   isTitle: PropTypes.bool,
   controllerName: PropTypes.string.isRequired,
   myError: PropTypes.objectOf(
-    PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
+    PropTypes.oneOf([PropTypes.string, PropTypes.object]),
   ),
   handleDataIfValChanged: PropTypes.func,
   useCustomError: PropTypes.bool,
