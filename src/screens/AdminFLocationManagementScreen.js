@@ -2,7 +2,7 @@ import { useStoreActions, useStoreState } from "easy-peasy";
 import { Select } from "native-base";
 import React, { useEffect, useState } from "react";
 import { FlatList, View } from "react-native";
-import { SearchBar } from "react-native-elements";
+import { SearchBar, Text } from "react-native-elements";
 
 import FLocationCard from "../components/FLocationCard";
 import HeaderTab from "../components/HeaderTab";
@@ -14,6 +14,9 @@ const AdminFLocationManagementScreen = () => {
   );
   const currentPage = useStoreState(
     (states) => states.AdminFLocationModel.currentPage,
+  );
+  const totalItem = useStoreState(
+    (states) => states.AdminFLocationModel.totalItem,
   );
   const getFishingLocationList = useStoreActions(
     (actions) => actions.AdminFLocationModel.getFishingLocationList,
@@ -81,7 +84,7 @@ const AdminFLocationManagementScreen = () => {
           onClear={onClear}
         />
 
-        <View style={[styles.mt3, { width: "90%" }]}>
+        <View style={[{ width: "90%" }]}>
           <Select
             placeholder="Lọc danh sách"
             fontSize="md"
@@ -92,9 +95,12 @@ const AdminFLocationManagementScreen = () => {
             <Select.Item label="Đã xác thực" value="active" />
             <Select.Item label="Chưa xác thực" value="inactive" />
           </Select>
+          <Text style={[styles.mt1, styles.mb1]} key="totalItem">
+            Tổng số: {totalItem}
+          </Text>
         </View>
         <FlatList
-          style={[styles.mt3, { width: "90%" }]}
+          style={[styles.mt1, { width: "90%" }]}
           data={fishingLocationList}
           renderItem={renderItem}
           keyExtractor={keyExtractor}
