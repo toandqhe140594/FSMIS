@@ -25,7 +25,7 @@ import SelectComponent from "../components/common/SelectComponent";
 import TextAreaComponent from "../components/common/TextAreaComponent";
 import HeaderTab from "../components/HeaderTab";
 import { ROUTE_NAMES, SCHEMA } from "../constants";
-import { showAlertAbsoluteBox, showAlertBox } from "../utilities";
+import { showAlertAbsoluteBox } from "../utilities";
 
 const styles = StyleSheet.create({
   sectionWrapper: {
@@ -39,7 +39,6 @@ const styles = StyleSheet.create({
 const AnglerCatchReportScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
-  const [imageArray, setImageArray] = useState([]);
   const [listFish, setListFish] = useState([]);
   const [success, setSuccess] = useState(null);
   const increaseCatchesCount = useStoreActions(
@@ -60,44 +59,34 @@ const AnglerCatchReportScreen = () => {
     resolver: yupResolver(SCHEMA.ANGLER_CATCH_REPORT_FORM),
   });
 
-  const { control, handleSubmit, watch } = methods;
+  const { control, handleSubmit, watch, setValue } = methods;
   const watchALakeTypeField = watch("aLakeType");
   const personalCheckout = useStoreActions(
     (actions) => actions.CheckInModel.personalCheckout,
   );
   const onSubmit = (data) => {
-    const { aCaption, aLakeType, isPublic, cards } = data;
+    console.log(data);
+    // const reduced = cards.reduce((filtered, card) => {
+    //   const { fishInLakeId } = listFish.find(({ id }) => id === card.fishType);
+    //   filtered.push({
+    //     quantity: card.catches,
+    //     fishSpeciesId: card.fishType,
+    //     returnToOwner: card.isReleased,
+    //     weight: card.totalWeight,
+    //     fishInLakeId,
+    //   });
+    //   return filtered;
+    // }, []);
 
-    if (imageArray !== undefined && imageArray.length > 0) {
-      const reduced = cards.reduce((filtered, card) => {
-        const { fishInLakeId } = listFish.find(
-          ({ id }) => id === card.fishType,
-        );
-        filtered.push({
-          quantity: card.catches,
-          fishSpeciesId: card.fishType,
-          returnToOwner: card.isReleased,
-          weight: card.totalWeight,
-          fishInLakeId,
-        });
-        return filtered;
-      }, []);
-
-      const imagesStringArray = imageArray.map((item) => item.base64);
-      submitCatchReport({
-        catchesDetailList: reduced,
-        description: aCaption,
-        hidden: !isPublic,
-        images: imagesStringArray,
-        lakeId: aLakeType,
-        setSuccess,
-      });
-      return;
-    }
-    showAlertBox("Thiếu thông tin", "Vui lòng thêm ảnh buổi câu");
-  };
-  const updateImageArray = (id) => {
-    setImageArray(imageArray.filter((image) => image.id !== id));
+    // const imagesStringArray = data.imageArray.map((item) => item.base64);
+    // submitCatchReport({
+    //   catchesDetailList: reduced,
+    //   description: aCaption,
+    //   hidden: !isPublic,
+    //   images: imagesStringArray,
+    //   lakeId: aLakeType,
+    //   setSuccess,
+    // });
   };
 
   // Fire when navigates back to this screen
@@ -105,7 +94,7 @@ const AnglerCatchReportScreen = () => {
     // useCallback will listen to route.param
     useCallback(() => {
       if (route.params?.base64Array && route.params.base64Array[0]) {
-        setImageArray(route.params.base64Array);
+        setValue("imageArray", route.params.base64Array);
         navigation.setParams({ base64Array: [] });
       }
     }, [route.params]),
@@ -149,15 +138,14 @@ const AnglerCatchReportScreen = () => {
                 {/* Impage picker section */}
                 <MultiImageSection
                   formRoute={ROUTE_NAMES.CATCHES_REPORT_FORM}
-                  deleteImage={updateImageArray}
-                  imageArray={imageArray}
+                  controllerName="imageArray"
                   selectLimit={3}
                 />
                 {/* Textarea input field */}
                 <TextAreaComponent
                   placeholder="Mô tả ngày câu của bạn"
                   numberOfLines={6}
-                  controllerName="aCaption"
+                  controllerName="description"
                 />
               </Stack>
             </Center>
@@ -169,7 +157,7 @@ const AnglerCatchReportScreen = () => {
                 label="Vị trí hồ câu"
                 placeholder="Chọn hồ câu"
                 data={listLake}
-                controllerName="aLakeType"
+                controllerName="lakeId"
               />
             </Center>
 
@@ -187,16 +175,29 @@ const AnglerCatchReportScreen = () => {
                 {/* Public checkbox field */}
                 <Controller
                   control={control}
-                  name="isPublic"
+                  name="hidden"
                   render={({ field: { onChange, value } }) => (
-                    <Checkbox
-                      mb={1}
-                      alignItems="flex-start"
-                      value={value}
-                      onChange={onChange}
-                    >
-                      Công khai thông tin
-                    </Checkbox>
+                    <>
+                      <Checkbox
+                        mb={1}
+                        alignItems="flex-start"
+                        value={value}
+                        onChange={onChange}
+                      >
+                        Để bài báo cá này ở chế độ riêng tư
+                      </Checkbox>
+                      <Text
+                        style={{
+                          fontSize: 12,
+                          fontStyle: "italic",
+                          marginBottom: 12,
+                        }}
+                      >
+                        Lưu ý: Bỏ qua lựa chọn này, kết quả báo cá của bạn sẽ
+                        công khai ở trang lịch sử bài cá của hồ để mọi người
+                        cùng theo dõi
+                      </Text>
+                    </>
                   )}
                 />
                 {/* Submit button */}

@@ -10,34 +10,40 @@ export const ANGLER_PROFILE_FORM = yup.object().shape({
 });
 
 export const ANGLER_CATCH_REPORT_FORM = yup.object().shape({
-  aCaption: yup.string().required("Hãy viết suy nghĩ của bạn về ngày câu"),
-  aLakeType: yup
+  imageArray: yup
+    .array()
+    .min(1, "Hãy chọn tối đa 3 ảnh miêu tả buổi câu")
+    .required("Ảnh không được để trống"),
+  description: yup.string().required("Hãy viết suy nghĩ của bạn về ngày câu"),
+  lakeId: yup
     .number()
     .typeError("Trường này chỉ được nhập số")
     .required("Loại hồ không được để trống"),
-  isPublic: yup.bool(),
-  isReleased: yup.bool(),
-  cards: yup.array().of(
+  hidden: yup.bool(),
+  catchesDetailList: yup.array().of(
     yup.object().shape({
-      fishType: yup
+      fishSpeciesId: yup
         .number()
         .typeError("Trường này chỉ được nhập số")
         .required("Loại cá không được để trống"),
-      catches: yup
+      quantity: yup
         .number()
         .typeError("Trường này chỉ được nhập số")
         .required("Số cá bắt được không được để trống"),
-      totalWeight: yup
+      weight: yup
         .number()
         .typeError("Trường này chỉ được nhập số")
         .required("Tổng cân nặng cá không được để trống"),
-      isReleased: yup.bool().default(false),
+      returnToOwner: yup.bool().default(false),
     }),
   ),
 });
 
 export const FMANAGE_LAKE_FORM = yup.object().shape({
-  imageArray: yup.array().min(1, "Hãy chọn một ảnh cho hồ"),
+  imageArray: yup
+    .array()
+    .min(1, "Hãy chọn một ảnh cho hồ")
+    .required("Ảnh không được để trống"),
   name: yup.string().required("Tên hồ không thể bỏ trống"),
   price: yup.string().required("Miêu tả giá vé ở hồ này"),
   methods: yup.array().min(1, "Trường này kia không được để trống"),
@@ -205,7 +211,10 @@ export const FMANAGE_LAKE_FISH_ADD_FORM = yup.object().shape(
 );
 
 export const FMANAGE_PROFILE_FORM = yup.object().shape({
-  imageArray: yup.array().min(1, "Hãy chọn tối đa 5 ảnh cho hồ"),
+  imageArray: yup
+    .array()
+    .min(1, "Hãy chọn tối đa 5 ảnh cho hồ")
+    .required("Ảnh không được để trống"),
   name: yup.string().required("Tên địa điểm không thể bỏ trống"),
   phone: yup
     .string()
