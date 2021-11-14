@@ -1039,7 +1039,6 @@ const model = {
   // END OF CHECKIN RELATED SECTION
 
   setCurrentPinPost: action((state, payload) => {
-    console.log(`payload.id`, payload.id);
     state.currentPinPost = payload;
   }),
   getPinPost: thunk(async (actions, payload, { getState }) => {
@@ -1058,13 +1057,10 @@ const model = {
   pinFLocationPost: thunk(async (actions, payload) => {
     const { postId } = payload;
     try {
-      const { status, data } = await http.post(`/location/post/pin/${postId}`);
-      if (status === 200) {
-        console.log("status pin :>> ", status);
-        console.log("pin data :>> ", data.id);
-      }
+      await http.post(`/location/post/pin/${postId}`);
+      console.log("success");
     } catch (error) {
-      console.log("status :>> ", error);
+      console.log("failed");
     }
   }),
 };
