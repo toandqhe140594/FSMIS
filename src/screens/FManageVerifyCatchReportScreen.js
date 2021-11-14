@@ -84,7 +84,7 @@ const UnresolvedCatchReportComponent = ({
         </Box>
         <VStack justifyContent="center" space={2.5} mt="4" width="33%">
           <Button
-            colorScheme="teal"
+            colorScheme="emerald"
             isLoading={loading}
             onPress={() => {
               approveHandler();
