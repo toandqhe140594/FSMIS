@@ -3,6 +3,7 @@ package fpt.g31.fsmis.controller;
 import fpt.g31.fsmis.dto.input.CatchReportDtoIn;
 import fpt.g31.fsmis.dto.input.ReportDtoIn;
 import fpt.g31.fsmis.service.CatchesService;
+import fpt.g31.fsmis.service.CheckInService;
 import fpt.g31.fsmis.service.ReportService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,7 @@ public class CatchesController {
 
     private final CatchesService catchesService;
     private final ReportService reportService;
+    private final CheckInService checkInService;
 
     @GetMapping("/{catchesId}")
     public ResponseEntity<Object> getCatchesDetails(HttpServletRequest request, @PathVariable Long catchesId) {
@@ -34,6 +36,7 @@ public class CatchesController {
 
     @PostMapping("/report")
     public ResponseEntity<Object> catchReport(HttpServletRequest request, @RequestBody @Valid CatchReportDtoIn catchReportDtoIn) {
+        checkInService.checkOut(request);
         return new ResponseEntity<>(catchesService.catchReport(request, catchReportDtoIn), HttpStatus.OK);
     }
 

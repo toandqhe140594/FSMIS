@@ -48,7 +48,7 @@ public class ServiceUtils {
         return Arrays.asList(output);
     }
 
-    public static String mergeString(List<String> input){
+    public static String mergeString(List<String> input) {
         StringBuilder sbd = new StringBuilder();
         for (String s :
                 input) {
