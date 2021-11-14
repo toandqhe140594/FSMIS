@@ -76,7 +76,9 @@ SelectComponent.propTypes = {
   label: PropTypes.string,
   placeholder: PropTypes.string,
   data: PropTypes.arrayOf(PropTypes.object),
-  myStyles: PropTypes.objectOf(PropTypes.string.isRequired),
+  myStyles: PropTypes.objectOf(
+    PropTypes.oneOf([PropTypes.string, PropTypes.number]),
+  ),
   hasAsterisk: PropTypes.bool,
   isTitle: PropTypes.bool,
   controllerName: PropTypes.string.isRequired,
