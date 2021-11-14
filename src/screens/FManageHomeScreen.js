@@ -58,10 +58,6 @@ const FManageHomeScreen = () => {
     };
   }, []);
 
-  useEffect(() => {
-    console.log(locationDetails.closed);
-  }, [locationDetails]);
-
   if (!role || !locationDetails.id)
     return (
       <Box flex={1} justifyContent="center" alignItems="center">
