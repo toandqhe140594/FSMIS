@@ -166,6 +166,9 @@ const PostEditScreen = () => {
       (item) => item.id === editData.id,
     );
     locationPostList[foundIndex] = editData;
+    if (currentPost.id === currentPinPost.id || currentPost.pinned) {
+      setCurrentPinPost(editData);
+    }
   };
   useEffect(() => {
     if (updateStatus === "SUCCESS") {
@@ -175,9 +178,6 @@ const PostEditScreen = () => {
         async () => {
           changeListPostItem();
           goToFManagePostScreen(navigation);
-          if (currentPost.id === currentPinPost.id || currentPost.pinned) {
-            setCurrentPinPost(editData);
-          }
         },
       );
     } else if (updateStatus === "FAILED") {
