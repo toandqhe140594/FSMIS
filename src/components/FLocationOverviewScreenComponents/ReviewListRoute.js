@@ -49,9 +49,7 @@ const PersonalReviewSection = ({ personalReview, currentLocationId }) => {
   } = personalReview;
 
   const goToWriteReviewScreenAction = () => {
-    goToWriteReviewScreen(navigation, {
-      id: currentLocationId,
-    });
+    goToWriteReviewScreen(navigation, { id: currentLocationId });
   };
 
   return (
