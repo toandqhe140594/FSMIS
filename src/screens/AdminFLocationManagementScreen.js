@@ -1,119 +1,106 @@
+import { useStoreActions, useStoreState } from "easy-peasy";
 import { Select } from "native-base";
 import React, { useEffect, useState } from "react";
-import { FormProvider, useForm } from "react-hook-form";
-import { FlatList, StyleSheet, View } from "react-native";
+import { FlatList, View } from "react-native";
+import { SearchBar } from "react-native-elements";
 
-import InputComponent from "../components/common/InputComponent";
 import FLocationCard from "../components/FLocationCard";
 import HeaderTab from "../components/HeaderTab";
-
-const styles = StyleSheet.create({
-  wrapper: { width: "90%", marginTop: 12 },
-  center: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 12,
-  },
-  card: {
-    marginTop: 8,
-  },
-});
-
-const APIList = [
-  {
-    id: 1,
-    address: "Hưng Yên",
-    image: "https://wallpaperaccess.com/full/317501.jpg",
-    isVerifed: true,
-    name: "Ho cau thuan viet",
-    rate: 4,
-  },
-  {
-    id: 2,
-    address: "Hưng Yên",
-    image: "https://wallpaperaccess.com/full/317501.jpg",
-    isVerifed: true,
-    name: "Ho cau thuan viet",
-    rate: 4,
-  },
-  {
-    id: 3,
-    address: "Hưng Yên",
-    image: "https://wallpaperaccess.com/full/317501.jpg",
-    isVerifed: false,
-    name: "Ho cau thuan viet",
-    rate: 4,
-  },
-  {
-    id: 4,
-    address: "Hưng Yên",
-    image: "https://wallpaperaccess.com/full/317501.jpg",
-    isVerifed: true,
-    name: "Ho cau thuan viet",
-    rate: 4,
-  },
-  {
-    id: 5,
-    address: "Hưng Yên",
-    image: "https://wallpaperaccess.com/full/317501.jpg",
-    isVerifed: false,
-    name: "Ho cau thuan viet",
-    rate: 4,
-  },
-];
+import styles from "../config/styles";
 
 const AdminFLocationManagementScreen = () => {
-  const [fLocationList, setFLocationList] = useState(APIList);
-  const [filter, setFilter] = useState("Tất cả");
-  const methods = useForm();
+  const fishingLocationList = useStoreState(
+    (states) => states.AdminFLocationModel.fishingLocationList,
+  );
+  const currentPage = useStoreState(
+    (states) => states.AdminFLocationModel.currentPage,
+  );
+  const getFishingLocationList = useStoreActions(
+    (actions) => actions.AdminFLocationModel.getFishingLocationList,
+  );
+  const getFishingLocationListOverwrite = useStoreActions(
+    (actions) => actions.AdminFLocationModel.getFishingLocationListOverwrite,
+  );
+
+  const [filter, setFilter] = useState("all");
+  const [search, setSearch] = useState("");
+
   useEffect(() => {
-    const getFilteredList = () => {
-      switch (filter) {
-        case "Tất cả":
-          return APIList;
-        case "Chưa xác thực":
-          return APIList.filter(({ isVerifed }) => !isVerifed);
-        case "Đã xác thực":
-          return APIList.filter(({ isVerifed }) => isVerifed);
-        default:
-          return fLocationList;
-      }
-    };
-    setFLocationList(getFilteredList());
-  }, [filter]);
+    if (currentPage === 1) getFishingLocationListOverwrite();
+  }, []);
+
+  const updateSearch = (searchKey) => {
+    setSearch(searchKey);
+  };
+
+  const onEndEditing = () => {
+    getFishingLocationList({ keyword: search });
+  };
+
+  const onClear = () => {};
+
+  const onValueChange = (value) => {
+    if (value !== filter) {
+      getFishingLocationListOverwrite({ filterType: value });
+      setFilter(value);
+    }
+  };
+
+  const renderItem = ({ item }) => (
+    <View style={styles.mt2} key={item.id}>
+      <FLocationCard
+        {...item}
+        id={item.id}
+        name={item.name}
+        address={item.address}
+        rate={item.rating}
+        showImage={false}
+        isAdmin
+      />
+    </View>
+  );
+
+  const onEndReached = ({ distanceFromEnd }) => {
+    if (distanceFromEnd > 100) return;
+    getFishingLocationList({ keyword: search, filterType: filter });
+  };
+
+  const keyExtractor = (item) => item.id.toString();
+
   return (
     <>
       <HeaderTab name="Quản lý xác thực Điểm câu" />
-      <View style={styles.center}>
-        <FormProvider {...methods}>
-          <InputComponent
-            myStyles={styles.wrapper}
-            placeholder="Tìm kiếm theo tên hồ"
-            controllerName="fLocationName"
-          />
-        </FormProvider>
-        <View style={styles.wrapper}>
+      <View style={[styles.centerBox, { marginBottom: 24 }]}>
+        <SearchBar
+          placeholder="Nhập số điện thoại"
+          onChangeText={updateSearch}
+          value={search}
+          containerStyle={styles.searchBar}
+          lightTheme
+          blurOnSubmit
+          onEndEditing={onEndEditing}
+          onClear={onClear}
+        />
+
+        <View style={[styles.mt3, { width: "90%" }]}>
           <Select
             placeholder="Lọc danh sách"
             fontSize="md"
-            onValueChange={setFilter}
-            value={filter}
+            onValueChange={onValueChange}
+            defaultValue="all"
           >
-            <Select.Item label="Tất cả" value="Tất cả" />
-            <Select.Item label="Chưa xác thực" value="Chưa xác thực" />
-            <Select.Item label="Đã xác thực" value="Đã xác thực" />
+            <Select.Item label="Tất cả" value="all" />
+            <Select.Item label="Đã xác thực" value="active" />
+            <Select.Item label="Chưa xác thực" value="inactive" />
           </Select>
         </View>
         <FlatList
-          style={styles.wrapper}
-          data={fLocationList}
-          renderItem={({ item }) => (
-            <View style={styles.card}>
-              <FLocationCard {...item} showImage={false} isAdmin />
-            </View>
-          )}
-          keyExtractor={(item) => item.id.toString()}
+          style={[styles.mt3, { width: "90%" }]}
+          data={fishingLocationList}
+          renderItem={renderItem}
+          keyExtractor={keyExtractor}
+          onEndReached={onEndReached}
+          onEndReachedThreshold={0.2}
         />
       </View>
     </>

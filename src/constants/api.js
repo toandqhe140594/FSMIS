@@ -13,6 +13,7 @@ export const ADMIN_REPORT_CATCH_LIST = "admin/report/catch";
 export const ADMIN_REPORT_LOCATION_LIST = "admin/report/location";
 export const ADMIN_REPORT_POST_LIST = "admin/report/post";
 export const ADMIN_REPORT_REVIEW_LIST = "admin/report/review";
+export const ADMIN_FISHING_LOCATION_LIST = "admin/location";
 
 export const STAFF_FIND_BY_PHONE = "findUserByPhone";
 export const STAFF_ADD = "staff/add";
