@@ -242,3 +242,17 @@ export const ADMIN_BLACKLIST_ADD_FORM = yup.object().shape({
     .matches(/((09|03|07|08|05)+([0-9]{8})\b)/, "Số điện thoại không hợp lệ")
     .required("Số điện thoại không dược bỏ trống"),
 });
+
+export const FMANAGE_POST_FORM = yup.object().shape({
+  postType: yup.string().required("Loại bài đăng không được để trống"),
+  content: yup.string().required("Nội dung bài đăng không được để trống"),
+  attachmentType: yup.string().required("Chọn loại đính kèm"),
+  imageArray: yup.array().when("attachmentType", {
+    is: "IMAGE",
+    then: yup.array().min(1, "Hãy chọn ảnh cho bài đăng"),
+  }),
+  postVideoLink: yup.string().when("attachmentType", {
+    is: "VIDEO",
+    then: yup.string().required("Link video không được để trống"),
+  }),
+});
