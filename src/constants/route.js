@@ -12,6 +12,7 @@ export const WRITE_REVIEW = "Write Review";
 export const WRITE_REPORT = "Write Report";
 export const LAKE_DETAIL = "Lake Detail";
 export const CATCHES_REPORT_DETAIL = "Catches Report Detail";
+export const ADVANCE_SEARCH = "Angler Advanced Search Screen";
 
 export const CATCHES_REPORT_FORM = "Catches Report FORM";
 export const PROFILE_CHANGE_INFORMATION = "Change Profiler Information";

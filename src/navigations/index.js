@@ -35,6 +35,10 @@ const goToOTPScreen = (navigation) => {
   navigation.navigate(ROUTE_NAMES.OTP_SCREEN);
 };
 
+const goToAdvanceSearchScreen = (navigation, params) => {
+  navigation.navigate(ROUTE_NAMES.ADVANCE_SEARCH, { ...params });
+};
+
 const goToLakeDetailScreen = (navigation, params) => {
   navigation.navigate(ROUTE_NAMES.LAKE_DETAIL, { ...params });
 };
@@ -231,6 +235,7 @@ export {
   goToAdminFLocationReportDetailScreen,
   goToAdminPostReportDetailScreen,
   goToAdminReviewReportDetailScreen,
+  goToAdvanceSearchScreen,
   goToCatchReportDetailScreen,
   goToCatchReportFormScreen,
   goToCatchReportVerifyDetailScreen,

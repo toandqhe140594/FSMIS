@@ -2,6 +2,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React from "react";
 
 import { ROUTE_NAMES } from "../constants";
+import AnglerAdvanceSearchScreen from "../screens/AnglerAdvanceSearchScreen";
 import AnglerCatchReportDetailScreen from "../screens/AnglerCatchReportDetailScreen";
 import AnglerCatchReportScreen from "../screens/AnglerCatchReportScreen";
 import ChangePhoneNumberScreen from "../screens/AnglerChangePhoneNumberScreen";
@@ -76,6 +77,10 @@ const RootStackNavigator = () => {
       <RootStack.Screen
         name={ROUTE_NAMES.MEDIA_SELECTOR}
         component={MediaSelectScreen}
+      />
+      <RootStack.Screen
+        name={ROUTE_NAMES.ADVANCE_SEARCH}
+        component={AnglerAdvanceSearchScreen}
       />
     </RootStack.Navigator>
   );
