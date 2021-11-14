@@ -1,6 +1,8 @@
 package fpt.g31.fsmis.repository;
 
 import fpt.g31.fsmis.entity.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -23,4 +25,5 @@ public interface UserRepos extends JpaRepository<User, Long> {
             "from tbl_employee_list tel ", nativeQuery = true)
     List<Long> getAllStaffId();
 
+    Page<User> findAllByIdNot(Pageable pageable, Long i);
 }

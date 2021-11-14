@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.ValidationException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -137,12 +138,31 @@ public class UserService {
                 .build();
     }
 
-    public PaginationDtoOut getAccountList(int pageNo) {
+    public PaginationDtoOut getAccountList(int pageNo, String phone) {
         if (pageNo <= 0) {
             throw new ValidationException(INVALID_PAGE_NUMBER);
         }
         List<AdminAccountItemDtoOut> output = new ArrayList<>();
-        Page<User> accountList = userRepos.findAll(PageRequest.of(pageNo - 1, 10));
+        if (!phone.isEmpty()) {
+            Optional<User> accountOptional = userRepos.findByPhone(phone);
+            if (accountOptional.isPresent()) {
+                User account = accountOptional.get();
+                AdminAccountItemDtoOut dtoOut =AdminAccountItemDtoOut.builder()
+                        .id(account.getId())
+                        .name(account.getFullName())
+                        .active(account.isActive())
+                        .avatar(account.getAvatarUrl())
+                        .phone(account.getPhone())
+                        .build();
+                output.add(dtoOut);
+            }
+            return PaginationDtoOut.builder()
+                    .totalPage(1)
+                    .totalItem(1)
+                    .items(output)
+                    .build();
+        }
+        Page<User> accountList = userRepos.findAllByIdNot(PageRequest.of(pageNo - 1, 10), 1L);
         for (User account : accountList) {
             AdminAccountItemDtoOut dtoOut = AdminAccountItemDtoOut.builder()
                     .id(account.getId())
