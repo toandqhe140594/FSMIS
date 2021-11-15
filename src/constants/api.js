@@ -6,12 +6,14 @@ export const ADMIN_FISH_ADD = "util/fish";
 export const ADMIN_FISH_EDIT = "util/fish";
 export const ADMIN_FISH_DELETE = "util/fish";
 export const ADMIN_FISHING_METHOD_LIST = "util/method";
-export const ADMIN_ACCOUNT_LIST = "util/method";
+export const ADMIN_ACCOUNT_LIST = "admin/account";
 export const ADMIN_ACCOUNT_INFORMATION = "util/method";
+export const ADMIN_ACCOUNT_BANNED_PHONE_LIST = "admin/location/banned";
 export const ADMIN_REPORT_CATCH_LIST = "admin/report/catch";
 export const ADMIN_REPORT_LOCATION_LIST = "admin/report/location";
 export const ADMIN_REPORT_POST_LIST = "admin/report/post";
 export const ADMIN_REPORT_REVIEW_LIST = "admin/report/review";
+export const ADMIN_FISHING_LOCATION_LIST = "admin/location";
 
 export const STAFF_FIND_BY_PHONE = "findUserByPhone";
 export const STAFF_ADD = "staff/add";

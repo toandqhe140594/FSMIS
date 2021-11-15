@@ -57,8 +57,8 @@ const FManageEditProfileScreen = () => {
     (actions) => actions.FManageModel,
   );
   const methods = useForm({
-    mode: "onChange",
-    reValidateMode: "onChange",
+    mode: "onSubmit",
+    reValidateMode: "onSubmit",
     resolver: yupResolver(SCHEMA.FMANAGE_PROFILE_FORM),
   });
   const generateAddressDropdown = useCallback((name, value) => {

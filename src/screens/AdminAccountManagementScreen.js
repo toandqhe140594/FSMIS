@@ -1,9 +1,8 @@
 import { useNavigation } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
-import { Box, Center, Divider } from "native-base";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, FlatList } from "react-native";
-import { SearchBar } from "react-native-elements";
+import { ActivityIndicator, FlatList, View } from "react-native";
+import { Divider, SearchBar } from "react-native-elements";
 
 import AvatarCard from "../components/AvatarCard";
 import HeaderTab from "../components/HeaderTab";
@@ -15,68 +14,81 @@ const AdminAccountManagementScreen = () => {
   const navigation = useNavigation();
 
   const userList = useStoreState(
-    (states) => states.AccountManagementModel.userList,
+    (states) => states.AccountManagementModel.accountList,
   );
-  const { setUserList, getUserList } = useStoreActions(
-    (actions) => actions.AccountManagementModel,
+
+  const clearAccountList = useStoreActions(
+    (actions) => actions.AccountManagementModel.clearAccountList,
+  );
+  const getUserList = useStoreActions(
+    (actions) => actions.AccountManagementModel.getAccountList,
   );
 
   const [search, setSearch] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [page, setPage] = useState(2);
-  const [displayedList, setDisplayedList] = useState(userList);
 
   const updateSearch = (searchKey) => {
     setSearch(searchKey);
   };
 
   const loadMoreUserData = () => {
-    getUserList({ pageNo: page });
+    getUserList({ pageNo: page, keyword: search, setIsLoading });
     setPage(page + 1);
   };
 
   const onClear = () => {
-    setDisplayedList(userList);
+    setIsLoading(true);
+    getUserList({ pageNo: 1, setIsLoading });
+    setPage(2);
   };
 
   const onEndEditing = () => {
-    if (!userList) return;
-    const filteredList = userList.filter(
-      (user) =>
-        user.name.toUpperCase().includes(search.toUpperCase()) ||
-        user.phone.includes(search),
-    );
-    setDisplayedList(filteredList);
+    setIsLoading(true);
+    getUserList({ keyword: search, pageNo: 1, setIsLoading });
+    setPage(2);
   };
 
   useEffect(() => {
-    setDisplayedList(userList);
-    if (userList) setIsLoading(false);
-  }, [userList]);
-
-  useEffect(() => {
-    getUserList({ pageNo: 1 });
+    getUserList({ pageNo: 1, setIsLoading });
     const loadingTimeout = setTimeout(() => {
       setIsLoading(false);
-    }, 1000); // Test
+    }, 5000); // Test
     return () => {
       clearTimeout(loadingTimeout);
-      setUserList([]);
+      clearAccountList();
     };
   }, []);
 
-  if (isLoading)
+  useEffect(() => {
+    if (userList) setIsLoading(false);
+  }, [userList]);
+
+  const goToAccountDetailScreen = (id) => () => {
+    goToAdminAccountManagementDetailScreen(navigation, {
+      id,
+    });
+  };
+
+  const renderItem = ({ item }) => {
     return (
-      <Center flex={1}>
-        <ActivityIndicator size="large" color="blue" />
-      </Center>
+      <PressableCustomCard onPress={goToAccountDetailScreen(item.id)}>
+        <AvatarCard
+          nameUser={item.name}
+          subText={`SĐT: ${item.phone}`}
+          image={item.image}
+        />
+      </PressableCustomCard>
     );
+  };
+
+  const keyExtractor = (item) => item.id.toString();
 
   return (
     <>
       <HeaderTab name="Quản lý tài khoản" />
-      <Center flex={1} alignItems="center">
-        <Box w="100%" alignItems="center" flex={1}>
+      <View style={styles.flexBox}>
+        <View style={[styles.flexBox, styles.wfull, { alignItems: "center" }]}>
           <SearchBar
             placeholder="Nhập tên hoặc số điện thoại"
             onChangeText={updateSearch}
@@ -88,33 +100,25 @@ const AdminAccountManagementScreen = () => {
             onClear={onClear}
           />
 
-          <Box w="90%">
-            <FlatList
-              data={displayedList}
-              renderItem={({ item }) => (
-                <PressableCustomCard
-                  onPress={() => {
-                    goToAdminAccountManagementDetailScreen(navigation, {
-                      id: item.id,
-                    });
-                  }}
-                >
-                  <AvatarCard
-                    nameUser={item.name}
-                    subText={`SĐT: ${item.phone}`}
-                    image={item.image}
-                  />
-                </PressableCustomCard>
-              )}
-              keyExtractor={(item) => item.id.toString()}
-              ItemSeparatorComponent={Divider}
-              onEndReached={() => {
-                loadMoreUserData();
-              }}
-            />
-          </Box>
-        </Box>
-      </Center>
+          {isLoading ? (
+            <View style={styles.centerBox}>
+              <ActivityIndicator size="large" color="blue" />
+            </View>
+          ) : (
+            <View style={[styles.flexBox, { width: "90%" }]}>
+              <FlatList
+                data={userList}
+                renderItem={renderItem}
+                keyExtractor={keyExtractor}
+                ItemSeparatorComponent={Divider}
+                onEndReached={loadMoreUserData}
+                initialNumToRender={10}
+                maxToRenderPerBatch={10}
+              />
+            </View>
+          )}
+        </View>
+      </View>
     </>
   );
 };

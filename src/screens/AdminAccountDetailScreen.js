@@ -1,47 +1,107 @@
+import { useRoute } from "@react-navigation/native";
+import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, Button } from "native-base";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { ActivityIndicator, Text } from "react-native";
 
 import EmployeeDetailBox from "../components/EmployeeDetailBox";
 import HeaderTab from "../components/HeaderTab";
+import { showToastMessage } from "../utilities";
 
 const AdminAccountDetailScreen = () => {
-  const [status, setStatus] = useState(true);
+  const route = useRoute();
+
   const [isLoading, setIsLoading] = useState(false);
+  const [screenLoading, setScreenLoading] = useState(true);
+  const [success, setSuccess] = useState(null);
+
+  const accountInformation = useStoreState(
+    (states) => states.AccountManagementModel.accountInformation,
+  );
+  const activateAccount = useStoreActions(
+    (actions) => actions.AccountManagementModel.activateAccount,
+  );
+  const getAccountInformation = useStoreActions(
+    (actions) => actions.AccountManagementModel.getAccountInformation,
+  );
+  const clearAccountInformation = useStoreActions(
+    (actions) => actions.AccountManagementModel.clearAccountInformation,
+  );
+
+  let activationTimeout = null;
 
   const changeAccountStatus = () => {
     setIsLoading(true);
-    setTimeout(() => {
+    activationTimeout = setTimeout(() => {
       setIsLoading(false);
-    }, 1000);
-    setStatus(!status);
+    }, 5000);
+    activateAccount({ setSuccess });
   };
+
+  useEffect(() => {
+    if (route.params.id) {
+      getAccountInformation({
+        id: route.params.id,
+        setLoading: setScreenLoading,
+      });
+    }
+    return () => {
+      clearAccountInformation();
+      if (activationTimeout !== null) clearTimeout(activationTimeout);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (success !== null) {
+      setIsLoading(false);
+    }
+    if (success === false) showToastMessage("Thao tác thất bại");
+    setSuccess(null);
+  }, [success]);
+
+  if (screenLoading)
+    return (
+      <>
+        <HeaderTab name="Quản lý tài khoản" />
+        <Box flex={1} alignItems="center" justifyContent="flex-start">
+          <ActivityIndicator size="large" color="blue" />
+        </Box>
+      </>
+    );
 
   return (
     <>
       <HeaderTab name="Quản lý tài khoản" />
       <Box flex={1} alignItems="center" justifyContent="flex-start">
-        <EmployeeDetailBox
-          name="Đào Quốc Toản"
-          dob="15/10/2021"
-          phoneNumber="098764434"
-          gender
-          address="Số 1 hồ Hoàng Kiếm Việt Nam Hà Nội Châu Á"
-          isDetailed
-          status={status ? "active" : "inactive"}
-        />
+        {accountInformation.id ? (
+          <>
+            <EmployeeDetailBox
+              name={accountInformation.name}
+              dob={accountInformation.dob}
+              phoneNumber={accountInformation.phone}
+              gender={accountInformation.gender}
+              address={accountInformation.address}
+              isDetailed
+              status={accountInformation.active ? "active" : "inactive"}
+              key={accountInformation.id}
+            />
 
-        <Box w="70%" mb={5}>
-          <Button
-            w="100%"
-            colorScheme={status ? "error" : "success"}
-            onPress={() => {
-              changeAccountStatus();
-            }}
-            isLoading={isLoading}
-          >
-            {status ? "Vô hiệu hóa tài khoản" : "Mở lại tài khoản"}
-          </Button>
-        </Box>
+            <Box w="70%" mb={5}>
+              <Button
+                w="100%"
+                colorScheme={accountInformation.active ? "error" : "emerald"}
+                onPress={changeAccountStatus}
+                isLoading={isLoading}
+              >
+                {accountInformation.active
+                  ? "Vô hiệu hóa tài khoản"
+                  : "Mở lại tài khoản"}
+              </Button>
+            </Box>
+          </>
+        ) : (
+          <Text>Không có dữ liệu</Text>
+        )}
       </Box>
     </>
   );

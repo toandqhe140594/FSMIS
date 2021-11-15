@@ -3,90 +3,132 @@ import { action, thunk } from "easy-peasy";
 import { API_URL } from "../constants";
 import http from "../utilities/Http";
 
-// initial state for test purpose only since there wasnot api for get userlist
-const initialUserList = [
-  {
-    id: 1,
-    name: "Nguyễn Văn A",
-    phone: "0987654321",
-    image:
-      "https://cdns-images.dzcdn.net/images/artist/4099da261a61666f58bb3598f0c4c37f/264x264.jpg",
-  },
-  {
-    id: 2,
-    name: "Nguyễn Văn B",
-    phone: "0987654322",
-    image:
-      "https://i.zoomtventertainment.com/story/Lisa_0.png?tr=w-400,h-300,fo-auto",
-  },
-  {
-    id: 3,
-    name: "Nguyễn Văn C",
-    phone: "0987654323",
-    image:
-      "http://pm1.narvii.com/7145/8e99f6f6f2e12a708ea03fcbe8264f311d859842r1-409-512v2_uhq.jpg",
-  },
-];
-
-const initialBlacklist = [
-  {
-    phone: "0985043311",
-    description: "vippro",
-  },
-  {
-    phone: "098504331322",
-    description: "clone",
-  },
-  {
-    phone: "09892",
-  },
-  {
-    phone: "3467",
-    description: "vippro",
-  },
-  {
-    phone: "645",
-    description: "clone",
-  },
-  {
-    phone: "235",
-  },
-];
-
 // initial state for test purpose only since there wasnot api for get account information
 const initialAccountInformation = {
-  id: 1,
+  id: 9,
   name: "Nguyễn Tài Khoản",
   dob: "01/01/2021",
   phone: "098765433",
   gender: true,
   address: "Số 1 hồ Hoàn Kiếm Việt Nam Hà Nội Châu Đại Dương",
   status: true,
+  active: true,
 };
 
 const model = {
-  userList: [...initialUserList],
-  accountInformation: {},
-  totalPage: 1,
-  blacklist: null,
-  setUserList: action((state, payload) => {
-    state.userList = payload;
-  }),
+  accountList: [], // List data of accounts
+  accountInformation: {}, // Detail information of an account
+  accountTotalPage: 1, // Maximum account page
+  accountTotalCounts: null, // Total accounts
+  blacklist: null, // Blacklist data
 
+  /**
+   * Set data for account list
+   * @param {Object} [payload] params pass to function
+   * @param {boolean} [payload.isOverwrite] true - overwrite the list data
+   * @param {Array} [payload.data] list data of accounts
+   */
+  setAccountList: action((state, payload) => {
+    if (payload.isOverwrite) state.accountList = payload.data;
+    else state.accountList = state.accountList.concat(payload.data);
+  }),
+  /**
+   * Set account detail information
+   */
   setAccountInformation: action((state, payload) => {
     state.accountInformation = payload;
   }),
-  setTotalPage: action((state, payload) => {
-    state.totalPage = payload < 1 ? 1 : payload;
+  /**
+   * Change account active status in state
+   * @param {number} payload.id id of the account
+   */
+  changeAccountActivation: action((state, payload) => {
+    const activateStatus = state.accountInformation.active;
+    const { id } = payload;
+    const foundIndex = state.accountList.findIndex(
+      (account) => account.id === id,
+    );
+    state.accountList[foundIndex].active = !activateStatus;
+    state.accountInformation.active = !activateStatus;
   }),
-  // Test
-  getUserList: thunk(async (actions) => {
-    // const { data } = await http.get(`${API_URL.ADMIN_ACCOUNT_LIST}`);
-    actions.setUserList(initialUserList);
+  /**
+   * Set account total page
+   * @param {number} payload number of pages, if less than 1 then set account total page = 1
+   */
+  setAccountTotalPage: action((state, payload) => {
+    state.accountTotalPage = payload < 1 ? 1 : payload;
   }),
-  getAccountInformation: thunk(async (actions) => {
-    // const { data } = await http.get(`${API_URL.ADMIN_ACCOUNT_INFORMATION}`);
-    actions.setAccountInformation({ ...initialAccountInformation });
+  /**
+   * Set total accounts number
+   */
+  setAccountTotalCounts: action((state, payload) => {
+    state.accountTotalCounts = payload;
+  }),
+  /**
+   * Call API to get account list data
+   * @param {Object} [payload] params pass to function
+   * @param {number} [payload.pageNo] page of the data
+   * @param {string} [payload.keyword] search keyword
+   * @param {Function} [payload.setIsLoading] function indicates loading state
+   */
+  getAccountList: thunk(async (actions, payload = {}, { getState }) => {
+    const pageNo = payload.pageNo || 1;
+    const keyword = payload.keyword || "";
+    const setIsLoading = payload.setIsLoading || (() => {});
+    const { accountTotalPage } = getState();
+    // If page number is invalid
+    if (pageNo < 1 || pageNo > accountTotalPage) return;
+    try {
+      const { data } = await http.get(`${API_URL.ADMIN_ACCOUNT_LIST}`, {
+        params: {
+          pageNo,
+          keyword,
+        },
+      });
+      const { totalPage, totalItem, items } = data;
+      await actions.setAccountList({ data: items, isOverwrite: pageNo === 1 });
+      actions.setAccountTotalCounts(totalItem);
+      actions.setAccountTotalPage(totalPage);
+      setIsLoading(false);
+    } catch (error) {
+      setIsLoading(false);
+      actions.setAccountList({ data: [], isOverwrite: true });
+      actions.setAccountTotalCounts(null);
+    }
+  }),
+  // Clear the account list data
+  clearAccountList: action((state) => {
+    state.accountList = [];
+  }),
+  getAccountInformation: thunk(async (actions, payload = {}) => {
+    const setSuccess = payload.setSuccess || (() => {});
+    const setLoading = payload.setLoading || (() => {});
+    try {
+      // const { data } = await http.get(`${API_URL.ADMIN_ACCOUNT_INFORMATION}`);
+      actions.setAccountInformation({ ...initialAccountInformation });
+      setSuccess(true);
+    } catch (error) {
+      setSuccess(false);
+    }
+    setLoading(false);
+  }),
+  clearAccountInformation: action((state) => {
+    state.accountInformation = {};
+  }),
+  /**
+   * Activate/deactive an account
+   */
+  activateAccount: thunk(async (actions, payload = {}, { getState }) => {
+    const { id } = getState().accountInformation;
+    const setSuccess = payload.setSuccess || (() => {});
+    try {
+      // const { data } = await http.get(`${API_URL.ADMIN_ACCOUNT_INFORMATION}`);
+      actions.changeAccountActivation({ id });
+      setSuccess(true);
+    } catch (error) {
+      console.log(error);
+      setSuccess(false);
+    }
   }),
 
   // START OF BLACKLIST RELATED STUFF SECTION
@@ -98,7 +140,7 @@ const model = {
     state.blacklist = payload;
   }),
   appendDataToBlacklist: action((state, payload) => {
-    state.blacklist = state.blacklist.concat(payload);
+    state.blacklist = [payload, ...state.blacklist];
   }),
   /**
    * Remove an element from blacklist data state
@@ -115,8 +157,14 @@ const model = {
    * Get blacklist data
    */
   getBlacklist: thunk(async (actions) => {
-    // const { data } = await http.get(`${API_URL.ADMIN_ACCOUNT_LIST}`);
-    actions.setBlacklist(initialBlacklist);
+    try {
+      const { data } = await http.get(
+        `${API_URL.ADMIN_ACCOUNT_BANNED_PHONE_LIST}`,
+      );
+      actions.setBlacklist(data);
+    } catch (error) {
+      actions.setBlacklist(null);
+    }
   }),
   whitelistPhoneNumber: thunk(async (actions, payload) => {
     const { phone, setSuccess } = payload;

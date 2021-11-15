@@ -9,22 +9,15 @@ import { Button, VStack } from "native-base";
 import React, { useCallback, useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { Dimensions, ScrollView, StyleSheet, View } from "react-native";
-import * as yup from "yup";
 
 import InputComponent from "../components/common/InputComponent";
 import MultiImageSection from "../components/common/MultiImageSection";
 import SelectComponent from "../components/common/SelectComponent";
 import TextAreaComponent from "../components/common/TextAreaComponent";
 import HeaderTab from "../components/HeaderTab";
-import { ROUTE_NAMES } from "../constants";
+import { ROUTE_NAMES, SCHEMA } from "../constants";
 import { goToFManagePostScreen } from "../navigations";
 import { showAlertAbsoluteBox, showAlertBox } from "../utilities";
-
-const validationSchema = yup.object().shape({
-  postType: yup.string().required("Loại bài đăng không được để trống"),
-  content: yup.string().required("Nội dung bài đăng không được để trống"),
-  postVideoLink: yup.string(),
-});
 
 const postTypeData = [
   { name: "Thông báo", id: "ANNOUNCING" },
@@ -38,6 +31,10 @@ const attachmentData = [
 ];
 const styles = StyleSheet.create({
   sectionWrapper: {
+    width: "90%",
+    flex: 2,
+  },
+  buttonWrapper: {
     width: "90%",
   },
   center: {
@@ -57,31 +54,30 @@ const PostEditScreen = () => {
 
   const route = useRoute();
   const navigation = useNavigation();
-  const [imageArray, setImageArray] = useState([]);
   const editPost = useStoreActions((actions) => actions.FManageModel.editPost);
   const [updateStatus, setUpdateStatus] = useState("");
   const [loadingButton, setLoadingButton] = useState(false);
   const methods = useForm({
     mode: "onSubmit",
     reValidateMode: "onSubmit",
-    resolver: yupResolver(validationSchema),
+    resolver: yupResolver(SCHEMA.FMANAGE_POST_FORM),
     defaultValues: {
       content: currentPost.content,
       postType: currentPost.postType,
       attachmentType: currentPost.attachmentType,
+      imageArray: [],
     },
   });
 
   const { handleSubmit, watch, setValue, getValues } = methods;
   const watchAttachmentType = watch("attachmentType");
-  /**
-   *  Reset the image array if imageArray is not empty
-   *  when switching to input link video
-   */
 
+  /**
+   * Populates data to image selector or video link field
+   */
   const setDefaultValues = () => {
     if (watchAttachmentType === "IMAGE") {
-      setImageArray([{ id: 1, base64: currentPost.url }]);
+      setValue("imageArray", [{ id: 1, base64: currentPost.url }]);
     }
     if (watchAttachmentType === "VIDEO") {
       setValue("postVideoLink", currentPost.url);
@@ -91,25 +87,36 @@ const PostEditScreen = () => {
   useEffect(() => {
     setDefaultValues();
   }, []);
+  /**
+   * Reset previous input when switching
+   * new attachment type
+   */
   useEffect(() => {
     switch (watchAttachmentType) {
       case "IMAGE":
-        setValue(" postVideoLink", "");
+        if (getValues("postVideoLink")) {
+          setValue("postVideoLink", "");
+        }
         break;
-
       case "VIDEO":
-        if (imageArray?.length > 0) setImageArray([]);
+        if (getValues("imageArray")?.length > 0) {
+          setValue("imageArray", []);
+        }
         break;
-
       default:
-        if (imageArray?.length > 0) setImageArray([]);
+        if (getValues("imageArray")?.length > 0) {
+          setValue("imageArray", []);
+        }
+        if (getValues("postVideoLink")) {
+          setValue("postVideoLink", "");
+        }
     }
   }, [watchAttachmentType]);
 
   const setAttachmentUrl = (type) => {
     switch (type) {
       case "IMAGE":
-        return imageArray[0].base64;
+        return getValues("imageArray")[0].base64;
       case "VIDEO":
         return getValues("postVideoLink");
       default:
@@ -117,8 +124,8 @@ const PostEditScreen = () => {
     }
   };
   const onSubmit = (data) => {
+    setLoadingButton(true);
     const url = setAttachmentUrl(watchAttachmentType);
-
     const updateData = {
       ...data,
       id: currentPost.id,
@@ -128,18 +135,14 @@ const PostEditScreen = () => {
       updateData,
       setUpdateStatus,
     });
-    setLoadingButton(true);
   };
 
-  const updateImageArray = (id) => {
-    setImageArray(imageArray.filter((image) => image.id !== id));
-  };
   // Fire when navigates back to this screen
   useFocusEffect(
     // useCallback will listen to route.param
     useCallback(() => {
       if (route.params?.base64Array && route.params.base64Array[0]) {
-        setImageArray(route.params?.base64Array);
+        setValue("imageArray", route.params?.base64Array);
         navigation.setParams({ base64Array: [] });
       }
     }, [route.params]),
@@ -160,6 +163,7 @@ const PostEditScreen = () => {
     }
     setUpdateStatus(null);
   }, [updateStatus]);
+
   return (
     <>
       <HeaderTab name="Bài đăng" />
@@ -172,7 +176,7 @@ const PostEditScreen = () => {
             marginTop: 8,
           }}
         >
-          <View style={[{ flex: 2 }, styles.sectionWrapper]}>
+          <View style={styles.sectionWrapper}>
             <VStack space={2} mb={2}>
               <SelectComponent
                 label="Sự kiện"
@@ -205,12 +209,11 @@ const PostEditScreen = () => {
               <MultiImageSection
                 containerStyle={{ width: "100%" }}
                 formRoute={ROUTE_NAMES.FMANAGE_POST_EDIT}
-                imageArray={imageArray}
-                deleteImage={updateImageArray}
+                controllerName="imageArray"
               />
             )}
           </View>
-          <View style={styles.sectionWrapper}>
+          <View style={styles.buttonWrapper}>
             <Button
               onPress={handleSubmit(onSubmit)}
               isLoading={loadingButton}

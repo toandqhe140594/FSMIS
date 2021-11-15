@@ -19,11 +19,29 @@ export default StyleSheet.create({
   mt1: {
     marginTop: 4,
   },
+  mt2: {
+    marginTop: 8,
+  },
+  mt3: {
+    marginTop: 12,
+  },
   mb1: {
     marginBottom: 4,
   },
+  mb2: {
+    marginBottom: 8,
+  },
+  mb3: {
+    marginBottom: 12,
+  },
   ml1: {
     marginLeft: 4,
+  },
+  ml2: {
+    marginLeft: 8,
+  },
+  ml3: {
+    marginLeft: 12,
   },
   p1: {
     padding: 4,
@@ -65,5 +83,12 @@ export default StyleSheet.create({
     marginTop: 12,
     backgroundColor: "white",
     paddingHorizontal: 12,
+  },
+  flexBox: {
+    flex: 1,
+  },
+  centerBox: {
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

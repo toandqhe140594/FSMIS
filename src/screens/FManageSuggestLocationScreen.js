@@ -7,6 +7,7 @@ import { View } from "react-native";
 import { Button, Text } from "react-native-elements";
 
 import InputComponent from "../components/common/InputComponent";
+import TextAreaComponent from "../components/common/TextAreaComponent";
 import HeaderTab from "../components/HeaderTab";
 import styles from "../config/styles";
 import { SCHEMA } from "../constants";
@@ -78,7 +79,17 @@ const FManageSuggestLocationScreen = () => {
               placeholder="Nhập số điện thoại chủ hồ"
               controllerName="ownerPhone"
               useNumPad
-              myStyles={{ marginTop: 20 }}
+              myStyles={{ marginVertical: 20 }}
+            />
+
+            {/* Description textarea */}
+            <TextAreaComponent
+              myStyles={styles.mt1}
+              label="Thông tin thêm"
+              isTitle
+              placeholder="Mô tả thông tin bổ sung (nếu có)"
+              numberOfLines={6}
+              controllerName="description"
             />
 
             <Button

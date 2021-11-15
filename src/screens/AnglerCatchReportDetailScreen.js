@@ -128,16 +128,18 @@ const AnglerCatchReportDetailScreen = () => {
           </Text>
 
           <Divider />
-          <Text
-            bold
-            italic
-            fontSize="15"
-            pl={0.5}
-            textAlign="center"
-            style={{ color: "white", backgroundColor: "#88E0EF" }}
-          >
-            Đã gửi lại cho hồ
-          </Text>
+          {catchDetails.returnToOwner && (
+            <Text
+              bold
+              italic
+              fontSize="15"
+              pl={0.5}
+              textAlign="center"
+              style={{ color: "white", backgroundColor: "#88E0EF" }}
+            >
+              Đã gửi lại cho hồ
+            </Text>
+          )}
         </VStack>
         <VStack space={1}>
           {catchDetails.fishes !== undefined &&
