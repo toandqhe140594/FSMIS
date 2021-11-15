@@ -1,3 +1,5 @@
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { useStoreActions } from "easy-peasy";
 import { Button, Center, Heading, Text, VStack } from "native-base";
 import React, { useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
@@ -7,6 +9,8 @@ import {
   useBlurOnFulfill,
   useClearByFocusCell,
 } from "react-native-confirmation-code-field";
+
+import { goToScreen } from "../navigations";
 
 const styles = StyleSheet.create({
   codeFieldRoot: { marginBottom: 10 },
@@ -30,15 +34,23 @@ const initialCountdown = 90;
 const CELL_COUNT = 6; // Length of the OTP code
 
 const OTPScreen = () => {
+  const navigation = useNavigation();
+  const route = useRoute();
+
+  const validateOtp = useStoreActions(
+    (actions) => actions.UtilModel.validateOtp,
+  );
+
   const [countdown, setCountdown] = useState(initialCountdown);
   const [loading, setLoading] = useState(false); // State placeholder for future API implement
   const [wrongOTP, setWrongOTP] = useState(false);
   const [value, setValue] = useState("");
-  const ref = useBlurOnFulfill({ value, cellCount: CELL_COUNT });
+  const [success, setSuccess] = useState(null);
   const [props, getCellOnLayoutHandler] = useClearByFocusCell({
     value,
     setValue,
   });
+  const ref = useBlurOnFulfill({ value, cellCount: CELL_COUNT });
 
   // Reset the countdown timer
   const resetCountdown = () => {
@@ -51,15 +63,13 @@ const OTPScreen = () => {
 
   // Event fire when submit OTP
   const onSubmit = (data) => () => {
-    console.log(data); // Test only
-    setWrongOTP(true); // Test only
-    setLoading(true); // Test only
+    setLoading(true);
+    validateOtp({
+      otp: data,
+      phone: route.params.phone,
+      setSuccess,
+    });
   };
-
-  useEffect(() => {
-    // Clear the interval when countdown timer count to 0
-    if (countdown <= 0) clearInterval(countdownInterval);
-  }, [countdown]);
 
   // Start the countdown timer when component mount
   useEffect(() => {
@@ -69,6 +79,21 @@ const OTPScreen = () => {
     };
   }, []);
 
+  useEffect(() => {
+    // Clear the interval when countdown timer count to 0
+    if (countdown <= 0) clearInterval(countdownInterval);
+  }, [countdown]);
+
+  useEffect(() => {
+    if (success === true) {
+      goToScreen(navigation, route.params.previousScreen, { otpSuccess: true });
+    } else if (success === false) {
+      setWrongOTP(true);
+      setLoading(false);
+      setSuccess(null);
+    }
+  }, [success]);
+
   return (
     <Center flex={1}>
       <Heading size="lg">Xác nhận OTP</Heading>
@@ -77,7 +102,7 @@ const OTPScreen = () => {
       </Text>
       {/* Placeholder for phonenumber | Phonenumber will need to get from store state */}
       <Text bold fontSize="lg" mt={4} textAlign="center">
-        0985043311
+        {route.params?.phone}
       </Text>
       <Text fontSize="lg" color="error.500" textAlign="left" w="70%" italic>
         {wrongOTP && "Mã OTP không chính xác"}
@@ -107,7 +132,7 @@ const OTPScreen = () => {
         />
         {/* Submit button */}
         <Button
-          isDisabled={value.length < 6}
+          isDisabled={value.length < 6 || loading}
           isLoading={loading}
           // Style for loading state
           _loading={{
