@@ -17,7 +17,8 @@ import {
 } from "native-base";
 import React, { useCallback, useEffect, useState } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
-import { ScrollView, StyleSheet } from "react-native";
+import { ActivityIndicator, ScrollView, StyleSheet } from "react-native";
+import { Overlay } from "react-native-elements";
 
 import CatchReportSection from "../components/CatchReport/CatchReportSection";
 import MultiImageSection from "../components/common/MultiImageSection";
@@ -25,7 +26,7 @@ import SelectComponent from "../components/common/SelectComponent";
 import TextAreaComponent from "../components/common/TextAreaComponent";
 import HeaderTab from "../components/HeaderTab";
 import { ROUTE_NAMES, SCHEMA } from "../constants";
-import { showAlertAbsoluteBox } from "../utilities";
+import { showAlertAbsoluteBox, showAlertBox } from "../utilities";
 
 const styles = StyleSheet.create({
   sectionWrapper: {
@@ -34,59 +35,51 @@ const styles = StyleSheet.create({
   button: {
     width: "90%",
   },
+  error: { fontStyle: "italic", color: "red", fontSize: 12 },
+  loadOnStart: { justifyContent: "center", alignItems: "center" },
+  loadOnSubmit: {
+    backgroundColor: "transparent",
+    justifyContent: "center",
+    alignItems: "center",
+  },
 });
 
 const AnglerCatchReportScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
-  const [listFish, setListFish] = useState([]);
-  const [success, setSuccess] = useState(null);
-  const increaseCatchesCount = useStoreActions(
-    (actions) => actions.ProfileModel.increaseCatchesCount,
+  const [workingFishList, setWorkingFishList] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [fullScreen, setFullScreen] = useState(true);
+  const [getStatus, setGetStatus] = useState("");
+  const [submitStatus, setSubmitStatus] = useState(null);
+  const { lakeList, fishList } = useStoreState((states) => states.CheckInModel);
+  const { increaseCatchesCount } = useStoreActions(
+    (actions) => actions.ProfileModel,
   );
-  const submitCatchReport = useStoreActions(
-    (actions) => actions.CheckInModel.submitCatchReport,
+  const { submitCatchReport, getLakeListByLocationId } = useStoreActions(
+    (actions) => actions.CheckInModel,
   );
-  const getLakeList = useStoreActions(
-    (actions) => actions.CheckInModel.getLakeListByLocationId,
-  );
-  const listLake = useStoreState((states) => states.CheckInModel.lakeList);
-  const listFishModel = useStoreState((states) => states.CheckInModel.fishList);
   const methods = useForm({
     mode: "onSubmit",
     reValidateMode: "onSubmit",
     defaultValues: { isPublic: false },
     resolver: yupResolver(SCHEMA.ANGLER_CATCH_REPORT_FORM),
   });
-
-  const { control, handleSubmit, watch, setValue } = methods;
+  const {
+    control,
+    handleSubmit,
+    watch,
+    setValue,
+    formState: { errors },
+  } = methods;
   const watchLakeIdField = watch("lakeId");
-  const personalCheckout = useStoreActions(
-    (actions) => actions.CheckInModel.personalCheckout,
-  );
   const onSubmit = (data) => {
-    console.log(data);
-    // const reduced = cards.reduce((filtered, card) => {
-    //   const { fishInLakeId } = listFish.find(({ id }) => id === card.fishType);
-    //   filtered.push({
-    //     quantity: card.catches,
-    //     fishSpeciesId: card.fishType,
-    //     returnToOwner: card.isReleased,
-    //     weight: card.totalWeight,
-    //     fishInLakeId,
-    //   });
-    //   return filtered;
-    // }, []);
-
-    // const imagesStringArray = data.imageArray.map((item) => item.base64);
-    // submitCatchReport({
-    //   catchesDetailList: reduced,
-    //   description: aCaption,
-    //   hidden: !isPublic,
-    //   images: imagesStringArray,
-    //   lakeId: aLakeType,
-    //   setSuccess,
-    // });
+    setIsLoading(true);
+    const images = data.imageArray.map((item) => item.base64);
+    delete data.imageArray; // Delete "imageArray" key in "data" object
+    // "data" will not have redundant "imageArray" data but only "images" have been processed
+    const submitData = { ...data, images };
+    submitCatchReport({ submitData, setSubmitStatus });
   };
 
   // Fire when navigates back to this screen
@@ -101,33 +94,72 @@ const AnglerCatchReportScreen = () => {
   );
 
   useEffect(() => {
-    getLakeList();
+    /* --------- NOTE TO REMOVE ------------ */
+    // Remove when getAllFish api working again
+    // Set isLoading default state to false
+    // Possibly remove fullScreen state and leave
+    // Overlay default style as loadOnSubmit
+    getLakeListByLocationId({ setGetStatus });
+    /* ------------------------------------- */
   }, []);
 
+  /**
+   * Set list of fish based on lake id chosen
+   */
   useEffect(() => {
-    const filter = listFishModel.filter((item) => item.id === watchLakeIdField);
+    const filter = fishList.filter((item) => item.id === watchLakeIdField);
     if (filter[0] !== undefined) {
-      setListFish(filter[0].fishList);
+      setWorkingFishList(filter[0].fishList);
     }
   }, [watchLakeIdField]);
 
+  /**
+   * Trigger when get status return
+   */
   useEffect(() => {
-    if (success === true)
+    if (getStatus === "SUCCESS") {
+      setIsLoading(false);
+      setFullScreen(false);
+      setGetStatus(null);
+    } else if (getStatus === "FAILED") {
+      setIsLoading(false);
+      setFullScreen(false);
+      setGetStatus(null);
+      // alert error
+    }
+  }, [getStatus]);
+
+  /**
+   * Trigger when submit status return
+   */
+  useEffect(() => {
+    if (submitStatus === "SUCCESS") {
+      increaseCatchesCount();
       showAlertAbsoluteBox(
         "Gửi thành công",
         "Thông tin buổi câu được gửi thành công",
-        async () => {
-          await personalCheckout();
-          increaseCatchesCount();
+        () => {
           navigation.pop(1);
         },
       );
-    setSuccess(null);
-  }, [success]);
+      setSubmitStatus(null);
+    } else if (submitStatus === "FAILED") {
+      setIsLoading(false);
+      setSubmitStatus(null);
+      showAlertBox("Thông báo", "Đã xảy ra lỗi! Vui lòng thử lại sau.");
+    }
+  }, [submitStatus]);
 
   return (
     <>
       <HeaderTab name="Báo cá" />
+      <Overlay
+        isVisible={isLoading}
+        fullScreen
+        overlayStyle={fullScreen ? styles.loadOnStart : styles.loadOnSubmit}
+      >
+        <ActivityIndicator size={60} color="#2089DC" />
+      </Overlay>
       <ScrollView>
         <FormProvider {...methods}>
           <VStack space={3} divider={<Divider />}>
@@ -154,23 +186,27 @@ const AnglerCatchReportScreen = () => {
                 isTitle
                 label="Vị trí hồ câu"
                 placeholder="Chọn hồ câu"
-                data={listLake}
+                data={lakeList}
                 controllerName="lakeId"
               />
             </Center>
 
             <Center>
-              <Stack style={styles.sectionWrapper} space={2}>
+              <Stack style={styles.sectionWrapper} space={1}>
                 <Text bold fontSize="md">
                   Thông tin cá
                 </Text>
-                <CatchReportSection fishList={listFish} />
+                {errors.catchesDetailList?.message && (
+                  <Text style={styles.error}>
+                    {errors.catchesDetailList?.message}
+                  </Text>
+                )}
+                <CatchReportSection fishList={workingFishList} />
               </Stack>
             </Center>
 
             <Center>
               <Box style={styles.sectionWrapper} mb={5}>
-                {/* Public checkbox field */}
                 <Controller
                   control={control}
                   name="hidden"
