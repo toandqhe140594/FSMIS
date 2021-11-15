@@ -240,5 +240,27 @@ const model = {
       setUpdateStatus("FAILED");
     }
   }),
+
+  /**
+   * Change personal password
+   * @param {object} [payload] params pass to function
+   * @param {Function} [payload.setUpdateStatus] set status after request api
+   * @param {object} [payload.updateData] object body pass to api
+   * @param {string} [updateData.oldPassword] user old password
+   * @param {string} [updateData.newPassword] new password
+   */
+  changePassword: thunk(async (actions, payload = {}) => {
+    const updateData = payload.updateData || {
+      newPassword: "",
+      oldPassword: "",
+    };
+    const setUpdateStatus = payload.setUpdateStatus || (() => {});
+    try {
+      await http.post(API_URL.PERSONAL_PASSWORD_CHANGE, updateData);
+      setUpdateStatus("SUCCESS");
+    } catch (error) {
+      setUpdateStatus("FAILED");
+    }
+  }),
 };
 export default model;
