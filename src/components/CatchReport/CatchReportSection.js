@@ -7,6 +7,7 @@ import { StyleSheet, Text, View } from "react-native";
 
 import InputComponent from "../common/InputComponent";
 import SelectComponent from "../common/SelectComponent";
+import CatchFieldWatcher from "./CatchFieldWatcher";
 
 const FishIcon = () => (
   <FontAwesome5
@@ -59,9 +60,7 @@ const CatchReportSection = ({ fishList }) => {
     shouldUnregister: true,
   });
   const handleAppend = () => {
-    append({
-      fishSpeciesId: 1,
-    });
+    append({ fishSpeciesId: 0 });
   };
   const handleRemove = (index) => () => {
     remove(index);
@@ -82,9 +81,14 @@ const CatchReportSection = ({ fishList }) => {
             data={fishList}
             itemKeyIdentifier="fishInLakeId"
             placeholder="Chọn loại cá bắt được"
-            controllerName={`catchesDetailList[${index}].fishSpeciesId`}
+            controllerName={`catchesDetailList[${index}].fishInLakeId`}
             useCustomError
-            myError={errors.catchesDetailList?.[index]?.fishSpeciesId}
+            myError={errors.catchesDetailList?.[index]?.fishInLakeId}
+          />
+          <CatchFieldWatcher
+            name={`catchesDetailList[${index}].fishInLakeId`}
+            dependentField={`catchesDetailList[${index}].fishSpeciesId`}
+            data={fishList}
           />
           <InputComponent
             myStyles={{ marginBottom: 8 }}
