@@ -25,6 +25,6 @@ public class LakeEditDtoIn {
     private String price;
     @NotEmpty
     private String imageUrl;
-    @NotNull
+    @NotEmpty
     private Long[] methods;
 }

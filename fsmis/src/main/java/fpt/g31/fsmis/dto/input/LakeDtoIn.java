@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -27,6 +28,7 @@ public class LakeDtoIn {
     @NotEmpty
     private String imageUrl;
     @NotNull
+    @Valid
     private List<FishInLakeDtoIn> fishInLakeList;
     @NotNull
     private Long[] methods;

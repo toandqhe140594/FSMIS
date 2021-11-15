@@ -4,20 +4,29 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class PersonalInfoDtoIn {
 
+    @NotEmpty
     private String avatarUrl;
 
+    @NotEmpty
     private String fullName;
 
+    @NotEmpty
     private String dob;
 
+    @NotNull
     private Boolean gender;
 
+    @NotEmpty
     private String address;
 
-    private long wardId;
+    @NotNull
+    private Long wardId;
 }
