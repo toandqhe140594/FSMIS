@@ -83,7 +83,7 @@ const AdminAccountManagementScreen = () => {
             <AvatarCard
               nameUser={item.name}
               subText={`SĐT: ${item.phone}`}
-              image={item.image}
+              image={item.avatar}
             />
           </View>
           <View style={[styles.centerBox, styles.flexBox]}>
