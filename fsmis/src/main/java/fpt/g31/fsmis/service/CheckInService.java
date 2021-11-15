@@ -139,7 +139,7 @@ public class CheckInService {
                     .avatar(checkIn.getUser().getAvatarUrl())
                     .checkInTime(ServiceUtils.convertDateToString(checkIn.getCheckInTime()))
                     .checkOutTime(checkIn.getCheckOutTime() == null
-                            ? "Bạn chưa check-out"
+                            ? "Chưa check-out"
                             : ServiceUtils.convertDateToString(checkIn.getCheckOutTime()))
                     .build();
             output.add(item);

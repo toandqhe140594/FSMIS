@@ -234,6 +234,9 @@ public class LakeService {
             }
             List<FishDtoOut> fishDtoOutList = new ArrayList<>();
             for (FishInLake fishInLake : lake.getFishInLakeList()) {
+                if (!fishInLake.isActive()) {
+                    continue;
+                }
                 FishDtoOut fishDtoOut = FishDtoOut.builder()
                         .id(fishInLake.getId())
                         .name(fishInLake.getFishSpecies().getName() + " biểu " + fishInLake.getMinWeight() + "-" + fishInLake.getMaxWeight())
@@ -259,7 +262,8 @@ public class LakeService {
             throw new ValidationException(UNAUTHORIZED);
         }
         checkValidFishInLake(fishInLakeDtoIn);
-        if (fishInLakeRepos.existsByFishSpeciesIdAndMinWeightAndMaxWeight(fishInLakeDtoIn.getFishSpeciesId(), fishInLakeDtoIn.getMinWeight(), fishInLakeDtoIn.getMaxWeight())){
+        if (fishInLakeRepos.existsByFishSpeciesIdAndMinWeightAndMaxWeightAndLakeIdAndActiveIsTrue
+                (fishInLakeDtoIn.getFishSpeciesId(), fishInLakeDtoIn.getMinWeight(), fishInLakeDtoIn.getMaxWeight(), lakeId)){
             throw new ValidationException("Đã tồn tại 1 bản ghi với cùng loài cá và biểu");
         }
         FishInLake fishInLake = FishInLake.builder()

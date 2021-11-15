@@ -408,7 +408,7 @@ public class FishingLocationService {
     }
 
     private Specification<FishingLocation> fishingMethodIdIn(List<Long> fishingMethodIdList) {
-        if (fishingMethodIdList.isEmpty()) {
+        if (fishingMethodIdList == null || fishingMethodIdList.isEmpty()) {
             return null;
         }
         return (root, criteriaQuery, criteriaBuilder) -> {
@@ -420,7 +420,7 @@ public class FishingLocationService {
     }
 
     private Specification<FishingLocation> provinceIdIn(List<Long> provinceIdList) {
-        if (provinceIdList.isEmpty()) {
+        if (provinceIdList == null || provinceIdList.isEmpty()) {
             return null;
         }
         return (root, criteriaQuery, criteriaBuilder) -> {
@@ -432,7 +432,7 @@ public class FishingLocationService {
     }
 
     private Specification<FishingLocation> fishSpeciesIdIn(List<Long> fishSpeciesIdList) {
-        if (fishSpeciesIdList.isEmpty()) {
+        if (fishSpeciesIdList == null || fishSpeciesIdList.isEmpty()) {
             return null;
         }
         return (root, criteriaQuery, criteriaBuilder) -> {
@@ -441,5 +441,12 @@ public class FishingLocationService {
             Join<FishInLake, FishSpecies> fishSpeciesJoin = fishInLakeJoin.join("fishSpecies");
             return criteriaBuilder.in(fishSpeciesJoin.get("id")).value(fishSpeciesIdList);
         };
+    }
+
+    private Specification<FishingLocation> scoreGreaterThan(Integer minScore) {
+        if (minScore == null || minScore == 0) {
+            return null;
+        }
+        return null;
     }
 }

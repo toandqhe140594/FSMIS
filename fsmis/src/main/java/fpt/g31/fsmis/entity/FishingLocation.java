@@ -101,4 +101,7 @@ public class FishingLocation {
     @JsonIgnore
     @OneToMany(mappedBy = "fishingLocation")
     private List<Catches> catchesList;
+
+    @Transient
+    private float score;
 }
