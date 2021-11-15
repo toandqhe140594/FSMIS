@@ -20,23 +20,27 @@ export const ANGLER_CATCH_REPORT_FORM = yup.object().shape({
     .typeError("Trường này chỉ được nhập số")
     .required("Loại hồ không được để trống"),
   hidden: yup.bool(),
-  catchesDetailList: yup.array().of(
-    yup.object().shape({
-      fishSpeciesId: yup
-        .number()
-        .typeError("Trường này chỉ được nhập số")
-        .required("Loại cá không được để trống"),
-      quantity: yup
-        .number()
-        .typeError("Trường này chỉ được nhập số")
-        .required("Số cá bắt được không được để trống"),
-      weight: yup
-        .number()
-        .typeError("Trường này chỉ được nhập số")
-        .required("Tổng cân nặng cá không được để trống"),
-      returnToOwner: yup.bool().default(false),
-    }),
-  ),
+  catchesDetailList: yup
+    .array()
+    .min(1, "Phải có ít nhất một thẻ cá")
+    .max(5, "Chỉ được tạo tối đa 10 thẻ cá")
+    .of(
+      yup.object().shape({
+        fishSpeciesId: yup
+          .number()
+          .typeError("Trường này chỉ được nhập số")
+          .required("Loại cá không được để trống"),
+        quantity: yup
+          .number()
+          .typeError("Trường này chỉ được nhập số")
+          .required("Số cá bắt được không được để trống"),
+        weight: yup
+          .number()
+          .typeError("Trường này chỉ được nhập số")
+          .required("Tổng cân nặng cá không được để trống"),
+        returnToOwner: yup.bool().default(false),
+      }),
+    ),
 });
 
 export const FMANAGE_LAKE_FORM = yup.object().shape({

@@ -65,7 +65,7 @@ const LakeAddNewScreen = () => {
   const methods = useForm({
     mode: "onSubmit",
     reValidateMode: "onSubmit",
-    defaultValues: { methods: [], imageArray: [] },
+    defaultValues: { methods: [] },
     resolver: yupResolver(SCHEMA.FMANAGE_LAKE_FORM),
   });
   const {
@@ -83,6 +83,7 @@ const LakeAddNewScreen = () => {
     );
     // Should check for empty images
     const imageUrl = data.imageArray[0].base64;
+    delete data.imageArray;
     const addData = { ...data, imageUrl, fishInLakeList: cleanFishArray };
     addNewLakeInLocation({ addData, setAddStatus });
   };
@@ -100,7 +101,7 @@ const LakeAddNewScreen = () => {
   }, []);
 
   /**
-   * Listen to addStatus state value return from api call
+   * Trigger when addStatus state value return from api call
    */
   useEffect(() => {
     if (addStatus === "SUCCESS") {

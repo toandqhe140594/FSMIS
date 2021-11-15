@@ -80,6 +80,7 @@ const CatchReportSection = ({ fishList }) => {
           <SelectComponent
             myStyles={{ marginBottom: 8 }}
             data={fishList}
+            itemKeyIdentifier="fishInLakeId"
             placeholder="Chọn loại cá bắt được"
             controllerName={`catchesDetailList[${index}].fishSpeciesId`}
             useCustomError

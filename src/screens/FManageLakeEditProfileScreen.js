@@ -80,6 +80,7 @@ const LakeEditProfileScreen = () => {
     setIsLoading(true);
     const { id } = lakeDetail;
     const imageUrl = data.imageArray[0].base64;
+    delete data.imageArray;
     const updateData = { ...data, imageUrl };
     editLakeDetail({ updateData, setUpdateStatus, id });
   };
