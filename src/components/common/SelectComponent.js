@@ -22,6 +22,7 @@ const SelectComponent = ({
   myError,
   handleDataIfValChanged,
   useCustomError,
+  itemKeyIdentifier,
 }) => {
   const {
     control,
@@ -53,9 +54,9 @@ const SelectComponent = ({
             >
               {data.map((item) => (
                 <Select.Item
-                  key={item.id}
+                  key={item[itemKeyIdentifier]}
                   label={item.name}
-                  value={item.id}
+                  value={item[itemKeyIdentifier]}
                   my={1}
                 />
               ))}
@@ -87,6 +88,7 @@ SelectComponent.propTypes = {
   ),
   handleDataIfValChanged: PropTypes.func,
   useCustomError: PropTypes.bool,
+  itemKeyIdentifier: PropTypes.string,
 };
 
 SelectComponent.defaultProps = {
@@ -99,6 +101,7 @@ SelectComponent.defaultProps = {
   myError: {},
   handleDataIfValChanged: () => {},
   useCustomError: false,
+  itemKeyIdentifier: "id",
 };
 
 export default React.memo(SelectComponent);
