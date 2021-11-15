@@ -42,7 +42,7 @@ const ReviewFromAnglerSection = ({
   };
 
   const goToWriteReportScreenAction = () => {
-    goToWriteReportScreen(navigation, { id, type: "review" });
+    goToWriteReportScreen(navigation, { id, type: "REVIEW" });
   };
 
   const upvoteReview = () => {

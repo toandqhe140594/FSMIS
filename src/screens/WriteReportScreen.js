@@ -1,56 +1,74 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useStoreActions } from "easy-peasy";
 import React, { useEffect, useState } from "react";
-import { Text, TextInput, ToastAndroid, View } from "react-native";
+import { Text, TextInput, View } from "react-native";
 import { Button, Divider } from "react-native-elements";
 
 import HeaderTab from "../components/HeaderTab";
+import ReportModel from "../models/ReportModel";
 import { goBack } from "../navigations";
+import { showAlertAbsoluteBox, showToastMessage } from "../utilities";
+import store from "../utilities/Store";
+
+store.addModel("ReportModel", ReportModel);
 
 const ReportScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
   const [reportParams, setReportParams] = useState({});
-  const [success, setSuccess] = useState(false);
   const [content, setContent] = useState("");
 
-  const writeNewReport = useStoreActions(
-    (actions) => actions.ProfileModel.writeNewReport,
-  );
+  const [sendStatus, setSendStatus] = useState(null);
+  const {
+    sendPostReport,
+    sendReviewReport,
+    sendLocationReport,
+    sendCatchReport,
+  } = useStoreActions((actions) => actions.ReportModel);
 
   const onSubmit = () => {
     const trimmedContent = content.trim();
     // If the content is empty or only contains blank characters
     if (!trimmedContent) {
-      ToastAndroid.showWithGravityAndOffset(
-        "Nội đung báo cáo không thể bỏ trống",
-        ToastAndroid.LONG,
-        ToastAndroid.BOTTOM,
-        25,
-        50,
-      );
+      showToastMessage("Nội đung báo cáo không thể bỏ trống");
     }
-    writeNewReport({
-      id: reportParams.id,
-      type: reportParams.type,
-      content: trimmedContent,
-      setSuccess,
-    });
-  };
+    switch (reportParams.type) {
+      case "POST":
+        console.log(reportParams);
+        sendPostReport({
+          postId: reportParams.id,
+          reportDtoIn: trimmedContent,
+          setSendStatus,
+        });
+        break;
+      case "REVIEW":
+        console.log(reportParams);
+        sendReviewReport({
+          reviewId: reportParams.id,
+          reportDtoIn: trimmedContent,
+          setSendStatus,
+        });
+        break;
+      case "LOCATION":
+        sendLocationReport({
+          locationId: reportParams.id,
+          reportDtoIn: trimmedContent,
+          setSendStatus,
+        });
+        break;
+      case "CATCH":
+        sendCatchReport({
+          catchId: reportParams.id,
+          reportDtoIn: trimmedContent,
+          setSendStatus,
+        });
 
-  useEffect(() => {
-    // If write report success, show toast
-    if (success) {
-      ToastAndroid.showWithGravityAndOffset(
-        "Báo cáo thành công",
-        ToastAndroid.LONG,
-        ToastAndroid.BOTTOM,
-        25,
-        50,
-      );
-      goBack(navigation);
+        break;
+
+      default:
+        break;
     }
-  }, [success]);
+  };
 
   useEffect(() => {
     // If there are params pass through
@@ -59,6 +77,18 @@ const ReportScreen = () => {
       setReportParams({ id, type });
     }
   }, []);
+
+  useEffect(() => {
+    if (sendStatus === true) {
+      showAlertAbsoluteBox("Trạng thái", "Gửi Thành công", () => {
+        goBack(navigation);
+      });
+    }
+    if (sendStatus === false) {
+      showToastMessage("Gửi thất bại");
+    }
+    setSendStatus(null);
+  }, [sendStatus]);
 
   return (
     <View style={{ flex: 1 }}>
@@ -84,11 +114,12 @@ const ReportScreen = () => {
             multiline
             numberOfLines={6}
             maxLength={1000}
-            placeholder="Chia sẻ về trải nghiệm của bạn"
+            placeholder="Nội dung vi phạm"
             style={{
-              borderWidth: 1,
+              borderWidth: 0.5,
               textAlignVertical: "top",
-              padding: 5,
+              padding: 9,
+              backgroundColor: "white",
             }}
             onChangeText={setContent}
           />

@@ -221,12 +221,18 @@ const goToAdminBlacklistPhoneAddScreen = (navigation, params) => {
     ...params,
   });
 };
+const goToAdminCatchReportDetail = (navigation, params) => {
+  navigation.navigate(ROUTE_NAMES.ADMIN_CATCH_REPORT_DETAIL, {
+    ...params,
+  });
+};
 
 export {
   goBack,
   goToAdminAccountManagementDetailScreen,
   goToAdminAccountManagementScreen,
   goToAdminBlacklistPhoneAddScreen,
+  goToAdminCatchReportDetail,
   goToAdminFishEditScreen,
   goToAdminFishingMethodEditScreen,
   goToAdminFishingMethodManagementScreen,

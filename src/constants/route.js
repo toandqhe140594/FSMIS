@@ -81,4 +81,6 @@ export const ADMIN_BLACKLIST_PHONE_MANAGEMENT_ADD =
   "Admin Add Phone To Blacklist Screen";
 
 export const ADMIN_REVIEW_REPORT_DETAIL = "Admin Review Report Detail Screen";
+export const ADMIN_CATCH_REPORT_DETAIL = "Admin Catch Report Detail Screen";
+
 export const MEDIA_SELECTOR = "Media Select Screen";
