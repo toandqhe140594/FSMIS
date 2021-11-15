@@ -7,7 +7,7 @@ import { StyleSheet, Text, View } from "react-native";
 
 import InputComponent from "../common/InputComponent";
 import SelectComponent from "../common/SelectComponent";
-import FieldWatcher from "./FieldWatcher";
+import FishCardFieldWatcher from "./FishCardFieldWatcher";
 
 const FishLeftIcon = () => (
   <FontAwesome5
@@ -76,15 +76,6 @@ const FishCardSection = () => {
     remove(index);
   };
   /**
-   * Reset a field and clear error
-   * @param {String} controllerName
-   * @param {Any} resetValue
-   */
-  const handleFieldReset = (controllerName, resetValue) => {
-    setValue(controllerName, resetValue);
-    clearErrors(controllerName);
-  };
-  /**
    * Append a card ready to use
    */
   useEffect(() => {
@@ -134,11 +125,7 @@ const FishCardSection = () => {
             useCustomError
             myError={errors.fishInLakeList?.[index]?.quantity}
           />
-          <FieldWatcher
-            control={control}
-            name={`fishInLakeList[${index}].quantity`}
-            onDeleteField={handleFieldReset}
-          />
+          <FishCardFieldWatcher name={`fishInLakeList[${index}].quantity`} />
           <InputComponent
             useNumPad
             placeholder="Nhập tổng cân nặng (kg)"
@@ -147,11 +134,7 @@ const FishCardSection = () => {
             useCustomError
             myError={errors.fishInLakeList?.[index]?.totalWeight}
           />
-          <FieldWatcher
-            control={control}
-            name={`fishInLakeList[${index}].totalWeight`}
-            onDeleteField={handleFieldReset}
-          />
+          <FishCardFieldWatcher name={`fishInLakeList[${index}].totalWeight`} />
           <Button
             fontSize="md"
             w="45%"

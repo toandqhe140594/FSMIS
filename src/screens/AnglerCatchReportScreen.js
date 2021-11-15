@@ -60,7 +60,7 @@ const AnglerCatchReportScreen = () => {
   const methods = useForm({
     mode: "onSubmit",
     reValidateMode: "onSubmit",
-    defaultValues: { isPublic: false },
+    defaultValues: { hidden: false },
     resolver: yupResolver(SCHEMA.ANGLER_CATCH_REPORT_FORM),
   });
   const {
@@ -74,11 +74,20 @@ const AnglerCatchReportScreen = () => {
   const onSubmit = (data) => {
     setIsLoading(true);
     const images = data.imageArray.map((item) => item.base64);
-    delete data.imageArray; // Delete "imageArray" key in "data" object
-    // "data" will not have redundant "imageArray" data but only "images" have been processed
+    delete data.imageArray;
     const submitData = { ...data, images };
     submitCatchReport({ submitData, setSubmitStatus });
   };
+
+  /**
+   * Set list of fish based on lake id chosen
+   */
+  useEffect(() => {
+    const filter = fishList.filter((item) => item.id === watchLakeIdField);
+    if (filter[0] !== undefined) {
+      setWorkingFishList(filter[0].fishList);
+    }
+  }, [watchLakeIdField]);
 
   // Fire when navigates back to this screen
   useFocusEffect(
@@ -90,16 +99,6 @@ const AnglerCatchReportScreen = () => {
       }
     }, [route.params]),
   );
-
-  /**
-   * Set list of fish based on lake id chosen
-   */
-  useEffect(() => {
-    const filter = fishList.filter((item) => item.id === watchLakeIdField);
-    if (filter[0] !== undefined) {
-      setWorkingFishList(filter[0].fishList);
-    }
-  }, [watchLakeIdField]);
 
   /**
    * Trigger when submit status return
