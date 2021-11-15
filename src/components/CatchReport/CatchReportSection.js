@@ -7,7 +7,7 @@ import { StyleSheet, Text, View } from "react-native";
 
 import InputComponent from "../common/InputComponent";
 import SelectComponent from "../common/SelectComponent";
-import CatchFieldWatcher from "./CatchFieldWatcher";
+import CatchReportFieldWatcher from "./CatchReportFieldWatcher";
 
 const FishIcon = () => (
   <FontAwesome5
@@ -85,7 +85,7 @@ const CatchReportSection = ({ fishList }) => {
             useCustomError
             myError={errors.catchesDetailList?.[index]?.fishInLakeId}
           />
-          <CatchFieldWatcher
+          <CatchReportFieldWatcher
             name={`catchesDetailList[${index}].fishInLakeId`}
             dependentField={`catchesDetailList[${index}].fishSpeciesId`}
             data={fishList}
