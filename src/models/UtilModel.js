@@ -28,5 +28,25 @@ const model = {
       setSuccess(false);
     }
   }),
+  /**
+   * Validate the otp corresponding with the phone number
+   * @param {object} payload - params pass to function
+   * @param {string} payload.phone - the corresponding phone number
+   * @param {string} payload.otp - the otp that need to be validate with corresponding phone number
+   * @param {Function} [payload.setSuccess] - function indicate otp is valid
+   */
+  validateOtp: thunk(async (actions, payload) => {
+    const { phone, otp } = payload;
+    const setSuccess = payload.setSuccess || (() => {});
+    try {
+      await http.post(`${API_URL.OTP_VALIDATE}`, {
+        phone,
+        otp,
+      });
+      setSuccess(true);
+    } catch (error) {
+      setSuccess(false);
+    }
+  }),
 };
 export default model;
