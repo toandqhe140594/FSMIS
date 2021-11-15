@@ -52,7 +52,7 @@ const AnglerCatchReportDetailScreen = () => {
    * Verify catch report button action
    * @param {boolean} isApprove value indicate accept or denied catch report
    */
-  const verifyHandler = (isApprove) => {
+  const verifyHandler = (isApprove) => () => {
     setButtonLoading(true);
     verifyTimeout = setTimeout(() => {
       setButtonLoading(false);
@@ -218,9 +218,7 @@ const AnglerCatchReportDetailScreen = () => {
               colorScheme="danger"
               size="lg"
               isLoading={buttonLoading}
-              onPress={() => {
-                verifyHandler(false);
-              }}
+              onPress={verifyHandler(false)}
             >
               Từ chối
             </Button>
@@ -230,9 +228,7 @@ const AnglerCatchReportDetailScreen = () => {
               colorScheme="teal"
               size="lg"
               isLoading={buttonLoading}
-              onPress={() => {
-                verifyHandler(true);
-              }}
+              onPress={verifyHandler(true)}
             >
               Xác nhận
             </Button>
