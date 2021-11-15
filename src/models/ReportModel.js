@@ -249,7 +249,6 @@ const model = {
         setSendStatus(true);
       }
     } catch (error) {
-      console.log("status :>> ", error);
       setSendStatus(false);
     }
   }),
@@ -261,11 +260,9 @@ const model = {
         reportDtoIn,
       );
       if (status === 200) {
-        console.log(`status`, status);
         setSendStatus(true);
       }
     } catch (error) {
-      console.log("status :>> ", error);
       setSendStatus(false);
     }
   }),
@@ -277,27 +274,58 @@ const model = {
         reportDtoIn,
       );
       if (status === 200) {
-        console.log(`status`, status);
         setSendStatus(true);
       }
     } catch (error) {
-      console.log("status :>> ", error);
       setSendStatus(false);
     }
   }),
-  sendCatchReport: thunk(async (actions, payload) => {
-    const { catchId, reportDtoIn, setSendStatus } = payload;
-    // try {
-    //   const { status } = await http.post(
-    //     `/location/review/report/${catchId}`,
-    //     reportDtoIn,
-    //   );
-    //   if (status === 200) {
-    //     console.log(`status`, status);
-    //   }
-    // } catch (error) {
-    //   console.log("status :>> ", error);
-    // }
+
+  sendReport: thunk(async (actions, payload) => {
+    const { id, reportDtoIn, type, setSendStatus } = payload;
+    console.log(`payload`, payload);
+    try {
+      switch (type) {
+        case "POST": {
+          const { status } = await http.post(
+            `/location/post/report/${id}`,
+            reportDtoIn,
+          );
+          if (status === 200) {
+            setSendStatus(true);
+          }
+          break;
+        }
+        case "REVIEW": {
+          const { status } = await http.post(
+            `/location/review/report/${id}`,
+            reportDtoIn,
+          );
+          if (status === 200) {
+            setSendStatus(true);
+          }
+          break;
+        }
+        case "LOCATION": {
+          const { status } = await http.post(
+            `/location/report/${id}`,
+            reportDtoIn,
+          );
+          if (status === 200) {
+            setSendStatus(true);
+          }
+          break;
+        }
+        case "CATCH":
+          setSendStatus(true);
+          break;
+        default:
+          break;
+      }
+    } catch (error) {
+      setSendStatus(false);
+      console.log(`error`, error);
+    }
   }),
 };
 

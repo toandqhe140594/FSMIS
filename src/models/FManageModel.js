@@ -352,7 +352,7 @@ const model = {
         actions.setCurrentPinPost({});
       }
     } catch (error) {
-      console.log(`error`, error);
+    
       setDeleteSuccess(false);
     }
   }),
@@ -1083,7 +1083,6 @@ const model = {
         actions.setCurrentPinPost(item);
       }
     } catch (error) {
-      console.log("status :>> ", error);
       setPinSuccess(false);
     }
   }),
