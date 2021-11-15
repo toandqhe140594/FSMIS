@@ -31,8 +31,8 @@ const goToChangePasswordScreen = (navigation) => {
   navigation.navigate(ROUTE_NAMES.PASSWORD_CHANGE);
 };
 
-const goToOTPScreen = (navigation) => {
-  navigation.navigate(ROUTE_NAMES.OTP_SCREEN);
+const goToOTPScreen = (navigation, params) => {
+  navigation.navigate(ROUTE_NAMES.OTP_SCREEN, { ...params });
 };
 
 const goToAdvanceSearchScreen = (navigation, params) => {
