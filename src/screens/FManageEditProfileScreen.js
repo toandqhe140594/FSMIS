@@ -72,6 +72,7 @@ const FManageEditProfileScreen = () => {
   const onSubmit = (data) => {
     setIsLoading(true);
     const images = data.imageArray.map((image) => image.base64);
+    delete data.imageArray;
     const updateData = { ...data, ...locationLatLng, images };
     editFishingLocation({ updateData, setUpdateStatus });
   };

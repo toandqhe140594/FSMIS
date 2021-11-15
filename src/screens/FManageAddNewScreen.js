@@ -46,7 +46,6 @@ const FManageAddNewScreen = () => {
   const methods = useForm({
     mode: "onSubmit",
     reValidateMode: "onSubmit",
-    defaultValues: { imageArray: [] },
     resolver: yupResolver(SCHEMA.FMANAGE_PROFILE_FORM),
   });
   const { handleSubmit, setValue } = methods;
@@ -60,6 +59,7 @@ const FManageAddNewScreen = () => {
 
   const onSubmit = (data) => {
     const images = data.imageArray.map((image) => image.base64);
+    delete data.imageArray;
     const addData = { ...data, ...locationLatLng, images };
     addNewLocation({ addData, setAddStatus });
   };
