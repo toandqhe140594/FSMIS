@@ -303,7 +303,6 @@ const model = {
       }
     } catch (error) {
       // handle error
-      console.log(`error>>> `, error);
     }
   }),
 
@@ -321,7 +320,6 @@ const model = {
       }
     } catch (error) {
       // handle error
-      console.log(`error>>> `, error);
     }
   }),
 

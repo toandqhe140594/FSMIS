@@ -47,15 +47,7 @@ const EventPostCard = ({
                 value={lakePost.badge}
               />
               {postTime !== undefined && (
-                <Text style={styles.ml1}>
-                  {postTime}
-                  {edited && (
-                    <Text style={{ fontWeight: "bold", fontSize: 12 }}>
-                      {" "}
-                      (chỉnh sửa){" "}
-                    </Text>
-                  )}
-                </Text>
+                <Text style={styles.ml1}>{postTime}</Text>
               )}
             </HStack>
 
@@ -84,7 +76,15 @@ const EventPostCard = ({
 
           <VStack>
             <Box mb={2} w="100%" px="2" pl="3">
-              <Text>{lakePost.content && lakePost.content.trim()}</Text>
+              <Text>
+                {lakePost.content && lakePost.content.trim()}{" "}
+                {edited && (
+                  <Text style={{ fontWeight: "bold", fontSize: 12 }}>
+                    {" "}
+                    (chỉnh sửa){" "}
+                  </Text>
+                )}
+              </Text>
             </Box>
           </VStack>
         </>

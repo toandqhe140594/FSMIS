@@ -75,7 +75,12 @@ const AdminReportReviewDetailScreen = () => {
       pl="2"
       py="1.5"
     >
-      <AvatarCard avatarSize="md" nameUser={item.userFullName} />
+      <AvatarCard
+        avatarSize="md"
+        nameUser={item.userFullName}
+        images={item.userAvatar}
+        subText={item.time}
+      />
       <Box mt={2}>
         <Text italic style={styles.textContentType}>
           {item.description}

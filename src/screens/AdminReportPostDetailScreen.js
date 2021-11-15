@@ -8,81 +8,67 @@ import EventPostCard from "../components/EventPostCard";
 import styles from "../config/styles";
 
 const AdminReportPostDetailScreen = () => {
-  const reportData = [
-    { userName: "Cưởng", content: "Hồ thả lân ,tôi đã căng" },
-    {
-      userName: "Cưởng 1",
-      content:
-        "Hồ vẫn thả lân ,tôi lại căng  Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis quam nihil vel adipisci facere? Cupiditate fugit ratione facilis atque ullam minus provident, velit quia, dolor corporis, laborum ipsa laboriosam doloribus. ",
-    },
-    {
-      userName: "Cưởng 1",
-      content:
-        "Hồ vẫn thả lân ,tôi lại căng  Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis quam nihil vel adipisci facere? Cupiditate fugit ratione facilis atque ullam minus provident, velit quia, dolor corporis, laborum ipsa laboriosam doloribus. ",
-    },
-    {
-      userName: "Cưởng 1",
-      content:
-        "Hồ vẫn thả lân ,tôi lại căng  Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis quam nihil vel adipisci facere? Cupiditate fugit ratione facilis atque ullam minus provident, velit quia, dolor corporis, laborum ipsa laboriosam doloribus. ",
-    },
-    {
-      userName: "Cưởng 1",
-      content:
-        "Hồ vẫn thả lân ,tôi lại căng  Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis quam nihil vel adipisci facere? Cupiditate fugit ratione facilis atque ullam minus provident, velit quia, dolor corporis, laborum ipsa laboriosam doloribus. ",
-    },
-    {
-      userName: "Cưởng 1",
-      content:
-        "Hồ vẫn thả lân ,tôi lại căng  Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis quam nihil vel adipisci facere? Cupiditate fugit ratione facilis atque ullam minus provident, velit quia, dolor corporis, laborum ipsa laboriosam doloribus. ",
-    },
-    {
-      userName: "Cưởng 1",
-      content:
-        "Hồ vẫn thả lân ,tôi lại căng  Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis quam nihil vel adipisci facere? Cupiditate fugit ratione facilis atque ullam minus provident, velit quia, dolor corporis, laborum ipsa laboriosam doloribus. ",
-    },
-    {
-      userName: "Cưởng 1",
-      content:
-        "Hồ vẫn thả lân ,tôi lại căng  Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis quam nihil vel adipisci facere? Cupiditate fugit ratione facilis atque ullam minus provident, velit quia, dolor corporis, laborum ipsa laboriosam doloribus. ",
-    },
-    {
-      userName: "Cưởng 1",
-      content:
-        "Hồ vẫn thả lân ,tôi lại căng  Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis quam nihil vel adipisci facere? Cupiditate fugit ratione facilis atque ullam minus provident, velit quia, dolor corporis, laborum ipsa laboriosam doloribus. ",
-    },
-    {
-      userName: "Cưởng 1",
-      content:
-        "Hồ vẫn thả lân ,tôi lại căng  Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis quam nihil vel adipisci facere? Cupiditate fugit ratione facilis atque ullam minus provident, velit quia, dolor corporis, laborum ipsa laboriosam doloribus. ",
-    },
-    {
-      userName: "Cưởng 1",
-      content:
-        "Hồ vẫn thả lân ,tôi lại căng  Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis quam nihil vel adipisci facere? Cupiditate fugit ratione facilis atque ullam minus provident, velit quia, dolor corporis, laborum ipsa laboriosam doloribus. ",
-    },
-    {
-      userName: "Cưởng 1",
-      content:
-        "Hồ vẫn thả lân ,tôi lại căng  Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis quam nihil vel adipisci facere? Cupiditate fugit ratione facilis atque ullam minus provident, velit quia, dolor corporis, laborum ipsa laboriosam doloribus. ",
-    },
-    {
-      userName: "Cưởng 1",
-      content:
-        "Hồ vẫn thả lân ,tôi lại căng  Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis quam nihil vel adipisci facere? Cupiditate fugit ratione facilis atque ullam minus provident, velit quia, dolor corporis, laborum ipsa laboriosam doloribus. ",
-    },
-  ];
-
   const postReportDetail = useStoreState(
     (states) => states.ReportModel.postReportDetail,
   );
   const getPostReportDetail = useStoreActions(
     (actions) => actions.ReportModel.getPostReportDetail,
   );
-  useEffect(() => {
-    getPostReportDetail({ id: 33 });
-  }, []);
-  console.log(`reviewReportDetail`, postReportDetail);
+
+  const { locationName, reportTime, postDtoOut, reportDetailList } =
+    postReportDetail;
   const listEvent = [{ name: "Xóa bài viết", onPress: () => {} }];
+
+  let typeBadge = "";
+
+  if (postDtoOut !== undefined) {
+    switch (postDtoOut.postType) {
+      case "STOCKING":
+        typeBadge = "Bồi cá";
+        break;
+      case "REPORTING":
+        typeBadge = "Báo cá";
+        break;
+      default:
+        typeBadge = "Thông báo";
+    }
+  }
+  const headerListComponent = () => (
+    <>
+      {postDtoOut !== undefined ? (
+        <VStack space={3} mt={4} px={3}>
+          <Box style={styles.textContentType}>
+            <Text bold>Điểm câu bị báo cáo</Text>
+            <Text>{locationName}</Text>
+          </Box>
+          <Divider />
+          <Text style={styles.textContentType}>
+            <Text bold>Thời gian báo cáo :</Text> {reportTime}
+          </Text>
+          <Divider />
+          <EventPostCard
+            id={postDtoOut.id}
+            iconEvent={listEvent}
+            iconName="ellipsis-vertical"
+            postStyle="LAKE_POST"
+            image={postDtoOut.uri}
+            postTime={postDtoOut.postTime}
+            edited={postDtoOut.edited}
+            lakePost={{
+              badge: typeBadge,
+              content: postDtoOut.content,
+            }}
+          />
+          <Text bold style={styles.textContentType}>
+            Danh sách báo cáo :
+          </Text>
+        </VStack>
+      ) : (
+        <></>
+      )}
+    </>
+  );
+  const footerComponent = () => <Divider mt={20} />;
   const renderItem = ({ item }) => (
     <Box
       borderTopWidth="1"
@@ -93,40 +79,26 @@ const AdminReportPostDetailScreen = () => {
       backgroundColor="white"
       mt="0.5"
       mb="1"
-      // keyExtractor={(item.id) => item.index_id.toString()}
       pl="2"
-      pb="1"
+      py="1.5"
     >
-      <AvatarCard avatarSize="md" nameUser={item.userName} />
+      <AvatarCard
+        avatarSize="md"
+        nameUser={item.userFullName}
+        images={item.userAvatar}
+        subText={item.time}
+      />
       <Box mt={2}>
         <Text italic style={styles.textContentType}>
-          {item.content}
+          {item.description}
         </Text>
       </Box>
     </Box>
   );
-  const headerListComponent = () => (
-    <VStack space={3} mt={4} px={3}>
-      <Box style={styles.textContentType}>
-        <Text bold>Điểm câu bị báo cáo</Text>
-        <Text>Ho thuan viet</Text>
-      </Box>
-      <Divider />
-      <Text style={styles.textContentType}>
-        <Text bold>Thời gian báo cáo :</Text> 0/0/0
-      </Text>
-      <Divider />
-      <EventPostCard
-        id={1}
-        iconEvent={listEvent}
-        iconName="ellipsis-vertical"
-      />
-      <Text bold style={styles.textContentType}>
-        Danh sách báo cáo :
-      </Text>
-    </VStack>
-  );
-  const footerComponent = () => <Divider mt={20} />;
+
+  useEffect(() => {
+    getPostReportDetail({ id: 5 });
+  }, []);
 
   return (
     <AdminReport>
@@ -134,7 +106,7 @@ const AdminReportPostDetailScreen = () => {
         ListHeaderComponent={headerListComponent}
         ListFooterComponent={footerComponent}
         pt="0.5"
-        data={reportData}
+        data={reportDetailList}
         renderItem={renderItem}
         keyExtractor={(item, index) => index.toString()}
       />
