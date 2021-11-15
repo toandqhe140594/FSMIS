@@ -151,8 +151,6 @@ const PostListContainerComponent = () => {
 
   useEffect(() => {
     if (pinSuccess === true) {
-      // setCurrentPinPost(newPinPost);
-      console.log(`currentPinPost`, currentPinPost);
       showToastMessage("Xử lý thành công");
     }
     if (pinSuccess === false) {
