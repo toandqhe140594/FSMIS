@@ -26,8 +26,9 @@ export const ANGLER_CATCH_REPORT_FORM = yup.object().shape({
     .max(5, "Chỉ được tạo tối đa 10 thẻ cá")
     .of(
       yup.object().shape({
-        fishSpeciesId: yup
+        fishInLakeId: yup
           .number()
+          .test("zero", "Loại cá không được để trống", (value) => value !== 0)
           .typeError("Trường này chỉ được nhập số")
           .required("Loại cá không được để trống"),
         quantity: yup
