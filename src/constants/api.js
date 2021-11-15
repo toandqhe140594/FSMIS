@@ -57,3 +57,8 @@ export const REPORT_WRITE = "report/add";
 export const CHECKIN = "checkin";
 export const CHECKIN_STATUS = "personal/availability";
 export const CHECKOUT = "location/checkout";
+
+export const OTP_SEND_ANY = "util/otp/any";
+export const OTP_SEND_EXISTED = "util/otp/existed";
+export const OTP_SEND_NONEXISTED = "util/otp/nonexisted";
+export const OTP_VALIDATE = "util/otp/validate";
