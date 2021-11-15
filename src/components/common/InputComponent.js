@@ -14,6 +14,11 @@ const styles = StyleSheet.create({
   },
 });
 
+const INPUT_TYPE_TEXT = "text";
+const INPUT_TYPE_PASSWORD = "password";
+const KEYBOARD_TYPE_NUMBER_PAD = "number-pad";
+const KEYBOARD_TYPE_DEFAULT = "default";
+
 const InputComponent = ({
   label,
   placeholder,
@@ -26,7 +31,7 @@ const InputComponent = ({
   shouldDisable,
   myError,
   useCustomError,
-  inputType,
+  useSecureInput,
 }) => {
   const {
     control,
@@ -46,13 +51,15 @@ const InputComponent = ({
         render={({ field: { onChange, onBlur, value } }) => (
           <Input
             InputLeftElement={leftIcon}
-            type={inputType}
+            type={useSecureInput ? INPUT_TYPE_PASSWORD : INPUT_TYPE_TEXT}
             placeholder={placeholder}
             onChangeText={onChange}
             onBlur={onBlur}
             value={value}
             fontSize="md"
-            keyboardType={useNumPad ? "number-pad" : "default"}
+            keyboardType={
+              useNumPad ? KEYBOARD_TYPE_NUMBER_PAD : KEYBOARD_TYPE_DEFAULT
+            }
             isDisabled={shouldDisable}
             style={styles.inputComponent}
           />
@@ -83,7 +90,7 @@ InputComponent.propTypes = {
   myError: PropTypes.objectOf(
     PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
   ),
-  inputType: PropTypes.string,
+  useSecureInput: PropTypes.bool,
 };
 
 InputComponent.defaultProps = {
@@ -98,7 +105,7 @@ InputComponent.defaultProps = {
   shouldDisable: false,
   useCustomError: false,
   myError: {},
-  inputType: "text",
+  useSecureInput: false,
 };
 
 export default InputComponent;
