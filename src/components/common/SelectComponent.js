@@ -77,13 +77,13 @@ SelectComponent.propTypes = {
   placeholder: PropTypes.string,
   data: PropTypes.arrayOf(PropTypes.object),
   myStyles: PropTypes.objectOf(
-    PropTypes.oneOf([PropTypes.string, PropTypes.number]),
+    PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   ),
   hasAsterisk: PropTypes.bool,
   isTitle: PropTypes.bool,
   controllerName: PropTypes.string.isRequired,
   myError: PropTypes.objectOf(
-    PropTypes.oneOf([PropTypes.string, PropTypes.object]),
+    PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
   ),
   handleDataIfValChanged: PropTypes.func,
   useCustomError: PropTypes.bool,
