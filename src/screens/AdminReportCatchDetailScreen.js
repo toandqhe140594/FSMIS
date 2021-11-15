@@ -1,5 +1,6 @@
+import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, Button, Divider, FlatList, Text, VStack } from "native-base";
-import React from "react";
+import React, { useEffect } from "react";
 
 import AdminReport from "../components/AdminReport";
 import AvatarCard from "../components/AvatarCard";
@@ -70,7 +71,19 @@ const AdminReportCatchDetailScreen = () => {
         "Hồ vẫn thả lân ,tôi lại căng  Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis quam nihil vel adipisci facere? Cupiditate fugit ratione facilis atque ullam minus provident, velit quia, dolor corporis, laborum ipsa laboriosam doloribus. ",
     },
   ];
+  const catchReportDetail = useStoreState(
+    (states) => states.ReportModel.catchReportDetail,
+  );
+  const getCatchReportDetail = useStoreActions(
+    (actions) => actions.ReportModel.getCatchReportDetail,
+  );
+  useEffect(() => {
+    getCatchReportDetail({ id: 3 });
+  }, []);
+  console.log(`catchReportDetail`, catchReportDetail);
+
   const listEvent = [{ name: "Xóa bài viết", onPress: () => {} }];
+  const fishList = ["tram"];
   const renderItem = ({ item }) => (
     <Box
       borderTopWidth="1"
@@ -81,7 +94,6 @@ const AdminReportCatchDetailScreen = () => {
       backgroundColor="white"
       mt="0.5"
       mb="1"
-      // keyExtractor={(item.id) => item.index_id.toString()}
       pl="2"
       pb="1"
     >
@@ -118,6 +130,10 @@ const AdminReportCatchDetailScreen = () => {
         iconEvent={listEvent}
         iconName="ellipsis-vertical"
         postStyle="ANGLER_POST"
+        fishList={fishList}
+        anglerName="test"
+        postTime="123"
+        imageAvatar="https://picsum.photos/200"
       />
       <Text bold style={styles.textContentType}>
         Danh sách báo cáo :

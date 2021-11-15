@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { Overlay } from "react-native-elements";
 
-import { goToAdminReviewReportDetailScreen } from "../../navigations";
+import { goToAdminCatchReportDetail } from "../../navigations";
 import HeaderTab from "../HeaderTab";
 import ReportCard from "./ReportCard";
 
@@ -37,7 +37,7 @@ const ReportCatchRoute = () => {
   const renderItem = ({ item }) => (
     <TouchableOpacity
       onPress={() => {
-        goToAdminReviewReportDetailScreen(navigation);
+        goToAdminCatchReportDetail(navigation);
       }}
     >
       <ReportCard {...item} isCatchReportType />

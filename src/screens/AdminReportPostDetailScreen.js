@@ -1,5 +1,6 @@
+import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, Divider, FlatList, Text, VStack } from "native-base";
-import React from "react";
+import React, { useEffect } from "react";
 
 import AdminReport from "../components/AdminReport";
 import AvatarCard from "../components/AvatarCard";
@@ -70,6 +71,17 @@ const AdminReportPostDetailScreen = () => {
         "Hồ vẫn thả lân ,tôi lại căng  Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis quam nihil vel adipisci facere? Cupiditate fugit ratione facilis atque ullam minus provident, velit quia, dolor corporis, laborum ipsa laboriosam doloribus. ",
     },
   ];
+
+  const postReportDetail = useStoreState(
+    (states) => states.ReportModel.postReportDetail,
+  );
+  const getPostReportDetail = useStoreActions(
+    (actions) => actions.ReportModel.getPostReportDetail,
+  );
+  useEffect(() => {
+    getPostReportDetail({ id: 33 });
+  }, []);
+  console.log(`reviewReportDetail`, postReportDetail);
   const listEvent = [{ name: "Xóa bài viết", onPress: () => {} }];
   const renderItem = ({ item }) => (
     <Box

@@ -237,53 +237,8 @@ const model = {
     }
   }),
   // SEND REPORT
-
-  sendLocationReport: thunk(async (actions, payload) => {
-    const { locationId, reportDtoIn, setSendStatus } = payload;
-    try {
-      const { status } = await http.post(
-        `location/report/${locationId}`,
-        reportDtoIn,
-      );
-      if (status === 200) {
-        setSendStatus(true);
-      }
-    } catch (error) {
-      setSendStatus(false);
-    }
-  }),
-  sendPostReport: thunk(async (actions, payload) => {
-    const { postId, reportDtoIn, setSendStatus } = payload;
-    try {
-      const { status } = await http.post(
-        `/location/post/report/${postId}`,
-        reportDtoIn,
-      );
-      if (status === 200) {
-        setSendStatus(true);
-      }
-    } catch (error) {
-      setSendStatus(false);
-    }
-  }),
-  sendReviewReport: thunk(async (actions, payload) => {
-    const { reviewId, reportDtoIn, setSendStatus } = payload;
-    try {
-      const { status } = await http.post(
-        `/location/review/report/${reviewId}`,
-        reportDtoIn,
-      );
-      if (status === 200) {
-        setSendStatus(true);
-      }
-    } catch (error) {
-      setSendStatus(false);
-    }
-  }),
-
   sendReport: thunk(async (actions, payload) => {
     const { id, reportDtoIn, type, setSendStatus } = payload;
-    console.log(`payload`, payload);
     try {
       switch (type) {
         case "POST": {
@@ -325,6 +280,84 @@ const model = {
     } catch (error) {
       setSendStatus(false);
       console.log(`error`, error);
+    }
+  }),
+
+  // GET REPORT DETAIL
+  locationReportDetail: {},
+  reviewReportDetail: {},
+  postReportDetail: {},
+  catchReportDetail: {},
+
+  setLocationReportDetail: action((state, payload) => {
+    state.locationReportDetail = payload;
+  }),
+  getLocationReportDetail: thunk(async (actions, payload) => {
+    const { id } = payload;
+    try {
+      const { status, data } = await http.get(
+        `${API_URL.ADMIN_REPORT_LOCATION_LIST}/${id}`,
+      );
+      if (status === 200) {
+        actions.setLocationReportDetail(data);
+      }
+    } catch (error) {
+      // handle error
+      console.log(`error>>> `, error);
+    }
+  }),
+
+  setReviewReportDetail: action((state, payload) => {
+    state.reviewReportDetail = payload;
+  }),
+  getReviewReportDetail: thunk(async (actions, payload) => {
+    const { id } = payload;
+    try {
+      const { status, data } = await http.get(
+        `${API_URL.ADMIN_REPORT_REVIEW_LIST}/${id}`,
+      );
+      if (status === 200) {
+        actions.setReviewReportDetail(data);
+      }
+    } catch (error) {
+      // handle error
+      console.log(`error>>> `, error);
+    }
+  }),
+
+  setPostReportDetail: action((state, payload) => {
+    state.postReportDetail = payload;
+  }),
+  getPostReportDetail: thunk(async (actions, payload) => {
+    const { id } = payload;
+    try {
+      const { status, data } = await http.get(
+        `${API_URL.ADMIN_REPORT_POST_LIST}/${id}`,
+      );
+      if (status === 200) {
+        actions.setPostReportDetail(data);
+      }
+    } catch (error) {
+      // handle error
+      console.log(`error>>> `, error);
+    }
+  }),
+
+  setCatchReportDetail: action((state, payload) => {
+    state.catchReportDetail = payload;
+  }),
+  getCatchReportDetail: thunk(async (actions, payload) => {
+    const { id } = payload;
+    try {
+      const { status, data } = await http.get(
+        `${API_URL.ADMIN_REPORT_CATCH_LIST}/${id}`,
+      );
+      if (status === 200) {
+        actions.setCatchReportDetail(data);
+      }
+    } catch (error) {
+      // handle error
+      console.log(`error>>> `, error);
     }
   }),
 };
