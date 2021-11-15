@@ -26,6 +26,7 @@ const InputComponent = ({
   shouldDisable,
   myError,
   useCustomError,
+  inputType,
 }) => {
   const {
     control,
@@ -45,7 +46,7 @@ const InputComponent = ({
         render={({ field: { onChange, onBlur, value } }) => (
           <Input
             InputLeftElement={leftIcon}
-            type="text"
+            type={inputType}
             placeholder={placeholder}
             onChangeText={onChange}
             onBlur={onBlur}
@@ -82,6 +83,7 @@ InputComponent.propTypes = {
   myError: PropTypes.objectOf(
     PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
   ),
+  inputType: PropTypes.string,
 };
 
 InputComponent.defaultProps = {
@@ -96,6 +98,7 @@ InputComponent.defaultProps = {
   shouldDisable: false,
   useCustomError: false,
   myError: {},
+  inputType: "text",
 };
 
 export default InputComponent;
