@@ -50,7 +50,7 @@ const OTPScreen = () => {
   };
 
   // Event fire when submit OTP
-  const onSubmit = (data) => {
+  const onSubmit = (data) => () => {
     console.log(data); // Test only
     setWrongOTP(true); // Test only
     setLoading(true); // Test only
@@ -119,7 +119,7 @@ const OTPScreen = () => {
           isLoadingText="Đang xử lý"
           size="lg"
           w="100%"
-          onPress={() => onSubmit(value)}
+          onPress={onSubmit(value)}
         >
           <Text color="white" fontSize="lg">
             Tiếp tục
@@ -145,12 +145,7 @@ const OTPScreen = () => {
               .padStart(2, "0")}`}
           </Text>
         ) : (
-          <Button
-            height={12}
-            size="lg"
-            w="40%"
-            onPress={() => resetCountdown()}
-          >
+          <Button height={12} size="lg" w="40%" onPress={resetCountdown}>
             <Text color="white" fontSize="xl">
               Gửi lại
             </Text>
