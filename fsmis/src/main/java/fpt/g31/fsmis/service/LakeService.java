@@ -229,6 +229,9 @@ public class LakeService {
                 .orElseThrow(() -> new NotFoundException("Không tìm thấy khu hồ!"));
         List<LakeWithFishInLakeDtoOut> output = new ArrayList<>();
         for (Lake lake : location.getLakeList()) {
+            if (!lake.isActive()){
+                continue;
+            }
             List<FishDtoOut> fishDtoOutList = new ArrayList<>();
             for (FishInLake fishInLake : lake.getFishInLakeList()) {
                 FishDtoOut fishDtoOut = FishDtoOut.builder()
