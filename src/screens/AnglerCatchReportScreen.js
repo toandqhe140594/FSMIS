@@ -48,15 +48,13 @@ const AnglerCatchReportScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
   const [workingFishList, setWorkingFishList] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [fullScreen, setFullScreen] = useState(true);
-  const [getStatus, setGetStatus] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [submitStatus, setSubmitStatus] = useState(null);
   const { lakeList, fishList } = useStoreState((states) => states.CheckInModel);
   const { increaseCatchesCount } = useStoreActions(
     (actions) => actions.ProfileModel,
   );
-  const { submitCatchReport, getLakeListByLocationId } = useStoreActions(
+  const { submitCatchReport } = useStoreActions(
     (actions) => actions.CheckInModel,
   );
   const methods = useForm({
@@ -93,16 +91,6 @@ const AnglerCatchReportScreen = () => {
     }, [route.params]),
   );
 
-  useEffect(() => {
-    /* --------- NOTE TO REMOVE ------------ */
-    // Remove when getAllFish api working again
-    // Set isLoading default state to false
-    // Possibly remove fullScreen state and leave
-    // Overlay default style as loadOnSubmit
-    getLakeListByLocationId({ setGetStatus });
-    /* ------------------------------------- */
-  }, []);
-
   /**
    * Set list of fish based on lake id chosen
    */
@@ -112,22 +100,6 @@ const AnglerCatchReportScreen = () => {
       setWorkingFishList(filter[0].fishList);
     }
   }, [watchLakeIdField]);
-
-  /**
-   * Trigger when get status return
-   */
-  useEffect(() => {
-    if (getStatus === "SUCCESS") {
-      setIsLoading(false);
-      setFullScreen(false);
-      setGetStatus(null);
-    } else if (getStatus === "FAILED") {
-      setIsLoading(false);
-      setFullScreen(false);
-      setGetStatus(null);
-      // alert error
-    }
-  }, [getStatus]);
 
   /**
    * Trigger when submit status return
@@ -156,7 +128,7 @@ const AnglerCatchReportScreen = () => {
       <Overlay
         isVisible={isLoading}
         fullScreen
-        overlayStyle={fullScreen ? styles.loadOnStart : styles.loadOnSubmit}
+        overlayStyle={styles.loadOnSubmit}
       >
         <ActivityIndicator size={60} color="#2089DC" />
       </Overlay>
