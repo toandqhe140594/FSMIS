@@ -18,7 +18,6 @@ const PostListContainerComponent = () => {
     getLocationPostListFirstPage,
     pinFLocationPost,
     getPinPost,
-    setCurrentPinPost,
   } = useStoreActions((actions) => actions.FManageModel);
 
   const lakePostPageNo = useStoreState(
@@ -33,7 +32,6 @@ const PostListContainerComponent = () => {
   );
   const [deleteSuccess, setDeleteSuccess] = useState(null);
   const [pinSuccess, setPinSuccess] = useState(null);
-  const [newPinPost, setNewPinPost] = useState({});
   const loadMoreLakeCatchData = () => {
     getLocationPostListByPage({ pageNo: lakePostPageNo });
     setLakePostPageNo(lakePostPageNo + 1);
@@ -45,13 +43,11 @@ const PostListContainerComponent = () => {
   };
 
   const pinFLocationPostHandler = (id, item) => {
-    pinFLocationPost({ postId: id, setPinSuccess });
-    setNewPinPost(item);
+    pinFLocationPost({ postId: id, item, setPinSuccess });
   };
 
   const unPinFLocationPostHandler = (id) => {
     pinFLocationPost({ postId: id, setPinSuccess });
-    setNewPinPost({});
   };
 
   const removePostHandler = (id) => {
@@ -148,7 +144,6 @@ const PostListContainerComponent = () => {
   useEffect(() => {
     if (deleteSuccess === true) {
       showToastMessage("Xóa thành công");
-      setCurrentPinPost({});
     }
     if (deleteSuccess === false) showToastMessage("Xóa thất bại");
     setDeleteSuccess(null);
@@ -156,7 +151,8 @@ const PostListContainerComponent = () => {
 
   useEffect(() => {
     if (pinSuccess === true) {
-      setCurrentPinPost(newPinPost);
+      // setCurrentPinPost(newPinPost);
+      console.log(`currentPinPost`, currentPinPost);
       showToastMessage("Xử lý thành công");
     }
     if (pinSuccess === false) {
