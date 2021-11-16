@@ -21,9 +21,5 @@ public class AdminFishingLocationController {
         return new ResponseEntity<>(locationService.adminGetLocationList(pageNo), HttpStatus.OK);
     }
 
-    @GetMapping("/banned")
-    public ResponseEntity<Object> getBannedPhoneList(){
-        return new ResponseEntity<>(locationService.getBannedPhone(), HttpStatus.OK);
-    }
     // @PostMapping("/{locationId}/verify")
 }
