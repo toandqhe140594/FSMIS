@@ -1,7 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, FlatList, Text, View } from "react-native";
+import { ActivityIndicator, FlatList, View } from "react-native";
 import { Button, Icon } from "react-native-elements";
 
 import styles from "../../config/styles";
@@ -14,15 +14,21 @@ const ListViewRoute = () => {
   // DucHM ADD_START 16/11/2021
   const [isLoading, setIsLoading] = useState(false);
   const [getStatus, setGetStatus] = useState(null);
-  const { listLocationResult } = useStoreState(
+  const { listLocationResult, pageNo, totaListLocationPage } = useStoreState(
     (states) => states.AdvanceSearchModel,
   );
-  const { getListLocationNextPage } = useStoreActions(
+  const { setPageNo, getListLocationNextPage } = useStoreActions(
     (actions) => actions.AdvanceSearchModel,
   );
+  /**
+   * Check if pageNo small then totalPage
+   * then set incremented pageNo
+   */
   const handleLoadMore = () => {
-    setIsLoading(true);
-    getListLocationNextPage({ setGetStatus });
+    if (pageNo < totaListLocationPage) {
+      setIsLoading(true);
+      setPageNo(pageNo + 1);
+    }
   };
   // DucHM ADD_END 16/11/2021
 
@@ -48,25 +54,36 @@ const ListViewRoute = () => {
 
   // DucHM ADD_START 16/11/2021
   const renderFooter = () => {
-    return isLoading ? <ActivityIndicator color="#2089DC" /> : null;
+    return isLoading ? (
+      <View style={{ marginVertical: 12, justifyContent: "center" }}>
+        <ActivityIndicator size="large" color="#2089DC" />
+      </View>
+    ) : null;
   };
-
-  const renderEmpty = () => (
-    <Text style={{ alignSelf: "center", color: "gray" }}>
-      Chưa có kết quả tìm kiếm
-    </Text>
-  );
   // DucHM ADD_END 16/11/2021
 
   const keyExtractor = (item) => item.id.toString();
 
   // DucHM ADD_START 16/11/2021
+  /**
+   * Listen to when pageNo increases
+   * and call the get list next page
+   */
+  useEffect(() => {
+    getListLocationNextPage({ setGetStatus });
+  }, [pageNo]);
+
+  /**
+   * Trigger when get status returns
+   */
   useEffect(() => {
     if (getStatus === "SUCCESS") {
       setIsLoading(false);
+      setGetStatus(null);
     } else if (getStatus === "FAILED") {
       setIsLoading(false);
       showToastMessage("Đã có lỗi xảy ra!");
+      setGetStatus(null);
       // handle error
     }
   }, [getStatus]);
@@ -100,7 +117,7 @@ const ListViewRoute = () => {
           initialNumToRender={3}
           maxToRenderPerBatch={5}
           // DucHM ADD_START 16/11/2021
-          ListEmptyComponent={renderEmpty}
+          bounces={false} // prevent onEndReach trigger twice
           ListFooterComponent={renderFooter}
           onEndReached={handleLoadMore}
           onEndReachedThreshold={0.2}
