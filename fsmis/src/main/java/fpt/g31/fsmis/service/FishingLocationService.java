@@ -380,7 +380,8 @@ public class FishingLocationService {
     public PaginationDtoOut searchFishingLocation(FilterDtoIn filterDtoIn, int pageNo) {
         Specification<FishingLocation> specification = where(fishingMethodIdIn(filterDtoIn.getFishingMethodIdList()))
                 .and(provinceIdIn(filterDtoIn.getProvinceIdList()))
-                .and(fishSpeciesIdIn(filterDtoIn.getFishSpeciesIdList()));
+                .and(fishSpeciesIdIn(filterDtoIn.getFishSpeciesIdList()))
+                .and(activeIs(true));
         Page<FishingLocation> fishingLocationList = fishingLocationRepos.findAll(specification, PageRequest.of(pageNo - 1, 10));
         List<FishingLocationItemDtoOut> output = new ArrayList<>();
         for (FishingLocation location :
@@ -443,10 +444,14 @@ public class FishingLocationService {
         };
     }
 
-    private Specification<FishingLocation> scoreGreaterThan(Integer minScore) {
-        if (minScore == null || minScore == 0) {
-            return null;
-        }
-        return null;
+    private Specification<FishingLocation> activeIs(Boolean active) {
+        return (root, criteriaQuery, criteriaBuilder) -> criteriaBuilder.equal(root.get("active"), active);
     }
+
+//    private Specification<FishingLocation> scoreGreaterThan(Integer minScore) {
+//        if (minScore == null || minScore == 0) {
+//            return null;
+//        }
+//        return null;
+//    }
 }
