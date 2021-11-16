@@ -352,7 +352,7 @@ const model = {
         actions.setCurrentPinPost({});
       }
     } catch (error) {
-      console.log(`error`, error);
+    
       setDeleteSuccess(false);
     }
   }),
@@ -1077,11 +1077,10 @@ const model = {
     try {
       const { status } = await http.post(`/location/post/pin/${postId}`);
       if (status === 200) {
-        setPinSuccess(true);
         actions.setCurrentPinPost(item);
+        setPinSuccess(true);
       }
     } catch (error) {
-      console.log("status :>> ", error);
       setPinSuccess(false);
     }
   }),

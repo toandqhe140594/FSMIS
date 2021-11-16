@@ -38,7 +38,7 @@ const FLocationReportRoute = () => {
     return (
       <TouchableOpacity
         onPress={() => {
-          goToAdminFLocationReportDetailScreen(navigation);
+          goToAdminFLocationReportDetailScreen(navigation, { id: item.id });
         }}
       >
         <ReportCard {...item} isFLocationReport />
