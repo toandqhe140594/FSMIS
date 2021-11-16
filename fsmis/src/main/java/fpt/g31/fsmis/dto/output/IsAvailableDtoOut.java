@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class IsAvailableDtoOut {
-    private Boolean isAvailable;
+    private Boolean available;
     private FishingLocationItemDtoOut fishingLocationItemDtoOut;
 }

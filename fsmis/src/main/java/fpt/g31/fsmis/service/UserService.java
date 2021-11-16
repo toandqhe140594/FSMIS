@@ -133,7 +133,7 @@ public class UserService {
                     .build();
         }
         return IsAvailableDtoOut.builder()
-                .isAvailable(user.getAvailable())
+                .available(user.getAvailable())
                 .fishingLocationItemDtoOut(fishingLocationItemDtoOut)
                 .build();
     }
