@@ -285,3 +285,17 @@ export const FMANAGE_POST_FORM = yup.object().shape({
     then: yup.string().required("Link video không được để trống"),
   }),
 });
+
+export const REGISTER_PHONE_AND_PASS_FORM = yup.object().shape({
+  phoneNumber: yup
+    .string()
+    .required("Số điện thoại không thể bỏ trống")
+    .label("PhoneNumber"),
+  password: yup
+    .string()
+    .required("Mật khẩu không thể bỏ trống")
+    .min(8, "Mật khẩu phải chứa ít nhất 8 ký tự"),
+  passwordConfirmation: yup
+    .string()
+    .oneOf([yup.ref("password"), null], "Mật khẩu không khớp"),
+});
