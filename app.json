@@ -13,7 +13,9 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true
     },
@@ -32,7 +34,7 @@
     "web": {
       "favicon": "./src/assets/images/favicon.png"
     },
-    "description": "The Fishing Spot Management Information System project - end of iteration 1",
+    "description": "The Fishing Spot Management Information System project - v1.1.1",
     "githubUrl": "https://github.com/toandqhe140594/FSMIS"
   }
 }

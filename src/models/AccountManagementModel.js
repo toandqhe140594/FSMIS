@@ -82,7 +82,7 @@ const model = {
       const { data } = await http.get(`${API_URL.ADMIN_ACCOUNT_LIST}`, {
         params: {
           pageNo,
-          keyword,
+          phone: keyword,
         },
       });
       const { totalPage, totalItem, items } = data;

@@ -18,7 +18,6 @@ const PostListContainerComponent = () => {
     getLocationPostListFirstPage,
     pinFLocationPost,
     getPinPost,
-    setCurrentPinPost,
   } = useStoreActions((actions) => actions.FManageModel);
 
   const lakePostPageNo = useStoreState(
@@ -32,7 +31,7 @@ const PostListContainerComponent = () => {
     (states) => states.FManageModel.currentPinPost,
   );
   const [deleteSuccess, setDeleteSuccess] = useState(null);
-
+  const [pinSuccess, setPinSuccess] = useState(null);
   const loadMoreLakeCatchData = () => {
     getLocationPostListByPage({ pageNo: lakePostPageNo });
     setLakePostPageNo(lakePostPageNo + 1);
@@ -44,13 +43,11 @@ const PostListContainerComponent = () => {
   };
 
   const pinFLocationPostHandler = (id, item) => {
-    pinFLocationPost({ postId: id });
-    setCurrentPinPost(item);
+    pinFLocationPost({ postId: id, item, setPinSuccess });
   };
 
   const unPinFLocationPostHandler = (id) => {
-    pinFLocationPost({ postId: id });
-    setCurrentPinPost({});
+    pinFLocationPost({ postId: id, setPinSuccess });
   };
 
   const removePostHandler = (id) => {
@@ -70,23 +67,36 @@ const PostListContainerComponent = () => {
     { name: "Xóa bài đăng", onPress: removePostHandler },
   ];
 
-  const renderItem = ({ item }) => (
-    <Box backgroundColor="white" my="1">
-      <EventPostCard
-        postStyle="LAKE_POST"
-        iconName="ellipsis-vertical"
-        iconEvent={[...pinPostEvent, ...listEvent]}
-        id={item.id}
-        image={item.url}
-        itemData={item}
-        lakePost={{
-          badge: item.postType === "STOCKING" ? "Bồi cá" : "Thông báo",
-          content: item.content,
-        }}
-        postTime={item.postTime}
-      />
-    </Box>
-  );
+  const renderItem = ({ item }) => {
+    let typeBadge = "";
+    switch (item.postType) {
+      case "STOCKING":
+        typeBadge = "Bồi cá";
+        break;
+      case "REPORTING":
+        typeBadge = "Báo cá";
+        break;
+      default:
+        typeBadge = "Thông báo";
+    }
+    return (
+      <Box backgroundColor="white" my="1">
+        <EventPostCard
+          postStyle="LAKE_POST"
+          iconName="ellipsis-vertical"
+          iconEvent={[...pinPostEvent, ...listEvent]}
+          id={item.id}
+          image={item.url}
+          itemData={item}
+          lakePost={{
+            badge: typeBadge,
+            content: item.content,
+          }}
+          postTime={item.postTime}
+        />
+      </Box>
+    );
+  };
 
   const pinPostComponent = () => (
     <>
@@ -130,16 +140,29 @@ const PostListContainerComponent = () => {
     </>
   );
   const footerComponent = () => <Divider mt={20} />;
+
+  useEffect(() => {
+    if (deleteSuccess === true) {
+      showToastMessage("Xóa thành công");
+    }
+    if (deleteSuccess === false) showToastMessage("Xóa thất bại");
+    setDeleteSuccess(null);
+  }, [deleteSuccess]);
+
+  useEffect(() => {
+    if (pinSuccess === true) {
+      showToastMessage("Xử lý thành công");
+    }
+    if (pinSuccess === false) {
+      showToastMessage("Thất bại");
+    }
+    setPinSuccess(null);
+  }, [pinSuccess]);
+
   useEffect(() => {
     getLocationPostListFirstPage();
     getPinPost();
   }, []);
-
-  useEffect(() => {
-    if (deleteSuccess === true) showToastMessage("Xóa thành công");
-    if (deleteSuccess === false) showToastMessage("Xóa thất bại");
-    setDeleteSuccess(null);
-  }, [deleteSuccess]);
 
   return (
     <Box>

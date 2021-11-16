@@ -316,24 +316,43 @@ const model = {
   }),
 
   editPost: thunk(async (actions, payload, { getState }) => {
-    const { currentId } = getState();
+    const { currentId, currentPinPost } = getState();
     const { updateData, setUpdateStatus } = payload;
     try {
       await http.put(`location/${currentId}/post/edit`, updateData);
+      if (currentPinPost.id === updateData.id) {
+        actions.setCurrentPinPost(updateData);
+      }
+      actions.editPostInList(updateData);
       setUpdateStatus("SUCCESS");
     } catch (error) {
       setUpdateStatus("FAILED");
     }
   }),
 
+  editPostInList: action((state, payload) => {
+    state.locationPostList = state.locationPostList.filter(
+      (post) => post.id !== payload,
+    );
+    const foundIndex = state.locationPostList.findIndex(
+      (item) => item.id === payload.id,
+    );
+
+    state.locationPostList[foundIndex] = payload;
+  }),
+
   deletePost: thunk(async (actions, payload, { getState }) => {
     const { postId, setDeleteSuccess } = payload;
-    const { currentId } = getState();
+    const { currentId, currentPinPost } = getState();
     try {
       await http.delete(`location/${currentId}/post/delete/${postId}`);
       actions.removePostFromPostList(postId);
       setDeleteSuccess(true);
+      if (currentPinPost.id === postId) {
+        actions.setCurrentPinPost({});
+      }
     } catch (error) {
+      console.log(`error`, error);
       setDeleteSuccess(false);
     }
   }),
@@ -589,9 +608,7 @@ const model = {
   addNewLocation: thunk(async (actions, payload) => {
     const { addData, setAddStatus } = payload;
     try {
-      await http.post(API_URL.LOCATION_ADD, addData, {
-        params: {},
-      });
+      await http.post(API_URL.LOCATION_ADD, addData);
       await actions.getListOfFishingLocations();
       setAddStatus("SUCCESS");
     } catch (error) {
@@ -1041,6 +1058,7 @@ const model = {
   setCurrentPinPost: action((state, payload) => {
     state.currentPinPost = payload;
   }),
+
   getPinPost: thunk(async (actions, payload, { getState }) => {
     const { currentId } = getState();
     try {
@@ -1055,12 +1073,16 @@ const model = {
     }
   }),
   pinFLocationPost: thunk(async (actions, payload) => {
-    const { postId } = payload;
+    const { postId, item, setPinSuccess } = payload;
     try {
-      await http.post(`/location/post/pin/${postId}`);
-      console.log("success");
+      const { status } = await http.post(`/location/post/pin/${postId}`);
+      if (status === 200) {
+        setPinSuccess(true);
+        actions.setCurrentPinPost(item);
+      }
     } catch (error) {
-      console.log("failed");
+      console.log("status :>> ", error);
+      setPinSuccess(false);
     }
   }),
 };

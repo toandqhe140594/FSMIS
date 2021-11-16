@@ -236,6 +236,69 @@ const model = {
       // handle error
     }
   }),
+  // SEND REPORT
+
+  sendLocationReport: thunk(async (actions, payload) => {
+    const { locationId, reportDtoIn, setSendStatus } = payload;
+    try {
+      const { status } = await http.post(
+        `location/report/${locationId}`,
+        reportDtoIn,
+      );
+      if (status === 200) {
+        setSendStatus(true);
+      }
+    } catch (error) {
+      console.log("status :>> ", error);
+      setSendStatus(false);
+    }
+  }),
+  sendPostReport: thunk(async (actions, payload) => {
+    const { postId, reportDtoIn, setSendStatus } = payload;
+    try {
+      const { status } = await http.post(
+        `/location/post/report/${postId}`,
+        reportDtoIn,
+      );
+      if (status === 200) {
+        console.log(`status`, status);
+        setSendStatus(true);
+      }
+    } catch (error) {
+      console.log("status :>> ", error);
+      setSendStatus(false);
+    }
+  }),
+  sendReviewReport: thunk(async (actions, payload) => {
+    const { reviewId, reportDtoIn, setSendStatus } = payload;
+    try {
+      const { status } = await http.post(
+        `/location/review/report/${reviewId}`,
+        reportDtoIn,
+      );
+      if (status === 200) {
+        console.log(`status`, status);
+        setSendStatus(true);
+      }
+    } catch (error) {
+      console.log("status :>> ", error);
+      setSendStatus(false);
+    }
+  }),
+  sendCatchReport: thunk(async (actions, payload) => {
+    const { catchId, reportDtoIn, setSendStatus } = payload;
+    // try {
+    //   const { status } = await http.post(
+    //     `/location/review/report/${catchId}`,
+    //     reportDtoIn,
+    //   );
+    //   if (status === 200) {
+    //     console.log(`status`, status);
+    //   }
+    // } catch (error) {
+    //   console.log("status :>> ", error);
+    // }
+  }),
 };
 
 export default model;

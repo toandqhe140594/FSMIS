@@ -97,7 +97,11 @@ const FManageHomeScreen = () => {
           {role === VIEW_ROLE_STAFF && (
             <>
               {MENU_STAFF.map((item) => (
-                <MenuScreen menuListItem={item.category} key={item.id} />
+                <MenuScreen
+                  menuListItem={item.category}
+                  key={item.id}
+                  locationId={locationDetails.id}
+                />
               ))}
             </>
           )}

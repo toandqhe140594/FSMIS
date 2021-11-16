@@ -17,6 +17,7 @@ import TextAreaComponent from "../components/common/TextAreaComponent";
 import MapOverviewBox from "../components/FLocationEditProfile/MapOverviewBox";
 import HeaderTab from "../components/HeaderTab";
 import { ROUTE_NAMES, SCHEMA } from "../constants";
+import { goBack, goToOTPScreen } from "../navigations";
 import { showAlertAbsoluteBox, showAlertBox } from "../utilities";
 
 const styles = StyleSheet.create({
@@ -43,12 +44,17 @@ const FManageAddNewScreen = () => {
     getWardByDistrictId,
   } = useStoreActions((actions) => actions.AddressModel);
   const { addNewLocation } = useStoreActions((actions) => actions.FManageModel);
+  const sendOtp = useStoreActions((actions) => actions.UtilModel.sendOtp);
+
   const methods = useForm({
     mode: "onSubmit",
     reValidateMode: "onSubmit",
     resolver: yupResolver(SCHEMA.FMANAGE_PROFILE_FORM),
   });
   const { handleSubmit, setValue } = methods;
+  const [locationData, setLocationData] = useState({});
+  const [otpSendSuccess, setOtpSendSuccess] = useState(null);
+
   const generateAddressDropdown = useCallback((name, value) => {
     if (name === "provinceId") {
       getDisctrictByProvinceId({ id: value });
@@ -58,10 +64,16 @@ const FManageAddNewScreen = () => {
   }, []);
 
   const onSubmit = (data) => {
+    // if location info is missing
+    if (!locationLatLng.latitude) {
+      showAlertBox("Thông báo", "Vị trí hồ câu trên bản đồ không thể bỏ trống");
+      return;
+    }
     const images = data.imageArray.map((image) => image.base64);
     delete data.imageArray;
     const addData = { ...data, ...locationLatLng, images };
-    addNewLocation({ addData, setAddStatus });
+    setLocationData(addData);
+    sendOtp({ phone: data.phone, setSuccess: setOtpSendSuccess });
   };
 
   useEffect(() => {
@@ -72,12 +84,23 @@ const FManageAddNewScreen = () => {
   }, []);
 
   useEffect(() => {
+    if (otpSendSuccess === true) {
+      goToOTPScreen(
+        navigation,
+        ROUTE_NAMES.FMANAGE_PROFILE_ADD_NEW,
+        locationData.phone,
+      );
+    }
+    setOtpSendSuccess(null);
+  }, [otpSendSuccess]);
+
+  useEffect(() => {
     if (addStatus === "SUCCESS") {
       showAlertAbsoluteBox(
         "Thông báo",
         "Khu hồ thêm thành công!",
         () => {
-          navigation.goBack();
+          goBack(navigation);
         },
         "Xác nhận",
       );
@@ -85,6 +108,7 @@ const FManageAddNewScreen = () => {
       showAlertBox("Thông báo", "Đã có lỗi xảy ra, vui lòng thử lại");
     }
   }, [addStatus]);
+
   useFocusEffect(
     // useCallback will listen to route.param
     useCallback(() => {
@@ -92,8 +116,11 @@ const FManageAddNewScreen = () => {
         setValue("imageArray", route.params?.base64Array);
         navigation.setParams({ base64Array: [] });
       }
+      if (route.params?.otpSuccess === true)
+        addNewLocation({ addData: locationData, setAddStatus });
     }, [route.params]),
   );
+
   return (
     <>
       <HeaderTab name="Tạo điểm câu mới" />

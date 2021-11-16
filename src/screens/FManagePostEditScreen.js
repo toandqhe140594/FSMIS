@@ -51,11 +51,7 @@ const PostEditScreen = () => {
   const currentPost = useStoreState(
     (states) => states.FManageModel.currentPost,
   );
-  const locationPostList = useStoreState(
-    (states) => states.FManageModel.locationPostList,
-  );
 
-  const [editData, setEditData] = useState({});
   const route = useRoute();
   const navigation = useNavigation();
   const editPost = useStoreActions((actions) => actions.FManageModel.editPost);
@@ -72,9 +68,6 @@ const PostEditScreen = () => {
       imageArray: [],
     },
   });
-  const setCurrentPinPost = useStoreActions(
-    (actions) => actions.FManageModel.setCurrentPinPost,
-  );
 
   const { handleSubmit, watch, setValue, getValues } = methods;
   const watchAttachmentType = watch("attachmentType");
@@ -142,10 +135,6 @@ const PostEditScreen = () => {
       updateData,
       setUpdateStatus,
     });
-    setEditData(updateData);
-    if (currentPost.pinned) {
-      setCurrentPinPost(updateData);
-    }
   };
 
   // Fire when navigates back to this screen
@@ -159,20 +148,12 @@ const PostEditScreen = () => {
     }, [route.params]),
   );
 
-  const changeListPostItem = () => {
-    const foundIndex = locationPostList.findIndex(
-      (item) => item.id === editData.id,
-    );
-    locationPostList[foundIndex] = editData;
-  };
-
   useEffect(() => {
     if (updateStatus === "SUCCESS") {
       showAlertAbsoluteBox(
         "Thông báo",
         "Gửi thông thành công! Đang chỉnh sửa bài viết.",
         async () => {
-          changeListPostItem();
           goToFManagePostScreen(navigation);
         },
       );

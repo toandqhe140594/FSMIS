@@ -5,6 +5,7 @@ import React, { useEffect } from "react";
 
 import colors from "../config/colors";
 import ProfileModel from "../models/ProfileModel";
+import UtilModel from "../models/UtilModel";
 import CheckinScreen from "../screens/AnglerCheckinScreen";
 import FLocationSaveScreen from "../screens/FLocationSaveScreen";
 import FishingLocationSearchScreen from "../screens/FLocationSearchScreen";
@@ -13,6 +14,7 @@ import store from "../utilities/Store";
 import ProfileNavigator from "./NestedProfileNavigator";
 
 store.addModel("ProfileModel", ProfileModel);
+store.addModel("UtilModel", UtilModel);
 
 const Tab = createBottomTabNavigator();
 const AnglerMainNavigator = () => {

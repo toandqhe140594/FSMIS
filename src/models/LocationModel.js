@@ -326,7 +326,5 @@ const model = {
     actions.setCurrentPinPost(data);
   }),
   // END PIN POST
-
-  
 };
 export default model;

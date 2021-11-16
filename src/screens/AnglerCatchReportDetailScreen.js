@@ -9,6 +9,7 @@ import AvatarCard from "../components/AvatarCard";
 import FishInformationCard from "../components/FishInformationCard";
 import HeaderTab from "../components/HeaderTab";
 import ImageResizeMode from "../components/ImageResizeMode";
+import colors from "../config/colors";
 import { goToFishingLocationOverviewScreen } from "../navigations";
 
 const AnglerCatchReportDetailScreen = () => {
@@ -100,13 +101,7 @@ const AnglerCatchReportDetailScreen = () => {
             <Text bold fontSize="16">
               Câu tại:{" "}
             </Text>
-            <Text
-              fontSize="18"
-              underline
-              onPress={() => {
-                openLocationOverviewScreen();
-              }}
-            >
+            <Text fontSize="18" underline onPress={openLocationOverviewScreen}>
               {catchDetails.locationName}
             </Text>
           </Text>
@@ -114,12 +109,7 @@ const AnglerCatchReportDetailScreen = () => {
             <Text bold fontSize="16">
               Vị trí:{" "}
             </Text>
-            <Text
-              fontSize="16"
-              onPress={() => {
-                openLocationOverviewScreen();
-              }}
-            >
+            <Text fontSize="16" onPress={openLocationOverviewScreen}>
               Hồ thường
             </Text>
           </Text>
@@ -128,29 +118,34 @@ const AnglerCatchReportDetailScreen = () => {
           </Text>
 
           <Divider />
-          {catchDetails.returnToOwner && (
-            <Text
-              bold
-              italic
-              fontSize="15"
-              pl={0.5}
-              textAlign="center"
-              style={{ color: "white", backgroundColor: "#88E0EF" }}
-            >
-              Đã gửi lại cho hồ
-            </Text>
-          )}
         </VStack>
         <VStack space={1}>
           {catchDetails.fishes !== undefined &&
-            catchDetails.fishes.map((item) => (
-              <FishInformationCard
-                key={item.name}
-                image={item.image}
-                name={item.name}
-                amount={item.quantity}
-                totalWeight={item.weight}
-              />
+            catchDetails.fishes.map((item, index) => (
+              <React.Fragment key={`${item.name}${index.toString()}`}>
+                <Text
+                  bold
+                  italic
+                  fontSize="15"
+                  pl={0.5}
+                  textAlign="center"
+                  style={{
+                    color: "white",
+                    backgroundColor: item.returnToOwner
+                      ? "#88E0EF"
+                      : colors.defaultDanger,
+                  }}
+                >
+                  {item.returnToOwner ? "Đã gửi lại cho hồ" : "Không gửi lại"}
+                </Text>
+                <FishInformationCard
+                  key={item.name}
+                  image={item.image}
+                  name={item.name}
+                  amount={item.quantity}
+                  totalWeight={item.weight}
+                />
+              </React.Fragment>
             ))}
         </VStack>
       </Box>
