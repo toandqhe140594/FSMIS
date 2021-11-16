@@ -1079,8 +1079,8 @@ const model = {
     try {
       const { status } = await http.post(`/location/post/pin/${postId}`);
       if (status === 200) {
-        setPinSuccess(true);
         actions.setCurrentPinPost(item);
+        setPinSuccess(true);
       }
     } catch (error) {
       setPinSuccess(false);
