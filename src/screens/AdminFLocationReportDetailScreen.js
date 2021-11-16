@@ -1,74 +1,25 @@
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, Button, Divider, FlatList, Text, VStack } from "native-base";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import AdminReport from "../components/AdminReport";
 import AvatarCard from "../components/AvatarCard";
 import styles from "../config/styles";
+import { showAlertAbsoluteBox } from "../utilities";
 
 const AdminFLocationReportDetailScreen = () => {
-  const reportData = [
-    { userName: "Cưởng", content: "Hồ thả lân ,tôi đã căng" },
-    {
-      userName: "Cưởng 1",
-      content:
-        "Hồ vẫn thả lân ,tôi lại căng  Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis quam nihil vel adipisci facere? Cupiditate fugit ratione facilis atque ullam minus provident, velit quia, dolor corporis, laborum ipsa laboriosam doloribus. ",
-    },
-    {
-      userName: "Cưởng 1",
-      content:
-        "Hồ vẫn thả lân ,tôi lại căng  Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis quam nihil vel adipisci facere? Cupiditate fugit ratione facilis atque ullam minus provident, velit quia, dolor corporis, laborum ipsa laboriosam doloribus. ",
-    },
-    {
-      userName: "Cưởng 1",
-      content:
-        "Hồ vẫn thả lân ,tôi lại căng  Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis quam nihil vel adipisci facere? Cupiditate fugit ratione facilis atque ullam minus provident, velit quia, dolor corporis, laborum ipsa laboriosam doloribus. ",
-    },
-    {
-      userName: "Cưởng 1",
-      content:
-        "Hồ vẫn thả lân ,tôi lại căng  Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis quam nihil vel adipisci facere? Cupiditate fugit ratione facilis atque ullam minus provident, velit quia, dolor corporis, laborum ipsa laboriosam doloribus. ",
-    },
-    {
-      userName: "Cưởng 1",
-      content:
-        "Hồ vẫn thả lân ,tôi lại căng  Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis quam nihil vel adipisci facere? Cupiditate fugit ratione facilis atque ullam minus provident, velit quia, dolor corporis, laborum ipsa laboriosam doloribus. ",
-    },
-    {
-      userName: "Cưởng 1",
-      content:
-        "Hồ vẫn thả lân ,tôi lại căng  Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis quam nihil vel adipisci facere? Cupiditate fugit ratione facilis atque ullam minus provident, velit quia, dolor corporis, laborum ipsa laboriosam doloribus. ",
-    },
-    {
-      userName: "Cưởng 1",
-      content:
-        "Hồ vẫn thả lân ,tôi lại căng  Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis quam nihil vel adipisci facere? Cupiditate fugit ratione facilis atque ullam minus provident, velit quia, dolor corporis, laborum ipsa laboriosam doloribus. ",
-    },
-    {
-      userName: "Cưởng 1",
-      content:
-        "Hồ vẫn thả lân ,tôi lại căng  Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis quam nihil vel adipisci facere? Cupiditate fugit ratione facilis atque ullam minus provident, velit quia, dolor corporis, laborum ipsa laboriosam doloribus. ",
-    },
-    {
-      userName: "Cưởng 1",
-      content:
-        "Hồ vẫn thả lân ,tôi lại căng  Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis quam nihil vel adipisci facere? Cupiditate fugit ratione facilis atque ullam minus provident, velit quia, dolor corporis, laborum ipsa laboriosam doloribus. ",
-    },
-    {
-      userName: "Cưởng 1",
-      content:
-        "Hồ vẫn thả lân ,tôi lại căng  Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis quam nihil vel adipisci facere? Cupiditate fugit ratione facilis atque ullam minus provident, velit quia, dolor corporis, laborum ipsa laboriosam doloribus. ",
-    },
-    {
-      userName: "Cưởng 1",
-      content:
-        "Hồ vẫn thả lân ,tôi lại căng  Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis quam nihil vel adipisci facere? Cupiditate fugit ratione facilis atque ullam minus provident, velit quia, dolor corporis, laborum ipsa laboriosam doloribus. ",
-    },
-    {
-      userName: "Cưởng 1",
-      content:
-        "Hồ vẫn thả lân ,tôi lại căng  Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis quam nihil vel adipisci facere? Cupiditate fugit ratione facilis atque ullam minus provident, velit quia, dolor corporis, laborum ipsa laboriosam doloribus. ",
-    },
-  ];
+  const route = useRoute();
+  const navigation = useNavigation();
+  const [isSuccess, setIsSuccess] = useState(null);
+  const locationReportDetail = useStoreState(
+    (states) => states.ReportModel.locationReportDetail,
+  );
+  const { locationName, time, reportDetailList } = locationReportDetail;
+  const getLocationReportDetail = useStoreActions(
+    (actions) => actions.ReportModel.getLocationReportDetail,
+  );
+
   const headerListComponent = () => (
     <VStack space={3} mt={4} px={3}>
       <Box
@@ -79,13 +30,13 @@ const AdminFLocationReportDetailScreen = () => {
       >
         <Box>
           <Text bold>Điểm câu bị báo cáo</Text>
-          <Text>Hồ thuần việt</Text>
+          <Text>{locationName}</Text>
         </Box>
         <Button>Đi tới trang</Button>
       </Box>
       <Divider />
       <Text style={styles.textContentType}>
-        <Text bold>Thời gian báo cáo :</Text> 0/0/0
+        <Text bold>Thời gian báo cáo :</Text> {time}
       </Text>
       <Divider />
       <Text bold style={styles.textContentType}>
@@ -105,21 +56,46 @@ const AdminFLocationReportDetailScreen = () => {
       mt="0.5"
       mb="1"
       pl="2"
-      pb="1"
+      py="1.5"
     >
-      <AvatarCard avatarSize="md" nameUser={item.userName} />
+      <AvatarCard
+        avatarSize="md"
+        nameUser={item.userFullName}
+        images={item.userAvatar}
+        subText={item.time}
+        subTextFontSize="sm"
+      />
       <Box mt={2}>
         <Text italic style={styles.textContentType}>
-          {item.content}
+          {item.description}
         </Text>
       </Box>
     </Box>
   );
+  useEffect(() => {
+    if (route.params.id) {
+      getLocationReportDetail({ id: route.params.id, setIsSuccess });
+    }
+  }, []);
+  useEffect(() => {
+    if (isSuccess === false) {
+      showAlertAbsoluteBox(
+        "Thông báo",
+        "Xảy ra lỗi, vui lòng quay lại.",
+        () => {
+          navigation.goBack();
+        },
+        "Xác nhận",
+      );
+    }
+    setIsSuccess(null);
+  }, [isSuccess]);
+
   return (
     <AdminReport>
       <FlatList
         pt="0.5"
-        data={reportData}
+        data={reportDetailList}
         ListHeaderComponent={headerListComponent}
         ListFooterComponent={footerComponent}
         renderItem={renderItem}

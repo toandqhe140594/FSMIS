@@ -47,7 +47,7 @@ const PostListContainerComponent = () => {
   };
 
   const unPinFLocationPostHandler = (id) => {
-    pinFLocationPost({ postId: id, setPinSuccess });
+    pinFLocationPost({ postId: id, item: {}, setPinSuccess });
   };
 
   const removePostHandler = (id) => {

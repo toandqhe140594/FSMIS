@@ -1,76 +1,34 @@
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, Button, Divider, FlatList, Text, VStack } from "native-base";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import AdminReport from "../components/AdminReport";
 import AvatarCard from "../components/AvatarCard";
 import EventPostCard from "../components/EventPostCard";
 import styles from "../config/styles";
+import { showAlertAbsoluteBox } from "../utilities";
 
 const AdminReportCatchDetailScreen = () => {
-  const reportData = [
-    { userName: "Cưởng", content: "Hồ thả lân ,tôi đã căng" },
-    {
-      userName: "Cưởng 1",
-      content:
-        "Hồ vẫn thả lân ,tôi lại căng  Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis quam nihil vel adipisci facere? Cupiditate fugit ratione facilis atque ullam minus provident, velit quia, dolor corporis, laborum ipsa laboriosam doloribus. ",
-    },
-    {
-      userName: "Cưởng 1",
-      content:
-        "Hồ vẫn thả lân ,tôi lại căng  Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis quam nihil vel adipisci facere? Cupiditate fugit ratione facilis atque ullam minus provident, velit quia, dolor corporis, laborum ipsa laboriosam doloribus. ",
-    },
-    {
-      userName: "Cưởng 1",
-      content:
-        "Hồ vẫn thả lân ,tôi lại căng  Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis quam nihil vel adipisci facere? Cupiditate fugit ratione facilis atque ullam minus provident, velit quia, dolor corporis, laborum ipsa laboriosam doloribus. ",
-    },
-    {
-      userName: "Cưởng 1",
-      content:
-        "Hồ vẫn thả lân ,tôi lại căng  Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis quam nihil vel adipisci facere? Cupiditate fugit ratione facilis atque ullam minus provident, velit quia, dolor corporis, laborum ipsa laboriosam doloribus. ",
-    },
-    {
-      userName: "Cưởng 1",
-      content:
-        "Hồ vẫn thả lân ,tôi lại căng  Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis quam nihil vel adipisci facere? Cupiditate fugit ratione facilis atque ullam minus provident, velit quia, dolor corporis, laborum ipsa laboriosam doloribus. ",
-    },
-    {
-      userName: "Cưởng 1",
-      content:
-        "Hồ vẫn thả lân ,tôi lại căng  Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis quam nihil vel adipisci facere? Cupiditate fugit ratione facilis atque ullam minus provident, velit quia, dolor corporis, laborum ipsa laboriosam doloribus. ",
-    },
-    {
-      userName: "Cưởng 1",
-      content:
-        "Hồ vẫn thả lân ,tôi lại căng  Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis quam nihil vel adipisci facere? Cupiditate fugit ratione facilis atque ullam minus provident, velit quia, dolor corporis, laborum ipsa laboriosam doloribus. ",
-    },
-    {
-      userName: "Cưởng 1",
-      content:
-        "Hồ vẫn thả lân ,tôi lại căng  Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis quam nihil vel adipisci facere? Cupiditate fugit ratione facilis atque ullam minus provident, velit quia, dolor corporis, laborum ipsa laboriosam doloribus. ",
-    },
-    {
-      userName: "Cưởng 1",
-      content:
-        "Hồ vẫn thả lân ,tôi lại căng  Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis quam nihil vel adipisci facere? Cupiditate fugit ratione facilis atque ullam minus provident, velit quia, dolor corporis, laborum ipsa laboriosam doloribus. ",
-    },
-    {
-      userName: "Cưởng 1",
-      content:
-        "Hồ vẫn thả lân ,tôi lại căng  Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis quam nihil vel adipisci facere? Cupiditate fugit ratione facilis atque ullam minus provident, velit quia, dolor corporis, laborum ipsa laboriosam doloribus. ",
-    },
-    {
-      userName: "Cưởng 1",
-      content:
-        "Hồ vẫn thả lân ,tôi lại căng  Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis quam nihil vel adipisci facere? Cupiditate fugit ratione facilis atque ullam minus provident, velit quia, dolor corporis, laborum ipsa laboriosam doloribus. ",
-    },
-    {
-      userName: "Cưởng 1",
-      content:
-        "Hồ vẫn thả lân ,tôi lại căng  Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis quam nihil vel adipisci facere? Cupiditate fugit ratione facilis atque ullam minus provident, velit quia, dolor corporis, laborum ipsa laboriosam doloribus. ",
-    },
-  ];
+  const route = useRoute();
+  const navigation = useNavigation();
+  const [isSuccess, setIsSuccess] = useState(null);
+  const catchReportDetail = useStoreState(
+    (states) => states.ReportModel.catchReportDetail,
+  );
+  const getCatchReportDetail = useStoreActions(
+    (actions) => actions.ReportModel.getCatchReportDetail,
+  );
+
+  const {
+    locationName,
+    reportTime,
+    catchesOverviewNoImageDtoOut,
+    reportDetailList,
+  } = catchReportDetail;
+
   const listEvent = [{ name: "Xóa bài viết", onPress: () => {} }];
+
   const renderItem = ({ item }) => (
     <Box
       borderTopWidth="1"
@@ -81,14 +39,18 @@ const AdminReportCatchDetailScreen = () => {
       backgroundColor="white"
       mt="0.5"
       mb="1"
-      // keyExtractor={(item.id) => item.index_id.toString()}
       pl="2"
-      pb="1"
+      py="1.5"
     >
-      <AvatarCard avatarSize="md" nameUser={item.userName} />
+      <AvatarCard
+        avatarSize="md"
+        nameUser={item.userFullName}
+        images={item.userAvatar}
+        subText={item.time}
+      />
       <Box mt={2}>
         <Text italic style={styles.textContentType}>
-          {item.content}
+          {item.description}
         </Text>
       </Box>
     </Box>
@@ -103,22 +65,31 @@ const AdminReportCatchDetailScreen = () => {
       >
         <Box>
           <Text bold>Điểm câu bị báo cáo</Text>
-          <Text>Hồ thuần việt</Text>
+          <Text>{locationName}</Text>
         </Box>
         <Button>Đi tới trang</Button>
       </Box>
 
       <Divider />
       <Text style={styles.textContentType}>
-        <Text bold>Thời gian báo cáo :</Text> 0/0/0
+        <Text bold>Thời gian báo cáo :</Text> {reportTime}
       </Text>
       <Divider />
-      <EventPostCard
-        id={1}
-        iconEvent={listEvent}
-        iconName="ellipsis-vertical"
-        postStyle="ANGLER_POST"
-      />
+      {catchesOverviewNoImageDtoOut !== undefined && (
+        <EventPostCard
+          id={catchesOverviewNoImageDtoOut.id}
+          iconEvent={listEvent}
+          iconName="ellipsis-vertical"
+          postStyle="ANGLER_POST"
+          fishList={catchesOverviewNoImageDtoOut.fishes}
+          anglerName={catchesOverviewNoImageDtoOut.userFullName}
+          postTime={catchesOverviewNoImageDtoOut.time}
+          imageAvatar={catchesOverviewNoImageDtoOut.avatar}
+          image="https://picsum.photos/400"
+          anglerContent={catchesOverviewNoImageDtoOut.description}
+        />
+      )}
+
       <Text bold style={styles.textContentType}>
         Danh sách báo cáo :
       </Text>
@@ -126,13 +97,32 @@ const AdminReportCatchDetailScreen = () => {
   );
   const footerComponent = () => <Divider mt={20} />;
 
+  useEffect(() => {
+    if (route.params.id) {
+      getCatchReportDetail({ id: route.params.id, setIsSuccess });
+    }
+  }, []);
+  useEffect(() => {
+    if (isSuccess === false) {
+      showAlertAbsoluteBox(
+        "Thông báo",
+        "Xảy ra lỗi, vui lòng quay lại.",
+        () => {
+          navigation.goBack();
+        },
+        "Xác nhận",
+      );
+    }
+    setIsSuccess(null);
+  }, [isSuccess]);
+
   return (
     <AdminReport>
       <FlatList
         ListHeaderComponent={headerListComponent}
         ListFooterComponent={footerComponent}
         pt="0.5"
-        data={reportData}
+        data={reportDetailList}
         renderItem={renderItem}
         keyExtractor={(item, index) => index.toString()}
       />

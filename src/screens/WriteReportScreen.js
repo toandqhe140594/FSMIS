@@ -19,12 +19,9 @@ const ReportScreen = () => {
   const [content, setContent] = useState("");
 
   const [sendStatus, setSendStatus] = useState(null);
-  const {
-    sendPostReport,
-    sendReviewReport,
-    sendLocationReport,
-    sendCatchReport,
-  } = useStoreActions((actions) => actions.ReportModel);
+  const sendReport = useStoreActions(
+    (actions) => actions.ReportModel.sendReport,
+  );
 
   const onSubmit = () => {
     const trimmedContent = content.trim();
@@ -32,42 +29,12 @@ const ReportScreen = () => {
     if (!trimmedContent) {
       showToastMessage("Nội đung báo cáo không thể bỏ trống");
     }
-    switch (reportParams.type) {
-      case "POST":
-        console.log(reportParams);
-        sendPostReport({
-          postId: reportParams.id,
-          reportDtoIn: trimmedContent,
-          setSendStatus,
-        });
-        break;
-      case "REVIEW":
-        console.log(reportParams);
-        sendReviewReport({
-          reviewId: reportParams.id,
-          reportDtoIn: trimmedContent,
-          setSendStatus,
-        });
-        break;
-      case "LOCATION":
-        sendLocationReport({
-          locationId: reportParams.id,
-          reportDtoIn: trimmedContent,
-          setSendStatus,
-        });
-        break;
-      case "CATCH":
-        sendCatchReport({
-          catchId: reportParams.id,
-          reportDtoIn: trimmedContent,
-          setSendStatus,
-        });
-
-        break;
-
-      default:
-        break;
-    }
+    sendReport({
+      id: reportParams.id,
+      reportDtoIn: trimmedContent,
+      type: reportParams.type,
+      setSendStatus,
+    });
   };
 
   useEffect(() => {

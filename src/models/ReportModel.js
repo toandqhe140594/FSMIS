@@ -237,67 +237,116 @@ const model = {
     }
   }),
   // SEND REPORT
+  sendReport: thunk(async (actions, payload) => {
+    const { id, reportDtoIn, type, setSendStatus } = payload;
+    let requestAPI = "";
+    switch (type) {
+      case "POST":
+        requestAPI = `/location/post/report/${id}`;
+        break;
 
-  sendLocationReport: thunk(async (actions, payload) => {
-    const { locationId, reportDtoIn, setSendStatus } = payload;
+      case "REVIEW": {
+        requestAPI = `/location/review/report/${id}`;
+        break;
+      }
+      case "LOCATION": {
+        requestAPI = `/location/report/${id}`;
+        break;
+      }
+      case "CATCH":
+        setSendStatus(false);
+        break;
+      default:
+        break;
+    }
     try {
-      const { status } = await http.post(
-        `location/report/${locationId}`,
-        reportDtoIn,
-      );
+      const { status } = await http.post(requestAPI, reportDtoIn);
       if (status === 200) {
         setSendStatus(true);
       }
     } catch (error) {
-      console.log("status :>> ", error);
       setSendStatus(false);
     }
   }),
-  sendPostReport: thunk(async (actions, payload) => {
-    const { postId, reportDtoIn, setSendStatus } = payload;
+
+  // GET REPORT DETAIL
+  locationReportDetail: {},
+  reviewReportDetail: {},
+  postReportDetail: {},
+  catchReportDetail: {},
+
+  setLocationReportDetail: action((state, payload) => {
+    state.locationReportDetail = payload;
+  }),
+  getLocationReportDetail: thunk(async (actions, payload) => {
+    const { id, setIsSuccess } = payload;
     try {
-      const { status } = await http.post(
-        `/location/post/report/${postId}`,
-        reportDtoIn,
+      const { status, data } = await http.get(
+        `${API_URL.ADMIN_REPORT_LOCATION_LIST}/${id}`,
       );
+      actions.setLocationReportDetail(data);
       if (status === 200) {
-        console.log(`status`, status);
-        setSendStatus(true);
+        setIsSuccess(true);
       }
     } catch (error) {
-      console.log("status :>> ", error);
-      setSendStatus(false);
+      setIsSuccess(false);
     }
   }),
-  sendReviewReport: thunk(async (actions, payload) => {
-    const { reviewId, reportDtoIn, setSendStatus } = payload;
+
+  setReviewReportDetail: action((state, payload) => {
+    state.reviewReportDetail = payload;
+  }),
+  getReviewReportDetail: thunk(async (actions, payload) => {
+    const { id, setIsSuccess } = payload;
     try {
-      const { status } = await http.post(
-        `/location/review/report/${reviewId}`,
-        reportDtoIn,
+      const { status, data } = await http.get(
+        `${API_URL.ADMIN_REPORT_REVIEW_LIST}/${id}`,
       );
       if (status === 200) {
-        console.log(`status`, status);
-        setSendStatus(true);
+        actions.setReviewReportDetail(data);
+        setIsSuccess(true);
       }
     } catch (error) {
-      console.log("status :>> ", error);
-      setSendStatus(false);
+      setIsSuccess(false);
     }
   }),
-  sendCatchReport: thunk(async (actions, payload) => {
-    const { catchId, reportDtoIn, setSendStatus } = payload;
-    // try {
-    //   const { status } = await http.post(
-    //     `/location/review/report/${catchId}`,
-    //     reportDtoIn,
-    //   );
-    //   if (status === 200) {
-    //     console.log(`status`, status);
-    //   }
-    // } catch (error) {
-    //   console.log("status :>> ", error);
-    // }
+
+  setPostReportDetail: action((state, payload) => {
+    state.postReportDetail = payload;
+  }),
+  getPostReportDetail: thunk(async (actions, payload) => {
+    const { id, setIsSuccess } = payload;
+    try {
+      const { status, data } = await http.get(
+        `${API_URL.ADMIN_REPORT_POST_LIST}/${id}`,
+      );
+      if (status === 200) {
+        actions.setPostReportDetail(data);
+        setIsSuccess(true);
+      }
+    } catch (error) {
+      // handle error
+      setIsSuccess(false);
+    }
+  }),
+
+  setCatchReportDetail: action((state, payload) => {
+    state.catchReportDetail = payload;
+  }),
+  getCatchReportDetail: thunk(async (actions, payload) => {
+    const { id, setIsSuccess } = payload;
+    try {
+      const { status, data } = await http.get(
+        `${API_URL.ADMIN_REPORT_CATCH_LIST}/${id}`,
+      );
+      if (status === 200) {
+        actions.setCatchReportDetail(data);
+        setIsSuccess(true);
+      }
+    } catch (error) {
+      // handle error
+      setIsSuccess(false);
+    }
   }),
 };
 
