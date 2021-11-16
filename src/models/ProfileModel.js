@@ -244,7 +244,7 @@ const model = {
   /**
    * Change personal password
    * @param {object} [payload] params pass to function
-   * @param {Function} [payload.setUpdateStatus] set status after request api
+   * @param {Function} [payload.setSuccess] set status after request api
    * @param {object} [payload.updateData] object body pass to api
    * @param {string} [updateData.oldPassword] user old password
    * @param {string} [updateData.newPassword] new password
@@ -254,12 +254,12 @@ const model = {
       newPassword: "",
       oldPassword: "",
     };
-    const setUpdateStatus = payload.setUpdateStatus || (() => {});
+    const setSuccess = payload.setSuccess || (() => {});
     try {
       await http.post(API_URL.PERSONAL_PASSWORD_CHANGE, updateData);
-      setUpdateStatus("SUCCESS");
+      setSuccess(true);
     } catch (error) {
-      setUpdateStatus("FAILED");
+      setSuccess(false);
     }
   }),
 };
