@@ -22,7 +22,7 @@ const model = {
     const { type, prevState } = payload;
     switch (type) {
       case "PROVINCE_ID_LIST":
-        state.prevStateData.provinceIdList = prevState;
+        state.prevStateData.provinceIdList = [prevState];
         break;
       case "FISHING_METHOD_ID_LIST":
         state.prevStateData.fishingMethodIdList = prevState;
@@ -35,29 +35,34 @@ const model = {
   }),
 
   /**
+   * Set listLocationResult state with set mode
    * @param {String} [payload.type] type of set case
    * @param {Array} [payload.items] data to set listLocationResult
    */
   setListLocationResult: action((state, payload) => {
-    const { type, items } = payload;
-    if (type === "APPEND") {
+    const { setMode, items } = payload;
+    if (setMode === "APPEND") {
       state.listLocationResult = state.listLocationResult.concat(items);
-    } else if (type === "NEW") {
+    } else if (setMode === "NEW") {
       state.listLocationResult = [].concat(items);
     }
   }),
   /**
-   *
+   * Set new totalPage
    */
   setTotalPage: action((state, payload) => {
-    state.totaListLocationPage = payload.totalpage;
+    state.totaListLocationPage = payload.totalPage;
   }),
 
   /**
-   *
+   * Set new pageNo state
+   * Use to set increment pageNo
+   * Due to synchronous behaviour,
+   * do increment outside and pass value to action payload
+   * @param {Number} [payload] incremented value for pageNo
    */
-  incrementPageNo: action((state) => {
-    state.pageNo += 1;
+  setPageNo: action((state, payload) => {
+    state.pageNo = payload;
   }),
 
   /**
@@ -77,18 +82,24 @@ const model = {
   }),
 
   /**
-   *
+   * Call search location api method
+   * @param {Object} [payload.submitData] body's data for post method
+   * @param {Function} [payload.setSubmitStatus] function to set api call status
    */
   searchFishingLocation: thunk(async (actions, payload) => {
     const { submitData, setSubmitStatus } = payload;
     try {
-      const { data } = await http.post(API_URL.LOCATION_ADVANCED_SEARCH, {
-        params: { ...submitData, pageNo: 1 },
-      });
+      const { data } = await http.post(
+        API_URL.LOCATION_ADVANCED_SEARCH,
+        submitData,
+        {
+          params: { pageNo: 1 },
+        },
+      );
       const { totalPage, items } = data;
       actions.resetPageNo();
       actions.setTotalPage({ totalPage });
-      actions.setListLocationResult({ type: "NEW", items });
+      actions.setListLocationResult({ setMode: "NEW", items });
       setSubmitStatus("SUCCESS");
     } catch (error) {
       setSubmitStatus("FAILED");
@@ -96,19 +107,24 @@ const model = {
     }
   }),
 
+  /**
+   * Get list location next page
+   * @param {Function} [payload.setGetStatus] function to set get api's status
+   */
   getListLocationNextPage: thunk(async (actions, payload, { getState }) => {
     const { setGetStatus } = payload;
-    const { prevStateData, pageNo, totaListLocationPage } = getState();
+    const { prevStateData, pageNo } = getState();
     try {
-      if (pageNo < totaListLocationPage) {
-        const { data } = await http.post(API_URL.LOCATION_ADVANCED_SEARCH, {
-          params: { ...prevStateData, pageNo: pageNo + 1 },
-        });
-        const { totalPage, items } = data;
-        actions.incrementPageNo();
-        actions.setTotalPage({ totalPage });
-        actions.setListLocationResult({ type: "APPEND", items });
-      }
+      const { data } = await http.post(
+        API_URL.LOCATION_ADVANCED_SEARCH,
+        prevStateData,
+        {
+          params: { pageNo },
+        },
+      );
+      const { totalPage, items } = data;
+      actions.setTotalPage({ totalPage });
+      actions.setListLocationResult({ setMode: "APPEND", items });
       setGetStatus("SUCCESS");
     } catch (error) {
       setGetStatus("FAILED");
