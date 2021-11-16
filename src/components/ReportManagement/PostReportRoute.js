@@ -37,7 +37,7 @@ const PostReportRoute = () => {
   const renderItem = ({ item }) => (
     <TouchableOpacity
       onPress={() => {
-        goToAdminPostReportDetailScreen(navigation);
+        goToAdminPostReportDetailScreen(navigation, { id: item.id });
       }}
     >
       <ReportCard {...item} isPostReport />

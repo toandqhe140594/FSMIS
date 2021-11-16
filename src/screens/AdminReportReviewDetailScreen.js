@@ -1,3 +1,4 @@
+import { useRoute } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, Button, Divider, FlatList, Text, VStack } from "native-base";
 import React, { useEffect } from "react";
@@ -8,6 +9,7 @@ import ReviewFromAnglerSection from "../components/ReviewFromAnglerSection";
 import styles from "../config/styles";
 
 const AdminReportReviewDetailScreen = () => {
+  const route = useRoute();
   const reviewReportDetail = useStoreState(
     (states) => states.ReportModel.reviewReportDetail,
   );
@@ -17,7 +19,6 @@ const AdminReportReviewDetailScreen = () => {
     (actions) => actions.ReportModel.getReviewReportDetail,
   );
 
-  console.log(`reportDetailList`, reportDetailList);
   const headerListComponent = () => (
     <>
       {reviewDtoOut !== undefined ? (
@@ -89,7 +90,9 @@ const AdminReportReviewDetailScreen = () => {
     </Box>
   );
   useEffect(() => {
-    getReviewReportDetail({ id: 4 });
+    if (route.params.id) {
+      getReviewReportDetail({ id: route.params.id });
+    }
   }, []);
   return (
     <AdminReport>

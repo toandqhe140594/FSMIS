@@ -1,3 +1,4 @@
+import { useRoute } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, Divider, FlatList, Text, VStack } from "native-base";
 import React, { useEffect } from "react";
@@ -8,6 +9,7 @@ import EventPostCard from "../components/EventPostCard";
 import styles from "../config/styles";
 
 const AdminReportPostDetailScreen = () => {
+  const route = useRoute();
   const postReportDetail = useStoreState(
     (states) => states.ReportModel.postReportDetail,
   );
@@ -97,7 +99,9 @@ const AdminReportPostDetailScreen = () => {
   );
 
   useEffect(() => {
-    getPostReportDetail({ id: 5 });
+    if (route.params.id) {
+      getPostReportDetail({ id: route.params.id });
+    }
   }, []);
 
   return (

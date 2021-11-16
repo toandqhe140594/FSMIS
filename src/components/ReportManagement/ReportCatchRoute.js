@@ -37,7 +37,7 @@ const ReportCatchRoute = () => {
   const renderItem = ({ item }) => (
     <TouchableOpacity
       onPress={() => {
-        goToAdminCatchReportDetail(navigation);
+        goToAdminCatchReportDetail(navigation, { id: item.id });
       }}
     >
       <ReportCard {...item} isCatchReportType />

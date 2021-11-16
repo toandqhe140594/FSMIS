@@ -1,3 +1,4 @@
+import { useRoute } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, Button, Divider, FlatList, Text, VStack } from "native-base";
 import React, { useEffect } from "react";
@@ -7,6 +8,7 @@ import AvatarCard from "../components/AvatarCard";
 import styles from "../config/styles";
 
 const AdminFLocationReportDetailScreen = () => {
+  const route = useRoute();
   const locationReportDetail = useStoreState(
     (states) => states.ReportModel.locationReportDetail,
   );
@@ -68,7 +70,9 @@ const AdminFLocationReportDetailScreen = () => {
     </Box>
   );
   useEffect(() => {
-    getLocationReportDetail({ id: 2 });
+    if (route.params.id) {
+      getLocationReportDetail({ id: route.params.id });
+    }
   }, []);
   return (
     <AdminReport>
