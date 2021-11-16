@@ -9,7 +9,6 @@ import AvatarCard from "../components/AvatarCard";
 import FishInformationCard from "../components/FishInformationCard";
 import HeaderTab from "../components/HeaderTab";
 import ImageResizeMode from "../components/ImageResizeMode";
-import colors from "../config/colors";
 import { goToFishingLocationOverviewScreen } from "../navigations";
 
 const AnglerCatchReportDetailScreen = () => {
@@ -93,6 +92,7 @@ const AnglerCatchReportDetailScreen = () => {
             nameFontSize="lg"
             subText={catchDetails.time}
             image={avatar}
+            watermarkType={catchDetails.approved}
           />
         )}
 
@@ -131,12 +131,10 @@ const AnglerCatchReportDetailScreen = () => {
                   textAlign="center"
                   style={{
                     color: "white",
-                    backgroundColor: item.returnToOwner
-                      ? "#88E0EF"
-                      : colors.defaultDanger,
+                    backgroundColor: item.returnToOwner ? "#88E0EF" : "#6ee7b7",
                   }}
                 >
-                  {item.returnToOwner ? "Đã gửi lại cho hồ" : "Không gửi lại"}
+                  {item.returnToOwner ? "Đã gửi lại cho hồ" : "Mang về"}
                 </Text>
                 <FishInformationCard
                   key={item.name}

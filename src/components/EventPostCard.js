@@ -24,6 +24,7 @@ const EventPostCard = ({
   imageAvatar,
   id,
   itemData,
+  isApproved,
 }) => {
   return (
     <Box mt="1" px="1.4">
@@ -99,6 +100,7 @@ const EventPostCard = ({
                 nameUser={anglerName}
                 subText={postTime}
                 image={imageAvatar}
+                watermarkType={isApproved}
               />
             </Box>
 
@@ -111,7 +113,7 @@ const EventPostCard = ({
                       name={iconName}
                       size={22}
                       color="black"
-                      style={{ position: "relative", top: 15, left: 10 }}
+                      style={{ position: "relative", top: 27, left: 10 }}
                     />
                   </Pressable>
                 );
@@ -176,6 +178,7 @@ EventPostCard.propTypes = {
   edited: PropTypes.bool,
   postTime: PropTypes.string,
   id: PropTypes.number.isRequired,
+  isApproved: PropTypes.bool,
 };
 
 EventPostCard.defaultProps = {
@@ -191,6 +194,7 @@ EventPostCard.defaultProps = {
   image: "https://picsum.photos/500",
   edited: false,
   postTime: "",
+  isApproved: undefined,
 };
 
 export default EventPostCard;

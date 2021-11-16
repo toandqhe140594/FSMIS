@@ -1,4 +1,4 @@
-import { Avatar, Box, HStack, Text, VStack } from "native-base";
+import { Avatar, Badge, Box, HStack, Text, VStack } from "native-base";
 import PropTypes from "prop-types";
 import React from "react";
 
@@ -9,7 +9,26 @@ const AvatarCard = ({
   subText,
   subTextFontSize,
   image,
+  watermarkType,
 }) => {
+  let typeBadge = null;
+  let badgeText = "";
+  switch (watermarkType) {
+    case true:
+      typeBadge = "success";
+      badgeText = "Xác thực";
+      break;
+    case false:
+      typeBadge = "error";
+      badgeText = "Từ chối";
+      break;
+    case null:
+      typeBadge = "warning";
+      badgeText = "Chờ";
+      break;
+    default:
+      break;
+  }
   return (
     <Box
       w={{
@@ -53,6 +72,10 @@ const AvatarCard = ({
             </Text>
           )}
         </VStack>
+
+        {watermarkType !== undefined && (
+          <Badge colorScheme={typeBadge}>{badgeText}</Badge>
+        )}
       </HStack>
     </Box>
   );
@@ -64,6 +87,7 @@ AvatarCard.propTypes = {
   subText: PropTypes.string,
   subTextFontSize: PropTypes.string,
   image: PropTypes.string,
+  watermarkType: PropTypes.bool,
 };
 AvatarCard.defaultProps = {
   avatarSize: "md",
@@ -72,5 +96,6 @@ AvatarCard.defaultProps = {
   subText: null,
   subTextFontSize: "sm",
   image: "https://picsum.photos/seed/picsum/200/300",
+  watermarkType: undefined,
 };
 export default AvatarCard;

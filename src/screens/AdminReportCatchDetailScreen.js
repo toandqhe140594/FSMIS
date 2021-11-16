@@ -87,6 +87,7 @@ const AdminReportCatchDetailScreen = () => {
           imageAvatar={catchesOverviewNoImageDtoOut.avatar}
           image="https://picsum.photos/400"
           anglerContent={catchesOverviewNoImageDtoOut.description}
+          isApproved={catchesOverviewNoImageDtoOut.approved}
         />
       )}
 

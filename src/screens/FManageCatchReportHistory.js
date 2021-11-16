@@ -121,7 +121,14 @@ const FManageCatchReportHistory = () => {
           <FlatList
             data={catchReportHistory}
             renderItem={({ item }) => {
-              const { userFullName, avatar, description, time, fishes } = item;
+              const {
+                userFullName,
+                avatar,
+                description,
+                time,
+                fishes,
+                approved,
+              } = item;
               return (
                 <Box
                   borderBottomWidth="1"
@@ -144,6 +151,7 @@ const FManageCatchReportHistory = () => {
                         nameUser={userFullName}
                         image={avatar}
                         subText={time}
+                        watermarkType={approved}
                       />
                       <Box mt={2}>
                         <Text italic>{description}</Text>
