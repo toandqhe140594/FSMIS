@@ -608,9 +608,7 @@ const model = {
   addNewLocation: thunk(async (actions, payload) => {
     const { addData, setAddStatus } = payload;
     try {
-      await http.post(API_URL.LOCATION_ADD, addData, {
-        params: {},
-      });
+      await http.post(API_URL.LOCATION_ADD, addData);
       await actions.getListOfFishingLocations();
       setAddStatus("SUCCESS");
     } catch (error) {
