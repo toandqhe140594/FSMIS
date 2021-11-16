@@ -20,8 +20,10 @@ const model = {
     else if (existedStatus === "NONEXISTED")
       requestUrl = API_URL.OTP_SEND_NONEXISTED;
     try {
-      await http.post(`${requestUrl}`, {
-        phone,
+      await http.post(`${requestUrl}`, null, {
+        params: {
+          phone,
+        },
       });
       setSuccess(true);
     } catch (error) {
