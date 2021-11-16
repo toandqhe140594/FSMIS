@@ -28,27 +28,19 @@ const model = {
     switch (type) {
       case "LOCATION":
         state.listLocationReport =
-          setMode === "NEW"
-            ? [].concat(items)
-            : state.listLocationReport.concat(items);
+          setMode === "NEW" ? items : state.listLocationReport.concat(items);
         break;
       case "POST":
         state.listPostReport =
-          setMode === "NEW"
-            ? [].concat(items)
-            : state.listPostReport.concat(items);
+          setMode === "NEW" ? items : state.listPostReport.concat(items);
         break;
       case "REVIEW":
         state.listReviewReport =
-          setMode === "NEW"
-            ? [].concat(items)
-            : state.listReviewReport.concat(items);
+          setMode === "NEW" ? items : state.listReviewReport.concat(items);
         break;
       case "CATCH":
         state.listCatchReport =
-          setMode === "NEW"
-            ? [].concat(items)
-            : state.listCatchReport.concat(items);
+          setMode === "NEW" ? items : state.listCatchReport.concat(items);
         break;
       default:
     }
