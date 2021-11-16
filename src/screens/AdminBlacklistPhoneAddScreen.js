@@ -27,8 +27,10 @@ const FManageSuggestLocationScreen = () => {
   );
 
   const [success, setSuccess] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const onSubmit = (data) => {
+    setLoading(true);
     blacklistPhoneNumber({ blacklistObj: data, setSuccess });
   };
 
@@ -44,8 +46,11 @@ const FManageSuggestLocationScreen = () => {
         `Số điện thoại "${phoneNumber}"" đã bị thêm vào danh sách đen `,
         goBackAfterSuccess,
       );
-    } else if (success === false) showToastMessage("Có lỗi xảy ra");
-    setSuccess(null);
+    } else if (success === false) {
+      showToastMessage("Có lỗi xảy ra");
+      setLoading(false);
+      setSuccess(null);
+    }
   }, [success]);
 
   return (
@@ -93,6 +98,8 @@ const FManageSuggestLocationScreen = () => {
               title="Gửi"
               onPress={handleSubmit(onSubmit)}
               containerStyle={{ marginTop: 30 }}
+              loading={loading}
+              disabled={loading}
             />
           </View>
         </View>
