@@ -126,7 +126,6 @@ const model = {
       actions.changeAccountActivation({ id });
       setSuccess(true);
     } catch (error) {
-      console.log(error);
       setSuccess(false);
     }
   }),
@@ -139,8 +138,15 @@ const model = {
   setBlacklist: action((state, payload) => {
     state.blacklist = payload;
   }),
-  appendDataToBlacklist: action((state, payload) => {
-    state.blacklist = [payload, ...state.blacklist];
+  /**
+   * Add object to start of the blacklist array
+   * @param {Object} payload - params pass to function
+   * @param {Object} payload.blacklistObj - object that need to add to array
+   * @param {string} blacklistObj.phone - phone number
+   * @param {string} [blacklistObj.description] - description
+   */
+  addDataToStartOfBlacklist: action((state, payload) => {
+    state.blacklist.unshift(payload.blacklistObj);
   }),
   /**
    * Remove an element from blacklist data state
@@ -166,21 +172,40 @@ const model = {
       actions.setBlacklist(null);
     }
   }),
+  /**
+   * Remove a phone number from blacklist
+   * @param {Object} payload = params pass to func
+   * @param {string} payload.phone - phone number that need to be whitelisted
+   * @param {Function} payload.setSuccess - function indicate success status of api call
+   */
   whitelistPhoneNumber: thunk(async (actions, payload) => {
     const { phone, setSuccess } = payload;
     try {
-      // const { data } = await http.get(`${API_URL.ADMIN_ACCOUNT_LIST}`);
-      actions.removeElementFromBlacklist({ phone });
+      await http.delete(`${API_URL.ADMIN_ACCOUNT_BANNED_PHONE_REMOVE}`, {
+        params: {
+          phone,
+        },
+      });
       setSuccess(true);
+      actions.removeElementFromBlacklist({ phone });
     } catch (error) {
       setSuccess(false);
     }
   }),
+  /**
+   * Add a phone number to blacklist
+   * @param {Object} payload - params pass to func
+   * @param {Object} payload.blacklistObj - data of phone number that need to be ban
+   * @param {Function} payload.setSuccess - function indicate success status of api call
+   */
   blacklistPhoneNumber: thunk(async (actions, payload) => {
     const { blacklistObj, setSuccess } = payload;
     try {
-      // const { data } = await http.get(`${API_URL.ADMIN_ACCOUNT_LIST}`);
-      actions.appendDataToBlacklist({ blacklistObj });
+      await http.post(
+        `${API_URL.ADMIN_ACCOUNT_BANNED_PHONE_ADD}`,
+        blacklistObj,
+      );
+      actions.addDataToStartOfBlacklist({ blacklistObj });
       setSuccess(true);
     } catch (error) {
       setSuccess(false);
