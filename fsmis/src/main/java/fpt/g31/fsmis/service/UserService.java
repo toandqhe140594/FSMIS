@@ -6,6 +6,7 @@ import fpt.g31.fsmis.dto.output.*;
 import fpt.g31.fsmis.entity.FishingLocation;
 import fpt.g31.fsmis.entity.Notification;
 import fpt.g31.fsmis.entity.User;
+import fpt.g31.fsmis.exception.NotFoundException;
 import fpt.g31.fsmis.repository.*;
 import fpt.g31.fsmis.security.JwtFilter;
 import lombok.AllArgsConstructor;
@@ -138,7 +139,7 @@ public class UserService {
                 .build();
     }
 
-    public PaginationDtoOut getAccountList(int pageNo, String phone) {
+    public PaginationDtoOut adminGetAccountList(int pageNo, String phone) {
         if (pageNo <= 0) {
             throw new ValidationException(INVALID_PAGE_NUMBER);
         }
@@ -147,7 +148,7 @@ public class UserService {
             Optional<User> accountOptional = userRepos.findByPhone(phone);
             if (accountOptional.isPresent()) {
                 User account = accountOptional.get();
-                AdminAccountItemDtoOut dtoOut =AdminAccountItemDtoOut.builder()
+                AdminAccountItemDtoOut dtoOut = AdminAccountItemDtoOut.builder()
                         .id(account.getId())
                         .name(account.getFullName())
                         .active(account.getActive())
@@ -178,5 +179,14 @@ public class UserService {
                 .totalItem(accountList.getTotalElements())
                 .items(output)
                 .build();
+    }
+
+    public ResponseTextDtoOut adminChangeActive(Long userId) {
+        User user = userRepos.findById(userId)
+                .orElseThrow(() -> new NotFoundException("Không tìm thấy tài khoản"));
+        user.setActive(!user.getActive());
+        userRepos.save(user);
+        String output = Boolean.TRUE.equals(user.getActive()) ? "Mở khóa tài khoản thành công" : "Khóa tài khoản thành công";
+        return new ResponseTextDtoOut(output);
     }
 }
