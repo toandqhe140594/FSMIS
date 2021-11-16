@@ -44,7 +44,7 @@ const model = {
     if (setMode === "APPEND") {
       state.listLocationResult = state.listLocationResult.concat(items);
     } else if (setMode === "NEW") {
-      state.listLocationResult = [].concat(items);
+      state.listLocationResult = items;
     }
   }),
   /**
