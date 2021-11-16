@@ -9,6 +9,15 @@ export const ANGLER_PROFILE_FORM = yup.object().shape({
   wardId: yup.number(),
 });
 
+export const ANGLER_PROFILE_PASSWORD_CHANGE_FORM = yup.object().shape({
+  oldPassword: yup.string().required("Mật khẩu cũ không thể bỏ trống"),
+  newPassword: yup.string().required("Mật khẩu mới không thể bỏ trống"),
+  repeatPassword: yup
+    .string()
+    .required("Trường này không thể bỏ trống")
+    .oneOf([yup.ref("newPassword"), null], "Mật khẩu không khớp"),
+});
+
 export const ANGLER_CATCH_REPORT_FORM = yup.object().shape({
   imageArray: yup
     .array()
