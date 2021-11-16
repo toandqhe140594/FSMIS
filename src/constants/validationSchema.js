@@ -18,6 +18,11 @@ export const ANGLER_PROFILE_PASSWORD_CHANGE_FORM = yup.object().shape({
     .oneOf([yup.ref("newPassword"), null], "Mật khẩu không khớp"),
 });
 
+export const ANGLER_PROFILE_PHONE_CHANGE_FORM = yup.object().shape({
+  phone: yup.string().required("Số điện thoại không thể bỏ trống"),
+  password: yup.string().required("Mật khẩu không thể bỏ trống"),
+});
+
 export const ANGLER_CATCH_REPORT_FORM = yup.object().shape({
   imageArray: yup
     .array()
