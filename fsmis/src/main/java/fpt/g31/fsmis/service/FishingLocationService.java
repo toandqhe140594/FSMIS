@@ -364,19 +364,6 @@ public class FishingLocationService {
                 .build();
     }
 
-    public List<BannedPhoneDtoOut> getBannedPhone() {
-        List<BannedPhoneDtoOut> output = new ArrayList<>();
-        List<BannedPhone> bannedPhoneList = bannedPhoneRepos.findAll();
-        for (BannedPhone bannedPhone : bannedPhoneList) {
-            BannedPhoneDtoOut dto = BannedPhoneDtoOut.builder()
-                    .phone(bannedPhone.getPhone())
-                    .description(bannedPhone.getDescription())
-                    .build();
-            output.add(dto);
-        }
-        return output;
-    }
-
     public PaginationDtoOut searchFishingLocation(FilterDtoIn filterDtoIn, int pageNo) {
         Specification<FishingLocation> specification = where(fishingMethodIdIn(filterDtoIn.getFishingMethodIdList()))
                 .and(provinceIdIn(filterDtoIn.getProvinceIdList()))
