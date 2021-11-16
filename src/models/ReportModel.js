@@ -239,47 +239,33 @@ const model = {
   // SEND REPORT
   sendReport: thunk(async (actions, payload) => {
     const { id, reportDtoIn, type, setSendStatus } = payload;
+    let requestAPI = "";
+    switch (type) {
+      case "POST":
+        requestAPI = `/location/post/report/${id}`;
+        break;
+
+      case "REVIEW": {
+        requestAPI = `/location/review/report/${id}`;
+        break;
+      }
+      case "LOCATION": {
+        requestAPI = `/location/report/${id}`;
+        break;
+      }
+      case "CATCH":
+        setSendStatus(false);
+        break;
+      default:
+        break;
+    }
     try {
-      switch (type) {
-        case "POST": {
-          const { status } = await http.post(
-            `/location/post/report/${id}`,
-            reportDtoIn,
-          );
-          if (status === 200) {
-            setSendStatus(true);
-          }
-          break;
-        }
-        case "REVIEW": {
-          const { status } = await http.post(
-            `/location/review/report/${id}`,
-            reportDtoIn,
-          );
-          if (status === 200) {
-            setSendStatus(true);
-          }
-          break;
-        }
-        case "LOCATION": {
-          const { status } = await http.post(
-            `/location/report/${id}`,
-            reportDtoIn,
-          );
-          if (status === 200) {
-            setSendStatus(true);
-          }
-          break;
-        }
-        case "CATCH":
-          setSendStatus(true);
-          break;
-        default:
-          break;
+      const { status } = await http.post(requestAPI, reportDtoIn);
+      if (status === 200) {
+        setSendStatus(true);
       }
     } catch (error) {
       setSendStatus(false);
-      console.log(`error`, error);
     }
   }),
 
@@ -293,16 +279,17 @@ const model = {
     state.locationReportDetail = payload;
   }),
   getLocationReportDetail: thunk(async (actions, payload) => {
-    const { id } = payload;
+    const { id, setIsSuccess } = payload;
     try {
       const { status, data } = await http.get(
         `${API_URL.ADMIN_REPORT_LOCATION_LIST}/${id}`,
       );
+      actions.setLocationReportDetail(data);
       if (status === 200) {
-        actions.setLocationReportDetail(data);
+        setIsSuccess(true);
       }
     } catch (error) {
-      // handle error
+      setIsSuccess(false);
     }
   }),
 
@@ -310,16 +297,17 @@ const model = {
     state.reviewReportDetail = payload;
   }),
   getReviewReportDetail: thunk(async (actions, payload) => {
-    const { id } = payload;
+    const { id, setIsSuccess } = payload;
     try {
       const { status, data } = await http.get(
         `${API_URL.ADMIN_REPORT_REVIEW_LIST}/${id}`,
       );
       if (status === 200) {
         actions.setReviewReportDetail(data);
+        setIsSuccess(true);
       }
     } catch (error) {
-      // handle error
+      setIsSuccess(false);
     }
   }),
 
@@ -327,17 +315,18 @@ const model = {
     state.postReportDetail = payload;
   }),
   getPostReportDetail: thunk(async (actions, payload) => {
-    const { id } = payload;
+    const { id, setIsSuccess } = payload;
     try {
       const { status, data } = await http.get(
         `${API_URL.ADMIN_REPORT_POST_LIST}/${id}`,
       );
       if (status === 200) {
         actions.setPostReportDetail(data);
+        setIsSuccess(true);
       }
     } catch (error) {
       // handle error
-      console.log(`error>>> `, error);
+      setIsSuccess(false);
     }
   }),
 
@@ -345,17 +334,18 @@ const model = {
     state.catchReportDetail = payload;
   }),
   getCatchReportDetail: thunk(async (actions, payload) => {
-    const { id } = payload;
+    const { id, setIsSuccess } = payload;
     try {
       const { status, data } = await http.get(
         `${API_URL.ADMIN_REPORT_CATCH_LIST}/${id}`,
       );
       if (status === 200) {
         actions.setCatchReportDetail(data);
+        setIsSuccess(true);
       }
     } catch (error) {
       // handle error
-      console.log(`error>>> `, error);
+      setIsSuccess(false);
     }
   }),
 };

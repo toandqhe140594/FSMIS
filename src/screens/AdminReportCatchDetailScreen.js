@@ -1,15 +1,18 @@
-import { useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, Button, Divider, FlatList, Text, VStack } from "native-base";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 import AdminReport from "../components/AdminReport";
 import AvatarCard from "../components/AvatarCard";
 import EventPostCard from "../components/EventPostCard";
 import styles from "../config/styles";
+import { showAlertAbsoluteBox } from "../utilities";
 
 const AdminReportCatchDetailScreen = () => {
   const route = useRoute();
+  const navigation = useNavigation();
+  const [isSuccess, setIsSuccess] = useState(null);
   const catchReportDetail = useStoreState(
     (states) => states.ReportModel.catchReportDetail,
   );
@@ -96,9 +99,22 @@ const AdminReportCatchDetailScreen = () => {
 
   useEffect(() => {
     if (route.params.id) {
-      getCatchReportDetail({ id: route.params.id });
+      getCatchReportDetail({ id: route.params.id, setIsSuccess });
     }
   }, []);
+  useEffect(() => {
+    if (isSuccess === false) {
+      showAlertAbsoluteBox(
+        "Thông báo",
+        "Xảy ra lỗi, vui lòng quay lại.",
+        () => {
+          navigation.goBack();
+        },
+        "Xác nhận",
+      );
+    }
+    setIsSuccess(null);
+  }, [isSuccess]);
 
   return (
     <AdminReport>
