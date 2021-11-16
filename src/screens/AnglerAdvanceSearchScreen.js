@@ -1,43 +1,17 @@
-import { yupResolver } from "@hookform/resolvers/yup";
 import { useNavigation } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import { Button, VStack } from "native-base";
-import PropTypes from "prop-types";
 import React, { useCallback, useEffect, useState } from "react";
-import {
-  FormProvider,
-  useForm,
-  useFormContext,
-  useWatch,
-} from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 import { ActivityIndicator, Dimensions, StyleSheet, View } from "react-native";
 import { Overlay } from "react-native-elements";
-import * as yup from "yup";
 
+import AdvanceSearchFieldWatcher from "../components/AdvanceSearch/AdvanceSearchFieldWatcher";
 import InputComponent from "../components/common/InputComponent";
 import SelectComponent from "../components/common/SelectComponent";
 import HeaderTab from "../components/HeaderTab";
 import CheckboxSelectorComponent from "../components/LakeEditProfile/CheckboxSelectorComponent";
 import { showToastMessage } from "../utilities";
-
-const FieldWatcher = React.memo(({ name, onValueChange }) => {
-  const { control } = useFormContext();
-  const watchValue = useWatch({ control, name, defaultValue: [] });
-  useEffect(() => {
-    onValueChange(watchValue);
-  }, [watchValue]);
-  return <></>;
-});
-
-FieldWatcher.propTypes = {
-  name: PropTypes.string,
-  onValueChange: PropTypes.func,
-};
-
-FieldWatcher.defaultProps = {
-  name: "",
-  onValueChange: () => {},
-};
 
 const OFFSET_BOTTOM = 80;
 // Get window height without status bar height
@@ -70,8 +44,6 @@ const styles = StyleSheet.create({
   },
 });
 
-const schema = yup.object().shape();
-
 const AnglerAdvanceSearchScreen = () => {
   const navigation = useNavigation();
   const [isLoading, setIsLoading] = useState(true);
@@ -95,7 +67,6 @@ const AnglerAdvanceSearchScreen = () => {
     mode: "onSubmit",
     reValidateMode: "onSubmit",
     defaultValues: { searchTerm: "", rating: 0 },
-    resolver: yupResolver(schema),
   });
   const { handleSubmit, setValue } = methods;
   const handleIdListChange = useCallback(
@@ -108,21 +79,19 @@ const AnglerAdvanceSearchScreen = () => {
   const setDefaultValues = () => {
     setValue("fishingMethodIdList", prevStateData.fishingMethodIdList || []);
     setValue("fishSpeciesIdList", prevStateData.fishSpeciesIdList || []);
-    setValue("provinceIdList", prevStateData.provinceIdList || 0);
+    setValue("provinceIdList", prevStateData.provinceIdList[0] || 0);
   };
 
   const onSubmit = (data) => {
-    console.log(data);
     setIsLoading(true);
     const provinceIdList = [data.provinceIdList];
     const submitData = { ...data, provinceIdList };
-    console.log(submitData);
     searchFishingLocation({ setSubmitStatus, submitData });
   };
 
   /**
-   * Reset last store selection and
-   * field
+   * Reset last store selected state in easy peasy
+   * and field on the screen
    */
   const handleReset = () => {
     resetAllPrevState();
@@ -133,7 +102,7 @@ const AnglerAdvanceSearchScreen = () => {
   };
 
   /**
-   *
+   * Get all api data for select options
    */
   useEffect(() => {
     (async () => {
@@ -147,12 +116,11 @@ const AnglerAdvanceSearchScreen = () => {
   }, []);
 
   /**
-   *
+   * Trigget when submit status returns
    */
   useEffect(() => {
     if (submitStatus === "SUCCESS") {
-      // setIsLoading(false);
-      // setSubmitStatus(null);
+      setSubmitStatus(null);
       navigation.pop(1);
     } else if (submitStatus === "FAILED") {
       setIsLoading(false);
@@ -186,7 +154,7 @@ const AnglerAdvanceSearchScreen = () => {
               data={provinceList}
               controllerName="provinceIdList"
             />
-            <FieldWatcher
+            <AdvanceSearchFieldWatcher
               name="provinceIdList"
               onValueChange={handleIdListChange("PROVINCE_ID_LIST")}
             />
@@ -197,7 +165,7 @@ const AnglerAdvanceSearchScreen = () => {
               data={fishingMethodList}
               controllerName="fishingMethodIdList"
             />
-            <FieldWatcher
+            <AdvanceSearchFieldWatcher
               name="fishingMethodIdList"
               onValueChange={handleIdListChange("FISHING_METHOD_ID_LIST")}
             />
@@ -208,7 +176,7 @@ const AnglerAdvanceSearchScreen = () => {
               data={fishList}
               controllerName="fishSpeciesIdList"
             />
-            <FieldWatcher
+            <AdvanceSearchFieldWatcher
               name="fishSpeciesIdList"
               onValueChange={handleIdListChange("FISH_SPECIES_ID_LIST")}
             />
@@ -224,6 +192,8 @@ const AnglerAdvanceSearchScreen = () => {
             <Button
               variant="outline"
               style={styles.button}
+              isLoading={isLoading}
+              isLoadingText="Đang tìm kiếm"
               onPress={handleReset}
             >
               Xoá bộ lọc
