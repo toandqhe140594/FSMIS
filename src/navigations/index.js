@@ -31,8 +31,19 @@ const goToChangePasswordScreen = (navigation) => {
   navigation.navigate(ROUTE_NAMES.PASSWORD_CHANGE);
 };
 
-const goToOTPScreen = (navigation, params) => {
-  navigation.navigate(ROUTE_NAMES.OTP_SCREEN, { ...params });
+/**
+ * Navigate to OTP screen
+ * @param {object} navigation - navigation object
+ * @param {string} previousScreen - route name of the screen before otp screen
+ * @param {string} phone - phone number need to display on otp screen
+ * @param {Object} [params] - additional params pass through route
+ */
+const goToOTPScreen = (navigation, previousScreen, phone, params) => {
+  navigation.navigate(ROUTE_NAMES.OTP_SCREEN, {
+    ...params,
+    previousScreen,
+    phone,
+  });
 };
 
 const goToAdvanceSearchScreen = (navigation, params) => {
