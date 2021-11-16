@@ -83,13 +83,13 @@ export const FMANAGE_LAKE_FORM = yup.object().shape({
           minWeight: yup
             .number()
             .typeError("Trường này chỉ được nhập số")
-            .min(1, "Phải nhập bè hoặc lớn hơn 1")
+            .min(0.1, "Phải nhập lớn hơn 0")
             .max(999, "Phải nhập số bé hoặc bằng 999")
             .required("Biểu nhỏ không được để trống"),
           maxWeight: yup
             .number()
             .typeError("Trường này chỉ được nhập số")
-            .min(1, "Phải nhập bè hoặc lớn hơn 1")
+            .min(0.1, "Phải nhập lớn hơn 0")
             .max(999, "Phải nhập số bé hoặc bằng 999")
             .required("Biểu lớn không được để trống"),
           quantity: yup
@@ -178,14 +178,14 @@ export const FMANAGE_LAKE_FISH_ADD_FORM = yup.object().shape(
     minWeight: yup
       .number()
       .typeError("Trường này chỉ được nhập số")
-      .min(1, "Phải nhập lớn hơn hoặc bằng 1")
+      .min(0.1, "Phải nhập lớn hơn 0")
       .max(999, "Phải nhập bé hơn hoặc bằng 999")
       .required("Biểu nhỏ không được để trống"),
     maxWeight: yup
       .number()
       .typeError("Trường này chỉ được nhập số")
+      .min(0.1, "Phải nhập lớn hơn 0")
       .max(999, "Phải nhập bé hơn hoặc bằng 999")
-      .min(1, "Phải nhập lớn hơn hoặc bằng 1")
       .required("Biểu lớn không được để trống"),
     quantity: yup
       .number()
