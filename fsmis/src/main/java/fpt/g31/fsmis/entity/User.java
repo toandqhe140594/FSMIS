@@ -41,11 +41,11 @@ public class User {
     @Column(columnDefinition = "TEXT")
     private String avatarUrl;
 
-    private boolean gender;
+    private Boolean gender;
 
-    private boolean available;
+    private Boolean available;
 
-    private boolean active;
+    private Boolean active;
 
     @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)

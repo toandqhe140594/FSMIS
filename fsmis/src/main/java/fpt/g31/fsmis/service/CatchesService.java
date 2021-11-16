@@ -70,7 +70,7 @@ public class CatchesService {
         if (pageNo <= 0) {
             throw new ValidationException(INVALID_PAGE_NUMBER);
         }
-        if (!isOwnerOrStaff(locationId, jwtFilter.getUserFromToken(request))) {
+        if (Boolean.FALSE.equals(isOwnerOrStaff(locationId, jwtFilter.getUserFromToken(request)))) {
             throw new ValidationException(UNAUTHORIZED);
         }
         LocalDateTime beginDate = beginDateString == null ?
@@ -112,7 +112,7 @@ public class CatchesService {
         if (pageNo <= 0) {
             throw new ValidationException(INVALID_PAGE_NUMBER);
         }
-        if (!isOwnerOrStaff(locationId, jwtFilter.getUserFromToken(request))) {
+        if (Boolean.FALSE.equals(isOwnerOrStaff(locationId, jwtFilter.getUserFromToken(request)))) {
             throw new ValidationException(UNAUTHORIZED);
         }
         Page<Catches> catchesList = catchesRepos.findByFishingLocationIdAndApprovedIsNullOrderByTimeDesc(locationId, PageRequest.of(pageNo - 1, 10));
@@ -178,7 +178,7 @@ public class CatchesService {
         User user = jwtFilter.getUserFromToken(request);
         Catches catches = catchesRepos.findById(catchesId)
                 .orElseThrow(() -> new NotFoundException("Không tìm thấy bản ghi này!"));
-        if (Boolean.TRUE.equals(catches.getHidden()) && catches.getUser() != user && !isOwnerOrStaff(catches.getFishingLocation().getId(), user)) {
+        if (Boolean.TRUE.equals(catches.getHidden()) && catches.getUser() != user && Boolean.TRUE.equals(!isOwnerOrStaff(catches.getFishingLocation().getId(), user))) {
             throw new ValidationException(UNAUTHORIZED);
         }
         List<CatchesDetail> catchesDetailList = catches.getCatchesDetailList();
@@ -189,7 +189,7 @@ public class CatchesService {
                     .image(catchesDetail.getFishSpecies().getImageUrl())
                     .quantity(catchesDetail.getQuantity())
                     .weight(catchesDetail.getWeight())
-                    .returnToOwner(catchesDetail.isReturnToOwner())
+                    .returnToOwner(catchesDetail.getReturnToOwner())
                     .build();
             fishes.add(item);
         }
@@ -209,7 +209,7 @@ public class CatchesService {
                 .build();
     }
 
-    private boolean isOwnerOrStaff(Long locationId, User user) {
+    private Boolean isOwnerOrStaff(Long locationId, User user) {
         FishingLocation fishingLocation = fishingLocationRepos.getById(locationId);
         if (fishingLocation.getOwner() == user) {
             return true;
@@ -237,7 +237,7 @@ public class CatchesService {
                     .weight(catchDetailDtoIn.getWeight())
                     .fishSpecies(fishSpecies)
                     .fishInLakeId(catchDetailDtoIn.getFishInLakeId())
-                    .returnToOwner(catchDetailDtoIn.isReturnToOwner())
+                    .returnToOwner(catchDetailDtoIn.getReturnToOwner())
                     .build();
             catchesDetailList.add(catchesDetail);
         }
@@ -245,7 +245,7 @@ public class CatchesService {
                 .description(catchReportDtoIn.getDescription())
                 .imageUrl(ServiceUtils.mergeString(catchReportDtoIn.getImages()))
                 .time(LocalDateTime.now())
-                .hidden(catchReportDtoIn.isHidden())
+                .hidden(catchReportDtoIn.getHidden())
                 .approved(null)
                 .user(user)
                 .fishingLocation(fishingLocation)
@@ -256,7 +256,7 @@ public class CatchesService {
         return new ResponseTextDtoOut("Báo cá thành công, vui lòng chờ hồ câu duyệt!");
     }
 
-    public ResponseTextDtoOut approveCatch(HttpServletRequest request, Long catchesId, boolean isApprove) {
+    public ResponseTextDtoOut approveCatch(HttpServletRequest request, Long catchesId, Boolean isApprove) {
         User user = jwtFilter.getUserFromToken(request);
         Catches catches = catchesRepos.findById(catchesId)
                 .orElseThrow(() -> new NotFoundException("Không tìm thấy bản ghi"));
@@ -267,7 +267,7 @@ public class CatchesService {
         Lake lake = lakeRepos.getById(catches.getLakeId());
         List<FishInLake> fishInLakeList = lake.getFishInLakeList();
         for (CatchesDetail catchesDetail : catches.getCatchesDetailList()) {
-            if (catchesDetail.isReturnToOwner()){
+            if (Boolean.TRUE.equals(catchesDetail.getReturnToOwner())){
                 continue;
             }
             FishInLake fishInLake = fishInLakeRepos.findById(catchesDetail.getFishInLakeId())

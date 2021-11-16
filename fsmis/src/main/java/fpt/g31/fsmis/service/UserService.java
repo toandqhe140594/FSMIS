@@ -120,20 +120,20 @@ public class UserService {
     public IsAvailableDtoOut isAvailable(HttpServletRequest request) {
         User user = jwtFilter.getUserFromToken(request);
         FishingLocationItemDtoOut fishingLocationItemDtoOut = null;
-        if (!user.isAvailable()) {
+        if (Boolean.FALSE.equals(user.getAvailable())) {
             FishingLocation location = checkInRepos.findFirstByUserIdOrderByCheckInTimeDesc(user.getId()).getFishingLocation();
             fishingLocationItemDtoOut = FishingLocationItemDtoOut.builder()
                     .id(location.getId())
                     .name(location.getName())
                     .image(ServiceUtils.splitString(location.getImageUrl()).get(0))
-                    .verify(location.isVerify())
-                    .closed(location.isClosed())
+                    .verify(location.getVerify())
+                    .closed(location.getClosed())
                     .address(ServiceUtils.getAddress(location.getAddress(), location.getWard()))
                     .score(reviewRepos.getAverageScoreByFishingLocationIdAndActiveIsTrue(location.getId()))
                     .build();
         }
         return IsAvailableDtoOut.builder()
-                .isAvailable(user.isAvailable())
+                .isAvailable(user.getAvailable())
                 .fishingLocationItemDtoOut(fishingLocationItemDtoOut)
                 .build();
     }
@@ -150,7 +150,7 @@ public class UserService {
                 AdminAccountItemDtoOut dtoOut =AdminAccountItemDtoOut.builder()
                         .id(account.getId())
                         .name(account.getFullName())
-                        .active(account.isActive())
+                        .active(account.getActive())
                         .avatar(account.getAvatarUrl())
                         .phone(account.getPhone())
                         .build();
@@ -167,7 +167,7 @@ public class UserService {
             AdminAccountItemDtoOut dtoOut = AdminAccountItemDtoOut.builder()
                     .id(account.getId())
                     .name(account.getFullName())
-                    .active(account.isActive())
+                    .active(account.getActive())
                     .avatar(account.getAvatarUrl())
                     .phone(account.getPhone())
                     .build();

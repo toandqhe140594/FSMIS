@@ -9,5 +9,5 @@ public interface FishInLakeRepos extends JpaRepository<FishInLake, Long> {
     List<FishInLake> findByLakeIdAndActiveIsTrue(Long lakeId);
 
 
-    boolean existsByFishSpeciesIdAndMinWeightAndMaxWeightAndLakeIdAndActiveIsTrue(Long fishSpeciesId, Float minWeight, Float maxWeight, Long lakeId);
+    Boolean existsByFishSpeciesIdAndMinWeightAndMaxWeightAndLakeIdAndActiveIsTrue(Long fishSpeciesId, Float minWeight, Float maxWeight, Long lakeId);
 }

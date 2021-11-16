@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class ReportDtoOut {
     private Long id;
     private String time;
-    private boolean active;
+    private Boolean active;
     private String name;
     private String avatar;
     private String postType;

@@ -19,7 +19,7 @@ public class PersonalInfoDtoOut {
 
     private String dob;
 
-    private boolean gender;
+    private Boolean gender;
 
     private String address;
 
@@ -27,9 +27,9 @@ public class PersonalInfoDtoOut {
 
     private String avatarUrl;
 
-    private boolean available;
+    private Boolean available;
 
     private AddressFromWardDtoOut addressFromWard;
 
-    private long catchesCount;
+    private Long catchesCount;
 }

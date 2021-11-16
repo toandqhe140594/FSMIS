@@ -5,15 +5,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AdminFishingLocationItemDtoOut {
+public class ProvinceDtoOut {
     private Long id;
     private String name;
-    private Double rating;
-    private String address;
-    private Boolean active;
-    private Boolean verified;
+    private List<DistrictDtoOut> districtDtoOutList;
 }

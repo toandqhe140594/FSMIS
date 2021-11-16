@@ -9,11 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AdminFishingLocationItemDtoOut {
+public class WardDtoOut {
     private Long id;
     private String name;
-    private Double rating;
-    private String address;
-    private Boolean active;
-    private Boolean verified;
 }

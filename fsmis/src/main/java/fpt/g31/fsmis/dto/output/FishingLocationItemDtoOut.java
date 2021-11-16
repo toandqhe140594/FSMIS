@@ -17,7 +17,7 @@ public class FishingLocationItemDtoOut {
 
     private String image;
 
-    private boolean verify;
+    private Boolean verify;
 
     private Double score;
 
@@ -25,5 +25,5 @@ public class FishingLocationItemDtoOut {
 
     private String role;
 
-    private boolean closed;
+    private Boolean closed;
 }

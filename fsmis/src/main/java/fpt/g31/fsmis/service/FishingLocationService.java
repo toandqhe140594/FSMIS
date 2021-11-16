@@ -189,9 +189,9 @@ public class FishingLocationService {
                     .id(fishingLocation.getId())
                     .name(fishingLocation.getName())
                     .image(ServiceUtils.splitString(fishingLocation.getImageUrl()).get(0))
-                    .verify(fishingLocation.isVerify())
+                    .verify(fishingLocation.getVerify())
                     .address(ServiceUtils.getAddress(fishingLocation.getAddress(), fishingLocation.getWard()))
-                    .closed(fishingLocation.isClosed())
+                    .closed(fishingLocation.getClosed())
                     .build();
             Double score = reviewRepos.getAverageScoreByFishingLocationIdAndActiveIsTrue(fishingLocation.getId());
             if (score == null) {
@@ -226,10 +226,10 @@ public class FishingLocationService {
                     .id(fishingLocation.getId())
                     .name(fishingLocation.getName())
                     .image(ServiceUtils.splitString(fishingLocation.getImageUrl()).get(0))
-                    .verify(fishingLocation.isVerify())
+                    .verify(fishingLocation.getVerify())
                     .address(ServiceUtils.getAddress(fishingLocation.getAddress(), fishingLocation.getWard()))
                     .score(reviewRepos.getAverageScoreByFishingLocationIdAndActiveIsTrue(fishingLocation.getId()))
-                    .closed(fishingLocation.isClosed())
+                    .closed(fishingLocation.getClosed())
                     .role(role)
                     .build();
             fishingLocationItemDtoOutList.add(fishingLocationItemDtoOut);
@@ -318,11 +318,11 @@ public class FishingLocationService {
         return UserDtoOut.builder()
                 .id(staff.getId())
                 .avatar(staff.getAvatarUrl())
-                .active(staff.isActive())
+                .active(staff.getActive())
                 .fullName(staff.getFullName())
                 .dob(ServiceUtils.convertDateToString(staff.getDob()))
                 .phone(staff.getPhone())
-                .gender(staff.isGender())
+                .gender(staff.getGender())
                 .address(ServiceUtils.getAddress(staff.getAddress(), staff.getWard()))
                 .build();
     }
@@ -334,7 +334,7 @@ public class FishingLocationService {
         if (!location.getOwner().equals(user)) {
             throw new UnauthorizedException("Không có quyền thực hiện hành động này");
         }
-        location.setClosed(!location.isClosed());
+        location.setClosed(!location.getClosed());
         fishingLocationRepos.save(location);
         return new ResponseTextDtoOut("Chuyển trạng thái khu hồ thành công");
     }
@@ -350,8 +350,8 @@ public class FishingLocationService {
             AdminFishingLocationItemDtoOut dtoOut = AdminFishingLocationItemDtoOut.builder()
                     .id(location.getId())
                     .name(location.getName())
-                    .active(location.isActive())
-                    .verified(location.isVerify())
+                    .active(location.getActive())
+                    .verified(location.getVerify())
                     .address(ServiceUtils.getAddress(location.getAddress(), location.getWard()))
                     .rating(avgScore == null ? 0 : avgScore)
                     .build();
@@ -394,10 +394,10 @@ public class FishingLocationService {
                     .id(location.getId())
                     .name(location.getName())
                     .image(ServiceUtils.splitString(location.getImageUrl()).get(0))
-                    .verify(location.isVerify())
+                    .verify(location.getVerify())
                     .score(score)
                     .address(location.getAddress())
-                    .closed(location.isClosed())
+                    .closed(location.getClosed())
                     .build();
             output.add(fishingLocationItemDtoOut);
         }

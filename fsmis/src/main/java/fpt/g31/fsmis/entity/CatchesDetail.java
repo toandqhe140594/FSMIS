@@ -29,5 +29,5 @@ public class CatchesDetail {
 
     private Long fishInLakeId;
 
-    private boolean returnToOwner;
+    private Boolean returnToOwner;
 }

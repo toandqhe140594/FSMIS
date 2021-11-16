@@ -1,5 +1,8 @@
 package fpt.g31.fsmis.service;
 
+import fpt.g31.fsmis.dto.output.DistrictDtoOut;
+import fpt.g31.fsmis.dto.output.ProvinceDtoOut;
+import fpt.g31.fsmis.dto.output.WardDtoOut;
 import fpt.g31.fsmis.entity.address.District;
 import fpt.g31.fsmis.entity.address.Province;
 import fpt.g31.fsmis.entity.address.Ward;
@@ -9,6 +12,7 @@ import fpt.g31.fsmis.repository.WardRepos;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -28,5 +32,24 @@ public class AddressService {
 
     public List<Ward> getWardByDistrictId(Long districtId) {
         return wardRepos.findByDistrictId(districtId);
+    }
+
+    public List<ProvinceDtoOut> getAll() {
+        List<ProvinceDtoOut> provinceDtoOutList = new ArrayList<>();
+        List<Province> provinceList = provinceRepos.findAll();
+        for (Province province: provinceList) {
+            List<DistrictDtoOut> districtDtoOutList = new ArrayList<>();
+            List<District> districtList = districtRepos.findByProvinceId(province.getId());
+            for (District district: districtList) {
+                List<WardDtoOut> wardDtoOutList = new ArrayList<>();
+                List<Ward> wardList = wardRepos.findByDistrictId(district.getId());
+                for (Ward ward: wardList) {
+                    wardDtoOutList.add(WardDtoOut.builder().id(ward.getId()).name(ward.getName()).build());
+                }
+                districtDtoOutList.add(DistrictDtoOut.builder().id(district.getId()).name(district.getName()).wardDtoOutList(wardDtoOutList).build());
+            }
+            provinceDtoOutList.add(ProvinceDtoOut.builder().id(province.getId()).name(province.getName()).districtDtoOutList(districtDtoOutList).build());
+        }
+        return provinceDtoOutList;
     }
 }

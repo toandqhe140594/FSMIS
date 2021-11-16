@@ -34,7 +34,7 @@ public class AuthService {
 
     @Transactional
     public ResponseTextDtoOut register(RegistrationDtoIn registrationDtoIn) {
-        if (userRepos.existsByPhone(registrationDtoIn.getPhone())) {
+        if (Boolean.TRUE.equals(userRepos.existsByPhone(registrationDtoIn.getPhone()))) {
             throw new ValidationException("Số điện thoại này đã tồn tại trong hệ thống");
         }
         User user = User.builder()
@@ -61,7 +61,7 @@ public class AuthService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         User user = userRepos.findByPhone(authDtoIn.getPhone())
                 .orElseThrow(() -> new ValidationException("Tài khoản không tồn tại!"));
-        if (!user.isActive()) {
+        if (Boolean.FALSE.equals(user.getActive())) {
             throw new ValidationException("Tài khoản này đã bị vô hiệu hóa");
         }
         String token = jwtProvider.generateJwtToken(authentication);

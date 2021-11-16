@@ -23,5 +23,5 @@ public class CatchReportDtoIn {
     @Valid
     private List<CatchDetailDtoIn> catchesDetailList;
     @NotNull
-    private boolean hidden;
+    private Boolean hidden;
 }

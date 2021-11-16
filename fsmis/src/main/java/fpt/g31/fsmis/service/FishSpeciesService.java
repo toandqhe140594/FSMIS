@@ -16,7 +16,7 @@ import java.util.Optional;
 public class FishSpeciesService {
     FishSpeciesRepos fishSpeciesRepos;
 
-    public List<FishSpeciesDtoOut> getAll(boolean withImage) {
+    public List<FishSpeciesDtoOut> getAll(Boolean withImage) {
         List<FishSpecies> fishSpeciesList = fishSpeciesRepos.findAllByActiveIsTrue();
         List<FishSpeciesDtoOut> fishSpeciesDtoOuts = new ArrayList<>();
         for (FishSpecies fishSpecies :
@@ -25,7 +25,7 @@ public class FishSpeciesService {
                     .id(fishSpecies.getId())
                     .name(fishSpecies.getName())
                     .build();
-            if (withImage){
+            if (Boolean.TRUE.equals(withImage)){
                 fishSpeciesDtoOut.setImage(fishSpecies.getImageUrl());
             }
             fishSpeciesDtoOuts.add(fishSpeciesDtoOut);

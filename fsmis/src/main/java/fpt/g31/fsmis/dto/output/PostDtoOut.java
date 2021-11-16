@@ -16,6 +16,6 @@ public class PostDtoOut {
     private String postType;
     private String url;
     private String attachmentType;
-    private boolean edited;
-    private boolean pinned;
+    private Boolean edited;
+    private Boolean pinned;
 }

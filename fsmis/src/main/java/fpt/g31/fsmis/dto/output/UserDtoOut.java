@@ -20,6 +20,6 @@ public class UserDtoOut {
     private String address;
     private LocalDateTime addressFromWard;
     private String avatar;
-    private boolean gender;
-    private boolean active;
+    private Boolean gender;
+    private Boolean active;
 }

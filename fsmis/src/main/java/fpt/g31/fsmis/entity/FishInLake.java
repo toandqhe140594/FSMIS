@@ -33,5 +33,5 @@ public class FishInLake {
     
     private Float totalWeight;
 
-    private boolean active;
+    private Boolean active;
 }

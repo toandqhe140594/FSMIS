@@ -14,26 +14,26 @@ public class AdminReportController {
     private final ReportService reportService;
 
     @GetMapping("/location")
-    public ResponseEntity<Object> getLocationReports(@RequestParam(defaultValue = "1", required = false) int pageNo,
-                                                     @RequestParam(defaultValue = "true", required = false) boolean active) {
+    public ResponseEntity<Object> getLocationReports(@RequestParam(defaultValue = "1", required = false) Integer pageNo,
+                                                     @RequestParam(defaultValue = "true", required = false) Boolean active) {
         return new ResponseEntity<>(reportService.getLocationReports(pageNo, active), HttpStatus.OK);
     }
 
     @GetMapping("/review")
-    public ResponseEntity<Object> getReviewReportList(@RequestParam(defaultValue = "1", required = false) int pageNo,
-                                                      @RequestParam(defaultValue = "true", required = false) boolean active) {
+    public ResponseEntity<Object> getReviewReportList(@RequestParam(defaultValue = "1", required = false) Integer pageNo,
+                                                      @RequestParam(defaultValue = "true", required = false) Boolean active) {
         return new ResponseEntity<>(reportService.getReviewReports(pageNo, active), HttpStatus.OK);
     }
 
     @GetMapping("/post")
-    public ResponseEntity<Object> getPostReportList(@RequestParam(defaultValue = "1", required = false) int pageNo,
-                                                    @RequestParam(defaultValue = "true", required = false) boolean active) {
+    public ResponseEntity<Object> getPostReportList(@RequestParam(defaultValue = "1", required = false) Integer pageNo,
+                                                    @RequestParam(defaultValue = "true", required = false) Boolean active) {
         return new ResponseEntity<>(reportService.getPostReports(pageNo, active), HttpStatus.OK);
     }
 
     @GetMapping("/catch")
-    public ResponseEntity<Object> getImproperCatchReportList(@RequestParam(defaultValue = "1", required = false) int pageNo,
-                                                             @RequestParam(defaultValue = "true", required = false) boolean active) {
+    public ResponseEntity<Object> getImproperCatchReportList(@RequestParam(defaultValue = "1", required = false) Integer pageNo,
+                                                             @RequestParam(defaultValue = "true", required = false) Boolean active) {
         return new ResponseEntity<>(reportService.getImproperCatchReports(pageNo, active), HttpStatus.OK);
     }
 

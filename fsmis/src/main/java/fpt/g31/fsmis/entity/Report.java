@@ -20,7 +20,7 @@ public class Report {
 
     private LocalDateTime time;
 
-    private boolean active;
+    private Boolean active;
 
     @ManyToOne
     @JoinColumn

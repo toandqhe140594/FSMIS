@@ -20,5 +20,5 @@ public interface CheckInRepos extends JpaRepository<CheckIn, Long> {
                                                                                      LocalDateTime checkInTimeEnd,
                                                                                      Pageable pageable);
 
-    boolean existsByUserIdAndFishingLocationId(Long userId, Long fishingLocationId);
+    Boolean existsByUserIdAndFishingLocationId(Long userId, Long fishingLocationId);
 }

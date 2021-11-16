@@ -30,7 +30,7 @@ public class CatchesController {
     @PostMapping("/approve/{catchesId}")
     public ResponseEntity<Object> approveCatch(HttpServletRequest request,
                                                @PathVariable Long catchesId,
-                                               @RequestParam boolean isApprove){
+                                               @RequestParam Boolean isApprove){
         return new ResponseEntity<>(catchesService.approveCatch(request, catchesId, isApprove), HttpStatus.OK);
     }
 

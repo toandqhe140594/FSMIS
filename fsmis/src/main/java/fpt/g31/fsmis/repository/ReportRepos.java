@@ -16,11 +16,11 @@ public interface ReportRepos extends JpaRepository<Report, Long> {
 
     Optional<Report> findByCatchesIdAndActiveIsTrue(Long catchId);
 
-    Page<Report> findAllByFishingLocationIdNotNullAndActiveOrderByTimeDesc(boolean active, Pageable pageable);
+    Page<Report> findAllByFishingLocationIdNotNullAndActiveOrderByTimeDesc(Boolean active, Pageable pageable);
 
-    Page<Report> findAllByReviewIdNotNullAndActiveOrderByTimeDesc(boolean active, Pageable pageable);
+    Page<Report> findAllByReviewIdNotNullAndActiveOrderByTimeDesc(Boolean active, Pageable pageable);
 
-    Page<Report> findAllByPostIdNotNullAndActiveOrderByTimeDesc(boolean active, Pageable pageable);
+    Page<Report> findAllByPostIdNotNullAndActiveOrderByTimeDesc(Boolean active, Pageable pageable);
 
-    Page<Report> findAllByCatchesIdNotNullAndActiveOrderByTimeDesc(boolean active, Pageable pageable);
+    Page<Report> findAllByCatchesIdNotNullAndActiveOrderByTimeDesc(Boolean active, Pageable pageable);
 }

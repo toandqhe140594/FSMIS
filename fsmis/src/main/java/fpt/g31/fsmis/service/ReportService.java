@@ -140,7 +140,7 @@ public class ReportService {
         return new ResponseTextDtoOut("Báo cáo báo cá thành công");
     }
 
-    public PaginationDtoOut getLocationReports(int pageNo, boolean active) {
+    public PaginationDtoOut getLocationReports(Integer pageNo, Boolean active) {
         if (pageNo <= 0) {
             throw new ValidationException(INVALID_PAGE_NUMBER);
         }
@@ -151,7 +151,7 @@ public class ReportService {
                     .id(report.getId())
                     .name(report.getFishingLocation().getName())
                     .time(ServiceUtils.convertDateToString(report.getTime()))
-                    .active(report.isActive())
+                    .active(report.getActive())
                     .build();
             output.add(dtoOut);
         }
@@ -163,7 +163,7 @@ public class ReportService {
                 .build();
     }
 
-    public PaginationDtoOut getReviewReports(int pageNo, boolean active) {
+    public PaginationDtoOut getReviewReports(Integer pageNo, Boolean active) {
         if (pageNo <= 0) {
             throw new ValidationException(INVALID_PAGE_NUMBER);
         }
@@ -175,7 +175,7 @@ public class ReportService {
                     .name(report.getReview().getUser().getFullName())
                     .avatar(report.getReview().getUser().getAvatarUrl())
                     .time(ServiceUtils.convertDateToString(report.getTime()))
-                    .active(report.isActive())
+                    .active(report.getActive())
                     .build();
             output.add(dtoOut);
         }
@@ -187,7 +187,7 @@ public class ReportService {
                 .build();
     }
 
-    public PaginationDtoOut getPostReports(int pageNo, boolean active) {
+    public PaginationDtoOut getPostReports(Integer pageNo, Boolean active) {
         if (pageNo <= 0) {
             throw new ValidationException(INVALID_PAGE_NUMBER);
         }
@@ -199,7 +199,7 @@ public class ReportService {
                     .name(report.getPost().getFishingLocation().getName())
                     .postType(report.getPost().getPostType().toString())
                     .time(ServiceUtils.convertDateToString(report.getTime()))
-                    .active(report.isActive())
+                    .active(report.getActive())
                     .build();
             output.add(dtoOut);
         }
@@ -211,7 +211,7 @@ public class ReportService {
                 .build();
     }
 
-    public PaginationDtoOut getImproperCatchReports(int pageNo, boolean active) {
+    public PaginationDtoOut getImproperCatchReports(Integer pageNo, Boolean active) {
         if (pageNo <= 0) {
             throw new ValidationException(INVALID_PAGE_NUMBER);
         }
@@ -223,7 +223,7 @@ public class ReportService {
                     .name(report.getCatches().getUser().getFullName())
                     .avatar(report.getCatches().getUser().getAvatarUrl())
                     .time(ServiceUtils.convertDateToString(report.getTime()))
-                    .active(report.isActive())
+                    .active(report.getActive())
                     .build();
             output.add(dtoOut);
         }
@@ -285,7 +285,7 @@ public class ReportService {
                 .postType(post.getPostType().toString())
                 .url(post.getUrl())
                 .attachmentType(post.getAttachmentType().toString())
-                .edited(post.isEdited())
+                .edited(post.getEdited())
                 .build();
         return PostReportDetailDtoOut.builder()
                 .reportTime(ServiceUtils.convertDateToString(report.getTime()))

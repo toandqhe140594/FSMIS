@@ -31,5 +31,5 @@ public class CatchesOverviewNoImageDtoOut {
 
     private List<String> fishes;
 
-    private boolean approved;
+    private Boolean approved;
 }

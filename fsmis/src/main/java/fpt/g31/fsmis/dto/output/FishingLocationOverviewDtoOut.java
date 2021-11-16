@@ -24,11 +24,11 @@ public class FishingLocationOverviewDtoOut {
     private String description;
     private String service;
     private String timetable;
-    private boolean closed;
+    private Boolean closed;
     private String rule;
     private List<String> image;
-    private boolean verify;
-    private boolean saved;
-    private boolean active;
+    private Boolean verify;
+    private Boolean saved;
+    private Boolean active;
     private String role;
 }

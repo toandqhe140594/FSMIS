@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class FishingLocationPinDtoOut {
     private Long id;
     private String name;
-    private boolean verify;
+    private Boolean verify;
     private Double score;
     private Float longitude;
     private Float latitude;

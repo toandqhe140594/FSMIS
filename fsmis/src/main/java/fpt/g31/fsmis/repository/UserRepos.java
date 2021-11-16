@@ -13,7 +13,7 @@ public interface UserRepos extends JpaRepository<User, Long> {
 
     Optional<User> findByPhone(String phone);
 
-    boolean existsByPhone(String phone);
+    Boolean existsByPhone(String phone);
 
     Optional<User> findByQrString(String qrString);
 

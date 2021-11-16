@@ -14,5 +14,5 @@ public class AdminAccountItemDtoOut {
     private String name;
     private String phone;
     private String avatar;
-    private boolean active;
+    private Boolean active;
 }

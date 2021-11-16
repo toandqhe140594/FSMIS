@@ -90,7 +90,7 @@ public class LakeService {
     public LakeDtoOut getLakeById(Long locationId, long lakeId) {
         Lake lake = lakeRepos.findById(lakeId)
                 .orElseThrow(() -> new NotFoundException("Không tìm thấy hồ câu"));
-        if (lake.getFishingLocation().getId().equals(locationId) && !lake.isActive()) {
+        if (lake.getFishingLocation().getId().equals(locationId) && Boolean.TRUE.equals(!lake.getActive())) {
             throw new ValidationException("Hồ này không tồn tại");
         }
         List<String> fishingMethodList = new ArrayList<>();
@@ -130,7 +130,7 @@ public class LakeService {
 
     public List<LakeOverviewDtoOut> getAllByLocationId(Long locationId) {
         Optional<FishingLocation> fishingLocationOptional = fishingLocationRepos.findById(locationId);
-        if (!fishingLocationOptional.isPresent() || Boolean.FALSE.equals(fishingLocationOptional.get().isActive())) {
+        if (!fishingLocationOptional.isPresent() || Boolean.FALSE.equals(fishingLocationOptional.get().getActive())) {
             throw new NotFoundException("Không tìm thấy khu hồ!");
         }
         List<Lake> lakeList = lakeRepos.findByFishingLocationIdAndActiveIsTrue(locationId);
@@ -229,12 +229,12 @@ public class LakeService {
                 .orElseThrow(() -> new NotFoundException("Không tìm thấy khu hồ!"));
         List<LakeWithFishInLakeDtoOut> output = new ArrayList<>();
         for (Lake lake : location.getLakeList()) {
-            if (!lake.isActive()){
+            if (Boolean.FALSE.equals(lake.getActive())){
                 continue;
             }
             List<FishDtoOut> fishDtoOutList = new ArrayList<>();
             for (FishInLake fishInLake : lake.getFishInLakeList()) {
-                if (!fishInLake.isActive()) {
+                if (Boolean.FALSE.equals(fishInLake.getActive())) {
                     continue;
                 }
                 FishDtoOut fishDtoOut = FishDtoOut.builder()
@@ -262,8 +262,8 @@ public class LakeService {
             throw new ValidationException(UNAUTHORIZED);
         }
         checkValidFishInLake(fishInLakeDtoIn);
-        if (fishInLakeRepos.existsByFishSpeciesIdAndMinWeightAndMaxWeightAndLakeIdAndActiveIsTrue
-                (fishInLakeDtoIn.getFishSpeciesId(), fishInLakeDtoIn.getMinWeight(), fishInLakeDtoIn.getMaxWeight(), lakeId)){
+        if (Boolean.TRUE.equals(fishInLakeRepos.existsByFishSpeciesIdAndMinWeightAndMaxWeightAndLakeIdAndActiveIsTrue
+                (fishInLakeDtoIn.getFishSpeciesId(), fishInLakeDtoIn.getMinWeight(), fishInLakeDtoIn.getMaxWeight(), lakeId))){
             throw new ValidationException("Đã tồn tại 1 bản ghi với cùng loài cá và biểu");
         }
         FishInLake fishInLake = FishInLake.builder()

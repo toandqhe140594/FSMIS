@@ -34,7 +34,7 @@ public class Lake {
     @Column(columnDefinition = "TEXT")
     private String price;
 
-    private boolean active;
+    private Boolean active;
 
     @Column(columnDefinition = "TEXT")
     private String imageUrl;

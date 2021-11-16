@@ -27,11 +27,11 @@ public class Post {
     @NotNull
     private PostType postType;
 
-    private boolean edited;
+    private Boolean edited;
 
-    private boolean active;
+    private Boolean active;
 
-    private boolean pinned;
+    private Boolean pinned;
     
     @Column(columnDefinition = "TEXT")
     private String url;

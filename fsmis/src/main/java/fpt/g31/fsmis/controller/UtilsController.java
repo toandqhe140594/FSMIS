@@ -19,7 +19,7 @@ public class UtilsController {
     private final TwilioOtpService twilioOtpService;
 
     @GetMapping("/fish")
-    public ResponseEntity<Object> getAllFishSpecies(@RequestParam(required = false, defaultValue = "true") boolean withImage) {
+    public ResponseEntity<Object> getAllFishSpecies(@RequestParam(required = false, defaultValue = "true") Boolean withImage) {
         return new ResponseEntity<>(fishSpeciesService.getAll(withImage), HttpStatus.OK);
     }
 

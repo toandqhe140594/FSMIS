@@ -1,5 +1,6 @@
 package fpt.g31.fsmis.controller;
 
+import fpt.g31.fsmis.dto.output.ProvinceDtoOut;
 import fpt.g31.fsmis.entity.address.District;
 import fpt.g31.fsmis.entity.address.Province;
 import fpt.g31.fsmis.entity.address.Ward;
@@ -33,5 +34,10 @@ public class AddressController {
     @GetMapping(path = "/ward")
     public ResponseEntity<List<Ward>> getWardByDistrictId(@RequestParam Long districtId) {
         return new ResponseEntity<>(addressService.getWardByDistrictId(districtId), HttpStatus.OK);
+    }
+
+    @GetMapping()
+    public ResponseEntity<List<ProvinceDtoOut>> getAll(){
+        return new ResponseEntity<>(addressService.getAll(), HttpStatus.OK);
     }
 }

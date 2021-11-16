@@ -19,5 +19,5 @@ public class CaughtFishDtoOut {
 
     private Float weight;
 
-    private boolean returnToOwner;
+    private Boolean returnToOwner;
 }

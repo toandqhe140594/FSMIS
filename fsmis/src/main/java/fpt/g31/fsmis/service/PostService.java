@@ -53,7 +53,7 @@ public class PostService {
                 .build();
     }
 
-    public ResponseTextDtoOut savePost(Long locationId, PostDtoIn postDtoIn, HttpServletRequest request, boolean isCreate) {
+    public ResponseTextDtoOut savePost(Long locationId, PostDtoIn postDtoIn, HttpServletRequest request, Boolean isCreate) {
         User user = jwtFilter.getUserFromToken(request);
         FishingLocation location = locationRepos.findById(locationId)
                 .orElseThrow(() -> new ValidationException("Không tìm thấy hồ câu!"));
@@ -61,7 +61,7 @@ public class PostService {
                 && !location.getEmployeeList().contains(user)) {
             throw new ValidationException("Không có quyền tạo/chỉnh sửa bài viết!");
         }
-        if (isCreate) {
+        if (Boolean.TRUE.equals(isCreate)) {
             Post post = Post.builder()
                     .content(postDtoIn.getContent())
                     .postTime(LocalDateTime.now())
@@ -114,7 +114,7 @@ public class PostService {
                 && !location.getEmployeeList().contains(user)) {
             throw new UnauthorizedException("Không có quyền ghim bài viết!");
         }
-        if (post.isPinned()) {
+        if (Boolean.TRUE.equals(post.getPinned())) {
             post.setPinned(false);
             postRepos.save(post);
             return new ResponseTextDtoOut("Bỏ ghim bài viết thành công");
@@ -143,7 +143,7 @@ public class PostService {
                     .url(pinnedPost.getUrl())
                     .attachmentType(pinnedPost.getAttachmentType().toString())
                     .pinned(true)
-                    .edited(pinnedPost.isEdited()).build();
+                    .edited(pinnedPost.getEdited()).build();
         }
         return output;
     }

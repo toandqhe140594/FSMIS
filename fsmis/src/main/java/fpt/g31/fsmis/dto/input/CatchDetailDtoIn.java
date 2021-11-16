@@ -21,5 +21,5 @@ public class CatchDetailDtoIn {
     @NotNull
     private Long fishInLakeId;
     @NotNull
-    private boolean returnToOwner;
+    private Boolean returnToOwner;
 }

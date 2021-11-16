@@ -27,7 +27,7 @@ public class Review {
     @NotNull
     private LocalDateTime time;
 
-    private boolean active;
+    private Boolean active;
 
     @ManyToOne
     @JoinColumn

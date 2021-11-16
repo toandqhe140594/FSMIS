@@ -33,7 +33,7 @@ public class CheckInService {
         User performer = jwtFilter.getUserFromToken(request);
         User user = userRepos.findByQrString(checkInDtoIn.getQr())
                 .orElseThrow(() -> new NotFoundException("Không tìm thấy tài khoản!"));
-        if (!user.isAvailable()) {
+        if (Boolean.FALSE.equals(user.getAvailable())) {
             throw new ValidationException("Không được check-in tại điểm khác khi đang câu!");
         }
         FishingLocation location = fishingLocationRepos.findById(fishingLocationId)
@@ -90,7 +90,7 @@ public class CheckInService {
 
     public UserCheckInDtoOut checkOut(HttpServletRequest request) {
         User user = jwtFilter.getUserFromToken(request);
-        if (user.isAvailable()) {
+        if (Boolean.TRUE.equals(user.getAvailable())) {
             throw new ValidationException("Bạn chưa check-in");
         }
         CheckIn checkIn = checkInRepos.findFirstByUserIdOrderByCheckInTimeDesc(user.getId());
@@ -109,7 +109,7 @@ public class CheckInService {
         if (!fishingLocationRepos.existsById(locationId)) {
             throw new NotFoundException("Không tìm thấy khu hồ!");
         }
-        return new ResponseTextDtoOut(checkInRepos.existsByUserIdAndFishingLocationId(user.getId(), locationId) ? "true" : "false");
+        return new ResponseTextDtoOut(Boolean.TRUE.equals(checkInRepos.existsByUserIdAndFishingLocationId(user.getId(), locationId)) ? "true" : "false");
     }
 
     public PaginationDtoOut getLocationCheckInHistory(Long locationId, HttpServletRequest request, Integer pageNo, String beginDateString, String endDateString) {
