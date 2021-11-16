@@ -27,7 +27,7 @@ public class FishingLocationController {
     private final ReportService reportService;
 
 
-    @GetMapping("/search")
+    @PostMapping("/search")
     public ResponseEntity<Object> searchFishingLocation(@RequestBody FilterDtoIn filterDtoIn,
                                                         @RequestParam(required = false, defaultValue = "1") int pageNo){
         return new ResponseEntity<>(fishingLocationService.searchFishingLocation(filterDtoIn, pageNo), HttpStatus.OK);
