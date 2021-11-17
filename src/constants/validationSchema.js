@@ -318,5 +318,6 @@ export const REGISTER_PHONE_AND_PASS_FORM = yup.object().shape({
     .min(8, "Mật khẩu phải chứa ít nhất 8 ký tự"),
   passwordConfirmation: yup
     .string()
+    .required("Trường này không thể bỏ trống")
     .oneOf([yup.ref("password"), null], "Mật khẩu không khớp"),
 });
