@@ -3,18 +3,6 @@ import { action, thunk } from "easy-peasy";
 import { API_URL } from "../constants";
 import http from "../utilities/Http";
 
-// initial state for test purpose only since there wasnot api for get account information
-const initialAccountInformation = {
-  id: 9,
-  name: "Nguyễn Tài Khoản",
-  dob: "01/01/2021",
-  phone: "098765433",
-  gender: true,
-  address: "Số 1 hồ Hoàn Kiếm Việt Nam Hà Nội Châu Đại Dương",
-  status: true,
-  active: true,
-};
-
 const model = {
   accountList: [], // List data of accounts
   accountInformation: {}, // Detail information of an account
@@ -100,12 +88,22 @@ const model = {
   clearAccountList: action((state) => {
     state.accountList = [];
   }),
+  /**
+   * Get detail information of an account by id
+   * @param {Object} payload - params pass to function
+   * @param {number} payload.id - id of the account
+   * @param {Function} [payload.setSuccess] - function indicate success state of action
+   * @param {Function} [payload.setLoading] - function indicate loading state
+   */
   getAccountInformation: thunk(async (actions, payload = {}) => {
+    const { id } = payload;
     const setSuccess = payload.setSuccess || (() => {});
     const setLoading = payload.setLoading || (() => {});
     try {
-      // const { data } = await http.get(`${API_URL.ADMIN_ACCOUNT_INFORMATION}`);
-      actions.setAccountInformation({ ...initialAccountInformation });
+      const { data } = await http.get(
+        `${API_URL.ADMIN_ACCOUNT_INFORMATION}/${id}`,
+      );
+      actions.setAccountInformation(data);
       setSuccess(true);
     } catch (error) {
       setSuccess(false);
@@ -117,12 +115,15 @@ const model = {
   }),
   /**
    * Activate/deactive an account
+   * @param {Object} payload - params pass to function
+   * @param {number} payload.id - id of the account
+   * @param {Function} [payload.setSuccess] - function indicate success state of action
    */
   activateAccount: thunk(async (actions, payload = {}, { getState }) => {
     const { id } = getState().accountInformation;
     const setSuccess = payload.setSuccess || (() => {});
     try {
-      // const { data } = await http.get(`${API_URL.ADMIN_ACCOUNT_INFORMATION}`);
+      await http.post(`${API_URL.ADMIN_ACCOUNT_ACTIVATE}/${id}`);
       actions.changeAccountActivation({ id });
       setSuccess(true);
     } catch (error) {
