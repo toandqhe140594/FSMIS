@@ -71,7 +71,11 @@ public class FishingLocationController {
         return new ResponseEntity<>(fishingLocationService.getNearBy(longitude, latitude, distance, methodId, minRating), HttpStatus.OK);
     }
 
-
+    @PostMapping("/suggest")
+    public ResponseEntity<Object> suggestLocation(@RequestBody SuggestedLocationDtoIn suggestedLocationDtoIn,
+                                                  HttpServletRequest request) {
+        return new ResponseEntity<>(fishingLocationService.suggest(suggestedLocationDtoIn, request), HttpStatus.OK);
+    }
     // FISHING LOCATION
 
     @GetMapping(path = "/{locationId}")

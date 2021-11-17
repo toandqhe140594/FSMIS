@@ -2,6 +2,7 @@ package fpt.g31.fsmis.service;
 
 import fpt.g31.fsmis.dto.input.FilterDtoIn;
 import fpt.g31.fsmis.dto.input.FishingLocationDtoIn;
+import fpt.g31.fsmis.dto.input.SuggestedLocationDtoIn;
 import fpt.g31.fsmis.dto.output.*;
 import fpt.g31.fsmis.entity.*;
 import fpt.g31.fsmis.entity.address.District;
@@ -37,13 +38,12 @@ public class FishingLocationService {
     private static final String ACCOUNT_NOT_FOUND = "Không tìm thấy tài khoản!";
     private static final String INVALID_PAGE_NUMBER = "Số trang không hợp lệ";
     private final JwtFilter jwtFilter;
-    private final CheckInRepos checkInRepos;
     private final FishingLocationRepos fishingLocationRepos;
     private final UserRepos userRepos;
     private final WardRepos wardRepos;
     private final ReviewRepos reviewRepos;
     private final ModelMapper modelMapper;
-    private final BannedPhoneRepos bannedPhoneRepos;
+    private final SuggestedLocationRepos suggestedLocationRepos;
 
     public ResponseTextDtoOut createFishingLocation(FishingLocationDtoIn fishingLocationDtoIn,
                                                     HttpServletRequest request) {
@@ -454,6 +454,18 @@ public class FishingLocationService {
         return new ResponseTextDtoOut(Boolean.TRUE.equals(location.getActive()) ?
                 "Hiện khu hồ thành công!" :
                 "Ẩn khu hồ thành công!");
+    }
+
+    public ResponseTextDtoOut suggest(SuggestedLocationDtoIn suggestedLocationDtoIn, HttpServletRequest request) {
+        User sender = jwtFilter.getUserFromToken(request);
+        SuggestedLocation suggestedLocation = SuggestedLocation.builder()
+                .name(suggestedLocationDtoIn.getName().trim())
+                .phone(suggestedLocationDtoIn.getPhone().trim())
+                .description(suggestedLocationDtoIn.getDescription().trim())
+                .senderPhone(sender.getPhone())
+                .build();
+        suggestedLocationRepos.save(suggestedLocation);
+        return new ResponseTextDtoOut("Gợi ý khu hồ thành công");
     }
 
 //    private Specification<FishingLocation> scoreGreaterThan(Integer minScore) {
