@@ -67,6 +67,7 @@ public class FishingLocationService {
                 .lastEditedDate(LocalDateTime.now())
                 .active(true)
                 .verify(false)
+                .closed(false)
                 .owner(owner)
                 .build();
         fishingLocationRepos.save(fishingLocation);
