@@ -25,7 +25,7 @@ const AdminReportCatchDetailScreen = () => {
     locationId,
     locationName,
     reportTime,
-    catchesOverviewNoImageDtoOut,
+    catchesOverviewDtoOut,
     reportDetailList,
   } = catchReportDetail;
   const goToFLocationDetailHandler = () => {
@@ -81,20 +81,22 @@ const AdminReportCatchDetailScreen = () => {
         <Text bold>Thời gian báo cáo :</Text> {reportTime}
       </Text>
       <Divider />
-      {catchesOverviewNoImageDtoOut !== undefined && (
-        <EventPostCard
-          id={catchesOverviewNoImageDtoOut.id}
-          iconEvent={listEvent}
-          iconName="ellipsis-vertical"
-          postStyle="ANGLER_POST"
-          fishList={catchesOverviewNoImageDtoOut.fishes}
-          anglerName={catchesOverviewNoImageDtoOut.userFullName}
-          postTime={catchesOverviewNoImageDtoOut.time}
-          imageAvatar={catchesOverviewNoImageDtoOut.avatar}
-          image="https://picsum.photos/400"
-          anglerContent={catchesOverviewNoImageDtoOut.description}
-          isApproved={catchesOverviewNoImageDtoOut.approved}
-        />
+      {catchesOverviewDtoOut !== undefined && (
+        <Box backgroundColor="white" px={1.5} pb={2}>
+          <EventPostCard
+            id={catchesOverviewDtoOut.id}
+            iconEvent={listEvent}
+            iconName="ellipsis-vertical"
+            postStyle="ANGLER_POST"
+            fishList={catchesOverviewDtoOut.fishes}
+            anglerName={catchesOverviewDtoOut.userFullName}
+            postTime={catchesOverviewDtoOut.time}
+            imageAvatar={catchesOverviewDtoOut.avatar}
+            image={catchesOverviewDtoOut.images[0]}
+            anglerContent={catchesOverviewDtoOut.description}
+            isApproved={catchesOverviewDtoOut.approved}
+          />
+        </Box>
       )}
 
       <Text bold style={styles.textContentType}>
