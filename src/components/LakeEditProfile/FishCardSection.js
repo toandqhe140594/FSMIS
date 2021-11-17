@@ -5,9 +5,9 @@ import React, { useEffect } from "react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import { StyleSheet, Text, View } from "react-native";
 
+import FieldWatcherResetter from "../common/FieldWatcherResetter";
 import InputComponent from "../common/InputComponent";
 import SelectComponent from "../common/SelectComponent";
-import FishCardFieldWatcher from "./FishCardFieldWatcher";
 
 const FishLeftIcon = () => (
   <FontAwesome5
@@ -57,14 +57,12 @@ const FishCardSection = () => {
   const { fishList } = useStoreState((state) => state.FishModel);
   const {
     control,
-    setValue,
-    clearErrors,
     formState: { errors },
   } = useFormContext();
   const { fields, append, remove } = useFieldArray({
     control,
     name: "fishInLakeList",
-    shouldUnregister: true, // fishInLakeList will be unregistered when unmount
+    shouldUnregister: true,
   });
   const handleAppend = () => {
     append({
@@ -125,7 +123,7 @@ const FishCardSection = () => {
             useCustomError
             myError={errors.fishInLakeList?.[index]?.quantity}
           />
-          <FishCardFieldWatcher name={`fishInLakeList[${index}].quantity`} />
+          <FieldWatcherResetter name={`fishInLakeList[${index}].quantity`} />
           <InputComponent
             useNumPad
             placeholder="Nhập tổng cân nặng (kg)"
@@ -134,7 +132,7 @@ const FishCardSection = () => {
             useCustomError
             myError={errors.fishInLakeList?.[index]?.totalWeight}
           />
-          <FishCardFieldWatcher name={`fishInLakeList[${index}].totalWeight`} />
+          <FieldWatcherResetter name={`fishInLakeList[${index}].totalWeight`} />
           <Button
             fontSize="md"
             w="45%"
