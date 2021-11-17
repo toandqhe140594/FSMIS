@@ -25,7 +25,8 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   text: { fontSize: 16 },
-  bold: { fontWeight: "bold" },
+  title: { fontSize: 16, fontWeight: "bold" },
+  asterisk: { color: "#f43f5e", fontSize: 16 },
 });
 
 const MAX_LENGTH = 1000;
@@ -37,6 +38,7 @@ const TextAreaComponent = ({
   isTitle,
   myStyles,
   controllerName,
+  hasAsterisk,
 }) => {
   const {
     control,
@@ -45,8 +47,9 @@ const TextAreaComponent = ({
   return (
     <Box style={myStyles}>
       {label.length > 0 && (
-        <Text style={[styles.text, isTitle ? styles.bold : null]} mb={2}>
+        <Text style={isTitle ? styles.title : styles.text} mb={2}>
           {label}
+          {hasAsterisk && <Text style={styles.asterisk}>*</Text>}
         </Text>
       )}
 
@@ -87,12 +90,14 @@ TextAreaComponent.propTypes = {
   ),
   isTitle: PropTypes.bool,
   controllerName: PropTypes.string.isRequired,
+  hasAsterisk: PropTypes.bool,
 };
 
 TextAreaComponent.defaultProps = {
   label: "",
   myStyles: {},
   isTitle: false,
+  hasAsterisk: false,
 };
 
 export default TextAreaComponent;
