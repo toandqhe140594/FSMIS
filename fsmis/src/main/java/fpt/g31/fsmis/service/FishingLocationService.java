@@ -483,6 +483,13 @@ public class FishingLocationService {
         return output;
     }
 
+    public ResponseTextDtoOut adminRemoveSuggestedLocation(Long suggestedLocationId) {
+        SuggestedLocation suggestedLocation = suggestedLocationRepos.findById(suggestedLocationId)
+                .orElseThrow(() -> new NotFoundException("Không tìm thấy bản ghi"));
+        suggestedLocationRepos.delete(suggestedLocation);
+        return new ResponseTextDtoOut("Xóa gợi ý khu hồ thành công");
+    }
+
 //    private Specification<FishingLocation> scoreGreaterThan(Integer minScore) {
 //        if (minScore == null || minScore == 0) {
 //            return null;

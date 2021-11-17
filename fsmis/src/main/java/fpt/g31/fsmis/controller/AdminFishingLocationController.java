@@ -32,4 +32,9 @@ public class AdminFishingLocationController {
     public ResponseEntity<Object> adminGetSuggestedLocationList() {
         return new ResponseEntity<>(locationService.adminGetSuggestedLocationList(), HttpStatus.OK);
     }
+
+    @DeleteMapping("/suggested/remove/{suggestedLocationId}")
+    public ResponseEntity<Object> adminRemoveSuggestedLocation(@PathVariable Long suggestedLocationId) {
+        return new ResponseEntity<>(locationService.adminRemoveSuggestedLocation(suggestedLocationId), HttpStatus.OK);
+    }
 }
