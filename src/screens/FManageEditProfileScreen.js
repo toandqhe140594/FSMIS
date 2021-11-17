@@ -59,6 +59,7 @@ const FManageEditProfileScreen = () => {
   const methods = useForm({
     mode: "onSubmit",
     reValidateMode: "onSubmit",
+    defaultValues: { imageArray: [] },
     resolver: yupResolver(SCHEMA.FMANAGE_PROFILE_FORM),
   });
   const generateAddressDropdown = useCallback((name, value) => {
