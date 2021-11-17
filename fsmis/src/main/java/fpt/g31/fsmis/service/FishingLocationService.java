@@ -51,17 +51,17 @@ public class FishingLocationService {
         Ward ward = wardRepos.findById(fishingLocationDtoIn.getWardId())
                 .orElseThrow(() -> new NotFoundException("Không tìm thấy phường/xã!"));
         FishingLocation fishingLocation = FishingLocation.builder()
-                .name(fishingLocationDtoIn.getName())
+                .name(fishingLocationDtoIn.getName().trim())
                 .longitude(fishingLocationDtoIn.getLongitude())
                 .latitude(fishingLocationDtoIn.getLatitude())
-                .address(fishingLocationDtoIn.getAddress())
+                .address(fishingLocationDtoIn.getAddress().trim())
                 .ward(ward)
-                .phone(fishingLocationDtoIn.getPhone())
-                .description(fishingLocationDtoIn.getDescription())
-                .website(fishingLocationDtoIn.getWebsite())
-                .service(fishingLocationDtoIn.getService())
-                .timetable(fishingLocationDtoIn.getTimetable())
-                .rule(fishingLocationDtoIn.getRule())
+                .phone(fishingLocationDtoIn.getPhone().trim())
+                .description(fishingLocationDtoIn.getDescription().trim())
+                .website(fishingLocationDtoIn.getWebsite().trim())
+                .service(fishingLocationDtoIn.getService().trim())
+                .timetable(fishingLocationDtoIn.getTimetable().trim())
+                .rule(fishingLocationDtoIn.getRule().trim())
                 .imageUrl(ServiceUtils.mergeString(fishingLocationDtoIn.getImages()))
                 .createdDate(LocalDateTime.now())
                 .lastEditedDate(LocalDateTime.now())
@@ -82,17 +82,17 @@ public class FishingLocationService {
         }
         Ward ward = wardRepos.findById(fishingLocationDtoIn.getWardId())
                 .orElseThrow(() -> new NotFoundException("Không tìm thấy phường/xã!"));
-        location.setName(fishingLocationDtoIn.getName());
-        location.setPhone(fishingLocationDtoIn.getPhone());
-        location.setWebsite(fishingLocationDtoIn.getWebsite());
-        location.setAddress(fishingLocationDtoIn.getAddress());
+        location.setName(fishingLocationDtoIn.getName().trim());
+        location.setPhone(fishingLocationDtoIn.getPhone().trim());
+        location.setWebsite(fishingLocationDtoIn.getWebsite().trim());
+        location.setAddress(fishingLocationDtoIn.getAddress().trim());
         location.setWard(ward);
         location.setLongitude(fishingLocationDtoIn.getLongitude());
         location.setLatitude(fishingLocationDtoIn.getLatitude());
-        location.setDescription(location.getDescription());
-        location.setTimetable(fishingLocationDtoIn.getTimetable());
-        location.setService(fishingLocationDtoIn.getService());
-        location.setRule(fishingLocationDtoIn.getRule());
+        location.setDescription(fishingLocationDtoIn.getDescription().trim());
+        location.setTimetable(fishingLocationDtoIn.getTimetable().trim());
+        location.setService(fishingLocationDtoIn.getService().trim());
+        location.setRule(fishingLocationDtoIn.getRule().trim());
         location.setImageUrl(ServiceUtils.mergeString(fishingLocationDtoIn.getImages()));
         location.setLastEditedDate(LocalDateTime.now());
         location.setVerify(false);
