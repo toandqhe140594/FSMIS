@@ -11,18 +11,21 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 public class AdminAccountController {
 
-     private final UserService userService;
+    private final UserService userService;
 
     @GetMapping()
-    public ResponseEntity<Object> getAccountList(@RequestParam(required = false, defaultValue = "1") int pageNo,
-                                                 @RequestParam(required = false, defaultValue = "") String phone) {
-         return new ResponseEntity<>(userService.adminGetAccountList(pageNo, phone), HttpStatus.OK);
+    public ResponseEntity<Object> adminGetAccountList(@RequestParam(required = false, defaultValue = "1") int pageNo,
+                                                      @RequestParam(required = false, defaultValue = "") String phone) {
+        return new ResponseEntity<>(userService.adminGetAccountList(pageNo, phone), HttpStatus.OK);
     }
 
-    // @GetMapping("{userId}")
+    @GetMapping("{userId}")
+    public ResponseEntity<Object> adminGetAccount(@PathVariable Long userId) {
+        return new ResponseEntity<>(userService.adminGetAccount(userId), HttpStatus.OK);
+    }
 
-     @PostMapping("/change-active/{userId}")
-    public ResponseEntity<Object> changeActive(@PathVariable Long userId) {
+    @PostMapping("/change-active/{userId}")
+    public ResponseEntity<Object> adminChangeActive(@PathVariable Long userId) {
         return new ResponseEntity<>(userService.adminChangeActive(userId), HttpStatus.OK);
-     }
+    }
 }

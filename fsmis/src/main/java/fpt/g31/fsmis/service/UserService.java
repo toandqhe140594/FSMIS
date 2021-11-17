@@ -189,4 +189,19 @@ public class UserService {
         String output = Boolean.TRUE.equals(user.getActive()) ? "Mở khóa tài khoản thành công" : "Khóa tài khoản thành công";
         return new ResponseTextDtoOut(output);
     }
+
+    public UserDtoOut adminGetAccount(Long userId) {
+        User user = userRepos.findById(userId)
+                .orElseThrow(() -> new NotFoundException("Không tìm thấy tài khoản"));
+        return UserDtoOut.builder()
+                .id(user.getId())
+                .fullName(user.getFullName())
+                .avatar(user.getAvatarUrl())
+                .dob(ServiceUtils.convertDateToString(user.getDob()))
+                .phone(user.getPhone())
+                .gender(user.getGender())
+                .address(ServiceUtils.getAddress(user.getAddress(), user.getWard()))
+                .active(user.getActive())
+                .build();
+    }
 }
