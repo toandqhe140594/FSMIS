@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useFormContext, useWatch } from "react-hook-form";
 
 const DependentFieldWatcher = ({ name, dependentField, data }) => {
@@ -26,7 +26,7 @@ const DependentFieldWatcher = ({ name, dependentField, data }) => {
     setValue(name, 0);
     setValue(dependentField, 0);
   }, [JSON.stringify(data)]);
-  return <></>;
+  return null;
 };
 
 DependentFieldWatcher.propTypes = {
