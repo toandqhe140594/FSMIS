@@ -7,6 +7,7 @@ import AdminReport from "../components/AdminReport";
 import AvatarCard from "../components/AvatarCard";
 import EventPostCard from "../components/EventPostCard";
 import styles from "../config/styles";
+import { goToAdminFLocationOverviewScreen } from "../navigations";
 import { showAlertAbsoluteBox } from "../utilities";
 
 const AdminReportCatchDetailScreen = () => {
@@ -21,12 +22,15 @@ const AdminReportCatchDetailScreen = () => {
   );
 
   const {
+    locationId,
     locationName,
     reportTime,
     catchesOverviewNoImageDtoOut,
     reportDetailList,
   } = catchReportDetail;
-
+  const goToFLocationDetailHandler = () => {
+    goToAdminFLocationOverviewScreen(navigation, { id: locationId });
+  };
   const listEvent = [{ name: "Xóa bài viết", onPress: () => {} }];
 
   const renderItem = ({ item }) => (
@@ -37,10 +41,12 @@ const AdminReportCatchDetailScreen = () => {
       }}
       borderColor="coolGray.200"
       backgroundColor="white"
-      mt="0.5"
-      mb="1"
-      pl="2"
-      py="1.5"
+      mt={0.5}
+      mb={1}
+      pl={3}
+      pt={1}
+      pb={2}
+      mx={2}
     >
       <AvatarCard
         avatarSize="md"
@@ -56,7 +62,7 @@ const AdminReportCatchDetailScreen = () => {
     </Box>
   );
   const headerListComponent = () => (
-    <VStack space={3} mt={4} px={3}>
+    <VStack space={3} mt={4} px={3} pb={2}>
       <Box
         style={styles.textContentType}
         flexDirection="row"
@@ -67,7 +73,7 @@ const AdminReportCatchDetailScreen = () => {
           <Text bold>Điểm câu bị báo cáo</Text>
           <Text>{locationName}</Text>
         </Box>
-        <Button>Đi tới trang</Button>
+        <Button onPress={goToFLocationDetailHandler}>Đi tới trang</Button>
       </Box>
 
       <Divider />

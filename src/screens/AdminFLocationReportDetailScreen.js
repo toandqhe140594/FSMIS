@@ -6,6 +6,7 @@ import React, { useEffect, useState } from "react";
 import AdminReport from "../components/AdminReport";
 import AvatarCard from "../components/AvatarCard";
 import styles from "../config/styles";
+import { goToAdminFLocationOverviewScreen } from "../navigations";
 import { showAlertAbsoluteBox } from "../utilities";
 
 const AdminFLocationReportDetailScreen = () => {
@@ -15,13 +16,17 @@ const AdminFLocationReportDetailScreen = () => {
   const locationReportDetail = useStoreState(
     (states) => states.ReportModel.locationReportDetail,
   );
-  const { locationName, time, reportDetailList } = locationReportDetail;
+  const { locationId, locationName, time, reportDetailList } =
+    locationReportDetail;
   const getLocationReportDetail = useStoreActions(
     (actions) => actions.ReportModel.getLocationReportDetail,
   );
+  const goToFLocationDetailHandler = () => {
+    goToAdminFLocationOverviewScreen(navigation, { id: locationId });
+  };
 
   const headerListComponent = () => (
-    <VStack space={3} mt={4} px={3}>
+    <VStack space={3} mt={4} px={3} pb={2}>
       <Box
         style={styles.textContentType}
         flexDirection="row"
@@ -32,7 +37,7 @@ const AdminFLocationReportDetailScreen = () => {
           <Text bold>Điểm câu bị báo cáo</Text>
           <Text>{locationName}</Text>
         </Box>
-        <Button>Đi tới trang</Button>
+        <Button onPress={goToFLocationDetailHandler}>Đi tới trang</Button>
       </Box>
       <Divider />
       <Text style={styles.textContentType}>
@@ -53,17 +58,18 @@ const AdminFLocationReportDetailScreen = () => {
       }}
       borderColor="coolGray.200"
       backgroundColor="white"
-      mt="0.5"
-      mb="1"
-      pl="2"
-      py="1.5"
+      mt={0.5}
+      mb={1}
+      pl={3}
+      pt={1}
+      pb={2}
+      mx={2}
     >
       <AvatarCard
         avatarSize="md"
         nameUser={item.userFullName}
         images={item.userAvatar}
         subText={item.time}
-        subTextFontSize="sm"
       />
       <Box mt={2}>
         <Text italic style={styles.textContentType}>

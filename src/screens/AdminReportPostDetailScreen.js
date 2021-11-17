@@ -1,12 +1,13 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
-import { Box, Divider, FlatList, Text, VStack } from "native-base";
+import { Box, Button, Divider, FlatList, Text, VStack } from "native-base";
 import React, { useEffect, useState } from "react";
 
 import AdminReport from "../components/AdminReport";
 import AvatarCard from "../components/AvatarCard";
 import EventPostCard from "../components/EventPostCard";
 import styles from "../config/styles";
+import { goToAdminFLocationOverviewScreen } from "../navigations";
 import { showAlertAbsoluteBox } from "../utilities";
 
 const AdminReportPostDetailScreen = () => {
@@ -20,10 +21,12 @@ const AdminReportPostDetailScreen = () => {
     (actions) => actions.ReportModel.getPostReportDetail,
   );
 
-  const { locationName, reportTime, postDtoOut, reportDetailList } =
+  const { locationId, locationName, reportTime, postDtoOut, reportDetailList } =
     postReportDetail;
   const listEvent = [{ name: "Xóa bài viết", onPress: () => {} }];
-
+  const goToFLocationDetailHandler = () => {
+    goToAdminFLocationOverviewScreen(navigation, { id: locationId });
+  };
   let typeBadge = "";
 
   if (postDtoOut !== undefined) {
@@ -41,29 +44,39 @@ const AdminReportPostDetailScreen = () => {
   const headerListComponent = () => (
     <>
       {postDtoOut !== undefined ? (
-        <VStack space={3} mt={4} px={3}>
-          <Box style={styles.textContentType}>
-            <Text bold>Điểm câu bị báo cáo</Text>
-            <Text>{locationName}</Text>
+        <VStack space={3} mt={4} px={3} pb={2}>
+          <Box
+            style={styles.textContentType}
+            flexDirection="row"
+            alignItems="center"
+            justifyContent="space-between"
+          >
+            <Box>
+              <Text bold>Điểm câu bị báo cáo</Text>
+              <Text>{locationName}</Text>
+            </Box>
+            <Button onPress={goToFLocationDetailHandler}>Đi tới trang</Button>
           </Box>
           <Divider />
           <Text style={styles.textContentType}>
             <Text bold>Thời gian báo cáo :</Text> {reportTime}
           </Text>
           <Divider />
-          <EventPostCard
-            id={postDtoOut.id}
-            iconEvent={listEvent}
-            iconName="ellipsis-vertical"
-            postStyle="LAKE_POST"
-            image={postDtoOut.uri}
-            postTime={postDtoOut.postTime}
-            edited={postDtoOut.edited}
-            lakePost={{
-              badge: typeBadge,
-              content: postDtoOut.content,
-            }}
-          />
+          <Box backgroundColor="white" px={1.5} pb={2}>
+            <EventPostCard
+              id={postDtoOut.id}
+              iconEvent={listEvent}
+              iconName="ellipsis-vertical"
+              postStyle="LAKE_POST"
+              image={postDtoOut.uri}
+              postTime={postDtoOut.postTime}
+              edited={postDtoOut.edited}
+              lakePost={{
+                badge: typeBadge,
+                content: postDtoOut.content,
+              }}
+            />
+          </Box>
           <Text bold style={styles.textContentType}>
             Danh sách báo cáo :
           </Text>
@@ -82,10 +95,12 @@ const AdminReportPostDetailScreen = () => {
       }}
       borderColor="coolGray.200"
       backgroundColor="white"
-      mt="0.5"
-      mb="1"
-      pl="2"
-      py="1.5"
+      mt={0.5}
+      mb={1}
+      pl={3}
+      pt={1}
+      pb={2}
+      mx={2}
     >
       <AvatarCard
         avatarSize="md"

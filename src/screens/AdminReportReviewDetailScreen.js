@@ -7,6 +7,7 @@ import AdminReport from "../components/AdminReport";
 import AvatarCard from "../components/AvatarCard";
 import ReviewFromAnglerSection from "../components/ReviewFromAnglerSection";
 import styles from "../config/styles";
+import { goToAdminFLocationOverviewScreen } from "../navigations";
 import { showAlertAbsoluteBox } from "../utilities";
 
 const AdminReportReviewDetailScreen = () => {
@@ -16,28 +17,37 @@ const AdminReportReviewDetailScreen = () => {
   const reviewReportDetail = useStoreState(
     (states) => states.ReportModel.reviewReportDetail,
   );
-  const { locationName, reportTime, reviewDtoOut, reportDetailList } =
-    reviewReportDetail;
+  const {
+    locationId,
+    locationName,
+    reportTime,
+    reviewDtoOut,
+    reportDetailList,
+  } = reviewReportDetail;
   const getReviewReportDetail = useStoreActions(
     (actions) => actions.ReportModel.getReviewReportDetail,
   );
-
+  const goToFLocationDetailHandler = () => {
+    goToAdminFLocationOverviewScreen(navigation, { id: locationId });
+  };
   const headerListComponent = () => (
     <>
       {reviewDtoOut !== undefined ? (
-        <VStack space={3} mt={4} px={3}>
-          <ReviewFromAnglerSection
-            id={reviewDtoOut.id}
-            name={reviewDtoOut.userFullName}
-            content={reviewDtoOut.description}
-            date={reviewDtoOut.time}
-            isDisabled
-            rate={reviewDtoOut.score}
-            negativeCount={reviewDtoOut.upvote}
-            positiveCount={reviewDtoOut.downvote}
-            userImage={reviewDtoOut.userAvatar}
-            isAdminView
-          />
+        <VStack space={3} mt={4} px={3} pb={2}>
+          <Box backgroundColor="white" paddingTop={2} paddingBottom={2}>
+            <ReviewFromAnglerSection
+              id={reviewDtoOut.id}
+              name={reviewDtoOut.userFullName}
+              content={reviewDtoOut.description}
+              date={reviewDtoOut.time}
+              isDisabled
+              rate={reviewDtoOut.score}
+              negativeCount={reviewDtoOut.upvote}
+              positiveCount={reviewDtoOut.downvote}
+              userImage={reviewDtoOut.userAvatar}
+              isAdminView
+            />
+          </Box>
           <Divider />
           <Box
             style={styles.textContentType}
@@ -49,7 +59,7 @@ const AdminReportReviewDetailScreen = () => {
               <Text bold>Điểm câu</Text>
               <Text>{locationName}</Text>
             </Box>
-            <Button>Đi tới trang</Button>
+            <Button onPress={goToFLocationDetailHandler}>Đi tới trang</Button>
           </Box>
           <Divider />
           <Text style={styles.textContentType}>
@@ -74,21 +84,22 @@ const AdminReportReviewDetailScreen = () => {
       }}
       borderColor="coolGray.200"
       backgroundColor="white"
-      mt="0.5"
-      mb="1"
-      pl="2"
-      py="1.5"
+      mt={0.5}
+      mb={1}
+      pl={3}
+      pt={1}
+      pb={2}
+      mx={2}
     >
       <AvatarCard
         avatarSize="md"
         nameUser={item.userFullName}
         images={item.userAvatar}
         subText={item.time}
+        subTextFontSize="12"
       />
-      <Box mt={2}>
-        <Text italic style={styles.textContentType}>
-          {item.description}
-        </Text>
+      <Box mt={0.5} ml={2}>
+        <Text style={styles.textContentType}>{item.description}</Text>
       </Box>
     </Box>
   );
