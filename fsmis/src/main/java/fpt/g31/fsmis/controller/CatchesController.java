@@ -5,6 +5,7 @@ import fpt.g31.fsmis.dto.input.ReportDtoIn;
 import fpt.g31.fsmis.service.CatchesService;
 import fpt.g31.fsmis.service.CheckInService;
 import fpt.g31.fsmis.service.ReportService;
+import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,6 +42,7 @@ public class CatchesController {
     }
 
     @PostMapping("/report-improper/{catchesId}")
+    @ApiOperation("Report improper catch")
     public ResponseEntity<Object> catchReport(HttpServletRequest request,
                                               @PathVariable Long catchesId,
                                               @RequestBody @Valid ReportDtoIn reportDtoIn) {

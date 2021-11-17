@@ -435,6 +435,26 @@ public class FishingLocationService {
         return (root, criteriaQuery, criteriaBuilder) -> criteriaBuilder.equal(root.get("active"), active);
     }
 
+    public ResponseTextDtoOut adminChangeVerify(Long locationId) {
+        FishingLocation location = fishingLocationRepos.findById(locationId)
+                .orElseThrow(() -> new NotFoundException(LOCATION_NOT_FOUND));
+        location.setVerify(!location.getVerify());
+        fishingLocationRepos.save(location);
+        return new ResponseTextDtoOut(Boolean.TRUE.equals(location.getVerify()) ?
+                "Xác nhận khu hồ thành công!" :
+                "Bỏ xác nhận khu hồ thành công!");
+    }
+
+    public ResponseTextDtoOut adminChangeActive(Long locationId) {
+        FishingLocation location = fishingLocationRepos.findById(locationId)
+                .orElseThrow(() -> new NotFoundException(LOCATION_NOT_FOUND));
+        location.setActive(!location.getActive());
+        fishingLocationRepos.save(location);
+        return new ResponseTextDtoOut(Boolean.TRUE.equals(location.getActive()) ?
+                "Hiện khu hồ thành công!" :
+                "Ẩn khu hồ thành công!");
+    }
+
 //    private Specification<FishingLocation> scoreGreaterThan(Integer minScore) {
 //        if (minScore == null || minScore == 0) {
 //            return null;
