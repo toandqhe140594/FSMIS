@@ -248,6 +248,9 @@ const FManageAddNewScreen = () => {
               <Box style={styles.sectionWrapper}>
                 <Text bold fontSize="md" mb={2}>
                   Bản đồ
+                  <Text color="danger.500" fontSize="md">
+                    *
+                  </Text>
                 </Text>
                 <MapOverviewBox />
               </Box>
@@ -259,6 +262,7 @@ const FManageAddNewScreen = () => {
                 myStyles={styles.sectionWrapper}
                 label="Mô tả khu hồ"
                 isTitle
+                hasAsterisk
                 placeholder="Miêu tả khu hồ của bạn"
                 numberOfLines={6}
                 controllerName="description"
@@ -271,6 +275,7 @@ const FManageAddNewScreen = () => {
                 myStyles={styles.sectionWrapper}
                 label="Thời gian hoạt động"
                 isTitle
+                hasAsterisk
                 placeholder="Miêu tả thời gian hoạt động của khu hồ"
                 numberOfLines={3}
                 controllerName="timetable"
@@ -283,6 +288,7 @@ const FManageAddNewScreen = () => {
                 myStyles={styles.sectionWrapper}
                 label="Dịch vụ"
                 isTitle
+                hasAsterisk
                 placeholder="Miêu tả dịch vụ khu hồ"
                 numberOfLines={3}
                 controllerName="service"
@@ -295,6 +301,7 @@ const FManageAddNewScreen = () => {
                 myStyles={styles.sectionWrapper}
                 label="Nội quy"
                 isTitle
+                hasAsterisk
                 placeholder="Miêu tả nội quy khu hồ"
                 numberOfLines={3}
                 controllerName="rule"
