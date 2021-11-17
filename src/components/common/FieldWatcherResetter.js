@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useFormContext, useWatch } from "react-hook-form";
 
 const FishCardFieldWatcher = ({ name }) => {
@@ -19,7 +19,7 @@ const FishCardFieldWatcher = ({ name }) => {
       clearErrors(name);
     }
   }, [watchField]);
-  return <></>;
+  return null;
 };
 
 FishCardFieldWatcher.propTypes = {

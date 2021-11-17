@@ -5,9 +5,10 @@ import React, { useEffect } from "react";
 import { Controller, useFieldArray, useFormContext } from "react-hook-form";
 import { StyleSheet, Text, View } from "react-native";
 
+import FieldWatcherResetter from "../common/FieldWatcherResetter";
 import InputComponent from "../common/InputComponent";
 import SelectComponent from "../common/SelectComponent";
-import CatchReportFieldWatcher from "./CatchReportFieldWatcher";
+import DependentFieldWatcher from "./DependentFieldWatcher";
 
 const FishIcon = () => (
   <FontAwesome5
@@ -46,6 +47,12 @@ const styles = StyleSheet.create({
     marginVertical: 8,
   },
   error: { color: "#f43f5e", fontSize: 12, fontStyle: "italic" },
+  hint: {
+    fontSize: 12,
+    fontStyle: "italic",
+    marginBottom: 12,
+    alignSelf: "center",
+  },
 });
 
 const CatchReportSection = ({ fishList }) => {
@@ -56,11 +63,10 @@ const CatchReportSection = ({ fishList }) => {
   const { fields, append, remove } = useFieldArray({
     control,
     name: "catchesDetailList",
-    // catchesDetailList will be unregistered when unmount
     shouldUnregister: true,
   });
   const handleAppend = () => {
-    append({ fishSpeciesId: 0 });
+    append({ fishSpeciesId: 0, weight: 0, quantity: 0 });
   };
   const handleRemove = (index) => () => {
     remove(index);
@@ -85,11 +91,14 @@ const CatchReportSection = ({ fishList }) => {
             useCustomError
             myError={errors.catchesDetailList?.[index]?.fishInLakeId}
           />
-          <CatchReportFieldWatcher
+          <DependentFieldWatcher
             name={`catchesDetailList[${index}].fishInLakeId`}
             dependentField={`catchesDetailList[${index}].fishSpeciesId`}
             data={fishList}
           />
+          <Text style={styles.hint}>
+            Lưu ý: Chỉ cần nhập một trong hai trường dưới đây
+          </Text>
           <InputComponent
             myStyles={{ marginBottom: 8 }}
             placeholder="Nhập số con bắt được"
@@ -98,6 +107,7 @@ const CatchReportSection = ({ fishList }) => {
             useCustomError
             myError={errors.catchesDetailList?.[index]?.quantity}
           />
+          <FieldWatcherResetter name={`catchesDetailList[${index}].quantity`} />
           <InputComponent
             placeholder="Nhập cân nặng bắt được (kg)"
             leftIcon={<WeightIcon />}
@@ -105,6 +115,7 @@ const CatchReportSection = ({ fishList }) => {
             useCustomError
             myError={errors.catchesDetailList?.[index]?.weight}
           />
+          <FieldWatcherResetter name={`catchesDetailList[${index}].weight`} />
           <View style={styles.rowWrapper}>
             <Controller
               name={`catchesDetailList[${index}].returnToOwner`}

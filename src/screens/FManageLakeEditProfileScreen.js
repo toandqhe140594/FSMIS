@@ -68,6 +68,7 @@ const LakeEditProfileScreen = () => {
   const methods = useForm({
     mode: "onSubmit",
     reValidateMode: "onSubmit",
+    defaultValues: { imageArray: [] },
     resolver: yupResolver(SCHEMA.FMANAGE_LAKE_FORM),
   });
   const { handleSubmit, setValue } = methods;

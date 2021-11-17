@@ -60,7 +60,7 @@ const AnglerCatchReportScreen = () => {
   const methods = useForm({
     mode: "onSubmit",
     reValidateMode: "onSubmit",
-    defaultValues: { hidden: false },
+    defaultValues: { hidden: false, imageArray: [] },
     resolver: yupResolver(SCHEMA.ANGLER_CATCH_REPORT_FORM),
   });
   const {

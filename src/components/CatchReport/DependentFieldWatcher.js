@@ -1,8 +1,8 @@
 import PropTypes from "prop-types";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useFormContext, useWatch } from "react-hook-form";
 
-const CatchFieldWatcher = ({ name, dependentField, data }) => {
+const DependentFieldWatcher = ({ name, dependentField, data }) => {
   const { control, setValue } = useFormContext();
   const watchFishInLakeIdField = useWatch({ control, name, defaultValue: 0 });
   /**
@@ -26,18 +26,18 @@ const CatchFieldWatcher = ({ name, dependentField, data }) => {
     setValue(name, 0);
     setValue(dependentField, 0);
   }, [JSON.stringify(data)]);
-  return <></>;
+  return null;
 };
 
-CatchFieldWatcher.propTypes = {
+DependentFieldWatcher.propTypes = {
   name: PropTypes.string,
   data: PropTypes.arrayOf(PropTypes.object),
   dependentField: PropTypes.string,
 };
-CatchFieldWatcher.defaultProps = {
+DependentFieldWatcher.defaultProps = {
   name: "",
   data: [],
   dependentField: "",
 };
 
-export default CatchFieldWatcher;
+export default DependentFieldWatcher;
