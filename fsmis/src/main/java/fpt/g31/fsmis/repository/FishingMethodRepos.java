@@ -9,4 +9,6 @@ import java.util.List;
 @Repository
 public interface FishingMethodRepos extends JpaRepository<FishingMethod, Long> {
     List<FishingMethod> findAllByActiveIsTrue();
+
+    boolean existsByNameIgnoreCase(String name);
 }

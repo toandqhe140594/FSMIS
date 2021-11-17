@@ -30,7 +30,7 @@ public class UtilsController {
 
     @GetMapping("/method")
     public ResponseEntity<Object> getAllFishingMethods() {
-        return new ResponseEntity<>(fishingMethodService.getAll(), HttpStatus.OK);
+        return new ResponseEntity<>(fishingMethodService.getAll(true), HttpStatus.OK);
     }
 
     @PostMapping("/otp/nonexisted")

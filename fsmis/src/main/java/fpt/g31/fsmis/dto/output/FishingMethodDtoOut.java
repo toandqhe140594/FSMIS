@@ -12,4 +12,5 @@ import lombok.Setter;
 public class FishingMethodDtoOut {
     private Long id;
     private String name;
+    private Boolean active;
 }
