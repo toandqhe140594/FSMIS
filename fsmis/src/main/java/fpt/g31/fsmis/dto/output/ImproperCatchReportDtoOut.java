@@ -15,6 +15,6 @@ public class ImproperCatchReportDtoOut {
     private Long locationId;
     private String locationName;
     private String reportTime;
-    private CatchesOverviewNoImageDtoOut catchesOverviewNoImageDtoOut;
+    private CatchesOverviewDtoOut catchesOverviewDtoOut;
     private List<ReportDetailItemDtoOut> reportDetailList;
 }

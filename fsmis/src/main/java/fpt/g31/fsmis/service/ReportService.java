@@ -325,18 +325,19 @@ public class ReportService {
         List<ReportUser> reportDetailList = reportUserRepos.findAllByReportId(reportId);
         List<ReportDetailItemDtoOut> reportDetailDtoOutList = getReportDetailDtoList(reportDetailList);
         Catches catches = report.getCatches();
-        CatchesOverviewNoImageDtoOut catchesOverviewNoImageDtoOut = CatchesOverviewNoImageDtoOut.builder()
+        CatchesOverviewDtoOut catchesOverviewDtoOut = CatchesOverviewDtoOut.builder()
                 .id(catches.getId())
                 .userFullName(catches.getUser().getFullName())
                 .avatar(catches.getUser().getAvatarUrl())
                 .description(catches.getDescription())
                 .time(ServiceUtils.convertDateToString(catches.getTime()))
+                .images(ServiceUtils.splitString(catches.getImageUrl()))
                 .build();
         return ImproperCatchReportDtoOut.builder()
                 .reportTime(ServiceUtils.convertDateToString(report.getTime()))
                 .locationId(report.getCatches().getFishingLocation().getId())
                 .locationName(report.getCatches().getFishingLocation().getName())
-                .catchesOverviewNoImageDtoOut(catchesOverviewNoImageDtoOut)
+                .catchesOverviewDtoOut(catchesOverviewDtoOut)
                 .reportDetailList(reportDetailDtoOutList)
                 .build();
     }

@@ -37,9 +37,9 @@ public class CatchesService {
             throw new ValidationException(INVALID_PAGE_NUMBER);
         }
         Page<Catches> catchesList = catchesRepos.findByFishingLocationIdAndHiddenIsFalseAndApprovedIsTrueOrderByTimeDesc(locationId, PageRequest.of(pageNo - 1, 10));
-        List<CatchesOverViewDtoOut> output = new ArrayList<>();
+        List<CatchesOverviewDtoOut> output = new ArrayList<>();
         for (Catches catches : catchesList) {
-            CatchesOverViewDtoOut item = CatchesOverViewDtoOut.builder()
+            CatchesOverviewDtoOut item = CatchesOverviewDtoOut.builder()
                     .userId(catches.getUser().getId())
                     .userFullName(catches.getUser().getFullName())
                     .avatar(catches.getUser().getAvatarUrl())

@@ -11,7 +11,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CatchesOverViewDtoOut {
+public class CatchesOverviewDtoOut {
 
     private Long id;
 
