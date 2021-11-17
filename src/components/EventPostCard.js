@@ -24,6 +24,7 @@ const EventPostCard = ({
   imageAvatar,
   id,
   itemData,
+  isApproved,
 }) => {
   return (
     <Box mt="1" px="1.4">
@@ -47,15 +48,7 @@ const EventPostCard = ({
                 value={lakePost.badge}
               />
               {postTime !== undefined && (
-                <Text style={styles.ml1}>
-                  {postTime}
-                  {edited && (
-                    <Text style={{ fontWeight: "bold", fontSize: 12 }}>
-                      {" "}
-                      (chỉnh sửa){" "}
-                    </Text>
-                  )}
-                </Text>
+                <Text style={styles.ml1}>{postTime}</Text>
               )}
             </HStack>
 
@@ -84,7 +77,15 @@ const EventPostCard = ({
 
           <VStack>
             <Box mb={2} w="100%" px="2" pl="3">
-              <Text>{lakePost.content && lakePost.content.trim()}</Text>
+              <Text>
+                {lakePost.content && lakePost.content.trim()}{" "}
+                {edited && (
+                  <Text style={{ fontWeight: "bold", fontSize: 12 }}>
+                    {" "}
+                    (chỉnh sửa){" "}
+                  </Text>
+                )}
+              </Text>
             </Box>
           </VStack>
         </>
@@ -92,13 +93,14 @@ const EventPostCard = ({
 
       {postStyle === "ANGLER_POST" && (
         <VStack pb="1" mb={2} px="1.5">
-          <HStack px="2" space={2} mt={4} pb={3} justifyContent="space-between">
+          <HStack px="2" space={1} mt={4} pb={0} justifyContent="space-between">
             <Box justifyContent="flex-start" alignItems="flex-start" flex={1}>
               <AvatarCard
                 avatarSize="lg"
                 nameUser={anglerName}
                 subText={postTime}
                 image={imageAvatar}
+                watermarkType={isApproved}
               />
             </Box>
 
@@ -111,7 +113,7 @@ const EventPostCard = ({
                       name={iconName}
                       size={22}
                       color="black"
-                      style={{ position: "relative", top: 15, left: 10 }}
+                      style={{ position: "relative", top: 27, left: 10 }}
                     />
                   </Pressable>
                 );
@@ -130,13 +132,17 @@ const EventPostCard = ({
             </Menu>
           </HStack>
 
-          <Box mt={2}>
+          <Box mt={2} ml={1.5}>
             <Text italic>{anglerContent}</Text>
             <Text>
-              <Text bold>Đã câu được : </Text>
-              {fishList.map((item) => {
-                return <Text key={item}>{item}. </Text>;
-              })}
+              <Text b>Đã câu được : </Text>
+              {fishList !== undefined && fishList !== null ? (
+                fishList.map((item) => {
+                  return <Text key={item}>{item}. </Text>;
+                })
+              ) : (
+                <Text>Không có dữ liệu</Text>
+              )}
 
               <Text i>
                 {numberOfImages > 1 && `___ còn ${numberOfImages} ảnh.... `}
@@ -172,6 +178,7 @@ EventPostCard.propTypes = {
   edited: PropTypes.bool,
   postTime: PropTypes.string,
   id: PropTypes.number.isRequired,
+  isApproved: PropTypes.bool,
 };
 
 EventPostCard.defaultProps = {
@@ -187,6 +194,7 @@ EventPostCard.defaultProps = {
   image: "https://picsum.photos/500",
   edited: false,
   postTime: "",
+  isApproved: undefined,
 };
 
 export default EventPostCard;

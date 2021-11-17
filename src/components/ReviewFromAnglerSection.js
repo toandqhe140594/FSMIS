@@ -126,18 +126,22 @@ const ReviewFromAnglerSection = ({
           }}
           key={userImage}
         />
-        <Box justifyContent="center">
-          <Text style={{ fontWeight: "bold" }}>{name}</Text>
-          <Box flexDirection="row" justifyContent="center">
+        <Box justifyContent="center" marginTop={-2}>
+          <Text style={{ fontWeight: "bold", fontSize: 15 }}>{name}</Text>
+          <Box
+            flexDirection="row"
+            justifyContent="center"
+            alignItems="baseline"
+          >
             <Rating
-              imageSize={14}
+              imageSize={16}
               ratingCount={5}
               showRating={false}
               readonly
               startingValue={rate}
-              style={{ marginRight: 10 }}
+              style={{ marginRight: 10, position: "relative", top: -1.3 }}
             />
-            <Text>{`(${date})`}</Text>
+            <Text style={{ fontSize: 13 }}>{`(${date})`}</Text>
           </Box>
         </Box>
       </Box>

@@ -9,6 +9,20 @@ export const ANGLER_PROFILE_FORM = yup.object().shape({
   wardId: yup.number(),
 });
 
+export const ANGLER_PROFILE_PASSWORD_CHANGE_FORM = yup.object().shape({
+  oldPassword: yup.string().required("Mật khẩu cũ không thể bỏ trống"),
+  newPassword: yup.string().required("Mật khẩu mới không thể bỏ trống"),
+  repeatPassword: yup
+    .string()
+    .required("Trường này không thể bỏ trống")
+    .oneOf([yup.ref("newPassword"), null], "Mật khẩu không khớp"),
+});
+
+export const ANGLER_PROFILE_PHONE_CHANGE_FORM = yup.object().shape({
+  phone: yup.string().required("Số điện thoại không thể bỏ trống"),
+  password: yup.string().required("Mật khẩu không thể bỏ trống"),
+});
+
 export const ANGLER_CATCH_REPORT_FORM = yup.object().shape({
   imageArray: yup.array().min(1, "Hãy chọn tối đa 3 ảnh miêu tả buổi câu"),
   description: yup.string().required("Hãy viết suy nghĩ của bạn về ngày câu"),
@@ -291,4 +305,19 @@ export const FMANAGE_POST_FORM = yup.object().shape({
     is: "VIDEO",
     then: yup.string().required("Link video không được để trống"),
   }),
+});
+
+export const REGISTER_PHONE_AND_PASS_FORM = yup.object().shape({
+  phoneNumber: yup
+    .string()
+    .required("Số điện thoại không thể bỏ trống")
+    .label("PhoneNumber"),
+  password: yup
+    .string()
+    .required("Mật khẩu không thể bỏ trống")
+    .min(8, "Mật khẩu phải chứa ít nhất 8 ký tự"),
+  passwordConfirmation: yup
+    .string()
+    .required("Trường này không thể bỏ trống")
+    .oneOf([yup.ref("password"), null], "Mật khẩu không khớp"),
 });

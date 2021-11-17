@@ -152,7 +152,7 @@ const PostEditScreen = () => {
     if (updateStatus === "SUCCESS") {
       showAlertAbsoluteBox(
         "Thông báo",
-        "Gửi thông thành công! Đang chỉnh sửa bài viết.",
+        "Gửi thông tin thành công! Đang chỉnh sửa bài viết.",
         async () => {
           goToFManagePostScreen(navigation);
         },

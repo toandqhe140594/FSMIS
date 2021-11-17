@@ -27,6 +27,7 @@ const AdminAccountManagementScreen = () => {
   const [search, setSearch] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [page, setPage] = useState(2);
+  const [firstPageLastItemView, setFirstPageLastItemView] = useState(-1);
 
   const updateSearch = (searchKey) => {
     setSearch(searchKey);
@@ -64,6 +65,10 @@ const AdminAccountManagementScreen = () => {
     if (userList) setIsLoading(false);
   }, [userList]);
 
+  useEffect(() => {
+    if (firstPageLastItemView !== -1 && page === 2) loadMoreUserData(0);
+  }, [firstPageLastItemView]);
+
   const goToAccountDetailScreen = (id) => () => {
     goToAdminAccountManagementDetailScreen(navigation, {
       id,
@@ -99,6 +104,13 @@ const AdminAccountManagementScreen = () => {
   };
 
   const keyExtractor = (item) => item.id.toString();
+  const onViewRef = React.useRef((viewableItems) => {
+    const foundIndex = viewableItems.changed.findIndex(
+      (item) => item.index === 9,
+    );
+    setFirstPageLastItemView(foundIndex);
+  });
+  const viewConfigRef = React.useRef({ viewAreaCoveragePercentThreshold: 50 });
 
   return (
     <>
@@ -130,6 +142,8 @@ const AdminAccountManagementScreen = () => {
                 onEndReached={loadMoreUserData}
                 initialNumToRender={10}
                 maxToRenderPerBatch={10}
+                onViewableItemsChanged={onViewRef.current}
+                viewabilityConfig={viewConfigRef.current}
               />
             </View>
           )}

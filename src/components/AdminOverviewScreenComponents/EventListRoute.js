@@ -65,6 +65,7 @@ const CatchReportRoute = () => {
                   imageAvatar={item.avatar}
                   image={item.images[0]}
                   numberOfImages={item.images.length}
+                  isApproved={item.approved}
                 />
               </PressableCustomCard>
             );

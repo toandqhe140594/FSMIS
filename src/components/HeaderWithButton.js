@@ -54,10 +54,7 @@ const HeaderWithButton = ({
           justifyContent="center"
         >
           <Text
-            style={[
-              styles.nameTextLg,
-              { fontSize: 12, flex: 1, textAlign: "center" },
-            ]}
+            style={[styles.nameTextLg, { fontSize: 12, textAlign: "center" }]}
             numberOfLines={1}
           >
             {name}

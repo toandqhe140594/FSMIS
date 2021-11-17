@@ -34,26 +34,7 @@ const model = {
   setLakeList: action((state, payload) => {
     state.lakeList = payload;
   }),
-  // /**
-  //  * Get all lake in a location by location id
-  //  * @param {Function} [payload.setGetStatus] the function to track api get status
-  //  */
-  // getLakeListByLocationId: thunk(
-  //   async (actions, payload = {}, { getState }) => {
-  //     const setGetStatus = payload.setGetStatus || (() => {});
-  //     const { id } = getState().fishingLocationInfo;
-  //     try {
-  //       const { data } = await http.get(
-  //         `location/${id}/${API_URL.LOCATION_LAKE_ALL}`,
-  //       );
-  //       actions.setLakeList(data);
-  //       setGetStatus("SUCCESS");
-  //     } catch (error) {
-  //       // handle error
-  //       setGetStatus("FAILED");
-  //     }
-  //   },
-  // ),
+
   setCurrentLakeId: action((state, payload) => {
     state.currentLakeId = payload;
   }),
@@ -156,7 +137,8 @@ const model = {
       const { data, status } = await http.get(`${API_URL.CHECKIN_STATUS}`);
       if (status === 200) {
         await actions.setFishingLocationInfo(data.fishingLocationItemDtoOut);
-        actions.setCheckInState(!data.available);
+        const available = data.available || true;
+        actions.setCheckInState(!available);
         setLoading(false);
       }
     } catch (error) {
