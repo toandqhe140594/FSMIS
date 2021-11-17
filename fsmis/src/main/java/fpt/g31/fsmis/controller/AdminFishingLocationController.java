@@ -27,4 +27,9 @@ public class AdminFishingLocationController {
     public ResponseEntity<Object> adminChangeActive(@PathVariable Long locationId) {
         return new ResponseEntity<>(locationService.adminChangeActive(locationId), HttpStatus.OK);
     }
+
+    @GetMapping("/suggested")
+    public ResponseEntity<Object> adminGetSuggestedLocationList() {
+        return new ResponseEntity<>(locationService.adminGetSuggestedLocationList(), HttpStatus.OK);
+    }
 }

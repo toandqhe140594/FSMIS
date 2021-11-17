@@ -468,6 +468,21 @@ public class FishingLocationService {
         return new ResponseTextDtoOut("Gợi ý khu hồ thành công");
     }
 
+    public List<SuggestedLocationDtoOut> adminGetSuggestedLocationList() {
+        List<SuggestedLocation> suggestedLocationList = suggestedLocationRepos.findAll();
+        List<SuggestedLocationDtoOut> output = new ArrayList<>();
+        for (SuggestedLocation suggestedLocation : suggestedLocationList) {
+            output.add(SuggestedLocationDtoOut.builder()
+                    .id(suggestedLocation.getId())
+                    .name(suggestedLocation.getName())
+                    .phone(suggestedLocation.getPhone())
+                    .description(suggestedLocation.getDescription())
+                    .senderPhone(suggestedLocation.getSenderPhone())
+                    .build());
+        }
+        return output;
+    }
+
 //    private Specification<FishingLocation> scoreGreaterThan(Integer minScore) {
 //        if (minScore == null || minScore == 0) {
 //            return null;
