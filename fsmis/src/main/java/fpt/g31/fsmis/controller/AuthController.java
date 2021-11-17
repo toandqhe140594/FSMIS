@@ -3,7 +3,6 @@ package fpt.g31.fsmis.controller;
 import fpt.g31.fsmis.dto.input.AuthDtoIn;
 import fpt.g31.fsmis.dto.input.RegistrationDtoIn;
 import fpt.g31.fsmis.service.AuthService;
-import fpt.g31.fsmis.service.TwilioOtpService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final AuthService authService;
-    private final TwilioOtpService twilioOtpService;
 
     // UC-01: Login
     @PostMapping("/login")

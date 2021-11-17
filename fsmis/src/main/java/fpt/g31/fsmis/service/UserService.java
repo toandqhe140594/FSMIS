@@ -1,6 +1,7 @@
 package fpt.g31.fsmis.service;
 
 import fpt.g31.fsmis.dto.input.ChangePasswordDtoIn;
+import fpt.g31.fsmis.dto.input.ChangePhoneDtoIn;
 import fpt.g31.fsmis.dto.input.PersonalInfoDtoIn;
 import fpt.g31.fsmis.dto.output.*;
 import fpt.g31.fsmis.entity.FishingLocation;
@@ -70,9 +71,12 @@ public class UserService {
         return new ResponseTextDtoOut("Thay đổi mật khẩu thành công");
     }
 
-    public ResponseTextDtoOut changePhone(HttpServletRequest request, String newPhone) {
+    public ResponseTextDtoOut changePhone(HttpServletRequest request, ChangePhoneDtoIn changePhoneDtoIn) {
         User user = jwtFilter.getUserFromToken(request);
-        user.setPhone(newPhone);
+        if (!passwordEncoder.matches(changePhoneDtoIn.getPassword(), user.getPassword())) {
+            throw new ValidationException("Mật khẩu không đúng");
+        }
+        user.setPhone(changePhoneDtoIn.getNewPhone());
         userRepos.save(user);
         return new ResponseTextDtoOut("Thay đổi số điện thoại thành công");
     }

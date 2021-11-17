@@ -1,6 +1,7 @@
 package fpt.g31.fsmis.controller;
 
 import fpt.g31.fsmis.dto.input.ChangePasswordDtoIn;
+import fpt.g31.fsmis.dto.input.ChangePhoneDtoIn;
 import fpt.g31.fsmis.dto.input.PersonalInfoDtoIn;
 import fpt.g31.fsmis.service.*;
 import lombok.AllArgsConstructor;
@@ -46,8 +47,8 @@ public class UserController {
     }
 
     @PostMapping("/changephone")
-    public ResponseEntity<Object> changePhone(HttpServletRequest request, @RequestParam String newPhone) {
-        return new ResponseEntity<>(userService.changePhone(request, newPhone), HttpStatus.OK);
+    public ResponseEntity<Object> changePhone(HttpServletRequest request, @RequestBody ChangePhoneDtoIn changePhoneDtoIn) {
+        return new ResponseEntity<>(userService.changePhone(request, changePhoneDtoIn), HttpStatus.OK);
     }
 
     @GetMapping("/catch")
