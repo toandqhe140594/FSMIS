@@ -32,7 +32,7 @@ public class AdminFishingMethodController {
         return new ResponseEntity<>(fishingMethodService.editMethod(methodDtoIn, methodId), HttpStatus.OK);
     }
 
-    @PatchMapping("active/{methodId}")
+    @PatchMapping("change-active/{methodId}")
     public ResponseEntity<Object> adminChangeMethodActive(@PathVariable Long methodId) {
         return new ResponseEntity<>(fishingMethodService.changeMethodActive(methodId), HttpStatus.OK);
     }

@@ -13,4 +13,5 @@ public class FishSpeciesDtoOut {
     private Long id;
     private String name;
     private String image;
+    private Boolean active;
 }

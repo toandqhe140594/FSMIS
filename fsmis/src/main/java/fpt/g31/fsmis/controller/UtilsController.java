@@ -20,7 +20,7 @@ public class UtilsController {
 
     @GetMapping("/fish")
     public ResponseEntity<Object> getAllFishSpecies(@RequestParam(required = false, defaultValue = "true") Boolean withImage) {
-        return new ResponseEntity<>(fishSpeciesService.getAll(withImage), HttpStatus.OK);
+        return new ResponseEntity<>(fishSpeciesService.getAll(withImage, true), HttpStatus.OK);
     }
 
     @GetMapping("/fish/{speciesId}")

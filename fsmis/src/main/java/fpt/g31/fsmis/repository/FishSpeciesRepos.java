@@ -9,4 +9,8 @@ import java.util.List;
 @Repository
 public interface FishSpeciesRepos extends JpaRepository<FishSpecies, Long> {
     List<FishSpecies> findAllByActiveIsTrue();
+
+    boolean existsByNameIgnoreCase(String name);
+
+    FishSpecies findByNameIgnoreCase(String name);
 }
