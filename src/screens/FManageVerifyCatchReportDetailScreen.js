@@ -181,10 +181,10 @@ const AnglerCatchReportDetailScreen = () => {
                       color: "white",
                       backgroundColor: item.returnToOwner
                         ? "#88E0EF"
-                        : colors.defaultDanger,
+                        : "#6ee7b7",
                     }}
                   >
-                    {item.returnToOwner ? "Đã gửi lại cho hồ" : "Không gửi lại"}
+                    {item.returnToOwner ? "Đã gửi lại cho hồ" : "Mang về"}
                   </Text>
                   <FishInformationCard
                     key={item.name}

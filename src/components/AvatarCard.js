@@ -65,7 +65,7 @@ const AvatarCard = ({
               _dark={{
                 color: "warmGray.200",
               }}
-              fontSize={subTextFontSize || "md"}
+              fontSize={subTextFontSize || "12"}
               key={subText}
             >
               {subText}
