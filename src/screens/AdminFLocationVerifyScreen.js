@@ -1,7 +1,7 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { useRoute } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "react-native-elements";
 
 import EventListRoute from "../components/AdminOverviewScreenComponents/EventListRoute";
@@ -29,6 +29,19 @@ const FishingSpotDetailScreen = () => {
     setLocationReviewList,
     setLocationOverview,
   } = useStoreActions((actions) => actions.LocationModel);
+  const activateFishingLocation = useStoreActions(
+    (actions) => actions.AdminFLocationModel.activateFishingLocation,
+  );
+  const verifyFishingLocation = useStoreActions(
+    (actions) => actions.AdminFLocationModel.verifyFishingLocation,
+  );
+
+  const [verifyLoading, setVerifyLoading] = useState(false);
+  const [activateLoading, setActivateLoading] = useState(false);
+  const [verifySuccess, setVerifySuccess] = useState(null);
+  const [activateSuccess, setActivateSuccess] = useState(null);
+  const [active, setActive] = useState(true);
+  const [verify, setVerify] = useState(false);
 
   useEffect(() => {
     if (route.params) {
@@ -43,18 +56,59 @@ const FishingSpotDetailScreen = () => {
     };
   }, []);
 
-  const { id, name, verify } = locationOverview;
+  useEffect(() => {
+    setActive(locationOverview.active);
+    setVerify(locationOverview.verify);
+  }, [locationOverview]);
+
+  const activateFishingLocationButtonAction = (id) => () => {
+    setActivateLoading(true);
+    activateFishingLocation({
+      id,
+      setLoading: setActivateLoading,
+      setSuccess: setActivateSuccess,
+    });
+  };
+
+  const changeVerifyState = (id) => () => {
+    setVerifyLoading(true);
+    verifyFishingLocation({
+      id,
+      setLoading: setVerifyLoading,
+      setSuccess: setVerifySuccess,
+    });
+  };
+
+  useEffect(() => {
+    if (verifySuccess === true) {
+      setVerify(!verify);
+      setVerifyLoading(false);
+      setVerifySuccess(null);
+    } else {
+      setVerifySuccess(null);
+      setVerifyLoading(false);
+    }
+    if (activateSuccess === true) {
+      setActive(!active);
+      setActivateLoading(false);
+      setActivateSuccess(null);
+    } else {
+      setActivateSuccess(null);
+      setActivateLoading(false);
+    }
+  }, [verifySuccess, activateSuccess]);
+
+  const { id, name } = locationOverview;
   return (
     <>
       <HeaderWithButton
         id={id}
         name={name || route.params.name}
         isVerified={verify}
-        buttonName="Vô hiệu hóa"
-        onSuccess={() => {
-          console.log(id);
-        }}
-        isDanger
+        buttonName={active ? "Vô hiệu hóa" : "Kích hoạt"}
+        onSuccess={activateFishingLocationButtonAction(id)}
+        isDanger={active}
+        isLoading={activateLoading}
       />
       <Tab.Navigator
         sceneContainerStyle={{ backgroundColor: "white" }}
@@ -77,6 +131,8 @@ const FishingSpotDetailScreen = () => {
             backgroundColor: colors.defaultDanger,
           }
         }
+        onPress={changeVerifyState(id)}
+        loading={verifyLoading}
       />
     </>
   );

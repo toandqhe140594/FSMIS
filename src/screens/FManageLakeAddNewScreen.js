@@ -65,7 +65,7 @@ const LakeAddNewScreen = () => {
   const methods = useForm({
     mode: "onSubmit",
     reValidateMode: "onSubmit",
-    defaultValues: { methods: [] },
+    defaultValues: { methods: [], imageArray: [] },
     resolver: yupResolver(SCHEMA.FMANAGE_LAKE_FORM),
   });
   const {

@@ -97,7 +97,6 @@ const model = {
       setSuccess(false);
     }
   }),
-  verifyFishingLocation: thunk(async () => {}),
 
   getCatchReportDetailById: thunk(async (actions, payload) => {
     try {
@@ -108,8 +107,69 @@ const model = {
       }
     } catch (error) {
       actions.setCatchReportDetail({});
-      console.log(`error`, error);
       payload.setIsLoading(false);
+    }
+  }),
+  /**
+   * Change verify state of a fishing location in list data
+   */
+  changeVerifyState: action((state, payload) => {
+    const foundIndex = state.fishingLocationList.findIndex(
+      (location) => location.id === payload.id,
+    );
+    state.fishingLocationList[foundIndex].verified =
+      !state.fishingLocationList[foundIndex].verified;
+  }),
+  /**
+   * Change active state of a fishing location in list data
+   */
+  changeActiveState: action((state, payload) => {
+    const foundIndex = state.fishingLocationList.findIndex(
+      (location) => location.id === payload.id,
+    );
+    state.fishingLocationList[foundIndex].active =
+      !state.fishingLocationList[foundIndex].active;
+  }),
+  /**
+   * Call API to change verify state of a fishing location
+   * @param {Object} payload - params pass to function
+   * @param {number} payload.id - id of the fishing location
+   * @param {Function} [payload.setLoading] - set loading state
+   * @param {Function} [payload.setSuccess] - function indicate action success
+   */
+  verifyFishingLocation: thunk(async (actions, payload) => {
+    const { id } = payload;
+    const setLoading = payload.setLoading || (() => {});
+    const setSuccess = payload.setSuccess || (() => {});
+    try {
+      await http.post(`${API_URL.ADMIN_FISHING_LOCATION_VERIFY}/${id}`);
+      actions.changeVerifyState({ id });
+      setSuccess(true);
+      setLoading(false);
+    } catch (error) {
+      setSuccess(false);
+      setLoading(false);
+    }
+  }),
+  /**
+   * Call API to change active state of a fishing location
+   * @param {Object} payload - params pass to function
+   * @param {number} payload.id - id of the fishing location
+   * @param {Function} [payload.setLoading] - set loading state
+   * @param {Function} [payload.setSuccess] - function indicate action success
+   */
+  activateFishingLocation: thunk(async (actions, payload) => {
+    const { id } = payload;
+    const setLoading = payload.setLoading || (() => {});
+    const setSuccess = payload.setSuccess || (() => {});
+    try {
+      await http.post(`${API_URL.ADMIN_FISHING_LOCATION_ACTIVATE}/${id}`);
+      actions.changeActiveState({ id });
+      setSuccess(true);
+      setLoading(false);
+    } catch (error) {
+      setSuccess(false);
+      setLoading(false);
     }
   }),
 };

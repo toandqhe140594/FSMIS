@@ -68,10 +68,17 @@ const Store = createStore({
    * @param {String} [payload.password] the password
    */
   login: thunk(async (actions, payload, { dispatch }) => {
-    const { data } = await http.post("auth/login", {
-      ...payload,
-    });
+    let data;
     let authToken = null;
+    try {
+      const { data: responseData } = await http.post("auth/login", {
+        ...payload,
+      });
+      data = responseData;
+    } catch (error) {
+      actions.setErrorMessage(error.response.data.responseText);
+      return;
+    }
     try {
       authToken = data.authToken;
       await SecureStore.setItemAsync(AUTH_TOKEN, authToken);

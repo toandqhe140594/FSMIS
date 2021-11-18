@@ -3,15 +3,12 @@ import { Box, Button, Text } from "native-base";
 import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 
-import {
-  showAlertBox,
-  showAlertConfirmBox,
-  showToastMessage,
-} from "../utilities";
+import { showAlertBox, showAlertConfirmBox } from "../utilities";
 import PressableCustomCard from "./PressableCustomCard";
 
 const BlacklistPhoneCard = ({ phone, description }) => {
   const [success, setSuccess] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const whitelistPhoneNumber = useStoreActions(
     (actions) => actions.AccountManagementModel.whitelistPhoneNumber,
@@ -29,6 +26,7 @@ const BlacklistPhoneCard = ({ phone, description }) => {
   };
 
   const whitelistPhoneFunction = () => {
+    setLoading(true);
     whitelistPhoneNumber({ phone, setSuccess });
   };
 
@@ -41,8 +39,7 @@ const BlacklistPhoneCard = ({ phone, description }) => {
   };
 
   useEffect(() => {
-    if (success)
-      showToastMessage(`Số điện thoại ${phone} đã được xóa khỏi danh sách đen`);
+    setLoading(false);
     setSuccess(null);
   }, [success]);
 
@@ -62,7 +59,13 @@ const BlacklistPhoneCard = ({ phone, description }) => {
           )}
         </Box>
         <Box justifyContent="center">
-          <Button onPress={deletePhoneNumberButtonAction}>Xóa</Button>
+          <Button
+            onPress={deletePhoneNumberButtonAction}
+            isLoading={loading}
+            isDisabled={loading}
+          >
+            Xóa
+          </Button>
         </Box>
       </Box>
     </PressableCustomCard>

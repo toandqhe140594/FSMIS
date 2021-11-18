@@ -86,8 +86,8 @@ const FManageHomeScreen = () => {
               ))}
               <CloseFLocationTemporaryComponent
                 name={locationDetails.name || "Hồ câu"}
-                isClosed={locationDetails.closed}
-                key={locationDetails.closed}
+                isClosed={locationDetails.closed || false}
+                key={locationDetails.name}
               />
               <CloseFLocationComponent
                 name={locationDetails.name || "Hồ câu"}

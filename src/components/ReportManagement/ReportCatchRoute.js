@@ -14,7 +14,7 @@ import { goToAdminCatchReportDetail } from "../../navigations";
 import HeaderTab from "../HeaderTab";
 import ReportCard from "./ReportCard";
 
-const OFF_SET = 120;
+const OFF_SET = 100;
 const FILTER_TOUCHED_LABEL = "Đã xử lý";
 const FILTER_TOUCHED_VALUE = "ACTIVE";
 const FILTER_UNTOUCHED_LABEL = "Chưa xử lý";
@@ -26,8 +26,8 @@ const ReportCatchRoute = () => {
   const [bigLoading, setBigLoading] = useState(false);
   const [getStatus, setGetStatus] = useState("");
   const [pageNo, setPageNo] = useState(1);
-  const [active, setActive] = useState(true);
-  const [filter, setFilter] = useState(FILTER_TOUCHED_VALUE);
+  const [active, setActive] = useState(false);
+  const [filter, setFilter] = useState(FILTER_UNTOUCHED_VALUE);
   const { listCatchReport, totalCatchReportPage } = useStoreState(
     (state) => state.ReportModel,
   );
@@ -45,7 +45,9 @@ const ReportCatchRoute = () => {
   );
   const renderFooter = () =>
     isLoading && !bigLoading ? (
-      <ActivityIndicator size="large" color="#2089DC" />
+      <View margin={12}>
+        <ActivityIndicator size="large" color="#2089DC" />
+      </View>
     ) : null;
   /**
    * Change to new list
@@ -109,13 +111,13 @@ const ReportCatchRoute = () => {
       >
         <ActivityIndicator size={60} color="#2089DC" />
       </Overlay>
-      <View style={{ marginBottom: OFF_SET }}>
+      <View marginBottom={OFF_SET}>
         <Select
           w="90%"
           my={2}
           alignSelf="center"
           placeholder="Lọc hiển thị báo cáo"
-          defaultValue={FILTER_TOUCHED_VALUE}
+          defaultValue={FILTER_UNTOUCHED_VALUE}
           onValueChange={handleValueChange}
           fontSize="md"
         >
@@ -130,7 +132,7 @@ const ReportCatchRoute = () => {
         </Select>
 
         <FlatList
-          style={{ marginTop: 8 }}
+          height="100%"
           keyExtractor={(item) => `${item.id}`}
           data={listCatchReport}
           renderItem={renderItem}

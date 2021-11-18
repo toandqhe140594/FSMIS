@@ -18,11 +18,13 @@ export const ANGLER_PROFILE_PASSWORD_CHANGE_FORM = yup.object().shape({
     .oneOf([yup.ref("newPassword"), null], "Mật khẩu không khớp"),
 });
 
+export const ANGLER_PROFILE_PHONE_CHANGE_FORM = yup.object().shape({
+  phone: yup.string().required("Số điện thoại không thể bỏ trống"),
+  password: yup.string().required("Mật khẩu không thể bỏ trống"),
+});
+
 export const ANGLER_CATCH_REPORT_FORM = yup.object().shape({
-  imageArray: yup
-    .array()
-    .min(1, "Hãy chọn tối đa 3 ảnh miêu tả buổi câu")
-    .required("Ảnh không được để trống"),
+  imageArray: yup.array().min(1, "Hãy chọn tối đa 3 ảnh miêu tả buổi câu"),
   description: yup.string().required("Hãy viết suy nghĩ của bạn về ngày câu"),
   lakeId: yup
     .number()
@@ -32,32 +34,59 @@ export const ANGLER_CATCH_REPORT_FORM = yup.object().shape({
   catchesDetailList: yup
     .array()
     .min(1, "Phải có ít nhất một thẻ cá")
-    .max(5, "Chỉ được tạo tối đa 10 thẻ cá")
+    .max(10, "Chỉ được tạo tối đa 10 thẻ cá")
     .of(
-      yup.object().shape({
-        fishInLakeId: yup
-          .number()
-          .test("zero", "Loại cá không được để trống", (value) => value !== 0)
-          .typeError("Trường này chỉ được nhập số")
-          .required("Loại cá không được để trống"),
-        quantity: yup
-          .number()
-          .typeError("Trường này chỉ được nhập số")
-          .required("Số cá bắt được không được để trống"),
-        weight: yup
-          .number()
-          .typeError("Trường này chỉ được nhập số")
-          .required("Tổng cân nặng cá không được để trống"),
-        returnToOwner: yup.bool().default(false),
-      }),
+      yup.object().shape(
+        {
+          fishInLakeId: yup
+            .number()
+            .test("zero", "Loại cá không được để trống", (value) => value !== 0)
+            .typeError("Trường này chỉ được nhập số")
+            .required("Loại cá không được để trống"),
+          quantity: yup
+            .number()
+            .typeError("Trường này chỉ được nhập số")
+            .test("positive", "Phải là số dương", (value) => value >= 0)
+            .max(9999, "Phải nhập số bé hoặc bằng 9999")
+            .test("integer", "Phải là số nguyên", (value) =>
+              Number.isInteger(value),
+            )
+            .when("weight", {
+              is: 0,
+              then: yup
+                .number()
+                .typeError("Trường này chỉ được nhập số")
+                .test(
+                  "shouldNotEmptyOrZero",
+                  "Một trong hai trường không được để trống hay bằng 0",
+                  (value) => value !== 0,
+                ),
+            }),
+          weight: yup
+            .number()
+            .typeError("Trường này chỉ được nhập số")
+            .test("positive", "Phải là số dương", (value) => value >= 0)
+            .max(9999, "Phải nhập số bé hoặc bằng 9999")
+            .when("quantity", {
+              is: 0,
+              then: yup
+                .number()
+                .typeError("Trường này chỉ được nhập số")
+                .test(
+                  "shouldNotEmptyOrZero",
+                  "Một trong hai trường không được để trống hay bằng 0",
+                  (value) => value !== 0,
+                ),
+            }),
+          returnToOwner: yup.bool().default(false),
+        },
+        ["quantity", "weight"],
+      ),
     ),
 });
 
 export const FMANAGE_LAKE_FORM = yup.object().shape({
-  imageArray: yup
-    .array()
-    .min(1, "Hãy chọn một ảnh cho hồ")
-    .required("Ảnh không được để trống"),
+  imageArray: yup.array().min(1, "Hãy chọn một ảnh cho hồ"),
   name: yup.string().required("Tên hồ không thể bỏ trống"),
   price: yup.string().required("Miêu tả giá vé ở hồ này"),
   methods: yup.array().min(1, "Trường này kia không được để trống"),
@@ -83,20 +112,20 @@ export const FMANAGE_LAKE_FORM = yup.object().shape({
           minWeight: yup
             .number()
             .typeError("Trường này chỉ được nhập số")
-            .min(1, "Phải nhập bè hoặc lớn hơn 1")
-            .max(999, "Phải nhập số bé hoặc bằng 999")
+            .min(0.1, "Phải nhập lớn hơn 0")
+            .max(9999, "Phải nhập số bé hoặc bằng 9999")
             .required("Biểu nhỏ không được để trống"),
           maxWeight: yup
             .number()
             .typeError("Trường này chỉ được nhập số")
-            .min(1, "Phải nhập bè hoặc lớn hơn 1")
-            .max(999, "Phải nhập số bé hoặc bằng 999")
+            .min(0.1, "Phải nhập lớn hơn 0")
+            .max(9999, "Phải nhập số bé hoặc bằng 9999")
             .required("Biểu lớn không được để trống"),
           quantity: yup
             .number()
             .typeError("Trường này chỉ được nhập số")
             .test("positive", "Phải là số dương", (value) => value >= 0)
-            .max(999, "Phải nhập số bé hoặc bằng 999")
+            .max(9999, "Phải nhập số bé hoặc bằng 9999")
             .test("integer", "Phải là số nguyên", (value) =>
               Number.isInteger(value),
             )
@@ -139,7 +168,7 @@ export const FMANAGE_LAKE_FISH_EDIT_FORM = yup.object().shape(
       .number()
       .typeError("Trường này chỉ được nhập số")
       .test("positive", "Phải là số dương", (value) => value >= 0)
-      .max(999, "Phải nhập số bé hoặc bằng 999")
+      .max(9999, "Phải nhập số bé hoặc bằng 9999")
       .test("integer", "Phải là số nguyên", (value) => Number.isInteger(value))
       .when("weight", {
         is: 0,
@@ -156,7 +185,7 @@ export const FMANAGE_LAKE_FISH_EDIT_FORM = yup.object().shape(
       .number()
       .typeError("Trường này chỉ được nhập số")
       .test("positive", "Phải là số dương", (value) => value >= 0)
-      .max(999, "Phải nhập số bé hoặc bằng 999")
+      .max(9999, "Phải nhập số bé hoặc bằng 9999")
       .when("quantity", {
         is: 0,
         then: yup
@@ -178,20 +207,20 @@ export const FMANAGE_LAKE_FISH_ADD_FORM = yup.object().shape(
     minWeight: yup
       .number()
       .typeError("Trường này chỉ được nhập số")
-      .min(1, "Phải nhập lớn hơn hoặc bằng 1")
-      .max(999, "Phải nhập bé hơn hoặc bằng 999")
+      .min(0.1, "Phải nhập lớn hơn 0")
+      .max(9999, "Phải nhập bé hơn hoặc bằng 9999")
       .required("Biểu nhỏ không được để trống"),
     maxWeight: yup
       .number()
       .typeError("Trường này chỉ được nhập số")
-      .max(999, "Phải nhập bé hơn hoặc bằng 999")
-      .min(1, "Phải nhập lớn hơn hoặc bằng 1")
+      .min(0.1, "Phải nhập lớn hơn 0")
+      .max(9999, "Phải nhập bé hơn hoặc bằng 9999")
       .required("Biểu lớn không được để trống"),
     quantity: yup
       .number()
       .typeError("Trường này chỉ được nhập số")
       .test("positive", "Phải là số dương", (value) => value >= 0)
-      .max(999, "Phải nhập số bé hoặc bằng 999")
+      .max(9999, "Phải nhập số bé hoặc bằng 9999")
       .test("integer", "Phải là số nguyên", (value) => Number.isInteger(value))
       .when("totalWeight", {
         is: 0,
@@ -208,7 +237,7 @@ export const FMANAGE_LAKE_FISH_ADD_FORM = yup.object().shape(
       .number()
       .typeError("Trường này chỉ được nhập số")
       .test("positive", "Phải là số dương", (value) => value >= 0)
-      .max(999, "Phải nhập số bé hoặc bằng 999")
+      .max(9999, "Phải nhập số bé hoặc bằng 9999")
       .when("quantity", {
         is: 0,
         then: yup
@@ -225,10 +254,7 @@ export const FMANAGE_LAKE_FISH_ADD_FORM = yup.object().shape(
 );
 
 export const FMANAGE_PROFILE_FORM = yup.object().shape({
-  imageArray: yup
-    .array()
-    .min(1, "Hãy chọn tối đa 5 ảnh cho hồ")
-    .required("Ảnh không được để trống"),
+  imageArray: yup.array().min(1, "Hãy chọn tối đa 5 ảnh cho hồ"),
   name: yup.string().required("Tên địa điểm không thể bỏ trống"),
   phone: yup
     .string()
@@ -279,4 +305,19 @@ export const FMANAGE_POST_FORM = yup.object().shape({
     is: "VIDEO",
     then: yup.string().required("Link video không được để trống"),
   }),
+});
+
+export const REGISTER_PHONE_AND_PASS_FORM = yup.object().shape({
+  phoneNumber: yup
+    .string()
+    .required("Số điện thoại không thể bỏ trống")
+    .label("PhoneNumber"),
+  password: yup
+    .string()
+    .required("Mật khẩu không thể bỏ trống")
+    .min(8, "Mật khẩu phải chứa ít nhất 8 ký tự"),
+  passwordConfirmation: yup
+    .string()
+    .required("Trường này không thể bỏ trống")
+    .oneOf([yup.ref("password"), null], "Mật khẩu không khớp"),
 });
