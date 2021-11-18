@@ -29,7 +29,7 @@ const AdminFishingMethodManagementScreen = () => {
   const [displayedList, setDisplayedList] = useState(fishingMethodList);
 
   const renderRow = ({ item }) => (
-    <FishingMethodManagementCard id={item.id} name={item.name} />
+    <FishingMethodManagementCard id={item.id} name={item.name} active />
   );
 
   const updateSearch = (searchKey) => {
