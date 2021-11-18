@@ -8,6 +8,7 @@ import AdminAccountDetailScreen from "../screens/AdminAccountDetailScreen";
 import AdminAccountManagementScreen from "../screens/AdminAccountManagementScreen";
 import AdminBlacklistPhoneAddScreen from "../screens/AdminBlacklistPhoneAddScreen";
 import AdminBlacklistManagementScreen from "../screens/AdminBlacklistPhoneScreen";
+import AdminCatchReportDetailScreen from "../screens/AdminCatchReportDetailScreen";
 import AdminFishEditScreen from "../screens/AdminFishEditScreen";
 import AdminFishingMethodEditScreen from "../screens/AdminFishingMethodEditScreen";
 import AdminFishingMethodManagementScreen from "../screens/AdminFishingMethodManagementScreen";
@@ -107,6 +108,10 @@ const AdminStackNavigator = () => {
       <AdminStack.Screen
         name={ROUTE_NAMES.LAKE_DETAIL}
         component={LakeDetailScreen}
+      />
+      <AdminStack.Screen
+        name={ROUTE_NAMES.ADMIN_CATCH_DETAIL}
+        component={AdminCatchReportDetailScreen}
       />
     </AdminStack.Navigator>
   );

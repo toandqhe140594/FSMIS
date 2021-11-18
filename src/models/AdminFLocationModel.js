@@ -8,6 +8,14 @@ const model = {
   currentPage: 1, // Current page of data
   totalPage: 1, // Maximum page of data
   totalItem: 0, // Total items of fishing locations
+  currentPinPost: {},
+  catchReportDetail: {},
+  setCurrentId: action((state, payload) => {
+    state.currentId = payload;
+  }),
+  setCatchReportDetail: action((state, payload) => {
+    state.catchReportDetail = payload;
+  }),
   setFishingLocationList: action((state, payload) => {
     const { data, isOverwrite } = payload;
     if (isOverwrite) state.fishingLocationList = data;
@@ -90,6 +98,20 @@ const model = {
     }
   }),
   verifyFishingLocation: thunk(async () => {}),
+
+  getCatchReportDetailById: thunk(async (actions, payload) => {
+    try {
+      const { data, status } = await http.get(`catches/${payload.id}`);
+      if (status === 200) {
+        actions.setCatchReportDetail(data);
+        payload.setIsLoading(false);
+      }
+    } catch (error) {
+      actions.setCatchReportDetail({});
+      console.log(`error`, error);
+      payload.setIsLoading(false);
+    }
+  }),
 };
 
 export default model;
