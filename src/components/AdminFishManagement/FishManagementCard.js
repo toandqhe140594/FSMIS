@@ -80,11 +80,8 @@ const FishManagementCard = ({ id, name, image, active }) => {
         </Box>
         <Badge
           value={active ? "Đang hoạt động" : "Đang ẩn"}
-          textStyle={{ fontSize: active ? 12 : 16 }}
           containerStyle={{
             flex: 0.5,
-            justifyContent: "center",
-            alignItems: "flex-end",
             marginRight: 20,
           }}
           badgeStyle={{
