@@ -35,7 +35,7 @@ const AdminFishEditScreen = () => {
     console.log(data); // Test only
   };
 
-  const handleDelete = () => {
+  const handleSwitchStatus = () => {
     // Do delete fish here
     setIsActive(!isActive);
   };
@@ -118,7 +118,7 @@ const AdminFishEditScreen = () => {
               colorScheme={isActive ? "red" : "green"}
               alignSelf="center"
               marginTop={2}
-              onPress={handleDelete}
+              onPress={handleSwitchStatus}
             >
               {isActive ? "Ẩn loại cá này" : "Bỏ ẩn loại cá này"}
             </Button>
