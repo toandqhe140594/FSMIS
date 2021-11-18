@@ -7,7 +7,6 @@ import { Badge, Text } from "react-native-elements";
 
 import Colors from "../../config/colors";
 import { goToAdminFishingMethodEditScreen } from "../../navigations";
-// import { showAlertConfirmBox } from "../utilities";
 
 const FishingMethodManagementCard = ({ id, name, active }) => {
   const navigation = useNavigation();
@@ -16,13 +15,6 @@ const FishingMethodManagementCard = ({ id, name, active }) => {
     goToAdminFishingMethodEditScreen(navigation, { id, name });
   };
 
-  // const showDeleteAlert = () => {
-  //   showAlertConfirmBox(
-  //     "Bạn muốn xóa loại hình câu này?",
-  //     `"${name}" sẽ bị xóa vĩnh viễn. Bạn không thể hoàn tác hành động này`,
-  //     () => {},
-  //   );
-  // };
   return (
     <Pressable onPress={handleOnPress}>
       <Box
@@ -37,6 +29,7 @@ const FishingMethodManagementCard = ({ id, name, active }) => {
             {name}
           </Text>
         </Box>
+        {/* // DucHM ADD_START 18/11/2021 */}
         <Badge
           value={active ? "Đang hoạt động" : "Đang ẩn"}
           containerStyle={{
@@ -51,6 +44,7 @@ const FishingMethodManagementCard = ({ id, name, active }) => {
               : Colors.defaultDanger,
           }}
         />
+        {/* // DucHM ADD_END 18/11/2021 */}
       </Box>
     </Pressable>
   );

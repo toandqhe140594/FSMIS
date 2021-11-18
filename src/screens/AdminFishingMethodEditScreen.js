@@ -9,9 +9,11 @@ import * as yup from "yup";
 import InputComponent from "../components/common/InputComponent";
 import HeaderTab from "../components/HeaderTab";
 
+// DucHM ADD_START 18/11/2021
 const OFFSET_BOTTOM = 85;
 // Get window height without status bar height
 const CUSTOM_SCREEN_HEIGHT = Dimensions.get("window").height - OFFSET_BOTTOM;
+// DucHM ADD_END 18/11/2021
 
 // Validation schema for form
 const validationSchema = yup.object().shape({
@@ -34,10 +36,12 @@ const AdminFishingMethodEditScreen = () => {
     console.log(data); // Test only
   };
 
+  // DucHM ADD_START 18/11/2021
   const handleSwitchStatus = () => {
     // do activate/deactive
     setIsActive(!isActive);
   };
+  // DucHM ADD_END 18/11/2021
 
   useEffect(() => {
     const { id, name, active } = route.params;
@@ -84,6 +88,7 @@ const AdminFishingMethodEditScreen = () => {
           <Button w="80%" alignSelf="center" onPress={handleSubmit(onSubmit)}>
             {isNew ? "Thêm loại hình câu" : "Lưu thay đổi"}
           </Button>
+          {/* // DucHM ADD_START 18/11/2021 */}
           {!isNew && (
             <Button
               w="80%"
@@ -95,6 +100,7 @@ const AdminFishingMethodEditScreen = () => {
               {isActive ? "Ẩn loại hình câu này" : "Bỏ ẩn loại hình câu này"}
             </Button>
           )}
+          {/* // DucHM ADD_END 18/11/2021 */}
         </FormProvider>
       </Box>
     </>

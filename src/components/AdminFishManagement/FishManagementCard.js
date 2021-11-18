@@ -11,45 +11,12 @@ import { goToAdminFishEditScreen } from "../../navigations";
 const FishManagementCard = ({ id, name, image, active }) => {
   const navigation = useNavigation();
 
-  // const deleteFish = useStoreActions((actions) => actions.FishModel.deleteFish);
-  // const [deleteSuccess, setDeleteSuccess] = useState(null);
-  // const [deleteLoading, setDeleteLoading] = useState(false);
-
   // DucHM ADD_START 18/11/2021
   const handleOnPress = () => {
     goToAdminFishEditScreen(navigation, { id, name, image, active });
   };
   // DucHM ADD_END 18/11/2021
 
-  // const showDeleteAlert = () => {
-  //   showAlertConfirmBox(
-  //     "Bạn muốn xóa loài cá này?",
-  //     `"${name}" sẽ bị xóa vĩnh viễn. Bạn không thể hoàn tác hành động này`,
-  //     () => {
-  //       setDeleteLoading(true);
-  //     },
-  //   );
-  // };
-
-  // useEffect(() => {
-  //   return () => {
-  //     if (deleteSuccess) {
-  //       showToastMessage("Xóa thành công");
-  //     }
-  //   };
-  // }, []);
-
-  // useEffect(() => {
-  //   if (deleteLoading === true) deleteFish({ id, setDeleteSuccess });
-  // }, [deleteLoading]);
-
-  // useEffect(() => {
-  //   if (deleteSuccess === false) {
-  //     showToastMessage("Xóa thất bại");
-  //   }
-  //   setDeleteLoading(false);
-  //   setDeleteSuccess(null);
-  // }, [deleteSuccess]);
   return (
     <Pressable onPress={handleOnPress}>
       <Box
@@ -78,6 +45,7 @@ const FishManagementCard = ({ id, name, image, active }) => {
             </Text>
           </Box>
         </Box>
+        {/* // DucHM ADD_START 18/11/2021 */}
         <Badge
           value={active ? "Đang hoạt động" : "Đang ẩn"}
           containerStyle={{
@@ -93,6 +61,7 @@ const FishManagementCard = ({ id, name, image, active }) => {
               : Colors.defaultDanger,
           }}
         />
+        {/* // DucHM ADD_END 18/11/2021 */}
       </Box>
     </Pressable>
   );
