@@ -52,13 +52,14 @@ public class FishingLocationService {
                 .orElseThrow(() -> new NotFoundException("Không tìm thấy phường/xã!"));
         FishingLocation fishingLocation = FishingLocation.builder()
                 .name(fishingLocationDtoIn.getName().trim())
+                .unsignedName(VNCharacterUtils.removeAccent(fishingLocationDtoIn.getName().toLowerCase().trim()))
                 .longitude(fishingLocationDtoIn.getLongitude())
                 .latitude(fishingLocationDtoIn.getLatitude())
                 .address(fishingLocationDtoIn.getAddress().trim())
                 .ward(ward)
                 .phone(fishingLocationDtoIn.getPhone().trim())
                 .description(fishingLocationDtoIn.getDescription().trim())
-                .website(fishingLocationDtoIn.getWebsite().trim())
+                .website(fishingLocationDtoIn.getWebsite())
                 .service(fishingLocationDtoIn.getService().trim())
                 .timetable(fishingLocationDtoIn.getTimetable().trim())
                 .rule(fishingLocationDtoIn.getRule().trim())
@@ -84,6 +85,7 @@ public class FishingLocationService {
         Ward ward = wardRepos.findById(fishingLocationDtoIn.getWardId())
                 .orElseThrow(() -> new NotFoundException("Không tìm thấy phường/xã!"));
         location.setName(fishingLocationDtoIn.getName().trim());
+        location.setUnsignedName(VNCharacterUtils.removeAccent(fishingLocationDtoIn.getName().toLowerCase().trim()));
         location.setPhone(fishingLocationDtoIn.getPhone().trim());
         location.setWebsite(fishingLocationDtoIn.getWebsite().trim());
         location.setAddress(fishingLocationDtoIn.getAddress().trim());
@@ -366,34 +368,49 @@ public class FishingLocationService {
     }
 
     public PaginationDtoOut searchFishingLocation(FilterDtoIn filterDtoIn, int pageNo) {
-        Specification<FishingLocation> specification = where(fishingMethodIdIn(filterDtoIn.getFishingMethodIdList()))
-                .and(provinceIdIn(filterDtoIn.getProvinceIdList()))
-                .and(fishSpeciesIdIn(filterDtoIn.getFishSpeciesIdList()))
-                .and(activeIs(true));
-        Page<FishingLocation> fishingLocationList = fishingLocationRepos.findAll(specification, PageRequest.of(pageNo - 1, 10));
         List<FishingLocationItemDtoOut> output = new ArrayList<>();
+        Specification<FishingLocation> specification;
+        if (filterDtoIn.getInput() != null && filterDtoIn.getInput().matches("^(0|\\+84)(3[2-9]|5[6|8|9]|7[0|6-9]|8[0-6|8|9]|9[0-4|6-9])[0-9]{7}$")) {
+            specification = where(phoneIs(filterDtoIn.getInput()));
+        } else {
+            specification = where(fishingMethodIdIn(filterDtoIn.getFishingMethodIdList()))
+                    .and(provinceIdIn(filterDtoIn.getProvinceIdList()))
+                    .and(fishSpeciesIdIn(filterDtoIn.getFishSpeciesIdList()));
+            if (filterDtoIn.getInput() != null) {
+                String[] words = filterDtoIn.getInput().split(" ");
+                for (String word : words) {
+                    specification = specification.and(nameLike("%" + word + "%"));
+                }
+            }
+        }
+        specification = specification.and(activeIs(true));
+        Page<FishingLocation> fishingLocationList = fishingLocationRepos.findAll(specification, PageRequest.of(pageNo - 1, 10));
         for (FishingLocation location :
                 fishingLocationList) {
-            Double score = reviewRepos.getAverageScoreByFishingLocationIdAndActiveIsTrue(location.getId());
-            if (score == null) {
-                score = 0.0;
-            }
-            FishingLocationItemDtoOut fishingLocationItemDtoOut = FishingLocationItemDtoOut.builder()
-                    .id(location.getId())
-                    .name(location.getName())
-                    .image(ServiceUtils.splitString(location.getImageUrl()).get(0))
-                    .verify(location.getVerify())
-                    .score(score)
-                    .address(location.getAddress())
-                    .closed(location.getClosed())
-                    .build();
-            output.add(fishingLocationItemDtoOut);
+            addFishingLocationItemDtoOut(output, location);
         }
         return PaginationDtoOut.builder()
                 .totalItem(fishingLocationList.getTotalElements())
                 .totalPage(fishingLocationList.getTotalPages())
                 .items(output)
                 .build();
+    }
+
+    private void addFishingLocationItemDtoOut(List<FishingLocationItemDtoOut> output, FishingLocation location) {
+        Double score = reviewRepos.getAverageScoreByFishingLocationIdAndActiveIsTrue(location.getId());
+        if (score == null) {
+            score = 0.0;
+        }
+        FishingLocationItemDtoOut fishingLocationItemDtoOut = FishingLocationItemDtoOut.builder()
+                .id(location.getId())
+                .name(location.getName())
+                .image(ServiceUtils.splitString(location.getImageUrl()).get(0))
+                .verify(location.getVerify())
+                .score(score)
+                .address(location.getAddress())
+                .closed(location.getClosed())
+                .build();
+        output.add(fishingLocationItemDtoOut);
     }
 
     private Specification<FishingLocation> fishingMethodIdIn(List<Long> fishingMethodIdList) {
@@ -434,6 +451,15 @@ public class FishingLocationService {
 
     private Specification<FishingLocation> activeIs(Boolean active) {
         return (root, criteriaQuery, criteriaBuilder) -> criteriaBuilder.equal(root.get("active"), active);
+    }
+
+    private Specification<FishingLocation> nameLike(String input) {
+        return (root, criteriaQuery, criteriaBuilder) ->
+                criteriaBuilder.like(criteriaBuilder.lower(root.get("unsignedName")), VNCharacterUtils.removeAccent(input).toLowerCase());
+    }
+
+    private Specification<FishingLocation> phoneIs(String input) {
+        return (root, criteriaQuery, criteriaBuilder) -> criteriaBuilder.equal(root.get("phone"), input);
     }
 
     public ResponseTextDtoOut adminChangeVerify(Long locationId) {
@@ -489,11 +515,4 @@ public class FishingLocationService {
         suggestedLocationRepos.delete(suggestedLocation);
         return new ResponseTextDtoOut("Xóa gợi ý khu hồ thành công");
     }
-
-//    private Specification<FishingLocation> scoreGreaterThan(Integer minScore) {
-//        if (minScore == null || minScore == 0) {
-//            return null;
-//        }
-//        return null;
-//    }
 }

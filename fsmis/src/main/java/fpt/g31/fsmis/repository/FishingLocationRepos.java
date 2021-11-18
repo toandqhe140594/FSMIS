@@ -28,4 +28,6 @@ public interface FishingLocationRepos extends JpaRepository<FishingLocation, Lon
             "from tbl_fishing_location tfl inner join tbl_employee_list tel on tfl.id = tel.fishing_location_id \n" +
             "where tel.employee_id = ?1")
     Optional<FishingLocation> findByEmployeeId(Long staffId);
+
+    Optional<FishingLocation> findByPhone(String phone);
 }

@@ -25,6 +25,8 @@ public class FishingLocation {
     @NotNull
     private String name;
 
+    private String unsignedName;
+
     @NotNull
     private Float longitude;
 
