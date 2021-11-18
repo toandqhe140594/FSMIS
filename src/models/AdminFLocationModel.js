@@ -8,10 +8,6 @@ const model = {
   currentPage: 1, // Current page of data
   totalPage: 1, // Maximum page of data
   totalItem: 0, // Total items of fishing locations
-  currentPinPost: {},
-  setCurrentId: action((state, payload) => {
-    state.currentId = payload;
-  }),
 
   setFishingLocationList: action((state, payload) => {
     const { data, isOverwrite } = payload;
