@@ -37,6 +37,7 @@ const AdminFishEditScreen = () => {
 
   const handleDelete = () => {
     // Do delete fish here
+    setIsActive(!isActive);
   };
 
   useEffect(() => {
@@ -117,7 +118,6 @@ const AdminFishEditScreen = () => {
               colorScheme={isActive ? "red" : "green"}
               alignSelf="center"
               marginTop={2}
-              variant="outline"
               onPress={handleDelete}
             >
               {isActive ? "Ẩn loại cá này" : "Bỏ ẩn loại cá này"}
