@@ -98,18 +98,6 @@ const model = {
     }
   }),
 
-  getCatchReportDetailById: thunk(async (actions, payload) => {
-    try {
-      const { data, status } = await http.get(`catches/${payload.id}`);
-      if (status === 200) {
-        actions.setCatchReportDetail(data);
-        payload.setIsLoading(false);
-      }
-    } catch (error) {
-      actions.setCatchReportDetail({});
-      payload.setIsLoading(false);
-    }
-  }),
   /**
    * Change verify state of a fishing location in list data
    */

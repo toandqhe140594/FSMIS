@@ -16,10 +16,10 @@ const AdminCatchReportDetailScreen = () => {
   const navigation = useNavigation();
 
   const catchDetails = useStoreState(
-    (state) => state.AdminFLocationModel.catchReportDetail,
+    (state) => state.LocationModel.catchReportDetail,
   );
   const getCatchReportDetailById = useStoreActions(
-    (actions) => actions.AdminFLocationModel.getCatchReportDetailById,
+    (actions) => actions.LocationModel.getCatchReportDetailById,
   );
 
   const [isLoading, setIsLoading] = useState(true);
