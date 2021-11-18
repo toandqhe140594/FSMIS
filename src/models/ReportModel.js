@@ -246,7 +246,7 @@ const model = {
         break;
       }
       case "CATCH":
-        setSendStatus(false);
+        requestAPI = `/catches/report-improper/${id}`;
         break;
       default:
         break;
