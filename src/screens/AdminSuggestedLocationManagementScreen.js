@@ -7,23 +7,7 @@ import { Divider } from "react-native-elements";
 
 import HeaderTab from "../components/HeaderTab";
 import PressableCustomCard from "../components/PressableCustomCard";
-
-const renderItem = ({ item }) => (
-  <PressableCustomCard
-    onPress={() => {
-      console.log(item.id);
-    }}
-  >
-    <Box py={2} px={3} flex={1} justifyContent="center">
-      <Text bold fontSize="lg">
-        {item.name}
-      </Text>
-      <Text flex={1} isTruncated numberOfLines={1}>
-        Điện thoại chủ hồ: {item.phone}
-      </Text>
-    </Box>
-  </PressableCustomCard>
-);
+import { goToAdminFLocationSuggestedDetailScreen } from "../navigations";
 
 const keyExtractor = (item) => item.phone.toString();
 
@@ -57,6 +41,25 @@ const AdminSuggestedLocationManagementScreen = () => {
       clearTimeout(loadingTimeout);
     };
   }, []);
+
+  const goToDetailScreenAction = (item) => () => {
+    goToAdminFLocationSuggestedDetailScreen(navigation, {
+      ...item,
+    });
+  };
+
+  const renderItem = ({ item }) => (
+    <PressableCustomCard onPress={goToDetailScreenAction(item)}>
+      <Box py={2} px={3} flex={1} justifyContent="center">
+        <Text bold fontSize="lg">
+          {item.name}
+        </Text>
+        <Text flex={1} isTruncated numberOfLines={1}>
+          Điện thoại chủ hồ: {item.phone}
+        </Text>
+      </Box>
+    </PressableCustomCard>
+  );
 
   const ListView = () => {
     if (isLoading)
