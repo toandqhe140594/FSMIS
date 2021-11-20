@@ -12,6 +12,7 @@ const styles = StyleSheet.create({
   inputComponent: {
     backgroundColor: "white",
   },
+  disabled: { backgroundColor: "#d4d4d4" },
 });
 
 const INPUT_TYPE_TEXT = "text";
@@ -61,7 +62,7 @@ const InputComponent = ({
               useNumPad ? KEYBOARD_TYPE_NUMBER_PAD : KEYBOARD_TYPE_DEFAULT
             }
             isDisabled={shouldDisable}
-            style={styles.inputComponent}
+            style={shouldDisable ? styles.disabled : styles.inputComponent}
           />
         )}
       />

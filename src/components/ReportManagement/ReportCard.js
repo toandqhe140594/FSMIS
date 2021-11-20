@@ -75,7 +75,7 @@ const ReportCard = ({
           <Avatar
             rounded
             source={{
-              uri: avatar || "https://randomuser.me/api/portraits/men/41.jpg",
+              uri: avatar,
             }}
             size="medium"
           />
@@ -146,7 +146,7 @@ ReportCard.defaultProps = {
   postType: "",
   isCatchReportType: false,
   time: "",
-  avatar: "",
+  avatar: "https://randomuser.me/api/portraits/men/41.jpg",
 };
 
 export default ReportCard;

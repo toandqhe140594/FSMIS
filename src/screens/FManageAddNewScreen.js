@@ -8,7 +8,8 @@ import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, Button, Center, Divider, Stack, Text, VStack } from "native-base";
 import React, { useCallback, useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { ScrollView, StyleSheet } from "react-native";
+import { ActivityIndicator, ScrollView, StyleSheet } from "react-native";
+import { Overlay } from "react-native-elements";
 
 import InputComponent from "../components/common/InputComponent";
 import MultiImageSection from "../components/common/MultiImageSection";
@@ -27,12 +28,22 @@ const styles = StyleSheet.create({
   button: {
     width: "90%",
   },
+  loadOnStart: { justifyContent: "center", alignItems: "center" },
+  loadOnSubmit: {
+    backgroundColor: "transparent",
+    justifyContent: "center",
+    alignItems: "center",
+  },
 });
 
 const FManageAddNewScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
-  const [addStatus, setAddStatus] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [fullScreen, setFullScreen] = useState(true);
+  const [addStatus, setAddStatus] = useState(null);
+  const [locationData, setLocationData] = useState({});
+  const [otpSendSuccess, setOtpSendSuccess] = useState(null);
   const { provinceList, districtList, wardList } = useStoreState(
     (state) => state.AddressModel,
   );
@@ -53,8 +64,6 @@ const FManageAddNewScreen = () => {
     resolver: yupResolver(SCHEMA.FMANAGE_PROFILE_FORM),
   });
   const { handleSubmit, setValue } = methods;
-  const [locationData, setLocationData] = useState({});
-  const [otpSendSuccess, setOtpSendSuccess] = useState(null);
 
   const generateAddressDropdown = useCallback((name, value) => {
     if (name === "provinceId") {
@@ -70,20 +79,31 @@ const FManageAddNewScreen = () => {
       showAlertBox("Thông báo", "Vị trí hồ câu trên bản đồ không thể bỏ trống");
       return;
     }
+    setIsLoading(true);
     const images = data.imageArray.map((image) => image.base64);
     delete data.imageArray;
     const addData = { ...data, ...locationLatLng, images };
     setLocationData(addData);
     sendOtp({ phone: data.phone, setSuccess: setOtpSendSuccess });
   };
-
+  /**
+   * Trigger first time when enters
+   * and when screen unmounts
+   */
   useEffect(() => {
-    getAllProvince();
+    (async () => {
+      await getAllProvince();
+      setIsLoading(false);
+      setFullScreen(false);
+    })();
     return () => {
       resetDataList();
     };
   }, []);
 
+  /**
+   * Trigger when otp status returns
+   */
   useEffect(() => {
     if (otpSendSuccess === true) {
       goToOTPScreen(
@@ -91,10 +111,17 @@ const FManageAddNewScreen = () => {
         ROUTE_NAMES.FMANAGE_PROFILE_ADD_NEW,
         locationData.phone,
       );
+      setIsLoading(false);
+      setOtpSendSuccess(null);
+    } else if (otpSendSuccess === false) {
+      setIsLoading(false);
+      setOtpSendSuccess(null);
     }
-    setOtpSendSuccess(null);
   }, [otpSendSuccess]);
 
+  /**
+   * Trigger when add status returns
+   */
   useEffect(() => {
     if (addStatus === "SUCCESS") {
       showAlertAbsoluteBox(
@@ -105,11 +132,17 @@ const FManageAddNewScreen = () => {
         },
         "Xác nhận",
       );
+      setAddStatus(null);
     } else if (addStatus === "FAILED") {
       showAlertBox("Thông báo", "Đã có lỗi xảy ra, vui lòng thử lại");
+      setIsLoading(false);
+      setAddStatus(null);
     }
   }, [addStatus]);
 
+  /**
+   * Trigger when navigation goes back to this screen
+   */
   useFocusEffect(
     // useCallback will listen to route.param
     useCallback(() => {
@@ -117,14 +150,23 @@ const FManageAddNewScreen = () => {
         setValue("imageArray", route.params?.base64Array);
         navigation.setParams({ base64Array: [] });
       }
-      if (route.params?.otpSuccess === true)
+      if (route.params?.otpSuccess) {
+        setIsLoading(true);
         addNewLocation({ addData: locationData, setAddStatus });
+      }
     }, [route.params]),
   );
 
   return (
     <>
       <HeaderTab name="Tạo điểm câu mới" />
+      <Overlay
+        isVisible={isLoading}
+        fullScreen
+        overlayStyle={fullScreen ? styles.loadOnStart : styles.loadOnSubmit}
+      >
+        <ActivityIndicator size={60} color="#2089DC" />
+      </Overlay>
       <ScrollView>
         <FormProvider {...methods}>
           <VStack space={3} divider={<Divider />}>
@@ -206,6 +248,9 @@ const FManageAddNewScreen = () => {
               <Box style={styles.sectionWrapper}>
                 <Text bold fontSize="md" mb={2}>
                   Bản đồ
+                  <Text color="danger.500" fontSize="md">
+                    *
+                  </Text>
                 </Text>
                 <MapOverviewBox />
               </Box>
@@ -217,6 +262,7 @@ const FManageAddNewScreen = () => {
                 myStyles={styles.sectionWrapper}
                 label="Mô tả khu hồ"
                 isTitle
+                hasAsterisk
                 placeholder="Miêu tả khu hồ của bạn"
                 numberOfLines={6}
                 controllerName="description"
@@ -229,6 +275,7 @@ const FManageAddNewScreen = () => {
                 myStyles={styles.sectionWrapper}
                 label="Thời gian hoạt động"
                 isTitle
+                hasAsterisk
                 placeholder="Miêu tả thời gian hoạt động của khu hồ"
                 numberOfLines={3}
                 controllerName="timetable"
@@ -241,6 +288,7 @@ const FManageAddNewScreen = () => {
                 myStyles={styles.sectionWrapper}
                 label="Dịch vụ"
                 isTitle
+                hasAsterisk
                 placeholder="Miêu tả dịch vụ khu hồ"
                 numberOfLines={3}
                 controllerName="service"
@@ -253,6 +301,7 @@ const FManageAddNewScreen = () => {
                 myStyles={styles.sectionWrapper}
                 label="Nội quy"
                 isTitle
+                hasAsterisk
                 placeholder="Miêu tả nội quy khu hồ"
                 numberOfLines={3}
                 controllerName="rule"

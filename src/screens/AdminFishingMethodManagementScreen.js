@@ -1,70 +1,18 @@
 import { useNavigation } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, Button, Center } from "native-base";
-import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, FlatList } from "react-native";
-import { Divider, SearchBar, Text } from "react-native-elements";
+import { Divider, SearchBar } from "react-native-elements";
 
+import FishingMethodManagementCard from "../components/AdminMethodManagement/FishingMethodManagementCard";
 import HeaderTab from "../components/HeaderTab";
 import styles from "../config/styles";
 import FishingMethodModel from "../models/FishingMethodModel";
 import { goToAdminFishingMethodEditScreen } from "../navigations";
-import { showAlertConfirmBox } from "../utilities";
 import store from "../utilities/Store";
 
 store.addModel("FishingMethodModel", FishingMethodModel);
-
-const FishingMethodManagementCard = ({ id, name }) => {
-  const navigation = useNavigation();
-
-  const showDeleteAlert = () => {
-    showAlertConfirmBox(
-      "Bạn muốn xóa loại hình câu này?",
-      `"${name}" sẽ bị xóa vĩnh viễn. Bạn không thể hoàn tác hành động này`,
-      () => {},
-    );
-  };
-
-  return (
-    <Box
-      flexDirection="row"
-      alignItems="center"
-      justifyContent="space-between"
-      py={2}
-      px={3}
-    >
-      <Box flex={1} justifyContent="center" pr={1}>
-        <Text style={{ fontWeight: "bold", fontSize: 16 }} numberOfLines={2}>
-          {name}
-        </Text>
-      </Box>
-      <Box w="35%" alignItems="flex-end">
-        <Button.Group>
-          <Button
-            onPress={() => {
-              goToAdminFishingMethodEditScreen(navigation, { id, name });
-            }}
-          >
-            Chỉnh sửa
-          </Button>
-          <Button
-            onPress={() => {
-              showDeleteAlert();
-            }}
-          >
-            Xóa
-          </Button>
-        </Button.Group>
-      </Box>
-    </Box>
-  );
-};
-
-FishingMethodManagementCard.propTypes = {
-  id: PropTypes.number.isRequired,
-  name: PropTypes.string.isRequired,
-};
 
 const AdminFishingMethodManagementScreen = () => {
   const navigation = useNavigation();
@@ -79,6 +27,10 @@ const AdminFishingMethodManagementScreen = () => {
   const [search, setSearch] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [displayedList, setDisplayedList] = useState(fishingMethodList);
+
+  const renderRow = ({ item }) => (
+    <FishingMethodManagementCard id={item.id} name={item.name} active />
+  );
 
   const updateSearch = (searchKey) => {
     setSearch(searchKey);
@@ -151,9 +103,7 @@ const AdminFishingMethodManagementScreen = () => {
           <Box flex={1} w="100%">
             <FlatList
               data={displayedList}
-              renderItem={({ item }) => (
-                <FishingMethodManagementCard id={item.id} name={item.name} />
-              )}
+              renderItem={renderRow}
               keyExtractor={(item) => item.id.toString()}
               ItemSeparatorComponent={Divider}
             />
