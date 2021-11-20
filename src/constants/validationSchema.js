@@ -330,5 +330,5 @@ export const CHANGE_PHONE_NUMBER_FORM = yup.object().shape({
   password: yup
     .string()
     .min(8, "Mật khẩu phải chứa ít nhất 8 ký tự")
-    .required("Mật khẩu không được để trống"),
+    .required("Mật khẩu không được bỏ trống"),
 });
