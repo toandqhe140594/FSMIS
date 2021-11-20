@@ -4,6 +4,7 @@ import {
   useNavigation,
   useRoute,
 } from "@react-navigation/native";
+import { useStoreActions } from "easy-peasy";
 import { Box, Button, Text, VStack } from "native-base";
 import React, { useCallback, useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
@@ -23,33 +24,60 @@ const CUSTOM_SCREEN_HEIGHT = Dimensions.get("window").height - OFFSET_BOTTOM;
 const AdminFishEditScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
-  const [isNew, setIsNew] = useState(true);
+  const [fishId, setFishId] = useState(null);
   const [isActive, setIsActive] = useState(null);
+  const [isLoading, setIsLoading] = useState(null);
+  const [isSwitching, setIsSwitching] = useState(null);
+  const [submitStatus, setSubmitStatus] = useState(null);
+  const { updateFish, updateFishStatus } = useStoreActions(
+    (actions) => actions.FishModel,
+  );
   const methods = useForm({
-    mode: "onChange",
+    mode: "onSubmit",
     defaultValues: { fishImage: [] },
     resolver: yupResolver(SCHEMA.ADMIN_FISH_ADD_EDIT_FORM),
   });
   const { handleSubmit, setValue } = methods;
   const onSubmit = (data) => {
-    console.log(data); // Test only
+    setIsLoading(true);
+    const submitData = { ...data };
+    updateFish({ id: fishId, submitData, setSubmitStatus });
   };
 
   const handleSwitchStatus = () => {
-    // Do delete fish here
-    setIsActive(!isActive);
+    setIsLoading(true);
+    setIsSwitching(true);
+    updateFishStatus({ id: fishId, setSubmitStatus });
   };
 
   useEffect(() => {
     const { id } = route.params;
     if (id) {
       const { name, image, active } = route.params;
-      setIsNew(false);
-      setValue("fishName", name);
-      setValue("fishImage", [{ id: 1, base64: image }]);
+      setFishId(id);
+      setValue("name", name);
+      setValue("image", [{ id: 1, base64: image }]);
       setIsActive(active);
     }
   }, []);
+
+  useEffect(() => {
+    if (submitStatus === "SUCCESS") {
+      if (fishId) {
+        setIsLoading(false);
+        if (isSwitching) {
+          setIsSwitching(false);
+          setIsActive(!isActive);
+        }
+      } else {
+        navigation.pop(1);
+      }
+      setSubmitStatus(null);
+    } else if (submitStatus === "FAILED") {
+      setIsLoading(false);
+      setSubmitStatus(null);
+    }
+  }, [submitStatus]);
 
   // DucHM ADD_START 11/11/2021
   useFocusEffect(
@@ -80,7 +108,7 @@ const AdminFishEditScreen = () => {
             <MultiImageSection
               containerStyle={{ width: "90%" }}
               formRoute={ROUTE_NAMES.ADMIN_FISH_MANAGEMENT_EDIT}
-              controllerName="fishImage"
+              controllerName="image"
             />
             <InputComponent
               myStyles={{ width: "90%" }}
@@ -88,11 +116,11 @@ const AdminFishEditScreen = () => {
               isTitle
               hasAsterisk
               placeholder="Nhập tên cá"
-              controllerName="fishName"
+              controllerName="name"
             />
             {/* DucHM ADD_END 11/11/2021 */}
             {/* DucHM ADD_START 18/11/2021 */}
-            {!isNew && (
+            {fishId && (
               <Box w="90%" flexDirection="row" justifyContent="space-between">
                 <Text fontSize="md" bold>
                   Trạng thái:
@@ -108,16 +136,24 @@ const AdminFishEditScreen = () => {
             {/* DucHM ADD_END 18/11/2021 */}
           </VStack>
 
-          <Button w="80%" alignSelf="center" onPress={handleSubmit(onSubmit)}>
-            {isNew ? "Thêm loại cá" : "Lưu thay đổi"}
+          <Button
+            w="80%"
+            alignSelf="center"
+            isLoading={isLoading}
+            isLoadingText="Đang xử lý"
+            onPress={handleSubmit(onSubmit)}
+          >
+            {fishId ? "Lưu thay đổi" : "Thêm loại cá"}
           </Button>
           {/* // DucHM ADD_START 18/11/2021 */}
-          {!isNew && (
+          {fishId && (
             <Button
               w="80%"
               colorScheme={isActive ? "red" : "green"}
               alignSelf="center"
               marginTop={2}
+              isLoading={isLoading && isSwitching}
+              isLoadingText="Đang xử lý"
               onPress={handleSwitchStatus}
             >
               {isActive ? "Ẩn loại cá này" : "Bỏ ẩn loại cá này"}

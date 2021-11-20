@@ -99,10 +99,11 @@ const model = {
   /**
    * Get all districts by province ID from api
    * @param {Number} [payload.id] province id
+   * @param {Function} [payload.setGetStatus] function the set api status
    */
   getDisctrictByProvinceId: thunk(async (actions, payload, { getState }) => {
-    const { prevSelectedProvinceId } = getState();
-    const { wardList } = getState();
+    const setGetStatus = payload.setGetStatus || (() => {});
+    const { prevSelectedProvinceId, wardList } = getState();
     try {
       if (prevSelectedProvinceId !== payload.id) {
         const { data: districtData } = await http.get(
@@ -117,16 +118,20 @@ const model = {
         actions.setDistrictListByProvinceId({ districtData });
         actions.setPrevSelectedProvinceId({ id: payload.id });
       }
+      setGetStatus("SUCCESS");
     } catch (error) {
       // handle error
+      setGetStatus("FAILED");
     }
   }),
 
   /**
    * Get all wards by district ID from api
    * @param {Number} [payload.id] district id
+   * @param {Function} [payload.setGetStatus] function the set api status
    */
   getWardByDistrictId: thunk(async (actions, payload, { getState }) => {
+    const setGetStatus = payload.setGetStatus || (() => {});
     const { prevSelectedDistrictId } = getState();
     try {
       if (prevSelectedDistrictId !== payload.id) {
@@ -139,8 +144,10 @@ const model = {
         actions.setWardListByDistrictId({ wardData });
         actions.setPrevSelectedDistrictId({ id: payload.id });
       }
+      setGetStatus("SUCCESS");
     } catch (error) {
       // handle error
+      setGetStatus("FAILED");
     }
   }),
 };
