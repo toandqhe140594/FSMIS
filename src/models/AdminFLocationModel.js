@@ -159,6 +159,13 @@ const model = {
     state.suggestedLocationList = payload;
   }),
 
+  removeSuggestedLocationRecordFromList: action((state, payload) => {
+    const foundIndex = state.suggestedLocationList.findIndex(
+      (record) => record.id === payload.id,
+    );
+    if (foundIndex !== -1) state.suggestedLocationList.splice(foundIndex, 1);
+  }),
+
   getSuggestedLocationList: thunk(async (actions) => {
     try {
       const { data } = await http.get(
@@ -177,6 +184,7 @@ const model = {
         `${API_URL.ADMIN_FISHING_LOCATION_SUGGEST_REMOVE}/${id}`,
       );
       setSuccess(true);
+      actions.removeSuggestedLocationRecordFromList({ id });
     } catch (error) {
       setSuccess(false);
     }
