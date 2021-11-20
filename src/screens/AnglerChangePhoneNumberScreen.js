@@ -1,14 +1,22 @@
 import { MaterialIcons } from "@expo/vector-icons";
 import { yupResolver } from "@hookform/resolvers/yup";
+import {
+  useFocusEffect,
+  useNavigation,
+  useRoute,
+} from "@react-navigation/native";
+import { useStoreActions } from "easy-peasy";
 import { Button, Center, Icon, VStack } from "native-base";
 import PropTypes from "prop-types";
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { Pressable, useWindowDimensions } from "react-native";
 
 import InputComponent from "../components/common/InputComponent";
 import HeaderTab from "../components/HeaderTab";
 import { ROUTE_NAMES, SCHEMA } from "../constants";
+import { goToOTPScreen } from "../navigations";
+import { showAlertConfirmBox, showToastMessage } from "../utilities";
 
 const VisibilityIcon = ({ visible, toggleVisible }) => (
   <Pressable onPress={toggleVisible}>
@@ -33,6 +41,8 @@ VisibilityIcon.defaultProps = {
 };
 
 const ChangePhoneNumberScreen = () => {
+  const navigation = useNavigation();
+  const route = useRoute();
   const [isLoading, setIsLoading] = useState(false);
   const [visible, setVisible] = useState(false);
   const methods = useForm({
@@ -40,13 +50,84 @@ const ChangePhoneNumberScreen = () => {
     resolver: yupResolver(SCHEMA.CHANGE_PHONE_NUMBER_FORM),
   });
   const { handleSubmit } = methods;
+
+  const sendOtp = useStoreActions((actions) => actions.UtilModel.sendOtp);
+  const changePhoneNumber = useStoreActions(
+    (actions) => actions.ProfileModel.changePhoneNumber,
+  );
+  const logOut = useStoreActions((actions) => actions.logOut);
+
+  const [formData, setFormData] = useState({});
+  const [otpSendSuccess, setOtpSendSuccess] = useState(null);
+  const [success, setSuccess] = useState(null);
+
+  useEffect(() => {
+    if (otpSendSuccess === true) {
+      goToOTPScreen(
+        navigation,
+        ROUTE_NAMES.PROFILE_CHANGE_PHONE_NUMBER,
+        formData.phone,
+      );
+    }
+    setIsLoading(false);
+    setOtpSendSuccess(null);
+  }, [otpSendSuccess]);
+
+  useEffect(() => {
+    if (success) {
+      showToastMessage("Thay đổi số điện thoại thành công");
+      logOut();
+    } else {
+      setSuccess(null);
+      setIsLoading(false);
+    }
+  }, [success]);
+
+  /**
+   * Trigger when navigation goes back to this screen
+   */
+  useFocusEffect(
+    // useCallback will listen to route.param
+    useCallback(() => {
+      if (route.params?.otpSuccess) {
+        setIsLoading(true);
+        changePhoneNumber({ ...formData, setSuccess });
+      }
+    }, [route.params]),
+  );
+
+  /**
+   * Toggle password field visibility
+   */
   const handleToggle = () => {
     setVisible(!visible);
   };
-  const onSubmit = (data) => {
-    console.log(data);
+
+  /**
+   * Start change phone number chain action
+   * @param {Object} data form data to send to api
+   * @param {string} data.phone new phone number that need to be linked with the account
+   * @param {string} data.password current password
+   * @returns nothing
+   */
+  const changePhoneNumberAction = (data) => () => {
+    setFormData(data);
+    sendOtp({
+      phone: data.phone,
+      setSuccess: setOtpSendSuccess,
+      existedStatus: "NONEXISTED",
+    });
     setIsLoading(true);
   };
+
+  const onSubmit = (data) => {
+    showAlertConfirmBox(
+      "Đổi số điện thoại",
+      "Bạn muốn thay đổi số điện thoại liên kết với tài khoản này?",
+      changePhoneNumberAction(data),
+    );
+  };
+
   return (
     <Center flex={1} minHeight={Math.round(useWindowDimensions().height)}>
       <HeaderTab name="Thay đổi số điện thoại" />
