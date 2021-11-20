@@ -17,6 +17,7 @@ const VisibilityIcon = ({ visible, toggleVisible }) => (
       color="muted.500"
       as={<MaterialIcons name={visible ? "visibility" : "visibility-off"} />}
       size={6}
+      mx={2}
     />
   </Pressable>
 );
@@ -61,6 +62,8 @@ const ChangePhoneNumberScreen = () => {
           <InputComponent
             label="Số điện thoại"
             useNumPad
+            isTitle
+            hasAsterisk
             placeholder="Nhập số điện thoại"
             controllerName="phone"
           />
@@ -68,6 +71,8 @@ const ChangePhoneNumberScreen = () => {
           {/* Password input field */}
           <InputComponent
             label="Mật khẩu"
+            isTitle
+            hasAsterisk
             placeholder="Nhập mật khẩu"
             controllerName="password"
             useSecureInput={!visible}
