@@ -273,7 +273,7 @@ export const FMANAGE_PROFILE_FORM = yup.object().shape({
 
 export const ADMIN_FISH_ADD_EDIT_FORM = yup.object().shape({
   name: yup.string().required("Tên cá không thể bỏ trống"),
-  image: yup.array().min(1, "Hãy chọn ảnh cho loại cá"),
+  imageArray: yup.array().min(1, "Hãy chọn ảnh cho loại cá"),
 });
 
 export const FMANAGE_SUGGESTION_FORM = yup.object().shape({
