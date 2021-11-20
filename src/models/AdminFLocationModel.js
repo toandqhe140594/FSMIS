@@ -8,6 +8,7 @@ const model = {
   currentPage: 1, // Current page of data
   totalPage: 1, // Maximum page of data
   totalItem: 0, // Total items of fishing locations
+
   setFishingLocationList: action((state, payload) => {
     const { data, isOverwrite } = payload;
     if (isOverwrite) state.fishingLocationList = data;
@@ -89,6 +90,7 @@ const model = {
       setSuccess(false);
     }
   }),
+
   /**
    * Change verify state of a fishing location in list data
    */

@@ -5,7 +5,7 @@ import { Box } from "native-base";
 import React, { useEffect, useState } from "react";
 import { FlatList, StyleSheet } from "react-native";
 
-import { goToCatchReportDetailScreen } from "../../navigations";
+import { goToAdminCatchDetail } from "../../navigations";
 import EventPostCard from "../EventPostCard";
 import PressableCustomCard from "../PressableCustomCard";
 
@@ -50,7 +50,7 @@ const CatchReportRoute = () => {
               <PressableCustomCard
                 paddingX="1"
                 onPress={() => {
-                  goToCatchReportDetailScreen(navigation, {
+                  goToAdminCatchDetail(navigation, {
                     id: item.id,
                   });
                 }}

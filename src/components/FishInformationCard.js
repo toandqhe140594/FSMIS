@@ -36,7 +36,7 @@ const FishInformationCard = ({
           </>
         ) : (
           <>
-            {amount && <Text>Số lượng: {amount} con</Text>}
+            {amount ? <Text>Số lượng: {amount} con</Text> : null}
             <Text>Tổng khối lượng ước tính: {totalWeight} kg</Text>
           </>
         )}
