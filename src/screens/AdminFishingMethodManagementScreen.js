@@ -17,19 +17,23 @@ store.addModel("FishingMethodModel", FishingMethodModel);
 const AdminFishingMethodManagementScreen = () => {
   const navigation = useNavigation();
 
-  const fishingMethodList = useStoreState(
-    (states) => states.FishingMethodModel.fishingMethodList,
+  const adminFishingMethodList = useStoreState(
+    (states) => states.FishingMethodModel.adminFishingMethodList,
   );
-  const getFishingMethodList = useStoreActions(
-    (actions) => actions.FishingMethodModel.getFishingMethodList,
+  const getAdminFishingMethodList = useStoreActions(
+    (actions) => actions.FishingMethodModel.getAdminFishingMethodList,
   );
 
   const [search, setSearch] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-  const [displayedList, setDisplayedList] = useState(fishingMethodList);
+  const [displayedList, setDisplayedList] = useState(adminFishingMethodList);
 
   const renderRow = ({ item }) => (
-    <FishingMethodManagementCard id={item.id} name={item.name} active />
+    <FishingMethodManagementCard
+      id={item.id}
+      name={item.name}
+      active={item.active}
+    />
   );
 
   const updateSearch = (searchKey) => {
@@ -37,21 +41,21 @@ const AdminFishingMethodManagementScreen = () => {
   };
 
   const onClear = () => {
-    setDisplayedList(fishingMethodList);
+    setDisplayedList(adminFishingMethodList);
   };
 
   const onEndEditing = () => {
     // If the list is empty
-    if (!fishingMethodList) return;
+    if (!adminFishingMethodList) return;
     // Filter all element in the data list whose name includes search key
-    const filteredList = fishingMethodList.filter((method) =>
+    const filteredList = adminFishingMethodList.filter((method) =>
       method.name.toUpperCase().includes(search.toUpperCase()),
     );
     setDisplayedList(filteredList);
   };
 
   useEffect(() => {
-    getFishingMethodList({ setIsLoading });
+    getAdminFishingMethodList();
     const loadingTimeout = setTimeout(() => {
       setIsLoading(false);
     }, 1000); // Test
@@ -61,9 +65,9 @@ const AdminFishingMethodManagementScreen = () => {
   }, []);
 
   useEffect(() => {
-    setDisplayedList(fishingMethodList);
-    if (fishingMethodList) setIsLoading(false);
-  }, [fishingMethodList]);
+    setDisplayedList(adminFishingMethodList);
+    if (adminFishingMethodList) setIsLoading(false);
+  }, [adminFishingMethodList]);
 
   if (isLoading)
     return (

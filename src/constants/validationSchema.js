@@ -92,13 +92,18 @@ export const FMANAGE_LAKE_FORM = yup.object().shape({
   methods: yup.array().min(1, "Trường này kia không được để trống"),
   length: yup
     .number()
+    .max(1000, "Độ dài tối đa là 1000m")
     .typeError("Trường này chỉ được nhập số")
     .required("Chiều dài hồ không được để trống"),
   width: yup
     .number()
+    .max(1000, "Độ rộng tối đa là 1000m")
     .typeError("Trường này chỉ được nhập số")
     .required("Chiều rộng hồ không được để trống"),
-  depth: yup.number().required("Độ sâu của hồ không được để trống"),
+  depth: yup
+    .number()
+    .max(50, "Độ sâu tối đa là 50m")
+    .required("Độ sâu của hồ không được để trống"),
   fishInLakeList: yup
     .array()
     .min(1, "Phải có ít nhất một loại cá trong hồ")
@@ -273,7 +278,11 @@ export const FMANAGE_PROFILE_FORM = yup.object().shape({
 
 export const ADMIN_FISH_ADD_EDIT_FORM = yup.object().shape({
   name: yup.string().required("Tên cá không thể bỏ trống"),
-  image: yup.array().min(1, "Hãy chọn ảnh cho loại cá"),
+  imageArray: yup.array().min(1, "Hãy chọn ảnh cho loại cá"),
+});
+
+export const ADMIN_FISHING_METHOD_ADD_FORM = yup.object().shape({
+  name: yup.string().required("Tên loại hình không thể bỏ trống"),
 });
 
 export const FMANAGE_SUGGESTION_FORM = yup.object().shape({

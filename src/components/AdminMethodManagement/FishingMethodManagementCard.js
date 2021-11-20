@@ -12,7 +12,7 @@ const FishingMethodManagementCard = ({ id, name, active }) => {
   const navigation = useNavigation();
 
   const handleOnPress = () => {
-    goToAdminFishingMethodEditScreen(navigation, { id, name });
+    goToAdminFishingMethodEditScreen(navigation, { id, name, active });
   };
 
   return (
