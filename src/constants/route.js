@@ -58,6 +58,10 @@ export const ADMIN_MAIN = "Admin Management Main Screen";
 export const ADMIN_ACCOUNT_MANAGEMENT = "Admin Account Management Screen";
 export const ADMIN_ACCOUNT_MANAGEMENT_DETAIL =
   "Admin Account Management Detail Screen";
+export const ADMIN_LOCATION_SUGGEST_MANAGEMENT =
+  "Admin Suggested Fishing Location Management Screen";
+export const ADMIN_LOCATION_SUGGEST_DETAIL =
+  "Admin Suggested Fishing Location Detail";
 export const ADMIN_LOCATION_MANAGEMENT =
   "Admin Fishing Location Management Screen";
 export const ADMIN_LOCATION_MANAGEMENT_OVERVIEW =

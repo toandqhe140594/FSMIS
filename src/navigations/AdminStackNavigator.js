@@ -21,6 +21,7 @@ import AdminReportCatchDetailScreen from "../screens/AdminReportCatchDetailScree
 import AdminReportManagementScreen from "../screens/AdminReportManagementScreen";
 import AdminReportPostDetailScreen from "../screens/AdminReportPostDetailScreen";
 import AdminReportReviewDetailScreen from "../screens/AdminReportReviewDetailScreen";
+import AdminSuggestedLocationManagementScreen from "../screens/AdminSuggestedLocationManagementScreen";
 import LakeDetailScreen from "../screens/LakeDetailScreen";
 import MediaSelectScreen from "../screens/MediaSelectScreen";
 import store from "../utilities/Store";
@@ -112,6 +113,10 @@ const AdminStackNavigator = () => {
       <AdminStack.Screen
         name={ROUTE_NAMES.ADMIN_CATCH_DETAIL}
         component={AdminCatchReportDetailScreen}
+      />
+      <AdminStack.Screen
+        name={ROUTE_NAMES.ADMIN_LOCATION_SUGGEST_MANAGEMENT}
+        component={AdminSuggestedLocationManagementScreen}
       />
     </AdminStack.Navigator>
   );

@@ -21,6 +21,9 @@ export const ADMIN_REPORT_REVIEW_LIST = "admin/report/review";
 export const ADMIN_FISHING_LOCATION_LIST = "admin/location";
 export const ADMIN_FISHING_LOCATION_ACTIVATE = "admin/location/active";
 export const ADMIN_FISHING_LOCATION_VERIFY = "admin/location/verify";
+export const ADMIN_FISHING_LOCATION_SUGGEST_LIST = "admin/location/suggested";
+export const ADMIN_FISHING_LOCATION_SUGGEST_REMOVE =
+  "admin/location/suggested/remove";
 
 export const STAFF_FIND_BY_PHONE = "findUserByPhone";
 export const STAFF_ADD = "staff/add";

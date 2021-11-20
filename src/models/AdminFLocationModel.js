@@ -4,6 +4,7 @@ import { API_URL } from "../constants";
 import http from "../utilities/Http";
 
 const model = {
+  suggestedLocationList: [],
   fishingLocationList: [], // Data of fishing locations
   currentPage: 1, // Current page of data
   totalPage: 1, // Maximum page of data
@@ -151,6 +152,33 @@ const model = {
     } catch (error) {
       setSuccess(false);
       setLoading(false);
+    }
+  }),
+
+  setSuggestedLocationList: action((state, payload) => {
+    state.suggestedLocationList = payload;
+  }),
+
+  getSuggestedLocationList: thunk(async (actions) => {
+    try {
+      const { data } = await http.get(
+        `${API_URL.ADMIN_FISHING_LOCATION_SUGGEST_LIST}`,
+      );
+      actions.setSuggestedLocationList(data);
+    } catch (error) {
+      actions.setSuggestedLocationList(null);
+    }
+  }),
+
+  removeSuggestedLocation: thunk(async (actions, payload) => {
+    const { setSuccess, id } = payload;
+    try {
+      await http.delete(
+        `${API_URL.ADMIN_FISHING_LOCATION_SUGGEST_REMOVE}/${id}`,
+      );
+      setSuccess(true);
+    } catch (error) {
+      setSuccess(false);
     }
   }),
 };
