@@ -276,6 +276,10 @@ export const ADMIN_FISH_ADD_EDIT_FORM = yup.object().shape({
   imageArray: yup.array().min(1, "Hãy chọn ảnh cho loại cá"),
 });
 
+export const ADMIN_FISHING_METHOD_ADD_FORM = yup.object().shape({
+  name: yup.string().required("Tên loại hình không thể bỏ trống"),
+});
+
 export const FMANAGE_SUGGESTION_FORM = yup.object().shape({
   locationName: yup.string().required("Tên khu hồ không thể bỏ trống"),
   ownerPhone: yup
