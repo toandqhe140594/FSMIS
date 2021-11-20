@@ -3,6 +3,7 @@ export const AUTHENTICATION_REGISTER = "auth/register";
 export const AUTHENTICATION_PASSWORD_RESET = "auth/forgot";
 
 export const ADMIN_FISH_LIST = "util/fish";
+export const ADMIN_FISH_LIST_FULL = "admin/fish";
 export const ADMIN_FISH_ADD = "admin/fish/add";
 export const ADMIN_FISH_EDIT = "admin/fish/edit";
 export const ADMIN_FISH_UPDATE_STATUS = "admin/fish/change-active";
