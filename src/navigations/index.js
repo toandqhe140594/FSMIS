@@ -27,8 +27,8 @@ const goToForgotPasswordScreen = (navigation) => {
   navigation.navigate(ROUTE_NAMES.PASSWORD_FORGOT);
 };
 
-const goToChangePasswordScreen = (navigation) => {
-  navigation.navigate(ROUTE_NAMES.PASSWORD_CHANGE);
+const goToChangePasswordScreen = (navigation, params) => {
+  navigation.navigate(ROUTE_NAMES.PASSWORD_CHANGE, { ...params });
 };
 
 /**
@@ -237,12 +237,18 @@ const goToAdminCatchReportDetail = (navigation, params) => {
     ...params,
   });
 };
+const goToAdminCatchDetail = (navigation, params) => {
+  navigation.navigate(ROUTE_NAMES.ADMIN_CATCH_DETAIL, {
+    ...params,
+  });
+};
 
 export {
   goBack,
   goToAdminAccountManagementDetailScreen,
   goToAdminAccountManagementScreen,
   goToAdminBlacklistPhoneAddScreen,
+  goToAdminCatchDetail,
   goToAdminCatchReportDetail,
   goToAdminFishEditScreen,
   goToAdminFishingMethodEditScreen,

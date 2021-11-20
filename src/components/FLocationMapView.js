@@ -1,12 +1,18 @@
 import { Box } from "native-base";
 import PropTypes from "prop-types";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import MapView from "react-native-maps";
 
 import styles from "../config/styles";
 import FLocationMarker from "./FLocationMarker";
 
 export default function FLocationMapView({ coordinates, locationList }) {
+  const [marginTop, setMarginTop] = useState(-1);
+  useEffect(() => {
+    setTimeout(() => {
+      setMarginTop(0);
+    }, 50);
+  }, []);
   return (
     <Box flex={1}>
       <MapView
@@ -18,7 +24,7 @@ export default function FLocationMapView({ coordinates, locationList }) {
         }}
         provider={MapView.PROVIDER_GOOGLE}
         mapType="standard"
-        style={styles.map}
+        style={[styles.map, { marginTop }]}
         showsUserLocation
         showsMyLocationButton
         showsCompass

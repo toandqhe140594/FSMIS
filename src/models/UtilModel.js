@@ -50,5 +50,25 @@ const model = {
       setSuccess(false);
     }
   }),
+  /**
+   * Reset password of a phone number
+   * @param {object} payload - params pass to function
+   * @param {string} payload.phone - the corresponding phone number
+   * @param {string} payload.password - new password
+   * @param {Function} [payload.setSuccess] - function indicate reset success
+   */
+  resetPassword: thunk(async (actions, payload) => {
+    const { phone, password } = payload;
+    const setSuccess = payload.setSuccess || (() => {});
+    try {
+      await http.post(`${API_URL.AUTHENTICATION_PASSWORD_RESET}`, {
+        phone,
+        password,
+      });
+      setSuccess(true);
+    } catch (error) {
+      setSuccess(false);
+    }
+  }),
 };
 export default model;
