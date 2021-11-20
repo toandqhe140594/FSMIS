@@ -15,7 +15,7 @@ const VisibilityIcon = ({ visible, toggleVisible }) => (
     <Icon
       alignSelf="flex-end"
       color="muted.500"
-      as={<MaterialIcons name={visible ? "visibility-off" : "visibility"} />}
+      as={<MaterialIcons name={visible ? "visibility" : "visibility-off"} />}
       size={6}
     />
   </Pressable>
@@ -32,6 +32,7 @@ VisibilityIcon.defaultProps = {
 };
 
 const ChangePhoneNumberScreen = () => {
+  const [isLoading, setIsLoading] = useState(false);
   const [visible, setVisible] = useState(false);
   const methods = useForm({
     mode: "onSubmit",
@@ -43,6 +44,7 @@ const ChangePhoneNumberScreen = () => {
   };
   const onSubmit = (data) => {
     console.log(data);
+    setIsLoading(true);
   };
   return (
     <Center flex={1} minHeight={Math.round(useWindowDimensions().height)}>
@@ -68,13 +70,18 @@ const ChangePhoneNumberScreen = () => {
             label="Mật khẩu"
             placeholder="Nhập mật khẩu"
             controllerName="password"
-            useSecureInput={visible}
+            useSecureInput={!visible}
             rightIcon={
               <VisibilityIcon visible={visible} toggleVisible={handleToggle} />
             }
           />
           {/* Continue/Submit button */}
-          <Button mt={4} onPress={handleSubmit(onSubmit)}>
+          <Button
+            mt={4}
+            isLoading={isLoading}
+            isLoadingText="Đang xử lý"
+            onPress={handleSubmit(onSubmit)}
+          >
             Tiếp tục
           </Button>
         </VStack>
