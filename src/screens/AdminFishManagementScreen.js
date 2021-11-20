@@ -17,14 +17,16 @@ store.addModel("FishModel", FishModel);
 const AdminFishManagementScreen = () => {
   const navigation = useNavigation();
 
-  const fishList = useStoreState((states) => states.FishModel.fishList);
-  const getFishList = useStoreActions(
-    (actions) => actions.FishModel.getFishList,
+  const adminFishList = useStoreState(
+    (states) => states.FishModel.adminFishList,
+  );
+  const getAdminFishList = useStoreActions(
+    (actions) => actions.FishModel.getAdminFishList,
   );
 
   const [search, setSearch] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-  const [displayedList, setDisplayedList] = useState(fishList);
+  const [displayedList, setDisplayedList] = useState(adminFishList);
 
   // DucHM ADD_START 18/11/2021
   const renderRow = ({ item }) => (
@@ -32,7 +34,7 @@ const AdminFishManagementScreen = () => {
       id={item.id}
       name={item.name}
       image={item.image}
-      active
+      active={item.active}
     />
   );
   // DucHM ADD_END 18/11/2021
@@ -42,27 +44,27 @@ const AdminFishManagementScreen = () => {
   };
 
   const onClear = () => {
-    setDisplayedList(fishList);
+    setDisplayedList(adminFishList);
   };
 
   const onEndEditing = () => {
     // If the list is empty
-    if (!fishList) return;
+    if (!adminFishList) return;
     // Filter all element in the data list whose name includes search key
-    const filteredList = fishList.filter((fish) =>
+    const filteredList = adminFishList.filter((fish) =>
       fish.name.toUpperCase().includes(search.toUpperCase()),
     );
     setDisplayedList(filteredList);
   };
 
   useEffect(() => {
-    setDisplayedList(fishList);
-    if (fishList) setIsLoading(false);
-  }, [fishList]);
+    setDisplayedList(adminFishList);
+    if (adminFishList) setIsLoading(false);
+  }, [adminFishList]);
 
   useEffect(() => {
     setIsLoading(true);
-    getFishList();
+    getAdminFishList();
     // Hide the activity indicator after 5 seconds aka request timeout
     const loadingTimeout = setTimeout(() => {
       setIsLoading(false);
