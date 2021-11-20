@@ -3,9 +3,10 @@ export const AUTHENTICATION_REGISTER = "auth/register";
 export const AUTHENTICATION_PASSWORD_RESET = "auth/forgot";
 
 export const ADMIN_FISH_LIST = "util/fish";
-export const ADMIN_FISH_ADD = "util/fish";
-export const ADMIN_FISH_EDIT = "util/fish";
-export const ADMIN_FISH_DELETE = "util/fish";
+export const ADMIN_FISH_ADD = "admin/fish/add";
+export const ADMIN_FISH_EDIT = "admin/fish/edit";
+export const ADMIN_FISH_UPDATE_STATUS = "admin/fish/change-active";
+// export const ADMIN_FISH_DELETE = "util/fish";
 export const ADMIN_FISHING_METHOD_LIST = "util/method";
 export const ADMIN_ACCOUNT_LIST = "admin/account";
 export const ADMIN_ACCOUNT_INFORMATION = "admin/account";
