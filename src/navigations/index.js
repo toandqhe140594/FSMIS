@@ -27,8 +27,8 @@ const goToForgotPasswordScreen = (navigation) => {
   navigation.navigate(ROUTE_NAMES.PASSWORD_FORGOT);
 };
 
-const goToChangePasswordScreen = (navigation) => {
-  navigation.navigate(ROUTE_NAMES.PASSWORD_CHANGE);
+const goToChangePasswordScreen = (navigation, params) => {
+  navigation.navigate(ROUTE_NAMES.PASSWORD_CHANGE, { ...params });
 };
 
 /**

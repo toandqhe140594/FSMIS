@@ -1,5 +1,6 @@
 export const AUTHENTICATION_LOGIN = "auth/login";
 export const AUTHENTICATION_REGISTER = "auth/register";
+export const AUTHENTICATION_PASSWORD_RESET = "auth/forgot";
 
 export const ADMIN_FISH_LIST = "util/fish";
 export const ADMIN_FISH_ADD = "util/fish";

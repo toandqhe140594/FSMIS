@@ -25,7 +25,7 @@ import {
 import * as yup from "yup";
 
 import { phoneRegExp } from "../constants";
-import { goToRegisterScreen } from "../navigations";
+import { goToForgotPasswordScreen, goToRegisterScreen } from "../navigations";
 
 // Validation schema for form
 const validationSchema = yup.object().shape({
@@ -54,6 +54,14 @@ const LoginScreen = () => {
   const login = useStoreActions((actions) => actions.login);
 
   const [visible, setVisible] = useState(false);
+
+  const registerAction = () => {
+    goToRegisterScreen(navigation);
+  };
+
+  const forgotPasswordAction = () => {
+    goToForgotPasswordScreen(navigation);
+  };
 
   // Development only
   useEffect(() => {
@@ -163,7 +171,11 @@ const LoginScreen = () => {
                 </Text>
               )}
 
-              <Text alignSelf="flex-end" underline>
+              <Text
+                alignSelf="flex-end"
+                underline
+                onPress={forgotPasswordAction}
+              >
                 Quên mật khẩu?
               </Text>
 
@@ -174,12 +186,7 @@ const LoginScreen = () => {
           <Box justifyContent="flex-end" alignItems="center" mb={6}>
             <Text>
               Bạn chưa có tài khoản?{" "}
-              <Text
-                underline
-                onPress={() => {
-                  goToRegisterScreen(navigation);
-                }}
-              >
+              <Text underline onPress={registerAction}>
                 Đăng ký
               </Text>
             </Text>
