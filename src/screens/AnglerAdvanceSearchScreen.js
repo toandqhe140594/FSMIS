@@ -105,14 +105,17 @@ const AnglerAdvanceSearchScreen = () => {
    * Get all api data for select options
    */
   useEffect(() => {
-    (async () => {
-      getAllProvince();
-      getFishingMethodList();
-      await getFishList();
-      setDefaultValues();
+    getAllProvince();
+    getFishingMethodList();
+    getFishList();
+    setDefaultValues();
+    const timeoutId = setTimeout(() => {
       setIsLoading(false);
       setFullScreen(false);
-    })();
+    }, 2000);
+    return () => {
+      clearTimeout(timeoutId);
+    };
   }, []);
 
   /**
@@ -142,7 +145,7 @@ const AnglerAdvanceSearchScreen = () => {
         <FormProvider {...methods}>
           <VStack flex={1} space={2} style={styles.sectionWrapper}>
             <InputComponent
-              myStyles={{ width: "90%" }}
+              myStyles={{ width: "90%", marginBottom: 4 }}
               label="Từ khoá tìm kiếm"
               placeholder="Nhập số điện thoại, tên hồ câu"
               controllerName="searchTerm"
