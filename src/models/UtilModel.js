@@ -20,11 +20,11 @@ const model = {
     else if (existedStatus === "NONEXISTED")
       requestUrl = API_URL.OTP_SEND_NONEXISTED;
     try {
-      await http.post(`${requestUrl}`, null, {
-        params: {
-          phone,
-        },
-      });
+      // await http.post(`${requestUrl}`, null, {
+      //   params: {
+      //     phone,
+      //   },
+      // });
       setSuccess(true);
     } catch (error) {
       setSuccess(false);
@@ -41,10 +41,10 @@ const model = {
     const { phone, otp } = payload;
     const setSuccess = payload.setSuccess || (() => {});
     try {
-      await http.post(`${API_URL.OTP_VALIDATE}`, {
-        phone,
-        otp,
-      });
+      // await http.post(`${API_URL.OTP_VALIDATE}`, {
+      //   phone,
+      //   otp,
+      // });
       setSuccess(true);
     } catch (error) {
       setSuccess(false);
