@@ -100,6 +100,7 @@ const CatchReportSection = ({ fishList }) => {
             Lưu ý: Chỉ cần nhập một trong hai trường dưới đây
           </Text>
           <InputComponent
+            useNumPad
             myStyles={{ marginBottom: 8 }}
             placeholder="Nhập số con bắt được"
             leftIcon={<FishIcon />}
@@ -109,6 +110,7 @@ const CatchReportSection = ({ fishList }) => {
           />
           <FieldWatcherResetter name={`catchesDetailList[${index}].quantity`} />
           <InputComponent
+            useNumPad
             placeholder="Nhập cân nặng bắt được (kg)"
             leftIcon={<WeightIcon />}
             controllerName={`catchesDetailList[${index}].weight`}

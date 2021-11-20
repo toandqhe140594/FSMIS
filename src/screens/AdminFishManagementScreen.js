@@ -1,109 +1,18 @@
 import { useNavigation } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, Button, Center } from "native-base";
-import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, FlatList } from "react-native";
-import { Avatar, Divider, SearchBar, Text } from "react-native-elements";
+import { Divider, SearchBar } from "react-native-elements";
 
+import FishManagementCard from "../components/AdminFishManagement/FishManagementCard";
 import HeaderTab from "../components/HeaderTab";
 import styles from "../config/styles";
 import FishModel from "../models/FishModel";
 import { goToAdminFishEditScreen } from "../navigations";
-import { showAlertConfirmBox, showToastMessage } from "../utilities";
 import store from "../utilities/Store";
 
 store.addModel("FishModel", FishModel);
-
-const FishManagementCard = ({ id, name, image }) => {
-  const navigation = useNavigation();
-
-  const deleteFish = useStoreActions((actions) => actions.FishModel.deleteFish);
-  const [deleteSuccess, setDeleteSuccess] = useState(null);
-  const [deleteLoading, setDeleteLoading] = useState(false);
-
-  const showDeleteAlert = () => {
-    showAlertConfirmBox(
-      "Bạn muốn xóa loài cá này?",
-      `"${name}" sẽ bị xóa vĩnh viễn. Bạn không thể hoàn tác hành động này`,
-      () => {
-        setDeleteLoading(true);
-      },
-    );
-  };
-
-  useEffect(() => {
-    return () => {
-      if (deleteSuccess) {
-        showToastMessage("Xóa thành công");
-      }
-    };
-  }, []);
-
-  useEffect(() => {
-    if (deleteLoading === true) deleteFish({ id, setDeleteSuccess });
-  }, [deleteLoading]);
-
-  useEffect(() => {
-    if (deleteSuccess === false) {
-      showToastMessage("Xóa thất bại");
-    }
-    setDeleteLoading(false);
-    setDeleteSuccess(null);
-  }, [deleteSuccess]);
-
-  return (
-    <Box flexDirection="row" alignItems="center" justifyContent="space-between">
-      <Box flex={1} flexDirection="row">
-        <Avatar
-          size="large"
-          source={{
-            uri: image,
-          }}
-          containerStyle={{ padding: 10, margin: 5 }}
-          imageProps={{
-            resizeMode: "contain",
-          }}
-        />
-        <Box flex={1} justifyContent="center" pr={1}>
-          <Text style={{ fontWeight: "bold", fontSize: 16 }} numberOfLines={2}>
-            {name}
-          </Text>
-        </Box>
-      </Box>
-      <Box w="35%" mx={2} alignItems="flex-end">
-        <Button.Group>
-          <Button
-            onPress={() => {
-              goToAdminFishEditScreen(navigation, { id, name, image });
-            }}
-            isDisabled={deleteLoading}
-          >
-            Chỉnh sửa
-          </Button>
-          <Button
-            onPress={() => {
-              showDeleteAlert();
-            }}
-            isLoading={deleteLoading}
-          >
-            Xóa
-          </Button>
-        </Button.Group>
-      </Box>
-    </Box>
-  );
-};
-
-FishManagementCard.propTypes = {
-  id: PropTypes.number.isRequired,
-  name: PropTypes.string.isRequired,
-  image: PropTypes.string,
-};
-
-FishManagementCard.defaultProps = {
-  image: "https://picsum.photos/200",
-};
 
 const AdminFishManagementScreen = () => {
   const navigation = useNavigation();
@@ -116,6 +25,17 @@ const AdminFishManagementScreen = () => {
   const [search, setSearch] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [displayedList, setDisplayedList] = useState(fishList);
+
+  // DucHM ADD_START 18/11/2021
+  const renderRow = ({ item }) => (
+    <FishManagementCard
+      id={item.id}
+      name={item.name}
+      image={item.image}
+      active
+    />
+  );
+  // DucHM ADD_END 18/11/2021
 
   const updateSearch = (searchKey) => {
     setSearch(searchKey);
@@ -164,13 +84,7 @@ const AdminFishManagementScreen = () => {
       <Box flex={1} w="100%">
         <FlatList
           data={displayedList}
-          renderItem={({ item }) => (
-            <FishManagementCard
-              id={item.id}
-              name={item.name}
-              image={item.image}
-            />
-          )}
+          renderItem={renderRow}
           keyExtractor={(item) => item.id.toString()}
           ItemSeparatorComponent={Divider}
         />

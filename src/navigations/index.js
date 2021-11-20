@@ -237,12 +237,18 @@ const goToAdminCatchReportDetail = (navigation, params) => {
     ...params,
   });
 };
+const goToAdminCatchDetail = (navigation, params) => {
+  navigation.navigate(ROUTE_NAMES.ADMIN_CATCH_DETAIL, {
+    ...params,
+  });
+};
 
 export {
   goBack,
   goToAdminAccountManagementDetailScreen,
   goToAdminAccountManagementScreen,
   goToAdminBlacklistPhoneAddScreen,
+  goToAdminCatchDetail,
   goToAdminCatchReportDetail,
   goToAdminFishEditScreen,
   goToAdminFishingMethodEditScreen,

@@ -26,6 +26,10 @@ const EventPostCard = ({
   itemData,
   isApproved,
 }) => {
+  const onlyUnique = (value, index, self) => {
+    return self.indexOf(value) === index;
+  };
+
   return (
     <Box mt="1" px="1.4">
       {postStyle === "LAKE_POST" && (
@@ -137,7 +141,7 @@ const EventPostCard = ({
             <Text>
               <Text b>Đã câu được : </Text>
               {fishList !== undefined && fishList !== null ? (
-                fishList.map((item) => {
+                fishList.filter(onlyUnique).map((item) => {
                   return <Text key={item}>{item}. </Text>;
                 })
               ) : (
