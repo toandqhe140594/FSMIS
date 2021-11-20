@@ -12,7 +12,7 @@ import DependentFieldWatcher from "./DependentFieldWatcher";
 
 const FishIcon = () => (
   <FontAwesome5
-    style={{ marginLeft: 12 }}
+    style={{ marginHorizontal: 8 }}
     name="fish"
     size={24}
     color="black"
@@ -21,7 +21,7 @@ const FishIcon = () => (
 
 const WeightIcon = () => (
   <MaterialCommunityIcons
-    style={{ marginLeft: 12 }}
+    style={{ marginHorizontal: 8 }}
     name="weight-kilogram"
     size={28}
     color="#262626"
