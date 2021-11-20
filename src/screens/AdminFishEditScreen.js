@@ -62,25 +62,21 @@ const AdminFishEditScreen = () => {
 
   useEffect(() => {
     if (submitStatus === "SUCCESS") {
-      setSubmitStatus(null);
       if (!fishId) {
         getAdminFishList();
         showToastMessage("Thêm cá thành công");
         navigation.pop(1);
       } else {
-        setIsLoading(false);
         showToastMessage("Cập nhật cá thành công");
       }
     } else if (submitStatus === "PATCHED") {
-      setSubmitStatus(null);
-      setIsLoading(false);
       setIsActive(!isActive);
       showToastMessage("Trạng thái của cá đã được thay đổi");
     } else if (submitStatus === "FAILED") {
-      setSubmitStatus(null);
-      setIsLoading(false);
       showToastMessage("Đã xảy ra lỗi! Vui lòng thử lại sau");
     }
+    setIsLoading(false);
+    setSubmitStatus(null);
   }, [submitStatus]);
 
   useFocusEffect(
