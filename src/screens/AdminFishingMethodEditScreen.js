@@ -1,56 +1,85 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { useStoreActions } from "easy-peasy";
 import { Box, Button, Center, Text } from "native-base";
 import React, { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { Dimensions } from "react-native";
-import * as yup from "yup";
 
 import InputComponent from "../components/common/InputComponent";
 import HeaderTab from "../components/HeaderTab";
+import { SCHEMA } from "../constants";
+import { showToastMessage } from "../utilities";
 
-// DucHM ADD_START 18/11/2021
 const OFFSET_BOTTOM = 85;
 // Get window height without status bar height
 const CUSTOM_SCREEN_HEIGHT = Dimensions.get("window").height - OFFSET_BOTTOM;
-// DucHM ADD_END 18/11/2021
 
-// Validation schema for form
-const validationSchema = yup.object().shape({
-  fishingMethodName: yup.string().required("Tên loại hình không thể bỏ trống"),
-});
 const AdminFishingMethodEditScreen = () => {
   const route = useRoute();
-
-  const [isNew, setIsNew] = useState(true);
-  // DucHM ADD_START 18/11/2021
+  const navigation = useNavigation();
+  const [methodId, setMethodId] = useState(null);
   const [isActive, setIsActive] = useState(null);
-  // DucHM ADD_END 18/11/2021
+  const [isLoading, setIsLoading] = useState(null);
+  const [submitStatus, setSubmitStatus] = useState(null);
+  const {
+    updateFishingMethod,
+    updateFishingMethodStatus,
+    getAdminFishingMethodList,
+  } = useStoreActions((actions) => actions.FishingMethodModel);
+
   const methods = useForm({
     mode: "onSubmit",
-    resolver: yupResolver(validationSchema),
+    resolver: yupResolver(SCHEMA.ADMIN_FISHING_METHOD_ADD_FORM),
   });
   const { handleSubmit, setValue } = methods;
 
   const onSubmit = (data) => {
-    console.log(data); // Test only
+    setIsLoading(true);
+    updateFishingMethod({
+      id: methodId,
+      submitData: data,
+      active: isActive,
+      setSubmitStatus,
+    });
   };
 
-  // DucHM ADD_START 18/11/2021
-  const handleSwitchStatus = () => {
-    // do activate/deactive
-    setIsActive(!isActive);
+  const handleUpdateStatus = () => {
+    setIsLoading(true);
+    updateFishingMethodStatus({
+      id: methodId,
+      active: isActive,
+      setSubmitStatus,
+    });
   };
-  // DucHM ADD_END 18/11/2021
 
   useEffect(() => {
     const { id, name, active } = route.params;
     if (id) {
-      setIsNew(false);
-      setValue("fishingMethodName", name);
+      setMethodId(id);
+      setValue("name", name);
       setIsActive(active);
     }
   }, []);
+
+  useEffect(() => {
+    if (submitStatus === "SUCCESS") {
+      if (!methodId) {
+        getAdminFishingMethodList();
+        showToastMessage("Thêm loại hình câu thành công");
+        navigation.pop(1);
+      } else {
+        showToastMessage("Cập nhật loại hình câu thành công");
+      }
+    } else if (submitStatus === "PATCHED") {
+      setIsActive(!isActive);
+      showToastMessage("Trạng thái của loại hình câu đã được thay đổi");
+    } else if (submitStatus === "FAILED") {
+      showToastMessage("Đã xảy ra lỗi! Vui lòng thử lại sau");
+    }
+    setIsLoading(false);
+    setSubmitStatus(null);
+  }, [submitStatus]);
 
   return (
     <>
@@ -64,9 +93,9 @@ const AdminFishingMethodEditScreen = () => {
               label="Tên loại hình câu"
               isTitle
               hasAsterisk
-              controllerName="fishingMethodName"
+              controllerName="name"
             />
-            {!isNew && (
+            {methodId && (
               <Box
                 w="90%"
                 mt={1}
@@ -85,22 +114,28 @@ const AdminFishingMethodEditScreen = () => {
               </Box>
             )}
           </Center>
-          <Button w="80%" alignSelf="center" onPress={handleSubmit(onSubmit)}>
-            {isNew ? "Thêm loại hình câu" : "Lưu thay đổi"}
+          <Button
+            w="80%"
+            alignSelf="center"
+            onPress={handleSubmit(onSubmit)}
+            isLoading={isLoading}
+            isLoadingText="Đang xử lý"
+          >
+            {methodId ? "Lưu thay đổi" : "Thêm loại hình câu"}
           </Button>
-          {/* // DucHM ADD_START 18/11/2021 */}
-          {!isNew && (
+          {methodId && (
             <Button
               w="80%"
               colorScheme={isActive ? "red" : "green"}
               alignSelf="center"
               marginTop={2}
-              onPress={handleSwitchStatus}
+              onPress={handleUpdateStatus}
+              isLoading={isLoading}
+              isLoadingText="Đang xử lý"
             >
               {isActive ? "Ẩn loại hình câu này" : "Bỏ ẩn loại hình câu này"}
             </Button>
           )}
-          {/* // DucHM ADD_END 18/11/2021 */}
         </FormProvider>
       </Box>
     </>
