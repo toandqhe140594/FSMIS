@@ -31,4 +31,6 @@ public class CatchesDetailDtoOut {
     private String time;
 
     private List<CaughtFishDtoOut> fishes;
+
+    private Boolean approved;
 }

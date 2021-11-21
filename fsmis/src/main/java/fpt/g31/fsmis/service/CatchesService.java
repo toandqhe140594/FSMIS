@@ -206,6 +206,7 @@ public class CatchesService {
                 .images(ServiceUtils.splitString(catches.getImageUrl()))
                 .time(ServiceUtils.convertDateToString(catches.getTime()))
                 .fishes(fishes)
+                .approved(catches.getApproved())
                 .build();
     }
 
