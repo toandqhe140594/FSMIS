@@ -1,6 +1,8 @@
 import { Entypo } from "@expo/vector-icons";
 import { yupResolver } from "@hookform/resolvers/yup";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { useStoreActions, useStoreState } from "easy-peasy";
 import Constants from "expo-constants";
 import {
   Button,
@@ -23,23 +25,27 @@ import {
 import * as yup from "yup";
 
 import moment from "../config/moment";
+import { goToLoginScreen } from "../navigations";
+import { showAlertBox, showToastMessage } from "../utilities";
 
 const validationSchema = yup.object().shape({
   name: yup.string().required("Họ và tên không thể bỏ trống"),
-  gender: yup.number().default(-1),
-  address: yup.string(),
-  cityAddress: yup.number().default(-1),
+  gender: yup.number().default(1),
+  address: yup.string().default(""),
+  cityAddress: yup.number().default(1),
   districtAddress: yup.number().default(-1),
   communeAddress: yup.number().default(-1),
 });
 
 const RegisterInformationScreen = () => {
-  const [date, setDate] = useState(null);
-  const [displayedDate, setDisplayedDate] = useState(null);
-  const [show, setShow] = useState(false);
+  const route = useRoute();
+  const navigation = useNavigation();
+
   const {
     control,
     handleSubmit,
+    watch,
+    setValue,
     formState: { errors },
   } = useForm({
     mode: "onChange",
@@ -47,9 +53,80 @@ const RegisterInformationScreen = () => {
     resolver: yupResolver(validationSchema),
   });
 
+  const watchProvince = watch("cityAddress");
+  const watchDistrict = watch("districtAddress");
+
+  const { provinceList, districtList, wardList } = useStoreState(
+    (states) => states.UtilModel,
+  );
+  const { getAllAddress, getDistrictList, getWardList, register } =
+    useStoreActions((actions) => actions.UtilModel);
+  const [date, setDate] = useState(null);
+  const [displayedDate, setDisplayedDate] = useState(null);
+  const [show, setShow] = useState(false);
+  const [registerData, setRegisterData] = useState({});
+  const [success, setSuccess] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (provinceList.length === 0) getAllAddress();
+    if (route.params) {
+      const { phone, password } = route.params;
+      setRegisterData({ phone, password });
+    }
+  }, []);
+
+  useEffect(() => {
+    if (watchProvince) {
+      getDistrictList({ provinceId: watchProvince });
+      setValue("districtAddress", -1);
+      setValue("communeAddress", -1);
+    }
+  }, [watchProvince]);
+
+  useEffect(() => {
+    if (watchDistrict && watchDistrict !== -1) {
+      getWardList({ districtId: watchDistrict });
+      setValue("communeAddress", 1);
+    }
+  }, [watchDistrict]);
+
+  useEffect(() => {
+    if (success === true) {
+      showToastMessage("Đăng ký thành công");
+      goToLoginScreen(navigation);
+    }
+    setLoading(false);
+    setSuccess(null);
+  }, [success]);
+
   // Submit form event
   const onSubmit = (data) => {
-    console.log(data); // Test only
+    const { address, communeAddress: wardId, name: fullName, gender } = data;
+    if (!date) {
+      showAlertBox("Thiếu thông tin", "Thông tin ngày sinh không thể bỏ trống");
+      return;
+    }
+    setLoading(true);
+    register({
+      registerData: {
+        ...registerData,
+        address,
+        wardId: wardId === -1 ? 1 : wardId,
+        fullName,
+        gender,
+        dob: date.toJSON(),
+      },
+      setSuccess,
+    });
+    setRegisterData({
+      ...registerData,
+      address,
+      wardId,
+      fullName,
+      gender,
+      dob: date.toJSON(),
+    });
   };
 
   // Event fire when another dob date is picked
@@ -64,6 +141,10 @@ const RegisterInformationScreen = () => {
     if (date) setDisplayedDate(moment(date).format("DD/MM/YYYY").toString());
   }, [date]);
 
+  const navigateToLoginScreenAction = () => {
+    goToLoginScreen(navigation);
+  };
+
   return (
     <KeyboardAvoidingView>
       <ScrollView>
@@ -77,7 +158,10 @@ const RegisterInformationScreen = () => {
           />
         )}
 
-        <Center flex={1} minHeight={Math.round(useWindowDimensions().height)}>
+        <Center
+          flex={1}
+          minHeight={Math.round(useWindowDimensions().height - 40)}
+        >
           <VStack
             flex={1}
             justifyContent="center"
@@ -155,7 +239,6 @@ const RegisterInformationScreen = () => {
                 >
                   <Select.Item label="Nam" value={1} />
                   <Select.Item label="Nữ" value={0} />
-                  <Select.Item label="Không muốn nói" value={-1} />
                 </Select>
               )}
             />
@@ -200,11 +283,16 @@ const RegisterInformationScreen = () => {
                   fontSize="md"
                   placeholder="Tỉnh, thành phố"
                   onBlur={onBlur}
-                  onChangeText={onChange}
-                  value={value}
+                  onValueChange={onChange}
+                  selectedValue={value}
                 >
-                  <Select.Item label="Hà Nội" value={1} />
-                  <Select.Item label="Hồ Chí Minh" value={2} />
+                  {provinceList.map((province) => (
+                    <Select.Item
+                      label={province.name}
+                      value={province.id}
+                      key={province.id}
+                    />
+                  ))}
                 </Select>
               )}
             />
@@ -219,11 +307,16 @@ const RegisterInformationScreen = () => {
                   fontSize="md"
                   placeholder="Quận, huyện"
                   onBlur={onBlur}
-                  onChangeText={onChange}
-                  value={value}
+                  onValueChange={onChange}
+                  selectedValue={value}
                 >
-                  <Select.Item label="Hai Bà Trưng" value={1} />
-                  <Select.Item label="Hoàng Mai" value={2} />
+                  {districtList.map((district) => (
+                    <Select.Item
+                      label={district.name}
+                      value={district.id}
+                      key={district.id}
+                    />
+                  ))}
                 </Select>
               )}
             />
@@ -238,21 +331,32 @@ const RegisterInformationScreen = () => {
                   fontSize="md"
                   placeholder="Phường, xã"
                   onBlur={onBlur}
-                  onChangeText={onChange}
-                  value={value}
+                  onValueChange={onChange}
+                  selectedValue={value}
                 >
-                  <Select.Item label="Vĩnh Hưng" value={1} />
-                  <Select.Item label="Thanh Lương" value={2} />
+                  {wardList.map((ward) => (
+                    <Select.Item
+                      label={ward.name}
+                      value={ward.id}
+                      key={ward.id}
+                    />
+                  ))}
                 </Select>
               )}
             />
 
             {/* Submit button */}
-            <Button mt={3} size="lg" onPress={handleSubmit(onSubmit)}>
+            <Button
+              mt={3}
+              size="lg"
+              onPress={handleSubmit(onSubmit)}
+              isLoading={loading}
+              isDisabled={loading}
+            >
               Đăng ký
             </Button>
           </VStack>
-          <Text mb={6}>
+          <Text mb={6} onPress={navigateToLoginScreenAction}>
             Bạn chưa có tài khoản? <Text underline>Đăng nhập</Text>
           </Text>
         </Center>
