@@ -40,6 +40,7 @@ const OTPScreen = () => {
   const validateOtp = useStoreActions(
     (actions) => actions.UtilModel.validateOtp,
   );
+  const sendOtp = useStoreActions((actions) => actions.UtilModel.sendOtp);
 
   const [countdown, setCountdown] = useState(initialCountdown);
   const [loading, setLoading] = useState(false); // State placeholder for future API implement
@@ -54,6 +55,7 @@ const OTPScreen = () => {
 
   // Reset the countdown timer
   const resetCountdown = () => {
+    sendOtp({ phone: route.params.phone });
     setCountdown(initialCountdown); // Reset countdown value
     // Run the countdown timer
     countdownInterval = setInterval(() => {
