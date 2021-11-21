@@ -13,6 +13,7 @@ import { showAlertAbsoluteBox } from "../utilities";
 const AdminReportReviewDetailScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
+  const [isActive, setActive] = useState(true);
   const [isSuccess, setIsSuccess] = useState(null);
   const reviewReportDetail = useStoreState(
     (states) => states.ReportModel.reviewReportDetail,
@@ -107,6 +108,7 @@ const AdminReportReviewDetailScreen = () => {
     if (route.params.id) {
       getReviewReportDetail({ id: route.params.id, setIsSuccess });
     }
+    setActive(route.params.isActive);
   }, []);
 
   useEffect(() => {
@@ -123,7 +125,7 @@ const AdminReportReviewDetailScreen = () => {
     setIsSuccess(null);
   }, [isSuccess]);
   return (
-    <AdminReport>
+    <AdminReport isActive={isActive}>
       <FlatList
         pt="0.5"
         data={reportDetailList}

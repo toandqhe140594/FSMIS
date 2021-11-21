@@ -14,6 +14,7 @@ const AdminReportPostDetailScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
   const [isSuccess, setIsSuccess] = useState(null);
+  const [isActive, setActive] = useState(true);
   const postReportDetail = useStoreState(
     (states) => states.ReportModel.postReportDetail,
   );
@@ -120,6 +121,7 @@ const AdminReportPostDetailScreen = () => {
     if (route.params.id) {
       getPostReportDetail({ id: route.params.id, setIsSuccess });
     }
+    setActive(route.params.isActive);
   }, []);
 
   useEffect(() => {
@@ -137,7 +139,7 @@ const AdminReportPostDetailScreen = () => {
   }, [isSuccess]);
 
   return (
-    <AdminReport>
+    <AdminReport isActive={isActive}>
       <FlatList
         ListHeaderComponent={headerListComponent}
         ListFooterComponent={footerComponent}

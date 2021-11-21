@@ -340,6 +340,23 @@ const model = {
       setIsSuccess(false);
     }
   }),
+
+  solvedReport: thunk(async (actions, payload) => {
+    const { id, setIsSuccess } = payload;
+    try {
+      const { status } = await http.post(`/admin/report/solved/${id}`);
+      if (status === 200) {
+        // actions.setCatchReportDetail(data);
+        setIsSuccess(true);
+        console.log(`status`, status);
+      }
+    } catch (error) {
+      console.log(`error`, error);
+      setIsSuccess(false);
+      // handle error
+      // setIsSuccess(false);
+    }
+  }),
 };
 
 export default model;

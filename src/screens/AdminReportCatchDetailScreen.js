@@ -10,10 +10,12 @@ import styles from "../config/styles";
 import { goToAdminFLocationOverviewScreen } from "../navigations";
 import { showAlertAbsoluteBox } from "../utilities";
 
+// View report about angler catch.
 const AdminReportCatchDetailScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
   const [isSuccess, setIsSuccess] = useState(null);
+  const [isActive, setActive] = useState(true);
   const catchReportDetail = useStoreState(
     (states) => states.ReportModel.catchReportDetail,
   );
@@ -110,6 +112,7 @@ const AdminReportCatchDetailScreen = () => {
     if (route.params.id) {
       getCatchReportDetail({ id: route.params.id, setIsSuccess });
     }
+    setActive(route.params.isActive);
   }, []);
   useEffect(() => {
     if (isSuccess === false) {
@@ -126,7 +129,7 @@ const AdminReportCatchDetailScreen = () => {
   }, [isSuccess]);
 
   return (
-    <AdminReport>
+    <AdminReport isActive={isActive}>
       <FlatList
         ListHeaderComponent={headerListComponent}
         ListFooterComponent={footerComponent}

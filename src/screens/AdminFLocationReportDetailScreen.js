@@ -13,6 +13,8 @@ const AdminFLocationReportDetailScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
   const [isSuccess, setIsSuccess] = useState(null);
+  const [isLoading, setIsLoading] = useState(null);
+  const [isActive, setActive] = useState(true);
   const locationReportDetail = useStoreState(
     (states) => states.ReportModel.locationReportDetail,
   );
@@ -21,6 +23,15 @@ const AdminFLocationReportDetailScreen = () => {
   const getLocationReportDetail = useStoreActions(
     (actions) => actions.ReportModel.getLocationReportDetail,
   );
+  const solvedReport = useStoreActions(
+    (actions) => actions.ReportModel.solvedReport,
+  );
+
+  const solvedReportHandler = () => {
+    solvedReport({ id: locationId, setIsSuccess });
+    setIsLoading(true);
+  };
+
   const goToFLocationDetailHandler = () => {
     goToAdminFLocationOverviewScreen(navigation, { id: locationId });
   };
@@ -82,7 +93,9 @@ const AdminFLocationReportDetailScreen = () => {
     if (route.params.id) {
       getLocationReportDetail({ id: route.params.id, setIsSuccess });
     }
+    setActive(route.params.isActive);
   }, []);
+
   useEffect(() => {
     if (isSuccess === false) {
       showAlertAbsoluteBox(
@@ -95,10 +108,15 @@ const AdminFLocationReportDetailScreen = () => {
       );
     }
     setIsSuccess(null);
+    setIsLoading(false);
   }, [isSuccess]);
 
   return (
-    <AdminReport>
+    <AdminReport
+      isActive={isActive}
+      eventPress={solvedReportHandler}
+      isLoading={isLoading}
+    >
       <FlatList
         pt="0.5"
         data={reportDetailList}

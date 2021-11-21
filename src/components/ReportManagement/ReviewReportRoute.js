@@ -37,7 +37,10 @@ const ReviewReportRoute = () => {
   const renderItem = ({ item }) => (
     <TouchableOpacity
       onPress={() => {
-        goToAdminReviewReportDetailScreen(navigation, { id: item.id });
+        goToAdminReviewReportDetailScreen(navigation, {
+          id: item.id,
+          isActive: item.active,
+        });
       }}
     >
       <ReportCard {...item} isReviewReport />
