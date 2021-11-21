@@ -87,7 +87,6 @@ public class PostService {
             postRepos.save(post);
             return new ResponseTextDtoOut("Chỉnh sửa bài viết thành công!");
         }
-
     }
 
     public ResponseTextDtoOut deletePost(Long postId, HttpServletRequest request) {

@@ -104,6 +104,5 @@ public class FishingLocation {
     @OneToMany(mappedBy = "fishingLocation")
     private List<Catches> catchesList;
 
-    @Transient
-    private float score;
+    private Float score;
 }

@@ -16,4 +16,5 @@ public class FilterDtoIn {
     private List<Long> provinceIdList;
     private List<Long> fishSpeciesIdList;
     private String input;
+    private Integer score;
 }

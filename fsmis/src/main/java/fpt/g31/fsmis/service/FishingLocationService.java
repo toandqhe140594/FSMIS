@@ -1,5 +1,10 @@
 package fpt.g31.fsmis.service;
 
+import com.google.maps.DistanceMatrixApi;
+import com.google.maps.GeoApiContext;
+import com.google.maps.errors.ApiException;
+import com.google.maps.model.DistanceMatrix;
+import com.google.maps.model.LatLng;
 import fpt.g31.fsmis.dto.input.FilterDtoIn;
 import fpt.g31.fsmis.dto.input.FishingLocationDtoIn;
 import fpt.g31.fsmis.dto.input.SuggestedLocationDtoIn;
@@ -23,6 +28,7 @@ import org.springframework.stereotype.Service;
 import javax.persistence.criteria.Join;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ValidationException;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -69,6 +75,7 @@ public class FishingLocationService {
                 .active(true)
                 .verify(false)
                 .closed(false)
+                .score(0F)
                 .owner(owner)
                 .build();
         fishingLocationRepos.save(fishingLocation);
@@ -143,11 +150,24 @@ public class FishingLocationService {
     }
 
     public List<FishingLocationPinDtoOut> getNearBy(Float longitude, Float latitude, Integer distance, Long methodId, Integer minRating) {
+//        GeoApiContext context = new GeoApiContext.Builder()
+//                .apiKey("AIzaSyDA0QPfk3Pi5hGyCdcOF5tFpzLDbatTKck")
+//                .build();
         List<FishingLocation> fishingLocationList = fishingLocationRepos.getNearByLocation(longitude, latitude, distance, methodId, minRating);
         List<FishingLocationPinDtoOut> fishingLocationPinDtoOutList = new ArrayList<>();
         for (FishingLocation fishingLocation : fishingLocationList) {
+//            try {
+//                DistanceMatrix distanceMatrix = DistanceMatrixApi.newRequest(context)
+//                        .origins(new LatLng(latitude, longitude))
+//                        .destinations(new LatLng(fishingLocation.getLatitude(), fishingLocation.getLongitude()))
+//                        .await();
+//                System.out.println(distanceMatrix.toString());
+//            } catch (ApiException | InterruptedException | IOException e) {
+//                e.printStackTrace();
+//            }
             fishingLocationPinDtoOutList.add(modelMapper.map(fishingLocation, FishingLocationPinDtoOut.class));
         }
+//        context.shutdown();
         return fishingLocationPinDtoOutList;
     }
 
@@ -375,7 +395,8 @@ public class FishingLocationService {
         } else {
             specification = where(fishingMethodIdIn(filterDtoIn.getFishingMethodIdList()))
                     .and(provinceIdIn(filterDtoIn.getProvinceIdList()))
-                    .and(fishSpeciesIdIn(filterDtoIn.getFishSpeciesIdList()));
+                    .and(fishSpeciesIdIn(filterDtoIn.getFishSpeciesIdList()))
+                    .and(scoreGreaterThan(filterDtoIn.getScore()));
             if (filterDtoIn.getInput() != null) {
                 String[] words = filterDtoIn.getInput().split(" ");
                 for (String word : words) {
@@ -460,6 +481,11 @@ public class FishingLocationService {
 
     private Specification<FishingLocation> phoneIs(String input) {
         return (root, criteriaQuery, criteriaBuilder) -> criteriaBuilder.equal(root.get("phone"), input);
+    }
+
+    private Specification<FishingLocation> scoreGreaterThan(Integer minScore) {
+        if (minScore == null || minScore < 1) return null;
+        return (root, criteriaQuery, criteriaBuilder) -> criteriaBuilder.greaterThanOrEqualTo(root.get("score"), minScore);
     }
 
     public ResponseTextDtoOut adminChangeVerify(Long locationId) {

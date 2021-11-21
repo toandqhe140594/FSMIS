@@ -28,12 +28,12 @@ import java.util.List;
 @AllArgsConstructor
 public class ReviewService {
 
+    private static final String REVIEW_NOT_FOUND = "Không tìm thấy đánh giá";
     private final JwtFilter jwtFilter;
     private final FishingLocationRepos fishingLocationRepos;
     private final ReviewRepos reviewRepos;
     private final VoteRepos voteRepos;
     private final ModelMapper modelMapper;
-    private static final String REVIEW_NOT_FOUND = "Không tìm thấy đánh giá";
 
     public ReviewScoreDtoOut getReviewScore(Long locationId) {
         Double score = reviewRepos.getAverageScoreByFishingLocationIdAndActiveIsTrue(locationId);
@@ -72,7 +72,7 @@ public class ReviewService {
     public ReviewDtoOut postReview(HttpServletRequest request, Long locationId, ReviewDtoIn reviewDtoIn) {
         User user = jwtFilter.getUserFromToken(request);
         if (reviewRepos.findByFishingLocationIdAndUserIdAndActiveIsTrue(locationId, user.getId()) != null) {
-            throw new ValidationException("Đánh giá đã tồn tại");
+            throw new ValidationException("Bạn đã đánh giá ở địa điểm này rồi");
         }
         FishingLocation fishingLocation = fishingLocationRepos.findById(locationId)
                 .orElseThrow(() -> new NotFoundException("Không tìm thấy điểm câu"));
@@ -82,6 +82,8 @@ public class ReviewService {
         review.setUser(user);
         review.setFishingLocation(fishingLocation);
         reviewRepos.save(review);
+        fishingLocation.setScore(reviewRepos.getAverageScoreByFishingLocationIdAndActiveIsTrue(fishingLocation.getId()).floatValue());
+        fishingLocationRepos.save(fishingLocation);
         return ReviewDtoOut.builder()
                 .id(0L)
                 .userId(user.getId())
@@ -104,6 +106,10 @@ public class ReviewService {
         }
         review.setActive(false);
         reviewRepos.save(review);
+        FishingLocation location = review.getFishingLocation();
+        Double avgScore = reviewRepos.getAverageScoreByFishingLocationIdAndActiveIsTrue(locationId);
+        location.setScore(avgScore == null ? 0 : avgScore.floatValue());
+        fishingLocationRepos.save(location);
         return "Xóa đánh giá thành công";
     }
 
@@ -160,6 +166,10 @@ public class ReviewService {
                 .orElseThrow(() -> new NotFoundException(REVIEW_NOT_FOUND));
         review.setActive(false);
         reviewRepos.save(review);
+        FishingLocation location = review.getFishingLocation();
+        Double avgScore = reviewRepos.getAverageScoreByFishingLocationIdAndActiveIsTrue(location.getId());
+        location.setScore(avgScore == null ? 0 : avgScore.floatValue());
+        fishingLocationRepos.save(location);
         return new ResponseTextDtoOut("Xóa bài đánh giá thành công");
     }
 }
