@@ -1,17 +1,12 @@
-import * as apis from "./api";
-import * as routes from "./route";
-import * as validationSchema from "./validationSchema";
+import * as API_URL from "./api";
+import * as ROUTE_NAMES from "./route";
+import * as SCHEMA from "./validationSchema";
 
-export const ROUTE_NAMES = {
-  ...routes,
-};
-export const API_URL = {
-  ...apis,
-};
+export { ROUTE_NAMES };
 
-export const SCHEMA = {
-  ...validationSchema,
-};
+export { API_URL };
+
+export { SCHEMA };
 
 export const phoneRegExp =
   /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
