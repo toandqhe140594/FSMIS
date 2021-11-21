@@ -238,7 +238,7 @@ public class ReportService {
     public ResponseTextDtoOut markReportAsSolved(Long reportId) {
         Report report = reportRepos.findById(reportId)
                 .orElseThrow(() -> new NotFoundException(REPORT_NOT_FOUND));
-        report.setActive(true);
+        report.setActive(false);
         reportRepos.save(report);
         return new ResponseTextDtoOut("Xử lý báo cáo thành công");
     }
