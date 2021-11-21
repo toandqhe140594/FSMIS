@@ -12,6 +12,7 @@ const styles = StyleSheet.create({
   inputComponent: {
     backgroundColor: "white",
   },
+  disabled: { backgroundColor: "#d4d4d4" },
 });
 
 const INPUT_TYPE_TEXT = "text";
@@ -26,6 +27,7 @@ const InputComponent = ({
   hasAsterisk,
   myStyles,
   leftIcon,
+  rightIcon,
   controllerName,
   useNumPad,
   shouldDisable,
@@ -51,6 +53,7 @@ const InputComponent = ({
         render={({ field: { onChange, onBlur, value } }) => (
           <Input
             InputLeftElement={leftIcon}
+            InputRightElement={rightIcon}
             type={useSecureInput ? INPUT_TYPE_PASSWORD : INPUT_TYPE_TEXT}
             placeholder={placeholder}
             onChangeText={onChange}
@@ -61,7 +64,7 @@ const InputComponent = ({
               useNumPad ? KEYBOARD_TYPE_NUMBER_PAD : KEYBOARD_TYPE_DEFAULT
             }
             isDisabled={shouldDisable}
-            style={styles.inputComponent}
+            style={shouldDisable ? styles.disabled : styles.inputComponent}
           />
         )}
       />
@@ -83,6 +86,7 @@ InputComponent.propTypes = {
   hasAsterisk: PropTypes.bool,
   isTitle: PropTypes.bool,
   leftIcon: PropTypes.element,
+  rightIcon: PropTypes.element,
   controllerName: PropTypes.string,
   useNumPad: PropTypes.bool,
   shouldDisable: PropTypes.bool,
@@ -99,7 +103,8 @@ InputComponent.defaultProps = {
   myStyles: {},
   hasAsterisk: false,
   isTitle: false,
-  leftIcon: <></>,
+  leftIcon: null,
+  rightIcon: null,
   controllerName: "",
   useNumPad: false,
   shouldDisable: false,

@@ -1,8 +1,13 @@
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { useStoreActions } from "easy-peasy";
 import { Button, Center, Heading, Input, Text, VStack } from "native-base";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
+
+import { goToLoginScreen } from "../navigations";
+import { showToastMessage } from "../utilities";
 
 // Validation schema for form
 const validationSchema = yup.object().shape({
@@ -15,11 +20,9 @@ const validationSchema = yup.object().shape({
     .oneOf([yup.ref("password"), null], "Mật khẩu không khớp"),
 });
 
-const onSubmit = (data) => {
-  console.log(data); // Test only
-};
-
 const ChangePasswordScreen = () => {
+  const route = useRoute();
+  const navigation = useNavigation();
   const {
     control,
     handleSubmit,
@@ -29,6 +32,26 @@ const ChangePasswordScreen = () => {
     reValidateMode: "onChange",
     resolver: yupResolver(validationSchema),
   });
+
+  const resetPassword = useStoreActions(
+    (actions) => actions.UtilModel.resetPassword,
+  );
+  const [success, setSuccess] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const onSubmit = (data) => {
+    setLoading(true);
+    resetPassword({ ...data, phone: route.params?.phone, setSuccess });
+  };
+
+  useEffect(() => {
+    if (success === true) {
+      showToastMessage("Đổi mật khẩu thành công");
+      goToLoginScreen(navigation);
+    }
+    setLoading(false);
+    setSuccess(null);
+  }, [success]);
 
   return (
     <Center flex={1}>
@@ -81,7 +104,13 @@ const ChangePasswordScreen = () => {
           </Text>
         )}
         {/* Submit button */}
-        <Button size="lg" w="100%" onPress={handleSubmit(onSubmit)}>
+        <Button
+          size="lg"
+          w="100%"
+          onPress={handleSubmit(onSubmit)}
+          isLoading={loading}
+          isDisabled={loading}
+        >
           Tiếp tục
         </Button>
       </VStack>

@@ -352,7 +352,6 @@ const model = {
         actions.setCurrentPinPost({});
       }
     } catch (error) {
-    
       setDeleteSuccess(false);
     }
   }),
@@ -627,7 +626,11 @@ const model = {
   suggestNewLocation: thunk(async (actions, payload) => {
     const { data, setSuccess } = payload;
     try {
-      await http.post(API_URL.LOCATION_SUGGEST, data);
+      await http.post(API_URL.LOCATION_SUGGEST, {
+        phone: data.ownerPhone,
+        name: data.locationName,
+        description: data.description,
+      });
       setSuccess(true);
     } catch (error) {
       setSuccess(false);

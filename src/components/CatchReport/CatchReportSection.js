@@ -12,7 +12,7 @@ import DependentFieldWatcher from "./DependentFieldWatcher";
 
 const FishIcon = () => (
   <FontAwesome5
-    style={{ marginLeft: 12 }}
+    style={{ marginHorizontal: 8 }}
     name="fish"
     size={24}
     color="black"
@@ -21,7 +21,7 @@ const FishIcon = () => (
 
 const WeightIcon = () => (
   <MaterialCommunityIcons
-    style={{ marginLeft: 12 }}
+    style={{ marginHorizontal: 8 }}
     name="weight-kilogram"
     size={28}
     color="#262626"
@@ -100,6 +100,7 @@ const CatchReportSection = ({ fishList }) => {
             Lưu ý: Chỉ cần nhập một trong hai trường dưới đây
           </Text>
           <InputComponent
+            useNumPad
             myStyles={{ marginBottom: 8 }}
             placeholder="Nhập số con bắt được"
             leftIcon={<FishIcon />}
@@ -109,6 +110,7 @@ const CatchReportSection = ({ fishList }) => {
           />
           <FieldWatcherResetter name={`catchesDetailList[${index}].quantity`} />
           <InputComponent
+            useNumPad
             placeholder="Nhập cân nặng bắt được (kg)"
             leftIcon={<WeightIcon />}
             controllerName={`catchesDetailList[${index}].weight`}

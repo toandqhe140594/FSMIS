@@ -11,7 +11,7 @@ import SelectComponent from "../common/SelectComponent";
 
 const FishLeftIcon = () => (
   <FontAwesome5
-    style={{ marginLeft: 12 }}
+    style={{ marginHorizontal: 8 }}
     name="fish"
     size={24}
     color="black"
@@ -20,7 +20,7 @@ const FishLeftIcon = () => (
 
 const WeightLeftIcon = () => (
   <MaterialCommunityIcons
-    style={{ marginLeft: 12 }}
+    style={{ marginHorizontal: 8 }}
     name="weight-kilogram"
     size={28}
     color="#262626"
@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginTop: 8,
   },
-  leftIconText: { marginLeft: 12, fontSize: 12, fontWeight: "bold" },
+  leftIconText: { marginHorizontal: 8, fontSize: 12, fontWeight: "bold" },
   hint: {
     fontStyle: "italic",
     fontSize: 12,

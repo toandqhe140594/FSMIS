@@ -91,6 +91,7 @@ const FManageHomeScreen = () => {
               />
               <CloseFLocationComponent
                 name={locationDetails.name || "Hồ câu"}
+                phone={locationDetails.phone}
               />
             </>
           )}

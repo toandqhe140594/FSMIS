@@ -92,13 +92,18 @@ export const FMANAGE_LAKE_FORM = yup.object().shape({
   methods: yup.array().min(1, "Trường này kia không được để trống"),
   length: yup
     .number()
+    .max(1000, "Độ dài tối đa là 1000m")
     .typeError("Trường này chỉ được nhập số")
     .required("Chiều dài hồ không được để trống"),
   width: yup
     .number()
+    .max(1000, "Độ rộng tối đa là 1000m")
     .typeError("Trường này chỉ được nhập số")
     .required("Chiều rộng hồ không được để trống"),
-  depth: yup.number().required("Độ sâu của hồ không được để trống"),
+  depth: yup
+    .number()
+    .max(50, "Độ sâu tối đa là 50m")
+    .required("Độ sâu của hồ không được để trống"),
   fishInLakeList: yup
     .array()
     .min(1, "Phải có ít nhất một loại cá trong hồ")
@@ -272,8 +277,12 @@ export const FMANAGE_PROFILE_FORM = yup.object().shape({
 });
 
 export const ADMIN_FISH_ADD_EDIT_FORM = yup.object().shape({
-  fishName: yup.string().required("Tên cá không thể bỏ trống"),
-  fishImage: yup.array().min(1, "Hãy chọn ảnh cho loại cá"),
+  name: yup.string().required("Tên cá không thể bỏ trống"),
+  imageArray: yup.array().min(1, "Hãy chọn ảnh cho loại cá"),
+});
+
+export const ADMIN_FISHING_METHOD_ADD_FORM = yup.object().shape({
+  name: yup.string().required("Tên loại hình không thể bỏ trống"),
 });
 
 export const FMANAGE_SUGGESTION_FORM = yup.object().shape({
@@ -320,4 +329,15 @@ export const REGISTER_PHONE_AND_PASS_FORM = yup.object().shape({
     .string()
     .required("Trường này không thể bỏ trống")
     .oneOf([yup.ref("password"), null], "Mật khẩu không khớp"),
+});
+
+export const CHANGE_PHONE_NUMBER_FORM = yup.object().shape({
+  phone: yup
+    .string()
+    .matches(/((09|03|07|08|05)+([0-9]{8})\b)/, "Số điện thoại không hợp lệ")
+    .required("Số điện thoại không dược bỏ trống"),
+  password: yup
+    .string()
+    .min(8, "Mật khẩu phải chứa ít nhất 8 ký tự")
+    .required("Mật khẩu không được bỏ trống"),
 });

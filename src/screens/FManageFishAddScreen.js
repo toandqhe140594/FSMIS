@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import { Overlay } from "react-native-elements";
 
+import FieldWatcherResetter from "../components/common/FieldWatcherResetter";
 import InputComponent from "../components/common/InputComponent";
 import SelectComponent from "../components/common/SelectComponent";
 import HeaderTab from "../components/HeaderTab";
@@ -71,9 +72,9 @@ const FManageFishAddScreen = () => {
     defaultValues: { quantity: 0, totalWeight: 0 },
     resolver: yupResolver(SCHEMA.FMANAGE_LAKE_FISH_ADD_FORM),
   });
-  const { handleSubmit, watch, setValue, clearErrors } = methods;
-  const watchQuantity = watch("quantity", 0);
-  const watchTotalWeight = watch("totalWeight", 0);
+  const { handleSubmit } = methods;
+  // const watchQuantity = watch("quantity", 0);
+  // const watchTotalWeight = watch("totalWeight", 0);
   const onSubmit = (data) => {
     setIsLoading(true);
     const addData = Object.fromEntries(
@@ -90,19 +91,19 @@ const FManageFishAddScreen = () => {
     })();
   }, []);
 
-  useEffect(() => {
-    if (watchQuantity === "") {
-      setValue("quantity", 0);
-      clearErrors("quantity");
-    }
-  }, [watchQuantity]);
+  // useEffect(() => {
+  //   if (watchQuantity === "") {
+  //     setValue("quantity", 0);
+  //     clearErrors("quantity");
+  //   }
+  // }, [watchQuantity]);
 
-  useEffect(() => {
-    if (watchTotalWeight === "") {
-      setValue("totalWeight", 0);
-      clearErrors("totalWeight");
-    }
-  }, [watchTotalWeight]);
+  // useEffect(() => {
+  //   if (watchTotalWeight === "") {
+  //     setValue("totalWeight", 0);
+  //     clearErrors("totalWeight");
+  //   }
+  // }, [watchTotalWeight]);
 
   useEffect(() => {
     if (addStatus === "SUCCESS") {
@@ -168,12 +169,14 @@ const FManageFishAddScreen = () => {
               controllerName="quantity"
               useNumPad
             />
+            <FieldWatcherResetter name="quantity" />
             <InputComponent
               label="Tổng cân nặng"
               placeholder="Nhập tổng cân nặng (kg)"
               controllerName="totalWeight"
               useNumPad
             />
+            <FieldWatcherResetter name="totalWeight" />
           </VStack>
           <Button style={styles.button} onPress={handleSubmit(onSubmit)}>
             Thêm cá

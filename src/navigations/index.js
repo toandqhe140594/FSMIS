@@ -19,16 +19,16 @@ const goToRegisterScreen = (navigation) => {
   navigation.navigate(ROUTE_NAMES.REGISTER);
 };
 
-const goToRegisterInformationScreen = (navigation) => {
-  navigation.navigate(ROUTE_NAMES.REGISTER_INFORMATION);
+const goToRegisterInformationScreen = (navigation, params) => {
+  navigation.navigate(ROUTE_NAMES.REGISTER_INFORMATION, { ...params });
 };
 
 const goToForgotPasswordScreen = (navigation) => {
   navigation.navigate(ROUTE_NAMES.PASSWORD_FORGOT);
 };
 
-const goToChangePasswordScreen = (navigation) => {
-  navigation.navigate(ROUTE_NAMES.PASSWORD_CHANGE);
+const goToChangePasswordScreen = (navigation, params) => {
+  navigation.navigate(ROUTE_NAMES.PASSWORD_CHANGE, { ...params });
 };
 
 /**
@@ -203,6 +203,18 @@ const goToAdminFLocationOverviewScreen = (navigation, params) => {
   });
 };
 
+const goToAdminFLocationSuggestedManagementScreen = (navigation, params) => {
+  navigation.navigate(ROUTE_NAMES.ADMIN_LOCATION_SUGGEST_MANAGEMENT, {
+    ...params,
+  });
+};
+
+const goToAdminFLocationSuggestedDetailScreen = (navigation, params) => {
+  navigation.navigate(ROUTE_NAMES.ADMIN_LOCATION_SUGGEST_DETAIL, {
+    ...params,
+  });
+};
+
 const goToFManagePostScreen = (navigation, params) => {
   navigation.navigate(ROUTE_NAMES.FMANAGE_POST_MANAGEMENT, {
     ...params,
@@ -256,6 +268,8 @@ export {
   goToAdminFishManagementScreen,
   goToAdminFLocationOverviewScreen,
   goToAdminFLocationReportDetailScreen,
+  goToAdminFLocationSuggestedDetailScreen,
+  goToAdminFLocationSuggestedManagementScreen,
   goToAdminPostReportDetailScreen,
   goToAdminReviewReportDetailScreen,
   goToAdvanceSearchScreen,

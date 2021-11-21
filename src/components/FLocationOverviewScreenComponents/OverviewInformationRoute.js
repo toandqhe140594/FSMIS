@@ -9,6 +9,7 @@ import Swiper from "react-native-swiper";
 
 const OverviewInformationRoute = () => {
   const [loading, setLoading] = useState(true);
+  const [marginTop, setMarginTop] = useState(1);
   const locationOverview = useStoreState(
     (states) => states.LocationModel.locationOverview,
   );
@@ -35,6 +36,9 @@ const OverviewInformationRoute = () => {
 
   useEffect(() => {
     if (locationOverview && locationOverview.id) setLoading(false);
+    setTimeout(() => {
+      setMarginTop(0);
+    }, 50);
   }, [locationOverview]);
 
   if (loading)
@@ -130,9 +134,16 @@ const OverviewInformationRoute = () => {
                       latitudeDelta: 0.05,
                       longitudeDelta: 0.05,
                     }}
-                    style={{ height: 150, width: "100%" }}
+                    style={{ height: 150, width: "100%", marginTop }}
                     liteMode
                     showsMyLocationButton
+                    showsCompass
+                    showsBuildings
+                    showsIndoors
+                    showsPointsOfInterest
+                    showsTraffic
+                    showsIndoorLevelPicker
+                    showsScale
                   >
                     <Marker coordinate={{ latitude, longitude }} />
                   </MapView>

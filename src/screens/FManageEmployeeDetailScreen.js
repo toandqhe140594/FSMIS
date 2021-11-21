@@ -2,11 +2,11 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import { Button, Center } from "native-base";
 import React, { useEffect, useState } from "react";
-import { Alert, ToastAndroid } from "react-native";
 
 import EmployeeDetailBox from "../components/EmployeeDetailBox";
 import HeaderTab from "../components/HeaderTab";
 import { goBack } from "../navigations";
+import { showAlertConfirmBox, showToastMessage } from "../utilities";
 
 const FManageEmployeeDetailScreen = () => {
   const navigation = useNavigation();
@@ -21,45 +21,23 @@ const FManageEmployeeDetailScreen = () => {
   const [deleteSuccess, setDeleteSuccess] = useState(false);
 
   const onDeleteEmployee = () => {
-    Alert.alert(
+    showAlertConfirmBox(
       "Bạn muốn xóa nhân viên này khỏi hồ",
       `"${staffDetail.fullName}" sẽ bị xóa vĩnh viễn. Bạn không thể hoàn tác hành động này`,
-      [
-        {
-          text: "Quay lại",
-          style: "cancel",
-        },
-        {
-          text: "Xác nhận",
-          onPress: () => {
-            deleteStaffById({ userId: staffDetail.id, setDeleteSuccess });
-          },
-        },
-      ],
+      () => {
+        deleteStaffById({ userId: staffDetail.id, setDeleteSuccess });
+      },
     );
   };
 
   useEffect(() => {
     // If error occur
-    if (staffManagementErrorMsg)
-      ToastAndroid.showWithGravityAndOffset(
-        staffManagementErrorMsg,
-        ToastAndroid.LONG,
-        ToastAndroid.BOTTOM,
-        25,
-        50,
-      );
+    if (staffManagementErrorMsg) showToastMessage(staffManagementErrorMsg);
   }, [staffManagementErrorMsg]);
 
   useEffect(() => {
     if (deleteSuccess) {
-      ToastAndroid.showWithGravityAndOffset(
-        "Xóa thành công",
-        ToastAndroid.LONG,
-        ToastAndroid.BOTTOM,
-        25,
-        50,
-      );
+      showToastMessage("Xóa thành công");
       goBack(navigation);
     }
   }, [deleteSuccess]);
@@ -83,11 +61,12 @@ const FManageEmployeeDetailScreen = () => {
             gender={staffDetail.gender}
             address={staffDetail.address}
             isDetailed
+            image={staffDetail.avatar}
           />
         )}
 
         <Center w="70%" bg="lightBlue.100" mb={5}>
-          <Button w="100%" onPress={onDeleteEmployee}>
+          <Button w="100%" onPress={onDeleteEmployee} colorScheme="error">
             Xóa nhân viên
           </Button>
         </Center>

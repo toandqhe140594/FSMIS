@@ -1,11 +1,17 @@
 export const AUTHENTICATION_LOGIN = "auth/login";
 export const AUTHENTICATION_REGISTER = "auth/register";
+export const AUTHENTICATION_PASSWORD_RESET = "auth/forgot";
 
 export const ADMIN_FISH_LIST = "util/fish";
-export const ADMIN_FISH_ADD = "util/fish";
-export const ADMIN_FISH_EDIT = "util/fish";
-export const ADMIN_FISH_DELETE = "util/fish";
+export const ADMIN_FISH_LIST_FULL = "admin/fish";
+export const ADMIN_FISH_ADD = "admin/fish/add";
+export const ADMIN_FISH_EDIT = "admin/fish/edit";
+export const ADMIN_FISH_UPDATE_STATUS = "admin/fish/change-active";
 export const ADMIN_FISHING_METHOD_LIST = "util/method";
+export const ADMIN_FISHING_METHOD_LIST_FULL = "admin/method";
+export const ADMIN_FISHING_METHOD_ADD = "admin/method/add";
+export const ADMIN_FISHING_METHOD_EDIT = "admin/method/edit";
+export const ADMIN_FISHING_METHOD_UPDATE_STATUS = "admin/method/change-active";
 export const ADMIN_ACCOUNT_LIST = "admin/account";
 export const ADMIN_ACCOUNT_INFORMATION = "admin/account";
 export const ADMIN_ACCOUNT_ACTIVATE = "admin/account/change-active";
@@ -19,6 +25,9 @@ export const ADMIN_REPORT_REVIEW_LIST = "admin/report/review";
 export const ADMIN_FISHING_LOCATION_LIST = "admin/location";
 export const ADMIN_FISHING_LOCATION_ACTIVATE = "admin/location/active";
 export const ADMIN_FISHING_LOCATION_VERIFY = "admin/location/verify";
+export const ADMIN_FISHING_LOCATION_SUGGEST_LIST = "admin/location/suggested";
+export const ADMIN_FISHING_LOCATION_SUGGEST_REMOVE =
+  "admin/location/suggested/remove";
 
 export const STAFF_FIND_BY_PHONE = "findUserByPhone";
 export const STAFF_ADD = "staff/add";
@@ -33,6 +42,7 @@ export const PERSONAL_INFORMATION = "personal";
 export const PERSONAL_OWNED_LOCATION = "location/manager";
 export const PERSONAL_EDIT_PROFILE = "personal/edit";
 export const PERSONAL_PASSWORD_CHANGE = "personal/changepassword";
+export const PERSONAL_PHONE_CHANGE = "personal/changephone";
 
 export const LOCATION_OVERVIEW = "location";
 export const LOCATION_CHECKIN_STATUS = "checkin/status";
@@ -57,6 +67,7 @@ export const LOCATION_ADVANCED_SEARCH = "location/search";
 export const ADDRESS_ALL_PROVINCE = "address/province";
 export const ADDRESS_PROVINCE_DISTRICT = "address/district";
 export const ADDRESS_DISTRICT_WARD = "address/ward";
+export const ADDRESS_ALL = "address";
 
 export const SEND_CATCH_REPORT = "catches/report";
 export const REPORT_WRITE = "report/add";
