@@ -13,9 +13,9 @@ const AdminFLocationReportDetailScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
   const [isSuccess, setIsSuccess] = useState(null); // get data success
+  const [isActive, setActive] = useState(true);
   const [isSolvedSuccess, setIsSolvedSuccess] = useState(null); // post solved report handler success
   const [isLoading, setIsLoading] = useState(null);
-  const [isActive, setActive] = useState(true);
   const [reportId, setReportId] = useState();
   const locationReportDetail = useStoreState(
     (states) => states.ReportModel.locationReportDetail,
