@@ -2,6 +2,7 @@ package fpt.g31.fsmis.service;
 
 import fpt.g31.fsmis.dto.input.ReviewDtoIn;
 import fpt.g31.fsmis.dto.output.PaginationDtoOut;
+import fpt.g31.fsmis.dto.output.ResponseTextDtoOut;
 import fpt.g31.fsmis.dto.output.ReviewDtoOut;
 import fpt.g31.fsmis.dto.output.ReviewScoreDtoOut;
 import fpt.g31.fsmis.entity.*;
@@ -32,6 +33,7 @@ public class ReviewService {
     private final ReviewRepos reviewRepos;
     private final VoteRepos voteRepos;
     private final ModelMapper modelMapper;
+    private static final String REVIEW_NOT_FOUND = "Không tìm thấy đánh giá";
 
     public ReviewScoreDtoOut getReviewScore(Long locationId) {
         Double score = reviewRepos.getAverageScoreByFishingLocationIdAndActiveIsTrue(locationId);
@@ -151,5 +153,13 @@ public class ReviewService {
                 .pageNo(pageNo)
                 .items(output)
                 .build();
+    }
+
+    public ResponseTextDtoOut adminDeleteReview(Long reviewId) {
+        Review review = reviewRepos.findById(reviewId)
+                .orElseThrow(() -> new NotFoundException(REVIEW_NOT_FOUND));
+        review.setActive(false);
+        reviewRepos.save(review);
+        return new ResponseTextDtoOut("Xóa bài đánh giá thành công");
     }
 }

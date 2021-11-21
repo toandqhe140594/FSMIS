@@ -33,6 +33,7 @@ public class PostService {
     private JwtFilter jwtFilter;
     private ModelMapper modelMapper;
     private FishingLocationRepos locationRepos;
+    private static final String POST_NOT_FOUND = "Không tìm thấy bài viết!";
 
     public PaginationDtoOut getPostByLocationId(Long locationId, int pageNo) {
         if (pageNo <= 0) {
@@ -92,7 +93,7 @@ public class PostService {
     public ResponseTextDtoOut deletePost(Long postId, HttpServletRequest request) {
         User user = jwtFilter.getUserFromToken(request);
         Post post = postRepos.findById(postId)
-                .orElseThrow(() -> new NotFoundException("Không tìm thấy bài viết!"));
+                .orElseThrow(() -> new NotFoundException(POST_NOT_FOUND));
         FishingLocation location = post.getFishingLocation();
         if (!location.getOwner().equals(user)
                 && !location.getEmployeeList().contains(user)
@@ -108,7 +109,7 @@ public class PostService {
     public ResponseTextDtoOut pinPost(HttpServletRequest request, Long postId) {
         User user = jwtFilter.getUserFromToken(request);
         Post post = postRepos.findById(postId)
-                .orElseThrow(() -> new ValidationException("Không tìm thấy bài viết!"));
+                .orElseThrow(() -> new ValidationException(POST_NOT_FOUND));
         FishingLocation location = post.getFishingLocation();
         if (!location.getOwner().equals(user)
                 && !location.getEmployeeList().contains(user)) {
@@ -146,5 +147,14 @@ public class PostService {
                     .edited(pinnedPost.getEdited()).build();
         }
         return output;
+    }
+
+    public ResponseTextDtoOut adminDeletePost(Long postId) {
+        Post post = postRepos.findById(postId)
+                .orElseThrow(() -> new NotFoundException(POST_NOT_FOUND));
+        post.setActive(false);
+        post.setPinned(false);
+        postRepos.save(post);
+        return new ResponseTextDtoOut("Xóa bài viết thành công!");
     }
 }
