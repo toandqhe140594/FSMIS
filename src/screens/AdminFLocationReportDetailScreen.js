@@ -12,9 +12,11 @@ import { showAlertAbsoluteBox } from "../utilities";
 const AdminFLocationReportDetailScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
-  const [isSuccess, setIsSuccess] = useState(null);
+  const [isSuccess, setIsSuccess] = useState(null); // get data success
+  const [isSolvedSuccess, setIsSolvedSuccess] = useState(null); // post solved report handler success
   const [isLoading, setIsLoading] = useState(null);
   const [isActive, setActive] = useState(true);
+  const [reportId, setReportId] = useState();
   const locationReportDetail = useStoreState(
     (states) => states.ReportModel.locationReportDetail,
   );
@@ -28,7 +30,7 @@ const AdminFLocationReportDetailScreen = () => {
   );
 
   const solvedReportHandler = () => {
-    solvedReport({ id: locationId, setIsSuccess });
+    solvedReport({ id: reportId, setIsSuccess: setIsSolvedSuccess });
     setIsLoading(true);
   };
 
@@ -92,7 +94,9 @@ const AdminFLocationReportDetailScreen = () => {
   useEffect(() => {
     if (route.params.id) {
       getLocationReportDetail({ id: route.params.id, setIsSuccess });
+      setReportId(route.params.id);
     }
+    setIsLoading(true);
     setActive(route.params.isActive);
   }, []);
 
@@ -107,9 +111,32 @@ const AdminFLocationReportDetailScreen = () => {
         "Xác nhận",
       );
     }
-    setIsSuccess(null);
     setIsLoading(false);
+    setIsSuccess(null);
   }, [isSuccess]);
+
+  useEffect(() => {
+    if (isSolvedSuccess === true) {
+      showAlertAbsoluteBox(
+        "Xử lý thành công",
+        ``,
+        () => {
+          navigation.goBack();
+        },
+        "Xác nhận",
+      );
+    }
+    if (isSolvedSuccess === false) {
+      showAlertAbsoluteBox(
+        "Lỗi",
+        `Đã xảy ra lỗi, vui lòng thử lại.`,
+        () => {},
+        "Xác nhận",
+      );
+    }
+    setIsLoading(false);
+    setIsSolvedSuccess(null);
+  }, [isSolvedSuccess]);
 
   return (
     <AdminReport

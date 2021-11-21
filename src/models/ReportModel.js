@@ -273,9 +273,7 @@ const model = {
   getLocationReportDetail: thunk(async (actions, payload) => {
     const { id, setIsSuccess } = payload;
     try {
-      const { status, data } = await http.get(
-        `${API_URL.ADMIN_REPORT_LOCATION_LIST}/${id}`,
-      );
+      const { status, data } = await http.get(`/admin/report/location/${id}`);
       actions.setLocationReportDetail(data);
       if (status === 200) {
         setIsSuccess(true);
@@ -346,15 +344,11 @@ const model = {
     try {
       const { status } = await http.post(`/admin/report/solved/${id}`);
       if (status === 200) {
-        // actions.setCatchReportDetail(data);
         setIsSuccess(true);
-        console.log(`status`, status);
       }
     } catch (error) {
-      console.log(`error`, error);
-      setIsSuccess(false);
       // handle error
-      // setIsSuccess(false);
+      setIsSuccess(false);
     }
   }),
 };
