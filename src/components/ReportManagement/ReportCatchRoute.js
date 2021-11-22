@@ -1,7 +1,7 @@
-import { useNavigation } from "@react-navigation/native";
+import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import { Select } from "native-base";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -22,11 +22,13 @@ const FILTER_UNTOUCHED_VALUE = "INACTIVE";
 
 const ReportCatchRoute = () => {
   const navigation = useNavigation();
+  const isFocused = useIsFocused();
+  const isFocusedRef = useRef(true);
   const [isLoading, setIsLoading] = useState(true);
   const [bigLoading, setBigLoading] = useState(false);
   const [getStatus, setGetStatus] = useState("");
-  const [pageNo, setPageNo] = useState(1);
-  const [active, setActive] = useState(false);
+  const [mode, setMode] = useState("DEFAULT");
+  const [query, setQuery] = useState({ pageNo: 1, active: true });
   const [filter, setFilter] = useState(FILTER_UNTOUCHED_VALUE);
   const { listCatchReport, totalCatchReportPage } = useStoreState(
     (state) => state.ReportModel,
@@ -58,11 +60,11 @@ const ReportCatchRoute = () => {
    */
   const handleValueChange = (value) => {
     if (value !== filter) {
-      setIsLoading(true);
       setFilter(value);
-      setActive(value !== FILTER_UNTOUCHED_VALUE); // Change active based on list type
-      setPageNo(1); // Reset pageNo to 1 for new list
+      setQuery({ pageNo: 1, active: value === FILTER_UNTOUCHED_VALUE });
+      setMode("NEW");
       setBigLoading(true); // When change between each list type, use bigLoading
+      setIsLoading(true);
     }
   };
   /**
@@ -70,9 +72,10 @@ const ReportCatchRoute = () => {
    * process to the next catch report page
    */
   const handleLoadMore = () => {
-    if (pageNo < totalCatchReportPage) {
+    if (query.pageNo < totalCatchReportPage) {
+      setMode("DEFAULT");
+      setQuery((prev) => ({ ...prev, pageNo: prev.pageNo + 1 }));
       setIsLoading(true);
-      setPageNo(pageNo + 1);
     }
   };
   /**
@@ -84,8 +87,8 @@ const ReportCatchRoute = () => {
     };
   }, []);
   useEffect(() => {
-    getListReportCatch({ pageNo, setGetStatus, active });
-  }, [pageNo, active]);
+    if (isLoading) getListReportCatch({ mode, query, setGetStatus });
+  }, [isLoading]);
   /**
    * Trigger on getStatus return
    */
@@ -100,6 +103,18 @@ const ReportCatchRoute = () => {
       setGetStatus(null);
     }
   }, [getStatus]);
+
+  /**
+   * Trigger whenever screen focus state changes
+   */
+  useEffect(() => {
+    if (!isFocusedRef.current) {
+      setIsLoading(true);
+      setMode("NEW");
+      setQuery((prev) => ({ ...prev, pageNo: 1 }));
+    }
+    isFocusedRef.current = isFocused;
+  }, [isFocused]);
   return (
     <>
       <HeaderTab name="Quản lý báo cáo" />
@@ -125,12 +140,12 @@ const ReportCatchRoute = () => {
           fontSize="md"
         >
           <Select.Item
-            label={FILTER_TOUCHED_LABEL}
-            value={FILTER_TOUCHED_VALUE}
-          />
-          <Select.Item
             label={FILTER_UNTOUCHED_LABEL}
             value={FILTER_UNTOUCHED_VALUE}
+          />
+          <Select.Item
+            label={FILTER_TOUCHED_LABEL}
+            value={FILTER_TOUCHED_VALUE}
           />
         </Select>
 

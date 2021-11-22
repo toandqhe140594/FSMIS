@@ -62,11 +62,11 @@ const FLocationReportRoute = () => {
    */
   const handleValueChange = (value) => {
     if (value !== filter) {
+      setFilter(value);
+      setQuery({ pageNo: 1, active: value === FILTER_UNTOUCHED_VALUE });
+      setMode("NEW");
       setIsLoading(true);
       setBigLoading(true);
-      setFilter(value);
-      setQuery({ pageNo: 1, active: value !== FILTER_UNTOUCHED_VALUE });
-      setMode("NEW");
     }
   };
   /**
@@ -75,16 +75,15 @@ const FLocationReportRoute = () => {
    */
   const handleLoadMore = () => {
     if (query.pageNo < totalLocationReportPage) {
-      setIsLoading(true);
-      setMode("DEFAULT");
       setQuery((prev) => ({ ...prev, pageNo: prev.pageNo + 1 }));
+      setMode("DEFAULT");
+      setIsLoading(true);
     }
   };
   /**
    * Use only to reset list when unmount
    */
   useEffect(() => {
-    // useIsFocus here
     return () => {
       resetReportList({ type: "LOCATION" });
     };
@@ -103,10 +102,9 @@ const FLocationReportRoute = () => {
    */
   useEffect(() => {
     if (!isFocusedRef.current) {
-      setIsLoading(true);
-      setBigLoading(true);
       setMode("NEW");
       setQuery((prev) => ({ ...prev, pageNo: 1 }));
+      setIsLoading(true);
     }
     isFocusedRef.current = isFocused;
   }, [isFocused]);
@@ -117,11 +115,11 @@ const FLocationReportRoute = () => {
   useEffect(() => {
     if (getStatus === "SUCCESS") {
       setIsLoading(false);
-      setBigLoading(false);
+      if (bigLoading) setBigLoading(false);
       setGetStatus(null);
     } else if (getStatus === "FAILED") {
       setIsLoading(false);
-      setBigLoading(false);
+      if (bigLoading) setBigLoading(false);
       setGetStatus(null);
     }
   }, [getStatus]);
@@ -151,12 +149,12 @@ const FLocationReportRoute = () => {
           fontSize="md"
         >
           <Select.Item
-            label={FILTER_TOUCHED_LABEL}
-            value={FILTER_TOUCHED_VALUE}
-          />
-          <Select.Item
             label={FILTER_UNTOUCHED_LABEL}
             value={FILTER_UNTOUCHED_VALUE}
+          />
+          <Select.Item
+            label={FILTER_TOUCHED_LABEL}
+            value={FILTER_TOUCHED_VALUE}
           />
         </Select>
         <FlatList
