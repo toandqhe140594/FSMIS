@@ -8,7 +8,7 @@ import AvatarCard from "../components/AvatarCard";
 import ReviewFromAnglerSection from "../components/ReviewFromAnglerSection";
 import styles from "../config/styles";
 import { goToAdminFLocationOverviewScreen } from "../navigations";
-import { showAlertAbsoluteBox } from "../utilities";
+import { showAlertAbsoluteBox, showAlertConfirmBox } from "../utilities";
 
 const AdminReportReviewDetailScreen = () => {
   const route = useRoute();
@@ -28,12 +28,15 @@ const AdminReportReviewDetailScreen = () => {
     reviewDtoOut,
     reportDetailList,
   } = reviewReportDetail;
-  const getReviewReportDetail = useStoreActions(
-    (actions) => actions.ReportModel.getReviewReportDetail,
+  const { getReviewReportDetail, solvedReport, deleteReview } = useStoreActions(
+    (actions) => actions.ReportModel,
   );
-  const solvedReport = useStoreActions(
-    (actions) => actions.ReportModel.solvedReport,
-  );
+
+  const deleteReviewHandler = () => {
+    deleteReview({ id: reviewDtoOut.id, setIsSuccess: setIsSolvedSuccess });
+    setIsLoading(true);
+  };
+
   const goToFLocationDetailHandler = () => {
     goToAdminFLocationOverviewScreen(navigation, { id: locationId });
   };
@@ -41,11 +44,23 @@ const AdminReportReviewDetailScreen = () => {
     solvedReport({ id: reportId, setIsSuccess: setIsSolvedSuccess });
     setIsLoading(true);
   };
+  const onPressHandler = () => {
+    showAlertConfirmBox(
+      "Xác nhận xóa review.",
+      `Review của ${reviewDtoOut.userFullName} tại hồ ${locationName} sẽ bị xóa.`,
+      deleteReviewHandler,
+    );
+  };
   const headerListComponent = () => (
     <>
       {reviewDtoOut !== undefined ? (
         <VStack space={3} mt={4} px={3} pb={2}>
-          <Box backgroundColor="white" paddingTop={2} paddingBottom={2}>
+          <Box
+            backgroundColor="white"
+            paddingTop={2}
+            paddingBottom={2}
+            flexDirection="row"
+          >
             <ReviewFromAnglerSection
               id={reviewDtoOut.id}
               name={reviewDtoOut.userFullName}
@@ -58,6 +73,14 @@ const AdminReportReviewDetailScreen = () => {
               userImage={reviewDtoOut.userAvatar}
               isAdminView
             />
+            <Button
+              alignSelf="flex-end"
+              style={{ position: "relative", bottom: 11, right: 10 }}
+              colorScheme="danger"
+              onPress={onPressHandler}
+            >
+              Gỡ review
+            </Button>
           </Box>
           <Divider />
           <Box
