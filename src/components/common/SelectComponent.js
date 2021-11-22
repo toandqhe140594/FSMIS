@@ -57,7 +57,6 @@ const SelectComponent = ({
                   key={item[itemKeyIdentifier]}
                   label={item.name}
                   value={item[itemKeyIdentifier]}
-                  my={1}
                 />
               ))}
             </Select>

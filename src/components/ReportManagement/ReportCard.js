@@ -54,8 +54,8 @@ const ReportCard = ({
   postType,
   active,
 }) => {
-  const getBadgeText = () => (active ? "Đã xử lý" : "Chưa xử lý");
-  const getBadgeStatus = () => (active ? "success" : "error");
+  const getBadgeText = () => (active ? "Chưa xử lý" : "Đã xử lý");
+  const getBadgeStatus = () => (active ? "error" : "success");
   const getPostTypeName = (value) => {
     switch (value) {
       case "ANNOUNCING":
@@ -114,7 +114,7 @@ const ReportCard = ({
       <Badge
         status={getBadgeStatus()}
         value={getBadgeText()}
-        badgeStyle={active ? styles.badgeSuccess : styles.badgeError}
+        badgeStyle={active ? styles.badgeError : styles.badgeSuccess}
         containerStyle={
           isReviewReport || isCatchReportType
             ? styles.badgeWrapperMedium
