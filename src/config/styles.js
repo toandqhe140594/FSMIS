@@ -51,7 +51,6 @@ export default StyleSheet.create({
     paddingRight: 8,
   },
   stickyButtons: {
-    backgroundColor: "#fc454e",
     width: 200,
     height: 50,
     justifyContent: "center",

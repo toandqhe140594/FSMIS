@@ -11,6 +11,7 @@ import HeaderTab from "../components/HeaderTab";
 import ImageResizeMode from "../components/ImageResizeMode";
 import { goToAdminFLocationOverviewScreen } from "../navigations";
 
+// View angler catch detail.
 const AdminCatchReportDetailScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();

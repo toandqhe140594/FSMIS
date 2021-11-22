@@ -28,6 +28,7 @@ const ReportScreen = () => {
     // If the content is empty or only contains blank characters
     if (!trimmedContent) {
       showToastMessage("Nội đung báo cáo không thể bỏ trống");
+      return;
     }
     sendReport({
       id: reportParams.id,

@@ -10,17 +10,25 @@ import styles from "../config/styles";
 import { goToAdminFLocationOverviewScreen } from "../navigations";
 import { showAlertAbsoluteBox } from "../utilities";
 
+// View report about angler catch.
 const AdminReportCatchDetailScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
   const [isSuccess, setIsSuccess] = useState(null);
+  const [isActive, setActive] = useState(true);
+  const [isSolvedSuccess, setIsSolvedSuccess] = useState(null); // post solved report handler success
+  const [isLoading, setIsLoading] = useState(null);
+  const [reportId, setReportId] = useState();
   const catchReportDetail = useStoreState(
     (states) => states.ReportModel.catchReportDetail,
   );
   const getCatchReportDetail = useStoreActions(
     (actions) => actions.ReportModel.getCatchReportDetail,
   );
-
+  const solvedReport = useStoreActions(
+    (actions) => actions.ReportModel.solvedReport,
+  );
+  const listEvent = [{ name: "Xóa bài viết", onPress: () => {} }];
   const {
     locationId,
     locationName,
@@ -31,8 +39,10 @@ const AdminReportCatchDetailScreen = () => {
   const goToFLocationDetailHandler = () => {
     goToAdminFLocationOverviewScreen(navigation, { id: locationId });
   };
-  const listEvent = [{ name: "Xóa bài viết", onPress: () => {} }];
-
+  const solvedReportHandler = () => {
+    solvedReport({ id: reportId, setIsSuccess: setIsSolvedSuccess });
+    setIsLoading(true);
+  };
   const renderItem = ({ item }) => (
     <Box
       borderTopWidth="1"
@@ -109,7 +119,10 @@ const AdminReportCatchDetailScreen = () => {
   useEffect(() => {
     if (route.params.id) {
       getCatchReportDetail({ id: route.params.id, setIsSuccess });
+      setReportId(route.params.id);
     }
+    setIsLoading(true);
+    setActive(route.params.isActive);
   }, []);
   useEffect(() => {
     if (isSuccess === false) {
@@ -124,9 +137,34 @@ const AdminReportCatchDetailScreen = () => {
     }
     setIsSuccess(null);
   }, [isSuccess]);
-
+  useEffect(() => {
+    if (isSolvedSuccess === true) {
+      showAlertAbsoluteBox(
+        "Xử lý thành công",
+        ``,
+        () => {
+          navigation.goBack();
+        },
+        "Xác nhận",
+      );
+    }
+    if (isSolvedSuccess === false) {
+      showAlertAbsoluteBox(
+        "Lỗi",
+        `Đã xảy ra lỗi, vui lòng thử lại.`,
+        () => {},
+        "Xác nhận",
+      );
+    }
+    setIsLoading(false);
+    setIsSolvedSuccess(null);
+  }, [isSolvedSuccess]);
   return (
-    <AdminReport>
+    <AdminReport
+      isActive={isActive}
+      eventPress={solvedReportHandler}
+      isLoading={isLoading}
+    >
       <FlatList
         ListHeaderComponent={headerListComponent}
         ListFooterComponent={footerComponent}

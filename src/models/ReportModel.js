@@ -246,7 +246,7 @@ const model = {
         break;
       }
       case "CATCH":
-        setSendStatus(false);
+        requestAPI = `/catches/report-improper/${id}`;
         break;
       default:
         break;
@@ -273,9 +273,7 @@ const model = {
   getLocationReportDetail: thunk(async (actions, payload) => {
     const { id, setIsSuccess } = payload;
     try {
-      const { status, data } = await http.get(
-        `${API_URL.ADMIN_REPORT_LOCATION_LIST}/${id}`,
-      );
+      const { status, data } = await http.get(`/admin/report/location/${id}`);
       actions.setLocationReportDetail(data);
       if (status === 200) {
         setIsSuccess(true);
@@ -333,6 +331,19 @@ const model = {
       );
       if (status === 200) {
         actions.setCatchReportDetail(data);
+        setIsSuccess(true);
+      }
+    } catch (error) {
+      // handle error
+      setIsSuccess(false);
+    }
+  }),
+
+  solvedReport: thunk(async (actions, payload) => {
+    const { id, setIsSuccess } = payload;
+    try {
+      const { status } = await http.post(`/admin/report/solved/${id}`);
+      if (status === 200) {
         setIsSuccess(true);
       }
     } catch (error) {
