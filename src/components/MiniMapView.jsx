@@ -5,7 +5,7 @@ import { Linking, StyleSheet, TouchableOpacity, View } from "react-native";
 import { Image } from "react-native-elements";
 import MapView, { Marker } from "react-native-maps";
 
-import { showToastMessage } from "../../utilities";
+import { showToastMessage } from "../utilities";
 
 const containerSize = 38;
 const iconSize = 19;
@@ -83,7 +83,7 @@ const MiniMapView = ({ latitude, longitude }) => {
         )}
       >
         <Image
-          source={require("../../assets/images/google-maps.png")}
+          source={require("../assets/images/google-maps.png")}
           style={styles.image}
         />
       </TouchableOpacity>

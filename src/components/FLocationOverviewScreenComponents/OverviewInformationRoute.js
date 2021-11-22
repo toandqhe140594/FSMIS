@@ -7,7 +7,7 @@ import { Badge, Card, Divider } from "react-native-elements";
 import Swiper from "react-native-swiper";
 
 import { showToastMessage } from "../../utilities";
-import MiniMapView from "./MiniMapView";
+import MiniMapView from "../MiniMapView";
 
 const OverviewInformationRoute = () => {
   const [loading, setLoading] = useState(true);
