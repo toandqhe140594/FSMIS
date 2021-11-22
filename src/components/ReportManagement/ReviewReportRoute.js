@@ -29,7 +29,7 @@ const ReviewReportRoute = () => {
   const [mode, setMode] = useState("DEFAULT");
   const [query, setQuery] = useState({ pageNo: 1, active: true });
   const [filter, setFilter] = useState(FILTER_UNTOUCHED_VALUE);
-  const [getStatus, setGetStatus] = useState("");
+  const [getStatus, setGetStatus] = useState(null);
   const { listReviewReport, totalReviewReportPage } = useStoreState(
     (state) => state.ReportModel,
   );

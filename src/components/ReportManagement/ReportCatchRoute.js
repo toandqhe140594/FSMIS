@@ -26,7 +26,7 @@ const ReportCatchRoute = () => {
   const isFocusedRef = useRef(true);
   const [isLoading, setIsLoading] = useState(true);
   const [bigLoading, setBigLoading] = useState(false);
-  const [getStatus, setGetStatus] = useState("");
+  const [getStatus, setGetStatus] = useState(null);
   const [mode, setMode] = useState("DEFAULT");
   const [query, setQuery] = useState({ pageNo: 1, active: true });
   const [filter, setFilter] = useState(FILTER_UNTOUCHED_VALUE);
