@@ -14,8 +14,11 @@ public class AdminFishingLocationController {
     private final FishingLocationService locationService;
 
     @GetMapping()
-    public ResponseEntity<Object> adminGetLocationList(@RequestParam(required = false, defaultValue = "1") int pageNo) {
-        return new ResponseEntity<>(locationService.adminGetLocationList(pageNo), HttpStatus.OK);
+    public ResponseEntity<Object> adminGetLocationList(@RequestParam(required = false, defaultValue = "1") Integer pageNo,
+                                                       @RequestParam(required = false) String input,
+                                                       @RequestParam(required = false) Boolean active,
+                                                       @RequestParam(required = false) Boolean verified) {
+        return new ResponseEntity<>(locationService.adminGetLocationList(pageNo, input, active, verified), HttpStatus.OK);
     }
 
     @PostMapping("/verify/{locationId}")

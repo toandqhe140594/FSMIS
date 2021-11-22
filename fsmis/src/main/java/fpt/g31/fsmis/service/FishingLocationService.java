@@ -1,10 +1,5 @@
 package fpt.g31.fsmis.service;
 
-import com.google.maps.DistanceMatrixApi;
-import com.google.maps.GeoApiContext;
-import com.google.maps.errors.ApiException;
-import com.google.maps.model.DistanceMatrix;
-import com.google.maps.model.LatLng;
 import fpt.g31.fsmis.dto.input.FilterDtoIn;
 import fpt.g31.fsmis.dto.input.FishingLocationDtoIn;
 import fpt.g31.fsmis.dto.input.SuggestedLocationDtoIn;
@@ -28,7 +23,6 @@ import org.springframework.stereotype.Service;
 import javax.persistence.criteria.Join;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ValidationException;
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -362,21 +356,28 @@ public class FishingLocationService {
         return new ResponseTextDtoOut("Chuyển trạng thái khu hồ thành công");
     }
 
-    public PaginationDtoOut adminGetLocationList(int pageNo) {
+    public PaginationDtoOut adminGetLocationList(Integer pageNo, String input, Boolean active, Boolean verified) {
         if (pageNo <= 0) {
             throw new ValidationException(INVALID_PAGE_NUMBER);
         }
+        Specification<FishingLocation> specification = where(activeIs(active))
+                .and(verifiedIs(verified));
+        if (input != null) {
+            String[] words = input.split(" ");
+            for (String word : words) {
+                specification = specification.and(nameLike("%" + word + "%"));
+            }
+        }
         List<AdminFishingLocationItemDtoOut> output = new ArrayList<>();
-        Page<FishingLocation> locationList = fishingLocationRepos.findAll(PageRequest.of(pageNo - 1, 10));
+        Page<FishingLocation> locationList = fishingLocationRepos.findAll(specification, PageRequest.of(pageNo - 1, 10));
         for (FishingLocation location : locationList) {
-            Double avgScore = reviewRepos.getAverageScoreByFishingLocationIdAndActiveIsTrue(location.getId());
             AdminFishingLocationItemDtoOut dtoOut = AdminFishingLocationItemDtoOut.builder()
                     .id(location.getId())
                     .name(location.getName())
                     .active(location.getActive())
                     .verified(location.getVerify())
                     .address(ServiceUtils.getAddress(location.getAddress(), location.getWard()))
-                    .rating(avgScore == null ? 0 : avgScore)
+                    .rating(location.getScore().doubleValue())
                     .build();
             output.add(dtoOut);
         }
@@ -388,6 +389,9 @@ public class FishingLocationService {
     }
 
     public PaginationDtoOut searchFishingLocation(FilterDtoIn filterDtoIn, int pageNo) {
+        if (pageNo <= 0) {
+            throw new ValidationException(INVALID_PAGE_NUMBER);
+        }
         List<FishingLocationItemDtoOut> output = new ArrayList<>();
         Specification<FishingLocation> specification;
         if (filterDtoIn.getInput() != null && filterDtoIn.getInput().matches("^(0|\\+84)(3[2-9]|5[6|8|9]|7[0|6-9]|8[0-6|8|9]|9[0-4|6-9])[0-9]{7}$")) {
@@ -451,6 +455,7 @@ public class FishingLocationService {
             return null;
         }
         return (root, criteriaQuery, criteriaBuilder) -> {
+            criteriaQuery.distinct(true);
             Join<FishingLocation, Ward> wardJoin = root.join("ward");
             Join<Ward, District> districtJoin = wardJoin.join("district");
             Join<District, Province> provinceJoin = districtJoin.join("province");
@@ -463,6 +468,7 @@ public class FishingLocationService {
             return null;
         }
         return (root, criteriaQuery, criteriaBuilder) -> {
+            criteriaQuery.distinct(true);
             Join<FishingLocation, Lake> lakeJoin = root.join("lakeList");
             Join<Lake, FishInLake> fishInLakeJoin = lakeJoin.join("fishInLakeList");
             Join<FishInLake, FishSpecies> fishSpeciesJoin = fishInLakeJoin.join("fishSpecies");
@@ -471,8 +477,19 @@ public class FishingLocationService {
     }
 
     private Specification<FishingLocation> activeIs(Boolean active) {
-        return (root, criteriaQuery, criteriaBuilder) -> criteriaBuilder.equal(root.get("active"), active);
+        return (root, criteriaQuery, criteriaBuilder) -> {
+            if (active == null) return null;
+            return criteriaBuilder.equal(root.get("active"), active);
+        };
     }
+
+    private Specification<FishingLocation> verifiedIs(Boolean verified) {
+        return (root, criteriaQuery, criteriaBuilder) -> {
+            if (verified == null) return null;
+            return criteriaBuilder.equal(root.get("verify"), verified);
+        };
+    }
+
 
     private Specification<FishingLocation> nameLike(String input) {
         return (root, criteriaQuery, criteriaBuilder) ->
