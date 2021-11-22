@@ -13,22 +13,25 @@ import { FormProvider, useForm } from "react-hook-form";
 import {
   ActivityIndicator,
   Alert,
-  KeyboardAvoidingView,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
-  useWindowDimensions,
   View,
 } from "react-native";
-import { Avatar, Overlay } from "react-native-elements";
+import { Overlay } from "react-native-elements";
 
+import AvatarSection from "../components/AnglerEditProfile/AvatarSection";
+import AddressWatcherHandler from "../components/common/AddressWatcherHandler";
 import InputComponent from "../components/common/InputComponent";
 import SelectComponent from "../components/common/SelectComponent";
 import HeaderTab from "../components/HeaderTab";
 import moment from "../config/moment";
-import { ROUTE_NAMES, SCHEMA } from "../constants";
-import { goToMediaSelectScreen } from "../navigations";
+import { SCHEMA } from "../constants";
 import { showAlertBox } from "../utilities";
+
+const CalendarIcon = () => (
+  <Icon as={<Entypo name="calendar" />} size={5} mr={1} color="muted.500" />
+);
 
 const genderList = [
   { id: true, name: "Nam" },
@@ -44,16 +47,46 @@ const styles = StyleSheet.create({
   },
 });
 
+const STATUS_SUCCESS = "SUCCESS";
+const STATUS_FAILED = "FAILED";
+const ALERT_TITLE = "Thông báo";
+const ALERT_SUCCESS_MSG = "Cập nhật thông tin cá nhân thành công!";
+const ALERT_ERROR_MSG = "Đã xảy ra lỗi! Vui lòng thử lại sau.";
+const ANGLER_EDIT_PROFILE_HEADER_NAME = "Thông tin cá nhân";
+
+const FORM_FIELD_AVATAR = "avatarUrl";
+const FORM_FIELD_FULL_NAME = "fullName";
+const FORM_FIELD_GENDER = "gender";
+const FORM_FIELD_ADDRESS = "address";
+const FORM_FIELD_PROVINCE = "provinceId";
+const FORM_FIELD_DISTRICT = "districtId";
+const FORM_FIELD_WARD = "wardId";
+
+const INPUT_FULL_NAME_LABEL = "Họ và tên";
+const SELECT_GENDER_LABEL = "Giới tính";
+const INPUT_ADDRESS_LABEL = "Địa chỉ";
+const SELECT_PROVINCE_LABEL = "Tỉnh/Thành phố";
+const SELECT_DISTRICT_LABEL = "Quận/Huyện";
+const SELECT_WARD_LABEL = "Phường/xã";
+
+const INPUT_NAME_PLACEHOLDER = "Nhập họ và tên";
+const SELECT_BIRTHDATE_PLACEHOLDER = "Chọn ngày sinh";
+const SELECT_GENDER_PLACEHOLDER = "Chọn giới tính";
+const INPUT_ADDRESS_PLACEHOLDER = "Nhập địa chỉ thường trú";
+const SELECT_PROVINCE_PLACEHOLDER = "Chọn tỉnh/thành phố";
+const SELECT_DISTRICT_PLACEHOLDER = "Chọn quận/huyện";
+const SELECT_WARD_PLACEHOLDER = "Chọn phường/xã";
+
 const EditProfileScreen = () => {
+  const route = useRoute();
+  const navigation = useNavigation();
   const [date, setDate] = useState(null);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [formattedDate, setFormattedDate] = useState("");
-  const [avatarImage, setAvatarImage] = useState(undefined);
   const [isLoading, setIsLoading] = useState(true);
   const [fullScreen, setFullScreen] = useState(true);
-  const [updateStatus, setUpdateStatus] = useState("");
-  const navigation = useNavigation();
-  const route = useRoute();
+  const [getStatus, setGetStatus] = useState(null);
+  const [updateStatus, setUpdateStatus] = useState(null);
   const userInfo = useStoreState((state) => state.ProfileModel.userInfo);
   const { provinceList, districtList, wardList } = useStoreState(
     (state) => state.AddressModel,
@@ -72,26 +105,32 @@ const EditProfileScreen = () => {
     reValidateMode: "onSubmit",
     resolver: yupResolver(SCHEMA.ANGLER_PROFILE_FORM),
   });
-  const { handleSubmit, getValues, setValue } = methods;
+  const { handleSubmit, setValue } = methods;
 
   const setDefaultValues = () => {
-    setValue("fullName", userInfo.fullName);
-    setValue("gender", userInfo.gender);
-    setValue("address", userInfo.address);
-    setValue("provinceId", userInfo.addressFromWard.provinceId);
-    setValue("districtId", userInfo.addressFromWard.districtId);
-    setValue("wardId", userInfo.addressFromWard.wardId);
+    setValue(FORM_FIELD_FULL_NAME, userInfo.fullName);
+    setValue(FORM_FIELD_GENDER, userInfo.gender);
+    setValue(FORM_FIELD_ADDRESS, userInfo.address);
+    setValue(FORM_FIELD_PROVINCE, userInfo.addressFromWard.provinceId);
+    setValue(FORM_FIELD_DISTRICT, userInfo.addressFromWard.districtId);
+    setValue(FORM_FIELD_WARD, userInfo.addressFromWard.wardId);
+    setValue(FORM_FIELD_AVATAR, userInfo.avatarUrl);
     setDate(moment(userInfo.dob.split(" ")[0], "DD/MM/YYYY").toDate());
-    setAvatarImage(userInfo.avatarUrl);
   };
 
-  const generateAddressDropdown = useCallback((name, value) => {
-    if (name === "provinceId") {
-      getDisctrictByProvinceId({ id: value });
-    } else if (name === "districtId") {
-      getWardByDistrictId({ id: value });
-    }
+  const handleProvinceIdChange = useCallback((id) => {
+    setIsLoading(true);
+    getDisctrictByProvinceId({ id, setGetStatus });
   }, []);
+
+  const handleDistrictIdChange = useCallback((id) => {
+    setIsLoading(true);
+    getWardByDistrictId({ id, setGetStatus });
+  }, []);
+
+  const openDatePicker = () => {
+    setShowDatePicker(true);
+  };
 
   const onDateChange = (e, selectedDate) => {
     const currentDate = selectedDate || date;
@@ -113,7 +152,7 @@ const EditProfileScreen = () => {
         },
         {
           text: "Đồng ý",
-          onPress: () => setAvatarImage(userInfo.avatarUrl),
+          onPress: () => setValue("avatarUrl", userInfo.avatarUrl),
         },
       ],
       {
@@ -123,32 +162,25 @@ const EditProfileScreen = () => {
   };
 
   const onSubmit = (data) => {
-    // Did not have null or empty validation for avatarImage and formattedDate yet
+    setIsLoading(true);
     const updateData = {
       ...data,
-      avatarUrl: avatarImage,
       dob: moment(date).add(1, "days").toDate().toJSON(),
     };
     editPersonalInformation({ updateData, setUpdateStatus });
-    setIsLoading(true);
   };
   /**
-   * Run first time when the screen inits
-   * setDefaultValue for fields
-   * get all province list for select dropdown
-   * and set custome date picker value
-   * When component unmoute, reset distric list and ward list
+   * Set up the screen
    */
   useEffect(() => {
     setDefaultValues();
-    (async () => {
-      getAllProvince();
-      getDisctrictByProvinceId({ id: getValues("provinceId") });
-      await getWardByDistrictId({ id: getValues("districtId") });
+    getAllProvince();
+    const loadingId = setTimeout(() => {
       setIsLoading(false);
       setFullScreen(false);
-    })();
+    }, 2000);
     return () => {
+      clearTimeout(loadingId);
       resetDataList();
     };
   }, []);
@@ -168,159 +200,143 @@ const EditProfileScreen = () => {
     // useCallback will listen to route.param
     useCallback(() => {
       if (route.params?.base64Array && route.params.base64Array[0]) {
-        setAvatarImage(route.params?.base64Array[0].base64);
+        setValue("avatarUrl", route.params?.base64Array[0].base64);
         navigation.setParams({ base64Array: [] });
       }
     }, [route.params]),
   );
+
+  /**
+   * Triggers when get status returns
+   */
   useEffect(() => {
-    if (updateStatus === "SUCCESS") {
+    if (!fullScreen && getStatus === STATUS_SUCCESS) {
       setIsLoading(false);
-      showAlertBox("Thông báo", "Cập nhật thông tin cá nhân thành công!");
-      setUpdateStatus(null);
-    } else if (updateStatus === "FAILED") {
-      setIsLoading(false);
-      showAlertBox("Thông báo", "Đã xảy ra lỗi! Vui lòng thử lại sau.");
-      setUpdateStatus(null);
     }
+    setGetStatus(null);
+  }, [getStatus]);
+
+  /**
+   * Triggers when update status returns
+   */
+  useEffect(() => {
+    if (updateStatus === STATUS_SUCCESS) {
+      showAlertBox(ALERT_TITLE, ALERT_SUCCESS_MSG);
+    } else if (updateStatus === STATUS_FAILED) {
+      showAlertBox(ALERT_TITLE, ALERT_ERROR_MSG);
+    }
+    setIsLoading(false);
+    setUpdateStatus(null);
   }, [updateStatus]);
 
   return (
     <>
-      <KeyboardAvoidingView>
-        <Overlay
-          isVisible={isLoading}
-          fullScreen
-          overlayStyle={fullScreen ? styles.loadOnStart : styles.loadOnSubmit}
-        >
-          <ActivityIndicator size={60} color="#2089DC" />
-        </Overlay>
-        <ScrollView>
-          {showDatePicker && (
-            <DateTimePicker
-              display="default"
-              is24Hour
-              mode="date"
-              value={date || new Date()}
-              onChange={onDateChange}
-            />
-          )}
-          <Center flex={1} minHeight={Math.round(useWindowDimensions().height)}>
-            <HeaderTab name="Thông tin cá nhân" />
-            <FormProvider {...methods}>
-              <VStack
-                flex={1}
-                justifyContent="center"
-                mt={3}
-                mb={5}
-                space={4}
-                w={{ base: "70%", md: "50%", lg: "30%" }}
-              >
-                <Avatar
-                  containerStyle={{ alignSelf: "center" }}
-                  size={130}
-                  rounded
-                  source={{
-                    uri:
-                      avatarImage !== undefined
-                        ? avatarImage
-                        : userInfo.avatarUrl,
-                  }}
-                  onLongPress={() => deleteImage()}
-                  onPress={() =>
-                    goToMediaSelectScreen(navigation, {
-                      returnRoute: ROUTE_NAMES.PROFILE_CHANGE_INFORMATION,
-                      maxSelectable: 1,
-                    })
-                  }
-                />
+      <HeaderTab name={ANGLER_EDIT_PROFILE_HEADER_NAME} />
+      <Overlay
+        isVisible={isLoading}
+        fullScreen
+        overlayStyle={fullScreen ? styles.loadOnStart : styles.loadOnSubmit}
+      >
+        <ActivityIndicator size={60} color="#2089DC" />
+      </Overlay>
 
-                <InputComponent
-                  label="Họ và tên"
-                  isTitle
-                  placeholder="Nhập họ và tên"
-                  type="text"
-                  hasAsterisk
-                  controllerName="fullName"
-                />
-
-                {/* Date picker field */}
-                <View>
-                  <Text bold fontSize="md" mb={1}>
-                    Ngày sinh
-                  </Text>
-                  <TouchableOpacity onPress={() => setShowDatePicker(true)}>
-                    <Input
-                      InputRightElement={
-                        <Icon
-                          as={<Entypo name="calendar" />}
-                          size={5}
-                          mr={1}
-                          color="muted.500"
-                        />
-                      }
-                      placeholder="Chọn ngày sinh"
-                      size="lg"
-                      value={formattedDate ? formattedDate.toString() : ""}
-                      isDisabled
-                    />
-                  </TouchableOpacity>
-                </View>
-
-                {/* Gender select box */}
-                <SelectComponent
-                  label="Giới tính"
-                  isTitle
-                  placeholder="Chọn giới tính"
-                  controllerName="gender"
-                  data={genderList}
-                />
-
-                {/* Address input field */}
-                <InputComponent
-                  label="Địa chỉ"
-                  isTitle
-                  placeholder="Nhập địa chỉ thường trú"
-                  controllerName="address"
-                />
-
-                {/* Province select box */}
-                <SelectComponent
-                  label="Tỉnh/Thành phố"
-                  isTitle
-                  placeholder="Chọn tỉnh/thành phố"
-                  data={provinceList}
-                  controllerName="provinceId"
-                  handleDataIfValChanged={generateAddressDropdown}
-                />
-
-                {/* District select box */}
-                <SelectComponent
-                  label="Quận/Huyện"
-                  isTitle
-                  placeholder="Chọn quận/huyện"
-                  data={districtList}
-                  controllerName="districtId"
-                  handleDataIfValChanged={generateAddressDropdown}
-                />
-
-                {/* Ward select box */}
-                <SelectComponent
-                  label="Phường/Xã"
-                  isTitle
-                  placeholder="Chọn phường/xã"
-                  data={wardList}
-                  controllerName="wardId"
-                />
-                {/* Save changes button */}
-                <Button mt={2} size="lg" onPress={handleSubmit(onSubmit)}>
-                  Lưu thay đổi
-                </Button>
-              </VStack>
-            </FormProvider>
-          </Center>
-        </ScrollView>
-      </KeyboardAvoidingView>
+      <ScrollView>
+        {showDatePicker && (
+          <DateTimePicker
+            display="default"
+            is24Hour
+            mode="date"
+            value={date || new Date()}
+            onChange={onDateChange}
+          />
+        )}
+        <Center flex={1}>
+          <FormProvider {...methods}>
+            <VStack
+              flex={1}
+              justifyContent="center"
+              mt={3}
+              mb={5}
+              space={1}
+              w={{ base: "70%", md: "50%", lg: "30%" }}
+            >
+              <AvatarSection
+                containerStyle={{ alignSelf: "center" }}
+                navigation={navigation}
+                name={FORM_FIELD_AVATAR}
+                handleDelete={deleteImage}
+              />
+              <InputComponent
+                label={INPUT_FULL_NAME_LABEL}
+                isTitle
+                placeholder={INPUT_NAME_PLACEHOLDER}
+                type="text"
+                hasAsterisk
+                controllerName={FORM_FIELD_FULL_NAME}
+              />
+              <View>
+                <Text bold fontSize="md" mb={1}>
+                  Ngày sinh
+                </Text>
+                <TouchableOpacity onPress={openDatePicker}>
+                  <Input
+                    InputRightElement={<CalendarIcon />}
+                    placeholder={SELECT_BIRTHDATE_PLACEHOLDER}
+                    size="lg"
+                    value={formattedDate ? formattedDate.toString() : ""}
+                    isDisabled
+                  />
+                </TouchableOpacity>
+              </View>
+              <SelectComponent
+                label={SELECT_GENDER_LABEL}
+                isTitle
+                placeholder={SELECT_GENDER_PLACEHOLDER}
+                controllerName={FORM_FIELD_GENDER}
+                data={genderList}
+              />
+              <InputComponent
+                label={INPUT_ADDRESS_LABEL}
+                isTitle
+                placeholder={INPUT_ADDRESS_PLACEHOLDER}
+                controllerName={FORM_FIELD_ADDRESS}
+              />
+              <SelectComponent
+                label={SELECT_PROVINCE_LABEL}
+                isTitle
+                placeholder={SELECT_PROVINCE_PLACEHOLDER}
+                data={provinceList}
+                controllerName={FORM_FIELD_PROVINCE}
+              />
+              <AddressWatcherHandler
+                name={FORM_FIELD_PROVINCE}
+                onValueChange={handleProvinceIdChange}
+              />
+              <SelectComponent
+                label={SELECT_DISTRICT_LABEL}
+                isTitle
+                placeholder={SELECT_DISTRICT_PLACEHOLDER}
+                data={districtList}
+                controllerName={FORM_FIELD_DISTRICT}
+              />
+              <AddressWatcherHandler
+                name={FORM_FIELD_DISTRICT}
+                onValueChange={handleDistrictIdChange}
+              />
+              <SelectComponent
+                label={SELECT_WARD_LABEL}
+                isTitle
+                placeholder={SELECT_WARD_PLACEHOLDER}
+                data={wardList}
+                controllerName={FORM_FIELD_WARD}
+              />
+              <Button mt={6} size="lg" onPress={handleSubmit(onSubmit)}>
+                Lưu thay đổi
+              </Button>
+            </VStack>
+          </FormProvider>
+        </Center>
+      </ScrollView>
     </>
   );
 };
