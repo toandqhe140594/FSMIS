@@ -78,6 +78,7 @@ const AdminReportReviewDetailScreen = () => {
               style={{ position: "relative", bottom: 11, right: 10 }}
               colorScheme="danger"
               onPress={onPressHandler}
+              disabled={isActive === false}
             >
               Gỡ review
             </Button>
