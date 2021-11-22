@@ -11,6 +11,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import { ActivityIndicator, ScrollView, StyleSheet } from "react-native";
 import { Overlay } from "react-native-elements";
 
+import AddressWatcherHandler from "../components/common/AddressWatcherHandler";
 import InputComponent from "../components/common/InputComponent";
 import MultiImageSection from "../components/common/MultiImageSection";
 import SelectComponent from "../components/common/SelectComponent";
@@ -36,10 +37,57 @@ const styles = StyleSheet.create({
   },
 });
 
+const SUCCESS_STATUS = "SUCCESS";
+const FAILED_STATUS = "FAILED";
+const ALERT_TITLE = "Thông báo";
+const ALERT_ADD_LOCATION_SUCCESS_MSG = "Thêm điểm câu thành công";
+const ALERT_ERROR_MSG = "Đã xảy ra lỗi! Vui lòng thử lại sau.";
+const FMANAGE_ADD_LOCATION_HEADER = "Tạo điểm câu mới";
+
+const FORM_FIELD_IMAGE_ARRAY = "imageArray";
+const FORM_FIELD_LOCATION_NAME = "name";
+const FORM_FIELD_LOCATION_PHONE = "phone";
+const FORM_FIELD_LOCATION_WEBSITE = "website";
+const FORM_FIELD_ADDRESS = "address";
+const FORM_FIELD_PROVINCE = "provinceId";
+const FORM_FIELD_DISTRICT = "districtId";
+const FORM_FIELD_WARD = "wardId";
+const FORM_FIELD_LOCATION_DESCRIPTION = "description";
+const FORM_FIELD_LOCATION_TIMETABLE = "timetable";
+const FORM_FIELD_LOCATION_SERVICE = "service";
+const FORM_FIELD_LOCATION_RULE = "rule";
+
+const CONFIRM_BUTTON_LABEL = "Xác nhận";
+const LOCATION_NAME_LABEL = "Tên điểm câu";
+const LOCATION_PHONE_LABEL = "Số điện thoại";
+const LOCATION_WEBSITE_LABEL = "Website";
+const ADDRESS_LABEL = "Địa chỉ";
+const PROVINCE_LABEL = "Tỉnh/Thành phố";
+const DISTRICT_LABEL = "Quận/Huyện";
+const WARD_LABEL = "Phường/Xã";
+const LOCATION_DESCRIPTION_LABEL = "Mô tả khu hồ";
+const LOCATION_TIMETABLE_LABEL = "Thời gian hoạt động";
+const LOCATION_SERVICE_LABEL = "Dịch vụ";
+const LOCATION_RULE_LABEL = "Nội quy";
+
+const INPUT_LOCATION_NAME_PLACEHOLDER = "Nhập tên địa điểm câu";
+const INPUT_LOCATION_PHONE_PLACEHOLDER = "Nhập số điện thoại";
+const INPUT_LOCATION_WEBSITE_PLACEHOLDER = "Nhập website/facebook";
+const INPUT_ADDRESS_PLACEHOLDER = "Nhập địa chỉ";
+const SELECT_PROVINCE_PLACEHOLDER = "Chọn tỉnh/thành phố";
+const SELECT_DISTRICT_PLACEHOLDER = "Chọn quận/huyện";
+const SELECT_WARD_PLACEHOLDER = "Chọn phường/xã";
+const INPUT_LOCATION_DESCRIPTION_PLACEHOLDER = "Miêu tả khu hồ của bạn";
+const INPUT_LOCATION_TIMETABLE_PLACEHOLDER =
+  "Miêu tả thời gian hoạt động của khu hồ";
+const INPUT_LOCATION_SERVICE_PLACEHOLDER = "Miêu tả dịch vụ khu hồ";
+const INPUT_LOCATION_RULE_PLACEHOLDER = "Miêu tả nội quy khu hồ";
+
 const FManageAddNewScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
   const [isLoading, setIsLoading] = useState(true);
+  const [getStatus, setGetStatus] = useState(null);
   const [fullScreen, setFullScreen] = useState(true);
   const [addStatus, setAddStatus] = useState(null);
   const [locationData, setLocationData] = useState({});
@@ -65,12 +113,14 @@ const FManageAddNewScreen = () => {
   });
   const { handleSubmit, setValue } = methods;
 
-  const generateAddressDropdown = useCallback((name, value) => {
-    if (name === "provinceId") {
-      getDisctrictByProvinceId({ id: value });
-    } else if (name === "districtId") {
-      getWardByDistrictId({ id: value });
-    }
+  const handleProvinceIdChange = useCallback((id) => {
+    setIsLoading(true);
+    getDisctrictByProvinceId({ id, setGetStatus });
+  }, []);
+
+  const handleDistrictIdChange = useCallback((id) => {
+    setIsLoading(true);
+    getWardByDistrictId({ id, setGetStatus });
   }, []);
 
   const onSubmit = (data) => {
@@ -91,18 +141,29 @@ const FManageAddNewScreen = () => {
    * and when screen unmounts
    */
   useEffect(() => {
-    (async () => {
-      await getAllProvince();
+    getAllProvince();
+    const loadingId = setTimeout(() => {
       setIsLoading(false);
       setFullScreen(false);
-    })();
+    }, 2000);
     return () => {
       resetDataList();
+      clearTimeout(loadingId);
     };
   }, []);
 
   /**
-   * Trigger when otp status returns
+   * Triggers when get status returns
+   */
+  useEffect(() => {
+    if (!fullScreen && getStatus === SUCCESS_STATUS) {
+      setIsLoading(false);
+    }
+    setGetStatus(null);
+  }, [getStatus]);
+
+  /**
+   * Triggers when otp status returns
    */
   useEffect(() => {
     if (otpSendSuccess === true) {
@@ -111,33 +172,34 @@ const FManageAddNewScreen = () => {
         ROUTE_NAMES.FMANAGE_PROFILE_ADD_NEW,
         locationData.phone,
       );
+      // Because overlay loading must toggle between true/false for it to work
+      // Therefore, before go to OTP screen, turn off loading and when returns
+      // turn on loading
       setIsLoading(false);
-      setOtpSendSuccess(null);
     } else if (otpSendSuccess === false) {
       setIsLoading(false);
-      setOtpSendSuccess(null);
     }
+    setOtpSendSuccess(null);
   }, [otpSendSuccess]);
 
   /**
-   * Trigger when add status returns
+   * Triggers when add status returns
    */
   useEffect(() => {
-    if (addStatus === "SUCCESS") {
+    if (addStatus === SUCCESS_STATUS) {
       showAlertAbsoluteBox(
-        "Thông báo",
-        "Khu hồ thêm thành công!",
+        ALERT_TITLE,
+        ALERT_ADD_LOCATION_SUCCESS_MSG,
         () => {
           goBack(navigation);
         },
-        "Xác nhận",
+        CONFIRM_BUTTON_LABEL,
       );
-      setAddStatus(null);
-    } else if (addStatus === "FAILED") {
-      showAlertBox("Thông báo", "Đã có lỗi xảy ra, vui lòng thử lại");
+    } else if (addStatus === FAILED_STATUS) {
+      showAlertBox(ALERT_TITLE, ALERT_ERROR_MSG);
       setIsLoading(false);
-      setAddStatus(null);
     }
+    setAddStatus(null);
   }, [addStatus]);
 
   /**
@@ -159,7 +221,7 @@ const FManageAddNewScreen = () => {
 
   return (
     <>
-      <HeaderTab name="Tạo điểm câu mới" />
+      <HeaderTab name={FMANAGE_ADD_LOCATION_HEADER} />
       <Overlay
         isVisible={isLoading}
         fullScreen
@@ -178,14 +240,14 @@ const FManageAddNewScreen = () => {
                 <MultiImageSection
                   formRoute={ROUTE_NAMES.FMANAGE_PROFILE_ADD_NEW}
                   selectLimit={5}
-                  controllerName="imageArray"
+                  controllerName={FORM_FIELD_IMAGE_ARRAY}
                 />
                 <InputComponent
                   isTitle
-                  label="Tên địa điểm câu"
+                  label={LOCATION_NAME_LABEL}
                   hasAsterisk
-                  placeholder="Nhập tên địa điểm câu"
-                  controllerName="name"
+                  placeholder={INPUT_LOCATION_NAME_PLACEHOLDER}
+                  controllerName={FORM_FIELD_LOCATION_NAME}
                 />
               </Stack>
             </Center>
@@ -195,49 +257,53 @@ const FManageAddNewScreen = () => {
                   Thông tin liên hệ
                 </Text>
                 <InputComponent
-                  label="Số điện thoại"
-                  placeholder="Nhập số điện thoại"
-                  hasAsterisk
-                  controllerName="phone"
                   useNumPad
-                />
-
-                <InputComponent
-                  label="Website"
-                  placeholder="Nhập website/facebook"
-                  controllerName="website"
-                />
-
-                <InputComponent
-                  label="Địa chỉ"
-                  placeholder="Nhập địa chỉ"
+                  label={LOCATION_PHONE_LABEL}
+                  placeholder={INPUT_LOCATION_PHONE_PLACEHOLDER}
                   hasAsterisk
-                  controllerName="address"
+                  controllerName={FORM_FIELD_LOCATION_PHONE}
+                />
+
+                <InputComponent
+                  label={LOCATION_WEBSITE_LABEL}
+                  placeholder={INPUT_LOCATION_WEBSITE_PLACEHOLDER}
+                  controllerName={FORM_FIELD_LOCATION_WEBSITE}
+                />
+
+                <InputComponent
+                  label={ADDRESS_LABEL}
+                  placeholder={INPUT_ADDRESS_PLACEHOLDER}
+                  hasAsterisk
+                  controllerName={FORM_FIELD_ADDRESS}
                 />
 
                 <SelectComponent
-                  placeholder="Chọn tỉnh/thành phố"
-                  label="Tỉnh/Thành phố"
+                  label={PROVINCE_LABEL}
+                  placeholder={SELECT_PROVINCE_PLACEHOLDER}
                   hasAsterisk
-                  controllerName="provinceId"
+                  controllerName={FORM_FIELD_PROVINCE}
                   data={provinceList}
-                  handleDataIfValChanged={generateAddressDropdown}
                 />
-
+                <AddressWatcherHandler
+                  name={FORM_FIELD_PROVINCE}
+                  onValueChange={handleProvinceIdChange}
+                />
                 <SelectComponent
-                  placeholder="Chọn quận/huyện"
-                  label="Quận/Huyện"
+                  label={DISTRICT_LABEL}
+                  placeholder={SELECT_DISTRICT_PLACEHOLDER}
                   hasAsterisk
-                  controllerName="districtId"
+                  controllerName={FORM_FIELD_DISTRICT}
                   data={districtList}
-                  handleDataIfValChanged={generateAddressDropdown}
                 />
-
+                <AddressWatcherHandler
+                  name={FORM_FIELD_DISTRICT}
+                  onValueChange={handleDistrictIdChange}
+                />
                 <SelectComponent
-                  label="Phường/Xã"
-                  placeholder="Chọn phường/xã"
+                  label={WARD_LABEL}
+                  placeholder={SELECT_WARD_PLACEHOLDER}
                   hasAsterisk
-                  controllerName="wardId"
+                  controllerName={FORM_FIELD_WARD}
                   data={wardList}
                 />
               </VStack>
@@ -260,12 +326,12 @@ const FManageAddNewScreen = () => {
               {/* Description textarea */}
               <TextAreaComponent
                 myStyles={styles.sectionWrapper}
-                label="Mô tả khu hồ"
+                label={LOCATION_DESCRIPTION_LABEL}
                 isTitle
                 hasAsterisk
-                placeholder="Miêu tả khu hồ của bạn"
+                placeholder={INPUT_LOCATION_DESCRIPTION_PLACEHOLDER}
                 numberOfLines={6}
-                controllerName="description"
+                controllerName={FORM_FIELD_LOCATION_DESCRIPTION}
               />
             </Center>
 
@@ -273,12 +339,12 @@ const FManageAddNewScreen = () => {
               {/* Schedule textarea  */}
               <TextAreaComponent
                 myStyles={styles.sectionWrapper}
-                label="Thời gian hoạt động"
+                label={LOCATION_TIMETABLE_LABEL}
                 isTitle
                 hasAsterisk
-                placeholder="Miêu tả thời gian hoạt động của khu hồ"
+                placeholder={INPUT_LOCATION_TIMETABLE_PLACEHOLDER}
                 numberOfLines={3}
-                controllerName="timetable"
+                controllerName={FORM_FIELD_LOCATION_TIMETABLE}
               />
             </Center>
 
@@ -286,25 +352,24 @@ const FManageAddNewScreen = () => {
               {/* Service textarea */}
               <TextAreaComponent
                 myStyles={styles.sectionWrapper}
-                label="Dịch vụ"
+                label={LOCATION_SERVICE_LABEL}
                 isTitle
                 hasAsterisk
-                placeholder="Miêu tả dịch vụ khu hồ"
+                placeholder={INPUT_LOCATION_SERVICE_PLACEHOLDER}
                 numberOfLines={3}
-                controllerName="service"
+                controllerName={FORM_FIELD_LOCATION_SERVICE}
               />
             </Center>
 
             <Center>
-              {/* rules textarea */}
               <TextAreaComponent
                 myStyles={styles.sectionWrapper}
-                label="Nội quy"
+                label={LOCATION_RULE_LABEL}
                 isTitle
                 hasAsterisk
-                placeholder="Miêu tả nội quy khu hồ"
+                placeholder={INPUT_LOCATION_RULE_PLACEHOLDER}
                 numberOfLines={3}
-                controllerName="rule"
+                controllerName={FORM_FIELD_LOCATION_RULE}
               />
             </Center>
 
@@ -316,7 +381,7 @@ const FManageAddNewScreen = () => {
                   alignSelf="center"
                   onPress={handleSubmit(onSubmit)}
                 >
-                  Thêm khu hồ
+                  Thêm điểm câu
                 </Button>
               </Box>
             </Center>

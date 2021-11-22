@@ -98,7 +98,7 @@ const model = {
 
   /**
    * Get all districts by province ID from api
-   * @param {Number} [payload.id] province id
+   * @param {Number} payload.id province id
    * @param {Function} [payload.setGetStatus] function the set api status
    */
   getDisctrictByProvinceId: thunk(async (actions, payload, { getState }) => {
@@ -127,7 +127,7 @@ const model = {
 
   /**
    * Get all wards by district ID from api
-   * @param {Number} [payload.id] district id
+   * @param {Number} payload.id district id
    * @param {Function} [payload.setGetStatus] function the set api status
    */
   getWardByDistrictId: thunk(async (actions, payload, { getState }) => {
