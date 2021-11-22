@@ -104,5 +104,9 @@ public class FishingLocation {
     @OneToMany(mappedBy = "fishingLocation")
     private List<Catches> catchesList;
 
+    @JsonIgnore
+    @ManyToMany(mappedBy = "savedFishingLocations")
+    private List<User> savedUser;
+
     private Float score;
 }

@@ -44,6 +44,7 @@ public class FishingLocationService {
     private final ReviewRepos reviewRepos;
     private final ModelMapper modelMapper;
     private final SuggestedLocationRepos suggestedLocationRepos;
+    private final NotificationRepos notificationRepos;
 
     public ResponseTextDtoOut createFishingLocation(FishingLocationDtoIn fishingLocationDtoIn,
                                                     HttpServletRequest request) {
@@ -116,6 +117,9 @@ public class FishingLocationService {
         }
         location.setActive(false);
         fishingLocationRepos.save(location);
+        List<User> savedUser = location.getSavedUser();
+        String message = location.getName() + " đã dừng hoạt động";
+        NotificationService.createNotification(notificationRepos, message, savedUser);
         return new ResponseTextDtoOut("Bạn đã đóng cửa địa điểm.");
     }
 
@@ -144,24 +148,11 @@ public class FishingLocationService {
     }
 
     public List<FishingLocationPinDtoOut> getNearBy(Float longitude, Float latitude, Integer distance, Long methodId, Integer minRating) {
-//        GeoApiContext context = new GeoApiContext.Builder()
-//                .apiKey("AIzaSyDA0QPfk3Pi5hGyCdcOF5tFpzLDbatTKck")
-//                .build();
         List<FishingLocation> fishingLocationList = fishingLocationRepos.getNearByLocation(longitude, latitude, distance, methodId, minRating);
         List<FishingLocationPinDtoOut> fishingLocationPinDtoOutList = new ArrayList<>();
         for (FishingLocation fishingLocation : fishingLocationList) {
-//            try {
-//                DistanceMatrix distanceMatrix = DistanceMatrixApi.newRequest(context)
-//                        .origins(new LatLng(latitude, longitude))
-//                        .destinations(new LatLng(fishingLocation.getLatitude(), fishingLocation.getLongitude()))
-//                        .await();
-//                System.out.println(distanceMatrix.toString());
-//            } catch (ApiException | InterruptedException | IOException e) {
-//                e.printStackTrace();
-//            }
             fishingLocationPinDtoOutList.add(modelMapper.map(fishingLocation, FishingLocationPinDtoOut.class));
         }
-//        context.shutdown();
         return fishingLocationPinDtoOutList;
     }
 
@@ -394,7 +385,7 @@ public class FishingLocationService {
         }
         List<FishingLocationItemDtoOut> output = new ArrayList<>();
         Specification<FishingLocation> specification;
-        if (filterDtoIn.getInput() != null && filterDtoIn.getInput().matches("^(0|\\+84)(3[2-9]|5[6|8|9]|7[0|6-9]|8[0-6|8|9]|9[0-4|6-9])[0-9]{7}$")) {
+        if (filterDtoIn.getInput() != null && filterDtoIn.getInput().matches("^0(3[2-9]|5[689]|7[06-9]|8[0-689]|9[0-46-9])[0-9]{7}$")) {
             specification = where(phoneIs(filterDtoIn.getInput()));
         } else {
             specification = where(fishingMethodIdIn(filterDtoIn.getFishingMethodIdList()))

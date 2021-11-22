@@ -64,7 +64,7 @@ public class User {
     private List<Report> reportList;
 
     @JsonIgnore
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "tbl_user_notification",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -73,7 +73,7 @@ public class User {
     private List<Notification> notificationSet;
 
     @JsonIgnore
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "tbl_user_saved_fishing_locations",
             joinColumns = @JoinColumn(name = "user_id"),

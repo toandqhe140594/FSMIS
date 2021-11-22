@@ -23,6 +23,11 @@ public class Notification {
 
     private LocalDateTime time;
 
-    @ManyToMany(mappedBy = "notificationSet")
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "tbl_user_notification",
+            joinColumns = @JoinColumn(name = "notification_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
     private List<User> userSet;
 }
