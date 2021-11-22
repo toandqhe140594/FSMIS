@@ -44,7 +44,7 @@ public class UserService {
                 modelMapper.map(user, PersonalInfoDtoOut.class);
         output.setDob(ServiceUtils.convertDateToString(user.getDob()));
         output.setAddressFromWard(ServiceUtils.getAddressByWard(user.getWard()));
-        output.setCatchesCount(catchesRepos.countByUserId(user.getId()));
+        output.setCatchesCount(catchesRepos.countByUserIdAndApprovedIsTrue(user.getId()));
         return output;
     }
 
