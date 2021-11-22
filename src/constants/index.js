@@ -173,13 +173,13 @@ export const MENU_STAFF = [
 export const MENU_ADMIN = [
   {
     id: 1,
-    title: "Quản lý các tài khoản",
+    title: "Quản lý tài khoản",
     icon: "person",
     route: ROUTE_NAMES.ADMIN_ACCOUNT_MANAGEMENT,
   },
   {
     id: 2,
-    title: "Quản lý các điểm câu",
+    title: "Quản lý điểm câu",
     icon: "place",
     route: ROUTE_NAMES.ADMIN_LOCATION_MANAGEMENT,
   },
@@ -191,19 +191,26 @@ export const MENU_ADMIN = [
   },
   {
     id: 4,
-    title: "Quản lý các loại cá",
+    title: "Quản lý loại cá",
     icon: "fish",
     type: "font-awesome-5",
     route: ROUTE_NAMES.ADMIN_FISH_MANAGEMENT,
   },
   {
     id: 5,
-    title: "Quản lý các loại hình câu",
+    title: "Quản lý loại hình câu",
     icon: "list",
     route: ROUTE_NAMES.ADMIN_FISHING_METHOD_MANAGEMENT,
   },
   {
     id: 6,
+    title: "Hồ câu gợi ý từ cần thủ",
+    icon: "info-outline",
+    type: "material",
+    route: ROUTE_NAMES.ADMIN_LOCATION_SUGGEST_MANAGEMENT,
+  },
+  {
+    id: 7,
     title: "Danh sách đen",
     icon: "ban",
     type: "font-awesome",
