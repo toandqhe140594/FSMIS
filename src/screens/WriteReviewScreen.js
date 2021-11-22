@@ -3,7 +3,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
-import { StyleSheet, Text, TextInput, ToastAndroid, View } from "react-native";
+import { StyleSheet, Text, TextInput, View } from "react-native";
 import { Avatar, Button, Divider } from "react-native-elements";
 import { Rating } from "react-native-ratings";
 import * as yup from "yup";
@@ -11,6 +11,7 @@ import * as yup from "yup";
 import HeaderTab from "../components/HeaderTab";
 import colors from "../config/colors";
 import { goBack } from "../navigations";
+import { showToastMessage } from "../utilities";
 
 const styles = StyleSheet.create({
   avatarContainer: {
@@ -74,23 +75,14 @@ const WriteReviewScreen = () => {
 
   const userInfo = useStoreState((states) => states.ProfileModel.userInfo);
 
-  const showToastWithGravity = (message) => {
-    ToastAndroid.showWithGravity(
-      message,
-      ToastAndroid.LONG,
-      ToastAndroid.BOTTOM,
-    );
-  };
-
   const onSubmit = (data) => {
     postReview(data).then((result) => {
-      // Test only
       // If api return status of success
       if (result === 200) {
-        showToastWithGravity("Đánh giá thành công");
+        showToastMessage("Đánh giá thành công");
         goBack(navigation);
       } else {
-        showToastWithGravity("Đánh giá thất bại");
+        showToastMessage("Đánh giá thất bại");
       }
     });
   };

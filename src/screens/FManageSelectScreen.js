@@ -59,6 +59,14 @@ const FManageSelectScreen = () => {
   const [success, setSuccess] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const navigateToSuggestionScreen = () => {
+    goToFManageSuggestScreen(navigation);
+  };
+
+  const goToAddLocationScreen = () => {
+    goToFManageAddNewScreen(navigation);
+  };
+
   useEffect(() => {
     setLoading(true);
     const timeout = setTimeout(() => {
@@ -107,18 +115,12 @@ const FManageSelectScreen = () => {
           name: "info-outline",
           color: "blue",
           type: "material",
-          onPress: () => {
-            goToFManageSuggestScreen(navigation);
-          },
+          onPress: navigateToSuggestionScreen,
         }}
       />
       <ScrollView contentContainerStyle={getEmptyListStyling()}>
         <View style={[styles.center, getEmptyListStyling()]}>
-          <Pressable
-            onPress={() => {
-              goToFManageAddNewScreen(navigation);
-            }}
-          >
+          <Pressable onPress={goToAddLocationScreen}>
             <View style={[styles.border, isStaffStyle()]}>
               <Text style={{ fontSize: 12 }}>Thêm điểm câu</Text>
             </View>

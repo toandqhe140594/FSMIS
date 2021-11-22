@@ -68,6 +68,10 @@ const RegisterInformationScreen = () => {
   const [success, setSuccess] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  const toggleDatePicker = () => {
+    setShow(!show);
+  };
+
   useEffect(() => {
     if (provinceList.length === 0) getAllAddress();
     if (route.params) {
@@ -145,6 +149,8 @@ const RegisterInformationScreen = () => {
     goToLoginScreen(navigation);
   };
 
+  const minHeight = Math.round(useWindowDimensions().height - 40);
+
   return (
     <KeyboardAvoidingView>
       <ScrollView>
@@ -158,10 +164,7 @@ const RegisterInformationScreen = () => {
           />
         )}
 
-        <Center
-          flex={1}
-          minHeight={Math.round(useWindowDimensions().height - 40)}
-        >
+        <Center flex={1} minHeight={minHeight}>
           <VStack
             flex={1}
             justifyContent="center"
@@ -198,11 +201,7 @@ const RegisterInformationScreen = () => {
             )}
 
             {/* Date picker field */}
-            <TouchableOpacity
-              onPress={() => {
-                setShow(true);
-              }}
-            >
+            <TouchableOpacity onPress={toggleDatePicker}>
               <Input
                 InputRightElement={
                   <Icon

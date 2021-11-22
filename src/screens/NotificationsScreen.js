@@ -17,6 +17,31 @@ const NotificationsScreen = () => {
     if (notificationCurrentPage === 1) getNotificationList();
   }, []);
 
+  const renderItem = ({ item }) => (
+    <Box
+      borderBottomWidth="1"
+      _dark={{
+        borderColor: "gray.600",
+      }}
+      borderColor="coolGray.200"
+    >
+      <PressableCustomCard paddingX="2" paddingY="1">
+        <Box pl={5} py={3}>
+          <Text numberOfLines={2} mb={1} isTruncated>
+            {item.description}
+          </Text>
+          <Text>{item.time}</Text>
+        </Box>
+      </PressableCustomCard>
+    </Box>
+  );
+
+  const keyExtractor = (item) => item.id.toString();
+
+  const onEndReached = () => {
+    getNotificationList();
+  };
+
   return (
     <>
       <Box
@@ -27,28 +52,9 @@ const NotificationsScreen = () => {
       >
         <FlatList
           data={notificationList}
-          renderItem={({ item }) => (
-            <Box
-              borderBottomWidth="1"
-              _dark={{
-                borderColor: "gray.600",
-              }}
-              borderColor="coolGray.200"
-            >
-              <PressableCustomCard paddingX="2" paddingY="1">
-                <Box pl={5} py={3}>
-                  <Text numberOfLines={2} mb={1} isTruncated>
-                    {item.description}
-                  </Text>
-                  <Text>{item.time}</Text>
-                </Box>
-              </PressableCustomCard>
-            </Box>
-          )}
-          keyExtractor={(item) => item.id.toString()}
-          onEndReached={() => {
-            getNotificationList();
-          }}
+          renderItem={renderItem}
+          keyExtractor={keyExtractor}
+          onEndReached={onEndReached}
         />
       </Box>
     </>

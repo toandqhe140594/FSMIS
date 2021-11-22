@@ -86,7 +86,7 @@ const LakeEditProfileScreen = () => {
     editLakeDetail({ updateData, setUpdateStatus, id });
   };
 
-  const onDeleteLake = (id, name) => {
+  const onDeleteLake = (id, name) => () => {
     showAlertConfirmBox(
       "Bạn muốn xóa hồ này?",
       `"${name}" sẽ bị xóa vĩnh viễn. Bạn không thể hoàn tác hành động này`,
@@ -110,6 +110,10 @@ const LakeEditProfileScreen = () => {
     setValue("methods", selectedMethods);
   };
 
+  const navigateToLakeProfileScreen = () => {
+    goBack(navigation);
+  };
+
   /**
    * Call fishing method list api
    */
@@ -130,9 +134,7 @@ const LakeEditProfileScreen = () => {
       showAlertAbsoluteBox(
         "Thông báo",
         "Đã xảy ra lỗi! Vui lòng thử lại sau.",
-        () => {
-          navigation.goBack();
-        },
+        navigateToLakeProfileScreen,
       );
     }
   }, [getStatus]);
@@ -160,9 +162,7 @@ const LakeEditProfileScreen = () => {
       showAlertAbsoluteBox(
         "Thông báo",
         "Chỉnh sửa thành công",
-        () => {
-          goBack(navigation);
-        },
+        navigateToLakeProfileScreen,
         "Xác nhận",
       );
     } else if (updateStatus === "FAILED") {
@@ -276,9 +276,7 @@ const LakeEditProfileScreen = () => {
                   style={styles.button}
                   variant="outline"
                   alignSelf="center"
-                  onPress={() => {
-                    onDeleteLake(lakeDetail.id, lakeDetail.name);
-                  }}
+                  onPress={onDeleteLake(lakeDetail.id, lakeDetail.name)}
                 >
                   Xoá hồ câu
                 </Button>

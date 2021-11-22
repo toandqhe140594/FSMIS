@@ -95,9 +95,7 @@ const ReportScreen = () => {
         <Button
           containerStyle={{ margin: "10%" }}
           title="Báo cáo"
-          onPress={() => {
-            onSubmit();
-          }}
+          onPress={onSubmit}
         />
       </View>
     </View>
