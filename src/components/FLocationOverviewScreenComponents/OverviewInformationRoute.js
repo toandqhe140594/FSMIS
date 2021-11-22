@@ -2,14 +2,15 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, Button, Icon, Text } from "native-base";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, ScrollView } from "react-native";
+import { ActivityIndicator, Linking, ScrollView } from "react-native";
 import { Badge, Card, Divider } from "react-native-elements";
-import MapView, { Marker } from "react-native-maps";
 import Swiper from "react-native-swiper";
+
+import { showToastMessage } from "../../utilities";
+import MiniMapView from "./MiniMapView";
 
 const OverviewInformationRoute = () => {
   const [loading, setLoading] = useState(true);
-  const [marginTop, setMarginTop] = useState(1);
   const locationOverview = useStoreState(
     (states) => states.LocationModel.locationOverview,
   );
@@ -36,10 +37,18 @@ const OverviewInformationRoute = () => {
 
   useEffect(() => {
     if (locationOverview && locationOverview.id) setLoading(false);
-    setTimeout(() => {
-      setMarginTop(0);
-    }, 50);
   }, [locationOverview]);
+
+  const saveFishingLocation = () => {
+    saveLocation();
+  };
+
+  const openUrl = (url) => () => {
+    Linking.canOpenURL(url).then((supported) => {
+      if (supported) Linking.openURL(url);
+      else showToastMessage("Không thể mở đường dẫn");
+    });
+  };
 
   if (loading)
     return (
@@ -90,9 +99,7 @@ const OverviewInformationRoute = () => {
                     size="sm"
                   />
                 }
-                onPress={() => {
-                  saveLocation();
-                }}
+                onPress={saveFishingLocation}
               >
                 {saved ? "Bỏ lưu" : "Lưu điểm câu"}
               </Button>
@@ -107,14 +114,18 @@ const OverviewInformationRoute = () => {
                     <Text bold>Địa chỉ: </Text>
                     {address}
                   </Text>
-                  <Text>
+                  <Text onPress={openUrl(`tel:${phone}`)}>
                     <Text bold>SĐT: </Text>
                     <Text underline>{phone}</Text>
                   </Text>
-                  <Text>
-                    <Text bold>Website: </Text>
-                    <Text underline>{website}</Text>
-                  </Text>
+                  {website && (
+                    <Text>
+                      <Text bold>Website: </Text>
+                      <Text underline onPress={openUrl(website)}>
+                        {website}
+                      </Text>
+                    </Text>
+                  )}
                   <Text>
                     <Text bold>Cập nhật lần cuối: </Text>
                     {lastEditedDate}
@@ -127,26 +138,7 @@ const OverviewInformationRoute = () => {
               </Text>
               <Box m={3}>
                 {latitude && (
-                  <MapView
-                    initialRegion={{
-                      latitude,
-                      longitude,
-                      latitudeDelta: 0.05,
-                      longitudeDelta: 0.05,
-                    }}
-                    style={{ height: 150, width: "100%", marginTop }}
-                    liteMode
-                    showsMyLocationButton
-                    showsCompass
-                    showsBuildings
-                    showsIndoors
-                    showsPointsOfInterest
-                    showsTraffic
-                    showsIndoorLevelPicker
-                    showsScale
-                  >
-                    <Marker coordinate={{ latitude, longitude }} />
-                  </MapView>
+                  <MiniMapView latitude={latitude} longitude={longitude} />
                 )}
               </Box>
               <Divider />
