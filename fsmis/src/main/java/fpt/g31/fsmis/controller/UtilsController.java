@@ -7,16 +7,23 @@ import fpt.g31.fsmis.service.TwilioOtpService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.constraints.Pattern;
 
 @RestController
 @RequestMapping("/api/util")
 @AllArgsConstructor
+@Validated
 public class UtilsController {
 
     private final FishSpeciesService fishSpeciesService;
     private final FishingMethodService fishingMethodService;
     private final TwilioOtpService twilioOtpService;
+
+    private static final String INVALID_PHONE = "Số điện thoại không hợp lệ";
+    private static final String PHONE_REGEX = "^(0|\\+84)(3[2-9]|5[689]|7[06-9]|8[0-689]|9[0-46-9])[0-9]{7}$";
 
     @GetMapping("/fish")
     public ResponseEntity<Object> getAllFishSpecies(@RequestParam(required = false, defaultValue = "true") Boolean withImage) {
@@ -34,17 +41,17 @@ public class UtilsController {
     }
 
     @PostMapping("/otp/nonexisted")
-    public ResponseEntity<Object> sendOtpToNonExistedPhone(@RequestParam String phone) {
+    public ResponseEntity<Object> sendOtpToNonExistedPhone(@RequestParam @Pattern(regexp = PHONE_REGEX, message = INVALID_PHONE) String phone) {
         return new ResponseEntity<>(twilioOtpService.sendOtpForNonExistedUser(phone), HttpStatus.OK);
     }
 
     @PostMapping("/otp/existed")
-    public ResponseEntity<Object> sendOtpToExistedPhone(@RequestParam String phone) {
+    public ResponseEntity<Object> sendOtpToExistedPhone(@RequestParam @Pattern(regexp = PHONE_REGEX, message = INVALID_PHONE) String phone) {
         return new ResponseEntity<>(twilioOtpService.sendOtpForExistedUser(phone), HttpStatus.OK);
     }
 
     @PostMapping("/otp/any")
-    public ResponseEntity<Object> sendOtpToAnyPhone(@RequestParam String phone) {
+    public ResponseEntity<Object> sendOtpToAnyPhone(@RequestParam @Pattern(regexp = PHONE_REGEX, message = INVALID_PHONE) String phone) {
         return new ResponseEntity<>(twilioOtpService.sendOtp(phone), HttpStatus.OK);
     }
 

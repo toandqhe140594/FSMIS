@@ -27,7 +27,7 @@ public class GlobalAdvice {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     ResponseTextDtoOut globalExceptionHandler(Exception ex) {
         ex.printStackTrace();
-        return new ResponseTextDtoOut("Server gặp lỗi không xác định rùi onii-chan :<< báo back-end để xử lý nhé :<<");
+        return new ResponseTextDtoOut("Lỗi server");
     }
 
     @ResponseBody
@@ -94,7 +94,7 @@ public class GlobalAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     ResponseTextDtoOut httpRequestMethodNotSupportedExceptionHandler(HttpRequestMethodNotSupportedException ex) {
         ex.printStackTrace();
-        return new ResponseTextDtoOut("Không hỗ trợ phương thức này cho API");
+        return new ResponseTextDtoOut("Không hỗ trợ phương thức này cho request");
     }
 
     @ResponseBody

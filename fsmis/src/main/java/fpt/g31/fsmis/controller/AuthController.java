@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/api/auth")
 @AllArgsConstructor
@@ -20,19 +22,19 @@ public class AuthController {
 
     // UC-01: Login
     @PostMapping("/login")
-    public ResponseEntity<Object> login(@RequestBody AuthDtoIn authDtoIn) {
+    public ResponseEntity<Object> login(@RequestBody @Valid AuthDtoIn authDtoIn) {
         return new ResponseEntity<>(authService.login(authDtoIn), HttpStatus.OK);
     }
 
     // UC-02: Register
     @PostMapping("/register")
-    public ResponseEntity<Object> register(@RequestBody RegistrationDtoIn registrationDtoIn) {
+    public ResponseEntity<Object> register(@RequestBody @Valid RegistrationDtoIn registrationDtoIn) {
         return new ResponseEntity<>(authService.register(registrationDtoIn), HttpStatus.CREATED);
     }
 
     // UC-03: Forgot Password
     @PostMapping("/forgot")
-    public ResponseEntity<Object> changeForgotPassword(@RequestBody AuthDtoIn authDtoIn) {
+    public ResponseEntity<Object> changeForgotPassword(@RequestBody @Valid AuthDtoIn authDtoIn) {
         return new ResponseEntity<>(authService.changeForgotPassword(authDtoIn), HttpStatus.OK);
     }
 }

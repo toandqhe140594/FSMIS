@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping(path = "/api/personal")
@@ -47,7 +48,7 @@ public class UserController {
     }
 
     @PostMapping("/changephone")
-    public ResponseEntity<Object> changePhone(HttpServletRequest request, @RequestBody ChangePhoneDtoIn changePhoneDtoIn) {
+    public ResponseEntity<Object> changePhone(HttpServletRequest request, @RequestBody @Valid ChangePhoneDtoIn changePhoneDtoIn) {
         return new ResponseEntity<>(userService.changePhone(request, changePhoneDtoIn), HttpStatus.OK);
     }
 
