@@ -22,15 +22,15 @@ import java.util.List;
 @AllArgsConstructor
 public class CatchesService {
 
+    private static final String UNAUTHORIZED = "Không có quyền truy cập";
+    private static final String INVALID_PAGE_NUMBER = "SỐ trang không hợp lệ";
     private final FishingLocationRepos fishingLocationRepos;
     private final CatchesRepos catchesRepos;
     private final LakeRepos lakeRepos;
     private final FishSpeciesRepos fishSpeciesRepos;
     private final FishInLakeRepos fishInLakeRepos;
     private final JwtFilter jwtFilter;
-
-    private static final String UNAUTHORIZED = "Không có quyền truy cập";
-    private static final String INVALID_PAGE_NUMBER = "SỐ trang không hợp lệ";
+    private final NotificationRepos notificationRepos;
 
     public PaginationDtoOut getLocationPublicCatchesList(Long locationId, int pageNo) {
         if (pageNo <= 0) {
@@ -265,22 +265,28 @@ public class CatchesService {
                 && !catches.getFishingLocation().getEmployeeList().contains(user)) {
             throw new ValidationException(UNAUTHORIZED);
         }
-        Lake lake = lakeRepos.getById(catches.getLakeId());
-        List<FishInLake> fishInLakeList = lake.getFishInLakeList();
-        for (CatchesDetail catchesDetail : catches.getCatchesDetailList()) {
-            if (Boolean.TRUE.equals(catchesDetail.getReturnToOwner())){
-                continue;
+        if (Boolean.TRUE.equals(isApprove)) {
+            Lake lake = lakeRepos.getById(catches.getLakeId());
+            List<FishInLake> fishInLakeList = lake.getFishInLakeList();
+            for (CatchesDetail catchesDetail : catches.getCatchesDetailList()) {
+                if (Boolean.TRUE.equals(catchesDetail.getReturnToOwner())) {
+                    continue;
+                }
+                FishInLake fishInLake = fishInLakeRepos.findById(catchesDetail.getFishInLakeId())
+                        .orElseThrow(() -> new NotFoundException("Không tìm thấy bản ghi"));
+                if (fishInLakeList.contains(fishInLake)) {
+                    fishInLake.setQuantity(fishInLake.getQuantity() - catchesDetail.getQuantity());
+                    fishInLake.setTotalWeight(fishInLake.getTotalWeight() - catchesDetail.getWeight());
+                }
+                fishInLakeRepos.save(fishInLake);
             }
-            FishInLake fishInLake = fishInLakeRepos.findById(catchesDetail.getFishInLakeId())
-                    .orElseThrow(() -> new NotFoundException("Không tìm thấy bản ghi"));
-            if (fishInLakeList.contains(fishInLake)){
-                fishInLake.setQuantity(fishInLake.getQuantity() - catchesDetail.getQuantity());
-                fishInLake.setTotalWeight(fishInLake.getTotalWeight() - catchesDetail.getWeight());
-            }
-            fishInLakeRepos.save(fishInLake);
         }
         catches.setApproved(isApprove);
         catchesRepos.save(catches);
+        String notificationText = "Báo cá của bạn tại " + catches.getFishingLocation().getName() + " đã " + (Boolean.TRUE.equals(catches.getApproved()) ? "được duyệt" : "bị từ chối");
+        List<User> notificationReceiver = new ArrayList<>();
+        notificationReceiver.add(user);
+        NotificationService.createNotification(notificationRepos, notificationText, notificationReceiver);
         return new ResponseTextDtoOut("Phê duyệt thành công");
     }
 }

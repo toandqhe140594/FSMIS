@@ -11,6 +11,7 @@ import fpt.g31.fsmis.entity.User;
 import fpt.g31.fsmis.exception.NotFoundException;
 import fpt.g31.fsmis.exception.UnauthorizedException;
 import fpt.g31.fsmis.repository.FishingLocationRepos;
+import fpt.g31.fsmis.repository.NotificationRepos;
 import fpt.g31.fsmis.repository.PostRepos;
 import fpt.g31.fsmis.security.JwtFilter;
 import lombok.AllArgsConstructor;
@@ -33,6 +34,7 @@ public class PostService {
     private JwtFilter jwtFilter;
     private ModelMapper modelMapper;
     private FishingLocationRepos locationRepos;
+    private final NotificationRepos notificationRepos;
     private static final String POST_NOT_FOUND = "Không tìm thấy bài viết!";
 
     public PaginationDtoOut getPostByLocationId(Long locationId, int pageNo) {
@@ -75,6 +77,8 @@ public class PostService {
                     .fishingLocation(location)
                     .build();
             postRepos.save(post);
+            String notificationText = location.getName() + " đã đăng bài viết mới";
+            NotificationService.createNotification(notificationRepos, notificationText, location.getSavedUser());
             return new ResponseTextDtoOut("Tạo bài viết thành công!");
         } else {
             Post post = postRepos.findById(postDtoIn.getId())
