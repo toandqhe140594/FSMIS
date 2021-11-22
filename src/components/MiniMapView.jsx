@@ -12,7 +12,7 @@ const iconSize = 19;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "rgba(255,255,255,0.5)",
+    backgroundColor: "rgba(255,255,255,0.8)",
     width: containerSize,
     height: containerSize,
     position: "absolute",
@@ -28,6 +28,8 @@ const styles = StyleSheet.create({
   },
   secondFromRight: {
     right: 51,
+    borderRightWidth: 1,
+    borderRightColor: "rgba(200,200,200,0.8)",
   },
 });
 
@@ -73,7 +75,7 @@ const MiniMapView = ({ latitude, longitude }) => {
           `http://maps.google.com/maps?daddr=${latitude},${longitude}`,
         )}
       >
-        <FontAwesome5 name="directions" size={19} color="rgba(0,0,255,0.5)" />
+        <FontAwesome5 name="directions" size={19} color="rgba(0,0,255,0.8)" />
       </TouchableOpacity>
 
       <TouchableOpacity
