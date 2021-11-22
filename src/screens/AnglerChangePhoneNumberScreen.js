@@ -13,7 +13,6 @@ import { ROUTE_NAMES, SCHEMA } from "../constants";
 const VisibilityIcon = ({ visible, toggleVisible }) => (
   <Pressable onPress={toggleVisible}>
     <Icon
-      alignSelf="flex-end"
       color="muted.500"
       as={<MaterialIcons name={visible ? "visibility" : "visibility-off"} />}
       size={6}
