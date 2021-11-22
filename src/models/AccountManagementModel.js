@@ -4,7 +4,7 @@ import { API_URL } from "../constants";
 import http from "../utilities/Http";
 
 const model = {
-  accountList: [], // List data of accounts
+  accountList: null, // List data of accounts
   accountInformation: {}, // Detail information of an account
   accountTotalPage: 1, // Maximum account page
   accountTotalCounts: null, // Total accounts
@@ -86,7 +86,7 @@ const model = {
   }),
   // Clear the account list data
   clearAccountList: action((state) => {
-    state.accountList = [];
+    state.accountList = null;
   }),
   /**
    * Get detail information of an account by id

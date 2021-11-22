@@ -19,8 +19,8 @@ const goToRegisterScreen = (navigation) => {
   navigation.navigate(ROUTE_NAMES.REGISTER);
 };
 
-const goToRegisterInformationScreen = (navigation) => {
-  navigation.navigate(ROUTE_NAMES.REGISTER_INFORMATION);
+const goToRegisterInformationScreen = (navigation, params) => {
+  navigation.navigate(ROUTE_NAMES.REGISTER_INFORMATION, { ...params });
 };
 
 const goToForgotPasswordScreen = (navigation) => {
