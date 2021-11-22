@@ -12,7 +12,7 @@ const model = {
   totalPostReportPage: 0,
   totalReviewReportPage: 0,
   totalCatchReportPage: 0,
-  locationReportCurrentType: true,
+  locationReportCurrentActiveType: true,
   postReportCurrentType: true,
   reviewReportCurrentType: true,
   catchReportCurrentType: true,
@@ -24,23 +24,23 @@ const model = {
    * @param {String} [payload.setMode] decide to append to current list or create new list
    */
   setReportList: action((state, payload) => {
-    const { type, items, setMode } = payload;
+    const { type, items, mode } = payload;
     switch (type) {
       case "LOCATION":
         state.listLocationReport =
-          setMode === "NEW" ? items : state.listLocationReport.concat(items);
+          mode === "NEW" ? items : state.listLocationReport.concat(items);
         break;
       case "POST":
         state.listPostReport =
-          setMode === "NEW" ? items : state.listPostReport.concat(items);
+          mode === "NEW" ? items : state.listPostReport.concat(items);
         break;
       case "REVIEW":
         state.listReviewReport =
-          setMode === "NEW" ? items : state.listReviewReport.concat(items);
+          mode === "NEW" ? items : state.listReviewReport.concat(items);
         break;
       case "CATCH":
         state.listCatchReport =
-          setMode === "NEW" ? items : state.listCatchReport.concat(items);
+          mode === "NEW" ? items : state.listCatchReport.concat(items);
         break;
       default:
     }
@@ -103,13 +103,16 @@ const model = {
     const { active, type } = payload;
     switch (type) {
       case "LOCATION":
-        state.locationReportCurrentType = active;
+        state.locationReportCurrentActiveType = active;
         break;
       case "POST":
+        state.postReportCurrentType = active;
         break;
       case "REVIEW":
+        state.reviewReportCurrentType = active;
         break;
       case "CATCH":
+        state.catchReportCurrentType = active;
         break;
       default:
     }
@@ -121,31 +124,22 @@ const model = {
    * @param {Boolean} [payload.active] the list's filter for proccessed and unprocessed
    * @param {Function} [payload.setIsLoading] function to set loading state
    */
-  getListLocationReportLocation: thunk(
-    async (actions, payload, { getState }) => {
-      const { pageNo, setGetStatus, active } = payload;
-      const { locationReportCurrentType } = getState();
-      try {
-        const { data } = await http.get(API_URL.ADMIN_REPORT_LOCATION_LIST, {
-          params: { pageNo, active },
-        });
-        // Nếu kiểu biến cờ active trong state khác với active truyền vào
-        // thì reset lại list và set lại cờ active
-        let setMode = "DEFAULT";
-        if (locationReportCurrentType !== active) {
-          actions.setCurrentReportType({ type: "LOCATION", active });
-          setMode = "NEW";
-        }
-        const { totalPage, items } = data;
-        actions.setTotalReportPage({ type: "LOCATION", totalPage });
-        actions.setReportList({ type: "LOCATION", items, setMode });
-        setGetStatus("SUCCESS");
-      } catch (error) {
-        // handle error
-        setGetStatus("FAILED");
-      }
-    },
-  ),
+  getListLocationReportLocation: thunk(async (actions, payload) => {
+    const { mode, query, setGetStatus } = payload;
+    // const { locationReportCurrentActiveType } = getState();
+    try {
+      const { data } = await http.get(API_URL.ADMIN_REPORT_LOCATION_LIST, {
+        params: { ...query },
+      });
+      const { totalPage, items } = data;
+      actions.setTotalReportPage({ type: "LOCATION", totalPage });
+      actions.setReportList({ type: "LOCATION", items, mode });
+      setGetStatus("SUCCESS");
+    } catch (error) {
+      // handle error
+      setGetStatus("FAILED");
+    }
+  }),
 
   /**
    * Get catch report list by page number

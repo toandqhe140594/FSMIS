@@ -1,7 +1,7 @@
-import { useNavigation } from "@react-navigation/native";
+import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import { Select } from "native-base";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -22,11 +22,13 @@ const FILTER_UNTOUCHED_VALUE = "INACTIVE";
 
 const FLocationReportRoute = () => {
   const navigation = useNavigation();
+  const isFocused = useIsFocused();
+  const isFocusedRef = useRef(true);
   const [isLoading, setIsLoading] = useState(true);
   const [bigLoading, setBigLoading] = useState(false);
-  const [getStatus, setGetStatus] = useState("");
-  const [pageNo, setPageNo] = useState(1);
-  const [active, setActive] = useState(false);
+  const [getStatus, setGetStatus] = useState(null);
+  const [mode, setMode] = useState("DEFAULT");
+  const [query, setQuery] = useState({ pageNo: 1, active: true });
   const [filter, setFilter] = useState(FILTER_UNTOUCHED_VALUE);
   const { listLocationReport, totalLocationReportPage } = useStoreState(
     (state) => state.ReportModel,
@@ -61,10 +63,10 @@ const FLocationReportRoute = () => {
   const handleValueChange = (value) => {
     if (value !== filter) {
       setIsLoading(true);
+      setBigLoading(true);
       setFilter(value);
-      setActive(value !== FILTER_UNTOUCHED_VALUE); // Change active based on list type
-      setPageNo(1); // Reset pageNo to 1 for new list
-      setBigLoading(true); // When change between each list type, use bigLoading
+      setQuery({ pageNo: 1, active: value !== FILTER_UNTOUCHED_VALUE });
+      setMode("NEW");
     }
   };
   /**
@@ -72,15 +74,17 @@ const FLocationReportRoute = () => {
    * process to the next location report page
    */
   const handleLoadMore = () => {
-    if (pageNo < totalLocationReportPage) {
+    if (query.pageNo < totalLocationReportPage) {
       setIsLoading(true);
-      setPageNo(pageNo + 1);
+      setMode("DEFAULT");
+      setQuery((prev) => ({ ...prev, pageNo: prev.pageNo + 1 }));
     }
   };
   /**
    * Use only to reset list when unmount
    */
   useEffect(() => {
+    // useIsFocus here
     return () => {
       resetReportList({ type: "LOCATION" });
     };
@@ -89,22 +93,39 @@ const FLocationReportRoute = () => {
    * When pageNo or active changed, get next location report page
    */
   useEffect(() => {
-    getListLocationReportLocation({ pageNo, setGetStatus, active });
-  }, [pageNo, active]);
+    if (isLoading) {
+      getListLocationReportLocation({ mode, query, setGetStatus });
+    }
+  }, [isLoading]);
+
+  /**
+   * Trigger whenever screen focus state changes
+   */
+  useEffect(() => {
+    if (!isFocusedRef.current) {
+      setIsLoading(true);
+      setBigLoading(true);
+      setMode("NEW");
+      setQuery((prev) => ({ ...prev, pageNo: 1 }));
+    }
+    isFocusedRef.current = isFocused;
+  }, [isFocused]);
+
   /**
    * Trigger on getStatus return
    */
   useEffect(() => {
     if (getStatus === "SUCCESS") {
       setIsLoading(false);
-      if (bigLoading) setBigLoading(false);
+      setBigLoading(false);
       setGetStatus(null);
     } else if (getStatus === "FAILED") {
       setIsLoading(false);
-      if (bigLoading) setBigLoading(false);
+      setBigLoading(false);
       setGetStatus(null);
     }
   }, [getStatus]);
+
   return (
     <>
       <HeaderTab name="Quản lý báo cáo" />
