@@ -12,10 +12,6 @@ const model = {
   totalPostReportPage: 0,
   totalReviewReportPage: 0,
   totalCatchReportPage: 0,
-  locationReportCurrentActiveType: true,
-  postReportCurrentType: true,
-  reviewReportCurrentType: true,
-  catchReportCurrentType: true,
 
   /**
    * Append new location report list to current list
@@ -93,40 +89,13 @@ const model = {
   }),
 
   /**
-   * Set current flag for report type of a list
-   * Use to switch and reset list when the user filter the list
-   * by active or inactive
-   * @param {String} [payload.type] type of the report
-   * @param {Boolean} [payload.active] flag indicate list is active type
-   */
-  setCurrentReportType: action((state, payload) => {
-    const { active, type } = payload;
-    switch (type) {
-      case "LOCATION":
-        state.locationReportCurrentActiveType = active;
-        break;
-      case "POST":
-        state.postReportCurrentType = active;
-        break;
-      case "REVIEW":
-        state.reviewReportCurrentType = active;
-        break;
-      case "CATCH":
-        state.catchReportCurrentType = active;
-        break;
-      default:
-    }
-  }),
-
-  /**
    * Get location report list by page number
-   * @param {Number} [payload.pageNo] current page number
-   * @param {Boolean} [payload.active] the list's filter for proccessed and unprocessed
+   * @param {Number} payload.mode
+   * @param {Boolean} payload.query
    * @param {Function} [payload.setIsLoading] function to set loading state
    */
   getListLocationReportLocation: thunk(async (actions, payload) => {
     const { mode, query, setGetStatus } = payload;
-    // const { locationReportCurrentActiveType } = getState();
     try {
       const { data } = await http.get(API_URL.ADMIN_REPORT_LOCATION_LIST, {
         params: { ...query },
@@ -143,25 +112,19 @@ const model = {
 
   /**
    * Get catch report list by page number
-   * @param {Number} [payload.pageNo] current page number
-   * @param {Boolean} [payload.active] the list's filter for proccessed and unprocessed
+   * @param {Number} payload.mode
+   * @param {Boolean} payload.query
    * @param {Function} [payload.setGetStatus] function to set loading state
    */
-  getListReportCatch: thunk(async (actions, payload, { getState }) => {
-    const { pageNo, active, setGetStatus } = payload;
-    const { catchReportCurrentType } = getState();
+  getListReportCatch: thunk(async (actions, payload) => {
+    const { mode, query, setGetStatus } = payload;
     try {
       const { data } = await http.get(API_URL.ADMIN_REPORT_CATCH_LIST, {
-        params: { pageNo, active },
+        params: { ...query },
       });
-      let setMode = "DEFAULT";
-      if (catchReportCurrentType !== active) {
-        actions.setCurrentReportType({ type: "CATCH", active });
-        setMode = "NEW";
-      }
       const { totalPage, items } = data;
       actions.setTotalReportPage({ type: "CATCH", totalPage });
-      actions.setReportList({ type: "CATCH", items, setMode });
+      actions.setReportList({ type: "CATCH", items, mode });
       setGetStatus("SUCCESS");
     } catch (error) {
       // handle error
@@ -170,25 +133,19 @@ const model = {
   }),
   /**
    * Get post report list by page number
-   * @param {Number} [payload.pageNo] current page number
-   * @param {Boolean} [payload.active] the list's filter for proccessed and unprocessed
+   * @param {Number} payload.mode
+   * @param {Boolean} payload.query
    * @param {Function} [payload.setGetStatus] function to set loading state
    */
-  getListPostReport: thunk(async (actions, payload, { getState }) => {
-    const { pageNo, active, setGetStatus } = payload;
-    const { postReportCurrentType } = getState();
+  getListPostReport: thunk(async (actions, payload) => {
+    const { mode, query, setGetStatus } = payload;
     try {
       const { data } = await http.get(API_URL.ADMIN_REPORT_POST_LIST, {
-        params: { pageNo, active },
+        params: { ...query },
       });
-      let setMode = "DEFAULT";
-      if (postReportCurrentType !== active) {
-        actions.setCurrentReportType({ type: "POST", active });
-        setMode = "NEW";
-      }
       const { totalPage, items } = data;
       actions.setTotalReportPage({ type: "POST", totalPage });
-      actions.setReportList({ type: "POST", items, setMode });
+      actions.setReportList({ type: "POST", items, mode });
       setGetStatus("SUCCESS");
     } catch (error) {
       // handle error
@@ -197,25 +154,19 @@ const model = {
   }),
   /**
    * Get review report list by page number
-   * @param {Number} [payload.pageNo] current page number
-   * @param {Boolean} [payload.active] the list's filter for proccessed and unprocessed
+   * @param {Number} payload.mode
+   * @param {Boolean} payload.query
    * @param {Function} [payload.setGetStatus] function to set loading state
    */
-  getListReviewReport: thunk(async (actions, payload, { getState }) => {
-    const { pageNo, active, setGetStatus } = payload;
-    const { reviewReportCurrentType } = getState();
+  getListReviewReport: thunk(async (actions, payload) => {
+    const { mode, query, setGetStatus } = payload;
     try {
       const { data } = await http.get(API_URL.ADMIN_REPORT_REVIEW_LIST, {
-        params: { pageNo, active },
+        params: { ...query },
       });
-      let setMode = "DEFAULT";
-      if (reviewReportCurrentType !== active) {
-        actions.setCurrentReportType({ type: "REVIEW", action });
-        setMode = "NEW";
-      }
       const { totalPage, items } = data;
       actions.setTotalReportPage({ type: "REVIEW", totalPage });
-      actions.setReportList({ type: "REVIEW", items, setMode });
+      actions.setReportList({ type: "REVIEW", items, mode });
       setGetStatus("SUCCESS");
     } catch (error) {
       setGetStatus("FAILED");
