@@ -41,12 +41,12 @@ const AdminFishEditScreen = () => {
     const image = data.imageArray[0].base64;
     delete data.imageArray;
     const submitData = { ...data, image };
-    updateFish({ id: fishId, submitData, setSubmitStatus, active: isActive });
+    updateFish({ id: fishId, active: isActive, submitData, setSubmitStatus });
   };
 
   const handleUpdateStatus = () => {
     setIsLoading(true);
-    updateFishStatus({ id: fishId, setSubmitStatus, active: isActive });
+    updateFishStatus({ id: fishId, active: isActive, setSubmitStatus });
   };
 
   useEffect(() => {
