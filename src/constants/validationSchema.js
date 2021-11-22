@@ -1,6 +1,7 @@
 import * as yup from "yup";
 
 export const ANGLER_PROFILE_FORM = yup.object().shape({
+  avatarUrl: yup.string(),
   fullName: yup.string().required("Họ và tên không thể bỏ trống"),
   gender: yup.bool(),
   address: yup.string(),
@@ -19,8 +20,14 @@ export const ANGLER_PROFILE_PASSWORD_CHANGE_FORM = yup.object().shape({
 });
 
 export const ANGLER_PROFILE_PHONE_CHANGE_FORM = yup.object().shape({
-  phone: yup.string().required("Số điện thoại không thể bỏ trống"),
-  password: yup.string().required("Mật khẩu không thể bỏ trống"),
+  phone: yup
+    .string()
+    .matches(/((09|03|07|08|05)+([0-9]{8})\b)/, "Số điện thoại không hợp lệ")
+    .required("Số điện thoại không thể bỏ trống"),
+  password: yup
+    .string()
+    .min(8, "Mật khẩu phải chứa ít nhất 8 ký tự")
+    .required("Mật khẩu không thể bỏ trống"),
 });
 
 export const ANGLER_CATCH_REPORT_FORM = yup.object().shape({
@@ -46,9 +53,9 @@ export const ANGLER_CATCH_REPORT_FORM = yup.object().shape({
           quantity: yup
             .number()
             .typeError("Trường này chỉ được nhập số")
-            .test("positive", "Phải là số dương", (value) => value >= 0)
-            .max(9999, "Phải nhập số bé hoặc bằng 9999")
-            .test("integer", "Phải là số nguyên", (value) =>
+            .moreThan(0, "Số lượng phải lớn hơn 0")
+            .max(9999, "Số lượng tối đa là 9999")
+            .test("integer", "Số lượng phải là số nguyên", (value) =>
               Number.isInteger(value),
             )
             .when("weight", {
@@ -57,7 +64,7 @@ export const ANGLER_CATCH_REPORT_FORM = yup.object().shape({
                 .number()
                 .typeError("Trường này chỉ được nhập số")
                 .test(
-                  "shouldNotEmptyOrZero",
+                  "zeroEmpty",
                   "Một trong hai trường không được để trống hay bằng 0",
                   (value) => value !== 0,
                 ),
@@ -65,15 +72,15 @@ export const ANGLER_CATCH_REPORT_FORM = yup.object().shape({
           weight: yup
             .number()
             .typeError("Trường này chỉ được nhập số")
-            .test("positive", "Phải là số dương", (value) => value >= 0)
-            .max(9999, "Phải nhập số bé hoặc bằng 9999")
+            .moreThan(0, "Cân nặng phải lớn hơn 0")
+            .max(9999, "Cân nặng tối đa là 9999kg")
             .when("quantity", {
               is: 0,
               then: yup
                 .number()
                 .typeError("Trường này chỉ được nhập số")
                 .test(
-                  "shouldNotEmptyOrZero",
+                  "zeroEmpty",
                   "Một trong hai trường không được để trống hay bằng 0",
                   (value) => value !== 0,
                 ),
@@ -89,19 +96,22 @@ export const FMANAGE_LAKE_FORM = yup.object().shape({
   imageArray: yup.array().min(1, "Hãy chọn một ảnh cho hồ"),
   name: yup.string().required("Tên hồ không thể bỏ trống"),
   price: yup.string().required("Miêu tả giá vé ở hồ này"),
-  methods: yup.array().min(1, "Trường này kia không được để trống"),
+  methods: yup.array().min(1, "Trường này không được để trống"),
   length: yup
     .number()
+    .min(0.1, "Độ dài phải lớn hơn 0")
     .max(1000, "Độ dài tối đa là 1000m")
     .typeError("Trường này chỉ được nhập số")
     .required("Chiều dài hồ không được để trống"),
   width: yup
     .number()
+    .min(0.1, "Độ rộng phải lớn hơn 0")
     .max(1000, "Độ rộng tối đa là 1000m")
     .typeError("Trường này chỉ được nhập số")
     .required("Chiều rộng hồ không được để trống"),
   depth: yup
     .number()
+    .min(0.1, "Độ sâu phải lớn hơn 0")
     .max(50, "Độ sâu tối đa là 50m")
     .required("Độ sâu của hồ không được để trống"),
   fishInLakeList: yup
@@ -117,20 +127,20 @@ export const FMANAGE_LAKE_FORM = yup.object().shape({
           minWeight: yup
             .number()
             .typeError("Trường này chỉ được nhập số")
-            .min(0.1, "Phải nhập lớn hơn 0")
-            .max(9999, "Phải nhập số bé hoặc bằng 9999")
+            .min(0.1, "Cân nặng phải lớn hơn 0")
+            .max(9999, "Cân nặng tối đa là 9999kg")
             .required("Biểu nhỏ không được để trống"),
           maxWeight: yup
             .number()
             .typeError("Trường này chỉ được nhập số")
-            .min(0.1, "Phải nhập lớn hơn 0")
-            .max(9999, "Phải nhập số bé hoặc bằng 9999")
+            .min(0.1, "Cân nặng phải lớn hơn 0")
+            .max(9999, "Cân nặng tối đa là 9999kg")
             .required("Biểu lớn không được để trống"),
           quantity: yup
             .number()
             .typeError("Trường này chỉ được nhập số")
-            .test("positive", "Phải là số dương", (value) => value >= 0)
-            .max(9999, "Phải nhập số bé hoặc bằng 9999")
+            .min(0, "Số lượng phải lớn hơn 0")
+            .max(9999, "Số lượng tối đa là 9999")
             .test("integer", "Phải là số nguyên", (value) =>
               Number.isInteger(value),
             )
@@ -140,7 +150,7 @@ export const FMANAGE_LAKE_FORM = yup.object().shape({
                 .number()
                 .typeError("Trường này chỉ được nhập số")
                 .test(
-                  "shouldNotEmptyOrZero",
+                  "zeroEmpty",
                   "Một trong hai trường không được để trống hay bằng 0",
                   (value) => value !== 0,
                 ),
@@ -148,15 +158,15 @@ export const FMANAGE_LAKE_FORM = yup.object().shape({
           totalWeight: yup
             .number()
             .typeError("Trường này chỉ được nhập số")
-            .test("positive", "Phải là số dương", (value) => value >= 0)
-            .max(999, "Phải nhập số bé hoặc bằng 999")
+            .min(0, "Cân nặng phải lớn hơn 0")
+            .max(9999, "Cân nặng tối đa là 9999kg")
             .when("quantity", {
               is: 0,
               then: yup
                 .number()
                 .typeError("Trường này chỉ được nhập số")
                 .test(
-                  "shouldNotEmptyOrZero",
+                  "zeroEmpty",
                   "Một trong hai trường không được để trống hay bằng 0",
                   (value) => value !== 0,
                 ),
@@ -172,7 +182,7 @@ export const FMANAGE_LAKE_FISH_EDIT_FORM = yup.object().shape(
     quantity: yup
       .number()
       .typeError("Trường này chỉ được nhập số")
-      .test("positive", "Phải là số dương", (value) => value >= 0)
+      .min(0, "Số lượng phải lớn hơn 0")
       .max(9999, "Phải nhập số bé hoặc bằng 9999")
       .test("integer", "Phải là số nguyên", (value) => Number.isInteger(value))
       .when("weight", {
@@ -181,7 +191,7 @@ export const FMANAGE_LAKE_FISH_EDIT_FORM = yup.object().shape(
           .number()
           .typeError("Trường này chỉ được nhập số")
           .test(
-            "shouldNotEmptyOrZero",
+            "zeroEmpty",
             "Một trong hai trường không được để trống hay bằng 0",
             (value) => value !== 0,
           ),
@@ -189,7 +199,7 @@ export const FMANAGE_LAKE_FISH_EDIT_FORM = yup.object().shape(
     weight: yup
       .number()
       .typeError("Trường này chỉ được nhập số")
-      .test("positive", "Phải là số dương", (value) => value >= 0)
+      .min(0, "Cân nặng phải lớn hơn 0")
       .max(9999, "Phải nhập số bé hoặc bằng 9999")
       .when("quantity", {
         is: 0,
@@ -197,7 +207,7 @@ export const FMANAGE_LAKE_FISH_EDIT_FORM = yup.object().shape(
           .number()
           .typeError("Trường này chỉ được nhập số")
           .test(
-            "shouldNotEmptyOrZero",
+            "zeroEmpty",
             "Một trong hai trường không được để trống hay bằng 0",
             (value) => value !== 0,
           ),
@@ -224,7 +234,7 @@ export const FMANAGE_LAKE_FISH_ADD_FORM = yup.object().shape(
     quantity: yup
       .number()
       .typeError("Trường này chỉ được nhập số")
-      .test("positive", "Phải là số dương", (value) => value >= 0)
+      .min(0, "Số lượng phải lớn hơn 0")
       .max(9999, "Phải nhập số bé hoặc bằng 9999")
       .test("integer", "Phải là số nguyên", (value) => Number.isInteger(value))
       .when("totalWeight", {
@@ -233,7 +243,7 @@ export const FMANAGE_LAKE_FISH_ADD_FORM = yup.object().shape(
           .number()
           .typeError("Trường này chỉ được nhập số")
           .test(
-            "shouldNotEmptyOrZero",
+            "zeroEmpty",
             "Một trong hai trường không được để trống hay bằng 0",
             (value) => value !== 0,
           ),
@@ -241,7 +251,7 @@ export const FMANAGE_LAKE_FISH_ADD_FORM = yup.object().shape(
     totalWeight: yup
       .number()
       .typeError("Trường này chỉ được nhập số")
-      .test("positive", "Phải là số dương", (value) => value >= 0)
+      .min(0, "Cân nặng phải lớn hơn 0")
       .max(9999, "Phải nhập số bé hoặc bằng 9999")
       .when("quantity", {
         is: 0,
@@ -249,7 +259,7 @@ export const FMANAGE_LAKE_FISH_ADD_FORM = yup.object().shape(
           .number()
           .typeError("Trường này chỉ được nhập số")
           .test(
-            "shouldNotEmptyOrZero",
+            "zeroEmpty",
             "Một trong hai trường không được để trống hay bằng 0",
             (value) => value !== 0,
           ),
@@ -267,9 +277,18 @@ export const FMANAGE_PROFILE_FORM = yup.object().shape({
     .required("Số điện thoại không dược bỏ trống"),
   website: yup.string().typeError("Website không hợp lệ").ensure(),
   address: yup.string().required("Địa chỉ không được để trống"),
-  provinceId: yup.number().required("Tỉnh/Thành phố không được để trống"),
-  districtId: yup.number().required("Quận/Huyện không được để trống"),
-  wardId: yup.number().required("Phường/xã không được để trống"),
+  provinceId: yup
+    .number()
+    .moreThan(0, "Tỉnh/Thành phố không được để trống")
+    .required("Tỉnh/Thành phố không được để trống"),
+  districtId: yup
+    .number()
+    .moreThan(0, "Quận/Huyện không được để trống")
+    .required("Quận/Huyện không được để trống"),
+  wardId: yup
+    .number()
+    .moreThan(0, "Phường/xã không được để trống")
+    .required("Phường/xã không được để trống"),
   description: yup.string().required("Hãy viết một vài điều về địa điểm"),
   rule: yup.string().required("Ghi không có nếu để trống nội quy"),
   service: yup.string().required("Ghi không có nếu để trống dịch vụ"),
