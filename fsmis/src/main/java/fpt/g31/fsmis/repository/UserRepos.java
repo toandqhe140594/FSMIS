@@ -25,5 +25,7 @@ public interface UserRepos extends JpaRepository<User, Long> {
             "from tbl_employee_list tel ", nativeQuery = true)
     List<Long> getAllStaffId();
 
-    Page<User> findAllByIdNot(Pageable pageable, Long i);
+    Page<User> findAllByIdNot(Pageable pageable, Long id);
+
+    Page<User> findAllByPhoneLikeAndIdNot(String phone, Pageable pageable, Long id);
 }
