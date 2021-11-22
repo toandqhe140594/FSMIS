@@ -14,15 +14,28 @@ const AdminReportPostDetailScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
   const [isSuccess, setIsSuccess] = useState(null);
+  const [isActive, setActive] = useState(true);
+  const [isLoading, setIsLoading] = useState(null);
+  const [isSolvedSuccess, setIsSolvedSuccess] = useState(null);
+  const [reportId, setReportId] = useState();
   const postReportDetail = useStoreState(
     (states) => states.ReportModel.postReportDetail,
   );
   const getPostReportDetail = useStoreActions(
     (actions) => actions.ReportModel.getPostReportDetail,
   );
+  const solvedReport = useStoreActions(
+    (actions) => actions.ReportModel.solvedReport,
+  );
 
   const { locationId, locationName, reportTime, postDtoOut, reportDetailList } =
     postReportDetail;
+
+  const solvedReportHandler = () => {
+    solvedReport({ id: reportId, setIsSuccess: setIsSolvedSuccess });
+    setIsLoading(true);
+  };
+
   const listEvent = [{ name: "Xóa bài viết", onPress: () => {} }];
   const goToFLocationDetailHandler = () => {
     goToAdminFLocationOverviewScreen(navigation, { id: locationId });
@@ -119,7 +132,9 @@ const AdminReportPostDetailScreen = () => {
   useEffect(() => {
     if (route.params.id) {
       getPostReportDetail({ id: route.params.id, setIsSuccess });
+      setReportId(route.params.id);
     }
+    setActive(route.params.isActive);
   }, []);
 
   useEffect(() => {
@@ -135,9 +150,35 @@ const AdminReportPostDetailScreen = () => {
     }
     setIsSuccess(null);
   }, [isSuccess]);
+  useEffect(() => {
+    if (isSolvedSuccess === true) {
+      showAlertAbsoluteBox(
+        "Xử lý thành công",
+        ``,
+        () => {
+          navigation.goBack();
+        },
+        "Xác nhận",
+      );
+    }
+    if (isSolvedSuccess === false) {
+      showAlertAbsoluteBox(
+        "Lỗi",
+        `Đã xảy ra lỗi, vui lòng thử lại.`,
+        () => {},
+        "Xác nhận",
+      );
+    }
+    setIsLoading(false);
+    setIsSolvedSuccess(null);
+  }, [isSolvedSuccess]);
 
   return (
-    <AdminReport>
+    <AdminReport
+      isActive={isActive}
+      eventPress={solvedReportHandler}
+      isLoading={isLoading}
+    >
       <FlatList
         ListHeaderComponent={headerListComponent}
         ListFooterComponent={footerComponent}

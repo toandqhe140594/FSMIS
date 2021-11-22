@@ -13,7 +13,11 @@ import { showAlertAbsoluteBox } from "../utilities";
 const AdminReportReviewDetailScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
+  const [isActive, setActive] = useState(true);
   const [isSuccess, setIsSuccess] = useState(null);
+  const [isSolvedSuccess, setIsSolvedSuccess] = useState(null); // post solved report handler success
+  const [isLoading, setIsLoading] = useState(null);
+  const [reportId, setReportId] = useState();
   const reviewReportDetail = useStoreState(
     (states) => states.ReportModel.reviewReportDetail,
   );
@@ -27,8 +31,15 @@ const AdminReportReviewDetailScreen = () => {
   const getReviewReportDetail = useStoreActions(
     (actions) => actions.ReportModel.getReviewReportDetail,
   );
+  const solvedReport = useStoreActions(
+    (actions) => actions.ReportModel.solvedReport,
+  );
   const goToFLocationDetailHandler = () => {
     goToAdminFLocationOverviewScreen(navigation, { id: locationId });
+  };
+  const solvedReportHandler = () => {
+    solvedReport({ id: reportId, setIsSuccess: setIsSolvedSuccess });
+    setIsLoading(true);
   };
   const headerListComponent = () => (
     <>
@@ -106,7 +117,9 @@ const AdminReportReviewDetailScreen = () => {
   useEffect(() => {
     if (route.params.id) {
       getReviewReportDetail({ id: route.params.id, setIsSuccess });
+      setReportId(route.params.id);
     }
+    setActive(route.params.isActive);
   }, []);
 
   useEffect(() => {
@@ -122,8 +135,35 @@ const AdminReportReviewDetailScreen = () => {
     }
     setIsSuccess(null);
   }, [isSuccess]);
+  useEffect(() => {
+    if (isSolvedSuccess === true) {
+      showAlertAbsoluteBox(
+        "Xử lý thành công",
+        ``,
+        () => {
+          navigation.goBack();
+        },
+        "Xác nhận",
+      );
+    }
+    if (isSolvedSuccess === false) {
+      showAlertAbsoluteBox(
+        "Lỗi",
+        `Đã xảy ra lỗi, vui lòng thử lại.`,
+        () => {},
+        "Xác nhận",
+      );
+    }
+    setIsLoading(false);
+    setIsSolvedSuccess(null);
+  }, [isSolvedSuccess]);
+
   return (
-    <AdminReport>
+    <AdminReport
+      isActive={isActive}
+      eventPress={solvedReportHandler}
+      isLoading={isLoading}
+    >
       <FlatList
         pt="0.5"
         data={reportDetailList}
