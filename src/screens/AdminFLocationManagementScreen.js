@@ -1,7 +1,7 @@
 import { useStoreActions, useStoreState } from "easy-peasy";
-import { Select } from "native-base";
+import { Center, Select } from "native-base";
 import React, { useEffect, useState } from "react";
-import { FlatList, View } from "react-native";
+import { ActivityIndicator, FlatList, View } from "react-native";
 import { SearchBar, Text } from "react-native-elements";
 
 import FLocationCard from "../components/FLocationCard";
@@ -12,9 +12,6 @@ import styles from "../config/styles";
 const AdminFLocationManagementScreen = () => {
   const fishingLocationList = useStoreState(
     (states) => states.AdminFLocationModel.fishingLocationList,
-  );
-  const currentPage = useStoreState(
-    (states) => states.AdminFLocationModel.currentPage,
   );
   const totalItem = useStoreState(
     (states) => states.AdminFLocationModel.totalItem,
@@ -28,24 +25,45 @@ const AdminFLocationManagementScreen = () => {
 
   const [filter, setFilter] = useState("all");
   const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [success, setSuccess] = useState(null);
+
+  const searchFishingLocation = (keyword, filterType) => {
+    setLoading(true);
+    getFishingLocationListOverwrite({
+      keyword,
+      filterType,
+      setSuccess,
+    });
+  };
 
   useEffect(() => {
-    if (currentPage === 1) getFishingLocationListOverwrite();
+    getFishingLocationListOverwrite({ setSuccess });
   }, []);
+
+  useEffect(() => {
+    if (success !== null) {
+      setLoading(false);
+      setSuccess(null);
+    }
+  }, [success]);
 
   const updateSearch = (searchKey) => {
     setSearch(searchKey);
   };
 
   const onEndEditing = () => {
-    getFishingLocationList({ keyword: search });
+    searchFishingLocation(search, filter);
   };
 
-  const onClear = () => {};
+  const onClear = () => {
+    setSearch("");
+    searchFishingLocation("", filter);
+  };
 
   const onValueChange = (value) => {
     if (value !== filter) {
-      getFishingLocationListOverwrite({ filterType: value });
+      searchFishingLocation(search, value);
       setFilter(value);
     }
   };
@@ -84,10 +102,10 @@ const AdminFLocationManagementScreen = () => {
 
   return (
     <>
-      <HeaderTab name="Quản lý xác thực Điểm câu" />
+      <HeaderTab name="Quản lý điểm câu" />
       <View style={[styles.centerBox, { marginBottom: 125 }]}>
         <SearchBar
-          placeholder="Nhập số điện thoại"
+          placeholder="Nhập tên điểm câu"
           onChangeText={updateSearch}
           value={search}
           containerStyle={styles.searchBar}
@@ -105,21 +123,29 @@ const AdminFLocationManagementScreen = () => {
             defaultValue="all"
           >
             <Select.Item label="Tất cả" value="all" />
-            <Select.Item label="Đã xác thực" value="active" />
-            <Select.Item label="Chưa xác thực" value="inactive" />
+            <Select.Item label="Hoạt động" value="active" />
+            <Select.Item label="Không hoạt động" value="inactive" />
+            <Select.Item label="Đã xác thực" value="verified" />
+            <Select.Item label="Chưa xác thực" value="notverified" />
           </Select>
           <Text style={[styles.mt1, styles.mb1]} key="totalItem">
             Tổng số: {totalItem}
           </Text>
         </View>
-        <FlatList
-          style={[styles.mt1, { width: "90%" }]}
-          data={fishingLocationList}
-          renderItem={renderItem}
-          keyExtractor={keyExtractor}
-          onEndReached={onEndReached}
-          onEndReachedThreshold={0.2}
-        />
+        {loading ? (
+          <Center flex={1}>
+            <ActivityIndicator size="large" color="#2089DC" />
+          </Center>
+        ) : (
+          <FlatList
+            style={[styles.mt1, { width: "90%" }]}
+            data={fishingLocationList}
+            renderItem={renderItem}
+            keyExtractor={keyExtractor}
+            onEndReached={onEndReached}
+            onEndReachedThreshold={0.2}
+          />
+        )}
       </View>
     </>
   );

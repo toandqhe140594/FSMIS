@@ -3,6 +3,22 @@ import { action, thunk } from "easy-peasy";
 import { API_URL } from "../constants";
 import http from "../utilities/Http";
 
+/**
+ * Create object contains params to pass to search api from keyword and filtertype
+ * @param {string} keyword search keyword
+ * @param {string} filterType filter type
+ * @returns object represent params to pass to search api
+ */
+const createLocationSearchObject = (keyword, filterType) => {
+  const searchObject = {};
+  if (keyword) Object.assign(searchObject, { input: keyword });
+  if (filterType === "active" || filterType === "inactive")
+    Object.assign(searchObject, { active: filterType === "active" });
+  else if (filterType === "verified" || filterType === "notverified")
+    Object.assign(searchObject, { verified: filterType === "verified" });
+  return searchObject;
+};
+
 const model = {
   suggestedLocationList: [],
   fishingLocationList: [], // Data of fishing locations
@@ -34,6 +50,7 @@ const model = {
     const filterType = payload.filterType ? payload.filterType : "all";
     const keyword = payload.keyword ? payload.keyword : "";
     const setSuccess = payload.setSuccess || (() => {});
+    const searchObject = createLocationSearchObject(keyword, filterType);
     const { currentPage: pageNo, totalPage: currentTotalPage } = getState();
     // If the page is invalid
     if (pageNo < 1 || pageNo > currentTotalPage) return;
@@ -43,8 +60,7 @@ const model = {
       } = await http.get(`${API_URL.ADMIN_FISHING_LOCATION_LIST}`, {
         params: {
           pageNo,
-          filterType,
-          keyword,
+          ...searchObject,
         },
       });
       actions.setFishingLocationList({
@@ -68,6 +84,7 @@ const model = {
   getFishingLocationListOverwrite: thunk(async (actions, payload = {}) => {
     const filterType = payload.filterType ? payload.filterType : "all";
     const keyword = payload.keyword || "";
+    const searchObject = createLocationSearchObject(keyword, filterType);
     const setSuccess = payload.setSuccess || (() => {});
     try {
       const {
@@ -75,8 +92,7 @@ const model = {
       } = await http.get(`${API_URL.ADMIN_FISHING_LOCATION_LIST}`, {
         params: {
           pageNo: 1,
-          filterType,
-          keyword,
+          ...searchObject,
         },
       });
       actions.setFishingLocationList({
