@@ -59,7 +59,7 @@ const model = {
 
   /**
    * Get admin fish list from api call
-   * Returns both active and inactive fish in list
+   * Returns both active and inactive fishes in list
    */
   getAdminFishList: thunk(async (actions) => {
     const { data } = await http.get(`${API_URL.ADMIN_FISH_LIST_FULL}`);
@@ -76,7 +76,7 @@ const model = {
    * @param {Boolean} [payload.active] activation status of the fish
    */
   updateFish: thunk(async (actions, payload) => {
-    const { id, submitData, setSubmitStatus, active } = payload;
+    const { id, active, submitData, setSubmitStatus } = payload;
     try {
       if (id) {
         await http.put(`${API_URL.ADMIN_FISH_EDIT}/${id}`, submitData);
@@ -93,13 +93,13 @@ const model = {
   }),
 
   /**
-   * Update fish species status active or inactive in admin fish list
+   * Update fish species status to active or inactive in admin fish list
    * @param {Number} payload.id the fish's id
    * @param {Boolean} payload.active the fish's current status
    * @param {Function} payload.setSubmitStatus function to set update status
    */
   updateFishStatus: thunk(async (actions, payload) => {
-    const { id, setSubmitStatus, active } = payload;
+    const { id, active, setSubmitStatus } = payload;
     try {
       await http.patch(`${API_URL.ADMIN_FISH_UPDATE_STATUS}/${id}`);
       actions.setFishStatusInAdminList({ id, status: !active });
