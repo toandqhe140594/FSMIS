@@ -344,7 +344,17 @@ public class FishingLocationService {
         }
         location.setClosed(!location.getClosed());
         fishingLocationRepos.save(location);
-        return new ResponseTextDtoOut("Chuyển trạng thái khu hồ thành công");
+        String responseText;
+        String notificationText;
+        if (Boolean.TRUE.equals(location.getClosed())) {
+            responseText = "Đóng cửa khu hồ thành công";
+            notificationText = location.getName() + " đã đóng cửa";
+        } else {
+            responseText = "Mở cửa khu hồ thành công";
+            notificationText = location.getName() + " đã mở cửa";
+        }
+        NotificationService.createNotification(notificationRepos, notificationText, location.getSavedUser());
+        return new ResponseTextDtoOut(responseText);
     }
 
     public PaginationDtoOut adminGetLocationList(Integer pageNo, String input, Boolean active, Boolean verified) {

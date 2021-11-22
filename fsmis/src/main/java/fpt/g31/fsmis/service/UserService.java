@@ -13,7 +13,6 @@ import fpt.g31.fsmis.security.JwtFilter;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -36,6 +35,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final CheckInRepos checkInRepos;
     private final ReviewRepos reviewRepos;
+    private final NotificationRepos notificationRepos;
 
     public PersonalInfoDtoOut getPersonalInformation(HttpServletRequest request) {
         User user = jwtFilter.getUserFromToken(request);
@@ -85,18 +85,7 @@ public class UserService {
             throw new ValidationException("Địa chỉ không tồn tại");
         }
         User user = jwtFilter.getUserFromToken(request);
-
-        // CUSTOM PAGING
-        List<Notification> notifications = user.getNotificationSet();
-        PageRequest pageRequest = PageRequest.of(pageNo - 1, 10);
-        int total = notifications.size();
-        int start = (int) pageRequest.getOffset();
-        int end = Math.min((start + pageRequest.getPageSize()), total);
-        if (start > end) {
-            start = end = 0;
-        }
-        Page<Notification> notificationList = new PageImpl<>(notifications.subList(start, end), pageRequest, total);
-
+        Page<Notification> notificationList = notificationRepos.findAllByUserSetOrderByTimeDesc(user, PageRequest.of(pageNo-1, 10));
         List<NotificationDtoOut> output = new ArrayList<>();
         for (Notification notification : notificationList) {
             NotificationDtoOut item = modelMapper.map(notification, NotificationDtoOut.class);
