@@ -23,14 +23,14 @@ public class TwilioOtpService {
     private TwilioConfig twilioConfig;
 
     public ResponseTextDtoOut sendOtpForExistedUser(String phone) {
-        if (!userRepos.existsByPhone(phone)) {
+        if (Boolean.FALSE.equals(userRepos.existsByPhone(phone))) {
             throw new ValidationException("Số điện thoại này không tồn tại trong hệ thống");
         }
         return sendOtp(phone);
     }
 
     public ResponseTextDtoOut sendOtpForNonExistedUser(String phone) {
-        if (userRepos.existsByPhone(phone)) {
+        if (Boolean.TRUE.equals(userRepos.existsByPhone(phone))) {
             throw new ValidationException("Số điện thoại này đã tồn tại trong hệ thống");
         }
         return sendOtp(phone);
@@ -42,7 +42,7 @@ public class TwilioOtpService {
         PhoneNumber from = new PhoneNumber(twilioConfig.getTrialNumber());
         String otp = generateOtp();
         String otpMessage = "(FSMIS) Ma xac nhan cua ban la " + otp;
-        Message message = Message.creator(to, from, otpMessage).create();
+        Message.creator(to, from, otpMessage).create();
         otpMap.put(phone, otp);
         return new ResponseTextDtoOut("Gửi OTP thành công");
     }

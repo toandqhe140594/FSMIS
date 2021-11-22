@@ -23,7 +23,7 @@ public class UtilsController {
     private final TwilioOtpService twilioOtpService;
 
     private static final String INVALID_PHONE = "Số điện thoại không hợp lệ";
-    private static final String PHONE_REGEX = "^(0|\\+84)(3[2-9]|5[689]|7[06-9]|8[0-689]|9[0-46-9])[0-9]{7}$";
+    private static final String PHONE_REGEX = "^0(3[2-9]|5[689]|7[06-9]|8[0-689]|9[0-46-9])[0-9]{7}$";
 
     @GetMapping("/fish")
     public ResponseEntity<Object> getAllFishSpecies(@RequestParam(required = false, defaultValue = "true") Boolean withImage) {

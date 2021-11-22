@@ -16,7 +16,7 @@ public class FishingLocationDtoIn {
     @NotEmpty
     private String name;
 
-    @Pattern(regexp = "^(0|\\+84)(3[2-9]|5[689]|7[06-9]|8[0-689]|9[0-46-9])[0-9]{7}$", message = "Số điện thoại không hợp lệ")
+    @Pattern(regexp = "^0(3[2-9]|5[689]|7[06-9]|8[0-689]|9[0-46-9])[0-9]{7}$", message = "Số điện thoại không hợp lệ")
     private String phone;
 
     private String website;
