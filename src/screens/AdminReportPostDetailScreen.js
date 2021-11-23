@@ -8,7 +8,7 @@ import AvatarCard from "../components/AvatarCard";
 import EventPostCard from "../components/EventPostCard";
 import styles from "../config/styles";
 import { goToAdminFLocationOverviewScreen } from "../navigations";
-import { showAlertAbsoluteBox } from "../utilities";
+import { showAlertAbsoluteBox, showAlertConfirmBox } from "../utilities";
 
 const AdminReportPostDetailScreen = () => {
   const route = useRoute();
@@ -17,26 +17,37 @@ const AdminReportPostDetailScreen = () => {
   const [isActive, setActive] = useState(true);
   const [isLoading, setIsLoading] = useState(null);
   const [isSolvedSuccess, setIsSolvedSuccess] = useState(null);
-  const [reportId, setReportId] = useState();
+  // const [reportId, setReportId] = useState(null);
+  // const [postId, setPostId] = useState(null);
   const postReportDetail = useStoreState(
     (states) => states.ReportModel.postReportDetail,
   );
-  const getPostReportDetail = useStoreActions(
-    (actions) => actions.ReportModel.getPostReportDetail,
-  );
-  const solvedReport = useStoreActions(
-    (actions) => actions.ReportModel.solvedReport,
+
+  const { solvedReport, deletePost, getPostReportDetail } = useStoreActions(
+    (actions) => actions.ReportModel,
   );
 
   const { locationId, locationName, reportTime, postDtoOut, reportDetailList } =
     postReportDetail;
 
   const solvedReportHandler = () => {
-    solvedReport({ id: reportId, setIsSuccess: setIsSolvedSuccess });
+    solvedReport({ id: postDtoOut.id, setIsSuccess: setIsSolvedSuccess });
     setIsLoading(true);
   };
 
-  const listEvent = [{ name: "Xóa bài viết", onPress: () => {} }];
+  const deletePostHandler = () => {
+    deletePost({ id: postDtoOut.id, setIsSuccess: setIsSolvedSuccess });
+    setIsLoading(true);
+  };
+
+  const onPressHandler = () => {
+    showAlertConfirmBox(
+      "Xác nhận xóa bài đăng.",
+      `Bài đăng tại hồ ${locationName} sẽ bị xóa.`,
+      deletePostHandler,
+    );
+  };
+  const listEvent = [{ name: "Xóa bài viết", onPress: onPressHandler }];
   const goToFLocationDetailHandler = () => {
     goToAdminFLocationOverviewScreen(navigation, { id: locationId });
   };
@@ -81,7 +92,8 @@ const AdminReportPostDetailScreen = () => {
               iconEvent={listEvent}
               iconName="ellipsis-vertical"
               postStyle="LAKE_POST"
-              image={postDtoOut.uri}
+              uri={postDtoOut.uri}
+              typeUri={postDtoOut.attachmentType}
               postTime={postDtoOut.postTime}
               edited={postDtoOut.edited}
               lakePost={{
@@ -132,7 +144,7 @@ const AdminReportPostDetailScreen = () => {
   useEffect(() => {
     if (route.params.id) {
       getPostReportDetail({ id: route.params.id, setIsSuccess });
-      setReportId(route.params.id);
+      // setReportId(route.params.id);
     }
     setActive(route.params.isActive);
   }, []);

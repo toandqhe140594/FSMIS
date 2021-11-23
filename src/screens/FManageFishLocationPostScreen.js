@@ -86,7 +86,8 @@ const PostListContainerComponent = () => {
           iconName="ellipsis-vertical"
           iconEvent={[...pinPostEvent, ...listEvent]}
           id={item.id}
-          image={item.url}
+          typeUri={item.attachmentType}
+          uri={item.url}
           itemData={item}
           lakePost={{
             badge: typeBadge,
@@ -126,7 +127,8 @@ const PostListContainerComponent = () => {
             iconName="ellipsis-vertical"
             iconEvent={[...unPinPostEvent, ...listEvent]}
             id={currentPinPost.id}
-            image={currentPinPost.url}
+            typeUri={currentPinPost.attachmentType}
+            uri={currentPinPost.url}
             itemData={currentPinPost}
             lakePost={{
               badge:

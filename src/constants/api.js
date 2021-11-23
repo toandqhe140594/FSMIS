@@ -28,6 +28,9 @@ export const ADMIN_FISHING_LOCATION_VERIFY = "admin/location/verify";
 export const ADMIN_FISHING_LOCATION_SUGGEST_LIST = "admin/location/suggested";
 export const ADMIN_FISHING_LOCATION_SUGGEST_REMOVE =
   "admin/location/suggested/remove";
+export const ADMIN_DELETE_POST = "admin/report/post/delete/";
+export const ADMIN_DELETE_REVIEW = "admin/report/review/delete/";
+export const ADMIN_DELETE_CATCH = "admin/report/catch/delete/";
 
 export const STAFF_FIND_BY_PHONE = "findUserByPhone";
 export const STAFF_ADD = "staff/add";

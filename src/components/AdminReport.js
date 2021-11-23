@@ -25,12 +25,12 @@ const AdminReport = ({ isLoading, isActive, eventPress, ...props }) => {
       <Button
         style={styles.stickyButtons}
         onPress={onPressHandler}
-        isDisabled={isActive}
+        isDisabled={isActive === false}
         backgroundColor={
-          isActive ? colors.defaultSuccess : colors.defaultDanger
+          isActive === false ? colors.defaultSuccess : colors.defaultDanger
         }
       >
-        {isActive ? (
+        {isActive === false ? (
           <Text color="white">Đã xử lý </Text>
         ) : (
           <Text color="white">Đánh dấu xử lý </Text>

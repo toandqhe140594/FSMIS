@@ -102,7 +102,8 @@ const AdminReportCatchDetailScreen = () => {
             anglerName={catchesOverviewDtoOut.userFullName}
             postTime={catchesOverviewDtoOut.time}
             imageAvatar={catchesOverviewDtoOut.avatar}
-            image={catchesOverviewDtoOut.images[0]}
+            uri={catchesOverviewDtoOut.images[0]}
+            typeUri="IMAGE"
             anglerContent={catchesOverviewDtoOut.description}
             isApproved={catchesOverviewDtoOut.approved}
           />

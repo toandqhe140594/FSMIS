@@ -71,7 +71,8 @@ const CatchReportRoute = () => {
           fishList={item.fishes}
           id={item.id}
           imageAvatar={item.avatar}
-          image={item.images[0]}
+          typeUri="IMAGE"
+          uri={item.images[0]}
           numberOfImages={item.images.length}
           iconName={role === VIEW_ROLE_ANGLER ? "flag" : ""}
           iconEvent={listEvent}
@@ -145,8 +146,9 @@ const FLocationEventRoute = () => {
           postStyle="LAKE_POST"
           iconName={role === VIEW_ROLE_ANGLER ? "flag" : ""}
           iconEvent={listEvent}
+          typeUri={item.attachmentType}
           id={item.id}
-          image={item.url}
+          uri={item.url}
           itemData={item}
           lakePost={{
             badge: typeBadge,
@@ -187,7 +189,8 @@ const FLocationEventRoute = () => {
               iconName={role === VIEW_ROLE_ANGLER ? "flag" : ""}
               iconEvent={listEvent}
               id={currentPinPost.id}
-              image={currentPinPost.url}
+              uri={currentPinPost.url}
+              typeUri={currentPinPost.attachmentType}
               itemData={currentPinPost}
               lakePost={{
                 badge:
