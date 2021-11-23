@@ -52,7 +52,7 @@ public class FishingLocationService {
         User owner = jwtFilter.getUserFromToken(request);
         Ward ward = wardRepos.findById(fishingLocationDtoIn.getWardId())
                 .orElseThrow(() -> new NotFoundException("Không tìm thấy phường/xã!"));
-        if (bannedPhoneRepos.existsById(fishingLocationDtoIn.getPhone())){
+        if (bannedPhoneRepos.existsById(fishingLocationDtoIn.getPhone())) {
             throw new ValidationException("Số điện thoại bị cấm khỏi hệ thống");
         }
         FishingLocation fishingLocation = FishingLocation.builder()
@@ -515,6 +515,15 @@ public class FishingLocationService {
                 .orElseThrow(() -> new NotFoundException(LOCATION_NOT_FOUND));
         location.setVerify(!location.getVerify());
         fishingLocationRepos.save(location);
+        String notificationText;
+        if (Boolean.TRUE.equals(location.getVerify())) {
+            notificationText = "Điểm câu " + location.getName() + " đã được cấp tick xanh";
+        } else {
+            notificationText = "Điểm câu " + location.getName() + " đã bị bỏ tick xanh";
+        }
+        List<User> notificationReceiver = new ArrayList<>();
+        notificationReceiver.add(location.getOwner());
+        NotificationService.createNotification(notificationRepos, notificationText, notificationReceiver);
         return new ResponseTextDtoOut(Boolean.TRUE.equals(location.getVerify()) ?
                 "Xác nhận khu hồ thành công!" :
                 "Bỏ xác nhận khu hồ thành công!");
@@ -525,6 +534,16 @@ public class FishingLocationService {
                 .orElseThrow(() -> new NotFoundException(LOCATION_NOT_FOUND));
         location.setActive(!location.getActive());
         fishingLocationRepos.save(location);
+        String notificationText;
+        if (Boolean.FALSE.equals(location.getActive())) {
+            notificationText = "Điểm câu " + location.getName() + " đã bị đóng cửa do vi phạm điều khoản ứng dụng";
+        } else {
+            notificationText = "Điểm câu " + location.getName() + " đã được mở cửa trở lại";
+        }
+        List<User> notificationReceiver = new ArrayList<>();
+        notificationReceiver.add(location.getOwner());
+        NotificationService.createNotification(notificationRepos, notificationText, notificationReceiver);
+
         return new ResponseTextDtoOut(Boolean.TRUE.equals(location.getActive()) ?
                 "Hiện khu hồ thành công!" :
                 "Ẩn khu hồ thành công!");

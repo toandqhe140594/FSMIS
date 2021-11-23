@@ -8,6 +8,7 @@ import fpt.g31.fsmis.dto.output.ReviewScoreDtoOut;
 import fpt.g31.fsmis.entity.*;
 import fpt.g31.fsmis.exception.NotFoundException;
 import fpt.g31.fsmis.repository.FishingLocationRepos;
+import fpt.g31.fsmis.repository.NotificationRepos;
 import fpt.g31.fsmis.repository.ReviewRepos;
 import fpt.g31.fsmis.repository.VoteRepos;
 import fpt.g31.fsmis.security.JwtFilter;
@@ -34,6 +35,7 @@ public class ReviewService {
     private final ReviewRepos reviewRepos;
     private final VoteRepos voteRepos;
     private final ModelMapper modelMapper;
+    private final NotificationRepos notificationRepos;
 
     public ReviewScoreDtoOut getReviewScore(Long locationId) {
         Double score = reviewRepos.getAverageScoreByFishingLocationIdAndActiveIsTrue(locationId);
@@ -170,6 +172,10 @@ public class ReviewService {
         Double avgScore = reviewRepos.getAverageScoreByFishingLocationIdAndActiveIsTrue(location.getId());
         location.setScore(avgScore == null ? 0 : avgScore.floatValue());
         fishingLocationRepos.save(location);
+        String notificationText = "Đánh giá của bạn ở " + review.getFishingLocation().getName() + " đã bị xóa do vi phạm điều khoản ứng dụng";
+        List<User> notificationReceiver = new ArrayList<>();
+        notificationReceiver.add(review.getUser());
+        NotificationService.createNotification(notificationRepos, notificationText, notificationReceiver);
         return new ResponseTextDtoOut("Xóa bài đánh giá thành công");
     }
 }

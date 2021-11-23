@@ -158,6 +158,12 @@ public class PostService {
         post.setActive(false);
         post.setPinned(false);
         postRepos.save(post);
+        String notificationText = "Bài viết trên trang " + post.getFishingLocation().getName() + " với nội dung \""
+                + (post.getContent().length() >= 30 ? (post.getContent().substring(0, 30)+"...") : post.getContent())
+                + "\" đã bị xóa do vi phạm điều khoản ứng dụng";
+        List<User> notificationReceiver = new ArrayList<>();
+        notificationReceiver.add(post.getFishingLocation().getOwner());
+        NotificationService.createNotification(notificationRepos, notificationText, notificationReceiver);
         return new ResponseTextDtoOut("Xóa bài viết thành công!");
     }
 }
