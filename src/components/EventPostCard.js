@@ -224,8 +224,8 @@ const EventPostCard = ({
                   var body = document.getElementsByTagName("body");
                    if(elements[0].width < elements[0].height){
                     body[0].style.width= 300 + "px" ;
-                    body[0].style.height= "100%";
-                    body[0].style.margin= "0 auto "
+              
+                    body[0].style.margin= "0 auto"
                   }
                   if(elements[0].width >= elements[0].height){
                     body[0].style.width= "100%";
