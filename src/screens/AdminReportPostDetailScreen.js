@@ -92,7 +92,8 @@ const AdminReportPostDetailScreen = () => {
               iconEvent={listEvent}
               iconName="ellipsis-vertical"
               postStyle="LAKE_POST"
-              image={postDtoOut.uri}
+              uri={postDtoOut.uri}
+              typeUri={postDtoOut.attachmentType}
               postTime={postDtoOut.postTime}
               edited={postDtoOut.edited}
               lakePost={{
