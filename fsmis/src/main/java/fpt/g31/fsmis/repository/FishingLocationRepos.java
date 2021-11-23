@@ -16,7 +16,8 @@ public interface FishingLocationRepos extends JpaRepository<FishingLocation, Lon
             "  *, (\n" +
             "     ACOS(SIN(PI()*?2/180.0)*SIN(PI()*latitude/180.0)+COS(PI()*?2/180.0)*COS(PI()*latitude/180.0)*COS(PI()*longitude/180.0-PI()*?1/180.0))*6371\n" +
             "  ) as distance\n" +
-            "  FROM tbl_fishing_location \n" +
+            "FROM tbl_fishing_location\n" +
+            "where active = true\n" +
             " ) as t\n" +
             "where distance < ?3\n" +
             "ORDER BY distance;")

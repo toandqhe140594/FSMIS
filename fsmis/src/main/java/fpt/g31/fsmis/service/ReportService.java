@@ -31,6 +31,7 @@ public class ReportService {
 
     private static final String INVALID_PAGE_NUMBER = "Số trang không hợp lệ";
     private static final String REPORT_NOT_FOUND = "Không tìm thấy báo cáo";
+    private static final String INCORRECT_REPORT_TYPE = "Không đúng loại báo cáo";
 
     public ResponseTextDtoOut reportFishingLocation(HttpServletRequest request, Long locationId, ReportDtoIn reportDtoIn) {
         User user = jwtFilter.getUserFromToken(request);
@@ -246,6 +247,9 @@ public class ReportService {
     public LocationReportDetailDtoOut getLocationReportDetail(Long reportId) {
         Report report = reportRepos.findById(reportId)
                 .orElseThrow(() -> new NotFoundException(REPORT_NOT_FOUND));
+        if (report.getFishingLocation() == null) {
+            throw new ValidationException(INCORRECT_REPORT_TYPE);
+        }
         List<ReportUser> reportDetailList = reportUserRepos.findAllByReportId(reportId);
         List<ReportDetailItemDtoOut> reportDetailDtoOutList = getReportDetailDtoList(reportDetailList);
         return LocationReportDetailDtoOut.builder()
@@ -275,6 +279,9 @@ public class ReportService {
     public PostReportDetailDtoOut getPostReportDetail(Long reportId) {
         Report report = reportRepos.findById(reportId)
                 .orElseThrow(() -> new NotFoundException(REPORT_NOT_FOUND));
+        if (report.getPost() == null) {
+            throw new ValidationException(INCORRECT_REPORT_TYPE);
+        }
         List<ReportUser> reportDetailList = reportUserRepos.findAllByReportId(reportId);
         List<ReportDetailItemDtoOut> reportDetailDtoOutList = getReportDetailDtoList(reportDetailList);
         Post post = report.getPost();
@@ -299,6 +306,9 @@ public class ReportService {
     public ReviewReportDetailDtoOut getReviewReportDetail(Long reportId) {
         Report report = reportRepos.findById(reportId)
                 .orElseThrow(() -> new NotFoundException(REPORT_NOT_FOUND));
+        if (report.getReview() == null) {
+            throw new ValidationException(INCORRECT_REPORT_TYPE);
+        }
         List<ReportUser> reportDetailList = reportUserRepos.findAllByReportId(reportId);
         List<ReportDetailItemDtoOut> reportDetailDtoOutList = getReportDetailDtoList(reportDetailList);
         Review review = report.getReview();
@@ -322,6 +332,9 @@ public class ReportService {
     public ImproperCatchReportDtoOut getImproperCatchReportDetail(Long reportId) {
         Report report = reportRepos.findById(reportId)
                 .orElseThrow(() -> new NotFoundException(REPORT_NOT_FOUND));
+        if (report.getCatches() == null) {
+            throw new ValidationException(INCORRECT_REPORT_TYPE);
+        }
         List<ReportUser> reportDetailList = reportUserRepos.findAllByReportId(reportId);
         List<ReportDetailItemDtoOut> reportDetailDtoOutList = getReportDetailDtoList(reportDetailList);
         Catches catches = report.getCatches();

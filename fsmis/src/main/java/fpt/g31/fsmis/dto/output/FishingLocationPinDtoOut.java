@@ -13,7 +13,7 @@ public class FishingLocationPinDtoOut {
     private Long id;
     private String name;
     private Boolean verify;
-    private Double score;
+    private Float score;
     private Float longitude;
     private Float latitude;
 }
