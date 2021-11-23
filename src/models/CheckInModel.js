@@ -137,7 +137,7 @@ const model = {
       const { data, status } = await http.get(`${API_URL.CHECKIN_STATUS}`);
       if (status === 200) {
         await actions.setFishingLocationInfo(data.fishingLocationItemDtoOut);
-        const available = data.available || true;
+        const available = !data.available ? data.available : true;
         actions.setCheckInState(!available);
         setLoading(false);
       }
