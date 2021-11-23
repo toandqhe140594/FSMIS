@@ -66,8 +66,8 @@ public class FishingLocationController {
 
     @GetMapping("/nearby")
     public ResponseEntity<Object> getNearBy(@RequestParam Float latitude, @RequestParam Float longitude,
-                                            @RequestParam Integer distance, @RequestParam Long methodId,
-                                            @RequestParam Integer minRating) {
+                                            @RequestParam Integer distance, @RequestParam(required = false) Long methodId,
+                                            @RequestParam(defaultValue = "0", required = false) Integer minRating) {
         return new ResponseEntity<>(fishingLocationService.getNearBy(longitude, latitude, distance, methodId, minRating), HttpStatus.OK);
     }
 

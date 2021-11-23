@@ -152,7 +152,12 @@ public class FishingLocationService {
     }
 
     public List<FishingLocationPinDtoOut> getNearBy(Float longitude, Float latitude, Integer distance, Long methodId, Integer minRating) {
-        List<FishingLocation> fishingLocationList = fishingLocationRepos.getNearByLocation(longitude, latitude, distance, methodId, minRating);
+        List<FishingLocation> fishingLocationList;
+        if (methodId != null) {
+            fishingLocationList = fishingLocationRepos.getNearbyLocationWithMethodId(longitude, latitude, distance, minRating, methodId);
+        } else {
+            fishingLocationList = fishingLocationRepos.getNearbyLocation(longitude, latitude, distance, minRating);
+        }
         List<FishingLocationPinDtoOut> fishingLocationPinDtoOutList = new ArrayList<>();
         for (FishingLocation fishingLocation : fishingLocationList) {
             fishingLocationPinDtoOutList.add(modelMapper.map(fishingLocation, FishingLocationPinDtoOut.class));
