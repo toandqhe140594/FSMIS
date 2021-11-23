@@ -89,12 +89,10 @@ const LakeAddNewScreen = () => {
    * to get fishing method list and fish list
    */
   useEffect(() => {
-    (async () => {
-      await getFishingMethodList();
-      await getFishList();
+    Promise.all([getFishingMethodList(), getFishList()]).then(() => {
       setIsLoading(false);
       setFullScreenMode(false);
-    })();
+    });
     const loadingId = setTimeout(() => {
       setIsLoading(false);
       setFullScreenMode(false);
