@@ -4,6 +4,7 @@ import { Box, HStack, Menu, Pressable, VStack } from "native-base";
 import PropTypes from "prop-types";
 import React from "react";
 import { Badge, Divider, Text } from "react-native-elements";
+import { WebView } from "react-native-webview";
 
 import styles from "../config/styles";
 import AvatarCard from "./AvatarCard";
@@ -17,7 +18,8 @@ const EventPostCard = ({
   lakePost,
   iconName,
   iconEvent,
-  image,
+  typeUri,
+  uri,
   edited,
   postTime,
   fishList,
@@ -26,10 +28,10 @@ const EventPostCard = ({
   itemData,
   isApproved,
 }) => {
+  // Filter unique item for map.
   const onlyUnique = (value, index, self) => {
     return self.indexOf(value) === index;
   };
-
   return (
     <Box mt="1" px="1.4">
       {postStyle === "LAKE_POST" && (
@@ -156,10 +158,89 @@ const EventPostCard = ({
         </VStack>
       )}
 
-      <VStack py={1} px={1} backgroundColor="gray.100">
-        {image !== null && image.length > 10 && (
-          <ImageResizeMode imgUri={image} height={400} />
+      <VStack backgroundColor="gray.100">
+        {typeUri === "IMAGE" && uri !== null && uri.length > 10 && (
+          <ImageResizeMode imgUri={uri} height={400} />
         )}
+        {typeUri === "VIDEO" && uri !== null ? (
+          <Box
+            style={{
+              height: 500,
+              width: 400,
+              flex: 0,
+              justifyContent: "center",
+              position: "relative",
+              right: 10,
+              bottom: 5,
+              backgroundColor: "transparent",
+            }}
+          >
+            <WebView
+              overScrollMode="never"
+              showsHorizontalScrollIndicator={false}
+              originWhitelist={["https://*"]}
+              automaticallyAdjustContentInsets={false}
+              scalesPageToFit={false}
+              containerStyle={{
+                flex: 0,
+                height: 490,
+                width: "100%",
+              }}
+              allowsFullscreenVideo
+              source={{
+                html: `
+            <html>
+            <head>
+               <style>
+                  body{
+                  overflow: hidden;
+                  width: 900 px;
+                  height: 900px; 
+                  background-color:transparent;
+                 }  
+                  .container {
+                  width: inherit;
+                  height: inherit;
+                  overflow: hidden;
+                  border-style: solid;
+                  background-color:transparent;
+                  }          
+                  iframe {
+                  display : block;
+                  width: 100%;
+                  height: 100%;
+                  overflow: hidden;
+                  background-color:transparent;  
+                }
+               </style>
+            </head>
+            <body>
+               <div class="container">
+                  ${uri}
+               </div>
+               <script>
+                  var elements = document.getElementsByTagName("iframe");
+                  var container = document.getElementsByClassName("container");
+                  var body = document.getElementsByTagName("body");
+                   if(elements[0].width < elements[0].height){
+                    body[0].style.width= 300 + "px" ;
+                    body[0].style.height= "100%";
+                    body[0].style.margin= "0 auto "
+                  }
+                  if(elements[0].width >= elements[0].height){
+                    body[0].style.width= "100%";
+                    body[0].style.height= "100%";
+                    body[0].style.margin= "0 auto"
+                    body[0].style.paddingTop= 25;                   
+                  }  
+               </script>
+            </body>
+         </html>
+          `,
+              }}
+            />
+          </Box>
+        ) : null}
       </VStack>
       <Divider />
     </Box>
