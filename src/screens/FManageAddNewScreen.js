@@ -102,7 +102,7 @@ const FManageAddNewScreen = () => {
   const methods = useForm({
     mode: "onSubmit",
     reValidateMode: "onSubmit",
-    defaultValues: { imageArray: [] },
+    defaultValues: { imageArray: [], provinceId: 0, districtId: 0 },
     resolver: yupResolver(SCHEMA.FMANAGE_PROFILE_FORM),
   });
   const { handleSubmit, setValue } = methods;
