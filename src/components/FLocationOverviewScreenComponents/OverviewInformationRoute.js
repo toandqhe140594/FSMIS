@@ -118,13 +118,15 @@ const OverviewInformationRoute = () => {
                     <Text bold>SĐT: </Text>
                     <Text underline>{phone}</Text>
                   </Text>
-                  {website && (
+                  {website ? (
                     <Text>
                       <Text bold>Website: </Text>
                       <Text underline onPress={openUrl(website)}>
                         {website}
                       </Text>
                     </Text>
+                  ) : (
+                    <></>
                   )}
                   <Text>
                     <Text bold>Cập nhật lần cuối: </Text>
