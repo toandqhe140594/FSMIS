@@ -23,11 +23,14 @@ const model = {
    * Get all fishing methods from API
    * @param {Function} [payload.setGetStatus] function to set get status
    */
-  getFishingMethodList: thunk(async (actions, payload = {}) => {
+  getFishingMethodList: thunk(async (actions, payload = {}, { getState }) => {
     const setGetStatus = payload.setGetStatus || (() => {});
+    const { fishingMethodList } = getState();
     try {
       const { data } = await http.get(API_URL.ADMIN_FISHING_METHOD_LIST);
-      actions.setFishingMethodList(data);
+      if (fishingMethodList.length !== data.length) {
+        actions.setFishingMethodList(data);
+      }
       setGetStatus("SUCCESS");
     } catch (error) {
       // handler

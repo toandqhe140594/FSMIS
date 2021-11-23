@@ -18,9 +18,12 @@ const model = {
    * Get fish list from api call
    * Only list of active fish is returned
    */
-  getFishList: thunk(async (actions) => {
+  getFishList: thunk(async (actions, payload, { getState }) => {
+    const { fishList } = getState();
     const { data } = await http.get(`${API_URL.ADMIN_FISH_LIST}`);
-    actions.setFishList(data);
+    if (fishList.length !== data.length) {
+      actions.setFishList(data);
+    }
   }),
 
   /**
