@@ -20,7 +20,6 @@ public class UserController {
     private final CatchesService catchesService;
     private final CheckInService checkInService;
     private final FishingLocationService fishingLocationService;
-    private final TwilioOtpService twilioOtpService;
 
     @GetMapping()
     public ResponseEntity<Object> getPersonalInformation(HttpServletRequest request) {

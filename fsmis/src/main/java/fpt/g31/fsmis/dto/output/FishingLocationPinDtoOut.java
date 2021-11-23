@@ -16,4 +16,5 @@ public class FishingLocationPinDtoOut {
     private Float score;
     private Float longitude;
     private Float latitude;
+    private Float distance;
 }

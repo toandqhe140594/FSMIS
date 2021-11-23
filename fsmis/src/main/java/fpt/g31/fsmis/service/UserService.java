@@ -76,6 +76,9 @@ public class UserService {
         if (!passwordEncoder.matches(changePhoneDtoIn.getPassword(), user.getPassword())) {
             throw new ValidationException("Mật khẩu không đúng");
         }
+        if (changePhoneDtoIn.getNewPhone().equals(user.getPhone())) {
+            throw new ValidationException("Số điện thoại mới không được trùng số điện thoại cũ");
+        }
         if (bannedPhoneRepos.existsById(changePhoneDtoIn.getNewPhone())){
             throw new ValidationException("Số điện thoại bị cấm khỏi hệ thống");
         }

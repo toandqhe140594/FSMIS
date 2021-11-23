@@ -1,13 +1,11 @@
 package fpt.g31.fsmis.exception.advice;
 
+import com.twilio.exception.ApiException;
 import fpt.g31.fsmis.dto.output.ResponseTextDtoOut;
 import fpt.g31.fsmis.exception.NotFoundException;
 import fpt.g31.fsmis.exception.UnauthorizedException;
-import javax.validation.ValidationException;
-import com.twilio.exception.ApiException;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
-import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -19,6 +17,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+
+import javax.validation.ValidationException;
 
 @ControllerAdvice
 public class GlobalAdvice {
@@ -51,10 +51,7 @@ public class GlobalAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     ResponseTextDtoOut methodArgumentNotValidExceptionHandler(MethodArgumentNotValidException ex) {
         ex.printStackTrace();
-        return new ResponseTextDtoOut(
-                ex.getBindingResult().getFieldErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage)
-                        .collect(java.util.stream.Collectors.joining(", "))
-        );
+        return new ResponseTextDtoOut("Thông tin truyền vào không hợp lệ");
     }
 
     @ResponseBody

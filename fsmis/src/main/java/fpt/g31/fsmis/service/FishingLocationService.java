@@ -19,6 +19,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import javax.persistence.criteria.Join;
 import javax.servlet.http.HttpServletRequest;
@@ -160,7 +161,17 @@ public class FishingLocationService {
         }
         List<FishingLocationPinDtoOut> fishingLocationPinDtoOutList = new ArrayList<>();
         for (FishingLocation fishingLocation : fishingLocationList) {
-            fishingLocationPinDtoOutList.add(modelMapper.map(fishingLocation, FishingLocationPinDtoOut.class));
+            String uri = String.format("https://dev.virtualearth.net/REST/v1/Routes/DistanceMatrix?origins=%f,%f&destinations=%f,%f&travelMode=driving&key=AifuNyF5Q8Kh-xzvqV9icNvlkP_dFS89AZE7zIqJj_8UYpqfM15BSG1TiC-GC1jh"
+                    , latitude, longitude, fishingLocation.getLatitude(), fishingLocation.getLongitude());
+            RestTemplate restTemplate = new RestTemplate();
+            String result = restTemplate.getForObject(uri, String.class);
+            int index = result.indexOf("travelDistance");
+            float computedDistance = Float.parseFloat(result.substring(index+16, index+20));
+            if (computedDistance <= distance){
+                FishingLocationPinDtoOut fishingLocationPinDtoOut = modelMapper.map(fishingLocation, FishingLocationPinDtoOut.class);
+                fishingLocationPinDtoOut.setDistance(computedDistance);
+                fishingLocationPinDtoOutList.add(fishingLocationPinDtoOut);
+            }
         }
         return fishingLocationPinDtoOutList;
     }
