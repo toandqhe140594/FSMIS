@@ -38,7 +38,6 @@ const SpotMarker = ({ coordinate, fishingSpot, onPress }) => {
         <View style={styles.locationInfoContainer}>
           <View style={{ alignSelf: "center", padding: 2 }}>
             <Text>{fishingSpot.name}</Text>
-
             <View>
               <Rating
                 imageSize={16}
@@ -48,6 +47,10 @@ const SpotMarker = ({ coordinate, fishingSpot, onPress }) => {
                 startingValue={fishingSpot.rate || 0}
               />
             </View>
+            <Text>
+              Ước tính:{" "}
+              {fishingSpot.distance ? `${fishingSpot.distance}km` : "Không rõ"}
+            </Text>
           </View>
           {fishingSpot.isVerified && (
             <View style={verificationIconContainer}>
@@ -77,6 +80,7 @@ SpotMarker.propTypes = {
     rate: PropTypes.number,
     isVerified: PropTypes.bool,
     id: PropTypes.number,
+    distance: PropTypes.string,
   }).isRequired,
   onPress: PropTypes.func.isRequired,
 };

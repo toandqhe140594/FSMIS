@@ -49,6 +49,7 @@ export default function FLocationMapView({ coordinates, locationList }) {
                 rate: location.score,
                 isVerified: location.verify,
                 id: location.id,
+                distance: location.distance,
               }}
               onPress={openLocationDetail(location.id)}
               key={location.id}
