@@ -48,6 +48,10 @@ const MapViewOverlay = ({ visible, toggleOverlay }) => {
     setValue("rate", -1);
   }, []);
 
+  const sliderOnValueChange = (value) => {
+    setSliderValue(value);
+  };
+
   return (
     <Overlay isVisible={visible} onBackdropPress={toggleOverlay}>
       <VStack w="300" space={2} padding={2}>
@@ -119,7 +123,7 @@ const MapViewOverlay = ({ visible, toggleOverlay }) => {
             height: 15,
           }}
           value={sliderValue}
-          onValueChange={(value) => setSliderValue(value)}
+          onValueChange={sliderOnValueChange}
           minimumValue={5}
           maximumValue={50}
           step={5}
@@ -127,13 +131,7 @@ const MapViewOverlay = ({ visible, toggleOverlay }) => {
 
         {/* Reset and submit buttons */}
         <Box flexDir="row" justifyContent="space-between">
-          <Button
-            onPress={() => {
-              resetMapFilter();
-            }}
-          >
-            Chọn lại
-          </Button>
+          <Button onPress={resetMapFilter}>Chọn lại</Button>
           <Button onPress={handleSubmit(onSubmit)}>Tìm kiếm</Button>
         </Box>
       </VStack>
