@@ -14,7 +14,7 @@ import {
   Text,
   VStack,
 } from "native-base";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { ActivityIndicator, StyleSheet } from "react-native";
 import { Overlay } from "react-native-elements";
@@ -58,21 +58,18 @@ const LakeEditProfileScreen = () => {
   const { fishingMethodList } = useStoreState(
     (state) => state.FishingMethodModel,
   );
+  const { getFishingMethodList } = useStoreActions(
+    (actions) => actions.FishingMethodModel,
+  );
   const { lakeDetail } = useStoreState((states) => states.FManageModel);
   const { editLakeDetail, closeLakeByLakeId } = useStoreActions(
     (actions) => actions.FManageModel,
   );
-  const { getFishingMethodList } = useStoreActions(
-    (actions) => actions.FishingMethodModel,
-  );
-  const memoizedValue = useMemo(
-    () =>
-      fishingMethodList.reduce((acc, { name, id }) => {
-        if (lakeDetail.fishingMethodList.includes(name)) acc.push(id);
-        return acc;
-      }, []),
-    [fishingMethodList],
-  );
+  const methodValue = () =>
+    fishingMethodList.reduce((acc, { name, id }) => {
+      if (lakeDetail.fishingMethodList.includes(name)) acc.push(id);
+      return acc;
+    }, []);
   const methods = useForm({
     mode: "onSubmit",
     reValidateMode: "onSubmit",
@@ -117,12 +114,11 @@ const LakeEditProfileScreen = () => {
    * Call fishing method list api
    */
   useEffect(() => {
-    (async () => {
-      await getFishingMethodList();
-      setValue("methods", memoizedValue);
+    getFishingMethodList().then(() => {
+      setValue("methods", methodValue);
       setIsLoading(false);
       setFullScreenMode(false);
-    })();
+    });
     const loadingId = setTimeout(() => {
       setIsLoading(false);
       setFullScreenMode(false);
