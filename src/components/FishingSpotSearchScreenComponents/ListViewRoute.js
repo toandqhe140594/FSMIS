@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { ActivityIndicator, FlatList, View } from "react-native";
 import { Button, Icon } from "react-native-elements";
 
@@ -11,8 +11,7 @@ import FLocationCard from "../FLocationCard";
 
 const ListViewRoute = () => {
   const navigation = useNavigation();
-  // DucHM ADD_START 16/11/2021
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [getStatus, setGetStatus] = useState(null);
   const { listLocationResult, pageNo, totaListLocationPage } = useStoreState(
     (states) => states.AdvanceSearchModel,
@@ -20,14 +19,15 @@ const ListViewRoute = () => {
   const { setPageNo, getListLocationNextPage } = useStoreActions(
     (actions) => actions.AdvanceSearchModel,
   );
+
   /**
    * Check if pageNo small then totalPage
    * then set incremented pageNo
    */
   const handleLoadMore = () => {
     if (pageNo < totaListLocationPage) {
-      setIsLoading(true);
       setPageNo(pageNo + 1);
+      setIsLoading(true);
     }
   };
   // DucHM ADD_END 16/11/2021
@@ -51,8 +51,8 @@ const ListViewRoute = () => {
       key={location.id}
     />
   );
+  const memoizedValue = useMemo(() => renderItem, [listLocationResult]);
 
-  // DucHM ADD_START 16/11/2021
   const renderFooter = () => {
     return isLoading ? (
       <View style={{ marginVertical: 12, justifyContent: "center" }}>
@@ -60,7 +60,6 @@ const ListViewRoute = () => {
       </View>
     ) : null;
   };
-  // DucHM ADD_END 16/11/2021
 
   const keyExtractor = (item) => item.id.toString();
 
@@ -70,8 +69,8 @@ const ListViewRoute = () => {
    * and call the get list next page
    */
   useEffect(() => {
-    getListLocationNextPage({ setGetStatus });
-  }, [pageNo]);
+    if (isLoading) getListLocationNextPage({ setGetStatus });
+  }, [isLoading]);
 
   /**
    * Trigger when get status returns
@@ -111,7 +110,7 @@ const ListViewRoute = () => {
         <FlatList
           style={{ height: "100%" }}
           data={listLocationResult}
-          renderItem={renderItem}
+          renderItem={memoizedValue}
           keyExtractor={keyExtractor}
           ItemSeparatorComponent={ItemSeparatorComponent}
           initialNumToRender={3}
