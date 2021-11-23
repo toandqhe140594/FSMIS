@@ -21,9 +21,11 @@ import {
 import { Overlay } from "react-native-elements";
 
 import AvatarSection from "../components/AnglerEditProfile/AvatarSection";
-import AddressWatcherHandler from "../components/common/AddressWatcherHandler";
+import DistrictSelector from "../components/common/DistrictSelector";
 import InputComponent from "../components/common/InputComponent";
+import ProvinceSelector from "../components/common/ProvinceSelector";
 import SelectComponent from "../components/common/SelectComponent";
+import WardSelector from "../components/common/WardSelector";
 import HeaderTab from "../components/HeaderTab";
 import moment from "../config/moment";
 import { SCHEMA } from "../constants";
@@ -50,7 +52,7 @@ const styles = StyleSheet.create({
 const STATUS_SUCCESS = "SUCCESS";
 const STATUS_FAILED = "FAILED";
 const ALERT_TITLE = "Thông báo";
-const ALERT_SUCCESS_MSG = "Cập nhật thông tin cá nhân thành công!";
+const ALERT_EDIT_PROFILE_SUCCESS_MSG = "Cập nhật thông tin cá nhân thành công!";
 const ALERT_ERROR_MSG = "Đã xảy ra lỗi! Vui lòng thử lại sau.";
 const ANGLER_EDIT_PROFILE_HEADER_NAME = "Thông tin cá nhân";
 
@@ -62,12 +64,12 @@ const FORM_FIELD_PROVINCE = "provinceId";
 const FORM_FIELD_DISTRICT = "districtId";
 const FORM_FIELD_WARD = "wardId";
 
-const INPUT_FULL_NAME_LABEL = "Họ và tên";
-const SELECT_GENDER_LABEL = "Giới tính";
-const INPUT_ADDRESS_LABEL = "Địa chỉ";
-const SELECT_PROVINCE_LABEL = "Tỉnh/Thành phố";
-const SELECT_DISTRICT_LABEL = "Quận/Huyện";
-const SELECT_WARD_LABEL = "Phường/xã";
+const FULL_NAME_LABEL = "Họ và tên";
+const GENDER_LABEL = "Giới tính";
+const ADDRESS_LABEL = "Địa chỉ";
+const PROVINCE_LABEL = "Tỉnh/Thành phố";
+const DISTRICT_LABEL = "Quận/Huyện";
+const WARD_LABEL = "Phường/xã";
 
 const INPUT_NAME_PLACEHOLDER = "Nhập họ và tên";
 const SELECT_BIRTHDATE_PLACEHOLDER = "Chọn ngày sinh";
@@ -85,48 +87,29 @@ const EditProfileScreen = () => {
   const [formattedDate, setFormattedDate] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [fullScreen, setFullScreen] = useState(true);
-  const [getStatus, setGetStatus] = useState(null);
   const [updateStatus, setUpdateStatus] = useState(null);
   const userInfo = useStoreState((state) => state.ProfileModel.userInfo);
-  const { provinceList, districtList, wardList } = useStoreState(
-    (state) => state.AddressModel,
+  const { resetDataList, getAllProvince } = useStoreActions(
+    (actions) => actions.AddressModel,
   );
-  const {
-    resetDataList,
-    getAllProvince,
-    getDisctrictByProvinceId,
-    getWardByDistrictId,
-  } = useStoreActions((actions) => actions.AddressModel);
   const { editPersonalInformation } = useStoreActions(
     (actions) => actions.ProfileModel,
   );
   const methods = useForm({
     mode: "onSubmit",
     reValidateMode: "onSubmit",
+    defaultValues: {
+      avatarUrl: userInfo.avatarUrl,
+      fullName: userInfo.fullName,
+      gender: userInfo.gender,
+      address: userInfo.address,
+      provinceId: userInfo.addressFromWard.provinceId,
+      districtId: userInfo.addressFromWard.districtId,
+      wardId: userInfo.addressFromWard.wardId,
+    },
     resolver: yupResolver(SCHEMA.ANGLER_PROFILE_FORM),
   });
   const { handleSubmit, setValue } = methods;
-
-  const setDefaultValues = () => {
-    setValue(FORM_FIELD_FULL_NAME, userInfo.fullName);
-    setValue(FORM_FIELD_GENDER, userInfo.gender);
-    setValue(FORM_FIELD_ADDRESS, userInfo.address);
-    setValue(FORM_FIELD_PROVINCE, userInfo.addressFromWard.provinceId);
-    setValue(FORM_FIELD_DISTRICT, userInfo.addressFromWard.districtId);
-    setValue(FORM_FIELD_WARD, userInfo.addressFromWard.wardId);
-    setValue(FORM_FIELD_AVATAR, userInfo.avatarUrl);
-    setDate(moment(userInfo.dob.split(" ")[0], "DD/MM/YYYY").toDate());
-  };
-
-  const handleProvinceIdChange = useCallback((id) => {
-    setIsLoading(true);
-    getDisctrictByProvinceId({ id, setGetStatus });
-  }, []);
-
-  const handleDistrictIdChange = useCallback((id) => {
-    setIsLoading(true);
-    getWardByDistrictId({ id, setGetStatus });
-  }, []);
 
   const openDatePicker = () => {
     setShowDatePicker(true);
@@ -173,12 +156,16 @@ const EditProfileScreen = () => {
    * Set up the screen
    */
   useEffect(() => {
-    setDefaultValues();
-    getAllProvince();
+    (async () => {
+      setDate(moment(userInfo.dob.split(" ")[0], "DD/MM/YYYY").toDate());
+      await getAllProvince();
+      setIsLoading(false);
+      setFullScreen(false);
+    })();
     const loadingId = setTimeout(() => {
       setIsLoading(false);
       setFullScreen(false);
-    }, 2000);
+    }, 10000);
     return () => {
       clearTimeout(loadingId);
       resetDataList();
@@ -200,33 +187,25 @@ const EditProfileScreen = () => {
     // useCallback will listen to route.param
     useCallback(() => {
       if (route.params?.base64Array && route.params.base64Array[0]) {
-        setValue("avatarUrl", route.params?.base64Array[0].base64);
+        setValue(FORM_FIELD_AVATAR, route.params?.base64Array[0].base64);
         navigation.setParams({ base64Array: [] });
       }
     }, [route.params]),
   );
 
   /**
-   * Triggers when get status returns
-   */
-  useEffect(() => {
-    if (!fullScreen && getStatus === STATUS_SUCCESS) {
-      setIsLoading(false);
-    }
-    setGetStatus(null);
-  }, [getStatus]);
-
-  /**
    * Triggers when update status returns
    */
   useEffect(() => {
     if (updateStatus === STATUS_SUCCESS) {
-      showAlertBox(ALERT_TITLE, ALERT_SUCCESS_MSG);
+      setIsLoading(false);
+      setUpdateStatus(null);
+      showAlertBox(ALERT_TITLE, ALERT_EDIT_PROFILE_SUCCESS_MSG);
     } else if (updateStatus === STATUS_FAILED) {
+      setIsLoading(false);
+      setUpdateStatus(null);
       showAlertBox(ALERT_TITLE, ALERT_ERROR_MSG);
     }
-    setIsLoading(false);
-    setUpdateStatus(null);
   }, [updateStatus]);
 
   return (
@@ -267,7 +246,7 @@ const EditProfileScreen = () => {
                 handleDelete={deleteImage}
               />
               <InputComponent
-                label={INPUT_FULL_NAME_LABEL}
+                label={FULL_NAME_LABEL}
                 isTitle
                 placeholder={INPUT_NAME_PLACEHOLDER}
                 type="text"
@@ -289,45 +268,31 @@ const EditProfileScreen = () => {
                 </TouchableOpacity>
               </View>
               <SelectComponent
-                label={SELECT_GENDER_LABEL}
+                label={GENDER_LABEL}
                 isTitle
                 placeholder={SELECT_GENDER_PLACEHOLDER}
                 controllerName={FORM_FIELD_GENDER}
                 data={genderList}
               />
               <InputComponent
-                label={INPUT_ADDRESS_LABEL}
+                label={ADDRESS_LABEL}
                 isTitle
                 placeholder={INPUT_ADDRESS_PLACEHOLDER}
                 controllerName={FORM_FIELD_ADDRESS}
               />
-              <SelectComponent
-                label={SELECT_PROVINCE_LABEL}
-                isTitle
+              <ProvinceSelector
+                label={PROVINCE_LABEL}
                 placeholder={SELECT_PROVINCE_PLACEHOLDER}
-                data={provinceList}
                 controllerName={FORM_FIELD_PROVINCE}
               />
-              <AddressWatcherHandler
-                name={FORM_FIELD_PROVINCE}
-                onValueChange={handleProvinceIdChange}
-              />
-              <SelectComponent
-                label={SELECT_DISTRICT_LABEL}
-                isTitle
+              <DistrictSelector
+                label={DISTRICT_LABEL}
                 placeholder={SELECT_DISTRICT_PLACEHOLDER}
-                data={districtList}
                 controllerName={FORM_FIELD_DISTRICT}
               />
-              <AddressWatcherHandler
-                name={FORM_FIELD_DISTRICT}
-                onValueChange={handleDistrictIdChange}
-              />
-              <SelectComponent
-                label={SELECT_WARD_LABEL}
-                isTitle
+              <WardSelector
+                label={WARD_LABEL}
                 placeholder={SELECT_WARD_PLACEHOLDER}
-                data={wardList}
                 controllerName={FORM_FIELD_WARD}
               />
               <Button mt={6} size="lg" onPress={handleSubmit(onSubmit)}>

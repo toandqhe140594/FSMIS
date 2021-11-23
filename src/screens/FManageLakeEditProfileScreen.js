@@ -19,11 +19,12 @@ import { FormProvider, useForm } from "react-hook-form";
 import { ActivityIndicator, StyleSheet } from "react-native";
 import { Overlay } from "react-native-elements";
 
+// import MethodCheckboxSelector from "../components/AdvanceSearch/MethodCheckboxSelector";
+import CheckboxSelectorComponent from "../components/common/CheckboxSelectorComponent";
 import InputComponent from "../components/common/InputComponent";
 import MultiImageSection from "../components/common/MultiImageSection";
 import TextAreaComponent from "../components/common/TextAreaComponent";
 import HeaderTab from "../components/HeaderTab";
-import CheckboxSelectorComponent from "../components/LakeEditProfile/CheckboxSelectorComponent";
 import { ROUTE_NAMES, SCHEMA } from "../constants";
 import { goBack } from "../navigations";
 import {
@@ -51,24 +52,36 @@ const styles = StyleSheet.create({
 const LakeEditProfileScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
-  const [getStatus, setGetStatus] = useState("");
-  const [updateStatus, setUpdateStatus] = useState("");
+  const [updateStatus, setUpdateStatus] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [fullScreenMode, setFullScreenMode] = useState(true);
   const { fishingMethodList } = useStoreState(
     (state) => state.FishingMethodModel,
   );
+  const { getFishingMethodList } = useStoreActions(
+    (actions) => actions.FishingMethodModel,
+  );
   const { lakeDetail } = useStoreState((states) => states.FManageModel);
   const { editLakeDetail, closeLakeByLakeId } = useStoreActions(
     (actions) => actions.FManageModel,
   );
-  const { getFishingMethodList, clearFishingMethodList } = useStoreActions(
-    (actions) => actions.FishingMethodModel,
-  );
+  const methodValue = () =>
+    fishingMethodList.reduce((acc, { name, id }) => {
+      if (lakeDetail.fishingMethodList.includes(name)) acc.push(id);
+      return acc;
+    }, []);
   const methods = useForm({
     mode: "onSubmit",
     reValidateMode: "onSubmit",
-    defaultValues: { imageArray: [] },
+    defaultValues: {
+      name: lakeDetail.name,
+      price: lakeDetail.price,
+      width: lakeDetail.width.toString(),
+      length: lakeDetail.length.toString(),
+      depth: lakeDetail.depth.toString(),
+      imageArray: [{ id: 1, base64: lakeDetail.imageUrl }],
+      methods: [],
+    },
     resolver: yupResolver(SCHEMA.FMANAGE_LAKE_FORM),
   });
   const { handleSubmit, setValue } = methods;
@@ -86,7 +99,8 @@ const LakeEditProfileScreen = () => {
     editLakeDetail({ updateData, setUpdateStatus, id });
   };
 
-  const onDeleteLake = (id, name) => () => {
+  const handleLakeDelete = () => {
+    const { name, id } = lakeDetail;
     showAlertConfirmBox(
       "Bạn muốn xóa hồ này?",
       `"${name}" sẽ bị xóa vĩnh viễn. Bạn không thể hoàn tác hành động này`,
@@ -94,20 +108,6 @@ const LakeEditProfileScreen = () => {
         closeLakeByLakeId({ id, setDeleteSuccess });
       },
     );
-  };
-
-  const setDefaultValues = () => {
-    setValue("name", lakeDetail.name);
-    setValue("price", lakeDetail.price);
-    setValue("width", lakeDetail.width.toString());
-    setValue("length", lakeDetail.length.toString());
-    setValue("depth", lakeDetail.depth.toString());
-    setValue("imageArray", [{ id: 1, base64: lakeDetail.imageUrl }]);
-    const selectedMethods = fishingMethodList.reduce((acc, { name, id }) => {
-      if (lakeDetail.fishingMethodList.includes(name)) acc.push(id);
-      return acc;
-    }, []);
-    setValue("methods", selectedMethods);
   };
 
   const navigateToLakeProfileScreen = () => {
@@ -118,32 +118,25 @@ const LakeEditProfileScreen = () => {
    * Call fishing method list api
    */
   useEffect(() => {
-    getFishingMethodList({ setGetStatus });
-    return () => {
-      clearFishingMethodList();
-    };
-  }, []);
-
-  useEffect(() => {
-    if (getStatus === "SUCCESS") {
-      setDefaultValues();
+    getFishingMethodList().then(() => {
+      setValue("methods", methodValue);
       setIsLoading(false);
       setFullScreenMode(false);
-      setGetStatus(null);
-    } else if (getStatus === "FAILED") {
-      showAlertAbsoluteBox(
-        "Thông báo",
-        "Đã xảy ra lỗi! Vui lòng thử lại sau.",
-        navigateToLakeProfileScreen,
-      );
-    }
-  }, [getStatus]);
+    });
+    const loadingId = setTimeout(() => {
+      setIsLoading(false);
+      setFullScreenMode(false);
+    }, 10000);
+    return () => {
+      clearTimeout(loadingId);
+    };
+  }, []);
 
   /**
    * Fire when navigates back to the screen
    */
   useFocusEffect(
-    // useCallback will listen to route.param
+    // useCallback will listen to rsetIsLoading(false);
     useCallback(() => {
       if (route.params?.base64Array && route.params.base64Array[0]) {
         setValue("imageArray", route.params?.base64Array);
@@ -208,6 +201,7 @@ const LakeEditProfileScreen = () => {
                 myStyles={styles.sectionWrapper}
                 label="Tên hồ câu"
                 isTitle
+                hasAsterisk
                 placeholder="Nhập tên hồ câu"
                 controllerName="name"
               />
@@ -216,11 +210,12 @@ const LakeEditProfileScreen = () => {
             <Center>
               <CheckboxSelectorComponent
                 myStyles={styles.sectionWrapper}
-                label="Loại hình câu"
-                isTitle
                 placeholder="Chọn loại hình câu"
                 data={fishingMethodList}
                 controllerName="methods"
+                label="Loại hình câu"
+                hasAsterisk
+                isTitle
               />
             </Center>
 
@@ -229,6 +224,7 @@ const LakeEditProfileScreen = () => {
                 myStyles={styles.sectionWrapper}
                 label="Giá vé"
                 isTitle
+                hasAsterisk
                 placeholder="Miêu tả giá vé hồ"
                 numberOfLines={3}
                 controllerName="price"
@@ -241,18 +237,21 @@ const LakeEditProfileScreen = () => {
                   Thông số
                 </Text>
                 <InputComponent
+                  hasAsterisk
                   label="Chiều dài (m)"
                   placeholder="Nhập chiều dài của hồ"
                   controllerName="length"
                   useNumPad
                 />
                 <InputComponent
+                  hasAsterisk
                   label="Chiều rộng (m)"
                   placeholder="Nhập chiều rộng của hồ"
                   controllerName="width"
                   useNumPad
                 />
                 <InputComponent
+                  hasAsterisk
                   label="Độ sâu (m)"
                   placeholder="Nhập độ sâu của hồ"
                   controllerName="depth"
@@ -276,7 +275,7 @@ const LakeEditProfileScreen = () => {
                   style={styles.button}
                   variant="outline"
                   alignSelf="center"
-                  onPress={onDeleteLake(lakeDetail.id, lakeDetail.name)}
+                  onPress={handleLakeDelete}
                 >
                   Xoá hồ câu
                 </Button>

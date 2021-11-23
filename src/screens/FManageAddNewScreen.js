@@ -11,11 +11,12 @@ import { FormProvider, useForm } from "react-hook-form";
 import { ActivityIndicator, ScrollView, StyleSheet } from "react-native";
 import { Overlay } from "react-native-elements";
 
-import AddressWatcherHandler from "../components/common/AddressWatcherHandler";
+import DistrictSelector from "../components/common/DistrictSelector";
 import InputComponent from "../components/common/InputComponent";
 import MultiImageSection from "../components/common/MultiImageSection";
-import SelectComponent from "../components/common/SelectComponent";
+import ProvinceSelector from "../components/common/ProvinceSelector";
 import TextAreaComponent from "../components/common/TextAreaComponent";
+import WardSelector from "../components/common/WardSelector";
 import MapOverviewBox from "../components/FLocationEditProfile/MapOverviewBox";
 import HeaderTab from "../components/HeaderTab";
 import { ROUTE_NAMES, SCHEMA } from "../constants";
@@ -87,41 +88,24 @@ const FManageAddNewScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
   const [isLoading, setIsLoading] = useState(true);
-  const [getStatus, setGetStatus] = useState(null);
   const [fullScreen, setFullScreen] = useState(true);
   const [addStatus, setAddStatus] = useState(null);
   const [locationData, setLocationData] = useState({});
   const [otpSendSuccess, setOtpSendSuccess] = useState(null);
-  const { provinceList, districtList, wardList } = useStoreState(
-    (state) => state.AddressModel,
-  );
   const { locationLatLng } = useStoreState((states) => states.FManageModel);
-  const {
-    resetDataList,
-    getAllProvince,
-    getDisctrictByProvinceId,
-    getWardByDistrictId,
-  } = useStoreActions((actions) => actions.AddressModel);
+  const { resetDataList, getAllProvince } = useStoreActions(
+    (actions) => actions.AddressModel,
+  );
   const { addNewLocation } = useStoreActions((actions) => actions.FManageModel);
   const sendOtp = useStoreActions((actions) => actions.UtilModel.sendOtp);
 
   const methods = useForm({
     mode: "onSubmit",
     reValidateMode: "onSubmit",
-    defaultValues: { imageArray: [] },
+    defaultValues: { imageArray: [], provinceId: 0, districtId: 0 },
     resolver: yupResolver(SCHEMA.FMANAGE_PROFILE_FORM),
   });
   const { handleSubmit, setValue } = methods;
-
-  const handleProvinceIdChange = useCallback((id) => {
-    setIsLoading(true);
-    getDisctrictByProvinceId({ id, setGetStatus });
-  }, []);
-
-  const handleDistrictIdChange = useCallback((id) => {
-    setIsLoading(true);
-    getWardByDistrictId({ id, setGetStatus });
-  }, []);
 
   const onSubmit = (data) => {
     // if location info is missing
@@ -141,26 +125,20 @@ const FManageAddNewScreen = () => {
    * and when screen unmounts
    */
   useEffect(() => {
-    getAllProvince();
+    (async () => {
+      await getAllProvince();
+      setIsLoading(false);
+      setFullScreen(false);
+    })();
     const loadingId = setTimeout(() => {
       setIsLoading(false);
       setFullScreen(false);
-    }, 2000);
+    }, 10000);
     return () => {
       resetDataList();
       clearTimeout(loadingId);
     };
   }, []);
-
-  /**
-   * Triggers when get status returns
-   */
-  useEffect(() => {
-    if (!fullScreen && getStatus === SUCCESS_STATUS) {
-      setIsLoading(false);
-    }
-    setGetStatus(null);
-  }, [getStatus]);
 
   /**
    * Triggers when otp status returns
@@ -172,14 +150,12 @@ const FManageAddNewScreen = () => {
         ROUTE_NAMES.FMANAGE_PROFILE_ADD_NEW,
         locationData.phone,
       );
-      // Because overlay loading must toggle between true/false for it to work
-      // Therefore, before go to OTP screen, turn off loading and when returns
-      // turn on loading
       setIsLoading(false);
+      setOtpSendSuccess(null);
     } else if (otpSendSuccess === false) {
       setIsLoading(false);
+      setOtpSendSuccess(null);
     }
-    setOtpSendSuccess(null);
   }, [otpSendSuccess]);
 
   /**
@@ -187,6 +163,7 @@ const FManageAddNewScreen = () => {
    */
   useEffect(() => {
     if (addStatus === SUCCESS_STATUS) {
+      setAddStatus(null);
       showAlertAbsoluteBox(
         ALERT_TITLE,
         ALERT_ADD_LOCATION_SUCCESS_MSG,
@@ -196,10 +173,10 @@ const FManageAddNewScreen = () => {
         CONFIRM_BUTTON_LABEL,
       );
     } else if (addStatus === FAILED_STATUS) {
-      showAlertBox(ALERT_TITLE, ALERT_ERROR_MSG);
+      setAddStatus(null);
       setIsLoading(false);
+      showAlertBox(ALERT_TITLE, ALERT_ERROR_MSG);
     }
-    setAddStatus(null);
   }, [addStatus]);
 
   /**
@@ -209,7 +186,7 @@ const FManageAddNewScreen = () => {
     // useCallback will listen to route.param
     useCallback(() => {
       if (route.params?.base64Array && route.params.base64Array.length) {
-        setValue("imageArray", route.params?.base64Array);
+        setValue(FORM_FIELD_IMAGE_ARRAY, route.params?.base64Array);
         navigation.setParams({ base64Array: [] });
       }
       if (route.params?.otpSuccess) {
@@ -263,48 +240,31 @@ const FManageAddNewScreen = () => {
                   hasAsterisk
                   controllerName={FORM_FIELD_LOCATION_PHONE}
                 />
-
                 <InputComponent
                   label={LOCATION_WEBSITE_LABEL}
                   placeholder={INPUT_LOCATION_WEBSITE_PLACEHOLDER}
                   controllerName={FORM_FIELD_LOCATION_WEBSITE}
                 />
-
                 <InputComponent
                   label={ADDRESS_LABEL}
                   placeholder={INPUT_ADDRESS_PLACEHOLDER}
                   hasAsterisk
                   controllerName={FORM_FIELD_ADDRESS}
                 />
-
-                <SelectComponent
+                <ProvinceSelector
                   label={PROVINCE_LABEL}
                   placeholder={SELECT_PROVINCE_PLACEHOLDER}
-                  hasAsterisk
                   controllerName={FORM_FIELD_PROVINCE}
-                  data={provinceList}
                 />
-                <AddressWatcherHandler
-                  name={FORM_FIELD_PROVINCE}
-                  onValueChange={handleProvinceIdChange}
-                />
-                <SelectComponent
+                <DistrictSelector
                   label={DISTRICT_LABEL}
                   placeholder={SELECT_DISTRICT_PLACEHOLDER}
-                  hasAsterisk
                   controllerName={FORM_FIELD_DISTRICT}
-                  data={districtList}
                 />
-                <AddressWatcherHandler
-                  name={FORM_FIELD_DISTRICT}
-                  onValueChange={handleDistrictIdChange}
-                />
-                <SelectComponent
+                <WardSelector
                   label={WARD_LABEL}
                   placeholder={SELECT_WARD_PLACEHOLDER}
-                  hasAsterisk
                   controllerName={FORM_FIELD_WARD}
-                  data={wardList}
                 />
               </VStack>
             </Center>

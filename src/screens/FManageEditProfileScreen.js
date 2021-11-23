@@ -11,10 +11,12 @@ import { FormProvider, useForm } from "react-hook-form";
 import { ActivityIndicator, ScrollView, StyleSheet } from "react-native";
 import { Overlay } from "react-native-elements";
 
+import DistrictSelector from "../components/common/DistrictSelector";
 import InputComponent from "../components/common/InputComponent";
 import MultiImageSection from "../components/common/MultiImageSection";
-import SelectComponent from "../components/common/SelectComponent";
+import ProvinceSelector from "../components/common/ProvinceSelector";
 import TextAreaComponent from "../components/common/TextAreaComponent";
+import WardSelector from "../components/common/WardSelector";
 import MapOverviewBox from "../components/FLocationEditProfile/MapOverviewBox";
 import HeaderTab from "../components/HeaderTab";
 import { ROUTE_NAMES, SCHEMA } from "../constants";
@@ -34,42 +36,92 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 });
+const STATUS_SUCCESS = "SUCCESS";
+const STATUS_FAILED = "FAILED";
+const ALERT_TITLE = "Thông báo";
+const ALERT_EDIT_LOCATION_SUCCESS_MSG = "Cập nhật điểm câu thành công";
+const ALERT_ERROR_MSG = "Đã xảy ra lỗi! Vui lòng thử lại sau.";
+const FMANAGE_EDIT_LOCATION_HEADER = "Thông tin điểm câu";
+
+const FORM_FIELD_IMAGE_ARRAY = "imageArray";
+const FORM_FIELD_LOCATION_NAME = "name";
+const FORM_FIELD_LOCATION_PHONE = "phone";
+const FORM_FIELD_LOCATION_WEBSITE = "website";
+const FORM_FIELD_ADDRESS = "address";
+const FORM_FIELD_PROVINCE = "provinceId";
+const FORM_FIELD_DISTRICT = "districtId";
+const FORM_FIELD_WARD = "wardId";
+const FORM_FIELD_LOCATION_DESCRIPTION = "description";
+const FORM_FIELD_LOCATION_TIMETABLE = "timetable";
+const FORM_FIELD_LOCATION_SERVICE = "service";
+const FORM_FIELD_LOCATION_RULE = "rule";
+
+const LOCATION_NAME_LABEL = "Tên điểm câu";
+const LOCATION_PHONE_LABEL = "Số điện thoại";
+const LOCATION_WEBSITE_LABEL = "Website";
+const ADDRESS_LABEL = "Địa chỉ";
+const PROVINCE_LABEL = "Tỉnh/Thành phố";
+const DISTRICT_LABEL = "Quận/Huyện";
+const WARD_LABEL = "Phường/Xã";
+const LOCATION_DESCRIPTION_LABEL = "Mô tả khu hồ";
+const LOCATION_TIMETABLE_LABEL = "Thời gian hoạt động";
+const LOCATION_SERVICE_LABEL = "Dịch vụ";
+const LOCATION_RULE_LABEL = "Nội quy";
+
+const INPUT_LOCATION_NAME_PLACEHOLDER = "Nhập tên địa điểm câu";
+const INPUT_LOCATION_PHONE_PLACEHOLDER = "Nhập số điện thoại";
+const INPUT_LOCATION_WEBSITE_PLACEHOLDER = "Nhập website/facebook";
+const INPUT_ADDRESS_PLACEHOLDER = "Nhập địa chỉ";
+const SELECT_PROVINCE_PLACEHOLDER = "Chọn tỉnh/thành phố";
+const SELECT_DISTRICT_PLACEHOLDER = "Chọn quận/huyện";
+const SELECT_WARD_PLACEHOLDER = "Chọn phường/xã";
+const INPUT_LOCATION_DESCRIPTION_PLACEHOLDER = "Miêu tả khu hồ của bạn";
+const INPUT_LOCATION_TIMETABLE_PLACEHOLDER =
+  "Miêu tả thời gian hoạt động của khu hồ";
+const INPUT_LOCATION_SERVICE_PLACEHOLDER = "Miêu tả dịch vụ khu hồ";
+const INPUT_LOCATION_RULE_PLACEHOLDER = "Miêu tả nội quy khu hồ";
 
 const FManageEditProfileScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
-  const [updateStatus, setUpdateStatus] = useState("");
+  const [getStatus, setGetStatus] = useState(null);
+  const [updateStatus, setUpdateStatus] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [fullScreen, setFullScreen] = useState(true);
-  const { provinceList, districtList, wardList } = useStoreState(
-    (state) => state.AddressModel,
-  );
   const { locationLatLng, locationDetails } = useStoreState(
     (states) => states.FManageModel,
   );
-  const {
-    resetDataList,
-    getAllProvince,
-    getDisctrictByProvinceId,
-    getWardByDistrictId,
-  } = useStoreActions((actions) => actions.AddressModel);
+  const { resetDataList, getAllProvince } = useStoreActions(
+    (actions) => actions.AddressModel,
+  );
   const { editFishingLocation } = useStoreActions(
     (actions) => actions.FManageModel,
   );
   const methods = useForm({
     mode: "onSubmit",
     reValidateMode: "onSubmit",
-    defaultValues: { imageArray: [] },
+    defaultValues: {
+      name: locationDetails.name,
+      phone: locationDetails.phone,
+      website: locationDetails.website,
+      address: locationDetails.address,
+      provinceId: locationDetails.addressFromWard.provinceId,
+      districtId: locationDetails.addressFromWard.districtId,
+      wardId: locationDetails.addressFromWard.wardId,
+      description: locationDetails.description,
+      service: locationDetails.timetable,
+      timetable: locationDetails.service,
+      rule: locationDetails.rule,
+      imageArray: locationDetails.image.map((image, index) => ({
+        id: index,
+        base64: image,
+      })),
+    },
     resolver: yupResolver(SCHEMA.FMANAGE_PROFILE_FORM),
   });
-  const generateAddressDropdown = useCallback((name, value) => {
-    if (name === "provinceId") {
-      getDisctrictByProvinceId({ id: value });
-    } else if (name === "districtId") {
-      getWardByDistrictId({ id: value });
-    }
-  }, []);
-  const { handleSubmit, getValues, setValue } = methods;
+
+  const { handleSubmit, setValue } = methods;
+
   const onSubmit = (data) => {
     setIsLoading(true);
     const images = data.imageArray.map((image) => image.base64);
@@ -78,39 +130,19 @@ const FManageEditProfileScreen = () => {
     editFishingLocation({ updateData, setUpdateStatus });
   };
 
-  const setDefaultValues = () => {
-    setValue("name", locationDetails.name);
-    setValue("phone", locationDetails.phone);
-    setValue("website", locationDetails.website);
-    setValue("address", locationDetails.address);
-    setValue("provinceId", locationDetails.addressFromWard.provinceId);
-    setValue("districtId", locationDetails.addressFromWard.districtId);
-    setValue("wardId", locationDetails.addressFromWard.wardId);
-    setValue("description", locationDetails.description);
-    setValue("timetable", locationDetails.timetable);
-    setValue("rule", locationDetails.rule);
-    setValue("service", locationDetails.service);
-    setValue(
-      "imageArray",
-      locationDetails.image.map((image, index) => ({
-        id: index,
-        base64: image,
-      })),
-    );
-  };
-
   useEffect(() => {
-    setIsLoading(true);
-    setDefaultValues();
     (async () => {
-      getAllProvince();
-      getDisctrictByProvinceId({ id: getValues("provinceId") });
-      await getWardByDistrictId({ id: getValues("districtId") });
+      await getAllProvince();
       setIsLoading(false);
       setFullScreen(false);
     })();
+    const loadingId = setTimeout(() => {
+      setIsLoading(false);
+      setFullScreen(false);
+    }, 10000);
     return () => {
       resetDataList();
+      clearTimeout(loadingId);
     };
   }, []);
 
@@ -119,29 +151,36 @@ const FManageEditProfileScreen = () => {
     // useCallback will listen to route.param
     useCallback(() => {
       if (route.params?.base64Array && route.params.base64Array.length) {
-        setValue("imageArray", route.params.base64Array);
+        setValue(FORM_FIELD_IMAGE_ARRAY, route.params.base64Array);
         navigation.setParams({ base64Array: [] });
       }
     }, [route.params]),
   );
 
+  useEffect(() => {
+    if (getStatus === STATUS_SUCCESS) {
+      // setFieldLoading(false);
+      setGetStatus(null);
+    }
+  }, [getStatus]);
+
   /**
    * Fire when status is updated form api call
    */
   useEffect(() => {
-    if (updateStatus === "SUCCESS") {
+    if (updateStatus === STATUS_SUCCESS) {
       setIsLoading(false);
-      showAlertBox("Thông báo", "Cập nhật thông tin điểm câu thành công!");
+      showAlertBox(ALERT_TITLE, ALERT_EDIT_LOCATION_SUCCESS_MSG);
       setUpdateStatus(null);
-    } else if (updateStatus === "FAILED") {
+    } else if (updateStatus === STATUS_FAILED) {
       setIsLoading(false);
-      showAlertBox("Thông báo", "Đã xảy ra lỗi! Vui lòng thử lại sau.");
+      showAlertBox(ALERT_TITLE, ALERT_ERROR_MSG);
       setUpdateStatus(null);
     }
   }, [updateStatus]);
   return (
     <>
-      <HeaderTab name="Thông tin điểm câu" />
+      <HeaderTab name={FMANAGE_EDIT_LOCATION_HEADER} />
       <ScrollView>
         <Overlay
           isVisible={isLoading}
@@ -161,15 +200,15 @@ const FManageEditProfileScreen = () => {
                 <MultiImageSection
                   formRoute={ROUTE_NAMES.FMANAGE_PROFILE_EDIT}
                   selectLimit={5}
-                  controllerName="imageArray"
+                  controllerName={FORM_FIELD_IMAGE_ARRAY}
                 />
                 {/* Input location name */}
                 <InputComponent
                   isTitle
-                  label="Tên địa điểm câu"
+                  label={LOCATION_NAME_LABEL}
                   hasAsterisk
-                  placeholder="Nhập tên địa điểm câu"
-                  controllerName="name"
+                  placeholder={INPUT_LOCATION_NAME_PLACEHOLDER}
+                  controllerName={FORM_FIELD_LOCATION_NAME}
                 />
               </Stack>
             </Center>
@@ -180,49 +219,36 @@ const FManageEditProfileScreen = () => {
                 </Text>
                 {/* Information input and select fields */}
                 <InputComponent
-                  label="Số điện thoại"
-                  placeholder="Nhập số điện thoại"
+                  label={LOCATION_PHONE_LABEL}
+                  placeholder={INPUT_LOCATION_PHONE_PLACEHOLDER}
                   shouldDisable
-                  controllerName="phone"
+                  controllerName={FORM_FIELD_LOCATION_PHONE}
                 />
-
                 <InputComponent
-                  label="Website"
-                  placeholder="Nhập website/facebook"
-                  controllerName="website"
+                  label={LOCATION_WEBSITE_LABEL}
+                  placeholder={INPUT_LOCATION_WEBSITE_PLACEHOLDER}
+                  controllerName={FORM_FIELD_LOCATION_WEBSITE}
                 />
-
                 <InputComponent
-                  label="Địa chỉ"
-                  placeholder="Nhập địa chỉ"
+                  label={ADDRESS_LABEL}
+                  placeholder={INPUT_ADDRESS_PLACEHOLDER}
                   hasAsterisk
-                  controllerName="address"
+                  controllerName={FORM_FIELD_ADDRESS}
                 />
-
-                <SelectComponent
-                  placeholder="Chọn tỉnh/thành phố"
-                  label="Tỉnh/Thành phố"
-                  hasAsterisk
-                  controllerName="provinceId"
-                  data={provinceList}
-                  handleDataIfValChanged={generateAddressDropdown}
+                <ProvinceSelector
+                  label={PROVINCE_LABEL}
+                  placeholder={SELECT_PROVINCE_PLACEHOLDER}
+                  controllerName={FORM_FIELD_PROVINCE}
                 />
-
-                <SelectComponent
-                  placeholder="Chọn quận/huyện"
-                  label="Quận/Huyện"
-                  hasAsterisk
-                  controllerName="districtId"
-                  data={districtList}
-                  handleDataIfValChanged={generateAddressDropdown}
+                <DistrictSelector
+                  label={DISTRICT_LABEL}
+                  placeholder={SELECT_DISTRICT_PLACEHOLDER}
+                  controllerName={FORM_FIELD_DISTRICT}
                 />
-
-                <SelectComponent
-                  label="Phường/Xã"
-                  placeholder="Chọn phường/xã"
-                  hasAsterisk
-                  controllerName="wardId"
-                  data={wardList}
+                <WardSelector
+                  label={WARD_LABEL}
+                  placeholder={SELECT_WARD_PLACEHOLDER}
+                  controllerName={FORM_FIELD_WARD}
                 />
               </VStack>
             </Center>
@@ -244,12 +270,12 @@ const FManageEditProfileScreen = () => {
               {/* Description textarea */}
               <TextAreaComponent
                 myStyles={styles.sectionWrapper}
-                label="Mô tả khu hồ"
+                label={LOCATION_DESCRIPTION_LABEL}
                 isTitle
                 hasAsterisk
-                placeholder="Miêu tả khu hồ của bạn"
+                placeholder={INPUT_LOCATION_DESCRIPTION_PLACEHOLDER}
                 numberOfLines={6}
-                controllerName="description"
+                controllerName={FORM_FIELD_LOCATION_DESCRIPTION}
               />
             </Center>
 
@@ -257,12 +283,12 @@ const FManageEditProfileScreen = () => {
               {/* Schedule textarea  */}
               <TextAreaComponent
                 myStyles={styles.sectionWrapper}
-                label="Thời gian hoạt động"
+                label={LOCATION_TIMETABLE_LABEL}
                 isTitle
                 hasAsterisk
-                placeholder="Miêu tả thời gian hoạt động của khu hồ"
+                placeholder={INPUT_LOCATION_TIMETABLE_PLACEHOLDER}
                 numberOfLines={3}
-                controllerName="timetable"
+                controllerName={FORM_FIELD_LOCATION_TIMETABLE}
               />
             </Center>
 
@@ -270,12 +296,12 @@ const FManageEditProfileScreen = () => {
               {/* Service textarea */}
               <TextAreaComponent
                 myStyles={styles.sectionWrapper}
-                label="Dịch vụ"
+                label={LOCATION_SERVICE_LABEL}
                 isTitle
                 hasAsterisk
-                placeholder="Miêu tả dịch vụ khu hồ"
+                placeholder={INPUT_LOCATION_SERVICE_PLACEHOLDER}
                 numberOfLines={3}
-                controllerName="service"
+                controllerName={FORM_FIELD_LOCATION_SERVICE}
               />
             </Center>
 
@@ -283,12 +309,12 @@ const FManageEditProfileScreen = () => {
               {/* rules textarea */}
               <TextAreaComponent
                 myStyles={styles.sectionWrapper}
-                label="Nội quy"
+                label={LOCATION_RULE_LABEL}
                 isTitle
                 hasAsterisk
-                placeholder="Miêu tả nội quy khu hồ"
+                placeholder={INPUT_LOCATION_RULE_PLACEHOLDER}
                 numberOfLines={3}
-                controllerName="rule"
+                controllerName={FORM_FIELD_LOCATION_RULE}
               />
             </Center>
 

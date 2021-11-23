@@ -1,4 +1,5 @@
 import * as API_URL from "./api";
+import * as DICTIONARY from "./dictionary";
 import * as ROUTE_NAMES from "./route";
 import * as SCHEMA from "./validationSchema";
 
@@ -7,6 +8,8 @@ export { ROUTE_NAMES };
 export { API_URL };
 
 export { SCHEMA };
+
+export { DICTIONARY };
 
 export const phoneRegExp =
   /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;

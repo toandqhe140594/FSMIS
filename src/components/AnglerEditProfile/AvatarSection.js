@@ -8,7 +8,7 @@ import { goToMediaSelectScreen } from "../../navigations";
 
 const AvatarSection = ({ containerStyle, navigation, name, handleDelete }) => {
   const { control } = useFormContext();
-  const avatarUrl = useWatch({ control, name, defaultValue: "" });
+  const avatarUrl = useWatch({ control, name });
   return (
     <Avatar
       containerStyle={containerStyle}

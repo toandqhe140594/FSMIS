@@ -52,7 +52,6 @@ const MultiImageSection = ({
   const imageArray = useWatch({
     control,
     name: controllerName,
-    defaultValue: [],
   });
   const sectionWrapper = useMemo(() => {
     return {
