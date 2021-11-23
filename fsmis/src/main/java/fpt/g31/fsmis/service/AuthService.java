@@ -6,6 +6,7 @@ import fpt.g31.fsmis.dto.output.AuthTokenDtoOut;
 import fpt.g31.fsmis.dto.output.ResponseTextDtoOut;
 import fpt.g31.fsmis.entity.Role;
 import fpt.g31.fsmis.entity.User;
+import fpt.g31.fsmis.repository.BannedPhoneRepos;
 import fpt.g31.fsmis.repository.UserRepos;
 import fpt.g31.fsmis.repository.WardRepos;
 import fpt.g31.fsmis.security.JwtProvider;
@@ -31,11 +32,15 @@ public class AuthService {
     private final UserRepos userRepos;
     private final AuthenticationManager authenticationManager;
     private final JwtProvider jwtProvider;
+    private final BannedPhoneRepos bannedPhoneRepos;
 
     @Transactional
     public ResponseTextDtoOut register(RegistrationDtoIn registrationDtoIn) {
         if (Boolean.TRUE.equals(userRepos.existsByPhone(registrationDtoIn.getPhone()))) {
             throw new ValidationException("Số điện thoại này đã tồn tại trong hệ thống");
+        }
+        if (bannedPhoneRepos.existsById(registrationDtoIn.getPhone())){
+            throw new ValidationException("Số điện thoại bị cấm khỏi hệ thống");
         }
         User user = User.builder()
                 .fullName(registrationDtoIn.getFullName())
@@ -63,6 +68,9 @@ public class AuthService {
                 .orElseThrow(() -> new ValidationException("Tài khoản không tồn tại!"));
         if (Boolean.FALSE.equals(user.getActive())) {
             throw new ValidationException("Tài khoản này đã bị vô hiệu hóa");
+        }
+        if (bannedPhoneRepos.existsById(authDtoIn.getPhone())){
+            throw new ValidationException("Số điện thoại bị cấm khỏi hệ thống");
         }
         String token = jwtProvider.generateJwtToken(authentication);
         return AuthTokenDtoOut.builder()

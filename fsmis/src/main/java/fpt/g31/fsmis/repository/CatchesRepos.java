@@ -17,7 +17,7 @@ public interface CatchesRepos extends JpaRepository<Catches, Long> {
 
     Page<Catches> findByFishingLocationIdAndApprovedIsNullOrderByTimeDesc(Long locationId, Pageable pageable);
 
-    long countByUserIdAndApprovedIsTrue(Long userId);
+    long countByUserId(Long userId);
 
     Page<Catches> findByFishingLocationIdAndHiddenIsFalseAndApprovedIsTrueOrderByTimeDesc(Long locationId, Pageable pageable);
 }

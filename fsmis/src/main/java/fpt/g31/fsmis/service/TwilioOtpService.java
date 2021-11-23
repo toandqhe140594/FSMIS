@@ -5,6 +5,7 @@ import com.twilio.type.PhoneNumber;
 import fpt.g31.fsmis.config.TwilioConfig;
 import fpt.g31.fsmis.dto.input.ValidateOtpDtoIn;
 import fpt.g31.fsmis.dto.output.ResponseTextDtoOut;
+import fpt.g31.fsmis.repository.BannedPhoneRepos;
 import fpt.g31.fsmis.repository.UserRepos;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ import java.util.Random;
 @AllArgsConstructor
 public class TwilioOtpService {
 
+    private final BannedPhoneRepos bannedPhoneRepos;
     Map<String, String> otpMap;
     private UserRepos userRepos;
     private TwilioConfig twilioConfig;
@@ -37,6 +39,9 @@ public class TwilioOtpService {
     }
 
     public ResponseTextDtoOut sendOtp(String phone) {
+        if (bannedPhoneRepos.existsById(phone)) {
+            throw new ValidationException("Số điện thoại bị cấm khỏi hệ thống");
+        }
         phone = "+84" + phone.substring(1);
         PhoneNumber to = new PhoneNumber(phone);
         PhoneNumber from = new PhoneNumber(twilioConfig.getTrialNumber());

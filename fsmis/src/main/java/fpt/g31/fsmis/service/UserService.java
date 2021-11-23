@@ -36,6 +36,7 @@ public class UserService {
     private final CheckInRepos checkInRepos;
     private final ReviewRepos reviewRepos;
     private final NotificationRepos notificationRepos;
+    private final BannedPhoneRepos bannedPhoneRepos;
 
     public PersonalInfoDtoOut getPersonalInformation(HttpServletRequest request) {
         User user = jwtFilter.getUserFromToken(request);
@@ -43,7 +44,7 @@ public class UserService {
                 modelMapper.map(user, PersonalInfoDtoOut.class);
         output.setDob(ServiceUtils.convertDateToString(user.getDob()));
         output.setAddressFromWard(ServiceUtils.getAddressByWard(user.getWard()));
-        output.setCatchesCount(catchesRepos.countByUserIdAndApprovedIsTrue(user.getId()));
+        output.setCatchesCount(catchesRepos.countByUserId(user.getId()));
         return output;
     }
 
@@ -74,6 +75,9 @@ public class UserService {
         User user = jwtFilter.getUserFromToken(request);
         if (!passwordEncoder.matches(changePhoneDtoIn.getPassword(), user.getPassword())) {
             throw new ValidationException("Mật khẩu không đúng");
+        }
+        if (bannedPhoneRepos.existsById(changePhoneDtoIn.getNewPhone())){
+            throw new ValidationException("Số điện thoại bị cấm khỏi hệ thống");
         }
         user.setPhone(changePhoneDtoIn.getNewPhone());
         userRepos.save(user);

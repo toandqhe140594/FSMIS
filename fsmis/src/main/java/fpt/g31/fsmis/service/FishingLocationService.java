@@ -45,12 +45,16 @@ public class FishingLocationService {
     private final ModelMapper modelMapper;
     private final SuggestedLocationRepos suggestedLocationRepos;
     private final NotificationRepos notificationRepos;
+    private final BannedPhoneRepos bannedPhoneRepos;
 
     public ResponseTextDtoOut createFishingLocation(FishingLocationDtoIn fishingLocationDtoIn,
                                                     HttpServletRequest request) {
         User owner = jwtFilter.getUserFromToken(request);
         Ward ward = wardRepos.findById(fishingLocationDtoIn.getWardId())
                 .orElseThrow(() -> new NotFoundException("Không tìm thấy phường/xã!"));
+        if (bannedPhoneRepos.existsById(fishingLocationDtoIn.getPhone())){
+            throw new ValidationException("Số điện thoại bị cấm khỏi hệ thống");
+        }
         FishingLocation fishingLocation = FishingLocation.builder()
                 .name(fishingLocationDtoIn.getName().trim())
                 .unsignedName(VNCharacterUtils.removeAccent(fishingLocationDtoIn.getName().toLowerCase().trim()))
