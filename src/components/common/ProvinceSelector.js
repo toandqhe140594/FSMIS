@@ -5,7 +5,13 @@ import { useFormContext, useWatch } from "react-hook-form";
 
 import SelectComponent from "./SelectComponent";
 
-const ProvinceSelector = ({ label, placeholder, controllerName }) => {
+const ProvinceSelector = ({
+  containerStyle,
+  label,
+  placeholder,
+  controllerName,
+  hasAsterisk,
+}) => {
   const { control } = useFormContext();
   const watchProvince = useWatch({ control, name: controllerName });
   const { provinceList } = useStoreState((state) => state.AddressModel);
@@ -19,9 +25,10 @@ const ProvinceSelector = ({ label, placeholder, controllerName }) => {
 
   return (
     <SelectComponent
+      myStyles={containerStyle}
       label={label}
       placeholder={placeholder}
-      hasAsterisk
+      hasAsterisk={hasAsterisk}
       controllerName={controllerName}
       data={provinceList}
     />
@@ -29,15 +36,21 @@ const ProvinceSelector = ({ label, placeholder, controllerName }) => {
 };
 
 ProvinceSelector.propTypes = {
+  hasAsterisk: PropTypes.bool,
   label: PropTypes.string,
   placeholder: PropTypes.string,
   controllerName: PropTypes.string,
+  containerStyle: PropTypes.objectOf(
+    PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  ),
 };
 
 ProvinceSelector.defaultProps = {
+  hasAsterisk: false,
   label: "",
   placeholder: "",
   controllerName: "",
+  containerStyle: {},
 };
 
 export default React.memo(ProvinceSelector);
