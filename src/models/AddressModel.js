@@ -86,7 +86,7 @@ const model = {
     const { provinceList } = getState();
     // Get province list if it is empty
     try {
-      if (!provinceList.length) {
+      if (provinceList.length === 0) {
         const { data: provinceData } = await http.get(
           `${API_URL.ADDRESS_ALL_PROVINCE}`,
         );
