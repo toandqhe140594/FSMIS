@@ -172,7 +172,7 @@ const EventPostCard = ({
               position: "relative",
               right: 10,
               bottom: 5,
-              backgroundColor: "transparent",
+              overflow: "hidden",
             }}
           >
             <WebView
@@ -186,6 +186,7 @@ const EventPostCard = ({
                 height: 490,
                 width: "100%",
               }}
+              style={{ flex: 0, height: 490 }}
               allowsFullscreenVideo
               source={{
                 html: `
@@ -193,17 +194,17 @@ const EventPostCard = ({
             <head>
                <style>
                   body{
-                  overflow: hidden;
-                  width: 900 px;
+                 
+                  width: 900px;
                   height: 900px; 
-                  background-color:transparent;
+                
                  }  
                   .container {
                   width: inherit;
                   height: inherit;
                   overflow: hidden;
                   border-style: solid;
-                  background-color:transparent;
+                 
                   }          
                   iframe {
                   display : block;
