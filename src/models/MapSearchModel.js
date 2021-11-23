@@ -2,6 +2,19 @@ import { action, thunk } from "easy-peasy";
 
 import http from "../utilities/Http";
 
+/**
+ * Create params object from data
+ * @param {Object} data - data to create filter params
+ * @returns object contains params for search nearby location
+ */
+const createFilterObject = (data) => {
+  const filterObject = data;
+  const { methodId, minRating } = filterObject;
+  if (methodId === -1) delete filterObject.methodId;
+  if (minRating === -1) delete filterObject.minRating;
+  return filterObject;
+};
+
 const model = {
   currentLocation: null,
   locationList: [],
@@ -12,8 +25,9 @@ const model = {
     state.locationList = payload;
   }),
   getLocationListNearby: thunk(async (actions, payload) => {
+    const params = createFilterObject(payload);
     const { data } = await http.get(`location/nearby`, {
-      params: { ...payload },
+      params,
     });
     actions.setLocationList(data);
   }),

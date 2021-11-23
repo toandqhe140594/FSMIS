@@ -4,6 +4,7 @@ import { API_URL } from "../constants";
 import http from "../utilities/Http";
 
 const model = {
+  fishingMethodList: [],
   addressList: [],
   provinceList: [],
   districtList: [],
@@ -120,6 +121,9 @@ const model = {
       setSuccess(false);
     }
   }),
+  /**
+   * Call API to register new account
+   */
   register: thunk(async (actions, payload) => {
     const { registerData } = payload;
     const setSuccess = payload.setSuccess || (() => {});
@@ -128,6 +132,27 @@ const model = {
       setSuccess(true);
     } catch (error) {
       setSuccess(false);
+    }
+  }),
+  /**
+   * Set data for list of fishing methods
+   */
+  setFishingMethodList: action((state, payload) => {
+    state.fishingMethodList = payload;
+  }),
+  /**
+   * Get all fishing methods from API
+   * @param {Function} [payload.setGetStatus] function to set get status
+   */
+  getFishingMethodList: thunk(async (actions, payload = {}) => {
+    const setGetStatus = payload.setGetStatus || (() => {});
+    try {
+      const { data } = await http.get(API_URL.ADMIN_FISHING_METHOD_LIST);
+      actions.setFishingMethodList(data);
+      setGetStatus("SUCCESS");
+    } catch (error) {
+      // handler
+      setGetStatus("FAILED");
     }
   }),
 };
