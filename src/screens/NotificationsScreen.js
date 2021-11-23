@@ -1,21 +1,28 @@
+import { useFocusEffect } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, FlatList, Text } from "native-base";
-import React, { useEffect } from "react";
+import React, { useCallback } from "react";
 
 import PressableCustomCard from "../components/PressableCustomCard";
 
 const NotificationsScreen = () => {
-  const { notificationCurrentPage, notificationList } = useStoreState(
-    (states) => states.ProfileModel,
+  const notificationList = useStoreState(
+    (states) => states.ProfileModel.notificationList,
   );
 
   const getNotificationList = useStoreActions(
     (actions) => actions.ProfileModel.getNotificationList,
   );
+  const getNotificationListOverwrite = useStoreActions(
+    (actions) => actions.ProfileModel.getNotificationListOverwrite,
+  );
 
-  useEffect(() => {
-    if (notificationCurrentPage === 1) getNotificationList();
-  }, []);
+  useFocusEffect(
+    // useCallback will listen to route.param
+    useCallback(() => {
+      getNotificationListOverwrite();
+    }, []),
+  );
 
   const renderItem = ({ item }) => (
     <Box
