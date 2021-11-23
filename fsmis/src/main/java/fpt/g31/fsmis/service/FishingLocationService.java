@@ -1,5 +1,9 @@
 package fpt.g31.fsmis.service;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import fpt.g31.fsmis.dto.input.FilterDtoIn;
 import fpt.g31.fsmis.dto.input.FishingLocationDtoIn;
 import fpt.g31.fsmis.dto.input.SuggestedLocationDtoIn;
@@ -12,7 +16,7 @@ import fpt.g31.fsmis.exception.NotFoundException;
 import fpt.g31.fsmis.exception.UnauthorizedException;
 import fpt.g31.fsmis.repository.*;
 import fpt.g31.fsmis.security.JwtFilter;
-import lombok.AllArgsConstructor;
+import lombok.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -152,6 +156,7 @@ public class FishingLocationService {
         return dtoOut;
     }
 
+    @SneakyThrows
     public List<FishingLocationPinDtoOut> getNearBy(Float longitude, Float latitude, Integer distance, Long methodId, Integer minRating) {
         List<FishingLocation> fishingLocationList;
         if (methodId != null) {
@@ -160,21 +165,34 @@ public class FishingLocationService {
             fishingLocationList = fishingLocationRepos.getNearbyLocation(longitude, latitude, distance, minRating);
         }
         List<FishingLocationPinDtoOut> fishingLocationPinDtoOutList = new ArrayList<>();
+        StringBuilder uri = new StringBuilder("https://dev.virtualearth.net/REST/v1/Routes/DistanceMatrix?origins=" + latitude + "," + longitude + "&destinations=");
         for (FishingLocation fishingLocation : fishingLocationList) {
-            String uri = String.format("https://dev.virtualearth.net/REST/v1/Routes/DistanceMatrix?origins=%f,%f&destinations=%f,%f&travelMode=driving&key=AifuNyF5Q8Kh-xzvqV9icNvlkP_dFS89AZE7zIqJj_8UYpqfM15BSG1TiC-GC1jh"
-                    , latitude, longitude, fishingLocation.getLatitude(), fishingLocation.getLongitude());
-            RestTemplate restTemplate = new RestTemplate();
-            String result = restTemplate.getForObject(uri, String.class);
-            int index = result.indexOf("travelDistance");
-            float computedDistance = Float.parseFloat(result.substring(index+16, index+20));
-            if (computedDistance <= distance){
-                FishingLocationPinDtoOut fishingLocationPinDtoOut = modelMapper.map(fishingLocation, FishingLocationPinDtoOut.class);
-                fishingLocationPinDtoOut.setDistance(computedDistance);
+            uri.append(fishingLocation.getLatitude() + "," + fishingLocation.getLongitude() + ";");
+        }
+        uri.delete(uri.length() - 1, uri.length());
+        uri.append("&travelMode=driving&key=AifuNyF5Q8Kh-xzvqV9icNvlkP_dFS89AZE7zIqJj_8UYpqfM15BSG1TiC-GC1jh");
+        RestTemplate restTemplate = new RestTemplate();
+        String result = restTemplate.getForObject(uri.toString(), String.class);
+        JsonFactory factory = new JsonFactory();
+        ObjectMapper mapper = new ObjectMapper(factory);
+        JsonParser parser = factory.createParser(result);
+        JsonNode rootNode = mapper.readTree(parser);
+        JsonNode resourceSetsNode = rootNode.get("resourceSets");
+        JsonNode resourcesNode = resourceSetsNode.get(0).get("resources");
+        JsonNode resultNode = resourcesNode.get(0).get("results");
+        DistanceJsonResult[] resultList = mapper.convertValue(resultNode, DistanceJsonResult[].class);
+        int count = 0;
+        for (DistanceJsonResult distanceJsonResult : resultList) {
+            if (distanceJsonResult.getTravelDistance() <= distance && distanceJsonResult.getTravelDistance() > 0) {
+                FishingLocationPinDtoOut fishingLocationPinDtoOut = modelMapper.map(fishingLocationList.get(count), FishingLocationPinDtoOut.class);
+                fishingLocationPinDtoOut.setDistance(distanceJsonResult.getTravelDistance());
                 fishingLocationPinDtoOutList.add(fishingLocationPinDtoOut);
             }
+            count++;
         }
         return fishingLocationPinDtoOutList;
     }
+
 
     public SaveStatusDtoOut saveFishingLocation(HttpServletRequest request, Long locationId) {
         User user = jwtFilter.getUserFromToken(request);
@@ -511,7 +529,6 @@ public class FishingLocationService {
         };
     }
 
-
     private Specification<FishingLocation> nameLike(String input) {
         return (root, criteriaQuery, criteriaBuilder) ->
                 criteriaBuilder.like(criteriaBuilder.lower(root.get("unsignedName")), VNCharacterUtils.removeAccent(input).toLowerCase());
@@ -598,4 +615,6 @@ public class FishingLocationService {
         suggestedLocationRepos.delete(suggestedLocation);
         return new ResponseTextDtoOut("Xóa gợi ý khu hồ thành công");
     }
+
+
 }
