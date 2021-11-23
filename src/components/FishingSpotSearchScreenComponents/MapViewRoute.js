@@ -21,6 +21,12 @@ const MapViewOverlay = ({ visible, toggleOverlay }) => {
   const getLocationListNearby = useStoreActions(
     (actions) => actions.MapSearchModel.getLocationListNearby,
   );
+  const fishingMethodList = useStoreState(
+    (states) => states.UtilModel.fishingMethodList,
+  );
+  const getFishingMethodList = useStoreActions(
+    (actions) => actions.UtilModel.getFishingMethodList,
+  );
   const { control, handleSubmit, setValue } = useFormContext();
   const [sliderValue, setSliderValue] = useState(5);
 
@@ -37,8 +43,8 @@ const MapViewOverlay = ({ visible, toggleOverlay }) => {
       latitude: currentLocation.latitude,
       longitude: currentLocation.longitude,
       distance: sliderValue,
-      methodId: data.rate,
-      minRating: data.type,
+      methodId: data.type,
+      minRating: data.rate,
     });
     toggleOverlay();
   };
@@ -46,7 +52,13 @@ const MapViewOverlay = ({ visible, toggleOverlay }) => {
   useEffect(() => {
     setValue("type", -1);
     setValue("rate", -1);
+    if (!fishingMethodList || fishingMethodList.length === 0)
+      getFishingMethodList();
   }, []);
+
+  const sliderOnValueChange = (value) => {
+    setSliderValue(value);
+  };
 
   return (
     <Overlay isVisible={visible} onBackdropPress={toggleOverlay}>
@@ -69,8 +81,14 @@ const MapViewOverlay = ({ visible, toggleOverlay }) => {
                     onValueChange={onChange}
                     selectedValue={value}
                   >
-                    <Select.Item label="Câu đơn" value={1} />
-                    <Select.Item label="Câu đài" value={2} />
+                    {fishingMethodList &&
+                      fishingMethodList.map((method) => (
+                        <Select.Item
+                          label={method.name}
+                          value={method.id}
+                          key={method.id}
+                        />
+                      ))}
                     <Select.Item label="Tất cả" value={-1} />
                   </Select>
                 )}
@@ -100,6 +118,7 @@ const MapViewOverlay = ({ visible, toggleOverlay }) => {
                     <Select.Item label="5 sao" value={5} />
                     <Select.Item label="Trên 4 sao" value={4} />
                     <Select.Item label="Trên 3 sao" value={3} />
+                    <Select.Item label="Trên 2 sao" value={2} />
                     <Select.Item label="Tất cả" value={-1} />
                   </Select>
                 )}
@@ -119,7 +138,7 @@ const MapViewOverlay = ({ visible, toggleOverlay }) => {
             height: 15,
           }}
           value={sliderValue}
-          onValueChange={(value) => setSliderValue(value)}
+          onValueChange={sliderOnValueChange}
           minimumValue={5}
           maximumValue={50}
           step={5}
@@ -127,13 +146,7 @@ const MapViewOverlay = ({ visible, toggleOverlay }) => {
 
         {/* Reset and submit buttons */}
         <Box flexDir="row" justifyContent="space-between">
-          <Button
-            onPress={() => {
-              resetMapFilter();
-            }}
-          >
-            Chọn lại
-          </Button>
+          <Button onPress={resetMapFilter}>Chọn lại</Button>
           <Button onPress={handleSubmit(onSubmit)}>Tìm kiếm</Button>
         </Box>
       </VStack>

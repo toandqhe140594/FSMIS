@@ -188,6 +188,9 @@ const model = {
   setNotificationList: action((state, payload) => {
     state.notificationList = state.notificationList.concat(payload);
   }),
+  setNotificationListOverwrite: action((state, payload) => {
+    state.notificationList = payload;
+  }),
   getNotificationList: thunk(async (actions, payload, { getState }) => {
     const { notificationCurrentPage: pageNo, notificationTotalPage } =
       getState();
@@ -202,6 +205,19 @@ const model = {
     actions.setNotificationCurrentPage(pageNo + 1);
     actions.setNotificationTotalPage(totalPage);
     actions.setNotificationList(items);
+  }),
+  /**
+   * Get notification list from page 1 and overwrite the current notifications list
+   */
+  getNotificationListOverwrite: thunk(async (actions) => {
+    const { data } = await http.get(`${API_URL.PERSONAL_NOTIFICATION}`, {
+      params: { pageNo: 1 },
+    });
+
+    const { totalPage, items } = data;
+    actions.setNotificationCurrentPage(2);
+    actions.setNotificationTotalPage(totalPage);
+    actions.setNotificationListOverwrite(items);
   }),
 
   /**

@@ -110,6 +110,10 @@ const LakeEditProfileScreen = () => {
     );
   };
 
+  const navigateToLakeProfileScreen = () => {
+    goBack(navigation);
+  };
+
   /**
    * Call fishing method list api
    */
@@ -151,9 +155,7 @@ const LakeEditProfileScreen = () => {
       showAlertAbsoluteBox(
         "Thông báo",
         "Chỉnh sửa thành công",
-        () => {
-          goBack(navigation);
-        },
+        navigateToLakeProfileScreen,
         "Xác nhận",
       );
     } else if (updateStatus === "FAILED") {

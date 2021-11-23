@@ -6,13 +6,14 @@ import {
 import { useStoreActions } from "easy-peasy";
 import PropTypes from "prop-types";
 import React, { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, View } from "react-native";
-import { Icon, ListItem, Overlay } from "react-native-elements";
+import { View } from "react-native";
+import { Icon, ListItem } from "react-native-elements";
 
 import styles from "../config/styles";
 import { ROUTE_NAMES } from "../constants";
 import { goToFManageSelectScreen, goToOTPScreen } from "../navigations";
 import { showAlertConfirmBox, showToastMessage } from "../utilities";
+import OverlayLoading from "./OverLayLoading";
 
 const CloseFLocationComponent = ({ name, phone }) => {
   const navigation = useNavigation();
@@ -29,10 +30,12 @@ const CloseFLocationComponent = ({ name, phone }) => {
 
   const sendOtpAction = () => {
     setLoading(true);
-    sendOtp({ phone, setSuccess: setOtpSendSuccess });
+    setTimeout(() => {
+      sendOtp({ phone, setSuccess: setOtpSendSuccess });
+    }, 5000);
   };
 
-  const closeAction = () => {
+  const closeConfirmationAction = () => {
     showAlertConfirmBox(
       "Bạn muốn xóa khu hồ này?",
       `"${name}" sẽ bị xóa. Bạn không thể hoàn tác hành động này\nBạn cần xóa hết nhân viên khỏi hồ để đóng`,
@@ -40,11 +43,17 @@ const CloseFLocationComponent = ({ name, phone }) => {
     );
   };
 
+  const closeLocation = () => {
+    setLoading(true);
+    closeFishingLocation({ setDeleteSuccess });
+  };
+
   useFocusEffect(
     // useCallback will listen to route.param
     useCallback(() => {
-      if (route.params?.otpSuccess === true)
-        closeFishingLocation({ setDeleteSuccess });
+      if (route.params?.otpSuccess === true) {
+        closeLocation();
+      }
     }, [route.params]),
   );
 
@@ -65,19 +74,9 @@ const CloseFLocationComponent = ({ name, phone }) => {
 
   return (
     <>
-      <Overlay
-        isVisible={loading}
-        fullScreen
-        overlayStyle={{
-          backgroundColor: "transparent",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <ActivityIndicator size={60} color="#2089DC" />
-      </Overlay>
+      <OverlayLoading isLoading={loading} />
       <View style={styles.menuScreenListItemView}>
-        <ListItem onPress={closeAction}>
+        <ListItem onPress={closeConfirmationAction}>
           <Icon name="delete" size={26} type="antdesign" color="red" />
           <ListItem.Content style={{ height: 40 }}>
             <ListItem.Title style={{ color: "red" }}>Xóa khu hồ</ListItem.Title>

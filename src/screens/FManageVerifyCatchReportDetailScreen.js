@@ -19,7 +19,6 @@ import AvatarCard from "../components/AvatarCard";
 import FishInformationCard from "../components/FishInformationCard";
 import HeaderTab from "../components/HeaderTab";
 import ImageResizeMode from "../components/ImageResizeMode";
-import colors from "../config/colors";
 import { goToFishingLocationOverviewScreen } from "../navigations";
 
 const AnglerCatchReportDetailScreen = () => {

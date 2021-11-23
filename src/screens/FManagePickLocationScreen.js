@@ -77,15 +77,17 @@ const PickLocationScreen = () => {
     }
   }, [markerCoords]);
 
+  const headerButtonOnPress = () => {
+    setLocationLatLng(markerCoords);
+    goBack(navigation);
+  };
+
   return (
     <>
       <HeaderWithButton
         name="Chọn vị trí"
         buttonName="Chọn"
-        onSuccess={() => {
-          setLocationLatLng(markerCoords);
-          goBack(navigation);
-        }}
+        onSuccess={headerButtonOnPress}
       />
 
       {/* Map view */}

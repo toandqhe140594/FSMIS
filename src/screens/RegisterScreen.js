@@ -96,14 +96,12 @@ const RegisterScreen = () => {
     setOtpSendSuccess(null);
   }, [otpSendSuccess]);
 
+  const minHeight = Math.round(useWindowDimensions().height - 50);
+
   return (
     <KeyboardAvoidingView>
       <ScrollView>
-        <Center
-          flex={1}
-          justifyContent="center"
-          minHeight={Math.round(useWindowDimensions().height - 50)}
-        >
+        <Center flex={1} justifyContent="center" minHeight={minHeight}>
           <VStack
             flex={1}
             justifyContent="center"

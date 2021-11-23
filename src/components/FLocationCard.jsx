@@ -44,7 +44,7 @@ const FLocationCard = ({
   };
 
   return (
-    <Pressable onPress={() => onPress()}>
+    <Pressable onPress={onPress}>
       <Card containerStyle={{ width: "100%", padding: 0, margin: 0 }}>
         {showImage && (
           <Card.Image source={{ uri: image }} key={image}>
