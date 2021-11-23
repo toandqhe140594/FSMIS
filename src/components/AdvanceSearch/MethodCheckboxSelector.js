@@ -5,18 +5,22 @@ import React from "react";
 import CheckboxSelectorComponent from "../common/CheckboxSelectorComponent";
 
 const MethodCheckboxSelector = ({
-  containerStyle,
   label,
+  isTitle,
+  hasAsterisk,
   placeholder,
   controllerName,
+  containerStyle,
 }) => {
   const { fishingMethodList } = useStoreState(
     (state) => state.FishingMethodModel,
   );
   return (
     <CheckboxSelectorComponent
-      myStyles={containerStyle}
       label={label}
+      isTitle={isTitle}
+      hasAsterisk={hasAsterisk}
+      myStyles={containerStyle}
       placeholder={placeholder}
       data={fishingMethodList}
       controllerName={controllerName}
@@ -26,6 +30,8 @@ const MethodCheckboxSelector = ({
 
 MethodCheckboxSelector.propTypes = {
   label: PropTypes.string,
+  isTitle: PropTypes.bool,
+  hasAsterisk: PropTypes.bool,
   placeholder: PropTypes.string,
   controllerName: PropTypes.string,
   containerStyle: PropTypes.objectOf(
@@ -35,6 +41,8 @@ MethodCheckboxSelector.propTypes = {
 
 MethodCheckboxSelector.defaultProps = {
   label: "",
+  isTitle: false,
+  hasAsterisk: false,
   placeholder: "",
   controllerName: "",
   containerStyle: {},
