@@ -20,7 +20,6 @@ const SelectComponent = ({
   isTitle,
   controllerName,
   myError,
-  handleDataIfValChanged,
   useCustomError,
   itemKeyIdentifier,
 }) => {
@@ -40,15 +39,11 @@ const SelectComponent = ({
         control={control}
         name={controllerName}
         render={({ field: { onChange, value } }) => {
-          const handleChange = (val) => {
-            onChange(val);
-            handleDataIfValChanged(controllerName, val);
-          };
           return (
             <Select
               accessibilityLabel={placeholder}
               placeholder={placeholder}
-              onValueChange={handleChange}
+              onValueChange={onChange}
               selectedValue={value}
               fontSize="md"
             >
@@ -85,7 +80,6 @@ SelectComponent.propTypes = {
   myError: PropTypes.objectOf(
     PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
   ),
-  handleDataIfValChanged: PropTypes.func,
   useCustomError: PropTypes.bool,
   itemKeyIdentifier: PropTypes.string,
 };
@@ -98,7 +92,6 @@ SelectComponent.defaultProps = {
   isTitle: false,
   data: [],
   myError: {},
-  handleDataIfValChanged: () => {},
   useCustomError: false,
   itemKeyIdentifier: "id",
 };
