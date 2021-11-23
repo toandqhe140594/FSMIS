@@ -6,6 +6,7 @@ import { StyleSheet, Text, View } from "react-native";
 
 const styles = StyleSheet.create({
   error: { color: "#f43f5e", fontSize: 12, fontStyle: "italic" },
+  asterisk: { color: "#f43f5e", fontSize: 16 },
   title: { fontSize: 16, marginBottom: 4, fontWeight: "bold" },
   text: { fontSize: 16, marginBottom: 4 },
 });
@@ -15,6 +16,7 @@ const defaultValue = "0";
 const CheckboxSelectorComponent = ({
   label,
   isTitle,
+  hasAsterisk,
   placeholder,
   data,
   controllerName,
@@ -36,7 +38,10 @@ const CheckboxSelectorComponent = ({
   return (
     <View style={myStyles}>
       {label.length > 0 && (
-        <Text style={isTitle ? styles.title : styles.text}>{label}</Text>
+        <Text style={isTitle ? styles.title : styles.text}>
+          {label}
+          {hasAsterisk && <Text style={styles.asterisk}>*</Text>}
+        </Text>
       )}
       <Controller
         control={control}
@@ -71,22 +76,10 @@ const CheckboxSelectorComponent = ({
   );
 };
 
-// <CheckboxComponent
-//  defaultValue={value}
-//  onValueChange={handleValueChange(onChange)}
-//  data={data}
-/// >;
-
-// const handleValueChange = useCallback(
-//   (handler) => (value) => {
-//     handler(value);
-//   },
-//   [],
-// );
-
 CheckboxSelectorComponent.propTypes = {
   label: PropTypes.string,
   isTitle: PropTypes.bool,
+  hasAsterisk: PropTypes.bool,
   placeholder: PropTypes.string,
   data: PropTypes.arrayOf(PropTypes.object),
   controllerName: PropTypes.string,
@@ -98,6 +91,7 @@ CheckboxSelectorComponent.propTypes = {
 CheckboxSelectorComponent.defaultProps = {
   label: "",
   isTitle: false,
+  hasAsterisk: false,
   data: [],
   placeholder: "",
   controllerName: "",
