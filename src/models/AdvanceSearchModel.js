@@ -3,35 +3,27 @@ import { action, thunk } from "easy-peasy";
 import { API_URL } from "../constants";
 import http from "../utilities/Http";
 
+const DEFAULT_STATE = {
+  input: "",
+  provinceIdList: [],
+  fishingMethodIdList: [],
+  fishSpeciesIdList: [],
+  score: 0,
+};
+
 const model = {
   prevStateData: {
-    provinceIdList: [],
-    fishingMethodIdList: [],
-    fishSpeciesIdList: [],
+    ...DEFAULT_STATE,
   },
   totaListLocationPage: 0,
   listLocationResult: [],
   pageNo: 1,
 
   /**
-   * Set previous selected user's option to store in one of three state
-   * @param {String} [payload.type] type of set case
-   * @param {Array} [payload.prevState] previous state selected to store
+   * Save previous user's input
    */
-  setPrevIdList: action((state, payload) => {
-    const { type, prevState } = payload;
-    switch (type) {
-      case "PROVINCE_ID_LIST":
-        state.prevStateData.provinceIdList = [prevState];
-        break;
-      case "FISHING_METHOD_ID_LIST":
-        state.prevStateData.fishingMethodIdList = prevState;
-        break;
-      case "FISH_SPECIES_ID_LIST":
-        state.prevStateData.fishSpeciesIdList = prevState;
-        break;
-      default:
-    }
+  setPrevStateData: action((state, payload) => {
+    state.prevStateData = payload.submitData;
   }),
 
   /**
@@ -66,12 +58,10 @@ const model = {
   }),
 
   /**
-   * Reset previous stored state
+   * Reset previous stored state except input field
    */
-  resetAllPrevState: action((state) => {
-    state.prevProvinceIdList = [];
-    state.prevFishingMethodIdList = [];
-    state.prevFishSpeciesIdList = [];
+  resetPrevStateData: action((state) => {
+    state.prevStateData = { ...DEFAULT_STATE };
   }),
 
   /**
@@ -98,6 +88,7 @@ const model = {
       );
       const { totalPage, items } = data;
       actions.resetPageNo();
+      actions.setPrevStateData({ submitData });
       actions.setTotalPage({ totalPage });
       actions.setListLocationResult({ setMode: "NEW", items });
       setSubmitStatus("SUCCESS");
