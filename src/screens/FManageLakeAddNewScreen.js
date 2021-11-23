@@ -4,7 +4,7 @@ import {
   useNavigation,
   useRoute,
 } from "@react-navigation/native";
-import { useStoreActions, useStoreState } from "easy-peasy";
+import { useStoreActions } from "easy-peasy";
 import {
   Box,
   Button,
@@ -20,11 +20,11 @@ import { FormProvider, useForm } from "react-hook-form";
 import { ActivityIndicator, StyleSheet } from "react-native";
 import { Overlay } from "react-native-elements";
 
+import MethodCheckboxSelector from "../components/AdvanceSearch/MethodCheckboxSelector";
 import InputComponent from "../components/common/InputComponent";
 import MultiImageSection from "../components/common/MultiImageSection";
 import TextAreaComponent from "../components/common/TextAreaComponent";
 import HeaderTab from "../components/HeaderTab";
-import CheckboxSelectorComponent from "../components/LakeEditProfile/CheckboxSelectorComponent";
 import FishCardSection from "../components/LakeEditProfile/FishCardSection";
 import { ROUTE_NAMES, SCHEMA } from "../constants";
 import { goBack } from "../navigations";
@@ -52,9 +52,6 @@ const LakeAddNewScreen = () => {
   const [addStatus, setAddStatus] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [fullScreenMode, setFullScreenMode] = useState(true);
-  const { fishingMethodList } = useStoreState(
-    (state) => state.FishingMethodModel,
-  );
   const { addNewLakeInLocation } = useStoreActions(
     (actions) => actions.FManageModel,
   );
@@ -93,11 +90,18 @@ const LakeAddNewScreen = () => {
    */
   useEffect(() => {
     (async () => {
-      getFishingMethodList();
+      await getFishingMethodList();
       await getFishList();
       setIsLoading(false);
       setFullScreenMode(false);
     })();
+    const loadingId = setTimeout(() => {
+      setIsLoading(false);
+      setFullScreenMode(false);
+    }, 10000);
+    return () => {
+      clearTimeout(loadingId);
+    };
   }, []);
 
   /**
@@ -165,13 +169,13 @@ const LakeAddNewScreen = () => {
             </Center>
 
             <Center>
-              <CheckboxSelectorComponent
-                myStyles={styles.sectionWrapper}
+              <MethodCheckboxSelector
+                containerStyle={styles.sectionWrapper}
                 label="Loại hình câu"
                 isTitle
+                hasAsterisk
                 placeholder="Chọn loại hình câu"
-                data={fishingMethodList}
-                controllerName="methods" // this controller returns an array
+                controllerName="methods"
               />
             </Center>
 
@@ -180,6 +184,7 @@ const LakeAddNewScreen = () => {
                 myStyles={styles.sectionWrapper}
                 label="Giá vé"
                 isTitle
+                hasAsterisk
                 placeholder="Miêu tả giá vé hồ"
                 numberOfLines={3}
                 controllerName="price"
@@ -192,18 +197,21 @@ const LakeAddNewScreen = () => {
                   Thông số
                 </Text>
                 <InputComponent
+                  hasAsterisk
                   label="Chiều dài (m)"
                   placeholder="Nhập chiều dài của hồ"
                   controllerName="length"
                   useNumPad
                 />
                 <InputComponent
+                  hasAsterisk
                   label="Chiều rộng (m)"
                   placeholder="Nhập chiều rộng của hồ"
                   controllerName="width"
                   useNumPad
                 />
                 <InputComponent
+                  hasAsterisk
                   label="Độ sâu (m)"
                   placeholder="Nhập độ sâu của hồ"
                   controllerName="depth"
