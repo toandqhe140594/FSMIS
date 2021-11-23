@@ -13,12 +13,7 @@ const model = {
   setFishingMethodList: action((state, payload) => {
     state.fishingMethodList = payload;
   }),
-  // /**
-  //  * Clear fishing method list for next get
-  //  */
-  // clearFishingMethodList: action((state) => {
-  //   state.fishingMethodList = null;
-  // }),
+
   /**
    * Get all fishing methods from API
    * @param {Function} [payload.setGetStatus] function to set get status
