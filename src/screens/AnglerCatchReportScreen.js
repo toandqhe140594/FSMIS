@@ -155,6 +155,7 @@ const AnglerCatchReportScreen = () => {
               <SelectComponent
                 myStyles={styles.sectionWrapper}
                 isTitle
+                hasAsterisk
                 label="Vị trí hồ câu"
                 placeholder="Chọn hồ câu"
                 data={lakeList}
