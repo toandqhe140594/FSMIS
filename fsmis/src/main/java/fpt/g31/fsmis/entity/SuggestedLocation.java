@@ -2,10 +2,7 @@ package fpt.g31.fsmis.entity;
 
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Getter
 @Setter
@@ -18,9 +15,13 @@ public class SuggestedLocation {
     @Id
     @GeneratedValue
     private Long id;
-
     private String name;
     private String phone;
-    private String description;
+    private String website;
+    private String address;
+    private Float longitude;
+    private Float latitude;
+    @Column(columnDefinition = "TEXT")
+    private String additionalInformation;
     private String senderPhone;
 }

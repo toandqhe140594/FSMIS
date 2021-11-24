@@ -72,7 +72,7 @@ public class FishingLocationController {
     }
 
     @PostMapping("/suggest")
-    public ResponseEntity<Object> suggestLocation(@RequestBody SuggestedLocationDtoIn suggestedLocationDtoIn,
+    public ResponseEntity<Object> suggestLocation(@RequestBody @Valid SuggestedLocationDtoIn suggestedLocationDtoIn,
                                                   HttpServletRequest request) {
         return new ResponseEntity<>(fishingLocationService.suggest(suggestedLocationDtoIn, request), HttpStatus.OK);
     }

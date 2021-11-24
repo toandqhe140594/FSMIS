@@ -16,7 +16,8 @@ import fpt.g31.fsmis.exception.NotFoundException;
 import fpt.g31.fsmis.exception.UnauthorizedException;
 import fpt.g31.fsmis.repository.*;
 import fpt.g31.fsmis.security.JwtFilter;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -165,7 +166,7 @@ public class FishingLocationService {
             fishingLocationList = fishingLocationRepos.getNearbyLocation(longitude, latitude, distance, minRating);
         }
         List<FishingLocationPinDtoOut> fishingLocationPinDtoOutList = new ArrayList<>();
-        if (fishingLocationList.isEmpty()){
+        if (fishingLocationList.isEmpty()) {
             return fishingLocationPinDtoOutList;
         }
         StringBuilder uri = new StringBuilder("https://dev.virtualearth.net/REST/v1/Routes/DistanceMatrix?origins=" + latitude + "," + longitude + "&destinations=");
@@ -588,10 +589,14 @@ public class FishingLocationService {
     public ResponseTextDtoOut suggest(SuggestedLocationDtoIn suggestedLocationDtoIn, HttpServletRequest request) {
         User sender = jwtFilter.getUserFromToken(request);
         SuggestedLocation suggestedLocation = SuggestedLocation.builder()
-                .name(suggestedLocationDtoIn.getName().trim())
-                .phone(suggestedLocationDtoIn.getPhone().trim())
-                .description(suggestedLocationDtoIn.getDescription().trim())
+                .name(suggestedLocationDtoIn.getName())
+                .phone(suggestedLocationDtoIn.getPhone())
                 .senderPhone(sender.getPhone())
+                .website(suggestedLocationDtoIn.getWebsite())
+                .address(suggestedLocationDtoIn.getAddress())
+                .longitude(suggestedLocationDtoIn.getLongitude())
+                .latitude(suggestedLocationDtoIn.getLatitude())
+                .additionalInformation(suggestedLocationDtoIn.getAdditionalInformation())
                 .build();
         suggestedLocationRepos.save(suggestedLocation);
         return new ResponseTextDtoOut("Gợi ý khu hồ thành công");
@@ -605,7 +610,11 @@ public class FishingLocationService {
                     .id(suggestedLocation.getId())
                     .name(suggestedLocation.getName())
                     .phone(suggestedLocation.getPhone())
-                    .description(suggestedLocation.getDescription())
+                    .website(suggestedLocation.getWebsite())
+                    .address(suggestedLocation.getAddress())
+                    .latitude(suggestedLocation.getLatitude())
+                    .longitude(suggestedLocation.getLongitude())
+                    .additionalInformation(suggestedLocation.getAdditionalInformation())
                     .senderPhone(suggestedLocation.getSenderPhone())
                     .build());
         }
@@ -620,4 +629,32 @@ public class FishingLocationService {
     }
 
 
+//    public ResponseTextDtoOut adminCreateFishingLocation(FishingLocationDtoIn fishingLocationDtoIn) {
+//        Ward ward = wardRepos.findById(fishingLocationDtoIn.getWardId())
+//                .orElseThrow(() -> new NotFoundException("Không tìm thấy phường/xã!"));
+//        FishingLocation fishingLocation = FishingLocation.builder()
+//                .name(fishingLocationDtoIn.getName().trim())
+//                .unsignedName(VNCharacterUtils.removeAccent(fishingLocationDtoIn.getName().toLowerCase().trim()))
+//                .longitude(fishingLocationDtoIn.getLongitude())
+//                .latitude(fishingLocationDtoIn.getLatitude())
+//                .address(fishingLocationDtoIn.getAddress().trim())
+//                .ward(ward)
+//                .phone(fishingLocationDtoIn.getPhone().trim())
+//                .description(fishingLocationDtoIn.getDescription().trim())
+//                .website(fishingLocationDtoIn.getWebsite())
+//                .service(fishingLocationDtoIn.getService().trim())
+//                .timetable(fishingLocationDtoIn.getTimetable().trim())
+//                .rule(fishingLocationDtoIn.getRule().trim())
+//                .imageUrl(ServiceUtils.mergeString(fishingLocationDtoIn.getImages()))
+//                .createdDate(LocalDateTime.now())
+//                .lastEditedDate(LocalDateTime.now())
+//                .active(true)
+//                .verify(false)
+//                .closed(false)
+//                .score(0F)
+//                .owner(owner)
+//                .build();
+//        fishingLocationRepos.save(fishingLocation);
+//        return new ResponseTextDtoOut("Tạo hồ câu thành công!");
+//    }
 }

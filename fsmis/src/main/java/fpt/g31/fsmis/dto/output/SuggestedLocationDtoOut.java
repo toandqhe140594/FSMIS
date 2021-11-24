@@ -11,8 +11,12 @@ import lombok.NoArgsConstructor;
 @Builder
 public class SuggestedLocationDtoOut {
     private Long id;
-    private String name;
     private String phone;
-    private String description;
+    private String name;
+    private String website;
+    private String address;
+    private Float longitude;
+    private Float latitude;
+    private String additionalInformation;
     private String senderPhone;
 }
