@@ -10,7 +10,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { Dimensions, ScrollView, StyleSheet, View } from "react-native";
 
-import InputComponent from "../components/common/InputComponent";
+import InputWithClipboard from "../components/common/InputWithClipboard";
 import MultiImageSection from "../components/common/MultiImageSection";
 import SelectComponent from "../components/common/SelectComponent";
 import TextAreaComponent from "../components/common/TextAreaComponent";
@@ -69,7 +69,7 @@ const PostCreateScreen = () => {
       case "IMAGE":
         return getValues("imageArray")[0].base64;
       case "VIDEO":
-        return getValues("postVideoLink");
+        return getValues("mediaUrl");
       default:
         return "";
     }
@@ -78,17 +78,11 @@ const PostCreateScreen = () => {
   const onSubmit = (data) => {
     setLoadingButton(true);
     const url = setAttachmentUrl(watchAttachmentType);
-    const attachmentType = watchAttachmentType || "NONE";
-    const updateData = {
-      ...data,
-      attachmentType,
-      id: currentID,
-      url,
-    };
-    createPost({
-      updateData,
-      setUpdateStatus,
-    });
+    const attachmentType = watchAttachmentType;
+    delete data.imageArray;
+    delete data.mediaUrl;
+    const updateData = { ...data, attachmentType, id: currentID, url };
+    createPost({ updateData, setUpdateStatus });
   };
 
   // Fire when navigates back to this screen
@@ -111,11 +105,12 @@ const PostCreateScreen = () => {
           goToFManagePostScreen(navigation);
         },
       );
+      setUpdateStatus(null);
     } else if (updateStatus === false) {
       showAlertBox("Thông báo", "Đã xảy ra lỗi! Vui lòng thử lại.");
       setLoadingButton(false);
+      setUpdateStatus(null);
     }
-    setUpdateStatus(null);
   }, [updateStatus]);
   return (
     <>
@@ -129,8 +124,8 @@ const PostCreateScreen = () => {
             marginTop: 8,
           }}
         >
-          <View style={[{ flex: 2 }, styles.sectionWrapper]}>
-            <VStack space={2} mb={2}>
+          <View style={StyleSheet.compose(styles.sectionWrapper, { flex: 1 })}>
+            <VStack space={3} mb={2}>
               <SelectComponent
                 label="Sự kiện"
                 placeholder="Chọn sự kiện"
@@ -139,8 +134,8 @@ const PostCreateScreen = () => {
               />
               <TextAreaComponent
                 label="Miêu tả"
-                placeholder=""
-                numberOfLines={3}
+                placeholder="Nội dung bài đăng"
+                numberOfLines={6}
                 controllerName="content"
               />
               <SelectComponent
@@ -150,10 +145,10 @@ const PostCreateScreen = () => {
                 controllerName="attachmentType"
               />
               {watchAttachmentType === "VIDEO" && (
-                <InputComponent
-                  placeholder="Nhập link vào đây"
+                <InputWithClipboard
                   label="Đường dẫn"
-                  controllerName="postVideoLink"
+                  placeholder="Nhập mã nhúng video"
+                  controllerName="mediaUrl"
                 />
               )}
             </VStack>
