@@ -134,7 +134,7 @@ const FManageEditProfileScreen = () => {
     // New phone input need OTP validation
     if (updateData.phone !== locationDetails.phone) {
       locationData.current = updateData;
-      sendOtp({ phone: data.phone, setSuccess: setOtpSendSuccess });
+      sendOtp({ phone: updateData.phone, setSuccess: setOtpSendSuccess });
     } else {
       editFishingLocation({ updateData, setUpdateStatus });
     }
