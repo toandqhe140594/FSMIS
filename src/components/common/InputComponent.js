@@ -8,7 +8,7 @@ const styles = StyleSheet.create({
   error: { color: "#f43f5e", fontSize: 12, fontStyle: "italic" },
   asterisk: { color: "#f43f5e", fontSize: 16 },
   bold: { fontWeight: "bold" },
-  text: { fontSize: 16, marginBottom: 4 },
+  text: { fontSize: 16, marginBottom: 6 },
   inputComponent: {
     backgroundColor: "white",
   },
