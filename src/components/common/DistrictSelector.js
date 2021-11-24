@@ -1,13 +1,13 @@
 import { useStoreActions, useStoreState } from "easy-peasy";
 import PropTypes from "prop-types";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { useFormContext, useWatch } from "react-hook-form";
 
 import SelectComponent from "./SelectComponent";
 
 const DistrictSelector = ({ label, placeholder, controllerName }) => {
   const { control, setValue } = useFormContext();
-  const [getStatus, setGetStatus] = useState(null);
+  const canIRunNow = useRef(false);
   const watchDistrict = useWatch({ control, name: controllerName });
   const { districtList } = useStoreState((state) => state.AddressModel);
   const { getWardByDistrictId, resetWardList } = useStoreActions(
@@ -15,18 +15,22 @@ const DistrictSelector = ({ label, placeholder, controllerName }) => {
   );
 
   useEffect(() => {
-    getWardByDistrictId({ id: watchDistrict, setGetStatus });
-  }, [watchDistrict]);
+    getWardByDistrictId({ id: watchDistrict }).then(() => {
+      canIRunNow.current = true;
+    });
+  }, []);
 
   useEffect(() => {
-    if (getStatus === "SUCCESS") {
-      setValue(controllerName, 0);
-      setGetStatus(null);
-    } else if (getStatus === "FAILED") {
-      resetWardList();
-      setGetStatus(null);
+    if (canIRunNow.current) {
+      getWardByDistrictId({ id: watchDistrict })
+        .then(() => {
+          setValue("wardId", 0);
+        })
+        .catch(() => {
+          resetWardList();
+        });
     }
-  }, [getStatus]);
+  }, [watchDistrict]);
 
   return (
     <SelectComponent
