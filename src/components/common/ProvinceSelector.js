@@ -13,7 +13,7 @@ const ProvinceSelector = ({
   hasAsterisk,
 }) => {
   const { control, setValue } = useFormContext();
-  const canIRunNow = useRef(false);
+  const canBeReset = useRef(false);
   const watchProvince = useWatch({ control, name: controllerName });
   const { provinceList } = useStoreState((state) => state.AddressModel);
   const { getDisctrictByProvinceId, resetDistrictList } = useStoreActions(
@@ -23,9 +23,9 @@ const ProvinceSelector = ({
   useEffect(() => {
     getDisctrictByProvinceId({ id: watchProvince })
       .then(() => {
-        if (canIRunNow.current) {
+        if (canBeReset.current) {
           setValue("districtId", 0);
-        } else canIRunNow.current = true;
+        } else canBeReset.current = true;
       })
       .catch(() => {
         resetDistrictList();

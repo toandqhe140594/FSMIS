@@ -7,7 +7,7 @@ import SelectComponent from "./SelectComponent";
 
 const DistrictSelector = ({ label, placeholder, controllerName }) => {
   const { control, setValue } = useFormContext();
-  const canIRunNow = useRef(false);
+  const canBeReset = useRef(false);
   const watchDistrict = useWatch({ control, name: controllerName });
   const { districtList } = useStoreState((state) => state.AddressModel);
   const { getWardByDistrictId, resetWardList } = useStoreActions(
@@ -17,9 +17,9 @@ const DistrictSelector = ({ label, placeholder, controllerName }) => {
   useEffect(() => {
     getWardByDistrictId({ id: watchDistrict })
       .then(() => {
-        if (canIRunNow.current) {
+        if (canBeReset.current) {
           setValue("wardId", 0);
-        } else canIRunNow.current = true;
+        } else canBeReset.current = true;
       })
       .catch(() => {
         resetWardList();
