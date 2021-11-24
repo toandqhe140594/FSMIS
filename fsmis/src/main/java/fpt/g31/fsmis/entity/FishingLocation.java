@@ -27,20 +27,16 @@ public class FishingLocation {
 
     private String unsignedName;
 
-    @NotNull
     private Float longitude;
 
-    @NotNull
     private Float latitude;
 
-    @NotNull
     private String address;
 
     @ManyToOne
     @JoinColumn
     private Ward ward;
 
-    @NotNull
     private String phone;
 
     @Column(columnDefinition = "TEXT")
@@ -48,15 +44,12 @@ public class FishingLocation {
 
     private String website;
 
-    @NotNull
     @Column(columnDefinition = "TEXT")
     private String service;
 
-    @NotNull
     @Column(columnDefinition = "TEXT")
     private String timetable;
 
-    @NotNull
     @Column(columnDefinition = "TEXT")
     private String rule;
 

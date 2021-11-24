@@ -24,8 +24,6 @@ public interface FishingLocationRepos extends JpaRepository<FishingLocation, Lon
             "ORDER BY distance;")
     List<FishingLocation> getNearbyLocation(Float longitude, Float latitude, Integer distance, Integer minRating);
 
-    List<FishingLocation> findByOwnerIdAndActiveIsTrue(Long ownerId);
-
     @Query(nativeQuery = true, value = "select *\n" +
             "from tbl_fishing_location tfl inner join tbl_employee_list tel on tfl.id = tel.fishing_location_id \n" +
             "where tel.employee_id = ?1")
@@ -49,4 +47,6 @@ public interface FishingLocationRepos extends JpaRepository<FishingLocation, Lon
             "where distance < ?3\n" +
             "ORDER BY distance;")
     List<FishingLocation> getNearbyLocationWithMethodId(Float longitude, Float latitude, Integer distance, Integer minRating, Long methodId);
+
+    List<FishingLocation> findByOwnerId(Long id);
 }

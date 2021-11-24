@@ -1,5 +1,6 @@
 package fpt.g31.fsmis.controller;
 
+import fpt.g31.fsmis.dto.input.FishingLocationDtoIn;
 import fpt.g31.fsmis.service.FishingLocationService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -36,10 +37,10 @@ public class AdminFishingLocationController {
         return new ResponseEntity<>(locationService.adminGetSuggestedLocationList(), HttpStatus.OK);
     }
 
-//    @PostMapping("/create")
-//    public ResponseEntity<Object> adminCreateFishingLocation(@RequestBody FishingLocationDtoIn fishingLocationDtoIn) {
-//        return new ResponseEntity<>(locationService.adminCreateFishingLocation(fishingLocationDtoIn), HttpStatus.OK);
-//    }
+    @PostMapping("/create")
+    public ResponseEntity<Object> adminCreateLocation(@RequestBody FishingLocationDtoIn fishingLocationDtoIn) {
+        return new ResponseEntity<>(locationService.adminCreateLocation(fishingLocationDtoIn), HttpStatus.OK);
+    }
 
     @DeleteMapping("/suggested/remove/{suggestedLocationId}")
     public ResponseEntity<Object> adminRemoveSuggestedLocation(@PathVariable Long suggestedLocationId) {
