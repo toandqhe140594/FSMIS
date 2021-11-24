@@ -37,12 +37,12 @@ public class UserController {
     }
 
     @PostMapping("/edit")
-    public ResponseEntity<Object> editPersonalInformation(HttpServletRequest request, @RequestBody PersonalInfoDtoIn personalInfoDtoIn) {
+    public ResponseEntity<Object> editPersonalInformation(HttpServletRequest request, @RequestBody @Valid PersonalInfoDtoIn personalInfoDtoIn) {
         return new ResponseEntity<>(userService.savePersonalInformation(request, personalInfoDtoIn), HttpStatus.OK);
     }
 
     @PostMapping("/changepassword")
-    public ResponseEntity<Object> changePassword(HttpServletRequest request, @RequestBody ChangePasswordDtoIn changePasswordDtoIn) {
+    public ResponseEntity<Object> changePassword(HttpServletRequest request, @RequestBody @Valid ChangePasswordDtoIn changePasswordDtoIn) {
         return new ResponseEntity<>(userService.changePassword(request, changePasswordDtoIn), HttpStatus.OK);
     }
 

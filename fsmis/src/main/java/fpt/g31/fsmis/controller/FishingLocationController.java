@@ -28,7 +28,7 @@ public class FishingLocationController {
 
 
     @PostMapping("/search")
-    public ResponseEntity<Object> searchFishingLocation(@RequestBody FilterDtoIn filterDtoIn,
+    public ResponseEntity<Object> searchFishingLocation(@RequestBody @Valid FilterDtoIn filterDtoIn,
                                                         @RequestParam(required = false, defaultValue = "1") int pageNo){
         return new ResponseEntity<>(fishingLocationService.searchFishingLocation(filterDtoIn, pageNo), HttpStatus.OK);
     }
@@ -60,7 +60,7 @@ public class FishingLocationController {
     @PostMapping("/report/{locationId}")
     public ResponseEntity<Object> reportFishingLocation(HttpServletRequest request,
                                                         @PathVariable Long locationId,
-                                                        @RequestBody ReportDtoIn reportDtoIn) {
+                                                        @RequestBody @Valid ReportDtoIn reportDtoIn) {
         return new ResponseEntity<>(reportService.reportFishingLocation(request, locationId, reportDtoIn), HttpStatus.OK);
     }
 
@@ -228,7 +228,7 @@ public class FishingLocationController {
     @PostMapping("/{locationId}/review/me/post")
     public ResponseEntity<Object> postReview(HttpServletRequest request,
                                              @PathVariable Long locationId,
-                                             @RequestBody ReviewDtoIn reviewDtoIn) {
+                                             @RequestBody @Valid ReviewDtoIn reviewDtoIn) {
         return new ResponseEntity<>(reviewService.postReview(request, locationId, reviewDtoIn), HttpStatus.OK);
     }
 
@@ -283,8 +283,7 @@ public class FishingLocationController {
     }
 
     @DeleteMapping("/{locationId}/post/delete/{postId}")
-    public ResponseEntity<Object> deletePost(@PathVariable Long locationId,
-                                             @PathVariable Long postId,
+    public ResponseEntity<Object> deletePost(@PathVariable Long postId,
                                              HttpServletRequest request) {
         return new ResponseEntity<>(postService.deletePost(postId, request), HttpStatus.OK);
     }

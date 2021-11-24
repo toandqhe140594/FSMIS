@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Pattern;
 
 @RestController
@@ -56,7 +57,7 @@ public class UtilsController {
     }
 
     @PostMapping("/otp/validate")
-    public ResponseEntity<Object> validateOtp(@RequestBody ValidateOtpDtoIn validateOtpDtoIn) {
+    public ResponseEntity<Object> validateOtp(@RequestBody @Valid ValidateOtpDtoIn validateOtpDtoIn) {
         return new ResponseEntity<>(twilioOtpService.validateOtp(validateOtpDtoIn), HttpStatus.OK);
     }
 }

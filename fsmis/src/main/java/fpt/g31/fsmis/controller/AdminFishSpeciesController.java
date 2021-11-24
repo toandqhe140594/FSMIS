@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/api/admin/fish")
 @AllArgsConstructor
@@ -20,7 +22,7 @@ public class AdminFishSpeciesController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<Object> adminAddSpecies(@RequestBody SpeciesDtoIn speciesDtoIn) {
+    public ResponseEntity<Object> adminAddSpecies(@RequestBody @Valid SpeciesDtoIn speciesDtoIn) {
         return new ResponseEntity<>(fishSpeciesService.addSpecies(speciesDtoIn), HttpStatus.OK);
     }
 

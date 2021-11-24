@@ -165,6 +165,9 @@ public class FishingLocationService {
             fishingLocationList = fishingLocationRepos.getNearbyLocation(longitude, latitude, distance, minRating);
         }
         List<FishingLocationPinDtoOut> fishingLocationPinDtoOutList = new ArrayList<>();
+        if (fishingLocationList.isEmpty()){
+            return fishingLocationPinDtoOutList;
+        }
         StringBuilder uri = new StringBuilder("https://dev.virtualearth.net/REST/v1/Routes/DistanceMatrix?origins=" + latitude + "," + longitude + "&destinations=");
         for (FishingLocation fishingLocation : fishingLocationList) {
             uri.append(fishingLocation.getLatitude() + "," + fishingLocation.getLongitude() + ";");
