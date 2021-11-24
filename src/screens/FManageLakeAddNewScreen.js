@@ -184,7 +184,7 @@ const LakeAddNewScreen = () => {
                 isTitle
                 hasAsterisk
                 placeholder="Miêu tả giá vé hồ"
-                numberOfLines={3}
+                numberOfLines={6}
                 controllerName="price"
               />
             </Center>
