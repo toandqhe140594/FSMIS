@@ -129,7 +129,7 @@ const AdminReportReviewDetailScreen = () => {
       <AvatarCard
         avatarSize="md"
         nameUser={item.userFullName}
-        images={item.userAvatar}
+        image={item.userAvatar}
         subText={item.time}
         subTextFontSize="12"
       />

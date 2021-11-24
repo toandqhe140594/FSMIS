@@ -130,7 +130,7 @@ const AdminReportPostDetailScreen = () => {
       <AvatarCard
         avatarSize="md"
         nameUser={item.userFullName}
-        images={item.userAvatar}
+        image={item.userAvatar}
         subText={item.time}
       />
       <Box mt={2}>
