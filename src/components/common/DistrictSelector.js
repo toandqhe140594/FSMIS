@@ -15,21 +15,15 @@ const DistrictSelector = ({ label, placeholder, controllerName }) => {
   );
 
   useEffect(() => {
-    getWardByDistrictId({ id: watchDistrict }).then(() => {
-      canIRunNow.current = true;
-    });
-  }, []);
-
-  useEffect(() => {
-    if (canIRunNow.current) {
-      getWardByDistrictId({ id: watchDistrict })
-        .then(() => {
+    getWardByDistrictId({ id: watchDistrict })
+      .then(() => {
+        if (canIRunNow.current) {
           setValue("wardId", 0);
-        })
-        .catch(() => {
-          resetWardList();
-        });
-    }
+        } else canIRunNow.current = true;
+      })
+      .catch(() => {
+        resetWardList();
+      });
   }, [watchDistrict]);
 
   return (

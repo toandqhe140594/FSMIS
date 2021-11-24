@@ -21,21 +21,15 @@ const ProvinceSelector = ({
   );
 
   useEffect(() => {
-    getDisctrictByProvinceId({ id: watchProvince }).then(() => {
-      canIRunNow.current = true;
-    });
-  }, []);
-
-  useEffect(() => {
-    if (canIRunNow.current) {
-      getDisctrictByProvinceId({ id: watchProvince })
-        .then(() => {
+    getDisctrictByProvinceId({ id: watchProvince })
+      .then(() => {
+        if (canIRunNow.current) {
           setValue("districtId", 0);
-        })
-        .catch(() => {
-          resetDistrictList();
-        });
-    }
+        } else canIRunNow.current = true;
+      })
+      .catch(() => {
+        resetDistrictList();
+      });
   }, [watchProvince]);
 
   return (
