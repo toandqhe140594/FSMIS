@@ -103,7 +103,7 @@ const FManageSelectScreen = () => {
   if (loading)
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="blue" />
+        <ActivityIndicator size={60} color="#2089DC" />
       </View>
     );
 
