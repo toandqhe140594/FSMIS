@@ -329,7 +329,7 @@ export const FMANAGE_POST_FORM = yup.object().shape({
     is: "IMAGE",
     then: yup.array().min(1, "Hãy chọn ảnh cho bài đăng"),
   }),
-  postVideoLink: yup.string().when("attachmentType", {
+  mediaUrl: yup.string().when("attachmentType", {
     is: "VIDEO",
     then: yup.string().required("Link video không được để trống"),
   }),

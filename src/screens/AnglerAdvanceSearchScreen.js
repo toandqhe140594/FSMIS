@@ -19,6 +19,7 @@ const OFFSET_BOTTOM = 80;
 const CUSTOM_SCREEN_HEIGHT = Dimensions.get("window").height - OFFSET_BOTTOM;
 
 const scoreData = [
+  { id: 0, name: "Tất cả" },
   { id: 4, name: "Trên 4 sao" },
   { id: 3, name: "Trên 3 sao" },
   { id: 2, name: "Trên 2 sao" },
@@ -69,14 +70,14 @@ const AnglerAdvanceSearchScreen = () => {
     mode: "onSubmit",
     reValidateMode: "onSubmit",
     defaultValues: {
-      input: "",
+      input: prevStateData.input,
       fishingMethodIdList: prevStateData.fishingMethodIdList || [],
       fishSpeciesIdList: prevStateData.fishSpeciesIdList || [],
       provinceIdList: prevStateData.provinceIdList[0] || 0,
-      score: 0,
+      score: prevStateData.score,
     },
   });
-  const { handleSubmit, setValue, resetField } = methods;
+  const { handleSubmit, setValue } = methods;
 
   const onSubmit = (data) => {
     setIsLoading(true);
@@ -92,7 +93,7 @@ const AnglerAdvanceSearchScreen = () => {
    */
   const handleReset = () => {
     resetPrevStateData();
-    resetField("input");
+    setValue("input", "");
     setValue("provinceIdList", 0);
     setValue("fishingMethodIdList", []);
     setValue("fishSpeciesIdList", []);
@@ -103,13 +104,12 @@ const AnglerAdvanceSearchScreen = () => {
    * Get all api data for select options
    */
   useEffect(() => {
-    (async () => {
-      await getAllProvince();
-      await getFishingMethodList();
-      await getFishList();
-      setIsLoading(false);
-      setFullScreen(false);
-    })();
+    Promise.all([getAllProvince(), getFishingMethodList(), getFishList()]).then(
+      () => {
+        setIsLoading(false);
+        setFullScreen(false);
+      },
+    );
     const timeoutId = setTimeout(() => {
       setIsLoading(false);
       setFullScreen(false);
