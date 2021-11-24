@@ -105,7 +105,6 @@ const model = {
   getDisctrictByProvinceId: thunk(
     async (actions, payload = {}, { getState }) => {
       const { prevSelectedProvinceId, wardList } = getState();
-      const setGetStatus = payload.setGetStatus || (() => {});
       try {
         if (prevSelectedProvinceId !== payload.id) {
           const { data: districtData } = await http.get(
@@ -119,11 +118,9 @@ const model = {
           }
           actions.setDistrictListByProvinceId({ districtData });
           actions.setPrevSelectedProvinceId({ id: payload.id });
-          setGetStatus("SUCCESS");
         }
       } catch (error) {
-        setGetStatus("FAILED");
-        // handle error
+        throw new Error("FAILED");
       }
     },
   ),
@@ -135,7 +132,6 @@ const model = {
    */
   getWardByDistrictId: thunk(async (actions, payload = {}, { getState }) => {
     const { prevSelectedDistrictId } = getState();
-    const setGetStatus = payload.setGetStatus || (() => {});
     try {
       if (prevSelectedDistrictId !== payload.id) {
         const { data: wardData } = await http.get(
@@ -146,11 +142,9 @@ const model = {
         );
         actions.setWardListByDistrictId({ wardData });
         actions.setPrevSelectedDistrictId({ id: payload.id });
-        setGetStatus("SUCCESS");
       }
     } catch (error) {
-      // handle error
-      setGetStatus("FAILED");
+      throw new Error("FAILED");
     }
   }),
 };
