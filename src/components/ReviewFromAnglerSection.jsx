@@ -4,11 +4,12 @@ import { useStoreActions } from "easy-peasy";
 import { Box, Button, Menu, Pressable } from "native-base";
 import PropTypes from "prop-types";
 import React from "react";
-import { Alert, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 import { Avatar, Text } from "react-native-elements";
 import { Rating } from "react-native-ratings";
 
 import { goToWriteReportScreen } from "../navigations";
+import { showAlertConfirmBox } from "../utilities";
 
 const styles = StyleSheet.create({
   buttonText: { color: "white" },
@@ -54,22 +55,13 @@ const ReviewFromAnglerSection = ({
   };
 
   const deletePersonalReviewAction = () => {
-    Alert.alert(
+    showAlertConfirmBox(
       "Bạn muốn xóa bài đánh giá?",
       "Bài đánh giá sẽ bị xóa vĩnh viễn. Bạn không thể hoàn tác hành động này",
-      [
-        {
-          text: "Quay lại",
-          style: "cancel",
-        },
-        {
-          text: "Xác nhận",
-          onPress: async () => {
-            await deletePersonalReview();
-            getLocationReviewScore();
-          },
-        },
-      ],
+      async () => {
+        await deletePersonalReview();
+        getLocationReviewScore();
+      },
     );
   };
 
