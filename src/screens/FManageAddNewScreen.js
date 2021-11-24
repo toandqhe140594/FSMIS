@@ -6,13 +6,14 @@ import {
 } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, Button, Center, Divider, Stack, Text, VStack } from "native-base";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { ActivityIndicator, ScrollView, StyleSheet } from "react-native";
 import { Overlay } from "react-native-elements";
 
 import DistrictSelector from "../components/common/DistrictSelector";
 import InputComponent from "../components/common/InputComponent";
+import InputWithClipboard from "../components/common/InputWithClipboard";
 import MultiImageSection from "../components/common/MultiImageSection";
 import ProvinceSelector from "../components/common/ProvinceSelector";
 import TextAreaComponent from "../components/common/TextAreaComponent";
@@ -86,11 +87,11 @@ const INPUT_LOCATION_RULE_PLACEHOLDER = "Miêu tả nội quy khu hồ";
 
 const FManageAddNewScreen = () => {
   const route = useRoute();
+  const locationData = useRef(null);
   const navigation = useNavigation();
   const [isLoading, setIsLoading] = useState(true);
   const [fullScreen, setFullScreen] = useState(true);
   const [addStatus, setAddStatus] = useState(null);
-  const [locationData, setLocationData] = useState({});
   const [otpSendSuccess, setOtpSendSuccess] = useState(null);
   const { locationLatLng } = useStoreState((states) => states.FManageModel);
   const { resetDataList, getAllProvince } = useStoreActions(
@@ -117,7 +118,7 @@ const FManageAddNewScreen = () => {
     const images = data.imageArray.map((image) => image.base64);
     delete data.imageArray;
     const addData = { ...data, ...locationLatLng, images };
-    setLocationData(addData);
+    locationData.current = addData;
     sendOtp({ phone: data.phone, setSuccess: setOtpSendSuccess });
   };
   /**
@@ -125,11 +126,10 @@ const FManageAddNewScreen = () => {
    * and when screen unmounts
    */
   useEffect(() => {
-    (async () => {
-      await getAllProvince();
+    getAllProvince().then(() => {
       setIsLoading(false);
       setFullScreen(false);
-    })();
+    });
     const loadingId = setTimeout(() => {
       setIsLoading(false);
       setFullScreen(false);
@@ -148,7 +148,7 @@ const FManageAddNewScreen = () => {
       goToOTPScreen(
         navigation,
         ROUTE_NAMES.FMANAGE_PROFILE_ADD_NEW,
-        locationData.phone,
+        locationData.current.phone,
       );
       setIsLoading(false);
       setOtpSendSuccess(null);
@@ -191,7 +191,7 @@ const FManageAddNewScreen = () => {
       }
       if (route.params?.otpSuccess) {
         setIsLoading(true);
-        addNewLocation({ addData: locationData, setAddStatus });
+        addNewLocation({ addData: locationData.current, setAddStatus });
       }
     }, [route.params]),
   );
@@ -240,7 +240,7 @@ const FManageAddNewScreen = () => {
                   hasAsterisk
                   controllerName={FORM_FIELD_LOCATION_PHONE}
                 />
-                <InputComponent
+                <InputWithClipboard
                   label={LOCATION_WEBSITE_LABEL}
                   placeholder={INPUT_LOCATION_WEBSITE_PLACEHOLDER}
                   controllerName={FORM_FIELD_LOCATION_WEBSITE}
@@ -303,7 +303,7 @@ const FManageAddNewScreen = () => {
                 isTitle
                 hasAsterisk
                 placeholder={INPUT_LOCATION_TIMETABLE_PLACEHOLDER}
-                numberOfLines={3}
+                numberOfLines={6}
                 controllerName={FORM_FIELD_LOCATION_TIMETABLE}
               />
             </Center>
@@ -316,7 +316,7 @@ const FManageAddNewScreen = () => {
                 isTitle
                 hasAsterisk
                 placeholder={INPUT_LOCATION_SERVICE_PLACEHOLDER}
-                numberOfLines={3}
+                numberOfLines={6}
                 controllerName={FORM_FIELD_LOCATION_SERVICE}
               />
             </Center>
@@ -328,7 +328,7 @@ const FManageAddNewScreen = () => {
                 isTitle
                 hasAsterisk
                 placeholder={INPUT_LOCATION_RULE_PLACEHOLDER}
-                numberOfLines={3}
+                numberOfLines={6}
                 controllerName={FORM_FIELD_LOCATION_RULE}
               />
             </Center>
