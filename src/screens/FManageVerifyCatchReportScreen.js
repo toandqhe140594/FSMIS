@@ -84,20 +84,13 @@ const UnresolvedCatchReportComponent = ({
         </Box>
         <VStack justifyContent="center" space={2.5} mt="4" width="33%">
           <Button
-            colorScheme="teal"
+            colorScheme="emerald"
             isLoading={loading}
-            onPress={() => {
-              approveHandler();
-            }}
+            onPress={approveHandler}
           >
             Đồng ý
           </Button>
-          <Button
-            disabled={loading}
-            onPress={() => {
-              goToDetailHandler(id);
-            }}
-          >
+          <Button disabled={loading} onPress={goToDetailHandler}>
             Chi tiết
           </Button>
         </VStack>
@@ -131,6 +124,10 @@ const VerifyCatchReportScreen = () => {
     getUnresolvedCatchReportList({ status: "OVERWRITE" });
   }, []);
 
+  const renderItem = ({ item }) => <UnresolvedCatchReportComponent {...item} />;
+
+  const keyExtractor = (item) => item.id.toString();
+
   return (
     <Box>
       <HeaderTab name="Xác nhận báo cá" />
@@ -143,10 +140,8 @@ const VerifyCatchReportScreen = () => {
         <FlatList
           pt="0.5"
           data={unresolvedCatchReportList}
-          renderItem={({ item }) => (
-            <UnresolvedCatchReportComponent {...item} />
-          )}
-          keyExtractor={(item) => item.id.toString()}
+          renderItem={renderItem}
+          keyExtractor={keyExtractor}
           onEndReached={onEndReached}
         />
       </Box>

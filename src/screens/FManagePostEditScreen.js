@@ -9,22 +9,15 @@ import { Button, VStack } from "native-base";
 import React, { useCallback, useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { Dimensions, ScrollView, StyleSheet, View } from "react-native";
-import * as yup from "yup";
 
-import InputComponent from "../components/common/InputComponent";
+import InputWithClipboard from "../components/common/InputWithClipboard";
 import MultiImageSection from "../components/common/MultiImageSection";
 import SelectComponent from "../components/common/SelectComponent";
 import TextAreaComponent from "../components/common/TextAreaComponent";
 import HeaderTab from "../components/HeaderTab";
-import { ROUTE_NAMES } from "../constants";
+import { ROUTE_NAMES, SCHEMA } from "../constants";
 import { goToFManagePostScreen } from "../navigations";
 import { showAlertAbsoluteBox, showAlertBox } from "../utilities";
-
-const validationSchema = yup.object().shape({
-  postType: yup.string().required("Loại bài đăng không được để trống"),
-  content: yup.string().required("Nội dung bài đăng không được để trống"),
-  postVideoLink: yup.string(),
-});
 
 const postTypeData = [
   { name: "Thông báo", id: "ANNOUNCING" },
@@ -57,91 +50,65 @@ const PostEditScreen = () => {
 
   const route = useRoute();
   const navigation = useNavigation();
-  const [imageArray, setImageArray] = useState([]);
   const editPost = useStoreActions((actions) => actions.FManageModel.editPost);
   const [updateStatus, setUpdateStatus] = useState("");
   const [loadingButton, setLoadingButton] = useState(false);
   const methods = useForm({
     mode: "onSubmit",
     reValidateMode: "onSubmit",
-    resolver: yupResolver(validationSchema),
+    resolver: yupResolver(SCHEMA.FMANAGE_POST_FORM),
     defaultValues: {
       content: currentPost.content,
       postType: currentPost.postType,
       attachmentType: currentPost.attachmentType,
+      imageArray: [],
     },
   });
-  const getLocationPostListByPage = useStoreActions(
-    (actions) => actions.FManageModel.getLocationPostListByPage,
-  );
+
   const { handleSubmit, watch, setValue, getValues } = methods;
   const watchAttachmentType = watch("attachmentType");
-  /**
-   *  Reset the image array if imageArray is not empty
-   *  when switching to input link video
-   */
 
+  /**
+   * Populates data to image selector or video link field
+   */
   const setDefaultValues = () => {
     if (watchAttachmentType === "IMAGE") {
-      setImageArray([{ id: 1, base64: currentPost.url }]);
+      setValue("imageArray", [{ id: 1, base64: currentPost.url }]);
     }
     if (watchAttachmentType === "VIDEO") {
-      setValue("postVideoLink", currentPost.url);
+      setValue("mediaUrl", currentPost.url);
     }
   };
 
   useEffect(() => {
     setDefaultValues();
   }, []);
-  useEffect(() => {
-    switch (watchAttachmentType) {
-      case "IMAGE":
-        setValue(" postVideoLink", "");
-        break;
-
-      case "VIDEO":
-        if (imageArray?.length > 0) setImageArray([]);
-        break;
-
-      default:
-        if (imageArray?.length > 0) setImageArray([]);
-    }
-  }, [watchAttachmentType]);
 
   const setAttachmentUrl = (type) => {
     switch (type) {
       case "IMAGE":
-        return imageArray[0].base64;
+        return getValues("imageArray")[0].base64;
       case "VIDEO":
-        return getValues("postVideoLink");
+        return getValues("mediaUrl");
       default:
         return "";
     }
   };
-
   const onSubmit = (data) => {
-    const url = setAttachmentUrl(watchAttachmentType);
-    const updateData = {
-      ...data,
-      id: currentPost.id,
-      url,
-    };
-    editPost({
-      updateData,
-      setUpdateStatus,
-    });
     setLoadingButton(true);
+    const url = setAttachmentUrl(watchAttachmentType);
+    delete data.imageArray;
+    delete data.mediaUrl;
+    const updateData = { ...data, id: currentPost.id, url };
+    editPost({ updateData, setUpdateStatus });
   };
 
-  const updateImageArray = (id) => {
-    setImageArray(imageArray.filter((image) => image.id !== id));
-  };
   // Fire when navigates back to this screen
   useFocusEffect(
     // useCallback will listen to route.param
     useCallback(() => {
       if (route.params?.base64Array && route.params.base64Array[0]) {
-        setImageArray(route.params?.base64Array);
+        setValue("imageArray", route.params?.base64Array);
         navigation.setParams({ base64Array: [] });
       }
     }, [route.params]),
@@ -151,9 +118,8 @@ const PostEditScreen = () => {
     if (updateStatus === "SUCCESS") {
       showAlertAbsoluteBox(
         "Thông báo",
-        "Gửi thông thành công! Đang chỉnh sửa bài viết.",
+        "Gửi thông tin thành công! Đang chỉnh sửa bài viết.",
         async () => {
-          await getLocationPostListByPage({ pageNo: 1 });
           goToFManagePostScreen(navigation);
         },
       );
@@ -163,6 +129,7 @@ const PostEditScreen = () => {
     }
     setUpdateStatus(null);
   }, [updateStatus]);
+
   return (
     <>
       <HeaderTab name="Bài đăng" />
@@ -175,7 +142,7 @@ const PostEditScreen = () => {
             marginTop: 8,
           }}
         >
-          <View style={[{ flex: 2 }, styles.sectionWrapper]}>
+          <View style={StyleSheet.compose(styles.sectionWrapper, { flex: 1 })}>
             <VStack space={2} mb={2}>
               <SelectComponent
                 label="Sự kiện"
@@ -185,8 +152,8 @@ const PostEditScreen = () => {
               />
               <TextAreaComponent
                 label="Miêu tả"
-                placeholder=""
-                numberOfLines={3}
+                placeholder="Nội dung của bài đăng"
+                numberOfLines={6}
                 controllerName="content"
               />
               <SelectComponent
@@ -197,10 +164,10 @@ const PostEditScreen = () => {
               />
 
               {watchAttachmentType === "VIDEO" && (
-                <InputComponent
-                  placeholder="Nhập link vào đây"
+                <InputWithClipboard
                   label="Đường dẫn"
-                  controllerName="postVideoLink"
+                  placeholder="Nhập mã nhúng video"
+                  controllerName="mediaUrl"
                 />
               )}
             </VStack>
@@ -208,8 +175,7 @@ const PostEditScreen = () => {
               <MultiImageSection
                 containerStyle={{ width: "100%" }}
                 formRoute={ROUTE_NAMES.FMANAGE_POST_EDIT}
-                imageArray={imageArray}
-                deleteImage={updateImageArray}
+                controllerName="imageArray"
               />
             )}
           </View>

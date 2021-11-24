@@ -25,7 +25,7 @@ import {
 import * as yup from "yup";
 
 import { phoneRegExp } from "../constants";
-import { goToRegisterScreen } from "../navigations";
+import { goToForgotPasswordScreen, goToRegisterScreen } from "../navigations";
 
 // Validation schema for form
 const validationSchema = yup.object().shape({
@@ -45,7 +45,7 @@ const LoginScreen = () => {
   const {
     control,
     handleSubmit,
-    setValue,
+    // setValue,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(validationSchema),
@@ -55,26 +55,38 @@ const LoginScreen = () => {
 
   const [visible, setVisible] = useState(false);
 
+  const toggleVisible = () => {
+    setVisible(!visible);
+  };
+
+  const registerAction = () => {
+    goToRegisterScreen(navigation);
+  };
+
+  const forgotPasswordAction = () => {
+    goToForgotPasswordScreen(navigation);
+  };
+
   // Development only
   useEffect(() => {
     // 0921485233 admin
-    setValue("phoneNumber", "0963372727");
-    setValue("password", "Asdf2k@!");
+    // setValue("phoneNumber", "0963372727");
+    // setValue("phoneNumber", "0921485233");
+    // setValue("password", "Asdf2k@!");
   }, []);
 
   const onSubmit = (data) => {
     login({ phone: data.phoneNumber, password: data.password });
   };
 
+  const minHeight = Math.round(
+    useWindowDimensions().height - StatusBar.currentHeight,
+  );
+
   return (
     <KeyboardAvoidingView>
       <ScrollView>
-        <Box
-          flex={1}
-          minHeight={Math.round(
-            useWindowDimensions().height - StatusBar.currentHeight,
-          )}
-        >
+        <Box flex={1} minHeight={minHeight}>
           <Center flex={1}>
             <Image
               source={require("../assets/images/logo.png")}
@@ -152,7 +164,7 @@ const LoginScreen = () => {
                       position="absolute"
                       right={0}
                       w="20%"
-                      onPress={() => setVisible(!visible)}
+                      onPress={toggleVisible}
                     />
                   </Box>
                 )}
@@ -163,7 +175,11 @@ const LoginScreen = () => {
                 </Text>
               )}
 
-              <Text alignSelf="flex-end" underline>
+              <Text
+                alignSelf="flex-end"
+                underline
+                onPress={forgotPasswordAction}
+              >
                 Quên mật khẩu?
               </Text>
 
@@ -174,12 +190,7 @@ const LoginScreen = () => {
           <Box justifyContent="flex-end" alignItems="center" mb={6}>
             <Text>
               Bạn chưa có tài khoản?{" "}
-              <Text
-                underline
-                onPress={() => {
-                  goToRegisterScreen(navigation);
-                }}
-              >
+              <Text underline onPress={registerAction}>
                 Đăng ký
               </Text>
             </Text>

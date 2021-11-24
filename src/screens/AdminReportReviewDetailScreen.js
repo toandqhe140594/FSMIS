@@ -1,133 +1,218 @@
-import { Box, Divider, FlatList, ScrollView, Text, VStack } from "native-base";
-import React from "react";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { useStoreActions, useStoreState } from "easy-peasy";
+import { Box, Button, Divider, FlatList, Text, VStack } from "native-base";
+import React, { useEffect, useState } from "react";
 
 import AdminReport from "../components/AdminReport";
 import AvatarCard from "../components/AvatarCard";
 import ReviewFromAnglerSection from "../components/ReviewFromAnglerSection";
 import styles from "../config/styles";
-
-const reportData = [
-  { userName: "Cưởng", content: "Hồ thả lân ,tôi đã căng" },
-  {
-    userName: "Cưởng 1",
-    content:
-      "Hồ vẫn thả lân ,tôi lại căng  Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis quam nihil vel adipisci facere? Cupiditate fugit ratione facilis atque ullam minus provident, velit quia, dolor corporis, laborum ipsa laboriosam doloribus. ",
-  },
-  {
-    userName: "Cưởng 1",
-    content:
-      "Hồ vẫn thả lân ,tôi lại căng  Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis quam nihil vel adipisci facere? Cupiditate fugit ratione facilis atque ullam minus provident, velit quia, dolor corporis, laborum ipsa laboriosam doloribus. ",
-  },
-  {
-    userName: "Cưởng 1",
-    content:
-      "Hồ vẫn thả lân ,tôi lại căng  Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis quam nihil vel adipisci facere? Cupiditate fugit ratione facilis atque ullam minus provident, velit quia, dolor corporis, laborum ipsa laboriosam doloribus. ",
-  },
-  {
-    userName: "Cưởng 1",
-    content:
-      "Hồ vẫn thả lân ,tôi lại căng  Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis quam nihil vel adipisci facere? Cupiditate fugit ratione facilis atque ullam minus provident, velit quia, dolor corporis, laborum ipsa laboriosam doloribus. ",
-  },
-  {
-    userName: "Cưởng 1",
-    content:
-      "Hồ vẫn thả lân ,tôi lại căng  Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis quam nihil vel adipisci facere? Cupiditate fugit ratione facilis atque ullam minus provident, velit quia, dolor corporis, laborum ipsa laboriosam doloribus. ",
-  },
-  {
-    userName: "Cưởng 1",
-    content:
-      "Hồ vẫn thả lân ,tôi lại căng  Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis quam nihil vel adipisci facere? Cupiditate fugit ratione facilis atque ullam minus provident, velit quia, dolor corporis, laborum ipsa laboriosam doloribus. ",
-  },
-  {
-    userName: "Cưởng 1",
-    content:
-      "Hồ vẫn thả lân ,tôi lại căng  Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis quam nihil vel adipisci facere? Cupiditate fugit ratione facilis atque ullam minus provident, velit quia, dolor corporis, laborum ipsa laboriosam doloribus. ",
-  },
-  {
-    userName: "Cưởng 1",
-    content:
-      "Hồ vẫn thả lân ,tôi lại căng  Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis quam nihil vel adipisci facere? Cupiditate fugit ratione facilis atque ullam minus provident, velit quia, dolor corporis, laborum ipsa laboriosam doloribus. ",
-  },
-  {
-    userName: "Cưởng 1",
-    content:
-      "Hồ vẫn thả lân ,tôi lại căng  Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis quam nihil vel adipisci facere? Cupiditate fugit ratione facilis atque ullam minus provident, velit quia, dolor corporis, laborum ipsa laboriosam doloribus. ",
-  },
-  {
-    userName: "Cưởng 1",
-    content:
-      "Hồ vẫn thả lân ,tôi lại căng  Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis quam nihil vel adipisci facere? Cupiditate fugit ratione facilis atque ullam minus provident, velit quia, dolor corporis, laborum ipsa laboriosam doloribus. ",
-  },
-  {
-    userName: "Cưởng 1",
-    content:
-      "Hồ vẫn thả lân ,tôi lại căng  Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis quam nihil vel adipisci facere? Cupiditate fugit ratione facilis atque ullam minus provident, velit quia, dolor corporis, laborum ipsa laboriosam doloribus. ",
-  },
-  {
-    userName: "Cưởng 1",
-    content:
-      "Hồ vẫn thả lân ,tôi lại căng  Lorem ipsum dolor sit amet consectetur adipisicing elit. Nobis quam nihil vel adipisci facere? Cupiditate fugit ratione facilis atque ullam minus provident, velit quia, dolor corporis, laborum ipsa laboriosam doloribus. ",
-  },
-];
+import { goToAdminFLocationOverviewScreen } from "../navigations";
+import {
+  showAlertAbsoluteBox,
+  showAlertBox,
+  showAlertConfirmBox,
+} from "../utilities";
 
 const AdminReportReviewDetailScreen = () => {
-  return (
-    <AdminReport>
-      <ScrollView>
-        <VStack space={3} mt={4} px={3}>
-          <ReviewFromAnglerSection
-            name="Dao Quoc Toan"
-            content="Rất tốt, ae hãy đến"
-            isPositive={false}
-            date="01/01/2022"
-            isDisabled
-            rate={5}
-          />
+  const route = useRoute();
+  const navigation = useNavigation();
+  const [isActive, setActive] = useState(true);
+  const [isSuccess, setIsSuccess] = useState(null);
+  const [isSolvedSuccess, setIsSolvedSuccess] = useState(null); // post solved report handler success
+  const [isLoading, setIsLoading] = useState(null);
+  const [isDeleteSuccess, setIsDeleteSuccess] = useState(null);
+  const [reportId, setReportId] = useState();
+  const reviewReportDetail = useStoreState(
+    (states) => states.ReportModel.reviewReportDetail,
+  );
+  const {
+    locationId,
+    locationName,
+    reportTime,
+    reviewDtoOut,
+    reportDetailList,
+  } = reviewReportDetail;
+  const { getReviewReportDetail, solvedReport, deleteReview } = useStoreActions(
+    (actions) => actions.ReportModel,
+  );
+
+  const deleteReviewHandler = () => {
+    deleteReview({ id: reviewDtoOut.id, setIsSuccess: setIsDeleteSuccess });
+    setIsLoading(true);
+  };
+
+  const goToFLocationDetailHandler = () => {
+    goToAdminFLocationOverviewScreen(navigation, { id: locationId });
+  };
+  const solvedReportHandler = () => {
+    solvedReport({ id: reportId, setIsSuccess: setIsSolvedSuccess });
+    setIsLoading(true);
+  };
+  const onPressHandler = () => {
+    showAlertConfirmBox(
+      "Xác nhận xóa review.",
+      `Review của ${reviewDtoOut.userFullName} tại hồ ${locationName} sẽ bị xóa.`,
+      deleteReviewHandler,
+    );
+  };
+  const headerListComponent = () => (
+    <>
+      {reviewDtoOut !== undefined ? (
+        <VStack space={3} mt={4} px={3} pb={2}>
+          <Box
+            backgroundColor="white"
+            paddingTop={2}
+            paddingBottom={2}
+            flexDirection="row"
+          >
+            <ReviewFromAnglerSection
+              id={reviewDtoOut.id}
+              name={reviewDtoOut.userFullName}
+              content={reviewDtoOut.description}
+              date={reviewDtoOut.time}
+              isDisabled
+              rate={reviewDtoOut.score}
+              negativeCount={reviewDtoOut.upvote}
+              positiveCount={reviewDtoOut.downvote}
+              userImage={reviewDtoOut.userAvatar}
+              isAdminView
+            />
+            <Button
+              alignSelf="flex-end"
+              style={{ position: "relative", bottom: 11, right: 10 }}
+              colorScheme="danger"
+              onPress={onPressHandler}
+              disabled={isActive === false}
+            >
+              Gỡ review
+            </Button>
+          </Box>
           <Divider />
-          <Box style={styles.textContentType}>
-            <Text bold>Diem cau </Text>
-            <Text>Thuan Viet</Text>
+          <Box
+            style={styles.textContentType}
+            flexDirection="row"
+            alignItems="center"
+            justifyContent="space-between"
+          >
+            <Box>
+              <Text bold>Điểm câu</Text>
+              <Text>{locationName}</Text>
+            </Box>
+            <Button onPress={goToFLocationDetailHandler}>Đi tới trang</Button>
           </Box>
           <Divider />
           <Text style={styles.textContentType}>
-            <Text bold>Thời gian báo cáo :</Text> 0/0/0
+            <Text bold>Thời gian báo cáo :</Text> {reportTime}
           </Text>
           <Divider />
           <Text bold style={styles.textContentType}>
             Danh sách báo cáo :
           </Text>
-          <FlatList
-            pt="0.5"
-            data={reportData}
-            renderItem={({ item }) => (
-              <Box
-                borderTopWidth="1"
-                _dark={{
-                  borderColor: "gray.600",
-                }}
-                borderColor="coolGray.200"
-                backgroundColor="white"
-                mt="0.5"
-                mb="1"
-                // keyExtractor={(item.id) => item.index_id.toString()}
-                pl="2"
-                pb="1"
-              >
-                <AvatarCard avatarSize="md" nameUser={item.userName} />
-                <Box mt={2}>
-                  <Text italic style={styles.textContentType}>
-                    {item.content}
-                  </Text>
-                </Box>
-              </Box>
-            )}
-            keyExtractor={(item, index) => index.toString()}
-          />
-          <Box my="9">
-            <Divider />
-          </Box>
         </VStack>
-      </ScrollView>
+      ) : (
+        <></>
+      )}
+    </>
+  );
+  const footerComponent = () => <Divider mt={20} />;
+  const renderItem = ({ item }) => (
+    <Box
+      borderTopWidth="1"
+      _dark={{
+        borderColor: "gray.600",
+      }}
+      borderColor="coolGray.200"
+      backgroundColor="white"
+      mt={0.5}
+      mb={1}
+      pl={3}
+      pt={1}
+      pb={2}
+      mx={2}
+    >
+      <AvatarCard
+        avatarSize="md"
+        nameUser={item.userFullName}
+        image={item.userAvatar}
+        subText={item.time}
+        subTextFontSize="12"
+      />
+      <Box mt={0.5} ml={2}>
+        <Text style={styles.textContentType}>{item.description}</Text>
+      </Box>
+    </Box>
+  );
+  useEffect(() => {
+    if (route.params.id) {
+      getReviewReportDetail({ id: route.params.id, setIsSuccess });
+      setReportId(route.params.id);
+    }
+    setActive(route.params.isActive);
+  }, []);
+
+  useEffect(() => {
+    if (isSuccess === false) {
+      showAlertAbsoluteBox(
+        "Thông báo",
+        "Xảy ra lỗi, vui lòng quay lại.",
+        () => {
+          navigation.goBack();
+        },
+        "Xác nhận",
+      );
+    }
+    setIsSuccess(null);
+  }, [isSuccess]);
+  useEffect(() => {
+    if (isSolvedSuccess === true) {
+      showAlertAbsoluteBox(
+        "Xử lý thành công",
+        ``,
+        () => {
+          navigation.goBack();
+        },
+        "Xác nhận",
+      );
+    }
+    if (isSolvedSuccess === false) {
+      showAlertAbsoluteBox(
+        "Lỗi",
+        `Đã xảy ra lỗi, vui lòng thử lại.`,
+        () => {},
+        "Xác nhận",
+      );
+    }
+    setIsLoading(false);
+    setIsSolvedSuccess(null);
+  }, [isSolvedSuccess]);
+  useEffect(() => {
+    if (isDeleteSuccess === true) {
+      showAlertBox(
+        "Thành công",
+        `Review của ${reviewDtoOut.userFullName} đã được xóa`,
+      );
+    }
+    if (isDeleteSuccess === false) {
+      showAlertBox("Lỗi", `Đã xảy ra lỗi, vui lòng thử lại.`);
+    }
+    setIsLoading(false);
+    setIsDeleteSuccess(null);
+  }, [isDeleteSuccess]);
+  return (
+    <AdminReport
+      isActive={isActive}
+      eventPress={solvedReportHandler}
+      isLoading={isLoading}
+    >
+      <FlatList
+        pt="0.5"
+        data={reportDetailList}
+        ListHeaderComponent={headerListComponent}
+        ListFooterComponent={footerComponent}
+        renderItem={renderItem}
+        keyExtractor={(item, index) => index.toString()}
+      />
     </AdminReport>
   );
 };

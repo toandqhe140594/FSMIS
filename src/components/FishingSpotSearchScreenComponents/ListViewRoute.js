@@ -1,218 +1,129 @@
-import { Ionicons } from "@expo/vector-icons";
-import { useStoreState } from "easy-peasy";
-import {
-  Box,
-  Button,
-  Icon,
-  Input,
-  ScrollView,
-  Select,
-  Text,
-  VStack,
-} from "native-base";
-import PropTypes from "prop-types";
-import React, { useState } from "react";
-import {
-  Controller,
-  FormProvider,
-  useForm,
-  useFormContext,
-} from "react-hook-form";
-import { Overlay } from "react-native-elements";
+import { useNavigation } from "@react-navigation/native";
+import { useStoreActions, useStoreState } from "easy-peasy";
+import React, { useEffect, useMemo, useState } from "react";
+import { ActivityIndicator, FlatList, View } from "react-native";
+import { Button, Icon } from "react-native-elements";
 
+import styles from "../../config/styles";
+import { goToAdvanceSearchScreen } from "../../navigations";
+import { showToastMessage } from "../../utilities";
 import FLocationCard from "../FLocationCard";
 
-const ListViewOverlay = ({ visible, toggleOverlay }) => {
-  const { control, handleSubmit, setValue } = useFormContext();
-
-  // Reset data in the form
-  const resetListFilter = () => {
-    setValue("type", -1);
-    setValue("rate", -1);
-    setValue("city", -1);
-    setValue("name", "");
-  };
-
-  const onSubmit = (data) => {
-    console.log(data); // Test only
-  };
-
-  return (
-    <Overlay isVisible={visible} onBackdropPress={toggleOverlay}>
-      <VStack w="300" space={2} padding={2}>
-        <Box h={8}>
-          {/* Input field for fishing spot name/phone number */}
-          <Controller
-            control={control}
-            name="name"
-            render={({ field: { onChange, onBlur, value } }) => (
-              <Input
-                type="text"
-                placeholder="Tìm kiếm theo tên hồ hoặc số điện thoại"
-                size="sm"
-                onBlur={onBlur}
-                onChangeText={onChange}
-                value={value}
-              />
-            )}
-          />
-        </Box>
-
-        {/* City select box */}
-        <Box flexDir="row">
-          <Box flex={1} justifyContent="center">
-            <Text bold>Thành phố</Text>
-          </Box>
-          <Box flex={2}>
-            <Box height="8">
-              <Controller
-                control={control}
-                name="city"
-                render={({ field: { onChange, value } }) => (
-                  <Select
-                    accessibilityLabel="Chọn tỉnh, thành phố"
-                    fontSize={10}
-                    placeholder="Tất cả"
-                    onValueChange={onChange}
-                    selectedValue={value}
-                  >
-                    <Select.Item label="Hà Nội" value={5} />
-                    <Select.Item label="Hồ Chí Minh" value={4} />
-                    <Select.Item label="Đà Nẵng" value={3} />
-                    <Select.Item label="Tất cả" value={-1} />
-                  </Select>
-                )}
-              />
-            </Box>
-          </Box>
-        </Box>
-
-        {/* Fishing methods select box */}
-        <Box flexDir="row">
-          <Box flex={1} justifyContent="center">
-            <Text bold>Loại hình câu</Text>
-          </Box>
-          <Box flex={2}>
-            <Box height="8">
-              <Controller
-                control={control}
-                name="type"
-                render={({ field: { onChange, value } }) => (
-                  <Select
-                    accessibilityLabel="Chọn loại hình câu"
-                    fontSize={10}
-                    placeholder="Tất cả"
-                    onValueChange={onChange}
-                    selectedValue={value}
-                  >
-                    <Select.Item label="Câu đơn" value={1} />
-                    <Select.Item label="Câu đài" value={2} />
-                    <Select.Item label="Tất cả" value={-1} />
-                  </Select>
-                )}
-              />
-            </Box>
-          </Box>
-        </Box>
-
-        {/* Rate select box */}
-        <Box flexDir="row">
-          <Box flex={1} justifyContent="center">
-            <Text bold>Đánh giá</Text>
-          </Box>
-          <Box flex={2}>
-            <Box height="8">
-              <Controller
-                control={control}
-                name="rate"
-                render={({ field: { onChange, value } }) => (
-                  <Select
-                    accessibilityLabel="Chọn số sao"
-                    fontSize={10}
-                    placeholder="Tất cả"
-                    onValueChange={onChange}
-                    selectedValue={value}
-                  >
-                    <Select.Item label="Trên 4 sao" value={4} />
-                    <Select.Item label="Trên 3 sao" value={3} />
-                    <Select.Item label="Trên 2 sao" value={2} />
-                    <Select.Item label="Trên 1 sao" value={1} />
-                    <Select.Item label="Tất cả" value={-1} />
-                  </Select>
-                )}
-              />
-            </Box>
-          </Box>
-        </Box>
-
-        {/* Reset and submit buttons */}
-        <Box flexDir="row" justifyContent="space-between">
-          <Button
-            onPress={() => {
-              resetListFilter();
-            }}
-          >
-            Chọn lại
-          </Button>
-          <Button onPress={handleSubmit(onSubmit)}>Xác nhận</Button>
-        </Box>
-      </VStack>
-    </Overlay>
-  );
-};
-
-ListViewOverlay.propTypes = {
-  visible: PropTypes.bool.isRequired,
-  toggleOverlay: PropTypes.func.isRequired,
-};
-
 const ListViewRoute = () => {
-  const advancedLocationList = useStoreState(
-    (states) => states.MapSearchModel.advancedLocationList,
+  const navigation = useNavigation();
+  const [isLoading, setIsLoading] = useState(true);
+  const [getStatus, setGetStatus] = useState(null);
+  const { listLocationResult, pageNo, totaListLocationPage } = useStoreState(
+    (states) => states.AdvanceSearchModel,
   );
-  const [visible, setVisible] = useState(false);
-  const methods = useForm();
+  const { setPageNo, getListLocationNextPage } = useStoreActions(
+    (actions) => actions.AdvanceSearchModel,
+  );
+
+  /**
+   * Check if pageNo small then totalPage
+   * then set incremented pageNo
+   */
+  const handleLoadMore = () => {
+    if (pageNo < totaListLocationPage) {
+      setPageNo(pageNo + 1);
+      setIsLoading(true);
+    }
+  };
+  // DucHM ADD_END 16/11/2021
 
   // Show/hide overlay
-  const toggleOverlay = () => {
-    setVisible(!visible);
+  const goToAdvanceSearchFilterScreen = () => {
+    goToAdvanceSearchScreen(navigation);
   };
 
-  return (
-    <ScrollView>
-      <Box
-        flex={1}
-        alignItems="center"
-        w={{ base: "90%", md: "50%", lg: "30%" }}
-        alignSelf="center"
-      >
-        <Button
-          mt={5}
-          leftIcon={<Icon as={Ionicons} name="search" size="sm" />}
-          onPress={toggleOverlay}
-        >
-          Tìm kiếm
-        </Button>
+  const ItemSeparatorComponent = () => <View style={styles.mt2} />;
 
-        {/* Draft view only */}
-        <VStack mt={3} space={3} w="100%">
-          {advancedLocationList.map((location) => (
-            <FLocationCard
-              id={location.id}
-              address={location.address}
-              name={location.name}
-              rate={location.rate}
-              isVerifed={location.isVerifed}
-              image={location.mainImage}
-              key={location.id}
-            />
-          ))}
-        </VStack>
-      </Box>
-      <FormProvider {...methods}>
-        <ListViewOverlay visible={visible} toggleOverlay={toggleOverlay} />
-      </FormProvider>
-    </ScrollView>
+  const renderItem = ({ item: location }) => (
+    <FLocationCard
+      id={location.id}
+      address={location.address}
+      name={location.name}
+      rate={location.score}
+      isVerifed={location.verify}
+      image={location.image}
+      isClosed={location.closed}
+      key={location.id}
+    />
+  );
+  const memoizedValue = useMemo(() => renderItem, [listLocationResult]);
+
+  const renderFooter = () => {
+    return isLoading ? (
+      <View style={{ marginVertical: 12, justifyContent: "center" }}>
+        <ActivityIndicator size="large" color="#2089DC" />
+      </View>
+    ) : null;
+  };
+
+  const keyExtractor = (item) => item.id.toString();
+
+  // DucHM ADD_START 16/11/2021
+  /**
+   * Listen to when pageNo increases
+   * and call the get list next page
+   */
+  useEffect(() => {
+    if (isLoading) getListLocationNextPage({ setGetStatus });
+  }, [isLoading]);
+
+  /**
+   * Trigger when get status returns
+   */
+  useEffect(() => {
+    if (getStatus === "SUCCESS") {
+      setIsLoading(false);
+      setGetStatus(null);
+    } else if (getStatus === "FAILED") {
+      setIsLoading(false);
+      showToastMessage("Đã có lỗi xảy ra!");
+      setGetStatus(null);
+      // handle error
+    }
+  }, [getStatus]);
+  // DucHM ADD_END 16/11/2021
+
+  return (
+    <View style={[styles.centerBox, styles.flexBox, styles.wfull]}>
+      <Button
+        containerStyle={styles.mt3}
+        icon={<Icon type="ionicons" name="search" color="white" />}
+        onPress={goToAdvanceSearchFilterScreen}
+        title="Tìm kiếm"
+      />
+
+      {/* Draft view only */}
+      <View
+        style={[
+          styles.wfull,
+          styles.mt2,
+          styles.mb1,
+          styles.flexBox,
+          { width: "90%" },
+        ]}
+      >
+        <FlatList
+          style={{ height: "100%" }}
+          data={listLocationResult}
+          renderItem={memoizedValue}
+          keyExtractor={keyExtractor}
+          ItemSeparatorComponent={ItemSeparatorComponent}
+          initialNumToRender={3}
+          maxToRenderPerBatch={5}
+          // DucHM ADD_START 16/11/2021
+          bounces={false} // prevent onEndReach trigger twice
+          ListFooterComponent={renderFooter}
+          onEndReached={handleLoadMore}
+          onEndReachedThreshold={0.2}
+          // DucHM ADD_END 16/11/2021
+        />
+      </View>
+    </View>
   );
 };
 

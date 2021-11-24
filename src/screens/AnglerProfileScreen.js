@@ -30,18 +30,18 @@ const AnglerProfileScreen = () => {
         borderColor="coolGray.200"
         pl="4"
         pr="5"
-        py="2"
+        pt="2"
       >
         <AvatarCard
           avatarSize="xl"
           nameFontSize="21"
-          subText={`Lên cần: ${userInfo.catchesCount} lần`}
+          subText={`Số lần báo cá: ${userInfo.catchesCount} lần`}
           nameUser={userInfo.fullName}
           image={userInfo.avatarUrl}
         />
       </VStack>
       <Box maxHeight="80%">
-        <VStack mt="4">
+        <VStack mt="2">
           <MenuScreen menuListItem={MENU_ANGLER} />
           <MenuScreen menuListItem={MENU_LOGOUT} />
         </VStack>

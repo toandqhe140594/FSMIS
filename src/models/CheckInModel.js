@@ -34,14 +34,7 @@ const model = {
   setLakeList: action((state, payload) => {
     state.lakeList = payload;
   }),
-  getLakeListByLocationId: thunk(async (actions, payload, { getState }) => {
-    const { data } = await http.get(
-      `location/${getState().fishingLocationInfo.id}/${
-        API_URL.LOCATION_LAKE_ALL
-      }`,
-    );
-    actions.setLakeList(data);
-  }),
+
   setCurrentLakeId: action((state, payload) => {
     state.currentLakeId = payload;
   }),
@@ -51,35 +44,21 @@ const model = {
   }),
   /**
    * Submit catch report to server
-   * @param {Object} [payload] params pass to function
-   * @param {Array} [payload.catchesDetailList] list of catched fishes
-   * @param {string} [payload.description] description of the catch report
-   * @param {boolean} [payload.hidden] boolean indicate that this catch report should be made public or private
-   * @param {Array} [payload.images] list of images of catch report
-   * @param {number} [payload.lakeId] id of the lake
-   * @param {Function} [payload.setSuccess] function indicate submit success
+   * @param {Object} [payload.submitData] data submit
+   * @param {Function} [payload.setSubmitStatus] function indicate submit success
    */
   submitCatchReport: thunk(async (actions, payload) => {
-    const {
-      catchesDetailList,
-      description,
-      hidden,
-      images,
-      lakeId,
-      setSuccess,
-    } = payload;
+    const { submitData, setSubmitStatus } = payload;
     try {
-      const { data } = await http.post(`${API_URL.SEND_CATCH_REPORT}`, {
-        lakeId,
-        description,
-        catchesDetailList,
-        images,
-        hidden,
-      });
+      const { data } = await http.post(
+        `${API_URL.SEND_CATCH_REPORT}`,
+        submitData,
+      );
       actions.setCatchReportDetail({ ...data, id: null });
-      setSuccess(true);
+      actions.setCheckInState(false);
+      setSubmitStatus("SUCCESS");
     } catch (error) {
-      setSuccess(false);
+      setSubmitStatus("FAILED");
     }
   }),
   /**
@@ -158,7 +137,8 @@ const model = {
       const { data, status } = await http.get(`${API_URL.CHECKIN_STATUS}`);
       if (status === 200) {
         await actions.setFishingLocationInfo(data.fishingLocationItemDtoOut);
-        actions.setCheckInState(!data.available);
+        const available = data.available !== undefined ? data.available : true;
+        actions.setCheckInState(!available);
         setLoading(false);
       }
     } catch (error) {

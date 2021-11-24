@@ -20,38 +20,62 @@ const styles = StyleSheet.create({
   },
   avatarWrapper: { marginRight: 10 },
   textWrapper: { flexWrap: "wrap" },
-  badgeWrapper: {
+  badgeWrapperSmall: {
+    flex: 1,
     marginLeft: 10,
   },
-  badgeText: { fontSize: 14, color: "#27272a" },
-  badgeStyle: {
+  badgeWrapperMedium: {
+    flex: 1.3,
+    marginLeft: 10,
+  },
+  badgeSuccess: {
+    backgroundColor: "#4ade80",
+    borderRadius: 4,
+    width: "100%",
+    height: "60%",
+  },
+  badgeError: {
+    backgroundColor: "#f87171",
     borderRadius: 4,
     width: "100%",
     height: "60%",
   },
   bold: { fontWeight: "bold" },
-  error: { backgroundColor: "#f87171" },
-  success: { backgroundColor: "#4ade80" },
 });
 
 const ReportCard = ({
-  reportTarget,
+  time,
+  name,
+  avatar,
   isReviewReport,
   isFLocationReport,
   isPostReport,
+  isCatchReportType,
   postType,
-  isProcessed,
+  active,
 }) => {
-  const getBadgeText = () => (isProcessed ? "Đã xử lý" : "Chưa xử lý");
-  const getBadgeStatus = () => (isProcessed ? "success" : "error");
+  const getBadgeText = () => (active ? "Chưa xử lý" : "Đã xử lý");
+  const getBadgeStatus = () => (active ? "error" : "success");
+  const getPostTypeName = (value) => {
+    switch (value) {
+      case "ANNOUNCING":
+        return "Thông báo";
+      case "STOCKING":
+        return "Bồi cá";
+      case "REPORTING":
+        return "Báo cá";
+      default:
+        return "";
+    }
+  };
   return (
     <View style={styles.container}>
-      {isReviewReport && (
+      {(isReviewReport || isCatchReportType) && (
         <View style={styles.avatarWrapper}>
           <Avatar
             rounded
             source={{
-              uri: "https://randomuser.me/api/portraits/men/41.jpg",
+              uri: avatar,
             }}
             size="medium"
           />
@@ -60,39 +84,42 @@ const ReportCard = ({
       <View style={styles.textContainer}>
         <Text style={styles.textWrapper}>
           {isReviewReport && (
-            <>
-              Đánh giá của <Text style={styles.bold}>{reportTarget}</Text> là
-              thông tin sai lệch
-            </>
+            <Text>
+              Đánh giá của <Text style={styles.bold}>{name}</Text> bị báo cáo
+              sai lệch
+            </Text>
           )}
           {isFLocationReport && (
-            <>
-              <Text style={styles.bold}>{reportTarget}</Text> đã bị báo cáo về
-              thông tin sai lệch
-            </>
+            <Text>
+              <Text style={styles.bold}>{name}</Text> đã bị báo cáo về thông tin
+              sai lệch
+            </Text>
           )}
           {isPostReport && (
-            <>
-              Bài đăng sự kiện <Text style={styles.bold}>{postType}</Text> của{" "}
-              <Text style={styles.bold}>{reportTarget}</Text> là thông tin sai
-              lệch
-            </>
+            <Text>
+              Bài đăng sự kiện{" "}
+              <Text style={styles.bold}>{getPostTypeName(postType)}</Text> của{" "}
+              <Text style={styles.bold}>{name}</Text> bị báo cáo sai lệch
+            </Text>
+          )}
+          {isCatchReportType && (
+            <Text>
+              Bài báo cá của <Text style={styles.bold}>{name}</Text> đã bị báo
+              cáo sai lệch
+            </Text>
           )}
         </Text>
-        <Text>09:00 01/10/2021</Text>
+        <Text>{time}</Text>
       </View>
       <Badge
         status={getBadgeStatus()}
         value={getBadgeText()}
-        textStyle={styles.badgeText}
-        containerStyle={[
-          styles.badgeWrapper,
-          { flex: isReviewReport ? 1.3 : 1 },
-        ]}
-        badgeStyle={[
-          styles.badgeStyle,
-          isProcessed ? styles.success : styles.error,
-        ]}
+        badgeStyle={active ? styles.badgeError : styles.badgeSuccess}
+        containerStyle={
+          isReviewReport || isCatchReportType
+            ? styles.badgeWrapperMedium
+            : styles.badgeWrapperSmall
+        }
       />
     </View>
   );
@@ -101,19 +128,25 @@ const ReportCard = ({
 ReportCard.propTypes = {
   isFLocationReport: PropTypes.bool,
   isPostReport: PropTypes.bool,
-  reportTarget: PropTypes.string,
-  isProcessed: PropTypes.bool,
+  name: PropTypes.string,
+  active: PropTypes.bool,
   isReviewReport: PropTypes.bool,
   postType: PropTypes.string,
+  isCatchReportType: PropTypes.bool,
+  time: PropTypes.string,
+  avatar: PropTypes.string,
 };
 
 ReportCard.defaultProps = {
-  reportTarget: "",
-  isProcessed: false,
+  name: "",
+  active: false,
   isFLocationReport: false,
   isPostReport: false,
   isReviewReport: false,
   postType: "",
+  isCatchReportType: false,
+  time: "",
+  avatar: "https://randomuser.me/api/portraits/men/41.jpg",
 };
 
 export default ReportCard;

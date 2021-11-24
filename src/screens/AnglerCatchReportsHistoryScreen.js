@@ -65,6 +65,7 @@ const AnglerCatchReportsHistoryScreen = () => {
                       nameUser={item.userFullName}
                       subText={item.locationName}
                       image={item.avatar}
+                      watermarkType={item.approved}
                     />
                     <Box>
                       <Text numberOfLines={1} isTruncated>
@@ -75,10 +76,10 @@ const AnglerCatchReportsHistoryScreen = () => {
                         {item.fishes.join(", ").toString()}
                       </Text>
                     </Box>
-                    <Box mt={2} ml={3}>
-                      <Text italic numberOfLines={2} isTruncated>
-                        {item.description}
-                      </Text>
+                    <Box mt={1}>
+                      {/* <Text italic numberOfLines={2} isTruncated pl={1}>
+                        &quot; {item.description} &quot;
+                      </Text> */}
                     </Box>
                   </Box>
                 </PressableCustomCard>

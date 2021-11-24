@@ -1,82 +1,142 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useRoute } from "@react-navigation/native";
-import { Box, Button, Center, Input, Text } from "native-base";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { useStoreActions } from "easy-peasy";
+import { Box, Button, Center, Text } from "native-base";
 import React, { useEffect, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
-import * as yup from "yup";
+import { FormProvider, useForm } from "react-hook-form";
+import { Dimensions } from "react-native";
 
+import InputComponent from "../components/common/InputComponent";
 import HeaderTab from "../components/HeaderTab";
+import { SCHEMA } from "../constants";
+import { showToastMessage } from "../utilities";
 
-// Validation schema for form
-const validationSchema = yup.object().shape({
-  fishingMethodName: yup.string().required("Tên loại hình không thể bỏ trống"),
-});
+const OFFSET_BOTTOM = 85;
+// Get window height without status bar height
+const CUSTOM_SCREEN_HEIGHT = Dimensions.get("window").height - OFFSET_BOTTOM;
+
 const AdminFishingMethodEditScreen = () => {
   const route = useRoute();
-
-  const [isNew, setIsNew] = useState(true);
-
+  const navigation = useNavigation();
+  const [methodId, setMethodId] = useState(null);
+  const [isActive, setIsActive] = useState(null);
+  const [isLoading, setIsLoading] = useState(null);
+  const [submitStatus, setSubmitStatus] = useState(null);
   const {
-    control,
-    handleSubmit,
-    setValue,
-    formState: { errors },
-  } = useForm({
-    mode: "all",
-    resolver: yupResolver(validationSchema),
+    updateFishingMethod,
+    updateFishingMethodStatus,
+    getAdminFishingMethodList,
+  } = useStoreActions((actions) => actions.FishingMethodModel);
+
+  const methods = useForm({
+    mode: "onSubmit",
+    resolver: yupResolver(SCHEMA.ADMIN_FISHING_METHOD_ADD_FORM),
   });
+  const { handleSubmit, setValue } = methods;
 
   const onSubmit = (data) => {
-    console.log(data); // Test only
+    setIsLoading(true);
+    updateFishingMethod({
+      id: methodId,
+      submitData: data,
+      active: isActive,
+      setSubmitStatus,
+    });
+  };
+
+  const handleUpdateStatus = () => {
+    setIsLoading(true);
+    updateFishingMethodStatus({
+      id: methodId,
+      active: isActive,
+      setSubmitStatus,
+    });
   };
 
   useEffect(() => {
-    const { id, name } = route.params;
+    const { id, name, active } = route.params;
     if (id) {
-      setIsNew(false);
-      setValue("fishingMethodName", name);
+      setMethodId(id);
+      setValue("name", name);
+      setIsActive(active);
     }
   }, []);
+
+  useEffect(() => {
+    if (submitStatus === "SUCCESS") {
+      if (!methodId) {
+        getAdminFishingMethodList();
+        showToastMessage("Thêm loại hình câu thành công");
+        navigation.pop(1);
+      } else {
+        showToastMessage("Cập nhật loại hình câu thành công");
+      }
+    } else if (submitStatus === "PATCHED") {
+      setIsActive(!isActive);
+      showToastMessage("Trạng thái của loại hình câu đã được thay đổi");
+    } else if (submitStatus === "FAILED") {
+      showToastMessage("Đã xảy ra lỗi! Vui lòng thử lại sau");
+    }
+    setIsLoading(false);
+    setSubmitStatus(null);
+  }, [submitStatus]);
 
   return (
     <>
       <HeaderTab name="Quản lý loại hình câu" />
-      <Box flex={1} alignItems="center" justifyContent="flex-start">
-        <Center w="80%" mt={10}>
-          {/* Fishing method name input field */}
-          <Box alignItems="flex-start" w="100%">
-            <Text bold fontSize="md">
-              Tên loại hình câu <Text color="danger.500">*</Text>
-            </Text>
-            <Controller
-              control={control}
-              name="fishingMethodName"
-              render={({ field: { onChange, onBlur, value } }) => (
-                <Input
-                  placeholder="Tên loại hình câu"
-                  size="md"
-                  onBlur={onBlur}
-                  onChangeText={onChange}
-                  value={value}
-                  w="100%"
-                  h={10}
-                  mt={2}
-                />
-              )}
+      <Box height={CUSTOM_SCREEN_HEIGHT}>
+        <FormProvider {...methods}>
+          <Center flex={1} w="100%" mt={10} justifyContent="flex-start">
+            {/* Fishing method name input field */}
+            <InputComponent
+              myStyles={{ width: "90%" }}
+              label="Tên loại hình câu"
+              isTitle
+              hasAsterisk
+              controllerName="name"
             />
-            {errors.fishingMethodName?.message && (
-              <Text color="error.500" fontSize="xs" italic>
-                {errors.fishingMethodName?.message}
-              </Text>
+            {methodId && (
+              <Box
+                w="90%"
+                mt={1}
+                flexDirection="row"
+                justifyContent="space-between"
+              >
+                <Text fontSize="md" bold>
+                  Trạng thái:
+                </Text>
+                <Text
+                  fontSize="md"
+                  color={isActive ? "success.500" : "danger.500"}
+                >
+                  {isActive ? "Đang hoạt động" : "Đang ẩn"}
+                </Text>
+              </Box>
             )}
-          </Box>
-        </Center>
-
-        <Box w="70%" mb={5} justifyContent="flex-end" flex={1}>
-          <Button w="100%" onPress={handleSubmit(onSubmit)}>
-            {isNew ? "Thêm loại hình câu" : "Lưu thay đổi"}
+          </Center>
+          <Button
+            w="80%"
+            alignSelf="center"
+            onPress={handleSubmit(onSubmit)}
+            isLoading={isLoading}
+            isLoadingText="Đang xử lý"
+          >
+            {methodId ? "Lưu thay đổi" : "Thêm loại hình câu"}
           </Button>
-        </Box>
+          {methodId && (
+            <Button
+              w="80%"
+              colorScheme={isActive ? "red" : "green"}
+              alignSelf="center"
+              marginTop={2}
+              onPress={handleUpdateStatus}
+              isLoading={isLoading}
+              isLoadingText="Đang xử lý"
+            >
+              {isActive ? "Ẩn loại hình câu này" : "Bỏ ẩn loại hình câu này"}
+            </Button>
+          )}
+        </FormProvider>
       </Box>
     </>
   );

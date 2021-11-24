@@ -1,110 +1,100 @@
-import { MaterialIcons } from "@expo/vector-icons";
-import {
-  Box,
-  Button,
-  Center,
-  Icon,
-  IconButton,
-  Input,
-  Text,
-  VStack,
-} from "native-base";
-import React from "react";
-import { useWindowDimensions } from "react-native";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useStoreActions } from "easy-peasy";
+import React, { useEffect, useState } from "react";
+import { FormProvider, useForm } from "react-hook-form";
+import { View } from "react-native";
+import { Button } from "react-native-elements";
 
+import InputComponent from "../components/common/InputComponent";
 import HeaderTab from "../components/HeaderTab";
+import { SCHEMA } from "../constants";
+import { showToastMessage } from "../utilities";
 
 const ResetPasswordScreen = () => {
+  const methods = useForm({
+    mode: "onSubmit",
+    resolver: yupResolver(SCHEMA.ANGLER_PROFILE_PASSWORD_CHANGE_FORM),
+  });
+
+  const { handleSubmit } = methods;
+
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(null);
+
+  const changePassword = useStoreActions(
+    (actions) => actions.ProfileModel.changePassword,
+  );
+  const logOut = useStoreActions((actions) => actions.logOut);
+
+  const onSubmit = (data) => {
+    setLoading(true);
+    changePassword({ updateData: data, setSuccess });
+  };
+
+  useEffect(() => {
+    if (success === true) {
+      showToastMessage("Đổi mật khẩu thành công");
+      logOut(); // Logout after change password successfully
+    }
+    if (success === false) setLoading(false);
+    setSuccess(null);
+  }, [success]);
+
   return (
-    <Center flex={1} minHeight={Math.round(useWindowDimensions().height)}>
+    <View
+      style={{
+        flex: 1,
+      }}
+    >
       <HeaderTab name="Thay đổi mật khẩu" />
-      <VStack
-        flex={1}
-        justifyContent="center"
-        space={3}
-        mb={10}
-        w={{ base: "70%", md: "50%", lg: "30%" }}
-      >
-        {/* Old pass word input field */}
-        <Text bold fontSize="md">
-          Mật khẩu cũ<Text color="danger.500">*</Text>
-        </Text>
-        <Box position="relative" justifyContent="center">
-          <Input placeholder="Nhập mật khẩu cũ" size="lg" type="password" />
-          <IconButton
-            h="100%"
-            icon={
-              <Icon
-                alignSelf="flex-end"
-                as={<MaterialIcons name="visibility" />}
-                color="muted.500"
-                mr={2}
-                size={5}
-              />
-            }
-            justifyContent="center"
-            position="absolute"
-            right={0}
-            w="20%"
-          />
-        </Box>
+      <FormProvider {...methods}>
+        <View
+          style={{
+            width: "100%",
+            flex: 1,
+            alignItems: "center",
+            paddingTop: 40,
+          }}
+        >
+          <View style={{ width: "80%" }}>
+            <InputComponent
+              isTitle
+              label="Mật khẩu cũ"
+              hasAsterisk
+              placeholder="Nhập mật khẩu cũ"
+              controllerName="oldPassword"
+              useSecureInput
+            />
 
-        {/* New Password input field */}
-        <Text bold fontSize="md">
-          Mật khẩu mới<Text color="danger.500">*</Text>
-        </Text>
-        <Box position="relative" justifyContent="center">
-          <Input placeholder="Nhập mật khẩu mới" size="lg" type="password" />
-          <IconButton
-            h="100%"
-            icon={
-              <Icon
-                alignSelf="flex-end"
-                as={<MaterialIcons name="visibility" />}
-                color="muted.500"
-                mr={2}
-                size={5}
-              />
-            }
-            justifyContent="center"
-            position="absolute"
-            right={0}
-            w="20%"
-          />
-        </Box>
+            <InputComponent
+              isTitle
+              label="Mật khẩu mới"
+              hasAsterisk
+              placeholder="Nhập mật khẩu mới"
+              controllerName="newPassword"
+              myStyles={{ marginVertical: 20 }}
+              useSecureInput
+            />
 
-        {/* Re-enter new Password input field */}
-        <Text bold fontSize="md">
-          Nhập lại mật khẩu mới<Text color="danger.500">*</Text>
-        </Text>
-        <Box position="relative" justifyContent="center">
-          <Input
-            placeholder="Nhập mật lại khẩu mới"
-            size="lg"
-            type="password"
-          />
-          <IconButton
-            h="100%"
-            icon={
-              <Icon
-                alignSelf="flex-end"
-                as={<MaterialIcons name="visibility" />}
-                color="muted.500"
-                mr={2}
-                size={5}
-              />
-            }
-            justifyContent="center"
-            position="absolute"
-            right={0}
-            w="20%"
-          />
-        </Box>
+            <InputComponent
+              isTitle
+              label="Nhập lại mật khẩu mới"
+              hasAsterisk
+              placeholder="Nhập lại mật khẩu mới"
+              controllerName="repeatPassword"
+              useSecureInput
+            />
 
-        {/* Submit button */}
-        <Button mt={4}>Lưu thay đổi</Button>
-      </VStack>
-    </Center>
+            <Button
+              title="Gửi"
+              onPress={handleSubmit(onSubmit)}
+              containerStyle={{ marginTop: 30 }}
+              loading={loading}
+            />
+          </View>
+        </View>
+      </FormProvider>
+    </View>
   );
 };
 

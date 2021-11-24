@@ -105,11 +105,15 @@ FishCard.defaultProps = {
 const FManageEmployeeManagementScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
+  const [isLoading, setIsLoading] = useState(true);
   const [overlayState, setOverlayState] = useState({ visible: false });
   const [deleteStatus, setDeleteStatus] = useState("");
   const lakeDetail = useStoreState((states) => states.FManageModel.lakeDetail);
   const getLakeDetailByLakeId = useStoreActions(
     (actions) => actions.FManageModel.getLakeDetailByLakeId,
+  );
+  const { getFishingMethodList } = useStoreActions(
+    (actions) => actions.FishingMethodModel,
   );
   // DucHM ADD_START 8/11/2021
   const deleteFishFromLake = useStoreActions(
@@ -128,9 +132,18 @@ const FManageEmployeeManagementScreen = () => {
   };
   // DucHM ADD_END 8/11/2021
   useEffect(() => {
-    if (route.params.id) getLakeDetailByLakeId({ id: route.params.id });
+    if (route.params.id) {
+      Promise.all([
+        getLakeDetailByLakeId({ id: route.params.id }),
+        getFishingMethodList(),
+      ]).then(() => {
+        setIsLoading(false);
+      });
+    }
+    const loadingId = setTimeout(() => setIsLoading(false), 10000);
     return () => {
       setLakeDetail({ id: null });
+      clearTimeout(loadingId);
     };
   }, []);
 
@@ -146,10 +159,10 @@ const FManageEmployeeManagementScreen = () => {
   }, [deleteStatus]);
   // DucHM ADD_END 8/11/2021
 
-  if (!lakeDetail.id)
+  if (isLoading)
     return (
       <Box flex={1} alignItems="center" justifyContent="center">
-        <ActivityIndicator size="large" color="blue" />
+        <ActivityIndicator size={60} color="#2089DC" />
       </Box>
     );
 

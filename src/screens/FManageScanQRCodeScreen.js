@@ -3,26 +3,12 @@ import { useStoreActions } from "easy-peasy";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import { Box, Button, Text } from "native-base";
 import React, { useEffect, useState } from "react";
-import {
-  ActivityIndicator,
-  Alert,
-  StyleSheet,
-  ToastAndroid,
-} from "react-native";
+import { ActivityIndicator, StyleSheet } from "react-native";
 import { Overlay } from "react-native-elements";
 
 import HeaderTab from "../components/HeaderTab";
 import { goToFManageVerifyCheckinScreen } from "../navigations";
-
-const showToastMessage = (message) => {
-  ToastAndroid.showWithGravityAndOffset(
-    message,
-    ToastAndroid.LONG,
-    ToastAndroid.BOTTOM,
-    25,
-    50,
-  );
-};
+import { showAlertBox, showToastMessage } from "../utilities";
 
 let timeout = null;
 
@@ -46,7 +32,7 @@ const ScanQRCodeScreen = () => {
     setScanned(true);
     // If user scan something other than qrcode
     if (type !== 256) {
-      Alert.alert("Cảnh báo", `Ứng dụng không hỗ trợ loại mã này`);
+      showAlertBox("Cảnh báo", `Ứng dụng không hỗ trợ loại mã này`);
       return;
     }
     setLoading(true);

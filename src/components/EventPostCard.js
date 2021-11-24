@@ -4,6 +4,7 @@ import { Box, HStack, Menu, Pressable, VStack } from "native-base";
 import PropTypes from "prop-types";
 import React from "react";
 import { Badge, Divider, Text } from "react-native-elements";
+import { WebView } from "react-native-webview";
 
 import styles from "../config/styles";
 import AvatarCard from "./AvatarCard";
@@ -17,27 +18,32 @@ const EventPostCard = ({
   lakePost,
   iconName,
   iconEvent,
-  image,
+  typeUri,
+  uri,
   edited,
   postTime,
   fishList,
   imageAvatar,
   id,
   itemData,
+  isApproved,
 }) => {
+  // Filter unique item for map.
+  const onlyUnique = (value, index, self) => {
+    return self.indexOf(value) === index;
+  };
   return (
     <Box mt="1" px="1.4">
       {postStyle === "LAKE_POST" && (
         <>
           <HStack px="2" space={2} mt={4} pb={3} justifyContent="space-between">
-            <Box justifyContent="flex-start" alignItems="flex-start">
+            <HStack alignItems="baseline" space={1}>
               <Badge
                 badgeStyle={{
                   borderRadius: 7,
                   paddingHorizontal: 1,
                   width: "auto",
                   height: 30,
-                  marginBottom: 2,
                   paddingLeft: 15,
                   paddingRight: 15,
                   paddingTop: 18,
@@ -48,66 +54,194 @@ const EventPostCard = ({
                 value={lakePost.badge}
               />
               {postTime !== undefined && (
-                <Text style={styles.ml1}>
-                  {postTime} {edited && "(Đã chỉnh sửa)"}
-                </Text>
+                <Text style={styles.ml1}>{postTime}</Text>
               )}
-            </Box>
+            </HStack>
 
             <Menu
+              style={{ position: "relative", top: -30, left: -10 }}
               trigger={(triggerProps) => {
                 return (
-                  <Pressable {...triggerProps}>
+                  <Pressable {...triggerProps} hitSlop={10}>
                     <Ionicons name={iconName} size={22} color="black" />
                   </Pressable>
                 );
               }}
             >
-              {iconEvent.map((item) => (
-                <Menu.Item
-                  onPress={() => item.onPress(id, itemData)}
-                  key={item.name}
-                >
-                  {item.name}
-                </Menu.Item>
-              ))}
+              <Menu.Group title="Tùy chọn">
+                {iconEvent.map((item) => (
+                  <Menu.Item
+                    onPress={() => item.onPress(id, itemData)}
+                    key={item.name}
+                  >
+                    {item.name}
+                  </Menu.Item>
+                ))}
+              </Menu.Group>
             </Menu>
           </HStack>
 
           <VStack>
             <Box mb={2} w="100%" px="2" pl="3">
-              <Text>{lakePost.content && lakePost.content.trim()}</Text>
+              <Text>
+                {lakePost.content && lakePost.content.trim()}{" "}
+                {edited && (
+                  <Text style={{ fontWeight: "bold", fontSize: 12 }}>
+                    {" "}
+                    (chỉnh sửa){" "}
+                  </Text>
+                )}
+              </Text>
             </Box>
           </VStack>
         </>
       )}
 
       {postStyle === "ANGLER_POST" && (
-        <VStack pb="1" mb={2} px="2">
-          <AvatarCard
-            avatarSize="lg"
-            nameUser={anglerName}
-            subText={postTime}
-            image={imageAvatar}
-          />
-          <Box mt={2}>
+        <VStack pb="1" mb={2} px="1.5">
+          <HStack px="2" space={1} mt={4} pb={0} justifyContent="space-between">
+            <Box justifyContent="flex-start" alignItems="flex-start" flex={1}>
+              <AvatarCard
+                avatarSize="lg"
+                nameUser={anglerName}
+                subText={postTime}
+                image={imageAvatar}
+                watermarkType={isApproved}
+              />
+            </Box>
+
+            <Menu
+              style={{ position: "relative", top: -70, left: -10 }}
+              trigger={(triggerProps) => {
+                return (
+                  <Pressable {...triggerProps} hitSlop={20}>
+                    <Ionicons
+                      name={iconName}
+                      size={22}
+                      color="black"
+                      style={{ position: "relative", top: 27, left: 10 }}
+                    />
+                  </Pressable>
+                );
+              }}
+            >
+              <Menu.Group title="Tùy chọn">
+                {iconEvent.map((item) => (
+                  <Menu.Item
+                    onPress={() => item.onPress(id, itemData)}
+                    key={item.name}
+                  >
+                    {item.name}
+                  </Menu.Item>
+                ))}
+              </Menu.Group>
+            </Menu>
+          </HStack>
+
+          <Box mt={2} ml={1.5}>
             <Text italic>{anglerContent}</Text>
             <Text>
-              <Text bold>Đã câu được : </Text>
-              {fishList.map((item) => {
-                return <Text key={item}>{item}. </Text>;
-              })}
+              <Text b>Đã câu được : </Text>
+              {fishList !== undefined && fishList !== null ? (
+                fishList.filter(onlyUnique).map((item) => {
+                  return <Text key={item}>{item}. </Text>;
+                })
+              ) : (
+                <Text>Không có dữ liệu</Text>
+              )}
 
-              {numberOfImages > 1 && `___ còn ${numberOfImages} ảnh.... `}
+              <Text i>
+                {numberOfImages > 1 && `___ còn ${numberOfImages} ảnh.... `}
+              </Text>
             </Text>
           </Box>
         </VStack>
       )}
 
-      <VStack py={1} px={1} backgroundColor="gray.100">
-        {image !== null && image.length > 100 && (
-          <ImageResizeMode imgUri={image} height={400} />
+      <VStack backgroundColor="gray.100">
+        {typeUri === "IMAGE" && uri !== null && uri.length > 10 && (
+          <ImageResizeMode imgUri={uri} height={400} />
         )}
+        {typeUri === "VIDEO" && uri !== null ? (
+          <Box
+            style={{
+              height: 500,
+              width: 400,
+              flex: 0,
+              justifyContent: "center",
+              position: "relative",
+              right: 10,
+              bottom: 5,
+              overflow: "hidden",
+            }}
+          >
+            <WebView
+              overScrollMode="never"
+              showsHorizontalScrollIndicator={false}
+              originWhitelist={["https://*"]}
+              automaticallyAdjustContentInsets={false}
+              scalesPageToFit={false}
+              containerStyle={{
+                flex: 0,
+                height: 490,
+                width: "100%",
+              }}
+              style={{ flex: 0, height: 490 }}
+              allowsFullscreenVideo
+              source={{
+                html: `
+            <html>
+            <head>
+               <style>
+                  body{
+                 
+                  width: 900px;
+                  height: 900px; 
+                
+                 }  
+                  .container {
+                  width: inherit;
+                  height: inherit;
+                  overflow: hidden;
+                  border-style: solid;
+                 
+                  }          
+                  iframe {
+                  display : block;
+                  width: 100%;
+                  height: 100%;
+                  overflow: hidden;
+                  background-color:transparent;  
+                }
+               </style>
+            </head>
+            <body>
+               <div class="container">
+                  ${uri}
+               </div>
+               <script>
+                  var elements = document.getElementsByTagName("iframe");
+                  var container = document.getElementsByClassName("container");
+                  var body = document.getElementsByTagName("body");
+                   if(elements[0].width < elements[0].height){
+                    body[0].style.width= 300 + "px" ;
+              
+                    body[0].style.margin= "0 auto"
+                  }
+                  if(elements[0].width >= elements[0].height){
+                    body[0].style.width= "100%";
+                    body[0].style.height= "100%";
+                    body[0].style.margin= "0 auto"
+                    body[0].style.paddingTop= 25;                   
+                  }  
+               </script>
+            </body>
+         </html>
+          `,
+              }}
+            />
+          </Box>
+        ) : null}
       </VStack>
       <Divider />
     </Box>
@@ -130,6 +264,7 @@ EventPostCard.propTypes = {
   edited: PropTypes.bool,
   postTime: PropTypes.string,
   id: PropTypes.number.isRequired,
+  isApproved: PropTypes.bool,
 };
 
 EventPostCard.defaultProps = {
@@ -145,6 +280,7 @@ EventPostCard.defaultProps = {
   image: "https://picsum.photos/500",
   edited: false,
   postTime: "",
+  isApproved: undefined,
 };
 
 export default EventPostCard;

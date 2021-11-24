@@ -22,6 +22,7 @@ const FishInformationCard = ({
           uri: image,
         }}
         resizeMode="contain"
+        key={image}
       />
       <Box flex={1} ml={3}>
         <Text bold fontSize="lg">
@@ -35,7 +36,7 @@ const FishInformationCard = ({
           </>
         ) : (
           <>
-            {amount && <Text>Số lượng: {amount} con</Text>}
+            {amount ? <Text>Số lượng: {amount} con</Text> : null}
             <Text>Tổng khối lượng ước tính: {totalWeight} kg</Text>
           </>
         )}

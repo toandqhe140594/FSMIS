@@ -49,6 +49,12 @@ const model = {
   checkinHistoryCurrentPage: 1,
   checkinHistoryTotalPage: 1,
 
+  lakePostPageNo: 1,
+  currentPinPost: {},
+  setLakePostPageNo: action((state, payload) => {
+    state.lakePostPageNo = payload;
+  }),
+
   setCurrentId: action((state, payload) => {
     state.currentId = payload;
   }),
@@ -78,6 +84,9 @@ const model = {
   getLocationDetailsById: thunk(async (actions, payload) => {
     const { data } = await http.get(`location/${payload.id}`);
     actions.setLocationDetails(data);
+  }),
+  resetLocationDetails: action((state) => {
+    state.locationDetails = {};
   }),
 
   setListOfLake: action((state, payload) => {
@@ -256,6 +265,11 @@ const model = {
     if (payload.status === "Overwrite") state.locationPostList = payload.data;
     else state.locationPostList = state.locationPostList.concat(payload.data);
   }),
+
+  setLocationPostListFirstPage: action((state, payload) => {
+    state.locationPostList = payload.data;
+  }),
+
   /**
    * Get posts data by page
    * @param {Object} [payload] the payload pass to function
@@ -275,34 +289,68 @@ const model = {
     });
   }),
 
+  getLocationPostListFirstPage: thunk(
+    async (actions, payload, { getState }) => {
+      const { currentId, lakePostPageNo } = getState();
+      actions.setLakePostPageNo(2);
+      const { data } = await http.get(`location/${currentId}/post`, {
+        params: { lakePostPageNo },
+      });
+      actions.setTotalPostPage(data.totalPage);
+      actions.setLocationPostListFirstPage({
+        data: data.items,
+      });
+    },
+  ),
+
   createNewPost: thunk(async (actions, payload, { getState }) => {
     const { updateData, setUpdateStatus } = payload;
     const { currentId } = getState();
     try {
       await http.post(`location/${currentId}/post/add`, updateData);
+      await actions.getLocationPostListFirstPage();
       setUpdateStatus(true);
     } catch (error) {
       setUpdateStatus(false);
     }
   }),
+
   editPost: thunk(async (actions, payload, { getState }) => {
-    const { currentId } = getState();
+    const { currentId, currentPinPost } = getState();
     const { updateData, setUpdateStatus } = payload;
     try {
       await http.put(`location/${currentId}/post/edit`, updateData);
+      if (currentPinPost.id === updateData.id) {
+        actions.setCurrentPinPost(updateData);
+      }
+      actions.editPostInList(updateData);
       setUpdateStatus("SUCCESS");
     } catch (error) {
       setUpdateStatus("FAILED");
     }
   }),
 
+  editPostInList: action((state, payload) => {
+    state.locationPostList = state.locationPostList.filter(
+      (post) => post.id !== payload,
+    );
+    const foundIndex = state.locationPostList.findIndex(
+      (item) => item.id === payload.id,
+    );
+
+    state.locationPostList[foundIndex] = payload;
+  }),
+
   deletePost: thunk(async (actions, payload, { getState }) => {
     const { postId, setDeleteSuccess } = payload;
-    const { currentId } = getState();
+    const { currentId, currentPinPost } = getState();
     try {
       await http.delete(`location/${currentId}/post/delete/${postId}`);
       actions.removePostFromPostList(postId);
       setDeleteSuccess(true);
+      if (currentPinPost.id === postId) {
+        actions.setCurrentPinPost({});
+      }
     } catch (error) {
       setDeleteSuccess(false);
     }
@@ -525,11 +573,12 @@ const model = {
       const { currentId } = getState();
       const { setDeleteSuccess } = payload;
       try {
-        const { status } = await http.delete(
+        const { status } = await http.post(
           `${API_URL.LOCATION_CLOSE_TEMPORARY}/${currentId}`,
         );
         if (status === 200) {
-          actions.getListOfFishingLocations();
+          // actions.getListOfFishingLocations();
+          actions.switchFishingLocationClosedState({ id: currentId });
           setDeleteSuccess(true);
         }
       } catch (error) {
@@ -537,6 +586,17 @@ const model = {
       }
     },
   ),
+
+  switchFishingLocationClosedState: action((state, payload) => {
+    const foundIndex = state.listOfFishingLocations.findIndex(
+      (location) => location.id === payload.id,
+    );
+    state.listOfFishingLocations[foundIndex] = {
+      ...state.listOfFishingLocations[foundIndex],
+      closed: !state.locationDetails.closed,
+    };
+    state.locationDetails.closed = !state.locationDetails.closed;
+  }),
 
   // DucHM ADD_START 4/11/2021
   /**
@@ -547,16 +607,35 @@ const model = {
   addNewLocation: thunk(async (actions, payload) => {
     const { addData, setAddStatus } = payload;
     try {
-      await http.post(API_URL.LOCATION_ADD, addData, {
-        params: {},
-      });
+      await http.post(API_URL.LOCATION_ADD, addData);
+      await actions.getListOfFishingLocations();
       setAddStatus("SUCCESS");
-      actions.getListOfFishingLocations();
     } catch (error) {
       setAddStatus("FAILED");
     }
   }),
   // DucHM ADD_END 4/11/2021
+  /**
+   * Suggest a new location to admin
+   * @param {Object} [payload] params pass to function
+   * @param {Object} [payload.data] some data of the fishing location
+   * @param {string} [payload.data.locationName] name of the fishing location
+   * @param {string} [payload.data.ownerPhone] phone of the owner of the fishing location
+   * @param {Function} [payload.setSuccess] function to indicate request success
+   */
+  suggestNewLocation: thunk(async (actions, payload) => {
+    const { data, setSuccess } = payload;
+    try {
+      await http.post(API_URL.LOCATION_SUGGEST, {
+        phone: data.ownerPhone,
+        name: data.locationName,
+        description: data.description,
+      });
+      setSuccess(true);
+    } catch (error) {
+      setSuccess(false);
+    }
+  }),
 
   editLakeDetailData: action((state, payload) => {
     state.lakeDetail = {
@@ -622,7 +701,10 @@ const model = {
     const { currentId } = getState();
     try {
       await http.put(`location/edit/${currentId}`, updateData);
-      actions.editFishingLocationDetailData(updateData);
+      actions.editFishingLocationDetailData({
+        ...updateData,
+        image: [...updateData.images],
+      });
       actions.getListOfFishingLocations();
       setUpdateStatus("SUCCESS");
     } catch (error) {
@@ -656,12 +738,13 @@ const model = {
   /**
    * Delete a fish from lake by id
    * @param {Number} [payload.id] id of the fish to delete from lake
+   * @param {Number} [payload.setDeleteStatus] the function to set delete status
    */
   deleteFishFromLake: thunk(async (actions, payload, { getState }) => {
-    const { id, setDeleteStatus } = payload;
+    const { id: fishId, setDeleteStatus } = payload;
     const { id: lakeId } = getState().lakeDetail;
     try {
-      await http.delete(`location/lake/fish/delete/${id}`);
+      await http.delete(`location/lake/fish/delete/${fishId}`);
       actions.getLakeDetailByLakeId({ id: lakeId }); // purpose to fetch new fishInLake in lakeDetail
       setDeleteStatus("SUCCESS");
     } catch (error) {
@@ -678,11 +761,11 @@ const model = {
    * @param {Function} [payload.setUpdateStatus] the function to set status
    */
   stockFishInLake: thunk(async (actions, payload, { getState }) => {
-    const { id, quantity, weight, setUpdateStatus } = payload;
+    const { id, updateData, setUpdateStatus } = payload;
     const { id: lakeId } = getState().lakeDetail;
     try {
       await http.post(`location/lake/fish/stocking/${id}`, null, {
-        params: { quantity, weight },
+        params: { ...updateData },
       });
       await actions.getLakeDetailByLakeId({ id: lakeId }); // purpose to fetch new fishInLake in lakeDetail
       setUpdateStatus("SUCCESS");
@@ -974,6 +1057,36 @@ const model = {
     actions.rewriteCheckinHistory([]);
   }),
   // END OF CHECKIN RELATED SECTION
+
+  setCurrentPinPost: action((state, payload) => {
+    state.currentPinPost = payload;
+  }),
+
+  getPinPost: thunk(async (actions, payload, { getState }) => {
+    const { currentId } = getState();
+    try {
+      const { status, data } = await http.get(
+        `/location/${currentId}/post/pinned`,
+      );
+      if (status === 200) {
+        actions.setCurrentPinPost(data);
+      }
+    } catch (error) {
+      actions.setCurrentPinPost({});
+    }
+  }),
+  pinFLocationPost: thunk(async (actions, payload) => {
+    const { postId, item, setPinSuccess } = payload;
+    try {
+      const { status } = await http.post(`/location/post/pin/${postId}`);
+      if (status === 200) {
+        actions.setCurrentPinPost(item);
+        setPinSuccess(true);
+      }
+    } catch (error) {
+      setPinSuccess(false);
+    }
+  }),
 };
 
 export default model;

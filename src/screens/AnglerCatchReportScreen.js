@@ -17,7 +17,8 @@ import {
 } from "native-base";
 import React, { useCallback, useEffect, useState } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
-import { ScrollView, StyleSheet } from "react-native";
+import { ActivityIndicator, ScrollView, StyleSheet } from "react-native";
+import { Overlay } from "react-native-elements";
 
 import CatchReportSection from "../components/CatchReport/CatchReportSection";
 import MultiImageSection from "../components/common/MultiImageSection";
@@ -34,109 +35,102 @@ const styles = StyleSheet.create({
   button: {
     width: "90%",
   },
+  error: { fontStyle: "italic", color: "red", fontSize: 12 },
+  loadOnStart: { justifyContent: "center", alignItems: "center" },
+  loadOnSubmit: {
+    backgroundColor: "transparent",
+    justifyContent: "center",
+    alignItems: "center",
+  },
 });
 
 const AnglerCatchReportScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
-  const [imageArray, setImageArray] = useState([]);
-  const [listFish, setListFish] = useState([]);
-  const [success, setSuccess] = useState(null);
-  const submitCatchReport = useStoreActions(
-    (actions) => actions.CheckInModel.submitCatchReport,
+  const [workingFishList, setWorkingFishList] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState(null);
+  const { lakeList, fishList } = useStoreState((states) => states.CheckInModel);
+  const { increaseCatchesCount } = useStoreActions(
+    (actions) => actions.ProfileModel,
   );
-  const getLakeList = useStoreActions(
-    (actions) => actions.CheckInModel.getLakeListByLocationId,
+  const { submitCatchReport } = useStoreActions(
+    (actions) => actions.CheckInModel,
   );
-  const listLake = useStoreState((states) => states.CheckInModel.lakeList);
-  const listFishModel = useStoreState((states) => states.CheckInModel.fishList);
   const methods = useForm({
     mode: "onSubmit",
     reValidateMode: "onSubmit",
-    defaultValues: { isPublic: false },
+    defaultValues: { hidden: false, imageArray: [] },
     resolver: yupResolver(SCHEMA.ANGLER_CATCH_REPORT_FORM),
   });
-
-  const { control, handleSubmit, watch } = methods;
-  const watchALakeTypeField = watch("aLakeType");
-  const personalCheckout = useStoreActions(
-    (actions) => actions.CheckInModel.personalCheckout,
-  );
+  const {
+    control,
+    handleSubmit,
+    watch,
+    setValue,
+    formState: { errors },
+  } = methods;
+  const watchLakeIdField = watch("lakeId");
   const onSubmit = (data) => {
-    const { aCaption, aLakeType, isPublic, cards } = data;
+    setIsLoading(true);
+    const images = data.imageArray.map((item) => item.base64);
+    delete data.imageArray;
+    const submitData = { ...data, images };
+    submitCatchReport({ submitData, setSubmitStatus });
+  };
 
-    if (imageArray !== undefined && imageArray.length > 0) {
-      const reduced = cards.reduce((filtered, card) => {
-        const { fishInLakeId } = listFish.find(
-          ({ id }) => id === card.fishType,
-        );
-        filtered.push({
-          quantity: card.catches,
-          fishSpeciesId: card.fishType,
-          returnToOwner: card.isReleased,
-          weight: card.totalWeight,
-          fishInLakeId,
-        });
-        return filtered;
-      }, []);
-
-      const imagesStringArray = imageArray.map((item) => item.base64);
-      submitCatchReport({
-        catchesDetailList: reduced,
-        description: aCaption,
-        hidden: !isPublic,
-        images: imagesStringArray,
-        lakeId: aLakeType,
-        setSuccess,
-      });
-      return;
+  /**
+   * Set list of fish based on lake id chosen
+   */
+  useEffect(() => {
+    const filter = fishList.filter((item) => item.id === watchLakeIdField);
+    if (filter[0] !== undefined) {
+      setWorkingFishList(filter[0].fishList);
     }
-    showAlertBox("Thiếu thông tin", "Vui lòng thêm ảnh buổi câu");
-  };
-  const updateImageArray = (id) => {
-    setImageArray(imageArray.filter((image) => image.id !== id));
-  };
+  }, [watchLakeIdField]);
 
   // Fire when navigates back to this screen
   useFocusEffect(
     // useCallback will listen to route.param
     useCallback(() => {
       if (route.params?.base64Array && route.params.base64Array[0]) {
-        setImageArray(route.params.base64Array);
+        setValue("imageArray", route.params.base64Array);
         navigation.setParams({ base64Array: [] });
       }
     }, [route.params]),
   );
 
+  /**
+   * Trigger when submit status return
+   */
   useEffect(() => {
-    getLakeList();
-  }, []);
-
-  useEffect(() => {
-    const filter = listFishModel.filter(
-      (item) => item.id === watchALakeTypeField,
-    );
-    if (filter[0] !== undefined) {
-      setListFish(filter[0].fishList);
-    }
-  }, [watchALakeTypeField]);
-
-  useEffect(() => {
-    if (success === true)
+    if (submitStatus === "SUCCESS") {
+      increaseCatchesCount();
       showAlertAbsoluteBox(
         "Gửi thành công",
         "Thông tin buổi câu được gửi thành công",
-        async () => {
-          await personalCheckout();
+        () => {
           navigation.pop(1);
         },
       );
-    setSuccess(null);
-  }, [success]);
+      setSubmitStatus(null);
+    } else if (submitStatus === "FAILED") {
+      setIsLoading(false);
+      setSubmitStatus(null);
+      showAlertBox("Thông báo", "Đã xảy ra lỗi! Vui lòng thử lại sau.");
+    }
+  }, [submitStatus]);
 
   return (
     <>
       <HeaderTab name="Báo cá" />
+      <Overlay
+        isVisible={isLoading}
+        fullScreen
+        overlayStyle={styles.loadOnSubmit}
+      >
+        <ActivityIndicator size={60} color="#2089DC" />
+      </Overlay>
       <ScrollView>
         <FormProvider {...methods}>
           <VStack space={3} divider={<Divider />}>
@@ -145,15 +139,14 @@ const AnglerCatchReportScreen = () => {
                 {/* Impage picker section */}
                 <MultiImageSection
                   formRoute={ROUTE_NAMES.CATCHES_REPORT_FORM}
-                  deleteImage={updateImageArray}
-                  imageArray={imageArray}
+                  controllerName="imageArray"
                   selectLimit={3}
                 />
                 {/* Textarea input field */}
                 <TextAreaComponent
                   placeholder="Mô tả ngày câu của bạn"
                   numberOfLines={6}
-                  controllerName="aCaption"
+                  controllerName="description"
                 />
               </Stack>
             </Center>
@@ -162,37 +155,55 @@ const AnglerCatchReportScreen = () => {
               <SelectComponent
                 myStyles={styles.sectionWrapper}
                 isTitle
+                hasAsterisk
                 label="Vị trí hồ câu"
                 placeholder="Chọn hồ câu"
-                data={listLake}
-                controllerName="aLakeType"
+                data={lakeList}
+                controllerName="lakeId"
               />
             </Center>
 
             <Center>
-              <Stack style={styles.sectionWrapper} space={2}>
+              <Stack style={styles.sectionWrapper} space={1}>
                 <Text bold fontSize="md">
                   Thông tin cá
                 </Text>
-                <CatchReportSection fishList={listFish} />
+                {errors.catchesDetailList?.message && (
+                  <Text style={styles.error}>
+                    {errors.catchesDetailList?.message}
+                  </Text>
+                )}
+                <CatchReportSection fishList={workingFishList} />
               </Stack>
             </Center>
 
             <Center>
               <Box style={styles.sectionWrapper} mb={5}>
-                {/* Public checkbox field */}
                 <Controller
                   control={control}
-                  name="isPublic"
+                  name="hidden"
                   render={({ field: { onChange, value } }) => (
-                    <Checkbox
-                      mb={1}
-                      alignItems="flex-start"
-                      value={value}
-                      onChange={onChange}
-                    >
-                      Công khai thông tin
-                    </Checkbox>
+                    <>
+                      <Checkbox
+                        mb={1}
+                        alignItems="flex-start"
+                        value={value}
+                        onChange={onChange}
+                      >
+                        Để bài báo cá này ở chế độ riêng tư
+                      </Checkbox>
+                      <Text
+                        style={{
+                          fontSize: 12,
+                          fontStyle: "italic",
+                          marginBottom: 12,
+                        }}
+                      >
+                        Lưu ý: Bỏ qua lựa chọn này, kết quả báo cá của bạn sẽ
+                        công khai ở trang lịch sử bài cá của hồ để mọi người
+                        cùng theo dõi
+                      </Text>
+                    </>
                   )}
                 />
                 {/* Submit button */}

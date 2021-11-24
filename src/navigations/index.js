@@ -19,20 +19,35 @@ const goToRegisterScreen = (navigation) => {
   navigation.navigate(ROUTE_NAMES.REGISTER);
 };
 
-const goToRegisterInformationScreen = (navigation) => {
-  navigation.navigate(ROUTE_NAMES.REGISTER_INFORMATION);
+const goToRegisterInformationScreen = (navigation, params) => {
+  navigation.navigate(ROUTE_NAMES.REGISTER_INFORMATION, { ...params });
 };
 
 const goToForgotPasswordScreen = (navigation) => {
   navigation.navigate(ROUTE_NAMES.PASSWORD_FORGOT);
 };
 
-const goToChangePasswordScreen = (navigation) => {
-  navigation.navigate(ROUTE_NAMES.PASSWORD_CHANGE);
+const goToChangePasswordScreen = (navigation, params) => {
+  navigation.navigate(ROUTE_NAMES.PASSWORD_CHANGE, { ...params });
 };
 
-const goToOTPScreen = (navigation) => {
-  navigation.navigate(ROUTE_NAMES.OTP_SCREEN);
+/**
+ * Navigate to OTP screen
+ * @param {object} navigation - navigation object
+ * @param {string} previousScreen - route name of the screen before otp screen
+ * @param {string} phone - phone number need to display on otp screen
+ * @param {Object} [params] - additional params pass through route
+ */
+const goToOTPScreen = (navigation, previousScreen, phone, params) => {
+  navigation.navigate(ROUTE_NAMES.OTP_SCREEN, {
+    ...params,
+    previousScreen,
+    phone,
+  });
+};
+
+const goToAdvanceSearchScreen = (navigation, params) => {
+  navigation.navigate(ROUTE_NAMES.ADVANCE_SEARCH, { ...params });
 };
 
 const goToLakeDetailScreen = (navigation, params) => {
@@ -188,8 +203,54 @@ const goToAdminFLocationOverviewScreen = (navigation, params) => {
   });
 };
 
+const goToAdminFLocationSuggestedManagementScreen = (navigation, params) => {
+  navigation.navigate(ROUTE_NAMES.ADMIN_LOCATION_SUGGEST_MANAGEMENT, {
+    ...params,
+  });
+};
+
+const goToAdminFLocationSuggestedDetailScreen = (navigation, params) => {
+  navigation.navigate(ROUTE_NAMES.ADMIN_LOCATION_SUGGEST_DETAIL, {
+    ...params,
+  });
+};
+
 const goToFManagePostScreen = (navigation, params) => {
   navigation.navigate(ROUTE_NAMES.FMANAGE_POST_MANAGEMENT, {
+    ...params,
+  });
+};
+
+const goToAdminFLocationReportDetailScreen = (navigation, params) => {
+  navigation.navigate(ROUTE_NAMES.ADMIN_REPORT_MANAGEMENT_LOCATION_DETAIL, {
+    ...params,
+  });
+};
+
+const goToAdminReviewReportDetailScreen = (navigation, params) => {
+  navigation.navigate(ROUTE_NAMES.ADMIN_REPORT_MANAGEMENT_REVIEW_DETAIL, {
+    ...params,
+  });
+};
+
+const goToAdminPostReportDetailScreen = (navigation, params) => {
+  navigation.navigate(ROUTE_NAMES.ADMIN_REPORT_MANAGEMENT_POST_DETAIL, {
+    ...params,
+  });
+};
+
+const goToAdminBlacklistPhoneAddScreen = (navigation, params) => {
+  navigation.navigate(ROUTE_NAMES.ADMIN_BLACKLIST_PHONE_MANAGEMENT_ADD, {
+    ...params,
+  });
+};
+const goToAdminCatchReportDetail = (navigation, params) => {
+  navigation.navigate(ROUTE_NAMES.ADMIN_CATCH_REPORT_DETAIL, {
+    ...params,
+  });
+};
+const goToAdminCatchDetail = (navigation, params) => {
+  navigation.navigate(ROUTE_NAMES.ADMIN_CATCH_DETAIL, {
     ...params,
   });
 };
@@ -198,11 +259,20 @@ export {
   goBack,
   goToAdminAccountManagementDetailScreen,
   goToAdminAccountManagementScreen,
+  goToAdminBlacklistPhoneAddScreen,
+  goToAdminCatchDetail,
+  goToAdminCatchReportDetail,
   goToAdminFishEditScreen,
   goToAdminFishingMethodEditScreen,
   goToAdminFishingMethodManagementScreen,
   goToAdminFishManagementScreen,
   goToAdminFLocationOverviewScreen,
+  goToAdminFLocationReportDetailScreen,
+  goToAdminFLocationSuggestedDetailScreen,
+  goToAdminFLocationSuggestedManagementScreen,
+  goToAdminPostReportDetailScreen,
+  goToAdminReviewReportDetailScreen,
+  goToAdvanceSearchScreen,
   goToCatchReportDetailScreen,
   goToCatchReportFormScreen,
   goToCatchReportVerifyDetailScreen,

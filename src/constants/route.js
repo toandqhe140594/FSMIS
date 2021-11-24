@@ -12,6 +12,7 @@ export const WRITE_REVIEW = "Write Review";
 export const WRITE_REPORT = "Write Report";
 export const LAKE_DETAIL = "Lake Detail";
 export const CATCHES_REPORT_DETAIL = "Catches Report Detail";
+export const ADVANCE_SEARCH = "Angler Advanced Search Screen";
 
 export const CATCHES_REPORT_FORM = "Catches Report FORM";
 export const PROFILE_CHANGE_INFORMATION = "Change Profiler Information";
@@ -57,6 +58,10 @@ export const ADMIN_MAIN = "Admin Management Main Screen";
 export const ADMIN_ACCOUNT_MANAGEMENT = "Admin Account Management Screen";
 export const ADMIN_ACCOUNT_MANAGEMENT_DETAIL =
   "Admin Account Management Detail Screen";
+export const ADMIN_LOCATION_SUGGEST_MANAGEMENT =
+  "Admin Suggested Fishing Location Management Screen";
+export const ADMIN_LOCATION_SUGGEST_DETAIL =
+  "Admin Suggested Fishing Location Detail";
 export const ADMIN_LOCATION_MANAGEMENT =
   "Admin Fishing Location Management Screen";
 export const ADMIN_LOCATION_MANAGEMENT_OVERVIEW =
@@ -74,5 +79,13 @@ export const ADMIN_FISHING_METHOD_MANAGEMENT =
   "Admin Fishing Method Management Screen";
 export const ADMIN_FISHING_METHOD_MANAGEMENT_EDIT =
   "Admin Fishing Method Management Edit Screen";
+export const ADMIN_BLACKLIST_PHONE_MANAGEMENT =
+  "Admin Phone Blacklist Management Screen";
+export const ADMIN_BLACKLIST_PHONE_MANAGEMENT_ADD =
+  "Admin Add Phone To Blacklist Screen";
+
+export const ADMIN_REVIEW_REPORT_DETAIL = "Admin Review Report Detail Screen";
+export const ADMIN_CATCH_REPORT_DETAIL = "Admin Catch Report Detail Screen";
+export const ADMIN_CATCH_DETAIL = "Admin Catch Detail Screen";
 
 export const MEDIA_SELECTOR = "Media Select Screen";

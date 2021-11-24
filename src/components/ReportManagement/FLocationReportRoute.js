@@ -1,88 +1,171 @@
+import { useIsFocused, useNavigation } from "@react-navigation/native";
+import { useStoreActions, useStoreState } from "easy-peasy";
 import { Select } from "native-base";
-import React, { useEffect, useState } from "react";
-import { FlatList, StyleSheet, View } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import {
+  ActivityIndicator,
+  FlatList,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { Overlay } from "react-native-elements";
 
+import { goToAdminFLocationReportDetailScreen } from "../../navigations";
 import HeaderTab from "../HeaderTab";
-import ReviewReportCard from "./ReportCard";
+import ReportCard from "./ReportCard";
 
-const styles = StyleSheet.create({
-  flatList: { marginTop: 12 },
-});
-
-const APIList = [
-  {
-    id: "1",
-    reportTarget: "Hồ Câu Thuần Việt",
-    isProcessed: true,
-  },
-  {
-    id: "2",
-    reportTarget: "Hồ Câu Thuần Việt",
-    isProcessed: true,
-  },
-  {
-    id: "3",
-    reportTarget: "Hồ Câu Thuần Việt",
-    isProcessed: false,
-  },
-  {
-    id: "4",
-    reportTarget: "Hồ Câu Thuần Việt",
-    isProcessed: true,
-  },
-  {
-    id: "5",
-    reportTarget: "Hồ Câu Thuần Việt",
-    isProcessed: false,
-  },
-];
-
-const renderItem = ({ item }) => (
-  <ReviewReportCard {...item} isFLocationReport />
-);
+const OFF_SET = 100;
+const FILTER_TOUCHED_LABEL = "Đã xử lý";
+const FILTER_TOUCHED_VALUE = "ACTIVE";
+const FILTER_UNTOUCHED_LABEL = "Chưa xử lý";
+const FILTER_UNTOUCHED_VALUE = "INACTIVE";
 
 const FLocationReportRoute = () => {
-  const [filter, setFilter] = useState("");
-  const [reportList, setReportList] = useState(APIList);
+  const navigation = useNavigation();
+  const isFocused = useIsFocused();
+  const isFocusedRef = useRef(true);
+  const [isLoading, setIsLoading] = useState(true);
+  const [bigLoading, setBigLoading] = useState(false);
+  const [getStatus, setGetStatus] = useState(null);
+  const [mode, setMode] = useState("DEFAULT");
+  const [query, setQuery] = useState({ pageNo: 1, active: true });
+  const [filter, setFilter] = useState(FILTER_UNTOUCHED_VALUE);
+  const { listLocationReport, totalLocationReportPage } = useStoreState(
+    (state) => state.ReportModel,
+  );
+  const { getListLocationReportLocation, resetReportList } = useStoreActions(
+    (actions) => actions.ReportModel,
+  );
+  const renderItem = ({ item }) => {
+    return (
+      <TouchableOpacity
+        onPress={() => {
+          goToAdminFLocationReportDetailScreen(navigation, {
+            id: item.id,
+            isActive: item.active,
+          });
+        }}
+      >
+        <ReportCard {...item} isFLocationReport />
+      </TouchableOpacity>
+    );
+  };
+  const renderFooter = () =>
+    isLoading && !bigLoading ? (
+      <View margin={12}>
+        <ActivityIndicator size="large" color="#2089DC" />
+      </View>
+    ) : null;
+  /**
+   * Change to new list
+   * @param {String} value selected value
+   */
+  const handleValueChange = (value) => {
+    if (value !== filter) {
+      setFilter(value);
+      setQuery({ pageNo: 1, active: value === FILTER_UNTOUCHED_VALUE });
+      setMode("NEW");
+      setIsLoading(true);
+      setBigLoading(true);
+    }
+  };
+  /**
+   * When FlatList scroll to bottom,
+   * process to the next location report page
+   */
+  const handleLoadMore = () => {
+    if (query.pageNo < totalLocationReportPage) {
+      setQuery((prev) => ({ ...prev, pageNo: prev.pageNo + 1 }));
+      setMode("DEFAULT");
+      setIsLoading(true);
+    }
+  };
+  /**
+   * Use only to reset list when unmount
+   */
   useEffect(() => {
-    const getFilteredList = () => {
-      switch (filter) {
-        case "Tất cả":
-          return APIList;
-        case "Chưa xử lý":
-          return APIList.filter(({ isProcessed }) => !isProcessed);
-        case "Đã xử lý":
-          return APIList.filter(({ isProcessed }) => isProcessed);
-        default:
-          return reportList;
-      }
+    return () => {
+      resetReportList({ type: "LOCATION" });
     };
-    setReportList(getFilteredList());
-  }, [filter]);
+  }, []);
+  /**
+   * When pageNo or active changed, get next location report page
+   */
+  useEffect(() => {
+    if (isLoading) {
+      getListLocationReportLocation({ mode, query, setGetStatus });
+    }
+  }, [isLoading]);
+
+  /**
+   * Trigger whenever screen focus state changes
+   */
+  useEffect(() => {
+    if (!isFocusedRef.current) {
+      setMode("NEW");
+      setQuery((prev) => ({ ...prev, pageNo: 1 }));
+      setIsLoading(true);
+    }
+    isFocusedRef.current = isFocused;
+  }, [isFocused]);
+
+  /**
+   * Trigger on getStatus return
+   */
+  useEffect(() => {
+    if (getStatus === "SUCCESS") {
+      setIsLoading(false);
+      if (bigLoading) setBigLoading(false);
+      setGetStatus(null);
+    } else if (getStatus === "FAILED") {
+      setIsLoading(false);
+      if (bigLoading) setBigLoading(false);
+      setGetStatus(null);
+    }
+  }, [getStatus]);
+
   return (
     <>
       <HeaderTab name="Quản lý báo cáo" />
-      <View>
+      <Overlay
+        isVisible={isLoading && bigLoading}
+        fullScreen
+        overlayStyle={{
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "transparent",
+        }}
+      >
+        <ActivityIndicator size={60} color="#2089DC" />
+      </Overlay>
+      <View marginBottom={OFF_SET}>
         <Select
           w="90%"
           my={2}
           alignSelf="center"
           placeholder="Lọc hiển thị báo cáo"
-          defaultValue="Tất cả"
-          value={filter}
-          onValueChange={setFilter}
+          defaultValue={FILTER_UNTOUCHED_VALUE}
+          onValueChange={handleValueChange}
           fontSize="md"
         >
-          <Select.Item label="Tất cả" value="Tất cả" />
-          <Select.Item label="Chưa xử lý" value="Chưa xử lý" />
-          <Select.Item label="Đã xử lý" value="Đã xử lý" />
+          <Select.Item
+            label={FILTER_UNTOUCHED_LABEL}
+            value={FILTER_UNTOUCHED_VALUE}
+          />
+          <Select.Item
+            label={FILTER_TOUCHED_LABEL}
+            value={FILTER_TOUCHED_VALUE}
+          />
         </Select>
-
         <FlatList
-          style={styles.flatList}
-          keyExtractor={(item) => item.id}
+          height="100%"
+          keyExtractor={(item) => `${item.id}`}
           renderItem={renderItem}
-          data={reportList}
+          ListFooterComponent={renderFooter}
+          bounces={false}
+          data={listLocationReport}
+          onEndReached={handleLoadMore}
+          onEndReachedThreshold={0.2}
         />
       </View>
     </>

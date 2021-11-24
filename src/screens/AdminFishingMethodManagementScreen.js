@@ -1,104 +1,61 @@
 import { useNavigation } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, Button, Center } from "native-base";
-import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, FlatList } from "react-native";
-import { Divider, SearchBar, Text } from "react-native-elements";
+import { Divider, SearchBar } from "react-native-elements";
 
+import FishingMethodManagementCard from "../components/AdminMethodManagement/FishingMethodManagementCard";
 import HeaderTab from "../components/HeaderTab";
+import styles from "../config/styles";
 import FishingMethodModel from "../models/FishingMethodModel";
 import { goToAdminFishingMethodEditScreen } from "../navigations";
-import { showAlertConfirmBox } from "../utilities";
 import store from "../utilities/Store";
 
 store.addModel("FishingMethodModel", FishingMethodModel);
 
-const FishingMethodManagementCard = ({ id, name }) => {
-  const navigation = useNavigation();
-
-  const showDeleteAlert = () => {
-    showAlertConfirmBox(
-      "Bạn muốn xóa loại hình câu này?",
-      `"${name}" sẽ bị xóa vĩnh viễn. Bạn không thể hoàn tác hành động này`,
-      () => {},
-    );
-  };
-
-  return (
-    <Box
-      flexDirection="row"
-      alignItems="center"
-      justifyContent="space-between"
-      py={2}
-      px={3}
-    >
-      <Box flex={1} justifyContent="center" pr={1}>
-        <Text style={{ fontWeight: "bold", fontSize: 16 }} numberOfLines={2}>
-          {name}
-        </Text>
-      </Box>
-      <Box w="35%" alignItems="flex-end">
-        <Button.Group>
-          <Button
-            onPress={() => {
-              goToAdminFishingMethodEditScreen(navigation, { id, name });
-            }}
-          >
-            Chỉnh sửa
-          </Button>
-          <Button
-            onPress={() => {
-              showDeleteAlert();
-            }}
-          >
-            Xóa
-          </Button>
-        </Button.Group>
-      </Box>
-    </Box>
-  );
-};
-
-FishingMethodManagementCard.propTypes = {
-  id: PropTypes.number.isRequired,
-  name: PropTypes.string.isRequired,
-};
-
 const AdminFishingMethodManagementScreen = () => {
   const navigation = useNavigation();
 
-  const fishingMethodList = useStoreState(
-    (states) => states.FishingMethodModel.fishingMethodList,
+  const adminFishingMethodList = useStoreState(
+    (states) => states.FishingMethodModel.adminFishingMethodList,
   );
-  const getFishingMethodList = useStoreActions(
-    (actions) => actions.FishingMethodModel.getFishingMethodList,
+  const getAdminFishingMethodList = useStoreActions(
+    (actions) => actions.FishingMethodModel.getAdminFishingMethodList,
   );
 
   const [search, setSearch] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-  const [displayedList, setDisplayedList] = useState(fishingMethodList);
+  const [displayedList, setDisplayedList] = useState(adminFishingMethodList);
+
+  const renderRow = ({ item }) => (
+    <FishingMethodManagementCard
+      id={item.id}
+      name={item.name}
+      active={item.active}
+    />
+  );
 
   const updateSearch = (searchKey) => {
     setSearch(searchKey);
   };
 
   const onClear = () => {
-    setDisplayedList(fishingMethodList);
+    setDisplayedList(adminFishingMethodList);
   };
 
   const onEndEditing = () => {
     // If the list is empty
-    if (!fishingMethodList) return;
+    if (!adminFishingMethodList) return;
     // Filter all element in the data list whose name includes search key
-    const filteredList = fishingMethodList.filter((method) =>
+    const filteredList = adminFishingMethodList.filter((method) =>
       method.name.toUpperCase().includes(search.toUpperCase()),
     );
     setDisplayedList(filteredList);
   };
 
   useEffect(() => {
-    getFishingMethodList();
+    getAdminFishingMethodList();
     const loadingTimeout = setTimeout(() => {
       setIsLoading(false);
     }, 1000); // Test
@@ -108,9 +65,9 @@ const AdminFishingMethodManagementScreen = () => {
   }, []);
 
   useEffect(() => {
-    setDisplayedList(fishingMethodList);
-    if (fishingMethodList) setIsLoading(false);
-  }, [fishingMethodList]);
+    setDisplayedList(adminFishingMethodList);
+    if (adminFishingMethodList) setIsLoading(false);
+  }, [adminFishingMethodList]);
 
   if (isLoading)
     return (
@@ -128,12 +85,7 @@ const AdminFishingMethodManagementScreen = () => {
             placeholder="Tìm kiếm theo tên"
             onChangeText={updateSearch}
             value={search}
-            containerStyle={{
-              width: "100%",
-              marginTop: 12,
-              backgroundColor: "white",
-              paddingHorizontal: 12,
-            }}
+            containerStyle={styles.searchBar}
             lightTheme
             blurOnSubmit
             onEndEditing={onEndEditing}
@@ -155,9 +107,7 @@ const AdminFishingMethodManagementScreen = () => {
           <Box flex={1} w="100%">
             <FlatList
               data={displayedList}
-              renderItem={({ item }) => (
-                <FishingMethodManagementCard id={item.id} name={item.name} />
-              )}
+              renderItem={renderRow}
               keyExtractor={(item) => item.id.toString()}
               ItemSeparatorComponent={Divider}
             />

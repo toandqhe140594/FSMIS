@@ -1,14 +1,29 @@
-import { Box } from "native-base";
+import { useNavigation } from "@react-navigation/native";
 import PropTypes from "prop-types";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { View } from "react-native";
 import MapView from "react-native-maps";
 
 import styles from "../config/styles";
+import { goToFishingLocationOverviewScreen } from "../navigations";
 import FLocationMarker from "./FLocationMarker";
 
 export default function FLocationMapView({ coordinates, locationList }) {
+  const navigation = useNavigation();
+  const [marginTop, setMarginTop] = useState(-1);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setMarginTop(0);
+    }, 50);
+  }, []);
+
+  const openLocationDetail = (id) => () => {
+    goToFishingLocationOverviewScreen(navigation, { id });
+  };
+
   return (
-    <Box flex={1}>
+    <View style={styles.flexBox}>
       <MapView
         initialRegion={{
           latitude: coordinates.latitude,
@@ -18,8 +33,9 @@ export default function FLocationMapView({ coordinates, locationList }) {
         }}
         provider={MapView.PROVIDER_GOOGLE}
         mapType="standard"
-        style={styles.map}
+        style={[styles.map, { marginTop }]}
         showsUserLocation
+        showsMyLocationButton
       >
         {locationList &&
           locationList.map((location) => (
@@ -30,15 +46,17 @@ export default function FLocationMapView({ coordinates, locationList }) {
               }}
               fishingSpot={{
                 name: location.name,
-                rate: location.rating,
+                rate: location.score,
                 isVerified: location.verify,
                 id: location.id,
+                distance: location.distance,
               }}
+              onPress={openLocationDetail(location.id)}
               key={location.id}
             />
           ))}
       </MapView>
-    </Box>
+    </View>
   );
 }
 FLocationMapView.propTypes = {

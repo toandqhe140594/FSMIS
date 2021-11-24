@@ -4,6 +4,7 @@ import { useStoreActions, useStoreState } from "easy-peasy";
 import {
   Box,
   Button,
+  Divider,
   HStack,
   Icon,
   ScrollView,
@@ -12,12 +13,12 @@ import {
 } from "native-base";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator } from "react-native";
-import { Image } from "react-native-elements";
 import Swiper from "react-native-swiper";
 
 import AvatarCard from "../components/AvatarCard";
 import FishInformationCard from "../components/FishInformationCard";
 import HeaderTab from "../components/HeaderTab";
+import ImageResizeMode from "../components/ImageResizeMode";
 import { goToFishingLocationOverviewScreen } from "../navigations";
 
 const AnglerCatchReportDetailScreen = () => {
@@ -50,7 +51,7 @@ const AnglerCatchReportDetailScreen = () => {
    * Verify catch report button action
    * @param {boolean} isApprove value indicate accept or denied catch report
    */
-  const verifyHandler = (isApprove) => {
+  const verifyHandler = (isApprove) => () => {
     setButtonLoading(true);
     verifyTimeout = setTimeout(() => {
       setButtonLoading(false);
@@ -113,13 +114,10 @@ const AnglerCatchReportDetailScreen = () => {
         {catchDetails.images && catchDetails.images.length > 0 && (
           <Swiper height="auto" loadMinimal>
             {catchDetails.images.map((imageUri, index) => (
-              <Image
+              <ImageResizeMode
+                imgUri={imageUri}
+                height={400}
                 key={index.toString()}
-                source={{
-                  uri: imageUri,
-                }}
-                style={{ width: "100%", height: 450 }}
-                resizeMode="contain"
               />
             ))}
           </Swiper>
@@ -150,27 +148,51 @@ const AnglerCatchReportDetailScreen = () => {
               <Text
                 fontSize="18"
                 underline
-                onPress={() => {
-                  openLocationOverviewScreen();
-                }}
+                onPress={openLocationOverviewScreen}
               >
                 {catchDetails.locationName}
+              </Text>
+            </Text>
+            <Text pl={0.5}>
+              <Text bold fontSize="16">
+                Vị trí:{" "}
+              </Text>
+              <Text fontSize="16" onPress={openLocationOverviewScreen}>
+                Hồ thường
               </Text>
             </Text>
             <Text italic fontSize="md">
               &quot;{catchDetails.description}&quot;
             </Text>
+            <Divider />
           </VStack>
           <VStack space={1}>
             {catchDetails.fishes !== undefined &&
-              catchDetails.fishes.map((item) => (
-                <FishInformationCard
-                  key={item.name}
-                  image={item.image}
-                  name={item.name}
-                  amount={item.quantity}
-                  totalWeight={item.weight}
-                />
+              catchDetails.fishes.map((item, index) => (
+                <React.Fragment key={`${item.name}${index.toString()}`}>
+                  <Text
+                    bold
+                    italic
+                    fontSize="15"
+                    pl={0.5}
+                    textAlign="center"
+                    style={{
+                      color: "white",
+                      backgroundColor: item.returnToOwner
+                        ? "#88E0EF"
+                        : "#6ee7b7",
+                    }}
+                  >
+                    {item.returnToOwner ? "Đã gửi lại cho hồ" : "Mang về"}
+                  </Text>
+                  <FishInformationCard
+                    key={item.name}
+                    image={item.image}
+                    name={item.name}
+                    amount={item.quantity}
+                    totalWeight={item.weight}
+                  />
+                </React.Fragment>
               ))}
           </VStack>
         </Box>
@@ -195,9 +217,7 @@ const AnglerCatchReportDetailScreen = () => {
               colorScheme="danger"
               size="lg"
               isLoading={buttonLoading}
-              onPress={() => {
-                verifyHandler(false);
-              }}
+              onPress={verifyHandler(false)}
             >
               Từ chối
             </Button>
@@ -207,9 +227,7 @@ const AnglerCatchReportDetailScreen = () => {
               colorScheme="teal"
               size="lg"
               isLoading={buttonLoading}
-              onPress={() => {
-                verifyHandler(true);
-              }}
+              onPress={verifyHandler(true)}
             >
               Xác nhận
             </Button>

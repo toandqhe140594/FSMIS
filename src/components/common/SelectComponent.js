@@ -19,7 +19,9 @@ const SelectComponent = ({
   hasAsterisk,
   isTitle,
   controllerName,
-  handleDataIfValChanged,
+  myError,
+  useCustomError,
+  itemKeyIdentifier,
 }) => {
   const {
     control,
@@ -27,63 +29,71 @@ const SelectComponent = ({
   } = useFormContext();
   return (
     <View style={myStyles}>
-      <Text style={[styles.text, isTitle ? styles.bold : null]}>
-        {label}
-        {hasAsterisk && <Text style={styles.asterisk}>*</Text>}
-      </Text>
+      {label.length > 0 && (
+        <Text style={[styles.text, isTitle ? styles.bold : null]}>
+          {label}
+          {hasAsterisk && <Text style={styles.asterisk}>*</Text>}
+        </Text>
+      )}
       <Controller
         control={control}
         name={controllerName}
         render={({ field: { onChange, value } }) => {
-          const handleChange = (val) => {
-            onChange(val);
-            handleDataIfValChanged(controllerName, val);
-          };
           return (
             <Select
               accessibilityLabel={placeholder}
               placeholder={placeholder}
-              onValueChange={handleChange}
+              onValueChange={onChange}
               selectedValue={value}
               fontSize="md"
             >
               {data.map((item) => (
                 <Select.Item
-                  key={item.id}
+                  key={item[itemKeyIdentifier]}
                   label={item.name}
-                  value={item.id}
-                  my={1}
+                  value={item[itemKeyIdentifier]}
                 />
               ))}
             </Select>
           );
         }}
       />
-      {errors[controllerName]?.message && (
-        <Text style={styles.error}>{errors[controllerName]?.message}</Text>
-      )}
+      {useCustomError
+        ? myError.message && <Text style={styles.error}>{myError.message}</Text>
+        : errors[controllerName]?.message && (
+            <Text style={styles.error}>{errors[controllerName]?.message}</Text>
+          )}
     </View>
   );
 };
 
 SelectComponent.propTypes = {
-  label: PropTypes.string.isRequired,
-  placeholder: PropTypes.string.isRequired,
+  label: PropTypes.string,
+  placeholder: PropTypes.string,
   data: PropTypes.arrayOf(PropTypes.object),
-  myStyles: PropTypes.objectOf(PropTypes.string.isRequired),
+  myStyles: PropTypes.objectOf(
+    PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  ),
   hasAsterisk: PropTypes.bool,
   isTitle: PropTypes.bool,
   controllerName: PropTypes.string.isRequired,
-
-  handleDataIfValChanged: PropTypes.func,
+  myError: PropTypes.objectOf(
+    PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
+  ),
+  useCustomError: PropTypes.bool,
+  itemKeyIdentifier: PropTypes.string,
 };
 
 SelectComponent.defaultProps = {
+  label: "",
+  placeholder: "",
   myStyles: {},
   hasAsterisk: false,
   isTitle: false,
   data: [],
-  handleDataIfValChanged: () => {},
+  myError: {},
+  useCustomError: false,
+  itemKeyIdentifier: "id",
 };
 
 export default React.memo(SelectComponent);

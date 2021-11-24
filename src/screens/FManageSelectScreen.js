@@ -59,6 +59,14 @@ const FManageSelectScreen = () => {
   const [success, setSuccess] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const navigateToSuggestionScreen = () => {
+    goToFManageSuggestScreen(navigation);
+  };
+
+  const goToAddLocationScreen = () => {
+    goToFManageAddNewScreen(navigation);
+  };
+
   useEffect(() => {
     setLoading(true);
     const timeout = setTimeout(() => {
@@ -95,7 +103,7 @@ const FManageSelectScreen = () => {
   if (loading)
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="blue" />
+        <ActivityIndicator size={60} color="#2089DC" />
       </View>
     );
 
@@ -107,18 +115,12 @@ const FManageSelectScreen = () => {
           name: "info-outline",
           color: "blue",
           type: "material",
-          onPress: () => {
-            goToFManageSuggestScreen(navigation);
-          },
+          onPress: navigateToSuggestionScreen,
         }}
       />
       <ScrollView contentContainerStyle={getEmptyListStyling()}>
         <View style={[styles.center, getEmptyListStyling()]}>
-          <Pressable
-            onPress={() => {
-              goToFManageAddNewScreen(navigation);
-            }}
-          >
+          <Pressable onPress={goToAddLocationScreen}>
             <View style={[styles.border, isStaffStyle()]}>
               <Text style={{ fontSize: 12 }}>Thêm điểm câu</Text>
             </View>
@@ -127,8 +129,16 @@ const FManageSelectScreen = () => {
           {listOfFishingLocations.length > 0 && (
             <VStack w="90%" space={2} my={2}>
               {listOfFishingLocations.map((location) => {
-                const { id, name, image, verify, score, address, role } =
-                  location;
+                const {
+                  id,
+                  name,
+                  image,
+                  verify,
+                  score,
+                  address,
+                  role,
+                  closed,
+                } = location;
                 return (
                   <FLocationCard
                     id={id}
@@ -139,6 +149,7 @@ const FManageSelectScreen = () => {
                     address={address}
                     role={role}
                     isManaged
+                    isClosed={closed}
                     key={id}
                   />
                 );

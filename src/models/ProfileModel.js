@@ -46,6 +46,12 @@ const model = {
   setCatchHistoryTotalPage: action((state, payload) => {
     state.catchHistoryTotalPage = payload;
   }),
+  setTotalCatchesCount: action((state, payload) => {
+    state.userInfo.catchesCount = payload;
+  }),
+  increaseCatchesCount: action((state) => {
+    state.userInfo.catchesCount += 1;
+  }),
   getCatchReportHistory: thunk(async (actions, payload, { getState }) => {
     const { catchHistoryCurrentPage, catchHistoryTotalPage } = getState();
     // If current page is smaller than 0 or larger than maximum page then return
@@ -58,10 +64,11 @@ const model = {
     const { data } = await http.get(`${API_URL.PERSONAL_CATCH_REPORT}`, {
       params: { pageNo: catchHistoryCurrentPage },
     });
-    const { totalPage, items } = data;
+    const { totalPage, items, totalItem } = data;
     actions.setCatchHistoryCurrentPage(catchHistoryCurrentPage + 1);
     actions.setCatchHistoryTotalPage(totalPage);
     actions.setCatchReportHistory(items);
+    actions.setTotalCatchesCount(totalItem);
   }),
   /**
    * Remove catch report history data
@@ -181,6 +188,9 @@ const model = {
   setNotificationList: action((state, payload) => {
     state.notificationList = state.notificationList.concat(payload);
   }),
+  setNotificationListOverwrite: action((state, payload) => {
+    state.notificationList = payload;
+  }),
   getNotificationList: thunk(async (actions, payload, { getState }) => {
     const { notificationCurrentPage: pageNo, notificationTotalPage } =
       getState();
@@ -195,6 +205,19 @@ const model = {
     actions.setNotificationCurrentPage(pageNo + 1);
     actions.setNotificationTotalPage(totalPage);
     actions.setNotificationList(items);
+  }),
+  /**
+   * Get notification list from page 1 and overwrite the current notifications list
+   */
+  getNotificationListOverwrite: thunk(async (actions) => {
+    const { data } = await http.get(`${API_URL.PERSONAL_NOTIFICATION}`, {
+      params: { pageNo: 1 },
+    });
+
+    const { totalPage, items } = data;
+    actions.setNotificationCurrentPage(2);
+    actions.setNotificationTotalPage(totalPage);
+    actions.setNotificationListOverwrite(items);
   }),
 
   /**
@@ -231,6 +254,49 @@ const model = {
       setUpdateStatus("SUCCESS");
     } catch (error) {
       setUpdateStatus("FAILED");
+    }
+  }),
+
+  /**
+   * Change personal password
+   * @param {object} [payload] params pass to function
+   * @param {Function} [payload.setSuccess] set status after request api
+   * @param {object} [payload.updateData] object body pass to api
+   * @param {string} [updateData.oldPassword] user old password
+   * @param {string} [updateData.newPassword] new password
+   */
+  changePassword: thunk(async (actions, payload = {}) => {
+    const updateData = payload.updateData || {
+      newPassword: "",
+      oldPassword: "",
+    };
+    const setSuccess = payload.setSuccess || (() => {});
+    try {
+      await http.post(API_URL.PERSONAL_PASSWORD_CHANGE, updateData);
+      setSuccess(true);
+    } catch (error) {
+      setSuccess(false);
+    }
+  }),
+
+  /**
+   * Change personal account phone number
+   * @param {object} [payload] params pass to function
+   * @param {Function} [payload.setSuccess] set status after request api
+   * @param {string} [payload.newPhone] new phone number
+   * @param {string} [payload.password] current account password
+   */
+  changePhoneNumber: thunk(async (actions, payload = {}) => {
+    const { phone: newPhone, password } = payload;
+    const setSuccess = payload.setSuccess || (() => {});
+    try {
+      await http.post(API_URL.PERSONAL_PHONE_CHANGE, {
+        newPhone,
+        password,
+      });
+      setSuccess(true);
+    } catch (error) {
+      setSuccess(false);
     }
   }),
 };

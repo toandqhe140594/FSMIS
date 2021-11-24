@@ -58,6 +58,8 @@ const CheckinSuccessScreen = () => {
           name={locationInfo.name}
           isVerifed={locationInfo.verify}
           rate={locationInfo.score}
+          isClosed={locationInfo.closed}
+          image={locationInfo.image}
         />
       </Box>
       <Box w="70%">
@@ -113,7 +115,7 @@ const DefaultQRCodeScreen = () => {
       <Center flex={1}>
         <Center w="80%">
           <Text bold textAlign="center" mb="10%">
-            Hãy để nhân viên được quét mã QR để được Checkin và Báo cá
+            Hãy để nhân viên được quét mã QR để được Check-in và Báo cá
           </Text>
           <QRCode
             logo={require("../assets/images/logo.png")}

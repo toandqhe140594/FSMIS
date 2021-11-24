@@ -1,9 +1,32 @@
 import { FontAwesome5, MaterialCommunityIcons } from "@expo/vector-icons";
-import { Button, Checkbox, Input, Select } from "native-base";
+import { Button, Checkbox } from "native-base";
 import PropTypes from "prop-types";
 import React, { useEffect } from "react";
 import { Controller, useFieldArray, useFormContext } from "react-hook-form";
 import { StyleSheet, Text, View } from "react-native";
+
+import FieldWatcherResetter from "../common/FieldWatcherResetter";
+import InputComponent from "../common/InputComponent";
+import SelectComponent from "../common/SelectComponent";
+import DependentFieldWatcher from "./DependentFieldWatcher";
+
+const FishIcon = () => (
+  <FontAwesome5
+    style={{ marginHorizontal: 8 }}
+    name="fish"
+    size={24}
+    color="black"
+  />
+);
+
+const WeightIcon = () => (
+  <MaterialCommunityIcons
+    style={{ marginHorizontal: 8 }}
+    name="weight-kilogram"
+    size={28}
+    color="#262626"
+  />
+);
 
 const styles = StyleSheet.create({
   cardWrapper: {
@@ -24,6 +47,12 @@ const styles = StyleSheet.create({
     marginVertical: 8,
   },
   error: { color: "#f43f5e", fontSize: 12, fontStyle: "italic" },
+  hint: {
+    fontSize: 12,
+    fontStyle: "italic",
+    marginBottom: 12,
+    alignSelf: "center",
+  },
 });
 
 const CatchReportSection = ({ fishList }) => {
@@ -33,112 +62,65 @@ const CatchReportSection = ({ fishList }) => {
   } = useFormContext();
   const { fields, append, remove } = useFieldArray({
     control,
-    name: "cards",
-    // Cards will be unregistered when unmount
+    name: "catchesDetailList",
     shouldUnregister: true,
   });
+  const handleAppend = () => {
+    append({ fishSpeciesId: 0, weight: 0, quantity: 0 });
+  };
+  const handleRemove = (index) => () => {
+    remove(index);
+  };
   /**
    * Append a card ready to use
    */
   useEffect(() => {
-    const initCard = () => append({});
-    initCard();
+    handleAppend();
   }, []);
   return (
     <>
       {/* fields controls each object with field fishType, catches, totalWeight and isReleased */}
       {fields.map(({ id }, index) => (
         <View style={styles.cardWrapper} key={id}>
-          <Controller
-            name={`cards[${index}].fishType`}
-            control={control}
-            render={({ field: { onChange, value } }) => (
-              <Select
-                mt={2}
-                fontSize="md"
-                placeholder="Chọn loại cá"
-                onValueChange={onChange}
-                selectedValue={value}
-              >
-                {fishList.map((fish) => {
-                  return (
-                    <Select.Item
-                      label={fish.name}
-                      value={fish.id}
-                      key={fish.id}
-                    />
-                  );
-                })}
-              </Select>
-            )}
+          <SelectComponent
+            myStyles={{ marginBottom: 8 }}
+            data={fishList}
+            itemKeyIdentifier="fishInLakeId"
+            placeholder="Chọn loại cá bắt được"
+            controllerName={`catchesDetailList[${index}].fishInLakeId`}
+            useCustomError
+            myError={errors.catchesDetailList?.[index]?.fishInLakeId}
           />
-          {/* Check error message of fishType field of a specific object in the fieldArray */}
-          {errors.cards?.[index]?.fishType?.message && (
-            <Text style={styles.error}>
-              {errors?.cards?.[index].fishType?.message}
-            </Text>
-          )}
-          <Controller
-            name={`cards[${index}].catches`}
-            control={control}
-            render={({ field: { value, onChange, onBlur } }) => (
-              <Input
-                mt={2}
-                fontSize="md"
-                placeholder="Nhập số con bắt được"
-                value={value}
-                onChangeText={onChange}
-                onBlur={onBlur}
-                keyboardType="number-pad"
-                InputLeftElement={
-                  <FontAwesome5
-                    style={{ marginLeft: 12 }}
-                    name="fish"
-                    size={24}
-                    color="black"
-                  />
-                }
-              />
-            )}
+          <DependentFieldWatcher
+            name={`catchesDetailList[${index}].fishInLakeId`}
+            dependentField={`catchesDetailList[${index}].fishSpeciesId`}
+            data={fishList}
           />
-          {/* Check error message of catches feld of a specific object in the fieldArray */}
-          {errors.cards?.[index]?.catches?.message && (
-            <Text style={styles.error}>
-              {errors.cards?.[index].catches?.message}
-            </Text>
-          )}
-          <Controller
-            name={`cards[${index}].totalWeight`}
-            control={control}
-            render={({ field: { value, onChange, onBlur } }) => (
-              <Input
-                mt={2}
-                fontSize="md"
-                placeholder="Nhập tổng cân nặng (kg)"
-                value={value}
-                onChangeText={onChange}
-                onBlur={onBlur}
-                keyboardType="number-pad"
-                InputLeftElement={
-                  <MaterialCommunityIcons
-                    style={{ marginLeft: 12 }}
-                    name="weight-kilogram"
-                    size={28}
-                    color="#262626"
-                  />
-                }
-              />
-            )}
+          <Text style={styles.hint}>
+            Lưu ý: Chỉ cần nhập một trong hai trường dưới đây
+          </Text>
+          <InputComponent
+            useNumPad
+            myStyles={{ marginBottom: 8 }}
+            placeholder="Nhập số con bắt được"
+            leftIcon={<FishIcon />}
+            controllerName={`catchesDetailList[${index}].quantity`}
+            useCustomError
+            myError={errors.catchesDetailList?.[index]?.quantity}
           />
-          {/* Check error message of totalWeight field of a specific object in the fieldArray */}
-          {errors.cards?.[index]?.totalWeight?.message && (
-            <Text style={styles.error}>
-              {errors.cards?.[index].totalWeight?.message}
-            </Text>
-          )}
+          <FieldWatcherResetter name={`catchesDetailList[${index}].quantity`} />
+          <InputComponent
+            useNumPad
+            placeholder="Nhập cân nặng bắt được (kg)"
+            leftIcon={<WeightIcon />}
+            controllerName={`catchesDetailList[${index}].weight`}
+            useCustomError
+            myError={errors.catchesDetailList?.[index]?.weight}
+          />
+          <FieldWatcherResetter name={`catchesDetailList[${index}].weight`} />
           <View style={styles.rowWrapper}>
             <Controller
-              name={`cards[${index}].isReleased`}
+              name={`catchesDetailList[${index}].returnToOwner`}
               control={control}
               render={({ field: { value, onChange } }) => (
                 <Checkbox value={value} onChange={onChange}>
@@ -148,13 +130,13 @@ const CatchReportSection = ({ fishList }) => {
                 </Checkbox>
               )}
             />
-            <Button fontSize="md" w="40%" onPress={() => remove(index)}>
+            <Button fontSize="md" w="40%" onPress={handleRemove(index)}>
               Xoá
             </Button>
           </View>
         </View>
       ))}
-      <Button w="90%" mt={3} alignSelf="center" onPress={() => append({})}>
+      <Button w="90%" mt={3} alignSelf="center" onPress={handleAppend}>
         Thêm thẻ
       </Button>
     </>

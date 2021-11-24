@@ -1,6 +1,6 @@
 import { useFocusEffect } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
-import { Box, Button, Center, ScrollView } from "native-base";
+import { Box, Button, Center, FlatList } from "native-base";
 import PropTypes from "prop-types";
 import React, { useCallback, useEffect, useState } from "react";
 import { Divider, Text } from "react-native-elements";
@@ -15,11 +15,7 @@ const FilterButton = ({ filterType, content, value, changeFilterAction }) => {
   };
 
   return (
-    <Button
-      onPress={() => {
-        onPress();
-      }}
-    >
+    <Button onPress={onPress}>
       <Text
         style={[
           styles.textwhite,
@@ -38,14 +34,6 @@ FilterButton.propTypes = {
   changeFilterAction: PropTypes.func.isRequired,
 };
 
-const isCloseToBottom = ({ layoutMeasurement, contentOffset, contentSize }) => {
-  const paddingToBottom = 20;
-  return (
-    layoutMeasurement.height + contentOffset.y >=
-    contentSize.height - paddingToBottom
-  );
-};
-
 const ReviewListRoute = () => {
   const [reviewPage, setReviewPage] = useState(1);
   const [filterType, setFilterType] = useState("newest");
@@ -57,7 +45,6 @@ const ReviewListRoute = () => {
   const {
     getLocationReviewScore,
     getPersonalReview,
-    resetPersonalReview,
     getLocationReviewListByPage,
   } = useStoreActions((actions) => actions.LocationModel);
 
@@ -76,9 +63,6 @@ const ReviewListRoute = () => {
       getLocationReviewScore();
       getPersonalReview();
       resetReviewData();
-      return () => {
-        resetPersonalReview();
-      };
     }, []),
   );
 
@@ -86,78 +70,94 @@ const ReviewListRoute = () => {
     resetReviewData();
   }, [filterType]);
 
-  return (
-    <ScrollView
-      onScroll={({ nativeEvent }) => {
-        if (isCloseToBottom(nativeEvent)) {
-          console.log("end reach"); // Test only
-          loadMoreReviewData();
-        }
-      }}
-    >
-      <Box>
-        <Center flex={1} py={3}>
-          <Text h2>{locationReviewScore.score || 0}</Text>
-          <Rating
-            imageSize={24}
-            ratingCount={5}
-            readonly
-            showRating={false}
-            startingValue={locationReviewScore.score || 0}
-          />
-          <Text>({locationReviewScore.totalReviews || 0} đánh gía)</Text>
-        </Center>
+  const onEndReached = () => {
+    loadMoreReviewData();
+  };
 
+  const keyExtractor = (item) => item.id.toString();
+
+  const renderItem = ({ item }) => {
+    const { userVoteType } = item;
+    return (
+      <Box key={item.id}>
+        <ReviewFromAnglerSection
+          name={item.userFullName}
+          content={item.description}
+          isPositive={userVoteType === true}
+          isNeutral={userVoteType === null}
+          isDisabled
+          date={item.time}
+          positiveCount={item.upvote}
+          negativeCount={item.downvote}
+          rate={item.score}
+          id={item.id}
+          key={item.id}
+          isAdminView
+          userImage={item.userAvatar}
+        />
         <Divider />
-        <Box p={3}>
-          <Text style={{ fontWeight: "bold" }}>Đánh giá từ cộng đồng</Text>
-          <Button.Group mt={4}>
-            <FilterButton
-              filterType={filterType}
-              content="Mới nhất"
-              value="newest"
-              changeFilterAction={setFilterType}
-            />
-            <FilterButton
-              filterType={filterType}
-              content="Cao nhất"
-              value="highest"
-              changeFilterAction={setFilterType}
-            />
-            <FilterButton
-              filterType={filterType}
-              content="Thấp nhất"
-              value="lowest"
-              changeFilterAction={setFilterType}
-            />
-          </Button.Group>
-        </Box>
-        <Divider />
-        {locationReviewList &&
-          locationReviewList.length > 0 &&
-          locationReviewList.map((item) => {
-            const { userVoteType } = item;
-            return (
-              <Box key={item.id}>
-                <ReviewFromAnglerSection
-                  name={item.userFullName}
-                  content={item.description}
-                  isPositive={userVoteType === true}
-                  isNeutral={userVoteType === null}
-                  isDisabled
-                  date={item.time}
-                  positiveCount={item.upvote}
-                  negativeCount={item.downvote}
-                  rate={item.score}
-                  id={item.id}
-                  key={item.id}
-                />
-                <Divider />
-              </Box>
-            );
-          })}
       </Box>
-    </ScrollView>
+    );
+  };
+
+  const ListHeaderComponent = () => (
+    <>
+      <Center py={3} h={100}>
+        {locationReviewScore.score && locationReviewScore.score % 1 !== 0 ? (
+          <Text h2>{locationReviewScore.score.toFixed(1) || 0}</Text>
+        ) : (
+          <Text h2>{locationReviewScore.score || 0}</Text>
+        )}
+        <Rating
+          imageSize={24}
+          ratingCount={5}
+          readonly
+          showRating={false}
+          startingValue={locationReviewScore.score || 0}
+        />
+        <Text>({locationReviewScore.totalReviews || 0} đánh giá)</Text>
+      </Center>
+
+      <Divider />
+      <Box p={3}>
+        <Text style={styles.boldText}>Đánh giá từ cộng đồng</Text>
+        <Button.Group mt={4}>
+          <FilterButton
+            filterType={filterType}
+            content="Mới nhất"
+            value="newest"
+            changeFilterAction={setFilterType}
+          />
+          <FilterButton
+            filterType={filterType}
+            content="Cao nhất"
+            value="highest"
+            changeFilterAction={setFilterType}
+          />
+          <FilterButton
+            filterType={filterType}
+            content="Thấp nhất"
+            value="lowest"
+            changeFilterAction={setFilterType}
+          />
+        </Button.Group>
+      </Box>
+      <Divider />
+    </>
+  );
+
+  return (
+    <Box flex={1}>
+      <Box flex={1}>
+        <FlatList
+          data={locationReviewList}
+          renderItem={renderItem}
+          keyExtractor={keyExtractor}
+          ListHeaderComponent={ListHeaderComponent}
+          onEndReached={onEndReached}
+        />
+      </Box>
+    </Box>
   );
 };
 

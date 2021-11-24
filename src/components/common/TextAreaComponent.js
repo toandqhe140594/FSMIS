@@ -16,8 +16,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     textAlignVertical: "top",
     padding: 10,
-    height: 100,
-    backgroundColor: "#fafafa",
+    backgroundColor: "white",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.8,
@@ -25,7 +24,8 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   text: { fontSize: 16 },
-  bold: { fontWeight: "bold" },
+  title: { fontSize: 16, fontWeight: "bold" },
+  asterisk: { color: "#f43f5e", fontSize: 16 },
 });
 
 const MAX_LENGTH = 1000;
@@ -37,6 +37,7 @@ const TextAreaComponent = ({
   isTitle,
   myStyles,
   controllerName,
+  hasAsterisk,
 }) => {
   const {
     control,
@@ -45,8 +46,9 @@ const TextAreaComponent = ({
   return (
     <Box style={myStyles}>
       {label.length > 0 && (
-        <Text style={[styles.text, isTitle ? styles.bold : null]} mb={2}>
+        <Text style={isTitle ? styles.title : styles.text} mb={2}>
           {label}
+          {hasAsterisk && <Text style={styles.asterisk}>*</Text>}
         </Text>
       )}
 
@@ -64,7 +66,6 @@ const TextAreaComponent = ({
               onChangeText={onChange}
               onBlur={onBlur}
               value={value}
-              backgroundColor="white"
             />
           </TouchableWithoutFeedback>
         )}
@@ -83,15 +84,19 @@ TextAreaComponent.propTypes = {
   label: PropTypes.string,
   placeholder: PropTypes.string.isRequired,
   numberOfLines: PropTypes.number.isRequired,
-  myStyles: PropTypes.objectOf(PropTypes.string.isRequired),
+  myStyles: PropTypes.objectOf(
+    PropTypes.oneOfType([PropTypes.string, PropTypes.number]), // Accept object with property of type string or number
+  ),
   isTitle: PropTypes.bool,
   controllerName: PropTypes.string.isRequired,
+  hasAsterisk: PropTypes.bool,
 };
 
 TextAreaComponent.defaultProps = {
   label: "",
   myStyles: {},
   isTitle: false,
+  hasAsterisk: false,
 };
 
 export default TextAreaComponent;

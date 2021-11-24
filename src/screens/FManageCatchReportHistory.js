@@ -90,8 +90,8 @@ const FManageCatchReportHistory = () => {
               <CalendarPicker
                 allowRangeSelection
                 scrollable
-                todayBackgroundColor="#e6ffe6"
-                selectedDayColor="#66ff33"
+                todayBackgroundColor="#00e673"
+                selectedDayColor="#00ccff"
                 selectedDayTextColor="#000000"
                 scaleFactor={375}
                 onDateChange={dateChangeHandler}
@@ -109,10 +109,10 @@ const FManageCatchReportHistory = () => {
           accessibilityLabel="Chọn kiểu lọc"
           placeholder="Chọn kiểu lọc"
           _selectedItem={{
-            bg: "teal.600",
+            bg: "primary.200",
           }}
           onValueChange={(itemValue) => selectedFilterHandler(itemValue)}
-          backgroundColor="light.500"
+          backgroundColor="#ffffff"
         >
           <Select.Item label="Tất cả" value="All" />
           <Select.Item label="Theo Ngày" value="BY_DATE" />
@@ -121,7 +121,14 @@ const FManageCatchReportHistory = () => {
           <FlatList
             data={catchReportHistory}
             renderItem={({ item }) => {
-              const { userFullName, avatar, description, time, fishes } = item;
+              const {
+                userFullName,
+                avatar,
+                description,
+                time,
+                fishes,
+                approved,
+              } = item;
               return (
                 <Box
                   borderBottomWidth="1"
@@ -144,11 +151,12 @@ const FManageCatchReportHistory = () => {
                         nameUser={userFullName}
                         image={avatar}
                         subText={time}
+                        watermarkType={approved}
                       />
                       <Box mt={2}>
                         <Text italic>{description}</Text>
                         <Text>
-                          <Text bold>Đã câu được :</Text>
+                          <Text bold>Đã câu được: </Text>
                           {fishes.map((fish) => (
                             <Text key={fish}>{fish}. </Text>
                           ))}

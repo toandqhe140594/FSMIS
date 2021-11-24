@@ -8,8 +8,17 @@ const styles = StyleSheet.create({
   error: { color: "#f43f5e", fontSize: 12, fontStyle: "italic" },
   asterisk: { color: "#f43f5e", fontSize: 16 },
   bold: { fontWeight: "bold" },
-  text: { fontSize: 16, marginBottom: 4 },
+  text: { fontSize: 16, marginBottom: 6 },
+  inputComponent: {
+    backgroundColor: "white",
+  },
+  disabled: { backgroundColor: "#d4d4d4" },
 });
+
+const INPUT_TYPE_TEXT = "text";
+const INPUT_TYPE_PASSWORD = "password";
+const KEYBOARD_TYPE_NUMBER_PAD = "number-pad";
+const KEYBOARD_TYPE_DEFAULT = "default";
 
 const InputComponent = ({
   label,
@@ -18,8 +27,13 @@ const InputComponent = ({
   hasAsterisk,
   myStyles,
   leftIcon,
+  rightIcon,
   controllerName,
   useNumPad,
+  shouldDisable,
+  myError,
+  useCustomError,
+  useSecureInput,
 }) => {
   const {
     control,
@@ -39,19 +53,26 @@ const InputComponent = ({
         render={({ field: { onChange, onBlur, value } }) => (
           <Input
             InputLeftElement={leftIcon}
-            type="text"
+            InputRightElement={rightIcon}
+            type={useSecureInput ? INPUT_TYPE_PASSWORD : INPUT_TYPE_TEXT}
             placeholder={placeholder}
             onChangeText={onChange}
             onBlur={onBlur}
             value={value}
             fontSize="md"
-            keyboardType={useNumPad ? "number-pad" : "default"}
+            keyboardType={
+              useNumPad ? KEYBOARD_TYPE_NUMBER_PAD : KEYBOARD_TYPE_DEFAULT
+            }
+            isDisabled={shouldDisable}
+            style={shouldDisable ? styles.disabled : styles.inputComponent}
           />
         )}
       />
-      {errors[controllerName]?.message && (
-        <Text style={styles.error}>{errors[controllerName]?.message}</Text>
-      )}
+      {useCustomError
+        ? myError.message && <Text style={styles.error}>{myError.message}</Text>
+        : errors[controllerName]?.message && (
+            <Text style={styles.error}>{errors[controllerName]?.message}</Text>
+          )}
     </View>
   );
 };
@@ -65,8 +86,15 @@ InputComponent.propTypes = {
   hasAsterisk: PropTypes.bool,
   isTitle: PropTypes.bool,
   leftIcon: PropTypes.element,
+  rightIcon: PropTypes.element,
   controllerName: PropTypes.string,
   useNumPad: PropTypes.bool,
+  shouldDisable: PropTypes.bool,
+  useCustomError: PropTypes.bool,
+  myError: PropTypes.objectOf(
+    PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
+  ),
+  useSecureInput: PropTypes.bool,
 };
 
 InputComponent.defaultProps = {
@@ -75,9 +103,14 @@ InputComponent.defaultProps = {
   myStyles: {},
   hasAsterisk: false,
   isTitle: false,
-  leftIcon: <></>,
+  leftIcon: null,
+  rightIcon: null,
   controllerName: "",
   useNumPad: false,
+  shouldDisable: false,
+  useCustomError: false,
+  myError: {},
+  useSecureInput: false,
 };
 
 export default InputComponent;

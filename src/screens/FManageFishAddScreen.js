@@ -4,9 +4,16 @@ import { useStoreActions, useStoreState } from "easy-peasy";
 import { Button, VStack } from "native-base";
 import React, { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { ActivityIndicator, Dimensions, StyleSheet, View } from "react-native";
+import {
+  ActivityIndicator,
+  Dimensions,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { Overlay } from "react-native-elements";
 
+import FieldWatcherResetter from "../components/common/FieldWatcherResetter";
 import InputComponent from "../components/common/InputComponent";
 import SelectComponent from "../components/common/SelectComponent";
 import HeaderTab from "../components/HeaderTab";
@@ -35,11 +42,26 @@ const styles = StyleSheet.create({
     flexShrink: 1,
     flexBasis: "auto",
   },
+  loadOnStart: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loadOnSubmit: {
+    backgroundColor: "transparent",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  hint: {
+    fontSize: 12,
+    fontStyle: "italic",
+    alignSelf: "center",
+  },
 });
 
 const FManageFishAddScreen = () => {
   const navigation = useNavigation();
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [fullScreenMode, setFullScreenMode] = useState(true);
   const [addStatus, setAddStatus] = useState("");
   const { fishList } = useStoreState((state) => state.FishModel);
   const { getFishList } = useStoreActions((actions) => actions.FishModel);
@@ -47,22 +69,46 @@ const FManageFishAddScreen = () => {
   const methods = useForm({
     mode: "onSubmit",
     reValidateMode: "onSubmit",
-    resolver: yupResolver(SCHEMA.FMANAGE_LAKE_FISH_FORM),
+    defaultValues: { quantity: 0, totalWeight: 0 },
+    resolver: yupResolver(SCHEMA.FMANAGE_LAKE_FISH_ADD_FORM),
   });
   const { handleSubmit } = methods;
+  // const watchQuantity = watch("quantity", 0);
+  // const watchTotalWeight = watch("totalWeight", 0);
   const onSubmit = (data) => {
     setIsLoading(true);
-    const addData = { ...data };
+    const addData = Object.fromEntries(
+      Object.entries(data).filter((keyValPair) => keyValPair[1] !== 0),
+    );
     addFishToLake({ addData, setAddStatus });
   };
 
   useEffect(() => {
-    getFishList();
+    (async () => {
+      await getFishList();
+      setIsLoading(false);
+      setFullScreenMode(false);
+    })();
   }, []);
+
+  // useEffect(() => {
+  //   if (watchQuantity === "") {
+  //     setValue("quantity", 0);
+  //     clearErrors("quantity");
+  //   }
+  // }, [watchQuantity]);
+
+  // useEffect(() => {
+  //   if (watchTotalWeight === "") {
+  //     setValue("totalWeight", 0);
+  //     clearErrors("totalWeight");
+  //   }
+  // }, [watchTotalWeight]);
 
   useEffect(() => {
     if (addStatus === "SUCCESS") {
       setIsLoading(false);
+      setAddStatus(null);
       showAlertAbsoluteBox(
         "Thông báo",
         "Thêm cá thành công!",
@@ -73,14 +119,19 @@ const FManageFishAddScreen = () => {
       );
     } else if (addStatus === "FAILED") {
       setIsLoading(false);
+      setAddStatus(null);
       showAlertBox("Thông báo", "Đã có lỗi xảy ra, vui lòng thử lại");
     }
   }, [addStatus]);
   return (
     <>
       <HeaderTab name="Thêm cá vào hồ" />
-      <Overlay isVisible={isLoading}>
-        <ActivityIndicator color="#2089DC" />
+      <Overlay
+        isVisible={isLoading}
+        fullScreen
+        overlayStyle={fullScreenMode ? styles.loadOnStart : styles.loadOnSubmit}
+      >
+        <ActivityIndicator size={60} color="#2089DC" />
       </Overlay>
       <View style={styles.appContainer}>
         <FormProvider {...methods}>
@@ -109,18 +160,23 @@ const FManageFishAddScreen = () => {
                 useNumPad
               />
             </View>
+            <Text style={styles.hint}>
+              Lưu ý: Chỉ cần nhập một trong hai trường dưới đây
+            </Text>
             <InputComponent
               label="Số lượng cá"
               placeholder="Nhập số con"
               controllerName="quantity"
               useNumPad
             />
+            <FieldWatcherResetter name="quantity" />
             <InputComponent
               label="Tổng cân nặng"
               placeholder="Nhập tổng cân nặng (kg)"
               controllerName="totalWeight"
               useNumPad
             />
+            <FieldWatcherResetter name="totalWeight" />
           </VStack>
           <Button style={styles.button} onPress={handleSubmit(onSubmit)}>
             Thêm cá

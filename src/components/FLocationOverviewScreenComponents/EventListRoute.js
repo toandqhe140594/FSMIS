@@ -1,10 +1,9 @@
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { useNavigation } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
-import { Box } from "native-base";
+import { Box, Divider, Text } from "native-base";
 import React, { useEffect, useState } from "react";
 import { FlatList, StyleSheet } from "react-native";
-import { Divider } from "react-native-elements";
 
 import { VIEW_ROLE_ANGLER } from "../../constants";
 import {
@@ -45,41 +44,52 @@ const CatchReportRoute = () => {
     setLakeCatchPage(lakeCatchPage + 1);
   };
 
+  const reportHandler = (id) => {
+    goToWriteReportScreen(navigation, { id, type: "CATCH" });
+  };
+  const listEvent = [{ name: "Báo cáo bài viết", onPress: reportHandler }];
+
   useEffect(() => {
     getLocationCatchListByPage({ pageNo: lakeCatchPage });
     setLakeCatchPage(lakeCatchPage + 1);
   }, []);
-
+  const renderItem = ({ item }) => {
+    return (
+      <PressableCustomCard
+        paddingX="1"
+        onPress={() => {
+          goToCatchReportDetailScreen(navigation, {
+            id: item.id,
+          });
+        }}
+      >
+        <EventPostCard
+          postStyle="ANGLER_POST"
+          anglerName={item.userFullName}
+          anglerContent={item.description}
+          postTime={item.time}
+          fishList={item.fishes}
+          id={item.id}
+          imageAvatar={item.avatar}
+          typeUri="IMAGE"
+          uri={item.images[0]}
+          numberOfImages={item.images.length}
+          iconName={role === VIEW_ROLE_ANGLER ? "flag" : ""}
+          iconEvent={listEvent}
+        />
+      </PressableCustomCard>
+    );
+  };
   return (
     <>
       {locationCatchList.length > 0 && (
         <FlatList
+          removeClippedSubviews
+          initialNumToRender={5}
+          updateCellsBatchingPeriod={10}
+          maxToRenderPerBatch={20}
           data={locationCatchList}
-          renderItem={({ item }) => {
-            return (
-              <PressableCustomCard
-                paddingX="1"
-                onPress={() => {
-                  goToCatchReportDetailScreen(navigation, {
-                    id: item.id,
-                  });
-                }}
-              >
-                <EventPostCard
-                  postStyle="ANGLER_POST"
-                  anglerName={item.userFullName}
-                  anglerContent={item.description}
-                  postTime={item.time}
-                  fishList={item.fishes}
-                  id={item.id}
-                  imageAvatar={item.avatar}
-                  image={item.images[0]}
-                  numberOfImages={item.images.length}
-                  iconName={role === VIEW_ROLE_ANGLER ? "flag" : ""}
-                />
-              </PressableCustomCard>
-            );
-          }}
+          renderItem={renderItem}
           onEndReached={() => {
             loadMoreLakeCatchData();
           }}
@@ -99,46 +109,127 @@ const FLocationEventRoute = () => {
   const { role } = useStoreState(
     (states) => states.LocationModel.locationOverview,
   );
+  const currentPinPost = useStoreState(
+    (states) => states.LocationModel.currentPinPost,
+  );
   const getLocationPostListByPage = useStoreActions(
     (actions) => actions.LocationModel.getLocationPostListByPage,
   );
-
-  useEffect(() => {
-    getLocationPostListByPage({ pageNo: lakePostPage });
-    setLakePostPage(lakePostPage + 1);
-  }, []);
+  const getPinPost = useStoreActions(
+    (actions) => actions.LocationModel.getPinPost,
+  );
 
   const loadMoreLakePostData = () => {
     getLocationPostListByPage({ pageNo: lakePostPage });
     setLakePostPage(lakePostPage + 1);
   };
-  const reportHandler = (id, type) => {
-    goToWriteReportScreen(navigation, { id, type });
+  const reportHandler = (id) => {
+    goToWriteReportScreen(navigation, { id, type: "POST" });
   };
   const listEvent = [{ name: "Báo cáo bài viết", onPress: reportHandler }];
+
+  const renderItem = ({ item }) => {
+    let typeBadge = "";
+    switch (item.postType) {
+      case "STOCKING":
+        typeBadge = "Bồi cá";
+        break;
+      case "REPORTING":
+        typeBadge = "Báo cá";
+        break;
+      default:
+        typeBadge = "Thông báo";
+    }
+    return (
+      <Box backgroundColor="white" my="1">
+        <EventPostCard
+          postStyle="LAKE_POST"
+          iconName={role === VIEW_ROLE_ANGLER ? "flag" : ""}
+          iconEvent={listEvent}
+          typeUri={item.attachmentType}
+          id={item.id}
+          uri={item.url}
+          itemData={item}
+          lakePost={{
+            badge: typeBadge,
+            content: item.content,
+          }}
+          postTime={item.postTime}
+        />
+      </Box>
+    );
+  };
+
+  const pinPostComponent = () => (
+    <>
+      {currentPinPost.id !== undefined && (
+        <>
+          <Box
+            backgroundColor="white"
+            mb={5}
+            flexDirection="column"
+            style={{
+              borderColor: "#88E0EF",
+              borderWidth: 2,
+              borderBottomWidth: 8,
+            }}
+          >
+            <Text
+              bold
+              italic
+              fontSize="15"
+              pl={0.5}
+              textAlign="center"
+              style={{ color: "white", backgroundColor: "#88E0EF" }}
+            >
+              Bài ghim
+            </Text>
+            <EventPostCard
+              postStyle="LAKE_POST"
+              iconName={role === VIEW_ROLE_ANGLER ? "flag" : ""}
+              iconEvent={listEvent}
+              id={currentPinPost.id}
+              uri={currentPinPost.url}
+              typeUri={currentPinPost.attachmentType}
+              itemData={currentPinPost}
+              lakePost={{
+                badge:
+                  currentPinPost.postType === "STOCKING"
+                    ? "Bồi cá"
+                    : "Thông báo",
+                content: currentPinPost.content,
+              }}
+              postTime={currentPinPost.postTime}
+            />
+          </Box>
+          <Divider />
+        </>
+      )}
+    </>
+  );
+  const footerComponent = () => <Divider mt={20} />;
+
+  useEffect(() => {
+    getLocationPostListByPage({ pageNo: lakePostPage });
+    setLakePostPage(lakePostPage + 1);
+  }, []);
+  useEffect(() => {
+    getPinPost();
+  }, []);
+
   return (
     <>
       {locationPostList.length > 0 && (
         <FlatList
+          ListHeaderComponent={pinPostComponent}
+          ListFooterComponent={footerComponent}
+          removeClippedSubviews
+          initialNumToRender={5}
+          updateCellsBatchingPeriod={10}
+          maxToRenderPerBatch={20}
           data={locationPostList}
-          renderItem={({ item }) => (
-            <EventPostCard
-              lakePost={{
-                badge: item.postType === "STOCKING" ? "Bồi cá" : "Thông báo",
-                content: item.content,
-              }}
-              image={item.url}
-              postStyle="LAKE_POST"
-              edited={item.edited}
-              postTime={item.postTime}
-              id={item.id}
-              iconName={role === VIEW_ROLE_ANGLER ? "flag" : ""}
-              iconEvent={listEvent}
-            />
-          )}
-          onEndReached={() => {
-            loadMoreLakePostData();
-          }}
+          renderItem={renderItem}
+          onEndReached={loadMoreLakePostData}
           keyExtractor={(item) => item.id.toString()}
         />
       )}

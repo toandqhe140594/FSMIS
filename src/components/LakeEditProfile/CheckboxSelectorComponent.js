@@ -6,7 +6,7 @@ import { StyleSheet, Text, View } from "react-native";
 
 const styles = StyleSheet.create({
   error: { color: "#f43f5e", fontSize: 12, fontStyle: "italic" },
-  bold: { fontWeight: "bold" },
+  title: { fontSize: 16, marginBottom: 4, fontWeight: "bold" },
   text: { fontSize: 16, marginBottom: 4 },
 });
 
@@ -26,11 +26,12 @@ const CheckboxSelectorComponent = ({
   const watchSelection = useWatch({
     control,
     name: controllerName,
-    defaultValue: [],
   });
   useEffect(() => {
     if (watchSelection.length === 0) setUserSelection(placeholder);
-    else {
+    else if (watchSelection.length > 3) {
+      setUserSelection(`${watchSelection.length} lựa chọn`);
+    } else {
       const selectMethods = data.reduce((acc, { name, id }) => {
         if (watchSelection.includes(id)) return acc.concat(", ", name);
         return acc;
@@ -41,7 +42,7 @@ const CheckboxSelectorComponent = ({
   return (
     <View style={myStyles}>
       {label.length > 0 && (
-        <Text style={[styles.text, isTitle ? styles.bold : null]}>{label}</Text>
+        <Text style={isTitle ? styles.title : styles.text}>{label}</Text>
       )}
       <Select placeholder={userSelection || placeholder} fontSize="md">
         <Select.Item
@@ -50,24 +51,21 @@ const CheckboxSelectorComponent = ({
             <Controller
               control={control}
               name={controllerName}
-              render={({ field: { onChange, value } }) => {
-                // useEffect(() => {}, [value]);
-                return (
-                  <Checkbox.Group
-                    colorScheme="green"
-                    defaultValue={value}
-                    onChange={onChange}
-                    alignItems="flex-start"
-                  >
-                    {/* Display list of checkbox options */}
-                    {data.map((item) => (
-                      <Checkbox key={item.id} value={item.id} my={1} size="md">
-                        {item.name}
-                      </Checkbox>
-                    ))}
-                  </Checkbox.Group>
-                );
-              }}
+              render={({ field: { onChange, value } }) => (
+                <Checkbox.Group
+                  colorScheme="green"
+                  defaultValue={value}
+                  onChange={onChange}
+                  alignItems="flex-start"
+                >
+                  {/* Display list of checkbox options */}
+                  {data.map((item) => (
+                    <Checkbox key={item.id} value={item.id} my={1} size="md">
+                      {item.name}
+                    </Checkbox>
+                  ))}
+                </Checkbox.Group>
+              )}
             />
           }
         />

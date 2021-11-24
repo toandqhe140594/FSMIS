@@ -15,6 +15,14 @@ const FManageVerifyCheckinScreen = () => {
     (states) => states.FManageModel.anglerCheckinOverviewInfor,
   );
 
+  const goBackToScanQRCodeScreen = () => {
+    goBack(navigation);
+  };
+
+  const goToManagementScreen = () => {
+    navigation.pop(2);
+  };
+
   return (
     <Box flex={1}>
       <HeaderTab name="Thông tin" />
@@ -38,23 +46,10 @@ const FManageVerifyCheckinScreen = () => {
       </Box>
       <Box flex={1} />
       <Center mb={3}>
-        <Button
-          w="50%"
-          size="md"
-          mb={2}
-          onPress={() => {
-            goBack(navigation);
-          }}
-        >
+        <Button w="50%" size="md" mb={2} onPress={goBackToScanQRCodeScreen}>
           Tiếp tục
         </Button>
-        <Button
-          w="50%"
-          size="md"
-          onPress={() => {
-            navigation.pop(2);
-          }}
-        >
+        <Button w="50%" size="md" onPress={goToManagementScreen}>
           Màn hình quản lý
         </Button>
       </Center>

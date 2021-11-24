@@ -2,12 +2,16 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React from "react";
 
 import { ROUTE_NAMES } from "../constants";
+import UtilModel from "../models/UtilModel";
 import ChangePasswordScreen from "../screens/ChangePasswordScreen";
 import ForgotPasswordScreen from "../screens/ForgotPasswordScreen";
 import LoginScreen from "../screens/LoginScreen";
 import OTPScreen from "../screens/OTPScreen";
 import RegisterInformationScreen from "../screens/RegisterInformationScreen";
 import RegisterScreen from "../screens/RegisterScreen";
+import store from "../utilities/Store";
+
+store.addModel("UtilModel", UtilModel);
 
 const AuthenticationStack = createNativeStackNavigator();
 

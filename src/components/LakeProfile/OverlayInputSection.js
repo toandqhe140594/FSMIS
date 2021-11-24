@@ -19,15 +19,16 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     alignSelf: "center",
-    marginBottom: 20,
+    marginBottom: 12,
   },
   inputWrapper: {
     flexDirection: "row",
     alignItems: "center",
     margin: 4,
   },
-  input: { flexGrow: 1 },
+  input: { width: "65%" },
   text: { fontSize: 16, width: "35%" },
+  hint: { fontStyle: "italic", marginBottom: 6, alignSelf: "center" },
 });
 
 const OverlayInputSection = ({ id, name, visible, toggleOverlay }) => {
@@ -38,25 +39,57 @@ const OverlayInputSection = ({ id, name, visible, toggleOverlay }) => {
   );
   const methods = useForm({
     mode: "onSubmit",
-    reValidateMode: "onSubmit",
-    resolver: yupResolver(SCHEMA.FISH_EDIT_FORM),
+    reValidateMode: "onChange",
+    defaultValues: { quantity: 0, weight: 0 },
+    resolver: yupResolver(SCHEMA.FMANAGE_LAKE_FISH_EDIT_FORM),
   });
-  const { handleSubmit, clearErrors, reset } = methods;
+  const { handleSubmit, clearErrors, reset, watch, setValue } = methods;
+  const watchQuantity = watch("quantity", 0);
+  const watchWeight = watch("weight", 0);
   /**
    * To exit overlay, reset any error or previous input by use
    * setIsLoading to false
    * set visible to false to hide overlay
    */
   const handleOnExit = () => {
-    reset({ quantity: "", weight: "" }); // this reset will not work with select dropdown
+    reset({ quantity: 0, weight: 0 }); // this reset will not work with select dropdown
     clearErrors(["quantity", "weight"]);
     setIsLoading(false);
     toggleOverlay({ visible: false });
   };
+
   const onSubmit = (data) => {
+    // if (bothFieldNotEmpty()) {
     setIsLoading(true);
-    stockFishInLake({ ...data, id, setUpdateStatus });
+    const updateData = Object.fromEntries(
+      Object.entries(data).filter((keyValPair) => keyValPair[1] !== 0),
+    );
+    stockFishInLake({ updateData, id, setUpdateStatus });
+    // }
   };
+
+  /**
+   * Reset quantity "" to 0
+   * Fire when use deletes the value
+   */
+  useEffect(() => {
+    if (watchQuantity === "") {
+      setValue("quantity", 0);
+      clearErrors("quantity");
+    }
+  }, [watchQuantity]);
+
+  /**
+   * Reset weight "" to 0
+   * Fire when use deletes the value
+   */
+  useEffect(() => {
+    if (watchWeight === "") {
+      setValue("weight", 0);
+      clearErrors("weight");
+    }
+  }, [watchWeight]);
+
   useEffect(() => {
     if (updateStatus === "SUCCESS") {
       setIsLoading(false);
@@ -71,12 +104,9 @@ const OverlayInputSection = ({ id, name, visible, toggleOverlay }) => {
   }, [updateStatus]);
 
   return (
-    <Overlay
-      overlayStyle={styles.overlayContainer}
-      isVisible={visible}
-      onBackdropPress={handleOnExit}
-    >
+    <Overlay overlayStyle={styles.overlayContainer} isVisible={visible}>
       <Text style={styles.title}>Bồi cá</Text>
+      <Text style={styles.hint}>Lưu ý: Chỉ cần một trong hai trường</Text>
       <FormProvider {...methods}>
         <View style={styles.inputWrapper}>
           <Text style={styles.text}>Loại cá</Text>
@@ -90,6 +120,7 @@ const OverlayInputSection = ({ id, name, visible, toggleOverlay }) => {
             placeholder="Nhập số con muốn bồi"
             controllerName="quantity"
             useNumPad
+            // shouldDisable={watchWeight.length > 0}
           />
         </View>
         <View style={styles.inputWrapper}>
@@ -100,6 +131,7 @@ const OverlayInputSection = ({ id, name, visible, toggleOverlay }) => {
             placeholder="Nhập cân nặng đợt bồi (kg)"
             controllerName="weight"
             useNumPad
+            // shouldDisable={watchQuantity.length > 0}
           />
         </View>
         <View

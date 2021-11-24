@@ -1,6 +1,11 @@
 import { MaterialIcons } from "@expo/vector-icons";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useNavigation } from "@react-navigation/native";
+import {
+  useFocusEffect,
+  useNavigation,
+  useRoute,
+} from "@react-navigation/native";
+import { useStoreActions } from "easy-peasy";
 import {
   Box,
   Button,
@@ -12,35 +17,25 @@ import {
   Text,
   VStack,
 } from "native-base";
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import {
   KeyboardAvoidingView,
   ScrollView,
   useWindowDimensions,
 } from "react-native";
-import * as yup from "yup";
 
-import { phoneRegExp } from "../constants";
-import { goToLoginScreen, goToRegisterInformationScreen } from "../navigations";
-
-const validationSchema = yup.object().shape({
-  phoneNumber: yup
-    .string()
-    .required("Số điện thoại không thể bỏ trống")
-    .matches(phoneRegExp, "Số điện thoại không hợp lệ")
-    .label("PhoneNumber"),
-  password: yup
-    .string()
-    .required("Mật khẩu không thể bỏ trống")
-    .min(8, "Mật khẩu phải chứa ít nhất 8 ký tự"),
-  passwordConfirmation: yup
-    .string()
-    .oneOf([yup.ref("password"), null], "Mật khẩu không khớp"),
-});
+import { ROUTE_NAMES, SCHEMA } from "../constants";
+import {
+  goToLoginScreen,
+  goToOTPScreen,
+  goToRegisterInformationScreen,
+} from "../navigations";
+import { showToastMessage } from "../utilities";
 
 const RegisterScreen = () => {
   const navigation = useNavigation();
+  const route = useRoute();
   const {
     control,
     handleSubmit,
@@ -48,25 +43,65 @@ const RegisterScreen = () => {
   } = useForm({
     mode: "onChange",
     reValidateMode: "onChange",
-    resolver: yupResolver(validationSchema),
+    resolver: yupResolver(SCHEMA.REGISTER_PHONE_AND_PASS_FORM),
   });
+  const sendOtp = useStoreActions((actions) => actions.UtilModel.sendOtp);
   const [visible, setVisible] = useState(false); // Visible state of password field
   const [visibleConfirmation, setVisibleConfirmation] = useState(false); // Visible state of password confirmation field
+  const [accountData, setAccountData] = useState({});
+  const [otpSendSuccess, setOtpSendSuccess] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const togglePasswordVisible = () => {
+    setVisible(!visible);
+  };
+
+  const togglePasswordConfirmationVisible = () => {
+    setVisibleConfirmation(!visibleConfirmation);
+  };
 
   // Event fire when submit form
   const onSubmit = (data) => {
-    console.log(data); // Test only
-    goToRegisterInformationScreen(navigation);
+    setAccountData(data);
+    setLoading(true);
+    sendOtp({
+      phone: data.phoneNumber,
+      setSuccess: setOtpSendSuccess,
+      existedStatus: "NONEXISTED",
+    });
   };
+
+  const navigateToLoginScreenAction = () => {
+    goToLoginScreen(navigation);
+  };
+
+  useFocusEffect(
+    // useCallback will listen to route.param
+    useCallback(() => {
+      if (route.params?.otpSuccess === true)
+        goToRegisterInformationScreen(navigation, {
+          phone: accountData.phoneNumber,
+          password: accountData.password,
+        });
+    }, [route.params]),
+  );
+
+  useEffect(() => {
+    if (otpSendSuccess === true) {
+      goToOTPScreen(navigation, ROUTE_NAMES.REGISTER, accountData.phoneNumber);
+    }
+    if (otpSendSuccess === false)
+      showToastMessage("Số điện thoại không hợp lệ hoặc đã tồn tại");
+    setLoading(false);
+    setOtpSendSuccess(null);
+  }, [otpSendSuccess]);
+
+  const minHeight = Math.round(useWindowDimensions().height - 50);
 
   return (
     <KeyboardAvoidingView>
       <ScrollView>
-        <Center
-          flex={1}
-          justifyContent="center"
-          minHeight={Math.round(useWindowDimensions().height - 50)}
-        >
+        <Center flex={1} justifyContent="center" minHeight={minHeight}>
           <VStack
             flex={1}
             justifyContent="center"
@@ -150,7 +185,7 @@ const RegisterScreen = () => {
                     position="absolute"
                     right={0}
                     w="20%"
-                    onPress={() => setVisible(!visible)}
+                    onPress={togglePasswordVisible}
                   />
                 </Box>
               )}
@@ -201,7 +236,7 @@ const RegisterScreen = () => {
                     position="absolute"
                     right={0}
                     w="20%"
-                    onPress={() => setVisibleConfirmation(!visibleConfirmation)}
+                    onPress={togglePasswordConfirmationVisible}
                   />
                 </Box>
               )}
@@ -213,19 +248,20 @@ const RegisterScreen = () => {
             )}
 
             {/* Submit button */}
-            <Button mt={3} size="lg" onPress={handleSubmit(onSubmit)}>
+            <Button
+              mt={3}
+              size="lg"
+              onPress={handleSubmit(onSubmit)}
+              isLoading={loading}
+              isDisabled={loading}
+            >
               Đăng ký
             </Button>
           </VStack>
 
           <Text mb={6}>
             Bạn chưa có tài khoản?{" "}
-            <Text
-              underline
-              onPress={() => {
-                goToLoginScreen(navigation);
-              }}
-            >
+            <Text underline onPress={navigateToLoginScreenAction}>
               Đăng nhập
             </Text>
           </Text>

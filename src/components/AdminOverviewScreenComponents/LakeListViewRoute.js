@@ -18,7 +18,7 @@ const LakeListViewRoute = () => {
   }, []);
 
   useEffect(() => {
-    if (lakeList) setLoading(false);
+    if (lakeList !== null) setLoading(false);
   }, [lakeList]);
 
   return (

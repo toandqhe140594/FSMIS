@@ -1,110 +1,200 @@
+import { useNavigation } from "@react-navigation/native";
+import { useStoreActions, useStoreState } from "easy-peasy";
 import { Button, VStack } from "native-base";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { Dimensions, StyleSheet, View } from "react-native";
+import { ActivityIndicator, Dimensions, StyleSheet, View } from "react-native";
+import { Overlay } from "react-native-elements";
 
+import FishCheckboxSelector from "../components/AdvanceSearch/FishCheckboxSelector";
+import MethodCheckboxSelector from "../components/AdvanceSearch/MethodCheckboxSelector";
 import InputComponent from "../components/common/InputComponent";
+import ProvinceSelector from "../components/common/ProvinceSelector";
 import SelectComponent from "../components/common/SelectComponent";
 import HeaderTab from "../components/HeaderTab";
-import CheckboxSelectorComponent from "../components/LakeEditProfile/CheckboxSelectorComponent";
+import { showToastMessage } from "../utilities";
 
-const fishingMethodData = ["Câu đài", "Câu đơn", "Câu lục"];
+const OFFSET_BOTTOM = 80;
+// Get window height without status bar height
+const CUSTOM_SCREEN_HEIGHT = Dimensions.get("window").height - OFFSET_BOTTOM;
 
-const fishTypeData = ["Cá diếc", "Cá chép", "Cá đầu bìu"];
-
-const ratingData = [
-  { label: "1 sao", val: 1 },
-  { label: "2 sao", val: 2 },
-  { label: "3 sao", val: 3 },
-  { label: "4 sao", val: 4 },
-  { label: "5 sao", val: 5 },
-];
-
-const cityData = [
-  { label: "Hà Nội", val: 1 },
-  { label: "Hồ Chí Minh", val: 2 },
+const scoreData = [
+  { id: 0, name: "Tất cả" },
+  { id: 4, name: "Trên 4 sao" },
+  { id: 3, name: "Trên 3 sao" },
+  { id: 2, name: "Trên 2 sao" },
+  { id: 1, name: "Trên 1 sao" },
 ];
 
 const styles = StyleSheet.create({
   appContainer: {
-    paddingTop: 16,
+    height: CUSTOM_SCREEN_HEIGHT,
   },
-  section: {
-    flex: 1,
-    justifyContent: "center",
+  sectionWrapper: {
+    flexGrow: 1,
     alignItems: "center",
+    marginTop: 8,
   },
-  sectionWrapper: { width: "90%" },
   buttonWrapper: {
-    width: "90%",
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "space-evenly",
     alignItems: "center",
   },
   button: {
     width: "47%",
   },
+  loadOnStart: { justifyContent: "center", alignItems: "center" },
+  loadOnSubmit: {
+    backgroundColor: "transparent",
+    justifyContent: "center",
+    alignItems: "center",
+  },
 });
 
-const OFFSET_BOTTOM = 85;
-// Get window height without status bar height
-const CUSTOM_SCREEN_HEIGHT = Dimensions.get("window").height - OFFSET_BOTTOM;
-
 const AnglerAdvanceSearchScreen = () => {
+  const navigation = useNavigation();
+  const [isLoading, setIsLoading] = useState(true);
+  const [fullScreen, setFullScreen] = useState(true);
+  const [submitStatus, setSubmitStatus] = useState(null);
+  const { getFishingMethodList } = useStoreActions(
+    (actions) => actions.FishingMethodModel,
+  );
+  const { prevStateData } = useStoreState((state) => state.AdvanceSearchModel);
+  const { getFishList } = useStoreActions((actions) => actions.FishModel);
+  const { getAllProvince } = useStoreActions((actions) => actions.AddressModel);
+  const { resetPrevStateData, searchFishingLocation } = useStoreActions(
+    (actions) => actions.AdvanceSearchModel,
+  );
+
   const methods = useForm({
-    mode: "onChange",
-    defaultValues: { fishingMethods: [], fishTypes: [] },
-    reValidateMode: "onChange",
+    mode: "onSubmit",
+    reValidateMode: "onSubmit",
+    defaultValues: {
+      input: prevStateData.input,
+      fishingMethodIdList: prevStateData.fishingMethodIdList || [],
+      fishSpeciesIdList: prevStateData.fishSpeciesIdList || [],
+      provinceIdList: prevStateData.provinceIdList[0] || 0,
+      score: prevStateData.score,
+    },
   });
-  const { handleSubmit } = methods;
+  const { handleSubmit, setValue } = methods;
+
   const onSubmit = (data) => {
-    console.log(data);
+    setIsLoading(true);
+    const provinceIdList =
+      data.provinceIdList === 0 ? [] : [data.provinceIdList];
+    const submitData = { ...data, provinceIdList };
+    searchFishingLocation({ setSubmitStatus, submitData });
   };
+
+  /**
+   * Reset last store selected state in easy peasy
+   * and field on the screen
+   */
+  const handleReset = () => {
+    resetPrevStateData();
+    setValue("input", "");
+    setValue("provinceIdList", 0);
+    setValue("fishingMethodIdList", []);
+    setValue("fishSpeciesIdList", []);
+    setValue("score", 0);
+  };
+
+  /**
+   * Get all api data for select options
+   */
+  useEffect(() => {
+    Promise.all([getAllProvince(), getFishingMethodList(), getFishList()]).then(
+      () => {
+        setIsLoading(false);
+        setFullScreen(false);
+      },
+    );
+    const timeoutId = setTimeout(() => {
+      setIsLoading(false);
+      setFullScreen(false);
+    }, 10000);
+    return () => {
+      clearTimeout(timeoutId);
+    };
+  }, []);
+
+  /**
+   * Trigget when submit status returns
+   */
+  useEffect(() => {
+    if (submitStatus === "SUCCESS") {
+      setSubmitStatus(null);
+      navigation.pop(1);
+    } else if (submitStatus === "FAILED") {
+      setIsLoading(false);
+      setSubmitStatus(null);
+      showToastMessage("Đã có lỗi xảy ra! Vui lòng thử lại sau");
+    }
+  }, [submitStatus]);
   return (
     <>
       <HeaderTab name="Tìm kiếm nâng cao" />
-      <View style={[styles.appContainer, { height: CUSTOM_SCREEN_HEIGHT }]}>
+      <Overlay
+        isVisible={isLoading && fullScreen}
+        fullScreen
+        overlayStyle={styles.loadOnStart}
+      >
+        <ActivityIndicator size={60} color="#2089DC" />
+      </Overlay>
+      <View style={styles.appContainer}>
         <FormProvider {...methods}>
-          <View style={styles.section}>
-            <VStack flex={10} space={2} style={[styles.sectionWrapper]}>
-              <InputComponent
-                label="Từ khoá tìm kiếm"
-                placeholder="Nhập số điện thoại, tên hồ câu"
-                controllerName="searchTerm"
-              />
-              <SelectComponent
-                label="Thành phố"
-                placeholder="Lọc theo thành phố"
-                data={cityData}
-                controllerName="citySelected"
-              />
-              <CheckboxSelectorComponent
-                label="Loại hình câu"
-                placeholder="Chọn loại hình câu"
-                data={fishingMethodData}
-                controllerName="fishingMethods"
-              />
-              <CheckboxSelectorComponent
-                label="Loại cá"
-                placeholder="Chọn loại cá"
-                data={fishTypeData}
-                controllerName="fishTypes"
-              />
-              <SelectComponent
-                label="Đánh giá"
-                placeholder="Lọc theo đánh giá"
-                data={ratingData}
-                controllerName="rating"
-              />
-            </VStack>
-            <View style={styles.buttonWrapper}>
-              <Button variant="outline" style={styles.button}>
-                Xoá bộ lọc
-              </Button>
-              <Button style={styles.button} onPress={handleSubmit(onSubmit)}>
-                Tìm kiếm
-              </Button>
-            </View>
+          <VStack flex={1} space={2} style={styles.sectionWrapper}>
+            <InputComponent
+              myStyles={{ width: "90%", marginBottom: 4 }}
+              label="Từ khoá tìm kiếm"
+              placeholder="Nhập số điện thoại, tên hồ câu"
+              controllerName="input"
+            />
+            <ProvinceSelector
+              containerStyle={{ width: "90%" }}
+              label="Tỉnh/Thành phố"
+              placeholder="Chọn tỉnh/thành phố"
+              controllerName="provinceIdList"
+            />
+            <MethodCheckboxSelector
+              containerStyle={{ width: "90%" }}
+              label="Loại hình câu"
+              placeholder="Chọn loại hình câu"
+              controllerName="fishingMethodIdList"
+            />
+            <FishCheckboxSelector
+              containerStyle={{ width: "90%" }}
+              label="Loại cá"
+              placeholder="Chọn loại cá"
+              controllerName="fishSpeciesIdList"
+            />
+            <SelectComponent
+              myStyles={{ width: "90%" }}
+              label="Đánh giá"
+              placeholder="Lọc theo đánh giá"
+              data={scoreData}
+              controllerName="score"
+            />
+          </VStack>
+          <View style={styles.buttonWrapper}>
+            <Button
+              variant="outline"
+              style={styles.button}
+              isLoading={isLoading}
+              isLoadingText="Đang tìm kiếm"
+              onPress={handleReset}
+            >
+              Xoá bộ lọc
+            </Button>
+            <Button
+              style={styles.button}
+              isLoading={isLoading}
+              isLoadingText="Đang tìm kiếm"
+              onPress={handleSubmit(onSubmit)}
+            >
+              Tìm kiếm
+            </Button>
           </View>
         </FormProvider>
       </View>
