@@ -131,8 +131,8 @@ const FManageEditProfileScreen = () => {
     const images = data.imageArray.map((image) => image.base64);
     delete data.imageArray;
     const updateData = { ...data, ...locationLatLng, images };
-    // New phone inupt need OTP validation
-    if (data.phone !== locationDetails.phone) {
+    // New phone input need OTP validation
+    if (updateData.phone !== locationDetails.phone) {
       locationData.current = updateData;
       sendOtp({ phone: data.phone, setSuccess: setOtpSendSuccess });
     } else {
