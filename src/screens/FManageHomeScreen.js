@@ -61,7 +61,7 @@ const FManageHomeScreen = () => {
   if (!role || !locationDetails.id)
     return (
       <Box flex={1} justifyContent="center" alignItems="center">
-        <ActivityIndicator size="large" color="blue" />
+        <ActivityIndicator size={60} color="#2089DC" />
       </Box>
     );
 

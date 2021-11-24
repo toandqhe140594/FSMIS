@@ -8,7 +8,11 @@ import AvatarCard from "../components/AvatarCard";
 import ReviewFromAnglerSection from "../components/ReviewFromAnglerSection";
 import styles from "../config/styles";
 import { goToAdminFLocationOverviewScreen } from "../navigations";
-import { showAlertAbsoluteBox, showAlertConfirmBox } from "../utilities";
+import {
+  showAlertAbsoluteBox,
+  showAlertBox,
+  showAlertConfirmBox,
+} from "../utilities";
 
 const AdminReportReviewDetailScreen = () => {
   const route = useRoute();
@@ -17,6 +21,7 @@ const AdminReportReviewDetailScreen = () => {
   const [isSuccess, setIsSuccess] = useState(null);
   const [isSolvedSuccess, setIsSolvedSuccess] = useState(null); // post solved report handler success
   const [isLoading, setIsLoading] = useState(null);
+  const [isDeleteSuccess, setIsDeleteSuccess] = useState(null);
   const [reportId, setReportId] = useState();
   const reviewReportDetail = useStoreState(
     (states) => states.ReportModel.reviewReportDetail,
@@ -33,7 +38,7 @@ const AdminReportReviewDetailScreen = () => {
   );
 
   const deleteReviewHandler = () => {
-    deleteReview({ id: reviewDtoOut.id, setIsSuccess: setIsSolvedSuccess });
+    deleteReview({ id: reviewDtoOut.id, setIsSuccess: setIsDeleteSuccess });
     setIsLoading(true);
   };
 
@@ -129,7 +134,7 @@ const AdminReportReviewDetailScreen = () => {
       <AvatarCard
         avatarSize="md"
         nameUser={item.userFullName}
-        images={item.userAvatar}
+        image={item.userAvatar}
         subText={item.time}
         subTextFontSize="12"
       />
@@ -181,7 +186,19 @@ const AdminReportReviewDetailScreen = () => {
     setIsLoading(false);
     setIsSolvedSuccess(null);
   }, [isSolvedSuccess]);
-
+  useEffect(() => {
+    if (isDeleteSuccess === true) {
+      showAlertBox(
+        "Thành công",
+        `Review của ${reviewDtoOut.userFullName} đã được xóa`,
+      );
+    }
+    if (isDeleteSuccess === false) {
+      showAlertBox("Lỗi", `Đã xảy ra lỗi, vui lòng thử lại.`);
+    }
+    setIsLoading(false);
+    setIsDeleteSuccess(null);
+  }, [isDeleteSuccess]);
   return (
     <AdminReport
       isActive={isActive}

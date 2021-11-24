@@ -79,7 +79,6 @@ const FManageCheckinHistoryScreen = () => {
           base: "100%",
           md: "25%",
         }}
-        backgroundColor="white"
       >
         <Modal
           isOpen={modalVisible}
@@ -93,8 +92,8 @@ const FManageCheckinHistoryScreen = () => {
               <CalendarPicker
                 allowRangeSelection
                 scrollable
-                todayBackgroundColor="#e6ffe6"
-                selectedDayColor="#66ff33"
+                todayBackgroundColor="#00e673"
+                selectedDayColor="#00ccff"
                 selectedDayTextColor="#000000"
                 onDateChange={dateChangeHandler}
               />
@@ -110,9 +109,9 @@ const FManageCheckinHistoryScreen = () => {
           minWidth="200"
           accessibilityLabel="Chọn chế độ lọc"
           placeholder="Chọn chế độ lọc"
-          backgroundColor="light.500"
+          backgroundColor="#ffffff"
           _selectedItem={{
-            bg: "teal.600",
+            bg: "primary.200",
             endIcon: <CheckIcon size="5" />,
           }}
           mt={1}

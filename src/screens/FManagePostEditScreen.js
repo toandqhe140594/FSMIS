@@ -10,7 +10,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { Dimensions, ScrollView, StyleSheet, View } from "react-native";
 
-import InputComponent from "../components/common/InputComponent";
+import InputWithClipboard from "../components/common/InputWithClipboard";
 import MultiImageSection from "../components/common/MultiImageSection";
 import SelectComponent from "../components/common/SelectComponent";
 import TextAreaComponent from "../components/common/TextAreaComponent";
@@ -31,10 +31,6 @@ const attachmentData = [
 ];
 const styles = StyleSheet.create({
   sectionWrapper: {
-    width: "90%",
-    flex: 2,
-  },
-  buttonWrapper: {
     width: "90%",
   },
   center: {
@@ -80,45 +76,20 @@ const PostEditScreen = () => {
       setValue("imageArray", [{ id: 1, base64: currentPost.url }]);
     }
     if (watchAttachmentType === "VIDEO") {
-      setValue("postVideoLink", currentPost.url);
+      setValue("mediaUrl", currentPost.url);
     }
   };
 
   useEffect(() => {
     setDefaultValues();
   }, []);
-  /**
-   * Reset previous input when switching
-   * new attachment type
-   */
-  useEffect(() => {
-    switch (watchAttachmentType) {
-      case "IMAGE":
-        if (getValues("postVideoLink")) {
-          setValue("postVideoLink", "");
-        }
-        break;
-      case "VIDEO":
-        if (getValues("imageArray")?.length > 0) {
-          setValue("imageArray", []);
-        }
-        break;
-      default:
-        if (getValues("imageArray")?.length > 0) {
-          setValue("imageArray", []);
-        }
-        if (getValues("postVideoLink")) {
-          setValue("postVideoLink", "");
-        }
-    }
-  }, [watchAttachmentType]);
 
   const setAttachmentUrl = (type) => {
     switch (type) {
       case "IMAGE":
         return getValues("imageArray")[0].base64;
       case "VIDEO":
-        return getValues("postVideoLink");
+        return getValues("mediaUrl");
       default:
         return "";
     }
@@ -126,15 +97,10 @@ const PostEditScreen = () => {
   const onSubmit = (data) => {
     setLoadingButton(true);
     const url = setAttachmentUrl(watchAttachmentType);
-    const updateData = {
-      ...data,
-      id: currentPost.id,
-      url,
-    };
-    editPost({
-      updateData,
-      setUpdateStatus,
-    });
+    delete data.imageArray;
+    delete data.mediaUrl;
+    const updateData = { ...data, id: currentPost.id, url };
+    editPost({ updateData, setUpdateStatus });
   };
 
   // Fire when navigates back to this screen
@@ -176,7 +142,7 @@ const PostEditScreen = () => {
             marginTop: 8,
           }}
         >
-          <View style={styles.sectionWrapper}>
+          <View style={StyleSheet.compose(styles.sectionWrapper, { flex: 1 })}>
             <VStack space={2} mb={2}>
               <SelectComponent
                 label="Sự kiện"
@@ -186,8 +152,8 @@ const PostEditScreen = () => {
               />
               <TextAreaComponent
                 label="Miêu tả"
-                placeholder=""
-                numberOfLines={3}
+                placeholder="Nội dung của bài đăng"
+                numberOfLines={6}
                 controllerName="content"
               />
               <SelectComponent
@@ -198,10 +164,10 @@ const PostEditScreen = () => {
               />
 
               {watchAttachmentType === "VIDEO" && (
-                <InputComponent
-                  placeholder="Nhập link vào đây"
+                <InputWithClipboard
                   label="Đường dẫn"
-                  controllerName="postVideoLink"
+                  placeholder="Nhập mã nhúng video"
+                  controllerName="mediaUrl"
                 />
               )}
             </VStack>
@@ -213,7 +179,7 @@ const PostEditScreen = () => {
               />
             )}
           </View>
-          <View style={styles.buttonWrapper}>
+          <View style={styles.sectionWrapper}>
             <Button
               onPress={handleSubmit(onSubmit)}
               isLoading={loadingButton}

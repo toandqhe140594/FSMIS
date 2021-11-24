@@ -156,12 +156,11 @@ const EditProfileScreen = () => {
    * Set up the screen
    */
   useEffect(() => {
-    (async () => {
+    getAllProvince().then(() => {
       setDate(moment(userInfo.dob.split(" ")[0], "DD/MM/YYYY").toDate());
-      await getAllProvince();
       setIsLoading(false);
       setFullScreen(false);
-    })();
+    });
     const loadingId = setTimeout(() => {
       setIsLoading(false);
       setFullScreen(false);

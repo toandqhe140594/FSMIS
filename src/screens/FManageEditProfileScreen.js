@@ -6,13 +6,14 @@ import {
 } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, Button, Center, Divider, Stack, Text, VStack } from "native-base";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { ActivityIndicator, ScrollView, StyleSheet } from "react-native";
 import { Overlay } from "react-native-elements";
 
 import DistrictSelector from "../components/common/DistrictSelector";
 import InputComponent from "../components/common/InputComponent";
+import InputWithClipboard from "../components/common/InputWithClipboard";
 import MultiImageSection from "../components/common/MultiImageSection";
 import ProvinceSelector from "../components/common/ProvinceSelector";
 import TextAreaComponent from "../components/common/TextAreaComponent";
@@ -20,6 +21,7 @@ import WardSelector from "../components/common/WardSelector";
 import MapOverviewBox from "../components/FLocationEditProfile/MapOverviewBox";
 import HeaderTab from "../components/HeaderTab";
 import { ROUTE_NAMES, SCHEMA } from "../constants";
+import { goToOTPScreen } from "../navigations";
 import { showAlertBox } from "../utilities";
 
 const styles = StyleSheet.create({
@@ -83,8 +85,9 @@ const INPUT_LOCATION_RULE_PLACEHOLDER = "Miêu tả nội quy khu hồ";
 
 const FManageEditProfileScreen = () => {
   const route = useRoute();
+  const locationData = useRef(null);
   const navigation = useNavigation();
-  const [getStatus, setGetStatus] = useState(null);
+  const [otpSendSuccess, setOtpSendSuccess] = useState(null);
   const [updateStatus, setUpdateStatus] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [fullScreen, setFullScreen] = useState(true);
@@ -97,6 +100,7 @@ const FManageEditProfileScreen = () => {
   const { editFishingLocation } = useStoreActions(
     (actions) => actions.FManageModel,
   );
+  const sendOtp = useStoreActions((actions) => actions.UtilModel.sendOtp);
   const methods = useForm({
     mode: "onSubmit",
     reValidateMode: "onSubmit",
@@ -127,15 +131,20 @@ const FManageEditProfileScreen = () => {
     const images = data.imageArray.map((image) => image.base64);
     delete data.imageArray;
     const updateData = { ...data, ...locationLatLng, images };
-    editFishingLocation({ updateData, setUpdateStatus });
+    // New phone input need OTP validation
+    if (updateData.phone !== locationDetails.phone) {
+      locationData.current = updateData;
+      sendOtp({ phone: updateData.phone, setSuccess: setOtpSendSuccess });
+    } else {
+      editFishingLocation({ updateData, setUpdateStatus });
+    }
   };
 
   useEffect(() => {
-    (async () => {
-      await getAllProvince();
+    getAllProvince().then(() => {
       setIsLoading(false);
       setFullScreen(false);
-    })();
+    });
     const loadingId = setTimeout(() => {
       setIsLoading(false);
       setFullScreen(false);
@@ -154,15 +163,33 @@ const FManageEditProfileScreen = () => {
         setValue(FORM_FIELD_IMAGE_ARRAY, route.params.base64Array);
         navigation.setParams({ base64Array: [] });
       }
+      if (route.params?.otpSuccess) {
+        setIsLoading(true);
+        editFishingLocation({
+          updateData: locationData.current,
+          setUpdateStatus,
+        });
+      }
     }, [route.params]),
   );
 
+  /**
+   * Triggers when otp status returns
+   */
   useEffect(() => {
-    if (getStatus === STATUS_SUCCESS) {
-      // setFieldLoading(false);
-      setGetStatus(null);
+    if (otpSendSuccess === true) {
+      goToOTPScreen(
+        navigation,
+        ROUTE_NAMES.FMANAGE_PROFILE_ADD_NEW,
+        locationData.current.phone,
+      );
+      setIsLoading(false);
+      setOtpSendSuccess(null);
+    } else if (otpSendSuccess === false) {
+      setIsLoading(false);
+      setOtpSendSuccess(null);
     }
-  }, [getStatus]);
+  }, [otpSendSuccess]);
 
   /**
    * Fire when status is updated form api call
@@ -221,10 +248,9 @@ const FManageEditProfileScreen = () => {
                 <InputComponent
                   label={LOCATION_PHONE_LABEL}
                   placeholder={INPUT_LOCATION_PHONE_PLACEHOLDER}
-                  shouldDisable
                   controllerName={FORM_FIELD_LOCATION_PHONE}
                 />
-                <InputComponent
+                <InputWithClipboard
                   label={LOCATION_WEBSITE_LABEL}
                   placeholder={INPUT_LOCATION_WEBSITE_PLACEHOLDER}
                   controllerName={FORM_FIELD_LOCATION_WEBSITE}
@@ -287,7 +313,7 @@ const FManageEditProfileScreen = () => {
                 isTitle
                 hasAsterisk
                 placeholder={INPUT_LOCATION_TIMETABLE_PLACEHOLDER}
-                numberOfLines={3}
+                numberOfLines={6}
                 controllerName={FORM_FIELD_LOCATION_TIMETABLE}
               />
             </Center>
@@ -300,7 +326,7 @@ const FManageEditProfileScreen = () => {
                 isTitle
                 hasAsterisk
                 placeholder={INPUT_LOCATION_SERVICE_PLACEHOLDER}
-                numberOfLines={3}
+                numberOfLines={6}
                 controllerName={FORM_FIELD_LOCATION_SERVICE}
               />
             </Center>
@@ -313,7 +339,7 @@ const FManageEditProfileScreen = () => {
                 isTitle
                 hasAsterisk
                 placeholder={INPUT_LOCATION_RULE_PLACEHOLDER}
-                numberOfLines={3}
+                numberOfLines={6}
                 controllerName={FORM_FIELD_LOCATION_RULE}
               />
             </Center>
