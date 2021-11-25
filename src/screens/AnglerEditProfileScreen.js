@@ -1,26 +1,18 @@
-import { Entypo } from "@expo/vector-icons";
 import { yupResolver } from "@hookform/resolvers/yup";
-import DateTimePicker from "@react-native-community/datetimepicker";
 import {
   useFocusEffect,
   useNavigation,
   useRoute,
 } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
-import { Button, Center, Icon, Input, Text, VStack } from "native-base";
+import { Button, Center, VStack } from "native-base";
 import React, { useCallback, useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import {
-  ActivityIndicator,
-  Alert,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ActivityIndicator, Alert, ScrollView, StyleSheet } from "react-native";
 import { Overlay } from "react-native-elements";
 
 import AvatarSection from "../components/AnglerEditProfile/AvatarSection";
+import DatePickerInput from "../components/common/DatePickerInput";
 import DistrictSelector from "../components/common/DistrictSelector";
 import InputComponent from "../components/common/InputComponent";
 import ProvinceSelector from "../components/common/ProvinceSelector";
@@ -30,10 +22,6 @@ import HeaderTab from "../components/HeaderTab";
 import moment from "../config/moment";
 import { SCHEMA } from "../constants";
 import { showAlertBox } from "../utilities";
-
-const CalendarIcon = () => (
-  <Icon as={<Entypo name="calendar" />} size={5} mr={1} color="muted.500" />
-);
 
 const genderList = [
   { id: true, name: "Nam" },
@@ -63,7 +51,9 @@ const FORM_FIELD_ADDRESS = "address";
 const FORM_FIELD_PROVINCE = "provinceId";
 const FORM_FIELD_DISTRICT = "districtId";
 const FORM_FIELD_WARD = "wardId";
+const FORM_FIELD_DOB = "dob";
 
+const DOB_LABEL = "Ngày sinh";
 const FULL_NAME_LABEL = "Họ và tên";
 const GENDER_LABEL = "Giới tính";
 const ADDRESS_LABEL = "Địa chỉ";
@@ -82,12 +72,8 @@ const SELECT_WARD_PLACEHOLDER = "Chọn phường/xã";
 const EditProfileScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
-  const [date, setDate] = useState(null);
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  const [formattedDate, setFormattedDate] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [fullScreen, setFullScreen] = useState(true);
-  // const [updateStatus, setUpdateStatus] = useState(null);
   const userInfo = useStoreState((state) => state.ProfileModel.userInfo);
   const { resetDataList, getAllProvince } = useStoreActions(
     (actions) => actions.AddressModel,
@@ -102,6 +88,7 @@ const EditProfileScreen = () => {
       avatarUrl: userInfo.avatarUrl,
       fullName: userInfo.fullName,
       gender: userInfo.gender,
+      dob: moment(userInfo.dob.split(" ")[0], "DD/MM/YYYY").toDate(),
       address: userInfo.address,
       provinceId: userInfo.addressFromWard.provinceId,
       districtId: userInfo.addressFromWard.districtId,
@@ -111,15 +98,6 @@ const EditProfileScreen = () => {
   });
   const { handleSubmit, setValue } = methods;
 
-  const openDatePicker = () => {
-    setShowDatePicker(true);
-  };
-
-  const onDateChange = (e, selectedDate) => {
-    const currentDate = selectedDate || date;
-    setShowDatePicker(false);
-    setDate(currentDate);
-  };
   /**
    * Call an alert box to reset avatar image back to default avatar
    */
@@ -148,7 +126,7 @@ const EditProfileScreen = () => {
     setIsLoading(true);
     const updateData = {
       ...data,
-      dob: moment(date).add(1, "days").toDate().toJSON(),
+      dob: data.dob.toJSON(),
     };
     editPersonalInformation({ updateData })
       .then(() => {
@@ -166,7 +144,6 @@ const EditProfileScreen = () => {
   useEffect(() => {
     getAllProvince()
       .then(() => {
-        setDate(moment(userInfo.dob.split(" ")[0], "DD/MM/YYYY").toDate());
         setIsLoading(false);
         setFullScreen(false);
       })
@@ -182,13 +159,6 @@ const EditProfileScreen = () => {
       resetDataList();
     };
   }, []);
-
-  useEffect(() => {
-    if (date) {
-      setFormattedDate(moment(date).format("DD/MM/YYYY").toString());
-    }
-  }, [date]);
-
   /**
    * When navigate from MediaSelectScreen back to Edit Form
    * the callback listen to route params and set
@@ -214,17 +184,7 @@ const EditProfileScreen = () => {
       >
         <ActivityIndicator size={60} color="#2089DC" />
       </Overlay>
-
       <ScrollView>
-        {showDatePicker && (
-          <DateTimePicker
-            display="default"
-            is24Hour
-            mode="date"
-            value={date || new Date()}
-            onChange={onDateChange}
-          />
-        )}
         <Center flex={1}>
           <FormProvider {...methods}>
             <VStack
@@ -249,20 +209,11 @@ const EditProfileScreen = () => {
                 hasAsterisk
                 controllerName={FORM_FIELD_FULL_NAME}
               />
-              <View>
-                <Text bold fontSize="md" mb={1}>
-                  Ngày sinh
-                </Text>
-                <TouchableOpacity onPress={openDatePicker}>
-                  <Input
-                    InputRightElement={<CalendarIcon />}
-                    placeholder={SELECT_BIRTHDATE_PLACEHOLDER}
-                    size="lg"
-                    value={formattedDate ? formattedDate.toString() : ""}
-                    isDisabled
-                  />
-                </TouchableOpacity>
-              </View>
+              <DatePickerInput
+                label={DOB_LABEL}
+                placeholder={SELECT_BIRTHDATE_PLACEHOLDER}
+                controllerName={FORM_FIELD_DOB}
+              />
               <SelectComponent
                 label={GENDER_LABEL}
                 isTitle
