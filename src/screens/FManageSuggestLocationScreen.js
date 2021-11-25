@@ -1,19 +1,28 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useNavigation } from "@react-navigation/native";
-import { useStoreActions } from "easy-peasy";
+import { useStoreActions, useStoreState } from "easy-peasy";
 import React, { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { View } from "react-native";
+import { ScrollView, View } from "react-native";
 import { Button, Text } from "react-native-elements";
+import { Divider } from "react-native-elements/dist/divider/Divider";
 
 import InputComponent from "../components/common/InputComponent";
 import TextAreaComponent from "../components/common/TextAreaComponent";
+import MapOverviewBox from "../components/FLocationEditProfile/MapOverviewBox";
 import HeaderTab from "../components/HeaderTab";
 import styles from "../config/styles";
 import { SCHEMA } from "../constants";
 import { goBack } from "../navigations";
 import { showAlertAbsoluteBox, showToastMessage } from "../utilities";
 
+const createSuggestObject = (data) => {
+  const suggestObj = data;
+  if (!suggestObj.address) delete suggestObj.address;
+  if (!suggestObj.website) delete suggestObj.website;
+  if (!suggestObj.description) delete suggestObj.description;
+  return suggestObj;
+};
 const FManageSuggestLocationScreen = () => {
   const navigation = useNavigation();
   const methods = useForm({
@@ -22,14 +31,24 @@ const FManageSuggestLocationScreen = () => {
   });
   const { handleSubmit } = methods;
 
+  const locationLatLng = useStoreState(
+    (states) => states.FManageModel.locationLatLng,
+  );
   const suggestNewLocation = useStoreActions(
     (actions) => actions.FManageModel.suggestNewLocation,
+  );
+  const resetLocationLatLng = useStoreActions(
+    (actions) => actions.FManageModel.resetLocationLatLng,
   );
 
   const [success, setSuccess] = useState(null);
 
   const onSubmit = (data) => {
-    suggestNewLocation({ data, setSuccess });
+    const suggestObj = createSuggestObject(data);
+    suggestNewLocation({
+      data: { ...suggestObj, ...locationLatLng },
+      setSuccess,
+    });
   };
 
   const goBackAfterSuccess = () => {
@@ -47,8 +66,14 @@ const FManageSuggestLocationScreen = () => {
     setSuccess(null);
   }, [success]);
 
+  useEffect(() => {
+    return () => {
+      resetLocationLatLng();
+    };
+  }, []);
+
   return (
-    <View style={{ flex: 1 }}>
+    <ScrollView style={{ flex: 1 }}>
       <HeaderTab name="Gợi ý hồ câu cho hệ thống" />
       <FormProvider {...methods}>
         <View
@@ -69,19 +94,46 @@ const FManageSuggestLocationScreen = () => {
               label="Tên địa điểm câu"
               hasAsterisk
               placeholder="Nhập tên địa điểm câu"
-              controllerName="locationName"
+              controllerName="name"
             />
-
             <InputComponent
               isTitle
               label="Số điện thoại chủ hồ"
               hasAsterisk
               placeholder="Nhập số điện thoại chủ hồ"
-              controllerName="ownerPhone"
+              controllerName="phone"
               useNumPad
               myStyles={{ marginVertical: 20 }}
             />
-
+            <Divider />
+            <InputComponent
+              isTitle
+              label="Địa chỉ"
+              placeholder="Nhập địa chỉ của khu hồ"
+              controllerName="address"
+              useNumPad
+              myStyles={{ marginVertical: 20 }}
+            />
+            <InputComponent
+              isTitle
+              label="Website"
+              placeholder="Nhập trang web của khu hồ"
+              controllerName="website"
+              useNumPad
+            />
+            {/* Map component */}
+            <View>
+              <Text
+                style={{
+                  fontWeight: "bold",
+                  fontSize: 16,
+                  marginVertical: 8,
+                }}
+              >
+                Vị trí
+              </Text>
+              <MapOverviewBox />
+            </View>
             {/* Description textarea */}
             <TextAreaComponent
               myStyles={styles.mt1}
@@ -100,7 +152,7 @@ const FManageSuggestLocationScreen = () => {
           </View>
         </View>
       </FormProvider>
-    </View>
+    </ScrollView>
   );
 };
 
