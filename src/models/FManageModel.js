@@ -645,17 +645,15 @@ const model = {
    * Add new lake to a fishing location
    * If there no fishing location id pass in, get current id in state
    * @param {Object} [payload.addData] an object pass to POST body
-   * @param {Function} [payload.setAddStatus] the function set status
    */
   addNewLakeInLocation: thunk(async (actions, payload, { getState }) => {
-    const { addData, setAddStatus } = payload;
+    const { addData } = payload;
     const { currentId } = getState();
     try {
       await http.post(`location/${currentId}/lake/add`, addData);
-      setAddStatus("SUCCESS");
       actions.getListOfLake({ id: currentId });
     } catch (error) {
-      setAddStatus("FAILED");
+      throw new Error();
     }
   }),
   // DucHM ADD_END 5/11/2021
