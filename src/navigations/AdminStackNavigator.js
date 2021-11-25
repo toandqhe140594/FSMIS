@@ -4,6 +4,7 @@ import React from "react";
 import { ROUTE_NAMES } from "../constants";
 import AccountManagementModel from "../models/AccountManagementModel";
 import AdminFLocationModel from "../models/AdminFLocationModel";
+import AdminLocationLatLngModel from "../models/AdminLocationLatLngModel";
 import AdminAccountDeactivateScreen from "../screens/AdminAccountDeactivateScreen";
 import AdminAccountDetailScreen from "../screens/AdminAccountDetailScreen";
 import AdminAccountManagementScreen from "../screens/AdminAccountManagementScreen";
@@ -32,6 +33,7 @@ const AdminStack = createNativeStackNavigator();
 
 store.addModel("AccountManagementModel", AccountManagementModel);
 store.addModel("AdminFLocationModel", AdminFLocationModel);
+store.addModel("FManageModel", AdminLocationLatLngModel);
 const AdminStackNavigator = () => {
   return (
     <AdminStack.Navigator
