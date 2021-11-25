@@ -749,23 +749,19 @@ const model = {
 
   /**
    * Restock fish quantity and totalWeight in lake by id
-   * @param {Number} [payload.id] id of the fish to stock
-   * @param {Object} [payload.quantity] quantiy for stocking
-   * @param {Number} [payload.weight] weight for stocking
-   * @param {Function} [payload.setUpdateStatus] the function to set status
+   * @param {Number} payload.id id of the fish to stock
+   * @param {Number} payload.updateData data contain weight or quantity for stocking
    */
   stockFishInLake: thunk(async (actions, payload, { getState }) => {
-    const { id, updateData, setUpdateStatus } = payload;
+    const { id, updateData } = payload;
     const { id: lakeId } = getState().lakeDetail;
     try {
       await http.post(`location/lake/fish/stocking/${id}`, null, {
         params: { ...updateData },
       });
       await actions.getLakeDetailByLakeId({ id: lakeId }); // purpose to fetch new fishInLake in lakeDetail
-      setUpdateStatus("SUCCESS");
     } catch (error) {
-      // handle error
-      setUpdateStatus("FAILED");
+      throw new Error();
     }
   }),
   // DucHM ADD_END 8/11/2021
