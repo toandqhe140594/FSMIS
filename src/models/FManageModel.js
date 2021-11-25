@@ -713,19 +713,17 @@ const model = {
   /**
    * Add new fish to lake
    * @param {Object} addData new fish information
-   * @param {Function} addData the function to set state
    */
   addFishToLake: thunk(async (actions, payload, { getState }) => {
-    const { addData, setAddStatus } = payload;
+    const { addData } = payload;
     const {
       lakeDetail: { id },
     } = getState();
     try {
       await http.post(`location/lake/${id}/fish/add`, addData);
       actions.getLakeDetailByLakeId({ id });
-      setAddStatus("SUCCESS");
     } catch (error) {
-      setAddStatus("FAILED");
+      throw new Error();
     }
   }),
 
