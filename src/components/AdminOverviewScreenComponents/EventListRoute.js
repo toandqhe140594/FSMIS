@@ -102,6 +102,7 @@ const FLocationEventRoute = () => {
     <>
       {locationPostList.length > 0 && (
         <FlatList
+          nestedScrollEnabled
           data={locationPostList}
           renderItem={({ item }) => {
             return (

@@ -231,6 +231,7 @@ const FLocationEventRoute = () => {
           renderItem={renderItem}
           onEndReached={loadMoreLakePostData}
           keyExtractor={(item) => item.id.toString()}
+          nestedScrollEnabled
         />
       )}
     </>

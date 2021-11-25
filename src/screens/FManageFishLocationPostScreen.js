@@ -179,6 +179,7 @@ const PostListContainerComponent = () => {
         renderItem={renderItem}
         onEndReached={loadMoreLakeCatchData}
         keyExtractor={(item) => item.id.toString()}
+        nestedScrollEnabled
       />
     </Box>
   );
