@@ -167,6 +167,12 @@ const goToAdminAccountManagementScreen = (navigation, params) => {
   });
 };
 
+const goToAdminAccountDeactiveScreen = (navigation, params) => {
+  navigation.navigate(ROUTE_NAMES.ADMIN_ACCOUNT_MANAGEMENT_DEACTIVATE, {
+    ...params,
+  });
+};
+
 const goToAdminAccountManagementDetailScreen = (navigation, params) => {
   navigation.navigate(ROUTE_NAMES.ADMIN_ACCOUNT_MANAGEMENT_DETAIL, {
     ...params,
@@ -257,6 +263,7 @@ const goToAdminCatchDetail = (navigation, params) => {
 
 export {
   goBack,
+  goToAdminAccountDeactiveScreen,
   goToAdminAccountManagementDetailScreen,
   goToAdminAccountManagementScreen,
   goToAdminBlacklistPhoneAddScreen,

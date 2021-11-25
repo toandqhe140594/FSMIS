@@ -1,4 +1,4 @@
-import { useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, Button } from "native-base";
 import React, { useEffect, useState } from "react";
@@ -6,10 +6,13 @@ import { ActivityIndicator, Text } from "react-native";
 
 import EmployeeDetailBox from "../components/EmployeeDetailBox";
 import HeaderTab from "../components/HeaderTab";
+import { DEFAULT_TIMEOUT } from "../constants";
+import { goToAdminAccountDeactiveScreen } from "../navigations";
 import { showToastMessage } from "../utilities";
 
 const AdminAccountDetailScreen = () => {
   const route = useRoute();
+  const navigation = useNavigation();
 
   const [isLoading, setIsLoading] = useState(false);
   const [screenLoading, setScreenLoading] = useState(true);
@@ -32,9 +35,13 @@ const AdminAccountDetailScreen = () => {
 
   const changeAccountStatus = () => {
     setIsLoading(true);
+    if (accountInformation.active) {
+      goToAdminAccountDeactiveScreen(navigation);
+      return;
+    }
     activationTimeout = setTimeout(() => {
       setIsLoading(false);
-    }, 5000);
+    }, DEFAULT_TIMEOUT);
     activateAccount({ setSuccess });
   };
 
