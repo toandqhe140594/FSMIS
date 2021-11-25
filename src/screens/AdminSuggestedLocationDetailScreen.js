@@ -1,13 +1,45 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { useStoreActions } from "easy-peasy";
 import { Button, Input } from "native-base";
+import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
-import { View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import { Text } from "react-native-elements";
 
 import HeaderTab from "../components/HeaderTab";
+import MiniMapView from "../components/MiniMapView";
 import { goBack } from "../navigations";
 import { showToastMessage } from "../utilities";
+
+const styles = StyleSheet.create({
+  labelStyle: { fontSize: 16, fontWeight: "bold", marginVertical: 8 },
+});
+
+const InputDataView = ({ label, value }) => {
+  return (
+    <>
+      {value ? (
+        <>
+          <Text style={styles.labelStyle}>{label}</Text>
+          <Input
+            value={value}
+            fontSize="md"
+            isDisabled
+            style={{ backgroundColor: "white" }}
+          />
+        </>
+      ) : (
+        <></>
+      )}
+    </>
+  );
+};
+InputDataView.propTypes = {
+  label: PropTypes.string.isRequired,
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+};
+InputDataView.defaultProps = {
+  value: "",
+};
 
 const AdminSuggestedLocationDetailScreen = () => {
   const navigation = useNavigation();
@@ -19,13 +51,9 @@ const AdminSuggestedLocationDetailScreen = () => {
   const goBackAfterSuccess = () => {
     goBack(navigation);
   };
-  const removeSuggestedLocation = useStoreActions(
-    (actions) => actions.AdminFLocationModel.removeSuggestedLocation,
-  );
 
   const removeSuggestedRecord = () => {
     setLoading(true);
-    removeSuggestedLocation({ id: route.params?.id, setSuccess });
   };
 
   useEffect(() => {
@@ -40,54 +68,86 @@ const AdminSuggestedLocationDetailScreen = () => {
   }, [success]);
 
   return (
-    <View style={{ flex: 1 }}>
+    <ScrollView style={{ backgroundColor: "white" }}>
       <HeaderTab name={route.params?.name} />
       <View
         style={{
           width: "100%",
-          flex: 1,
           alignItems: "center",
-          paddingTop: 40,
+          paddingTop: 20,
+          borderBottomWidth: 0,
         }}
       >
-        <Text style={{ fontSize: 16, fontWeight: "bold", marginVertical: 8 }}>
+        <Text style={styles.labelStyle}>
           Số điện thoại người gửi: {route.params?.senderPhone}
         </Text>
-        <View style={{ width: "80%", marginTop: 40 }}>
-          <Text style={{ fontSize: 16, fontWeight: "bold", marginVertical: 8 }}>
-            Tên địa điểm câu
-          </Text>
-          <Input value={route.params?.name} fontSize="md" isDisabled />
-          <Text style={{ fontSize: 16, fontWeight: "bold", marginVertical: 8 }}>
-            Số điện thoại chủ hồ
-          </Text>
-          <Input value={route.params?.phone} fontSize="md" isDisabled />
-          <Text style={{ fontSize: 16, fontWeight: "bold", marginVertical: 8 }}>
-            Thông tin thêm
-          </Text>
-          <Input
-            value={`${route.params?.description}`}
-            fontSize="md"
-            isDisabled
-            multiline
-            numberOfLines={6}
-            style={{
-              textAlignVertical: "top",
-            }}
+        <View
+          style={{
+            width: "80%",
+            marginTop: 10,
+          }}
+        >
+          <InputDataView label="Tên địa điểm câu" value={route.params?.name} />
+          <InputDataView
+            label="Số điện thoại chủ hồ"
+            value={route.params?.phone}
           />
-
-          <Button
-            colorScheme="error"
-            mt={5}
-            onPress={removeSuggestedRecord}
-            isLoading={loading}
-            isDisabled={loading}
-          >
-            Xóa
-          </Button>
+          <InputDataView label="Website" value={route.params?.website} />
+          <InputDataView label="Địa chỉ" value={route.params?.address} />
+          {route.params?.latitude ? (
+            <>
+              <Text style={styles.labelStyle}>Vị trí</Text>
+              <View style={{ height: 150, marginTop: 10 }}>
+                <MiniMapView
+                  latitude={route.params.latitude}
+                  longitude={route.params.longitude}
+                />
+              </View>
+            </>
+          ) : (
+            <></>
+          )}
+          {route.params?.description ? (
+            <>
+              <Text
+                style={{ fontSize: 16, fontWeight: "bold", marginVertical: 8 }}
+              >
+                Thông tin thêm
+              </Text>
+              <Input
+                value={`${route.params?.description}`}
+                fontSize="md"
+                isDisabled
+                multiline
+                numberOfLines={6}
+                style={{
+                  textAlignVertical: "top",
+                }}
+              />
+            </>
+          ) : (
+            <></>
+          )}
+          <Button.Group direction="column" mt={5} mb={5}>
+            <Button
+              onPress={removeSuggestedRecord}
+              isLoading={loading}
+              isDisabled={loading}
+            >
+              Tạo điểm câu với thông tin
+            </Button>
+            <Button
+              colorScheme="emerald"
+              onPress={removeSuggestedRecord}
+              isLoading={loading}
+              isDisabled={loading}
+            >
+              Đánh dấu hữu ích
+            </Button>
+          </Button.Group>
         </View>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 
