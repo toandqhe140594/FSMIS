@@ -54,12 +54,13 @@ const OTPScreen = () => {
 
   // Reset the countdown timer
   const resetCountdown = () => {
-    sendOtp({ phone: route.params.phone });
-    setCountdown(initialCountdown); // Reset countdown value
-    // Run the countdown timer
-    countdownInterval = setInterval(() => {
-      setCountdown((prev) => prev - 1);
-    }, 1000);
+    sendOtp({ phone: route.params.phone }).then(() => {
+      setCountdown(initialCountdown); // Reset countdown value
+      // Run the countdown timer
+      countdownInterval = setInterval(() => {
+        setCountdown((prev) => prev - 1);
+      }, 1000);
+    });
   };
 
   // Event fire when submit OTP

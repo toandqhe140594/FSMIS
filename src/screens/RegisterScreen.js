@@ -17,7 +17,7 @@ import {
   Text,
   VStack,
 } from "native-base";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import {
   KeyboardAvoidingView,
@@ -36,6 +36,11 @@ import { showToastMessage } from "../utilities";
 const RegisterScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
+  const accountData = useRef(null);
+  const [loading, setLoading] = useState(false);
+  const sendOtp = useStoreActions((actions) => actions.UtilModel.sendOtp);
+  const [visible, setVisible] = useState(false); // Visible state of password field
+  const [visibleConfirmation, setVisibleConfirmation] = useState(false); // Visible state of password confirmation field
   const {
     control,
     handleSubmit,
@@ -45,13 +50,7 @@ const RegisterScreen = () => {
     reValidateMode: "onChange",
     resolver: yupResolver(SCHEMA.REGISTER_PHONE_AND_PASS_FORM),
   });
-  const sendOtp = useStoreActions((actions) => actions.UtilModel.sendOtp);
-  const [visible, setVisible] = useState(false); // Visible state of password field
-  const [visibleConfirmation, setVisibleConfirmation] = useState(false); // Visible state of password confirmation field
-  const [accountData, setAccountData] = useState({});
-  const [otpSendSuccess, setOtpSendSuccess] = useState(null);
-  const [loading, setLoading] = useState(false);
-
+  const minHeight = Math.round(useWindowDimensions().height - 50);
   const togglePasswordVisible = () => {
     setVisible(!visible);
   };
@@ -62,13 +61,20 @@ const RegisterScreen = () => {
 
   // Event fire when submit form
   const onSubmit = (data) => {
-    setAccountData(data);
+    accountData.current = data;
     setLoading(true);
-    sendOtp({
-      phone: data.phoneNumber,
-      setSuccess: setOtpSendSuccess,
-      existedStatus: "NONEXISTED",
-    });
+    sendOtp({ phone: data.phoneNumber, existedStatus: "NONEXISTED" })
+      .then(() => {
+        goToOTPScreen(
+          navigation,
+          ROUTE_NAMES.REGISTER,
+          accountData.current.phoneNumber,
+        );
+      })
+      .catch(() => {
+        setLoading(false);
+        showToastMessage("Số điện thoại không hợp lệ hoặc đã tồn tại");
+      });
   };
 
   const navigateToLoginScreenAction = () => {
@@ -80,23 +86,11 @@ const RegisterScreen = () => {
     useCallback(() => {
       if (route.params?.otpSuccess === true)
         goToRegisterInformationScreen(navigation, {
-          phone: accountData.phoneNumber,
-          password: accountData.password,
+          phone: accountData.current.phoneNumber,
+          password: accountData.current.password,
         });
     }, [route.params]),
   );
-
-  useEffect(() => {
-    if (otpSendSuccess === true) {
-      goToOTPScreen(navigation, ROUTE_NAMES.REGISTER, accountData.phoneNumber);
-    }
-    if (otpSendSuccess === false)
-      showToastMessage("Số điện thoại không hợp lệ hoặc đã tồn tại");
-    setLoading(false);
-    setOtpSendSuccess(null);
-  }, [otpSendSuccess]);
-
-  const minHeight = Math.round(useWindowDimensions().height - 50);
 
   return (
     <KeyboardAvoidingView>
@@ -132,7 +126,7 @@ const RegisterScreen = () => {
                       color="muted.500"
                     />
                   }
-                  keyboardType="phone-pad"
+                  keyboardType="number-pad"
                   maxLength={13}
                   paddingLeft={0}
                   placeholder="Số điện thoại"
