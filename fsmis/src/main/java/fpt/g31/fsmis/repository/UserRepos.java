@@ -28,4 +28,6 @@ public interface UserRepos extends JpaRepository<User, Long> {
     Page<User> findAllByIdNot(Pageable pageable, Long id);
 
     Page<User> findAllByPhoneLikeAndIdNot(String phone, Pageable pageable, Long id);
+
+    Page<User> findAllByFullNameLikeAndIdNot(String name, Pageable pageable, long id);
 }

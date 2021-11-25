@@ -138,14 +138,18 @@ public class UserService {
                 .build();
     }
 
-    public PaginationDtoOut adminGetAccountList(int pageNo, String phone) {
+    public PaginationDtoOut adminGetAccountList(int pageNo, String input) {
         if (pageNo <= 0) {
             throw new ValidationException(INVALID_PAGE_NUMBER);
         }
         Page<User> accountList;
         List<AdminAccountItemDtoOut> output = new ArrayList<>();
-        if (!phone.isEmpty()) {
-            accountList = userRepos.findAllByPhoneLikeAndIdNot("%" + phone + "%", PageRequest.of(pageNo - 1, 10), 1L);
+        if (!input.isEmpty()) {
+            if (input.matches("^[0-9]+$")){
+                accountList = userRepos.findAllByPhoneLikeAndIdNot("%" + input + "%", PageRequest.of(pageNo - 1, 10), 1L);
+            } else {
+                accountList = userRepos.findAllByFullNameLikeAndIdNot("%" + input + "%", PageRequest.of(pageNo - 1, 10), 1L);
+            }
         } else {
             accountList = userRepos.findAllByIdNot(PageRequest.of(pageNo - 1, 10), 1L);
         }

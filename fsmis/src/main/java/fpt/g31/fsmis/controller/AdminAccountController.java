@@ -15,8 +15,8 @@ public class AdminAccountController {
 
     @GetMapping()
     public ResponseEntity<Object> adminGetAccountList(@RequestParam(required = false, defaultValue = "1") int pageNo,
-                                                      @RequestParam(required = false, defaultValue = "") String phone) {
-        return new ResponseEntity<>(userService.adminGetAccountList(pageNo, phone), HttpStatus.OK);
+                                                      @RequestParam(required = false, defaultValue = "") String input) {
+        return new ResponseEntity<>(userService.adminGetAccountList(pageNo, input), HttpStatus.OK);
     }
 
     @GetMapping("{userId}")
