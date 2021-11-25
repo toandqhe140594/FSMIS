@@ -1,26 +1,33 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useNavigation } from "@react-navigation/native";
+import {
+  useFocusEffect,
+  useNavigation,
+  useRoute,
+} from "@react-navigation/native";
 import { useStoreActions } from "easy-peasy";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { View } from "react-native";
 import { Button, Text } from "react-native-elements";
 
 import InputComponent from "../components/common/InputComponent";
+import MultiImageSection from "../components/common/MultiImageSection";
 import TextAreaComponent from "../components/common/TextAreaComponent";
 import HeaderTab from "../components/HeaderTab";
 import styles from "../config/styles";
-import { SCHEMA } from "../constants";
+import { ROUTE_NAMES, SCHEMA } from "../constants";
 import { goBack } from "../navigations";
 import { showAlertAbsoluteBox, showToastMessage } from "../utilities";
 
 const FManageSuggestLocationScreen = () => {
+  const route = useRoute();
   const navigation = useNavigation();
   const methods = useForm({
     mode: "onSubmit",
+    defaultValues: { imageArray: [] },
     resolver: yupResolver(SCHEMA.ADMIN_BLACKLIST_ADD_FORM),
   });
-  const { handleSubmit, getValues } = methods;
+  const { handleSubmit, getValues, setValue } = methods;
 
   const blacklistPhoneNumber = useStoreActions(
     (actions) => actions.AccountManagementModel.blacklistPhoneNumber,
@@ -52,6 +59,16 @@ const FManageSuggestLocationScreen = () => {
       setSuccess(null);
     }
   }, [success]);
+
+  useFocusEffect(
+    // useCallback will listen to route.param
+    useCallback(() => {
+      if (route.params?.base64Array && route.params.base64Array.length) {
+        setValue("imageArray", route.params?.base64Array);
+        navigation.setParams({ base64Array: [] });
+      }
+    }, [route.params]),
+  );
 
   return (
     <View style={{ flex: 1 }}>
@@ -93,7 +110,15 @@ const FManageSuggestLocationScreen = () => {
               numberOfLines={6}
               controllerName="description"
             />
+            <Text style={{ marginTop: 10, fontWeight: "bold", fontSize: 16 }}>
+              Ảnh minh họa
+            </Text>
 
+            <MultiImageSection
+              containerStyle={{ width: "100%" }}
+              formRoute={ROUTE_NAMES.ADMIN_BLACKLIST_PHONE_MANAGEMENT_ADD}
+              controllerName="imageArray"
+            />
             <Button
               title="Gửi"
               onPress={handleSubmit(onSubmit)}
