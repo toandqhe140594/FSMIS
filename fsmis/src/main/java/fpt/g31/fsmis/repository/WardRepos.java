@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface WardRepos extends JpaRepository<Ward, Long> {
-    List<Ward> findByDistrictId(Long districtId);
+    List<Ward> findByDistrictIdOrderByNameAsc(Long districtId);
 }

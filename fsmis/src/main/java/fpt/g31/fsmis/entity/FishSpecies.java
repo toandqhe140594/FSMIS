@@ -21,6 +21,9 @@ public class FishSpecies {
 
     private Boolean active;
 
+    @Column(columnDefinition = "int default 0")
+    private Integer appearanceCount;
+
     @Column(columnDefinition = "TEXT")
     private String imageUrl;
 }

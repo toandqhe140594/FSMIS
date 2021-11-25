@@ -22,9 +22,9 @@ public class FishingMethodService {
     public List<FishingMethodDtoOut> getAll(boolean isActiveOnly) {
         List<FishingMethod> fishingMethods;
         if (isActiveOnly) {
-            fishingMethods = fishingMethodRepos.findAllByActiveIsTrue();
+            fishingMethods = fishingMethodRepos.findAllByActiveIsTrueOrderByNameAsc();
         } else {
-            fishingMethods = fishingMethodRepos.findAll();
+            fishingMethods = fishingMethodRepos.findAllByOrderByNameAsc();
         }
         List<FishingMethodDtoOut> fishingMethodDtoOuts = new ArrayList<>();
         for (FishingMethod fishingMethod :

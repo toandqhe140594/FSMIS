@@ -296,7 +296,7 @@ public class FishingLocationService {
         List<FishingLocation> fishingLocationList = fishingLocationRepos.findOwnedLocation(user.getId());
         String role;
         if (fishingLocationList.isEmpty()) {
-            Optional<FishingLocation> location = fishingLocationRepos.findByEmployeeId(user.getId());
+            Optional<FishingLocation> location = fishingLocationRepos.findByEmployeeIdAndActiveIsTrue(user.getId());
             location.ifPresent(fishingLocationList::add);
             role = "STAFF";
         } else {
@@ -601,6 +601,7 @@ public class FishingLocationService {
     public ResponseTextDtoOut adminChangeActive(Long locationId) {
         FishingLocation location = fishingLocationRepos.findById(locationId)
                 .orElseThrow(() -> new NotFoundException(LOCATION_NOT_FOUND));
+        location.setEmployeeList(new ArrayList<>());
         location.setActive(!location.getActive());
         fishingLocationRepos.save(location);
         String notificationText;

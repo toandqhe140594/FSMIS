@@ -48,8 +48,9 @@ public class LakeService {
             if (fishInLakeDtoIn.getMaxWeight() < fishInLakeDtoIn.getMinWeight()) {
                 throw new ValidationException(INVALID_WEIGHT_RANGE);
             }
+            FishSpecies fishSpecies = fishSpeciesRepos.getById(fishInLakeDtoIn.getFishSpeciesId());
             FishInLake fishInLake = FishInLake.builder()
-                    .fishSpecies(fishSpeciesRepos.getById(fishInLakeDtoIn.getFishSpeciesId()))
+                    .fishSpecies(fishSpecies)
                     .lake(lake)
                     .maxWeight(fishInLakeDtoIn.getMaxWeight())
                     .minWeight(fishInLakeDtoIn.getMinWeight())
@@ -57,6 +58,8 @@ public class LakeService {
                     .build();
             setWeightAndQuantity(fishInLakeDtoIn, fishInLake);
             fishInLakeList.add(fishInLake);
+            fishSpecies.setAppearanceCount(fishSpecies.getAppearanceCount() + 1);
+            fishSpeciesRepos.save(fishSpecies);
         }
         lake.setFishInLakeList(fishInLakeList);
         setMethodSet(lake, lakeDtoIn.getMethods());
@@ -224,12 +227,13 @@ public class LakeService {
             throw new ValidationException("Tương quan khối lượng và số lượng không hợp lệ");
         }
     }
+
     public List<LakeWithFishInLakeDtoOut> getAllLakeWithFishInLake(Long locationId) {
         FishingLocation location = fishingLocationRepos.findById(locationId)
                 .orElseThrow(() -> new NotFoundException("Không tìm thấy khu hồ!"));
         List<LakeWithFishInLakeDtoOut> output = new ArrayList<>();
         for (Lake lake : location.getLakeList()) {
-            if (Boolean.FALSE.equals(lake.getActive())){
+            if (Boolean.FALSE.equals(lake.getActive())) {
                 continue;
             }
             List<FishDtoOut> fishDtoOutList = new ArrayList<>();
@@ -263,12 +267,13 @@ public class LakeService {
         }
         checkValidFishInLake(fishInLakeDtoIn);
         if (Boolean.TRUE.equals(fishInLakeRepos.existsByFishSpeciesIdAndMinWeightAndMaxWeightAndLakeIdAndActiveIsTrue
-                (fishInLakeDtoIn.getFishSpeciesId(), fishInLakeDtoIn.getMinWeight(), fishInLakeDtoIn.getMaxWeight(), lakeId))){
+                (fishInLakeDtoIn.getFishSpeciesId(), fishInLakeDtoIn.getMinWeight(), fishInLakeDtoIn.getMaxWeight(), lakeId))) {
             throw new ValidationException("Đã tồn tại 1 bản ghi với cùng loài cá và biểu");
         }
+        FishSpecies fishSpecies = fishSpeciesRepos.getById(fishInLakeDtoIn.getFishSpeciesId());
         FishInLake fishInLake = FishInLake.builder()
                 .id(fishInLakeDtoIn.getId())
-                .fishSpecies(fishSpeciesRepos.getById(fishInLakeDtoIn.getFishSpeciesId()))
+                .fishSpecies(fishSpecies)
                 .lake(lake)
                 .maxWeight(fishInLakeDtoIn.getMaxWeight())
                 .minWeight(fishInLakeDtoIn.getMinWeight())
@@ -279,6 +284,8 @@ public class LakeService {
         fishInLakeList.add(fishInLake);
         lake.setFishInLakeList(fishInLakeList);
         lakeRepos.save(lake);
+        fishSpecies.setAppearanceCount(fishSpecies.getAppearanceCount() + 1);
+        fishSpeciesRepos.save(fishSpecies);
         return new ResponseTextDtoOut("Thêm cá vào hồ thành công!");
     }
 

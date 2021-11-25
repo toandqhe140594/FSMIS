@@ -8,9 +8,11 @@ import java.util.List;
 
 @Repository
 public interface FishSpeciesRepos extends JpaRepository<FishSpecies, Long> {
-    List<FishSpecies> findAllByActiveIsTrue();
+    List<FishSpecies> findAllByActiveIsTrueOrderByAppearanceCountDescNameAsc();
 
     boolean existsByNameIgnoreCase(String name);
 
     FishSpecies findByNameIgnoreCase(String name);
+
+    List<FishSpecies> findAllByOrderByAppearanceCountDescNameAsc();
 }

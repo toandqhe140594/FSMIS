@@ -27,7 +27,7 @@ public interface FishingLocationRepos extends JpaRepository<FishingLocation, Lon
     @Query(nativeQuery = true, value = "select *\n" +
             "from tbl_fishing_location tfl inner join tbl_employee_list tel on tfl.id = tel.fishing_location_id \n" +
             "where tel.employee_id = ?1")
-    Optional<FishingLocation> findByEmployeeId(Long staffId);
+    Optional<FishingLocation> findByEmployeeIdAndActiveIsTrue(Long staffId);
 
     @Query(nativeQuery = true, value = "SELECT * FROM\n" +
             " (\n" +

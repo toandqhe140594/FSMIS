@@ -22,9 +22,9 @@ public class FishSpeciesService {
     public List<FishSpeciesDtoOut> getAll(Boolean withImage, Boolean isActiveOnly) {
         List<FishSpecies> fishSpeciesList;
         if (Boolean.TRUE.equals(isActiveOnly)) {
-            fishSpeciesList = fishSpeciesRepos.findAllByActiveIsTrue();
+            fishSpeciesList = fishSpeciesRepos.findAllByActiveIsTrueOrderByAppearanceCountDescNameAsc();
         } else {
-            fishSpeciesList = fishSpeciesRepos.findAll();
+            fishSpeciesList = fishSpeciesRepos.findAllByOrderByAppearanceCountDescNameAsc();
         }
         List<FishSpeciesDtoOut> fishSpeciesDtoOuts = new ArrayList<>();
         for (FishSpecies fishSpecies :

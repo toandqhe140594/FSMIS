@@ -35,9 +35,4 @@ public class AddressController {
     public ResponseEntity<List<Ward>> getWardByDistrictId(@RequestParam Long districtId) {
         return new ResponseEntity<>(addressService.getWardByDistrictId(districtId), HttpStatus.OK);
     }
-
-    @GetMapping()
-    public ResponseEntity<List<ProvinceDtoOut>> getAll(){
-        return new ResponseEntity<>(addressService.getAll(), HttpStatus.OK);
-    }
 }
