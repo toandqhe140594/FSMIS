@@ -39,9 +39,10 @@ public class FishingLocation {
 
     private String phone;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT default ''")
     private String description;
 
+    @Column(columnDefinition = "default ''")
     private String website;
 
     @Column(columnDefinition = "TEXT")
@@ -65,6 +66,9 @@ public class FishingLocation {
     private Boolean verify;
 
     private Boolean closed;
+
+    @Column(columnDefinition = "boolean default false")
+    private Boolean pending;
 
     @JsonIgnore
     @OneToMany(mappedBy = "fishingLocation", cascade = CascadeType.ALL)

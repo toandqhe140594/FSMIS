@@ -4,9 +4,11 @@ import fpt.g31.fsmis.dto.input.AuthDtoIn;
 import fpt.g31.fsmis.dto.input.RegistrationDtoIn;
 import fpt.g31.fsmis.dto.output.AuthTokenDtoOut;
 import fpt.g31.fsmis.dto.output.ResponseTextDtoOut;
+import fpt.g31.fsmis.entity.FishingLocation;
 import fpt.g31.fsmis.entity.Role;
 import fpt.g31.fsmis.entity.User;
 import fpt.g31.fsmis.repository.BannedPhoneRepos;
+import fpt.g31.fsmis.repository.FishingLocationRepos;
 import fpt.g31.fsmis.repository.UserRepos;
 import fpt.g31.fsmis.repository.WardRepos;
 import fpt.g31.fsmis.security.JwtProvider;
@@ -20,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 import javax.validation.ValidationException;
 
@@ -33,6 +36,7 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtProvider jwtProvider;
     private final BannedPhoneRepos bannedPhoneRepos;
+    private final FishingLocationRepos fishingLocationRepos;
 
     @Transactional
     public ResponseTextDtoOut register(RegistrationDtoIn registrationDtoIn) {
@@ -57,6 +61,12 @@ public class AuthService {
                 .roles(Collections.singleton(Role.ROLE_USER))
                 .build();
         userRepos.save(user);
+        List<FishingLocation> pendingLocationList = fishingLocationRepos.findByPhoneAndPendingIsTrue(user.getPhone());
+        for (FishingLocation location :
+                pendingLocationList) {
+            location.setOwner(user);
+            fishingLocationRepos.save(location);
+        }
         return new ResponseTextDtoOut("Đăng ký thành công");
     }
 

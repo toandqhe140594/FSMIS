@@ -31,4 +31,5 @@ public class FishingLocationOverviewDtoOut {
     private Boolean saved;
     private Boolean active;
     private String role;
+    private Boolean pending;
 }

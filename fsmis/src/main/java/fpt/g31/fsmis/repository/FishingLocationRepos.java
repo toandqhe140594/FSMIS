@@ -48,5 +48,8 @@ public interface FishingLocationRepos extends JpaRepository<FishingLocation, Lon
             "ORDER BY distance;")
     List<FishingLocation> getNearbyLocationWithMethodId(Float longitude, Float latitude, Integer distance, Integer minRating, Long methodId);
 
-    List<FishingLocation> findByOwnerId(Long id);
+    @Query(value = "SELECT fl FROM FishingLocation fl where fl.owner.id = ?1 and (fl.active = true or fl.pending = true)")
+    List<FishingLocation> findOwnedLocation(Long id);
+
+    List<FishingLocation> findByPhoneAndPendingIsTrue(String phone);
 }

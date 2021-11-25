@@ -26,4 +26,6 @@ public class FishingLocationItemDtoOut {
     private String role;
 
     private Boolean closed;
+
+    private Boolean pending;
 }
