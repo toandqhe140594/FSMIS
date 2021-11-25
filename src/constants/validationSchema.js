@@ -341,3 +341,13 @@ export const CHANGE_PHONE_NUMBER_FORM = yup.object().shape({
     .min(8, "Mật khẩu phải chứa ít nhất 8 ký tự")
     .required("Mật khẩu không được bỏ trống"),
 });
+
+export const REGISTER_INFORMATION_FORM = yup.object().shape({
+  fullName: yup.string().required("Họ và tên không thể bỏ trống"),
+  gender: yup.bool(),
+  dob: yup.mixed().required("Ngày sinh không thể bỏ trống"),
+  address: yup.string().ensure(),
+  provinceId: yup.number().default(1),
+  districtId: yup.number().default(1),
+  wardId: yup.number().default(1),
+});
