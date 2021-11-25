@@ -1,4 +1,3 @@
-import { MaterialIcons } from "@expo/vector-icons";
 import { yupResolver } from "@hookform/resolvers/yup";
 import {
   useFocusEffect,
@@ -6,44 +5,22 @@ import {
   useRoute,
 } from "@react-navigation/native";
 import { useStoreActions } from "easy-peasy";
-import { Button, Center, Icon, VStack } from "native-base";
-import PropTypes from "prop-types";
+import { Button, Center, VStack } from "native-base";
 import React, { useCallback, useRef, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { Pressable, useWindowDimensions } from "react-native";
+import { useWindowDimensions } from "react-native";
 
 import InputComponent from "../components/common/InputComponent";
+import PasswordInput from "../components/common/PasswordInput";
 import HeaderTab from "../components/HeaderTab";
 import { ROUTE_NAMES, SCHEMA } from "../constants";
 import { goToOTPScreen } from "../navigations";
 import { showAlertConfirmBox, showToastMessage } from "../utilities";
 
-const VisibilityIcon = ({ visible, toggleVisible }) => (
-  <Pressable onPress={toggleVisible}>
-    <Icon
-      color="muted.500"
-      as={<MaterialIcons name={visible ? "visibility" : "visibility-off"} />}
-      size={6}
-      mx={2}
-    />
-  </Pressable>
-);
-
-VisibilityIcon.propTypes = {
-  visible: PropTypes.bool,
-  toggleVisible: PropTypes.func,
-};
-
-VisibilityIcon.defaultProps = {
-  visible: false,
-  toggleVisible: () => {},
-};
-
 const ChangePhoneNumberScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const [isLoading, setIsLoading] = useState(false);
-  const [visible, setVisible] = useState(false);
   const formData = useRef(null);
   const methods = useForm({
     mode: "onSubmit",
@@ -83,13 +60,6 @@ const ChangePhoneNumberScreen = () => {
       .catch(handleError);
   };
 
-  /**
-   * Toggle password field visibility
-   */
-  const handleToggle = () => {
-    setVisible(!visible);
-  };
-
   const onSubmit = (data) => {
     showAlertConfirmBox(
       "Đổi số điện thoại",
@@ -127,7 +97,6 @@ const ChangePhoneNumberScreen = () => {
           mb={10}
           w={{ base: "70%", md: "50%", lg: "30%" }}
         >
-          {/* Phone number input field */}
           <InputComponent
             label="Số điện thoại"
             useNumPad
@@ -136,18 +105,12 @@ const ChangePhoneNumberScreen = () => {
             placeholder="Nhập số điện thoại"
             controllerName="phone"
           />
-
-          {/* Password input field */}
-          <InputComponent
+          <PasswordInput
             label="Mật khẩu"
             isTitle
             hasAsterisk
             placeholder="Nhập mật khẩu"
             controllerName="password"
-            useSecureInput={!visible}
-            rightIcon={
-              <VisibilityIcon visible={visible} toggleVisible={handleToggle} />
-            }
           />
           {/* Continue/Submit button */}
           <Button
