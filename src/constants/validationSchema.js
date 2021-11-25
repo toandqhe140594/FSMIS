@@ -305,12 +305,14 @@ export const ADMIN_FISHING_METHOD_ADD_FORM = yup.object().shape({
 });
 
 export const FMANAGE_SUGGESTION_FORM = yup.object().shape({
-  locationName: yup.string().required("Tên khu hồ không thể bỏ trống"),
-  ownerPhone: yup
+  name: yup.string().required("Tên khu hồ không thể bỏ trống"),
+  phone: yup
     .string()
     .matches(/((09|03|07|08|05)+([0-9]{8})\b)/, "Số điện thoại không hợp lệ")
     .required("Số điện thoại chủ hồ không dược bỏ trống"),
   description: yup.string().max(255, "Mô tả tối đa 255 ký tự"),
+  address: yup.string().max(255, "Địa chỉ tối đa 255 ký tự"),
+  website: yup.string(),
 });
 
 export const ADMIN_BLACKLIST_ADD_FORM = yup.object().shape({
