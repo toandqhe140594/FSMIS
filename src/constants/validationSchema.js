@@ -47,13 +47,13 @@ export const ANGLER_CATCH_REPORT_FORM = yup.object().shape({
         {
           fishInLakeId: yup
             .number()
-            .test("zero", "Loại cá không được để trống", (value) => value !== 0)
+            .notOneOf([0], "Loại cá không được để trống")
             .typeError("Trường này chỉ được nhập số")
             .required("Loại cá không được để trống"),
           quantity: yup
             .number()
             .typeError("Trường này chỉ được nhập số")
-            .moreThan(0, "Số lượng phải lớn hơn 0")
+            .min(0, "Số lượng phải lớn hơn 0")
             .max(9999, "Số lượng tối đa là 9999")
             .test("integer", "Số lượng phải là số nguyên", (value) =>
               Number.isInteger(value),
@@ -63,26 +63,24 @@ export const ANGLER_CATCH_REPORT_FORM = yup.object().shape({
               then: yup
                 .number()
                 .typeError("Trường này chỉ được nhập số")
-                .test(
-                  "zeroEmpty",
+                .notOneOf(
+                  [0],
                   "Một trong hai trường không được để trống hay bằng 0",
-                  (value) => value !== 0,
                 ),
             }),
           weight: yup
             .number()
             .typeError("Trường này chỉ được nhập số")
-            .moreThan(0, "Cân nặng phải lớn hơn 0")
+            .min(0, "Cân nặng phải lớn hơn 0")
             .max(9999, "Cân nặng tối đa là 9999kg")
             .when("quantity", {
               is: 0,
               then: yup
                 .number()
                 .typeError("Trường này chỉ được nhập số")
-                .test(
-                  "zeroEmpty",
+                .notOneOf(
+                  [0],
                   "Một trong hai trường không được để trống hay bằng 0",
-                  (value) => value !== 0,
                 ),
             }),
           returnToOwner: yup.bool().default(false),
@@ -149,10 +147,9 @@ export const FMANAGE_LAKE_FORM = yup.object().shape({
               then: yup
                 .number()
                 .typeError("Trường này chỉ được nhập số")
-                .test(
-                  "zeroEmpty",
+                .notOneOf(
+                  [0],
                   "Một trong hai trường không được để trống hay bằng 0",
-                  (value) => value !== 0,
                 ),
             }),
           totalWeight: yup
@@ -165,10 +162,9 @@ export const FMANAGE_LAKE_FORM = yup.object().shape({
               then: yup
                 .number()
                 .typeError("Trường này chỉ được nhập số")
-                .test(
-                  "zeroEmpty",
+                .notOneOf(
+                  [0],
                   "Một trong hai trường không được để trống hay bằng 0",
-                  (value) => value !== 0,
                 ),
             }),
         },
@@ -190,11 +186,7 @@ export const FMANAGE_LAKE_FISH_EDIT_FORM = yup.object().shape(
         then: yup
           .number()
           .typeError("Trường này chỉ được nhập số")
-          .test(
-            "zeroEmpty",
-            "Một trong hai trường không được để trống hay bằng 0",
-            (value) => value !== 0,
-          ),
+          .notOneOf([0], "Một trong hai trường không được để trống hay bằng 0"),
       }),
     weight: yup
       .number()
@@ -206,11 +198,7 @@ export const FMANAGE_LAKE_FISH_EDIT_FORM = yup.object().shape(
         then: yup
           .number()
           .typeError("Trường này chỉ được nhập số")
-          .test(
-            "zeroEmpty",
-            "Một trong hai trường không được để trống hay bằng 0",
-            (value) => value !== 0,
-          ),
+          .notOneOf([0], "Một trong hai trường không được để trống hay bằng 0"),
       }),
   },
   ["quantity", "weight"],
@@ -242,11 +230,7 @@ export const FMANAGE_LAKE_FISH_ADD_FORM = yup.object().shape(
         then: yup
           .number()
           .typeError("Trường này chỉ được nhập số")
-          .test(
-            "zeroEmpty",
-            "Một trong hai trường không được để trống hay bằng 0",
-            (value) => value !== 0,
-          ),
+          .notOneOf([0], "Một trong hai trường không được để trống hay bằng 0"),
       }),
     totalWeight: yup
       .number()
@@ -258,11 +242,7 @@ export const FMANAGE_LAKE_FISH_ADD_FORM = yup.object().shape(
         then: yup
           .number()
           .typeError("Trường này chỉ được nhập số")
-          .test(
-            "zeroEmpty",
-            "Một trong hai trường không được để trống hay bằng 0",
-            (value) => value !== 0,
-          ),
+          .notOneOf([0], "Một trong hai trường không được để trống hay bằng 0"),
       }),
   },
   ["quantity", "totalWeight"],
