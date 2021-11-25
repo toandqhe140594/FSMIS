@@ -124,22 +124,20 @@ const model = {
 
   /**
    * Close lake of fishing location
-   * @param {Object} [payload] the payload pass to function
-   * @param {Function} [payload.setDeleteSuccess] the function to set delete success indicator
+   * @param {Object} payload.id the id of the lake
    */
   closeLakeByLakeId: thunk(async (actions, payload, { getState }) => {
     const { currentId } = getState();
-    const { id, setDeleteSuccess } = payload;
+    const { id } = payload;
     try {
       const { status } = await http.delete(
         `location/${currentId}/${API_URL.LOCATION_LAKE_CLOSE}/${id}`,
       );
       if (status === 200) {
         actions.removeLakeFromList({ id });
-        setDeleteSuccess(true);
       }
     } catch (error) {
-      setDeleteSuccess(false);
+      throw new Error();
     }
   }),
   // START OF REVIEW RELATED SECTION
@@ -661,20 +659,18 @@ const model = {
   // DucHM ADD_START 6/11/2021
   /**
    * Update lake detail (methods, dimensions, name, price)
-   * @param {Number} [payload.id] lake id
-   * @param {Object} [payload.updateData] updated information
-   * @param {Function} [payload.setUpdateStatus] the function set status
+   * @param {Number} payload.id lake id
+   * @param {Object} payload.updateData data for updating
    */
   editLakeDetail: thunk(async (actions, payload, { getState }) => {
-    const { updateData, setUpdateStatus, id } = payload;
+    const { updateData, id } = payload;
     const { currentId } = getState();
     try {
       await http.put(`location/${currentId}/lake/edit/${id}`, updateData);
       actions.editLakeDetailData({ ...updateData, id });
       actions.getListOfLake({ id: currentId });
-      setUpdateStatus("SUCCESS");
     } catch (error) {
-      setUpdateStatus("FAILED");
+      throw new Error();
     }
   }),
   // DucHM ADD_END 6/11/2021
