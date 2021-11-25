@@ -104,6 +104,11 @@ const FManageAddNewScreen = () => {
   });
   const { handleSubmit, setValue } = methods;
 
+  const handleError = () => {
+    setIsLoading(false);
+    showAlertBox(ALERT_TITLE, ALERT_ERROR_MSG);
+  };
+
   const onSubmit = (data) => {
     // if location info is missing
     if (!locationLatLng.latitude) {
@@ -124,9 +129,7 @@ const FManageAddNewScreen = () => {
           locationData.current.phone,
         );
       })
-      .catch(() => {
-        setIsLoading(false);
-      });
+      .catch(handleError);
   };
   /**
    * Trigger first time when enters
@@ -170,10 +173,7 @@ const FManageAddNewScreen = () => {
               CONFIRM_BUTTON_LABEL,
             );
           })
-          .catch(() => {
-            setIsLoading(false);
-            showAlertBox(ALERT_TITLE, ALERT_ERROR_MSG);
-          });
+          .catch(handleError);
       }
     }, [route.params]),
   );
