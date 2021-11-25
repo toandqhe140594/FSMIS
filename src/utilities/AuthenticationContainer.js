@@ -1,6 +1,5 @@
 import { useStoreActions, useStoreState } from "easy-peasy";
 import React, { useEffect } from "react";
-import { ToastAndroid } from "react-native";
 
 import { ROLE_USER } from "../constants";
 import AddressModel from "../models/AddressModel";
@@ -8,6 +7,8 @@ import AdminStackNavigator from "../navigations/AdminStackNavigator";
 import AuthenticationStackNavigator from "../navigations/AuthenticationStackNavigator";
 import RootStackNavigator from "../navigations/RootStackNavigator";
 import LogoScreen from "../screens/LogoScreen";
+import { setRequestErrorMessageHandling } from "./Http";
+import { showToastMessage } from "./index";
 import store from "./Store";
 
 store.addModel("AddressModel", AddressModel);
@@ -17,6 +18,7 @@ const AuthenticationContainer = () => {
   const userRole = useStoreState((states) => states.userRole);
   const errorMessage = useStoreState((states) => states.errorMessage);
   const retrieveToken = useStoreActions((actions) => actions.retrieveToken);
+  const setErrorMessage = useStoreActions((actions) => actions.setErrorMessage);
   const getAllProvince = useStoreActions(
     (actions) => actions.AddressModel.getAllProvince,
   );
@@ -25,17 +27,11 @@ const AuthenticationContainer = () => {
     setTimeout(async () => {
       await retrieveToken();
     }, 1500);
+    setRequestErrorMessageHandling(setErrorMessage);
   }, []);
 
   useEffect(() => {
-    if (errorMessage)
-      ToastAndroid.showWithGravityAndOffset(
-        errorMessage,
-        ToastAndroid.LONG,
-        ToastAndroid.BOTTOM,
-        25,
-        50,
-      );
+    if (errorMessage) showToastMessage(errorMessage);
   }, [errorMessage]);
 
   if (loginState.isLoading) {

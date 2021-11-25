@@ -299,6 +299,7 @@ export const ADMIN_BLACKLIST_ADD_FORM = yup.object().shape({
     .string()
     .matches(/((09|03|07|08|05)+([0-9]{8})\b)/, "Số điện thoại không hợp lệ")
     .required("Số điện thoại không dược bỏ trống"),
+  imageArray: yup.array().of(yup.string()),
 });
 
 export const FMANAGE_POST_FORM = yup.object().shape({

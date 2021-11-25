@@ -32,6 +32,31 @@ const EventPostCard = ({
   const onlyUnique = (value, index, self) => {
     return self.indexOf(value) === index;
   };
+  let srcUri;
+  let widthUri;
+  let heightUri;
+  let widthVideo = 400;
+  let heightVideo = 400;
+
+  if (typeUri === "VIDEO") {
+    try {
+      const regExGetSrc = /<iframe ?.* src="([^"]+)" ?.*>/i;
+      const regExGetWidth = /<iframe ?.* width="([^"]+)" ?.*>/i;
+      const regExGetHeight = /<iframe ?.* height="([^"]+)" ?.*>/i;
+
+      srcUri = uri.match(regExGetSrc);
+      widthUri = uri.match(regExGetWidth);
+      heightUri = uri.match(regExGetHeight);
+      if (widthUri + 50 < heightUri) {
+        widthVideo = 300;
+        heightVideo = 500;
+      }
+      // if (widthUri >= heightUri) {
+      // }
+    } catch (err) {
+      console.log(`err`, err);
+    }
+  }
   return (
     <Box mt="1" px="1.4">
       {postStyle === "LAKE_POST" && (
@@ -165,81 +190,36 @@ const EventPostCard = ({
         {typeUri === "VIDEO" && uri !== null ? (
           <Box
             style={{
-              height: 500,
-              width: 400,
+              height: heightVideo,
+              width: widthVideo,
               flex: 0,
-              justifyContent: "center",
               position: "relative",
-              right: 10,
-              bottom: 5,
+              right: 5,
+              alignSelf: "center",
               overflow: "hidden",
+              borderColor: "black",
+              borderWidth: 1,
             }}
           >
+            {/* <ScrollView contentContainerStyle={{ flexGrow: 1 }}> */}
             <WebView
-              overScrollMode="never"
-              showsHorizontalScrollIndicator={false}
+              // scrollEnabled={true}
+              // nestedScrollEnabled={true}
+              // howsHorizontalScrollIndicator={false}
               originWhitelist={["https://*"]}
               automaticallyAdjustContentInsets={false}
               scalesPageToFit={false}
-              containerStyle={{
+              style={{
                 flex: 0,
-                height: 490,
                 width: "100%",
+                height: "100%",
               }}
-              style={{ flex: 0, height: 490 }}
               allowsFullscreenVideo
               source={{
-                html: `
-            <html>
-            <head>
-               <style>
-                  body{
-                 
-                  width: 900px;
-                  height: 900px; 
-                
-                 }  
-                  .container {
-                  width: inherit;
-                  height: inherit;
-                  overflow: hidden;
-                  border-style: solid;
-                 
-                  }          
-                  iframe {
-                  display : block;
-                  width: 100%;
-                  height: 100%;
-                  overflow: hidden;
-                  background-color:transparent;  
-                }
-               </style>
-            </head>
-            <body>
-               <div class="container">
-                  ${uri}
-               </div>
-               <script>
-                  var elements = document.getElementsByTagName("iframe");
-                  var container = document.getElementsByClassName("container");
-                  var body = document.getElementsByTagName("body");
-                   if(elements[0].width < elements[0].height){
-                    body[0].style.width= 300 + "px" ;
-              
-                    body[0].style.margin= "0 auto"
-                  }
-                  if(elements[0].width >= elements[0].height){
-                    body[0].style.width= "100%";
-                    body[0].style.height= "100%";
-                    body[0].style.margin= "0 auto"
-                    body[0].style.paddingTop= 25;                   
-                  }  
-               </script>
-            </body>
-         </html>
-          `,
+                uri: srcUri[1],
               }}
             />
+            {/* </ScrollView> */}
           </Box>
         ) : null}
       </VStack>

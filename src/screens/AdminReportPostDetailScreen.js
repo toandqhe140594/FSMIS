@@ -8,7 +8,11 @@ import AvatarCard from "../components/AvatarCard";
 import EventPostCard from "../components/EventPostCard";
 import styles from "../config/styles";
 import { goToAdminFLocationOverviewScreen } from "../navigations";
-import { showAlertAbsoluteBox, showAlertConfirmBox } from "../utilities";
+import {
+  showAlertAbsoluteBox,
+  showAlertBox,
+  showAlertConfirmBox,
+} from "../utilities";
 
 const AdminReportPostDetailScreen = () => {
   const route = useRoute();
@@ -17,6 +21,7 @@ const AdminReportPostDetailScreen = () => {
   const [isActive, setActive] = useState(true);
   const [isLoading, setIsLoading] = useState(null);
   const [isSolvedSuccess, setIsSolvedSuccess] = useState(null);
+  const [isDeleteSuccess, setIsDeleteSuccess] = useState(null);
   // const [reportId, setReportId] = useState(null);
   // const [postId, setPostId] = useState(null);
   const postReportDetail = useStoreState(
@@ -36,7 +41,7 @@ const AdminReportPostDetailScreen = () => {
   };
 
   const deletePostHandler = () => {
-    deletePost({ id: postDtoOut.id, setIsSuccess: setIsSolvedSuccess });
+    deletePost({ id: postDtoOut.id, setIsSuccess: setIsDeleteSuccess });
     setIsLoading(true);
   };
 
@@ -130,7 +135,7 @@ const AdminReportPostDetailScreen = () => {
       <AvatarCard
         avatarSize="md"
         nameUser={item.userFullName}
-        images={item.userAvatar}
+        image={item.userAvatar}
         subText={item.time}
       />
       <Box mt={2}>
@@ -184,6 +189,20 @@ const AdminReportPostDetailScreen = () => {
     setIsLoading(false);
     setIsSolvedSuccess(null);
   }, [isSolvedSuccess]);
+
+  useEffect(() => {
+    if (isDeleteSuccess === true) {
+      showAlertBox(
+        "Thành công",
+        `Bài viết đã được gỡ khỏi trang sự kiện của hồ ${locationName}.`,
+      );
+    }
+    if (isDeleteSuccess === false) {
+      showAlertBox("Lỗi", `Đã xảy ra lỗi, vui lòng thử lại.`);
+    }
+    setIsLoading(false);
+    setIsDeleteSuccess(null);
+  }, [isDeleteSuccess]);
 
   return (
     <AdminReport

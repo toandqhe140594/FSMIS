@@ -90,8 +90,8 @@ const FManageCatchReportHistory = () => {
               <CalendarPicker
                 allowRangeSelection
                 scrollable
-                todayBackgroundColor="#e6ffe6"
-                selectedDayColor="#66ff33"
+                todayBackgroundColor="#00e673"
+                selectedDayColor="#00ccff"
                 selectedDayTextColor="#000000"
                 scaleFactor={375}
                 onDateChange={dateChangeHandler}
@@ -109,10 +109,10 @@ const FManageCatchReportHistory = () => {
           accessibilityLabel="Chọn kiểu lọc"
           placeholder="Chọn kiểu lọc"
           _selectedItem={{
-            bg: "teal.600",
+            bg: "primary.200",
           }}
           onValueChange={(itemValue) => selectedFilterHandler(itemValue)}
-          backgroundColor="light.500"
+          backgroundColor="#ffffff"
         >
           <Select.Item label="Tất cả" value="All" />
           <Select.Item label="Theo Ngày" value="BY_DATE" />

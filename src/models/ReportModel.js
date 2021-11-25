@@ -299,9 +299,7 @@ const model = {
   deletePost: thunk(async (actions, payload) => {
     const { id, setIsSuccess } = payload;
     try {
-      const { status } = await http.delete(
-        `${API_URL.ADMIN_DELETE_POST}/${id}`,
-      );
+      const { status } = await http.delete(`/admin/report/post/delete/${id}`);
       if (status === 200) {
         setIsSuccess(true);
       }
@@ -312,14 +310,11 @@ const model = {
   deleteReview: thunk(async (actions, payload) => {
     const { id, setIsSuccess } = payload;
     try {
-      const { status } = await http.delete(
-        `${API_URL.ADMIN_DELETE_REVIEW}/${id}`,
-      );
+      const { status } = await http.delete(`/admin/report/review/delete/${id}`);
       if (status === 200) {
         setIsSuccess(true);
       }
     } catch (error) {
-      console.log(`error`, error);
       setIsSuccess(false);
     }
   }),

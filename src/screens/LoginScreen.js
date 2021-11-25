@@ -45,7 +45,7 @@ const LoginScreen = () => {
   const {
     control,
     handleSubmit,
-    setValue,
+    // setValue,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(validationSchema),
@@ -54,6 +54,10 @@ const LoginScreen = () => {
   const login = useStoreActions((actions) => actions.login);
 
   const [visible, setVisible] = useState(false);
+
+  const toggleVisible = () => {
+    setVisible(!visible);
+  };
 
   const registerAction = () => {
     goToRegisterScreen(navigation);
@@ -66,23 +70,23 @@ const LoginScreen = () => {
   // Development only
   useEffect(() => {
     // 0921485233 admin
-    setValue("phoneNumber", "0963372727");
-    setValue("password", "Asdf2k@!");
+    // setValue("phoneNumber", "0963372727");
+    // setValue("phoneNumber", "0921485233");
+    // setValue("password", "Asdf2k@!");
   }, []);
 
   const onSubmit = (data) => {
     login({ phone: data.phoneNumber, password: data.password });
   };
 
+  const minHeight = Math.round(
+    useWindowDimensions().height - StatusBar.currentHeight,
+  );
+
   return (
     <KeyboardAvoidingView>
       <ScrollView>
-        <Box
-          flex={1}
-          minHeight={Math.round(
-            useWindowDimensions().height - StatusBar.currentHeight,
-          )}
-        >
+        <Box flex={1} minHeight={minHeight}>
           <Center flex={1}>
             <Image
               source={require("../assets/images/logo.png")}
@@ -160,7 +164,7 @@ const LoginScreen = () => {
                       position="absolute"
                       right={0}
                       w="20%"
-                      onPress={() => setVisible(!visible)}
+                      onPress={toggleVisible}
                     />
                   </Box>
                 )}

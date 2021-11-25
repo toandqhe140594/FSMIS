@@ -7,7 +7,6 @@ import http, {
   removeAuthToken,
   setAuthToken,
   setBeforeRequestFunction,
-  setRequestErrorMessageHandling,
 } from "./Http";
 
 const initialLoginState = {
@@ -96,8 +95,6 @@ const Store = createStore({
         actions.setErrorMessage("");
       });
 
-      await setRequestErrorMessageHandling(actions.setErrorMessage);
-
       actions.setUserRole(data.roles);
       actions.setUserProfile(data);
     } catch (e) {
@@ -151,8 +148,6 @@ const Store = createStore({
         await setBeforeRequestFunction(() => {
           actions.setErrorMessage("");
         });
-
-        await setRequestErrorMessageHandling(actions.setErrorMessage);
 
         actions.setUserRole(userRole);
         actions.setUserProfile(userProfile);

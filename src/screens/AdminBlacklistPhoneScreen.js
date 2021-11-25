@@ -14,6 +14,7 @@ const renderItem = ({ item }) => (
   <BlacklistPhoneCard
     phone={item.phone}
     description={item.description}
+    image={item.image}
     key={item.phone}
   />
 );
@@ -64,7 +65,7 @@ const AdminBlacklistManagementScreen = () => {
     getBlacklist();
     const loadingTimeout = setTimeout(() => {
       setIsLoading(false);
-    }, 1000); // Test
+    }, 10000); // Test
     return () => {
       clearTimeout(loadingTimeout);
     };
