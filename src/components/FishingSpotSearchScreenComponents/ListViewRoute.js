@@ -1,7 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import React, { useEffect, useMemo, useState } from "react";
-import { ActivityIndicator, FlatList, View } from "react-native";
+import { ActivityIndicator, FlatList, StyleSheet, View } from "react-native";
 import { Button, Icon } from "react-native-elements";
 
 import styles from "../../config/styles";
@@ -12,7 +12,6 @@ import FLocationCard from "../FLocationCard";
 const ListViewRoute = () => {
   const navigation = useNavigation();
   const [isLoading, setIsLoading] = useState(true);
-  const [getStatus, setGetStatus] = useState(null);
   const { listLocationResult, pageNo, totaListLocationPage } = useStoreState(
     (states) => states.AdvanceSearchModel,
   );
@@ -63,33 +62,29 @@ const ListViewRoute = () => {
 
   const keyExtractor = (item) => item.id.toString();
 
-  // DucHM ADD_START 16/11/2021
   /**
    * Listen to when pageNo increases
    * and call the get list next page
    */
   useEffect(() => {
-    if (isLoading) getListLocationNextPage({ setGetStatus });
+    if (isLoading) {
+      getListLocationNextPage()
+        .then(() => {
+          setIsLoading(false);
+        })
+        .catch(() => {
+          setIsLoading(false);
+          showToastMessage("Đã có lỗi xảy ra!");
+        });
+    }
   }, [isLoading]);
 
-  /**
-   * Trigger when get status returns
-   */
-  useEffect(() => {
-    if (getStatus === "SUCCESS") {
-      setIsLoading(false);
-      setGetStatus(null);
-    } else if (getStatus === "FAILED") {
-      setIsLoading(false);
-      showToastMessage("Đã có lỗi xảy ra!");
-      setGetStatus(null);
-      // handle error
-    }
-  }, [getStatus]);
   // DucHM ADD_END 16/11/2021
 
   return (
-    <View style={[styles.centerBox, styles.flexBox, styles.wfull]}>
+    <View
+      style={StyleSheet.compose(styles.centerBox, styles.flexBox, styles.wfull)}
+    >
       <Button
         containerStyle={styles.mt3}
         icon={<Icon type="ionicons" name="search" color="white" />}
@@ -99,13 +94,13 @@ const ListViewRoute = () => {
 
       {/* Draft view only */}
       <View
-        style={[
+        style={StyleSheet.compose(
           styles.wfull,
           styles.mt2,
           styles.mb1,
           styles.flexBox,
           { width: "90%" },
-        ]}
+        )}
       >
         <FlatList
           style={{ height: "100%" }}
