@@ -303,7 +303,7 @@ const model = {
 
   /**
    * Upload to create new post in a location
-   * @param {Number} payload.updateData data of the post
+   * @param {Object} payload.updateData data of the post
    */
   createNewPost: thunk(async (actions, payload, { getState }) => {
     const { updateData } = payload;
@@ -316,18 +316,21 @@ const model = {
     }
   }),
 
+  /**
+   * Upload to edit existing post in a location
+   * @param {Object} payload.updateDate updated data of the post
+   */
   editPost: thunk(async (actions, payload, { getState }) => {
     const { currentId, currentPinPost } = getState();
-    const { updateData, setUpdateStatus } = payload;
+    const { updateData } = payload;
     try {
       await http.put(`location/${currentId}/post/edit`, updateData);
       if (currentPinPost.id === updateData.id) {
         actions.setCurrentPinPost(updateData);
       }
       actions.editPostInList(updateData);
-      setUpdateStatus("SUCCESS");
     } catch (error) {
-      setUpdateStatus("FAILED");
+      throw new Error();
     }
   }),
 
