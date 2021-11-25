@@ -74,7 +74,7 @@ const ListViewRoute = () => {
         })
         .catch(() => {
           setIsLoading(false);
-          showToastMessage("Đã có lỗi xảy ra!");
+          showToastMessage("Đã có lỗi xảy ra! Vui lòng thử lại sau");
         });
     }
   }, [isLoading]);
