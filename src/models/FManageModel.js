@@ -621,19 +621,17 @@ const model = {
    * @param {Object} [payload.data] some data of the fishing location
    * @param {string} [payload.data.locationName] name of the fishing location
    * @param {string} [payload.data.ownerPhone] phone of the owner of the fishing location
-   * @param {Function} [payload.setSuccess] function to indicate request success
    */
   suggestNewLocation: thunk(async (actions, payload) => {
-    const { data, setSuccess } = payload;
+    const { data } = payload;
     try {
       await http.post(API_URL.LOCATION_SUGGEST, {
         phone: data.ownerPhone,
         name: data.locationName,
         description: data.description,
       });
-      setSuccess(true);
     } catch (error) {
-      setSuccess(false);
+      throw new Error();
     }
   }),
 
