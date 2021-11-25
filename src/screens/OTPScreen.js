@@ -46,7 +46,6 @@ const OTPScreen = () => {
   const [loading, setLoading] = useState(false); // State placeholder for future API implement
   const [wrongOTP, setWrongOTP] = useState(false);
   const [value, setValue] = useState("");
-  const [success, setSuccess] = useState(null);
   const [props, getCellOnLayoutHandler] = useClearByFocusCell({
     value,
     setValue,
@@ -66,11 +65,16 @@ const OTPScreen = () => {
   // Event fire when submit OTP
   const onSubmit = (data) => () => {
     setLoading(true);
-    validateOtp({
-      otp: data,
-      phone: route.params.phone,
-      setSuccess,
-    });
+    validateOtp({ otp: data, phone: route.params.phone })
+      .then(() => {
+        goToScreen(navigation, route.params.previousScreen, {
+          otpSuccess: true,
+        });
+      })
+      .catch(() => {
+        setWrongOTP(true);
+        setLoading(false);
+      });
   };
 
   // Start the countdown timer when component mount
@@ -85,16 +89,6 @@ const OTPScreen = () => {
     // Clear the interval when countdown timer count to 0
     if (countdown <= 0) clearInterval(countdownInterval);
   }, [countdown]);
-
-  useEffect(() => {
-    if (success === true) {
-      goToScreen(navigation, route.params.previousScreen, { otpSuccess: true });
-    } else if (success === false) {
-      setWrongOTP(true);
-      setLoading(false);
-      setSuccess(null);
-    }
-  }, [success]);
 
   return (
     <Center flex={1}>

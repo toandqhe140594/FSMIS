@@ -605,13 +605,12 @@ const model = {
    * @param {Function} [payload.setAddStatus] the function set status
    */
   addNewLocation: thunk(async (actions, payload) => {
-    const { addData, setAddStatus } = payload;
+    const { addData } = payload;
     try {
       await http.post(API_URL.LOCATION_ADD, addData);
       await actions.getListOfFishingLocations();
-      setAddStatus("SUCCESS");
     } catch (error) {
-      setAddStatus("FAILED");
+      throw new Error();
     }
   }),
   // DucHM ADD_END 4/11/2021
