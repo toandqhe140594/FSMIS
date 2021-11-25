@@ -280,21 +280,18 @@ const model = {
   /**
    * Change personal account phone number
    * @param {object} [payload] params pass to function
-   * @param {Function} [payload.setSuccess] set status after request api
    * @param {string} [payload.newPhone] new phone number
    * @param {string} [payload.password] current account password
    */
   changePhoneNumber: thunk(async (actions, payload = {}) => {
     const { phone: newPhone, password } = payload;
-    const setSuccess = payload.setSuccess || (() => {});
     try {
       await http.post(API_URL.PERSONAL_PHONE_CHANGE, {
         newPhone,
         password,
       });
-      setSuccess(true);
     } catch (error) {
-      setSuccess(false);
+      throw new Error();
     }
   }),
 };

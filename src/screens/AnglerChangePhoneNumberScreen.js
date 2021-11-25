@@ -8,7 +8,7 @@ import {
 import { useStoreActions } from "easy-peasy";
 import { Button, Center, Icon, VStack } from "native-base";
 import PropTypes from "prop-types";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { Pressable, useWindowDimensions } from "react-native";
 
@@ -44,6 +44,7 @@ const ChangePhoneNumberScreen = () => {
   const route = useRoute();
   const [isLoading, setIsLoading] = useState(false);
   const [visible, setVisible] = useState(false);
+  const formData = useRef(null);
   const methods = useForm({
     mode: "onSubmit",
     resolver: yupResolver(SCHEMA.CHANGE_PHONE_NUMBER_FORM),
@@ -56,50 +57,8 @@ const ChangePhoneNumberScreen = () => {
   );
   const logOut = useStoreActions((actions) => actions.logOut);
 
-  const [formData, setFormData] = useState({});
-  const [otpSendSuccess, setOtpSendSuccess] = useState(null);
-  const [success, setSuccess] = useState(null);
-
-  useEffect(() => {
-    if (otpSendSuccess === true) {
-      goToOTPScreen(
-        navigation,
-        ROUTE_NAMES.PROFILE_CHANGE_PHONE_NUMBER,
-        formData.phone,
-      );
-    }
+  const handleError = () => {
     setIsLoading(false);
-    setOtpSendSuccess(null);
-  }, [otpSendSuccess]);
-
-  useEffect(() => {
-    if (success) {
-      showToastMessage("Thay đổi số điện thoại thành công");
-      logOut();
-    } else {
-      setSuccess(null);
-      setIsLoading(false);
-    }
-  }, [success]);
-
-  /**
-   * Trigger when navigation goes back to this screen
-   */
-  useFocusEffect(
-    // useCallback will listen to route.param
-    useCallback(() => {
-      if (route.params?.otpSuccess) {
-        setIsLoading(true);
-        changePhoneNumber({ ...formData, setSuccess });
-      }
-    }, [route.params]),
-  );
-
-  /**
-   * Toggle password field visibility
-   */
-  const handleToggle = () => {
-    setVisible(!visible);
   };
 
   /**
@@ -110,13 +69,25 @@ const ChangePhoneNumberScreen = () => {
    * @returns nothing
    */
   const changePhoneNumberAction = (data) => () => {
-    setFormData(data);
-    sendOtp({
-      phone: data.phone,
-      setSuccess: setOtpSendSuccess,
-      existedStatus: "NONEXISTED",
-    });
     setIsLoading(true);
+    formData.current = data;
+    sendOtp({ phone: data.phone, existedStatus: "NONEXISTED" })
+      .then(() => {
+        setIsLoading(false);
+        goToOTPScreen(
+          navigation,
+          ROUTE_NAMES.PROFILE_CHANGE_PHONE_NUMBER,
+          formData.current.phone,
+        );
+      })
+      .catch(handleError);
+  };
+
+  /**
+   * Toggle password field visibility
+   */
+  const handleToggle = () => {
+    setVisible(!visible);
   };
 
   const onSubmit = (data) => {
@@ -126,6 +97,24 @@ const ChangePhoneNumberScreen = () => {
       changePhoneNumberAction(data),
     );
   };
+
+  /**
+   * Trigger when navigation goes back to this screen
+   */
+  useFocusEffect(
+    // useCallback will listen to route.param
+    useCallback(() => {
+      if (route.params?.otpSuccess) {
+        setIsLoading(true);
+        changePhoneNumber({ ...formData.current })
+          .then(() => {
+            showToastMessage("Thay đổi số điện thoại thành công");
+            logOut();
+          })
+          .catch(handleError);
+      }
+    }, [route.params]),
+  );
 
   return (
     <Center flex={1} minHeight={Math.round(useWindowDimensions().height)}>
