@@ -93,7 +93,7 @@ const model = {
         actions.setProvinceList({ provinceData });
       }
     } catch (error) {
-      // handler error
+      throw new Error();
     }
   }),
 
