@@ -9,7 +9,6 @@ import {
   ScrollView,
   useWindowDimensions,
 } from "react-native";
-import * as yup from "yup";
 
 import DatePickerInput from "../components/common/DatePickerInput";
 import DistrictSelector from "../components/common/DistrictSelector";
@@ -17,6 +16,7 @@ import InputComponent from "../components/common/InputComponent";
 import ProvinceSelector from "../components/common/ProvinceSelector";
 import SelectComponent from "../components/common/SelectComponent";
 import WardSelector from "../components/common/WardSelector";
+import { SCHEMA } from "../constants";
 import { goToLoginScreen } from "../navigations";
 import { showToastMessage } from "../utilities";
 
@@ -24,16 +24,6 @@ const genderList = [
   { id: true, name: "Nam" },
   { id: false, name: "Nữ" },
 ];
-
-const validationSchema = yup.object().shape({
-  fullName: yup.string().required("Họ và tên không thể bỏ trống"),
-  gender: yup.bool(),
-  dob: yup.mixed().required("Ngày sinh không thể bỏ trống"),
-  address: yup.string().ensure(),
-  provinceId: yup.number().default(1),
-  districtId: yup.number().default(1),
-  wardId: yup.number().default(1),
-});
 
 const RegisterInformationScreen = () => {
   const route = useRoute();
@@ -44,7 +34,7 @@ const RegisterInformationScreen = () => {
   const methods = useForm({
     mode: "onSubmit",
     reValidateMode: "onSubmit",
-    resolver: yupResolver(validationSchema),
+    resolver: yupResolver(SCHEMA.REGISTER_INFORMATION_FORM),
   });
   const { handleSubmit } = methods;
   const { register } = useStoreActions((actions) => actions.UtilModel);
@@ -73,7 +63,6 @@ const RegisterInformationScreen = () => {
       })
       .catch(() => {
         setLoading(false);
-        showToastMessage("Đã có lỗi xảy ra! Vui lòng thử lại");
       });
   };
 
