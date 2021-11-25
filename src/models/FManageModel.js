@@ -690,22 +690,19 @@ const model = {
   }),
   /**
    * Update fishing location profile
-   * @param {Object} [payload.updateData] update information
-   * @param {Function} [payload.setUpdateStatus] the function set status
+   * @param {Object} payload.updateData update information
    */
   editFishingLocation: thunk(async (actions, payload, { getState }) => {
-    const { updateData, setUpdateStatus } = payload;
+    const { updateData } = payload;
     const { currentId } = getState();
     try {
       await http.put(`location/edit/${currentId}`, updateData);
-      actions.editFishingLocationDetailData({
-        ...updateData,
-        image: [...updateData.images],
-      });
+      const data = { ...updateData, image: updateData.images };
+      delete data.images;
+      delete actions.editFishingLocationDetailData(data);
       actions.getListOfFishingLocations();
-      setUpdateStatus("SUCCESS");
     } catch (error) {
-      setUpdateStatus("FAILED");
+      throw new Error();
     }
   }),
   // DucHM ADD_END 7/11/2021

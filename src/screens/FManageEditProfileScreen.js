@@ -38,8 +38,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 });
-const STATUS_SUCCESS = "SUCCESS";
-const STATUS_FAILED = "FAILED";
+
 const ALERT_TITLE = "Thông báo";
 const ALERT_EDIT_LOCATION_SUCCESS_MSG = "Cập nhật điểm câu thành công";
 const ALERT_ERROR_MSG = "Đã xảy ra lỗi! Vui lòng thử lại sau.";
@@ -87,8 +86,6 @@ const FManageEditProfileScreen = () => {
   const route = useRoute();
   const locationData = useRef(null);
   const navigation = useNavigation();
-  const [otpSendSuccess, setOtpSendSuccess] = useState(null);
-  const [updateStatus, setUpdateStatus] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [fullScreen, setFullScreen] = useState(true);
   const { locationLatLng, locationDetails } = useStoreState(
@@ -126,17 +123,38 @@ const FManageEditProfileScreen = () => {
 
   const { handleSubmit, setValue } = methods;
 
+  const handleError = () => {
+    setIsLoading(false);
+    showAlertBox(ALERT_TITLE, ALERT_ERROR_MSG);
+  };
+
+  const handleEditSuccess = () => {
+    setIsLoading(false);
+    showAlertBox(ALERT_TITLE, ALERT_EDIT_LOCATION_SUCCESS_MSG);
+  };
+
   const onSubmit = (data) => {
     setIsLoading(true);
-    const images = data.imageArray.map((image) => image.base64);
+    const images = data.imageArray.map((pic) => pic.base64);
     delete data.imageArray;
     const updateData = { ...data, ...locationLatLng, images };
     // New phone input need OTP validation
     if (updateData.phone !== locationDetails.phone) {
       locationData.current = updateData;
-      sendOtp({ phone: updateData.phone, setSuccess: setOtpSendSuccess });
+      sendOtp({ phone: updateData.phone })
+        .then(() => {
+          setIsLoading(false);
+          goToOTPScreen(
+            navigation,
+            ROUTE_NAMES.FMANAGE_PROFILE_ADD_NEW,
+            locationData.current.phone,
+          );
+        })
+        .catch(handleError);
     } else {
-      editFishingLocation({ updateData, setUpdateStatus });
+      editFishingLocation({ updateData })
+        .then(handleEditSuccess)
+        .catch(handleError);
     }
   };
 
@@ -165,46 +183,13 @@ const FManageEditProfileScreen = () => {
       }
       if (route.params?.otpSuccess) {
         setIsLoading(true);
-        editFishingLocation({
-          updateData: locationData.current,
-          setUpdateStatus,
-        });
+        editFishingLocation({ updateData: locationData.current })
+          .then(handleEditSuccess)
+          .catch(handleError);
       }
     }, [route.params]),
   );
 
-  /**
-   * Triggers when otp status returns
-   */
-  useEffect(() => {
-    if (otpSendSuccess === true) {
-      goToOTPScreen(
-        navigation,
-        ROUTE_NAMES.FMANAGE_PROFILE_ADD_NEW,
-        locationData.current.phone,
-      );
-      setIsLoading(false);
-      setOtpSendSuccess(null);
-    } else if (otpSendSuccess === false) {
-      setIsLoading(false);
-      setOtpSendSuccess(null);
-    }
-  }, [otpSendSuccess]);
-
-  /**
-   * Fire when status is updated form api call
-   */
-  useEffect(() => {
-    if (updateStatus === STATUS_SUCCESS) {
-      setIsLoading(false);
-      showAlertBox(ALERT_TITLE, ALERT_EDIT_LOCATION_SUCCESS_MSG);
-      setUpdateStatus(null);
-    } else if (updateStatus === STATUS_FAILED) {
-      setIsLoading(false);
-      showAlertBox(ALERT_TITLE, ALERT_ERROR_MSG);
-      setUpdateStatus(null);
-    }
-  }, [updateStatus]);
   return (
     <>
       <HeaderTab name={FMANAGE_EDIT_LOCATION_HEADER} />
