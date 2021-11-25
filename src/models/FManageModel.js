@@ -301,15 +301,18 @@ const model = {
     },
   ),
 
+  /**
+   * Upload to create new post in a location
+   * @param {Number} payload.updateData data of the post
+   */
   createNewPost: thunk(async (actions, payload, { getState }) => {
-    const { updateData, setUpdateStatus } = payload;
+    const { updateData } = payload;
     const { currentId } = getState();
     try {
       await http.post(`location/${currentId}/post/add`, updateData);
       await actions.getLocationPostListFirstPage();
-      setUpdateStatus(true);
     } catch (error) {
-      setUpdateStatus(false);
+      throw new Error();
     }
   }),
 
