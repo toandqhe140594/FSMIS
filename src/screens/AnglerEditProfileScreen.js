@@ -49,8 +49,8 @@ const styles = StyleSheet.create({
   },
 });
 
-const STATUS_SUCCESS = "SUCCESS";
-const STATUS_FAILED = "FAILED";
+// const STATUS_SUCCESS = "SUCCESS";
+// const STATUS_FAILED = "FAILED";
 const ALERT_TITLE = "Thông báo";
 const ALERT_EDIT_PROFILE_SUCCESS_MSG = "Cập nhật thông tin cá nhân thành công!";
 const ALERT_ERROR_MSG = "Đã xảy ra lỗi! Vui lòng thử lại sau.";
@@ -87,7 +87,7 @@ const EditProfileScreen = () => {
   const [formattedDate, setFormattedDate] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [fullScreen, setFullScreen] = useState(true);
-  const [updateStatus, setUpdateStatus] = useState(null);
+  // const [updateStatus, setUpdateStatus] = useState(null);
   const userInfo = useStoreState((state) => state.ProfileModel.userInfo);
   const { resetDataList, getAllProvince } = useStoreActions(
     (actions) => actions.AddressModel,
@@ -150,17 +150,29 @@ const EditProfileScreen = () => {
       ...data,
       dob: moment(date).add(1, "days").toDate().toJSON(),
     };
-    editPersonalInformation({ updateData, setUpdateStatus });
+    editPersonalInformation({ updateData })
+      .then(() => {
+        setIsLoading(false);
+        showAlertBox(ALERT_TITLE, ALERT_EDIT_PROFILE_SUCCESS_MSG);
+      })
+      .catch(() => {
+        setIsLoading(false);
+        showAlertBox(ALERT_TITLE, ALERT_ERROR_MSG);
+      });
   };
   /**
    * Set up the screen
    */
   useEffect(() => {
-    getAllProvince().then(() => {
-      setDate(moment(userInfo.dob.split(" ")[0], "DD/MM/YYYY").toDate());
-      setIsLoading(false);
-      setFullScreen(false);
-    });
+    getAllProvince()
+      .then(() => {
+        setDate(moment(userInfo.dob.split(" ")[0], "DD/MM/YYYY").toDate());
+        setIsLoading(false);
+        setFullScreen(false);
+      })
+      .catch(() => {
+        navigation.pop(1);
+      });
     const loadingId = setTimeout(() => {
       setIsLoading(false);
       setFullScreen(false);
@@ -191,21 +203,6 @@ const EditProfileScreen = () => {
       }
     }, [route.params]),
   );
-
-  /**
-   * Triggers when update status returns
-   */
-  useEffect(() => {
-    if (updateStatus === STATUS_SUCCESS) {
-      setIsLoading(false);
-      setUpdateStatus(null);
-      showAlertBox(ALERT_TITLE, ALERT_EDIT_PROFILE_SUCCESS_MSG);
-    } else if (updateStatus === STATUS_FAILED) {
-      setIsLoading(false);
-      setUpdateStatus(null);
-      showAlertBox(ALERT_TITLE, ALERT_ERROR_MSG);
-    }
-  }, [updateStatus]);
 
   return (
     <>
