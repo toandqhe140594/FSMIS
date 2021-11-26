@@ -162,6 +162,7 @@ const model = {
    * @param {string} [blacklistObj.description] - description
    */
   addDataToStartOfBlacklist: action((state, payload) => {
+    if (state.blacklist === null) return;
     state.blacklist.unshift(payload.blacklistObj);
   }),
   /**
@@ -170,6 +171,7 @@ const model = {
    * @param {string} [payload.phone] the phone of element that need to be remove
    */
   removeElementFromBlacklist: action((state, payload) => {
+    if (state.blacklist === null) return;
     state.blacklist = state.blacklist.filter(
       (blacklistObj) => blacklistObj.phone !== payload.phone,
     );
@@ -216,11 +218,14 @@ const model = {
    */
   blacklistPhoneNumber: thunk(async (actions, payload) => {
     const { blacklistObj } = payload;
+    const requestData = blacklistObj;
+    if (requestData.imageArray.length === 0) delete requestData.imageArray;
+    else {
+      requestData.image = requestData.imageArray[0].base64;
+      delete requestData.imageArray;
+    }
     try {
-      await http.post(
-        `${API_URL.ADMIN_ACCOUNT_BANNED_PHONE_ADD}`,
-        blacklistObj,
-      );
+      await http.post(`${API_URL.ADMIN_ACCOUNT_BANNED_PHONE_ADD}`, requestData);
       actions.addDataToStartOfBlacklist({ blacklistObj });
       actions.changeAccountActivationByPhone({ phone: blacklistObj.phone });
     } catch (error) {

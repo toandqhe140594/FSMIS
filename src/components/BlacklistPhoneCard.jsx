@@ -42,7 +42,7 @@ const BlacklistPhoneCard = ({ phone, description, image }) => {
 
   const showDetailInformation = () => {
     // If the phone in blacklist has description aka reason
-    if (description)
+    if (description || image)
       // Show an overlay that show detail of the description
       toggleOverlay();
   };
