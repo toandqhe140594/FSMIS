@@ -36,16 +36,15 @@ const CELL_COUNT = 6; // Length of the OTP code
 const OTPScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
-
+  const [countdown, setCountdown] = useState(initialCountdown);
+  const [loading, setLoading] = useState(false); // State placeholder for future API implement
+  const [wrongOTP, setWrongOTP] = useState(false);
+  const [waitNewOTP, setWaitNewOTP] = useState(false);
+  const [value, setValue] = useState("");
   const validateOtp = useStoreActions(
     (actions) => actions.UtilModel.validateOtp,
   );
   const sendOtp = useStoreActions((actions) => actions.UtilModel.sendOtp);
-
-  const [countdown, setCountdown] = useState(initialCountdown);
-  const [loading, setLoading] = useState(false); // State placeholder for future API implement
-  const [wrongOTP, setWrongOTP] = useState(false);
-  const [value, setValue] = useState("");
   const [props, getCellOnLayoutHandler] = useClearByFocusCell({
     value,
     setValue,
@@ -54,13 +53,19 @@ const OTPScreen = () => {
 
   // Reset the countdown timer
   const resetCountdown = () => {
-    sendOtp({ phone: route.params.phone }).then(() => {
-      setCountdown(initialCountdown); // Reset countdown value
-      // Run the countdown timer
-      countdownInterval = setInterval(() => {
-        setCountdown((prev) => prev - 1);
-      }, 1000);
-    });
+    setWaitNewOTP(true);
+    sendOtp({ phone: route.params.phone })
+      .then(() => {
+        setWaitNewOTP(false);
+        setCountdown(initialCountdown); // Reset countdown value
+        // Run the countdown timer
+        countdownInterval = setInterval(() => {
+          setCountdown((prev) => prev - 1);
+        }, 1000);
+      })
+      .catch(() => {
+        setWaitNewOTP(false);
+      });
   };
 
   // Event fire when submit OTP
@@ -95,7 +100,7 @@ const OTPScreen = () => {
     <Center flex={1}>
       <Heading size="lg">Xác nhận OTP</Heading>
       <Text fontSize="lg" noOfLines={2} textAlign="center" w="70%">
-        Vui lòng nhập mã xác nhận đã được gửi tới SĐT của bạn
+        Vui lòng nhập mã xác nhận đã được gửi tới số điện thoại của bạn
       </Text>
       {/* Placeholder for phonenumber | Phonenumber will need to get from store state */}
       <Text bold fontSize="lg" mt={4} textAlign="center">
@@ -141,11 +146,10 @@ const OTPScreen = () => {
           isLoadingText="Đang xử lý"
           size="lg"
           w="100%"
+          _text={{ fontSize: 18 }}
           onPress={onSubmit(value)}
         >
-          <Text color="white" fontSize="lg">
-            Tiếp tục
-          </Text>
+          Tiếp tục
         </Button>
       </VStack>
       <Center mb={4}>
@@ -167,10 +171,16 @@ const OTPScreen = () => {
               .padStart(2, "0")}`}
           </Text>
         ) : (
-          <Button height={12} size="lg" w="40%" onPress={resetCountdown}>
-            <Text color="white" fontSize="xl">
-              Gửi lại
-            </Text>
+          <Button
+            height={12}
+            isLoading={waitNewOTP}
+            isLoadingText="Đang gửi"
+            size="lg"
+            w="40%"
+            _text={{ fontSize: 18 }}
+            onPress={resetCountdown}
+          >
+            Gửi lại
           </Button>
         ))}
     </Center>
