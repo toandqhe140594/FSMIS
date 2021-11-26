@@ -7,11 +7,11 @@ import AnglerCatchReportDetailScreen from "../screens/AnglerCatchReportDetailScr
 import AnglerCatchReportScreen from "../screens/AnglerCatchReportScreen";
 import ChangePhoneNumberScreen from "../screens/AnglerChangePhoneNumberScreen";
 import EditProfileScreen from "../screens/AnglerEditProfileScreen";
+import ResetPasswordScreen from "../screens/AnglerResetPasswordScreen";
 import FishingLocationOverviewScreen from "../screens/FLocationOverviewScreen";
 import LakeDetailScreen from "../screens/LakeDetailScreen";
 import MediaSelectScreen from "../screens/MediaSelectScreen";
 import OTPScreen from "../screens/OTPScreen";
-import ResetPasswordScreen from "../screens/ResetPasswordScreen";
 import WriteReportScreen from "../screens/WriteReportScreen";
 import WriteReviewScreen from "../screens/WriteReviewScreen";
 import AnglerMainTabNavigator from "./AnglerMainTabNavigator";
