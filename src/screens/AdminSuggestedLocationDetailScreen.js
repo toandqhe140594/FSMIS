@@ -107,7 +107,7 @@ const AdminSuggestedLocationDetailScreen = () => {
           ) : (
             <></>
           )}
-          {route.params?.description ? (
+          {route.params?.additionalInformation ? (
             <>
               <Text
                 style={{ fontSize: 16, fontWeight: "bold", marginVertical: 8 }}
@@ -115,13 +115,14 @@ const AdminSuggestedLocationDetailScreen = () => {
                 Thông tin thêm
               </Text>
               <Input
-                value={`${route.params?.description}`}
+                value={`${route.params?.additionalInformation}`}
                 fontSize="md"
                 isDisabled
                 multiline
                 numberOfLines={6}
                 style={{
                   textAlignVertical: "top",
+                  backgroundColor: "white",
                 }}
               />
             </>
