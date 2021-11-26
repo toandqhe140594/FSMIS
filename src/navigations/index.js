@@ -11,10 +11,6 @@ const goToLogoScreen = (navigation) => {
   navigation.navigate(ROUTE_NAMES.LOGO);
 };
 
-const goToBanNoticeScreen = (navigation, params) => {
-  navigation.navigate(ROUTE_NAMES.BAN_NOTICE_SCREEN, { ...params });
-};
-
 const goToLoginScreen = (navigation) => {
   navigation.navigate(ROUTE_NAMES.LOGIN);
 };
@@ -291,7 +287,6 @@ export {
   goToAdminPostReportDetailScreen,
   goToAdminReviewReportDetailScreen,
   goToAdvanceSearchScreen,
-  goToBanNoticeScreen,
   goToCatchReportDetailScreen,
   goToCatchReportFormScreen,
   goToCatchReportVerifyDetailScreen,

@@ -3,7 +3,6 @@ import React from "react";
 
 import { ROUTE_NAMES } from "../constants";
 import UtilModel from "../models/UtilModel";
-import BanNoticeScreen from "../screens/BanNoticeScreen";
 import ChangePasswordScreen from "../screens/ChangePasswordScreen";
 import ForgotPasswordScreen from "../screens/ForgotPasswordScreen";
 import LoginScreen from "../screens/LoginScreen";
@@ -47,10 +46,6 @@ const AuthenticationStackNavigator = () => {
       <AuthenticationStack.Screen
         name={ROUTE_NAMES.PASSWORD_CHANGE}
         component={ChangePasswordScreen}
-      />
-      <AuthenticationStack.Screen
-        name={ROUTE_NAMES.BAN_NOTICE_SCREEN}
-        component={BanNoticeScreen}
       />
     </AuthenticationStack.Navigator>
   );

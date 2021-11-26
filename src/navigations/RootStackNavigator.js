@@ -8,7 +8,6 @@ import AnglerCatchReportScreen from "../screens/AnglerCatchReportScreen";
 import ChangePhoneNumberScreen from "../screens/AnglerChangePhoneNumberScreen";
 import EditProfileScreen from "../screens/AnglerEditProfileScreen";
 import ResetPasswordScreen from "../screens/AnglerResetPasswordScreen";
-import BanNoticeScreen from "../screens/BanNoticeScreen";
 import FishingLocationOverviewScreen from "../screens/FLocationOverviewScreen";
 import LakeDetailScreen from "../screens/LakeDetailScreen";
 import MediaSelectScreen from "../screens/MediaSelectScreen";
@@ -28,10 +27,6 @@ const RootStackNavigator = () => {
       }}
       initialRouteName={ROUTE_NAMES.ANGLER_MAIN}
     >
-      <RootStack.Screen
-        name={ROUTE_NAMES.BAN_NOTICE_SCREEN}
-        component={BanNoticeScreen}
-      />
       <RootStack.Screen
         name={ROUTE_NAMES.ANGLER_MAIN}
         component={AnglerMainTabNavigator}
