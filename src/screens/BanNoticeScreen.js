@@ -1,11 +1,13 @@
-import { useRoute } from "@react-navigation/native";
+import { useStoreActions } from "easy-peasy";
 import { Box, Divider, Text } from "native-base";
-import React from "react";
+import PropTypes from "prop-types";
+import React, { useEffect } from "react";
 import {
+  Alert,
+  BackHandler,
   Linking,
   ScrollView,
   StyleSheet,
-  TouchableOpacity,
 } from "react-native";
 
 import HeaderTab from "../components/HeaderTab";
@@ -22,8 +24,35 @@ const styles = StyleSheet.create({
     color: "#053742",
   },
 });
-const BanNoticeScreen = () => {
-  const route = useRoute();
+const BanNoticeScreen = ({ bannedInformation }) => {
+  const setErrorMessage = useStoreActions((actions) => actions.setErrorMessage);
+
+  const resetErrorMessage = () => {
+    setErrorMessage({});
+  };
+  useEffect(() => {
+    const backAction = () => {
+      Alert.alert("Thông báo", "Bạn có muốn quay về màn hình đăng nhập không", [
+        {
+          text: "Hủy",
+          onPress: () => null,
+          style: "cancel",
+        },
+        {
+          text: "Đồng ý",
+          onPress: resetErrorMessage,
+        },
+      ]);
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction,
+    );
+
+    return () => backHandler.remove();
+  }, []);
 
   const onPressCallHandler = () => {
     Linking.openURL(`tel:0969051715`);
@@ -31,7 +60,7 @@ const BanNoticeScreen = () => {
 
   return (
     <ScrollView>
-      <HeaderTab name="Thông báo" />
+      <HeaderTab name="Thông báo" popToTop={resetErrorMessage} />
       <Box
         padding={2}
         paddingTop={8}
@@ -52,30 +81,35 @@ const BanNoticeScreen = () => {
               Gửi bạn
             </Text>
             <Text bold style={(styles.text, styles.textHeader)}>
-              {route.params?.name ? ` ${route.params.name}` : ""},
+              {bannedInformation.name ? ` ${bannedInformation.name}` : ""},
             </Text>
           </Text>
 
           <Text style={styles.text}>Tài khoản của bạn hiện đang bị khóa!</Text>
-          {route.params?.description ? (
+          {bannedInformation.description ? (
             <>
+              <Divider mt="2" />
               <Text mt={2} style={styles.text} bold>
                 Lý do:
               </Text>
-              <Text style={styles.text}>{route.params.description}</Text>
+              <Text style={styles.text} mb={2}>
+                {bannedInformation.description}
+              </Text>
             </>
           ) : (
             <></>
           )}
 
-          {route.params?.image ? (
+          {bannedInformation.image ? (
             <>
-              <Divider mb="2" />
               <Box>
                 <Text mb={2} style={styles.text} bold>
                   Ảnh minh họa:
                 </Text>
-                <ImageResizeMode imgUri={route.params.image} height={240} />
+                <ImageResizeMode
+                  imgUri={bannedInformation.image}
+                  height={240}
+                />
               </Box>
             </>
           ) : (
@@ -99,12 +133,21 @@ const BanNoticeScreen = () => {
         <Divider marginTop={3} />
         <Box marginTop={3} alignItems="baseline" flexDirection="row">
           <Text>Liên hệ hỗ trợ: </Text>
-          <TouchableOpacity onPress={onPressCallHandler}>
-            <Text underline>0985043311</Text>
-          </TouchableOpacity>
+          <Text underline onPress={onPressCallHandler}>
+            0985043311
+          </Text>
         </Box>
       </Box>
     </ScrollView>
   );
+};
+
+BanNoticeScreen.propTypes = {
+  bannedInformation: PropTypes.shape({
+    image: PropTypes.string,
+    phone: PropTypes.string,
+    description: PropTypes.string,
+    name: PropTypes.string,
+  }).isRequired,
 };
 export default BanNoticeScreen;
