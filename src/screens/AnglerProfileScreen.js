@@ -4,6 +4,7 @@ import React, { useEffect } from "react";
 
 import AvatarCard from "../components/AvatarCard";
 import MenuScreen from "../components/MenuScreen";
+import colors from "../config/colors";
 import { MENU_ANGLER, MENU_LOGOUT } from "../constants";
 
 const AnglerProfileScreen = () => {
@@ -18,7 +19,7 @@ const AnglerProfileScreen = () => {
   }, []);
 
   return (
-    <Box>
+    <Box bg={colors.defaultBackground}>
       <VStack
         _dark={{
           borderColor: "gray.600",

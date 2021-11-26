@@ -8,6 +8,7 @@ import AvatarCard from "../components/AvatarCard";
 import HeaderTab from "../components/HeaderTab";
 import PressableCustomCard from "../components/PressableCustomCard";
 import styles from "../config/styles";
+import { DEFAULT_TIMEOUT } from "../constants";
 import { goToAdminAccountManagementDetailScreen } from "../navigations";
 
 const AdminAccountManagementScreen = () => {
@@ -54,7 +55,7 @@ const AdminAccountManagementScreen = () => {
     getUserList({ pageNo: 1, setIsLoading });
     const loadingTimeout = setTimeout(() => {
       setIsLoading(false);
-    }, 5000); // Test
+    }, DEFAULT_TIMEOUT);
     return () => {
       clearTimeout(loadingTimeout);
       clearAccountList();

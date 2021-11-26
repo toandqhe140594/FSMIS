@@ -61,6 +61,9 @@ const model = {
   setLocationLatLng: action((state, payload) => {
     state.locationLatLng = payload;
   }),
+  resetLocationLatLng: action((state) => {
+    state.locationLatLng = {};
+  }),
   setListOfFishingLocations: action((state, payload) => {
     state.listOfFishingLocations = payload;
   }),
@@ -628,11 +631,7 @@ const model = {
   suggestNewLocation: thunk(async (actions, payload) => {
     const { data } = payload;
     try {
-      await http.post(API_URL.LOCATION_SUGGEST, {
-        phone: data.ownerPhone,
-        name: data.locationName,
-        description: data.description,
-      });
+      await http.post(API_URL.LOCATION_SUGGEST, data);
     } catch (error) {
       throw new Error();
     }

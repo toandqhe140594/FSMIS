@@ -8,6 +8,7 @@ import CloseFLocationComponent from "../components/CloseFLocationComponent";
 import CloseFLocationTemporaryComponent from "../components/CloseFLocationTemporaryComponent";
 import HeaderTab from "../components/HeaderTab";
 import MenuScreen from "../components/MenuScreen";
+import colors from "../config/colors";
 import {
   MENU_OWNER,
   MENU_STAFF,
@@ -66,7 +67,7 @@ const FManageHomeScreen = () => {
     );
 
   return (
-    <Box>
+    <Box bg={colors.defaultBackground}>
       <HeaderTab
         id={locationDetails.id}
         name={locationDetails.name || "Hồ câu"}
