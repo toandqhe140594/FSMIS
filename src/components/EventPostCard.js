@@ -37,6 +37,7 @@ const EventPostCard = ({
   let heightUri;
   let widthVideo = 400;
   let heightVideo = 400;
+  let heightPage = 410;
 
   if (typeUri === "VIDEO") {
     try {
@@ -53,11 +54,15 @@ const EventPostCard = ({
         if (widthUri + 50 < heightUri) {
           widthVideo = 300;
           heightVideo = 500;
+          heightPage = 510;
         }
-        // if (widthUri >= heightUri) {
-        // }
+        if (widthUri >= heightUri) {
+          widthVideo = 400;
+          heightPage = 410;
+        }
       } else {
         srcUri[1] = uri;
+        heightVideo = 700;
       }
     } catch (err) {
       srcUri[1] = uri;
@@ -196,25 +201,24 @@ const EventPostCard = ({
         {typeUri === "VIDEO" && uri !== null ? (
           <Box
             style={{
-              height: heightVideo,
-              width: 400,
+              height: heightPage,
+              width: widthVideo,
               flex: 0,
               position: "relative",
               right: 5,
               alignSelf: "center",
-
-              borderColor: "black",
-              borderWidth: 1,
             }}
           >
             <ScrollView
-              style={{ borderWidth: 3, borderColor: "#FF0000", flex: 1 }}
+              style={{
+                flex: 1,
+                marginBottom: 4,
+              }}
               vertical
               nestedScrollEnabled
               showsHorizontalScrollIndicator={false}
             >
               <WebView
-                nestedScrollEnabled
                 originWhitelist={["https://*"]}
                 androidHardwareAccelerationDisabled
                 allowsFullscreenVideo
