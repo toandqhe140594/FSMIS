@@ -2,6 +2,7 @@ package fpt.g31.fsmis.entity;
 
 import lombok.*;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -18,4 +19,7 @@ public class BannedPhone {
     private String phone;
 
     private String description;
+
+    @Column(columnDefinition = "TEXT")
+    private String image;
 }
