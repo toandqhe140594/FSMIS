@@ -191,19 +191,34 @@ public class FishingLocationService {
                 .build();
         Response response = client.newCall(request).execute();
         String result = response.body().string();
+        System.out.println(result);
         JsonFactory factory = new JsonFactory();
         ObjectMapper mapper = new ObjectMapper(factory);
         JsonParser parser = factory.createParser(result);
         JsonNode rootNode = mapper.readTree(parser);
-        DistanceJsonResult[] resultList = mapper.convertValue(rootNode.get("rows").get(0).get("elements"), DistanceJsonResult[].class);
-        int count = 0;
-        for (DistanceJsonResult distanceJsonResult : resultList) {
-            if (!distanceJsonResult.getStatus().equals("ZERO_RESULTS") && distanceJsonResult.getDistance().getValue()/1000 <= distance) {
-                FishingLocationPinDtoOut fishingLocationPinDtoOut = modelMapper.map(fishingLocationList.get(count), FishingLocationPinDtoOut.class);
-                fishingLocationPinDtoOut.setDistance((float)distanceJsonResult.getDistance().getValue()/1000);
-                fishingLocationPinDtoOutList.add(fishingLocationPinDtoOut);
+        if (!rootNode.get("status").toString().equals("OK")) {
+            for (FishingLocation location : fishingLocationList) {
+                FishingLocationPinDtoOut dto = FishingLocationPinDtoOut.builder()
+                        .id(location.getId())
+                        .name(location.getName())
+                        .verify(location.getVerify())
+                        .score(location.getScore())
+                        .longitude(location.getLongitude())
+                        .latitude(location.getLatitude())
+                        .build();
+                fishingLocationPinDtoOutList.add(dto);
             }
-            count++;
+        } else {
+            DistanceJsonResult[] resultList = mapper.convertValue(rootNode.get("rows").get(0).get("elements"), DistanceJsonResult[].class);
+            int count = 0;
+            for (DistanceJsonResult distanceJsonResult : resultList) {
+                if (!distanceJsonResult.getStatus().equals("ZERO_RESULTS") && distanceJsonResult.getDistance().getValue() / 1000 <= distance) {
+                    FishingLocationPinDtoOut fishingLocationPinDtoOut = modelMapper.map(fishingLocationList.get(count), FishingLocationPinDtoOut.class);
+                    fishingLocationPinDtoOut.setDistance((float) distanceJsonResult.getDistance().getValue() / 1000);
+                    fishingLocationPinDtoOutList.add(fishingLocationPinDtoOut);
+                }
+                count++;
+            }
         }
 //        StringBuilder uri = new StringBuilder("https://dev.virtualearth.net/REST/v1/Routes/DistanceMatrix?origins=" + latitude + "," + longitude + "&destinations=");
 //        for (FishingLocation fishingLocation : fishingLocationList) {
