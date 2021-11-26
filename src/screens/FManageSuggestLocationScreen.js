@@ -111,7 +111,6 @@ const FManageSuggestLocationScreen = () => {
                 label="Địa chỉ"
                 placeholder="Nhập địa chỉ của khu hồ"
                 controllerName="address"
-                useNumPad
                 myStyles={{ marginVertical: 20 }}
               />
               <InputWithClipboard

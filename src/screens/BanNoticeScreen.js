@@ -37,10 +37,9 @@ const BanNoticeScreen = () => {
       >
         <Box
           borderWidth={0.5}
-          padding={3}
+          padding={4}
           paddingTop={6}
-          backgroundColor="#A2DBFA"
-          borderColor="#39A2DB"
+          backgroundColor="#BDE5FB"
         >
           <Text marginBottom={2}>
             <Text fontSize="md" style={styles.textHeader}>
