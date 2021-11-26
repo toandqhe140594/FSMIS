@@ -29,6 +29,7 @@ const ForgotPasswordScreen = () => {
   const phoneNumber = useRef(null);
   const [loading, setLoading] = useState(false);
   const methods = useForm({
+    mode: "onSubmit",
     resolver: yupResolver(SCHEMA.PHONE_NUMBER),
   });
   const sendOtp = useStoreActions((actions) => actions.UtilModel.sendOtp);

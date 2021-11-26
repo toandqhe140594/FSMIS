@@ -41,8 +41,8 @@ const LoginScreen = () => {
     useWindowDimensions().height - StatusBar.currentHeight,
   );
   const methods = useForm({
-    mode: "onChange",
-    reValidateMode: "onChange",
+    mode: "onSubmit",
+    reValidateMode: "onSubmit",
     resolver: yupResolver(SCHEMA.LOGIN_FORM),
   });
   const { handleSubmit } = methods;

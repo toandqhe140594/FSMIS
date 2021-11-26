@@ -15,8 +15,8 @@ const ChangePasswordScreen = () => {
   const navigation = useNavigation();
   const [loading, setLoading] = useState(false);
   const methods = useForm({
-    mode: "onChange",
-    reValidateMode: "onChange",
+    mode: "onSubmit",
+    reValidateMode: "onSubmit",
     resolver: yupResolver(SCHEMA.FORGOT_PASSWORD_FORM),
   });
   const { handleSubmit } = methods;
