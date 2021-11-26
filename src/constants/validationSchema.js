@@ -1,5 +1,7 @@
 import * as yup from "yup";
 
+const VN_PHONE_REGEX = /((09|03|07|08|05)+([0-9]{8})\b)/;
+
 export const ANGLER_PROFILE_FORM = yup.object().shape({
   avatarUrl: yup.string(),
   fullName: yup.string().required("Họ và tên không thể bỏ trống"),
@@ -22,7 +24,7 @@ export const ANGLER_PROFILE_PASSWORD_CHANGE_FORM = yup.object().shape({
 export const ANGLER_PROFILE_PHONE_CHANGE_FORM = yup.object().shape({
   phone: yup
     .string()
-    .matches(/((09|03|07|08|05)+([0-9]{8})\b)/, "Số điện thoại không hợp lệ")
+    .matches(VN_PHONE_REGEX, "Số điện thoại không hợp lệ")
     .required("Số điện thoại không thể bỏ trống"),
   password: yup
     .string()
@@ -253,7 +255,7 @@ export const FMANAGE_PROFILE_FORM = yup.object().shape({
   name: yup.string().required("Tên địa điểm không thể bỏ trống"),
   phone: yup
     .string()
-    .matches(/((09|03|07|08|05)+([0-9]{8})\b)/, "Số điện thoại không hợp lệ")
+    .matches(VN_PHONE_REGEX, "Số điện thoại không hợp lệ")
     .required("Số điện thoại không dược bỏ trống"),
   website: yup.string().typeError("Website không hợp lệ").ensure(),
   address: yup.string().required("Địa chỉ không được để trống"),
@@ -288,7 +290,7 @@ export const FMANAGE_SUGGESTION_FORM = yup.object().shape({
   locationName: yup.string().required("Tên khu hồ không thể bỏ trống"),
   ownerPhone: yup
     .string()
-    .matches(/((09|03|07|08|05)+([0-9]{8})\b)/, "Số điện thoại không hợp lệ")
+    .matches(VN_PHONE_REGEX, "Số điện thoại không hợp lệ")
     .required("Số điện thoại chủ hồ không dược bỏ trống"),
   description: yup.string().max(255, "Mô tả tối đa 255 ký tự"),
 });
@@ -297,7 +299,7 @@ export const ADMIN_BLACKLIST_ADD_FORM = yup.object().shape({
   description: yup.string().max(255, "Mô tả tối đa 255 ký tự"),
   phone: yup
     .string()
-    .matches(/((09|03|07|08|05)+([0-9]{8})\b)/, "Số điện thoại không hợp lệ")
+    .matches(VN_PHONE_REGEX, "Số điện thoại không hợp lệ")
     .required("Số điện thoại không dược bỏ trống"),
   imageArray: yup.array().of(yup.string()),
 });
@@ -334,7 +336,7 @@ export const REGISTER_PHONE_AND_PASS_FORM = yup.object().shape({
 export const CHANGE_PHONE_NUMBER_FORM = yup.object().shape({
   phone: yup
     .string()
-    .matches(/((09|03|07|08|05)+([0-9]{8})\b)/, "Số điện thoại không hợp lệ")
+    .matches(VN_PHONE_REGEX, "Số điện thoại không hợp lệ")
     .required("Số điện thoại không dược bỏ trống"),
   password: yup
     .string()
@@ -350,4 +352,33 @@ export const REGISTER_INFORMATION_FORM = yup.object().shape({
   provinceId: yup.number().default(1),
   districtId: yup.number().default(1),
   wardId: yup.number().default(1),
+});
+
+export const LOGIN_FORM = yup.object().shape({
+  phoneNumber: yup
+    .string()
+    .required("Số điện thoại không thể bỏ trống")
+    .matches(VN_PHONE_REGEX, "Số điện thoại không hợp lệ")
+    .label("PhoneNumber"),
+  password: yup
+    .string()
+    .required("Mật khẩu không thể bỏ trống")
+    .label("Password"),
+});
+
+export const PHONE_NUMBER = yup.object().shape({
+  phoneNumber: yup
+    .string()
+    .required("Số điện thoại không thể bỏ trống")
+    .matches(VN_PHONE_REGEX, "Số điện thoại không hợp lệ"),
+});
+
+export const FORGOT_PASSWORD_FORM = yup.object().shape({
+  password: yup
+    .string()
+    .required("Mật khẩu không thể bỏ trống")
+    .min(8, "Mật khẩu phải chứa ít nhất 8 ký tự"),
+  passwordConfirmation: yup
+    .string()
+    .oneOf([yup.ref("password"), null], "Mật khẩu không khớp"),
 });
