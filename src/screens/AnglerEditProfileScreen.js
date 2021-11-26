@@ -124,6 +124,8 @@ const EditProfileScreen = () => {
 
   const onSubmit = (data) => {
     setIsLoading(true);
+    delete data.provinceId;
+    delete data.districtId;
     const updateData = {
       ...data,
       dob: data.dob.toJSON(),

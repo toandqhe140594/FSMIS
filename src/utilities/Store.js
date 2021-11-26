@@ -75,7 +75,7 @@ const Store = createStore({
       });
       data = responseData;
     } catch (error) {
-      return;
+      throw new Error();
     }
     try {
       authToken = data.authToken;

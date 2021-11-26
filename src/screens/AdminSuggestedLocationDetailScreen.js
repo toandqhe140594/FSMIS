@@ -1,14 +1,14 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { Button, Input } from "native-base";
 import PropTypes from "prop-types";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { Text } from "react-native-elements";
 
 import HeaderTab from "../components/HeaderTab";
 import MiniMapView from "../components/MiniMapView";
-import { goBack } from "../navigations";
-import { showToastMessage } from "../utilities";
+import { goBack, goToAdminCreateSuggestLocation } from "../navigations";
+// import { showToastMessage } from "../utilities";
 
 const styles = StyleSheet.create({
   labelStyle: { fontSize: 16, fontWeight: "bold", marginVertical: 8 },
@@ -44,28 +44,39 @@ InputDataView.defaultProps = {
 const AdminSuggestedLocationDetailScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
-
-  const [success, setSuccess] = useState(null);
+  const data = useRef(null);
+  // const [success, setSuccess] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const goBackAfterSuccess = () => {
-    goBack(navigation);
-  };
+  // const goBackAfterSuccess = () => {
+  //   goBack(navigation);
+  // };
 
   const removeSuggestedRecord = () => {
     setLoading(true);
   };
 
+  const navigateToAdminCreateSuggestLocation = () => {
+    goToAdminCreateSuggestLocation(navigation, { suggestData: data.current });
+  };
   useEffect(() => {
-    if (success) {
-      showToastMessage("Xóa bản ghi thành công");
-      goBackAfterSuccess();
-    } else if (success === false) {
-      showToastMessage("Có lỗi xảy ra");
-      setLoading(false);
+    if (route.params) {
+      data.current = route.params;
+      delete data.current.id;
+      delete data.current.senderPhone;
     }
-    setSuccess(null);
-  }, [success]);
+  }, []);
+
+  // useEffect(() => {
+  //   if (success) {
+  //     showToastMessage("Xóa bản ghi thành công");
+  //     goBackAfterSuccess();
+  //   } else if (success === false) {
+  //     showToastMessage("Có lỗi xảy ra");
+  //     setLoading(false);
+  //   }
+  //   setSuccess(null);
+  // }, [success]);
 
   return (
     <ScrollView style={{ backgroundColor: "white" }}>
@@ -107,7 +118,7 @@ const AdminSuggestedLocationDetailScreen = () => {
           ) : (
             <></>
           )}
-          {route.params?.description ? (
+          {route.params?.additionalInformation ? (
             <>
               <Text
                 style={{ fontSize: 16, fontWeight: "bold", marginVertical: 8 }}
@@ -115,13 +126,14 @@ const AdminSuggestedLocationDetailScreen = () => {
                 Thông tin thêm
               </Text>
               <Input
-                value={`${route.params?.description}`}
+                value={`${route.params?.additionalInformation}`}
                 fontSize="md"
                 isDisabled
                 multiline
                 numberOfLines={6}
                 style={{
                   textAlignVertical: "top",
+                  backgroundColor: "white",
                 }}
               />
             </>
@@ -130,7 +142,7 @@ const AdminSuggestedLocationDetailScreen = () => {
           )}
           <Button.Group direction="column" mt={5} mb={5}>
             <Button
-              onPress={removeSuggestedRecord}
+              onPress={navigateToAdminCreateSuggestLocation}
               isLoading={loading}
               isDisabled={loading}
             >

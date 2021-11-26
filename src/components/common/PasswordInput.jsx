@@ -20,6 +20,7 @@ const VisibilityIcon = ({ visible, toggleVisible }) => (
 const PasswordInput = ({
   label,
   isTitle,
+  myStyles,
   hasAsterisk,
   placeholder,
   controllerName,
@@ -33,6 +34,7 @@ const PasswordInput = ({
   };
   return (
     <InputComponent
+      myStyles={myStyles}
       label={label}
       isTitle={isTitle}
       hasAsterisk={hasAsterisk}
@@ -59,6 +61,9 @@ VisibilityIcon.defaultProps = {
 PasswordInput.propTypes = {
   label: PropTypes.string,
   isTitle: PropTypes.bool,
+  myStyles: PropTypes.objectOf(
+    PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  ),
   hasAsterisk: PropTypes.bool,
   placeholder: PropTypes.string,
   controllerName: PropTypes.string,
@@ -66,6 +71,7 @@ PasswordInput.propTypes = {
 
 PasswordInput.defaultProps = {
   label: "",
+  myStyles: {},
   isTitle: false,
   hasAsterisk: false,
   placeholder: "",

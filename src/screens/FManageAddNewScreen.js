@@ -118,6 +118,8 @@ const FManageAddNewScreen = () => {
     setIsLoading(true);
     const images = data.imageArray.map((image) => image.base64);
     delete data.imageArray;
+    delete data.provinceId;
+    delete data.districtId;
     const addData = { ...data, ...locationLatLng, images };
     locationData.current = addData;
     sendOtp({ phone: data.phone })

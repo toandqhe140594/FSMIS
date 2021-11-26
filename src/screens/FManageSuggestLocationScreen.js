@@ -14,7 +14,7 @@ import MapOverviewBox from "../components/FLocationEditProfile/MapOverviewBox";
 import HeaderTab from "../components/HeaderTab";
 import styles from "../config/styles";
 import { SCHEMA } from "../constants";
-import { goBack } from "../navigations";
+// import { goBack } from "../navigations";
 import { showAlertAbsoluteBox, showToastMessage } from "../utilities";
 
 const createSuggestObject = (data) => {
@@ -43,7 +43,7 @@ const FManageSuggestLocationScreen = () => {
   );
 
   const goBackAfterSuccess = () => {
-    goBack(navigation);
+    navigation.pop(2);
   };
 
   const onSubmit = (data) => {
