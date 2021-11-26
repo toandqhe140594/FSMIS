@@ -1,8 +1,11 @@
 package fpt.g31.fsmis.security;
 
 import fpt.g31.fsmis.entity.User;
+import fpt.g31.fsmis.exception.BannedException;
+import fpt.g31.fsmis.repository.BannedPhoneRepos;
 import fpt.g31.fsmis.repository.UserRepos;
 import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -27,13 +30,14 @@ public class JwtFilter extends OncePerRequestFilter {
     private UserDetailsService userDetailsService;
 
     private UserRepos userRepos;
+    private BannedPhoneRepos bannedPhoneRepos;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
         String token = getJwtTokenFromRequest(request);
 
-        if(StringUtils.hasText(token) && jwtProvider.validateJwtToken(token)) {
+        if(StringUtils.hasText(token) && Boolean.TRUE.equals(jwtProvider.validateJwtToken(token))) {
             String phone = jwtProvider.getPhoneFromJwtToken(token);
 
             UserDetails userDetails = userDetailsService.loadUserByUsername(phone);
@@ -53,9 +57,17 @@ public class JwtFilter extends OncePerRequestFilter {
         return bearerToken;
     }
 
+    @SneakyThrows
     public User getUserFromToken(HttpServletRequest request) {
         String phone = jwtProvider.getPhoneFromJwtToken(getJwtTokenFromRequest(request));
-        return userRepos.findByPhone(phone)
+        User user = userRepos.findByPhone(phone)
                 .orElseThrow(() -> new ValidationException("Người dùng không tồn tại"));
+        if (Boolean.TRUE.equals(user.getActive())) {
+            return user;
+        } else {
+            BannedException bannedException = new BannedException();
+            bannedException.setBannedPhone(bannedPhoneRepos.getById(phone));
+            throw bannedException;
+        }
     }
 }

@@ -7,12 +7,14 @@ import fpt.g31.fsmis.dto.output.ResponseTextDtoOut;
 import fpt.g31.fsmis.entity.FishingLocation;
 import fpt.g31.fsmis.entity.Role;
 import fpt.g31.fsmis.entity.User;
+import fpt.g31.fsmis.exception.BannedException;
 import fpt.g31.fsmis.repository.BannedPhoneRepos;
 import fpt.g31.fsmis.repository.FishingLocationRepos;
 import fpt.g31.fsmis.repository.UserRepos;
 import fpt.g31.fsmis.repository.WardRepos;
 import fpt.g31.fsmis.security.JwtProvider;
 import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -21,10 +23,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.validation.ValidationException;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
-import javax.validation.ValidationException;
 
 @Service
 @AllArgsConstructor
@@ -43,7 +45,7 @@ public class AuthService {
         if (Boolean.TRUE.equals(userRepos.existsByPhone(registrationDtoIn.getPhone()))) {
             throw new ValidationException("Số điện thoại này đã tồn tại trong hệ thống");
         }
-        if (bannedPhoneRepos.existsById(registrationDtoIn.getPhone())){
+        if (bannedPhoneRepos.existsById(registrationDtoIn.getPhone())) {
             throw new ValidationException("Số điện thoại bị cấm khỏi hệ thống");
         }
         User user = User.builder()
@@ -70,17 +72,17 @@ public class AuthService {
         return new ResponseTextDtoOut("Đăng ký thành công");
     }
 
-    public AuthTokenDtoOut login(AuthDtoIn authDtoIn) {
+    @SneakyThrows
+    public Object login(AuthDtoIn authDtoIn) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(authDtoIn.getPhone(), authDtoIn.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
         User user = userRepos.findByPhone(authDtoIn.getPhone())
                 .orElseThrow(() -> new ValidationException("Tài khoản không tồn tại!"));
         if (Boolean.FALSE.equals(user.getActive())) {
-            throw new ValidationException("Tài khoản này đã bị vô hiệu hóa");
-        }
-        if (bannedPhoneRepos.existsById(authDtoIn.getPhone())){
-            throw new ValidationException("Số điện thoại bị cấm khỏi hệ thống");
+            BannedException bannedException = new BannedException();
+            bannedException.setBannedPhone(bannedPhoneRepos.getById(user.getPhone()));
+            throw bannedException;
         }
         String token = jwtProvider.generateJwtToken(authentication);
         return AuthTokenDtoOut.builder()

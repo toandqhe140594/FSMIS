@@ -1,7 +1,9 @@
 package fpt.g31.fsmis.exception.advice;
 
 import com.twilio.exception.ApiException;
+import fpt.g31.fsmis.dto.output.BanDetailDtoOut;
 import fpt.g31.fsmis.dto.output.ResponseTextDtoOut;
+import fpt.g31.fsmis.exception.BannedException;
 import fpt.g31.fsmis.exception.NotFoundException;
 import fpt.g31.fsmis.exception.UnauthorizedException;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -108,5 +110,18 @@ public class GlobalAdvice {
     ResponseTextDtoOut jwtExceptionHandler(Exception ex) {
         ex.printStackTrace();
         return new ResponseTextDtoOut("Lỗi jwt");
+    }
+
+    @ResponseBody
+    @ExceptionHandler(BannedException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    BanDetailDtoOut bannedExceptionHandler(BannedException ex) {
+        ex.printStackTrace();
+        return BanDetailDtoOut.builder()
+                .responseText("Tài khoản của bạn đã bị cấm")
+                .description(ex.getBannedPhone().getDescription())
+                .image(ex.getBannedPhone().getImage())
+                .error("BANNED")
+                .build();
     }
 }
