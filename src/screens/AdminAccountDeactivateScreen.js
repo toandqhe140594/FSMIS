@@ -34,6 +34,7 @@ const FManageSuggestLocationScreen = () => {
   );
 
   const [loading, setLoading] = useState(false);
+  const [phoneNumber, setPhoneNumber] = useState("");
 
   const goBackAfterSuccess = () => {
     goBack(navigation);
@@ -47,7 +48,7 @@ const FManageSuggestLocationScreen = () => {
       .then(() => {
         showAlertAbsoluteBox(
           "Vô hiệu hóa tài khoản thành công",
-          `Số điện thoại "${route.params?.phone}" đã bị thêm vào danh sách đen `,
+          `Số điện thoại "${phoneNumber}" đã bị thêm vào danh sách đen `,
           goBackAfterSuccess,
         );
       })
@@ -58,9 +59,9 @@ const FManageSuggestLocationScreen = () => {
 
   const onSubmit = (data) => {
     showAlertConfirmBox(
-      `Vô hiệu tài khoản "${route.params?.phone}"?`,
+      `Vô hiệu tài khoản "${phoneNumber}"?`,
       "Tài khoản bị vô hiệu hóa sẽ bị thêm vào danh sách đen và không thể tham gia vào ứng dụng",
-      deactivateAccount({ ...data, phone: route.params?.phone }),
+      deactivateAccount({ ...data, phone: phoneNumber }),
     );
   };
 
@@ -71,6 +72,7 @@ const FManageSuggestLocationScreen = () => {
         setValue("imageArray", route.params?.base64Array);
         navigation.setParams({ base64Array: [] });
       }
+      if (route.params?.phone) setPhoneNumber(route.params.phone);
     }, [route.params]),
   );
 
@@ -87,7 +89,7 @@ const FManageSuggestLocationScreen = () => {
           }}
         >
           <Text style={[styles.mdText, styles.boldText, styles.mb1]}>
-            Vô hiệu hóa tài khoản {route.params?.phone}
+            Vô hiệu hóa tài khoản {phoneNumber}
           </Text>
           <Text
             style={[styles.mt1, { textAlign: "center", marginHorizontal: 10 }]}
