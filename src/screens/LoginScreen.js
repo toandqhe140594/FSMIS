@@ -73,8 +73,8 @@ const LoginScreen = () => {
   useEffect(() => {
     // 0921485233 admin
     // setValue("phoneNumber", "0963372727");
-    // setValue("phoneNumber", "0921485233");
-    // setValue("password", "Asdf2k@!");
+    setValue("phoneNumber", "0921485233");
+    setValue("password", "Asdf2k@!");
   }, []);
 
   return (
