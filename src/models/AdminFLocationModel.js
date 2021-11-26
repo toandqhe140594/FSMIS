@@ -205,6 +205,33 @@ const model = {
       setSuccess(false);
     }
   }),
+
+  /**
+   * Admin create new location
+   * @param {Object} payload.addData data of new location
+   * @param {String} payload.addData.address
+   * @param {String} payload.addData.description
+   * @param {Number} payload.addData.latitude
+   * @param {Number} payload.addData.longitude
+   * @param {String} payload.addData.name
+   * @param {String} payload.addData.phone
+   * @param {String} payload.addData.rule
+   * @param {String} payload.addData.service
+   * @param {String} payload.addData.timetable
+   * @param {Number} payload.addData.wardId
+   * @param {String} payload.addData.website
+   */
+  createSuggestedLocation: thunk(async (actions, payload) => {
+    const { addData } = payload;
+    try {
+      await http.post(
+        `${API_URL.ADMIN_FISHING_LOCATION_SUGGEST_CREATE}`,
+        addData,
+      );
+    } catch (error) {
+      throw new Error();
+    }
+  }),
 };
 
 export default model;
