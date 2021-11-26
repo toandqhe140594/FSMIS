@@ -33,6 +33,7 @@ const AnglerProfileScreen = () => {
           avatarSize="xl"
           nameFontSize="21"
           subText={`Số lần báo cá: ${userInfo.catchesCount} lần`}
+          subTextFontSize="16"
           nameUser={userInfo.fullName}
           image={userInfo.avatarUrl}
         />
