@@ -209,17 +209,17 @@ const model = {
   /**
    * Admin create new location
    * @param {Object} payload.addData data of new location
-   * @param {Object} payload.addData.address
-   * @param {Object} payload.addData.description
-   * @param {Object} payload.addData.latitude
-   * @param {Object} payload.addData.longitude
-   * @param {Object} payload.addData.name
-   * @param {Object} payload.addData.phone
-   * @param {Object} payload.addData.rule
-   * @param {Object} payload.addData.service
-   * @param {Object} payload.addData.timetable
-   * @param {Object} payload.addData.wardId
-   * @param {Object} payload.addData.website
+   * @param {String} payload.addData.address
+   * @param {String} payload.addData.description
+   * @param {Number} payload.addData.latitude
+   * @param {Number} payload.addData.longitude
+   * @param {String} payload.addData.name
+   * @param {String} payload.addData.phone
+   * @param {String} payload.addData.rule
+   * @param {String} payload.addData.service
+   * @param {String} payload.addData.timetable
+   * @param {Number} payload.addData.wardId
+   * @param {String} payload.addData.website
    */
   createSuggestedLocation: thunk(async (actions, payload) => {
     const { addData } = payload;
