@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import { Ionicons } from "@expo/vector-icons";
-import { Box, HStack, Menu, Pressable, VStack } from "native-base";
+import { Box, HStack, Menu, Pressable, ScrollView, VStack } from "native-base";
 import PropTypes from "prop-types";
 import React from "react";
 import { Badge, Divider, Text } from "react-native-elements";
@@ -32,29 +32,40 @@ const EventPostCard = ({
   const onlyUnique = (value, index, self) => {
     return self.indexOf(value) === index;
   };
-  let srcUri;
+  let srcUri = [];
   let widthUri;
   let heightUri;
   let widthVideo = 400;
   let heightVideo = 400;
+  let heightPage = 410;
 
   if (typeUri === "VIDEO") {
     try {
-      const regExGetSrc = /<iframe ?.* src="([^"]+)" ?.*>/i;
-      const regExGetWidth = /<iframe ?.* width="([^"]+)" ?.*>/i;
-      const regExGetHeight = /<iframe ?.* height="([^"]+)" ?.*>/i;
+      const regexIframe = new RegExp("<iframe", "g");
 
-      srcUri = uri.match(regExGetSrc);
-      widthUri = uri.match(regExGetWidth);
-      heightUri = uri.match(regExGetHeight);
-      if (widthUri + 50 < heightUri) {
-        widthVideo = 300;
-        heightVideo = 500;
+      if (regexIframe.test(uri)) {
+        const regExGetSrc = /<iframe ?.* src="([^"]+)" ?.*>/i;
+        const regExGetWidth = /<iframe ?.* width="([^"]+)" ?.*>/i;
+        const regExGetHeight = /<iframe ?.* height="([^"]+)" ?.*>/i;
+
+        srcUri = uri.match(regExGetSrc);
+        widthUri = uri.match(regExGetWidth);
+        heightUri = uri.match(regExGetHeight);
+        if (widthUri + 50 < heightUri) {
+          widthVideo = 300;
+          heightVideo = 500;
+          heightPage = 510;
+        }
+        if (widthUri >= heightUri) {
+          widthVideo = 400;
+          heightPage = 410;
+        }
+      } else {
+        srcUri[1] = uri;
+        heightVideo = 700;
       }
-      // if (widthUri >= heightUri) {
-      // }
     } catch (err) {
-      console.log(`err`, err);
+      srcUri[1] = uri;
     }
   }
   return (
@@ -183,46 +194,51 @@ const EventPostCard = ({
         </VStack>
       )}
 
-      <VStack backgroundColor="gray.100">
+      <Box backgroundColor="gray.100">
         {typeUri === "IMAGE" && uri !== null && uri.length > 10 && (
           <ImageResizeMode imgUri={uri} height={400} />
         )}
         {typeUri === "VIDEO" && uri !== null ? (
           <Box
             style={{
-              height: heightVideo,
+              height: heightPage,
               width: widthVideo,
               flex: 0,
               position: "relative",
               right: 5,
               alignSelf: "center",
-              overflow: "hidden",
-              borderColor: "black",
-              borderWidth: 1,
             }}
           >
-            {/* <ScrollView contentContainerStyle={{ flexGrow: 1 }}> */}
-            <WebView
-              // scrollEnabled={true}
-              // nestedScrollEnabled={true}
-              // howsHorizontalScrollIndicator={false}
-              originWhitelist={["https://*"]}
-              automaticallyAdjustContentInsets={false}
-              scalesPageToFit={false}
+            <ScrollView
               style={{
-                flex: 0,
-                width: "100%",
-                height: "100%",
+                flex: 1,
+                marginBottom: 4,
               }}
-              allowsFullscreenVideo
-              source={{
-                uri: srcUri[1],
-              }}
-            />
-            {/* </ScrollView> */}
+              vertical
+              nestedScrollEnabled
+              showsHorizontalScrollIndicator={false}
+            >
+              <WebView
+                originWhitelist={["https://*"]}
+                androidHardwareAccelerationDisabled
+                scalesPageToFit={false}
+                allowsFullscreenVideo
+                style={{
+                  flex: 1,
+                  alignSelf: "center",
+                  justifyContent: "center",
+                  height: heightVideo,
+                  width: widthVideo,
+                  opacity: 0.99,
+                }}
+                source={{
+                  uri: srcUri[1],
+                }}
+              />
+            </ScrollView>
           </Box>
         ) : null}
-      </VStack>
+      </Box>
       <Divider />
     </Box>
   );
