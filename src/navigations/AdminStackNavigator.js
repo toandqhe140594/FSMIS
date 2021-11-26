@@ -11,6 +11,7 @@ import AdminAccountManagementScreen from "../screens/AdminAccountManagementScree
 import AdminBlacklistPhoneAddScreen from "../screens/AdminBlacklistPhoneAddScreen";
 import AdminBlacklistManagementScreen from "../screens/AdminBlacklistPhoneScreen";
 import AdminCatchReportDetailScreen from "../screens/AdminCatchReportDetailScreen";
+import AdminCreateSuggestLocation from "../screens/AdminCreateSuggestLocation";
 import AdminFishEditScreen from "../screens/AdminFishEditScreen";
 import AdminFishingMethodEditScreen from "../screens/AdminFishingMethodEditScreen";
 import AdminFishingMethodManagementScreen from "../screens/AdminFishingMethodManagementScreen";
@@ -135,6 +136,10 @@ const AdminStackNavigator = () => {
       <AdminStack.Screen
         name={ROUTE_NAMES.ADMIN_LOCATION_SUGGEST_DETAIL}
         component={AdminSuggestedLocationDetailScreen}
+      />
+      <AdminStack.Screen
+        name={ROUTE_NAMES.ADMIN_CREATE_SUGGEST_LOCATION}
+        component={AdminCreateSuggestLocation}
       />
     </AdminStack.Navigator>
   );
