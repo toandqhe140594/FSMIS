@@ -323,6 +323,10 @@ export const ADMIN_BLACKLIST_ADD_FORM = yup.object().shape({
     .required("Số điện thoại không dược bỏ trống"),
   imageArray: yup.array().of(yup.string()),
 });
+export const ADMIN_ACCOUNT_DEACTIVATE_FORM = yup.object().shape({
+  description: yup.string().max(255, "Mô tả tối đa 255 ký tự"),
+  imageArray: yup.array().of(yup.string()),
+});
 
 export const FMANAGE_POST_FORM = yup.object().shape({
   postType: yup.string().required("Loại bài đăng không được để trống"),
