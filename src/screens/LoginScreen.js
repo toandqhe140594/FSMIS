@@ -12,7 +12,7 @@ import {
   Text,
   VStack,
 } from "native-base";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import {
   KeyboardAvoidingView,
@@ -25,6 +25,7 @@ import InputComponent from "../components/common/InputComponent";
 import PasswordInput from "../components/common/PasswordInput";
 import { SCHEMA } from "../constants";
 import { goToForgotPasswordScreen, goToRegisterScreen } from "../navigations";
+import { showToastMessage } from "../utilities";
 
 const PhoneIcon = () => (
   <Icon
@@ -37,6 +38,7 @@ const PhoneIcon = () => (
 
 const LoginScreen = () => {
   const navigation = useNavigation();
+  const [isLoading, setIsLoading] = useState(false);
   const minHeight = Math.round(
     useWindowDimensions().height - StatusBar.currentHeight,
   );
@@ -45,7 +47,7 @@ const LoginScreen = () => {
     reValidateMode: "onSubmit",
     resolver: yupResolver(SCHEMA.LOGIN_FORM),
   });
-  const { handleSubmit } = methods;
+  const { handleSubmit, setValue } = methods;
   const login = useStoreActions((actions) => actions.login);
 
   const registerAction = () => {
@@ -57,7 +59,14 @@ const LoginScreen = () => {
   };
 
   const onSubmit = (data) => {
-    login({ phone: data.phoneNumber, password: data.password });
+    setIsLoading(true);
+    login({ phone: data.phoneNumber, password: data.password })
+      .then(() => {
+        showToastMessage("Đăng nhập thành công");
+      })
+      .catch(() => {
+        setIsLoading(false);
+      });
   };
 
   // Development only
@@ -107,7 +116,9 @@ const LoginScreen = () => {
                 </Text>
 
                 {/* Submit button */}
-                <Button onPress={handleSubmit(onSubmit)}>Đăng nhập</Button>
+                <Button isLoading={isLoading} onPress={handleSubmit(onSubmit)}>
+                  Đăng nhập
+                </Button>
               </VStack>
             </FormProvider>
           </Center>
