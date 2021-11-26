@@ -14,6 +14,11 @@ import ImageResizeMode from "../components/ImageResizeMode";
 const styles = StyleSheet.create({
   text: {
     color: "#053742",
+    fontSize: 12,
+  },
+  textHeader: {
+    fontSize: 14,
+    color: "#053742",
   },
 });
 const BanNoticeScreen = () => {
@@ -38,42 +43,55 @@ const BanNoticeScreen = () => {
           borderColor="#39A2DB"
         >
           <Text marginBottom={2}>
-            <Text fontSize="md" style={styles.text}>
+            <Text fontSize="md" style={styles.textHeader}>
               Gửi bạn:{" "}
             </Text>
-            <Text bold style={styles.text}>
+            <Text bold style={(styles.text, styles.textHeader)}>
               {" "}
               123Text.
             </Text>
           </Text>
 
-          <Text paddingLeft={0.5} style={styles.text}>
+          <Text paddingLeft={0.5} style={styles.text} fontSize="12">
             Lorem ipsum dolor sit amet, consectetur adipisicing elit, seiusmod
             tempor
           </Text>
 
-          <Divider my="2" />
-
-          <Swiper
-            loadMinimal
-            paginationStyle={{
-              height: 15,
-              marginBottom: 0,
-              bottom: 0,
-            }}
-            style={{ marginTop: 0 }}
-            containerStyle={{
-              padding: 0,
-              height: 240,
-              flex: 0,
-              backgroundColor: "#DBE6FD",
-            }}
-          >
-            <ImageResizeMode imgUri="https://picsum.photos/200" height={240} />
-            <ImageResizeMode imgUri="https://picsum.photos/300" height={240} />
-            <ImageResizeMode imgUri="https://picsum.photos/400" height={240} />
-          </Swiper>
-          <Divider my="1" />
+          <Divider mb="2" />
+          <Box>
+            <Text mb={2} style={styles.text}>
+              Ảnh gửi bởi cộng đồng:
+            </Text>
+            <Swiper
+              loadMinimal
+              paginationStyle={{
+                height: 15,
+                marginBottom: 0,
+                bottom: 0,
+              }}
+              style={{ marginTop: 0 }}
+              containerStyle={{
+                padding: 0,
+                height: 240,
+                flex: 0,
+                backgroundColor: "#DBE6FD",
+              }}
+            >
+              <ImageResizeMode
+                imgUri="https://picsum.photos/200"
+                height={240}
+              />
+              <ImageResizeMode
+                imgUri="https://picsum.photos/300"
+                height={240}
+              />
+              <ImageResizeMode
+                imgUri="https://picsum.photos/400"
+                height={240}
+              />
+            </Swiper>
+          </Box>
+          <Divider my="2" backgroundColor="white" />
           <Text style={styles.text}>
             Tài khoản:{" "}
             <Text bold style={styles.text}>

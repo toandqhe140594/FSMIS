@@ -221,6 +221,7 @@ const EventPostCard = ({
               <WebView
                 originWhitelist={["https://*"]}
                 androidHardwareAccelerationDisabled
+                scalesPageToFit={false}
                 allowsFullscreenVideo
                 style={{
                   flex: 1,
