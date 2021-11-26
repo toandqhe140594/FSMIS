@@ -41,6 +41,7 @@ const ForgotPasswordScreen = () => {
     phoneNumber.current = data.phoneNumber;
     sendOtp({ phone: data.phoneNumber, existedStatus: "EXISTED" })
       .then(() => {
+        setLoading(false);
         goToOTPScreen(
           navigation,
           ROUTE_NAMES.PASSWORD_FORGOT,
@@ -55,8 +56,9 @@ const ForgotPasswordScreen = () => {
   useFocusEffect(
     // useCallback will listen to route.param
     useCallback(() => {
-      if (route.params?.otpSuccess === true)
+      if (route.params?.otpSuccess === true) {
         goToChangePasswordScreen(navigation, { ...phoneNumber.current });
+      }
     }, [route.params]),
   );
 
