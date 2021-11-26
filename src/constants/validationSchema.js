@@ -384,3 +384,17 @@ export const FORGOT_PASSWORD_FORM = yup.object().shape({
     .string()
     .oneOf([yup.ref("password"), null], "Mật khẩu không khớp"),
 });
+
+export const ADMIN_FMANAGE_PROFILE_FORM = yup.object().shape({
+  name: yup.string().required("Tên hồ không được để trống"),
+  phone: yup.string().matches(VN_PHONE_REGEX, "Số điện thoại không hợp lệ"),
+  website: yup.string().typeError("Website không hợp lệ").ensure(),
+  address: yup.string().required("Địa chỉ không được để trống"),
+  provinceId: yup.number(),
+  districtId: yup.number(),
+  wardId: yup.number().default(1),
+  description: yup.string().ensure(),
+  rule: yup.string().ensure(),
+  service: yup.string().ensure(),
+  timetable: yup.string().ensure(),
+});
