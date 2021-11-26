@@ -25,7 +25,7 @@ const FishingMethodManagementCard = ({ id, name, active }) => {
         marginHorizontal={12}
       >
         <Box flex={1} justifyContent="center" my={4}>
-          <Text style={{ fontWeight: "bold", fontSize: 18 }} numberOfLines={2}>
+          <Text style={{ fontWeight: "bold", fontSize: 20 }} numberOfLines={2}>
             {name}
           </Text>
         </Box>

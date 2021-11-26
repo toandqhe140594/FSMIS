@@ -1,6 +1,6 @@
 import { useStoreActions, useStoreState } from "easy-peasy";
 import PropTypes from "prop-types";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { useFormContext, useWatch } from "react-hook-form";
 
 import SelectComponent from "./SelectComponent";
@@ -13,7 +13,7 @@ const ProvinceSelector = ({
   hasAsterisk,
 }) => {
   const { control, setValue } = useFormContext();
-  const [getStatus, setGetStatus] = useState(null);
+  const canBeReset = useRef(false);
   const watchProvince = useWatch({ control, name: controllerName });
   const { provinceList } = useStoreState((state) => state.AddressModel);
   const { getDisctrictByProvinceId, resetDistrictList } = useStoreActions(
@@ -21,18 +21,16 @@ const ProvinceSelector = ({
   );
 
   useEffect(() => {
-    getDisctrictByProvinceId({ id: watchProvince, setGetStatus });
+    getDisctrictByProvinceId({ id: watchProvince })
+      .then(() => {
+        if (canBeReset.current) {
+          setValue("districtId", 0);
+        } else canBeReset.current = true;
+      })
+      .catch(() => {
+        resetDistrictList();
+      });
   }, [watchProvince]);
-
-  useEffect(() => {
-    if (getStatus === "SUCCESS") {
-      setValue(controllerName, 0);
-      setGetStatus(null);
-    } else if (getStatus === "FAILED") {
-      resetDistrictList();
-      setGetStatus(null);
-    }
-  }, [getStatus]);
 
   return (
     <SelectComponent

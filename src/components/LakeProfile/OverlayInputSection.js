@@ -32,7 +32,6 @@ const styles = StyleSheet.create({
 });
 
 const OverlayInputSection = ({ id, name, visible, toggleOverlay }) => {
-  const [updateStatus, setUpdateStatus] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { stockFishInLake } = useStoreActions(
     (actions) => actions.FManageModel,
@@ -43,65 +42,59 @@ const OverlayInputSection = ({ id, name, visible, toggleOverlay }) => {
     defaultValues: { quantity: 0, weight: 0 },
     resolver: yupResolver(SCHEMA.FMANAGE_LAKE_FISH_EDIT_FORM),
   });
-  const { handleSubmit, clearErrors, reset, watch, setValue } = methods;
-  const watchQuantity = watch("quantity", 0);
-  const watchWeight = watch("weight", 0);
+  const { handleSubmit, reset, watch } = methods;
+  const watchQuantity = watch("quantity");
+  const watchWeight = watch("weight");
   /**
    * To exit overlay, reset any error or previous input by use
    * setIsLoading to false
    * set visible to false to hide overlay
    */
   const handleOnExit = () => {
-    reset({ quantity: 0, weight: 0 }); // this reset will not work with select dropdown
-    clearErrors(["quantity", "weight"]);
+    reset(
+      { quantity: 0, weight: 0 },
+      {
+        keepErrors: false,
+      },
+    );
     setIsLoading(false);
     toggleOverlay({ visible: false });
   };
 
   const onSubmit = (data) => {
-    // if (bothFieldNotEmpty()) {
     setIsLoading(true);
     const updateData = Object.fromEntries(
       Object.entries(data).filter((keyValPair) => keyValPair[1] !== 0),
     );
-    stockFishInLake({ updateData, id, setUpdateStatus });
-    // }
+    stockFishInLake({ id, updateData })
+      .then(() => {
+        showToastMessage("Bồi cá thành công!");
+        handleOnExit();
+      })
+      .catch(() => {
+        setIsLoading(false);
+      });
   };
 
   /**
    * Reset quantity "" to 0
-   * Fire when use deletes the value
+   * Trigger when use deletes the value
    */
   useEffect(() => {
     if (watchQuantity === "") {
-      setValue("quantity", 0);
-      clearErrors("quantity");
+      reset({ quantity: 0 }, { keepErrors: false });
     }
   }, [watchQuantity]);
 
   /**
    * Reset weight "" to 0
-   * Fire when use deletes the value
+   * Trigger when use deletes the value
    */
   useEffect(() => {
     if (watchWeight === "") {
-      setValue("weight", 0);
-      clearErrors("weight");
+      reset({ weight: 0 }, { keepErrors: false });
     }
   }, [watchWeight]);
-
-  useEffect(() => {
-    if (updateStatus === "SUCCESS") {
-      setIsLoading(false);
-      showToastMessage("Bồi cá thành công!");
-      setUpdateStatus(null);
-      handleOnExit();
-    } else if (updateStatus === "FAILED") {
-      setIsLoading(false);
-      setUpdateStatus(null);
-      handleOnExit();
-    }
-  }, [updateStatus]);
 
   return (
     <Overlay overlayStyle={styles.overlayContainer} isVisible={visible}>
@@ -115,33 +108,29 @@ const OverlayInputSection = ({ id, name, visible, toggleOverlay }) => {
         <View style={styles.inputWrapper}>
           <Text style={styles.text}>Số cá bồi</Text>
           <InputComponent
-            myStyles={styles.input}
-            label=""
-            placeholder="Nhập số con muốn bồi"
-            controllerName="quantity"
             useNumPad
-            // shouldDisable={watchWeight.length > 0}
+            myStyles={styles.input}
+            controllerName="quantity"
+            placeholder="Nhập số con muốn bồi"
           />
         </View>
         <View style={styles.inputWrapper}>
           <Text style={styles.text}>Tổng cân nặng</Text>
           <InputComponent
-            myStyles={styles.input}
-            label=""
-            placeholder="Nhập cân nặng đợt bồi (kg)"
-            controllerName="weight"
             useNumPad
-            // shouldDisable={watchQuantity.length > 0}
+            controllerName="weight"
+            myStyles={styles.input}
+            placeholder="Nhập cân nặng đợt bồi (kg)"
           />
         </View>
         <View
-          style={[
-            styles.inputWrapper,
-            { marginTop: 20, justifyContent: "space-evenly" },
-          ]}
+          style={StyleSheet.compose(styles.inputWrapper, {
+            marginTop: 20,
+            justifyContent: "space-evenly",
+          })}
         >
           <Button w="45%" variant="outline" onPress={handleOnExit}>
-            Hủy
+            Quay lại
           </Button>
           <Button
             w="45%"

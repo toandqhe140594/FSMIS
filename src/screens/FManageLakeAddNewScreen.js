@@ -49,7 +49,6 @@ const styles = StyleSheet.create({
 const LakeAddNewScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
-  const [addStatus, setAddStatus] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [fullScreenMode, setFullScreenMode] = useState(true);
   const { addNewLakeInLocation } = useStoreActions(
@@ -70,19 +69,35 @@ const LakeAddNewScreen = () => {
     setValue,
     formState: { errors },
   } = methods;
+
+  const handleGoBack = () => {
+    goBack(navigation);
+  };
+
   const onSubmit = (data) => {
     setIsLoading(true);
-    // Remove in each object in fishInLake array any field has value 0
     const cleanFishArray = data.fishInLakeList.map((fishCard) =>
       Object.fromEntries(
         Object.entries(fishCard).filter((keyValPair) => keyValPair[1] !== 0),
       ),
     );
-    // Should check for empty images
     const imageUrl = data.imageArray[0].base64;
     delete data.imageArray;
     const addData = { ...data, imageUrl, fishInLakeList: cleanFishArray };
-    addNewLakeInLocation({ addData, setAddStatus });
+    addNewLakeInLocation({ addData })
+      .then(() => {
+        setIsLoading(false);
+        showAlertAbsoluteBox(
+          "Thông báo",
+          "Hồ bé thêm thành công!",
+          handleGoBack,
+          "Xác nhận",
+        );
+      })
+      .catch(() => {
+        setIsLoading(false);
+        showAlertBox("Thông báo", "Đã có lỗi xảy ra, vui lòng thử lại");
+      });
   };
   /**
    * Everytime enter the screen, call api
@@ -102,27 +117,6 @@ const LakeAddNewScreen = () => {
     };
   }, []);
 
-  /**
-   * Trigger when addStatus state value return from api call
-   */
-  useEffect(() => {
-    if (addStatus === "SUCCESS") {
-      setIsLoading(false);
-      setAddStatus(null);
-      showAlertAbsoluteBox(
-        "Thông báo",
-        "Hồ bé thêm thành công!",
-        () => {
-          goBack(navigation);
-        },
-        "Xác nhận",
-      );
-    } else if (addStatus === "FAILED") {
-      setIsLoading(false);
-      setAddStatus(null);
-      showAlertBox("Thông báo", "Đã có lỗi xảy ra, vui lòng thử lại");
-    }
-  }, [addStatus]);
   // Fire when navigates back to the screen
   useFocusEffect(
     // useCallback will listen to route.param

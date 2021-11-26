@@ -52,7 +52,6 @@ const styles = StyleSheet.create({
 const LakeEditProfileScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
-  const [updateStatus, setUpdateStatus] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [fullScreenMode, setFullScreenMode] = useState(true);
   const { fishingMethodList } = useStoreState(
@@ -85,7 +84,16 @@ const LakeEditProfileScreen = () => {
     resolver: yupResolver(SCHEMA.FMANAGE_LAKE_FORM),
   });
   const { handleSubmit, setValue } = methods;
-  const [deleteSuccess, setDeleteSuccess] = useState(false);
+
+  const navigateToLakeProfileScreen = () => {
+    goBack(navigation);
+  };
+
+  const handleError = () => {
+    setIsLoading(false);
+    showAlertBox("Thông báo", "Đã xảy ra lỗi! Vui lòng thử lại sau.");
+  };
+
   /**
    * Submit lake changes
    * @param {Object} data data from controller
@@ -96,22 +104,35 @@ const LakeEditProfileScreen = () => {
     const imageUrl = data.imageArray[0].base64;
     delete data.imageArray;
     const updateData = { ...data, imageUrl };
-    editLakeDetail({ updateData, setUpdateStatus, id });
+    editLakeDetail({ updateData, id })
+      .then(() => {
+        setIsLoading(false);
+        showAlertAbsoluteBox(
+          "Thông báo",
+          "Chỉnh sửa thành công",
+          navigateToLakeProfileScreen,
+          "Xác nhận",
+        );
+      })
+      .catch(handleError);
   };
 
-  const handleLakeDelete = () => {
+  const handleCloseLake = (id) => () => {
+    closeLakeByLakeId({ id })
+      .then(() => {
+        showToastMessage("Xóa hồ thành công");
+        navigation.pop(2);
+      })
+      .catch(handleError);
+  };
+
+  const promptBeforeDelete = () => {
     const { name, id } = lakeDetail;
     showAlertConfirmBox(
       "Bạn muốn xóa hồ này?",
       `"${name}" sẽ bị xóa vĩnh viễn. Bạn không thể hoàn tác hành động này`,
-      () => {
-        closeLakeByLakeId({ id, setDeleteSuccess });
-      },
+      handleCloseLake(id),
     );
-  };
-
-  const navigateToLakeProfileScreen = () => {
-    goBack(navigation);
   };
 
   /**
@@ -144,33 +165,6 @@ const LakeEditProfileScreen = () => {
       }
     }, [route.params]),
   );
-
-  /**
-   * When updateState return, open Alert
-   */
-  useEffect(() => {
-    if (updateStatus === "SUCCESS") {
-      setIsLoading(false);
-      setUpdateStatus(null);
-      showAlertAbsoluteBox(
-        "Thông báo",
-        "Chỉnh sửa thành công",
-        navigateToLakeProfileScreen,
-        "Xác nhận",
-      );
-    } else if (updateStatus === "FAILED") {
-      setIsLoading(false);
-      setUpdateStatus(null);
-      showAlertBox("Thông báo", "Đã xảy ra lỗi! Vui lòng thử lại sau.");
-    }
-  }, [updateStatus]);
-
-  useEffect(() => {
-    if (deleteSuccess) {
-      showToastMessage("Xóa hồ thành công");
-      navigation.pop(2);
-    }
-  }, [deleteSuccess]);
 
   return (
     <>
@@ -275,7 +269,7 @@ const LakeEditProfileScreen = () => {
                   style={styles.button}
                   variant="outline"
                   alignSelf="center"
-                  onPress={handleLakeDelete}
+                  onPress={promptBeforeDelete}
                 >
                   Xoá hồ câu
                 </Button>
