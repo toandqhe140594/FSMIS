@@ -66,7 +66,7 @@ const EventPostCard = ({
         const regexYouTubeID =
           /(?:https?:\/{2})?(?:w{3}\.)?youtu(?:be)?\.(?:com|be)(?:\/watch\?v=|\/)([^\s&]+)/;
         const idArray = uri.split(regexYouTubeID);
-        uri = `https://www.youtube.com/embed/${idArray[1]}`;
+        srcUri[1] = `https://www.youtube.com/embed/${idArray[1]}`;
         widthVideo = 400;
         heightPage = 410;
       } else {
