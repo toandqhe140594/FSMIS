@@ -8,7 +8,7 @@ import EmployeeDetailBox from "../components/EmployeeDetailBox";
 import HeaderTab from "../components/HeaderTab";
 import { DEFAULT_TIMEOUT } from "../constants";
 import { goToAdminAccountDeactiveScreen } from "../navigations";
-import { showToastMessage } from "../utilities";
+import { showAlertConfirmBox, showToastMessage } from "../utilities";
 
 const AdminAccountDetailScreen = () => {
   const route = useRoute();
@@ -33,16 +33,28 @@ const AdminAccountDetailScreen = () => {
 
   let activationTimeout = null;
 
-  const changeAccountStatus = () => {
-    setIsLoading(true);
-    if (accountInformation.active) {
-      goToAdminAccountDeactiveScreen(navigation);
-      return;
-    }
+  const activateAccountAction = () => {
     activationTimeout = setTimeout(() => {
       setIsLoading(false);
     }, DEFAULT_TIMEOUT);
     activateAccount({ setSuccess });
+  };
+
+  const changeAccountStatus = () => {
+    if (accountInformation.active) {
+      goToAdminAccountDeactiveScreen(navigation, {
+        phone: accountInformation.phone,
+      });
+    } else {
+      showAlertConfirmBox(
+        `Kích hoạt tài khoản ${accountInformation.phone}?`,
+        "Tài khoản được kích hoạt sẽ có thể tham gia vào ứng dụng như bình thường",
+        () => {
+          console.log("active");
+          activateAccountAction();
+        },
+      );
+    }
   };
 
   useEffect(() => {

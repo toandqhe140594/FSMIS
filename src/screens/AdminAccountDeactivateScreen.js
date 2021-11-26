@@ -5,7 +5,7 @@ import {
   useRoute,
 } from "@react-navigation/native";
 import { useStoreActions } from "easy-peasy";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { View } from "react-native";
 import { Button, Text } from "react-native-elements";
@@ -13,10 +13,11 @@ import { Button, Text } from "react-native-elements";
 import MultiImageSection from "../components/common/MultiImageSection";
 import TextAreaComponent from "../components/common/TextAreaComponent";
 import HeaderTab from "../components/HeaderTab";
+import colors from "../config/colors";
 import styles from "../config/styles";
 import { ROUTE_NAMES, SCHEMA } from "../constants";
 import { goBack } from "../navigations";
-import { showAlertAbsoluteBox, showToastMessage } from "../utilities";
+import { showAlertAbsoluteBox, showAlertConfirmBox } from "../utilities";
 
 const FManageSuggestLocationScreen = () => {
   const route = useRoute();
@@ -24,40 +25,44 @@ const FManageSuggestLocationScreen = () => {
   const methods = useForm({
     mode: "onSubmit",
     defaultValues: { imageArray: [] },
-    resolver: yupResolver(SCHEMA.ADMIN_BLACKLIST_ADD_FORM),
+    resolver: yupResolver(SCHEMA.ADMIN_ACCOUNT_DEACTIVATE_FORM),
   });
-  const { handleSubmit, getValues, setValue } = methods;
+  const { handleSubmit, setValue } = methods;
 
   const blacklistPhoneNumber = useStoreActions(
     (actions) => actions.AccountManagementModel.blacklistPhoneNumber,
   );
 
-  const [success, setSuccess] = useState(null);
   const [loading, setLoading] = useState(false);
-
-  const onSubmit = (data) => {
-    setLoading(true);
-    blacklistPhoneNumber({ blacklistObj: data, setSuccess });
-  };
 
   const goBackAfterSuccess = () => {
     goBack(navigation);
   };
 
-  useEffect(() => {
-    if (success) {
-      const phoneNumber = getValues("phone");
-      showAlertAbsoluteBox(
-        "Chặn số điện thoại thành công",
-        `Số điện thoại "${phoneNumber}"" đã bị thêm vào danh sách đen `,
-        goBackAfterSuccess,
-      );
-    } else if (success === false) {
-      showToastMessage("Có lỗi xảy ra");
-      setLoading(false);
-      setSuccess(null);
-    }
-  }, [success]);
+  const deactivateAccount = (blacklistObj) => () => {
+    setLoading(true);
+    blacklistPhoneNumber({
+      blacklistObj,
+    })
+      .then(() => {
+        showAlertAbsoluteBox(
+          "Vô hiệu hóa tài khoản thành công",
+          `Số điện thoại "${route.params?.phone}" đã bị thêm vào danh sách đen `,
+          goBackAfterSuccess,
+        );
+      })
+      .catch(() => {
+        setLoading(false);
+      });
+  };
+
+  const onSubmit = (data) => {
+    showAlertConfirmBox(
+      `Vô hiệu tài khoản "${route.params?.phone}"?`,
+      "Tài khoản bị vô hiệu hóa sẽ bị thêm vào danh sách đen và không thể tham gia vào ứng dụng",
+      deactivateAccount({ ...data, phone: route.params?.phone }),
+    );
+  };
 
   useFocusEffect(
     // useCallback will listen to route.param
@@ -82,7 +87,7 @@ const FManageSuggestLocationScreen = () => {
           }}
         >
           <Text style={[styles.mdText, styles.boldText, styles.mb1]}>
-            Vô hiệu hóa tài khoản 0985043311
+            Vô hiệu hóa tài khoản {route.params?.phone}
           </Text>
           <Text
             style={[styles.mt1, { textAlign: "center", marginHorizontal: 10 }]}
@@ -105,15 +110,18 @@ const FManageSuggestLocationScreen = () => {
 
             <MultiImageSection
               containerStyle={{ width: "100%" }}
-              formRoute={ROUTE_NAMES.ADMIN_BLACKLIST_PHONE_MANAGEMENT_ADD}
+              formRoute={ROUTE_NAMES.ADMIN_ACCOUNT_MANAGEMENT_DEACTIVATE}
               controllerName="imageArray"
             />
             <Button
-              title="Gửi"
+              title="Vô hiệu hóa tài khoản"
               onPress={handleSubmit(onSubmit)}
               containerStyle={{ marginTop: 30 }}
               loading={loading}
               disabled={loading}
+              buttonStyle={{
+                backgroundColor: colors.defaultDanger,
+              }}
             />
           </View>
         </View>
