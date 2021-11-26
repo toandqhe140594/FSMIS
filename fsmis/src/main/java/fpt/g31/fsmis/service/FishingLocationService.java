@@ -181,7 +181,8 @@ public class FishingLocationService {
         for (FishingLocation fishingLocation : fishingLocationList) {
             uri.append(fishingLocation.getLatitude()).append("%2C").append(fishingLocation.getLongitude()).append("%7C");
         }
-        uri.delete(uri.length() - 3, uri.length()).append("&key=AIzaSyCteSFfn7GN_wBX9QPGXstMTajRmd1EpNM");
+        String key = "AIzaSyCWkEPRlvNk7-z06foiZnfGFpm91THyVZQ";
+        uri.delete(uri.length() - 3, uri.length()).append("&key=").append(key);
         OkHttpClient client = new OkHttpClient().newBuilder()
                 .build();
         Request request = new Request.Builder()
