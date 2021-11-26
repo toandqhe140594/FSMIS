@@ -64,6 +64,7 @@ export const ADMIN_LOCATION_SUGGEST_MANAGEMENT =
   "Admin Suggested Fishing Location Management Screen";
 export const ADMIN_LOCATION_SUGGEST_DETAIL =
   "Admin Suggested Fishing Location Detail";
+export const ADMIN_CREATE_SUGGEST_LOCATION = "Admin Create Suggested Location";
 export const ADMIN_LOCATION_MANAGEMENT =
   "Admin Fishing Location Management Screen";
 export const ADMIN_LOCATION_MANAGEMENT_OVERVIEW =

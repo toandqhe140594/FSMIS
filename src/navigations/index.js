@@ -233,6 +233,12 @@ const goToAdminFLocationReportDetailScreen = (navigation, params) => {
   });
 };
 
+const goToAdminCreateSuggestLocation = (navigation, params) => {
+  navigation.navigate(ROUTE_NAMES.ADMIN_CREATE_SUGGEST_LOCATION, {
+    ...params,
+  });
+};
+
 const goToAdminReviewReportDetailScreen = (navigation, params) => {
   navigation.navigate(ROUTE_NAMES.ADMIN_REPORT_MANAGEMENT_REVIEW_DETAIL, {
     ...params,
@@ -269,6 +275,7 @@ export {
   goToAdminBlacklistPhoneAddScreen,
   goToAdminCatchDetail,
   goToAdminCatchReportDetail,
+  goToAdminCreateSuggestLocation,
   goToAdminFishEditScreen,
   goToAdminFishingMethodEditScreen,
   goToAdminFishingMethodManagementScreen,
