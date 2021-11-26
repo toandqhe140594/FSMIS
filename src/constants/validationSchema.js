@@ -1,5 +1,7 @@
 import * as yup from "yup";
 
+const VN_PHONE_REGEX = /((09|03|07|08|05)+([0-9]{8})\b)/;
+
 export const ANGLER_PROFILE_FORM = yup.object().shape({
   avatarUrl: yup.string(),
   fullName: yup.string().required("Họ và tên không thể bỏ trống"),
@@ -22,7 +24,7 @@ export const ANGLER_PROFILE_PASSWORD_CHANGE_FORM = yup.object().shape({
 export const ANGLER_PROFILE_PHONE_CHANGE_FORM = yup.object().shape({
   phone: yup
     .string()
-    .matches(/((09|03|07|08|05)+([0-9]{8})\b)/, "Số điện thoại không hợp lệ")
+    .matches(VN_PHONE_REGEX, "Số điện thoại không hợp lệ")
     .required("Số điện thoại không thể bỏ trống"),
   password: yup
     .string()
@@ -47,13 +49,13 @@ export const ANGLER_CATCH_REPORT_FORM = yup.object().shape({
         {
           fishInLakeId: yup
             .number()
-            .test("zero", "Loại cá không được để trống", (value) => value !== 0)
+            .notOneOf([0], "Loại cá không được để trống")
             .typeError("Trường này chỉ được nhập số")
             .required("Loại cá không được để trống"),
           quantity: yup
             .number()
             .typeError("Trường này chỉ được nhập số")
-            .moreThan(0, "Số lượng phải lớn hơn 0")
+            .min(0, "Số lượng phải lớn hơn 0")
             .max(9999, "Số lượng tối đa là 9999")
             .test("integer", "Số lượng phải là số nguyên", (value) =>
               Number.isInteger(value),
@@ -63,26 +65,24 @@ export const ANGLER_CATCH_REPORT_FORM = yup.object().shape({
               then: yup
                 .number()
                 .typeError("Trường này chỉ được nhập số")
-                .test(
-                  "zeroEmpty",
+                .notOneOf(
+                  [0],
                   "Một trong hai trường không được để trống hay bằng 0",
-                  (value) => value !== 0,
                 ),
             }),
           weight: yup
             .number()
             .typeError("Trường này chỉ được nhập số")
-            .moreThan(0, "Cân nặng phải lớn hơn 0")
+            .min(0, "Cân nặng phải lớn hơn 0")
             .max(9999, "Cân nặng tối đa là 9999kg")
             .when("quantity", {
               is: 0,
               then: yup
                 .number()
                 .typeError("Trường này chỉ được nhập số")
-                .test(
-                  "zeroEmpty",
+                .notOneOf(
+                  [0],
                   "Một trong hai trường không được để trống hay bằng 0",
-                  (value) => value !== 0,
                 ),
             }),
           returnToOwner: yup.bool().default(false),
@@ -149,10 +149,9 @@ export const FMANAGE_LAKE_FORM = yup.object().shape({
               then: yup
                 .number()
                 .typeError("Trường này chỉ được nhập số")
-                .test(
-                  "zeroEmpty",
+                .notOneOf(
+                  [0],
                   "Một trong hai trường không được để trống hay bằng 0",
-                  (value) => value !== 0,
                 ),
             }),
           totalWeight: yup
@@ -165,10 +164,9 @@ export const FMANAGE_LAKE_FORM = yup.object().shape({
               then: yup
                 .number()
                 .typeError("Trường này chỉ được nhập số")
-                .test(
-                  "zeroEmpty",
+                .notOneOf(
+                  [0],
                   "Một trong hai trường không được để trống hay bằng 0",
-                  (value) => value !== 0,
                 ),
             }),
         },
@@ -190,11 +188,7 @@ export const FMANAGE_LAKE_FISH_EDIT_FORM = yup.object().shape(
         then: yup
           .number()
           .typeError("Trường này chỉ được nhập số")
-          .test(
-            "zeroEmpty",
-            "Một trong hai trường không được để trống hay bằng 0",
-            (value) => value !== 0,
-          ),
+          .notOneOf([0], "Một trong hai trường không được để trống hay bằng 0"),
       }),
     weight: yup
       .number()
@@ -206,11 +200,7 @@ export const FMANAGE_LAKE_FISH_EDIT_FORM = yup.object().shape(
         then: yup
           .number()
           .typeError("Trường này chỉ được nhập số")
-          .test(
-            "zeroEmpty",
-            "Một trong hai trường không được để trống hay bằng 0",
-            (value) => value !== 0,
-          ),
+          .notOneOf([0], "Một trong hai trường không được để trống hay bằng 0"),
       }),
   },
   ["quantity", "weight"],
@@ -242,11 +232,7 @@ export const FMANAGE_LAKE_FISH_ADD_FORM = yup.object().shape(
         then: yup
           .number()
           .typeError("Trường này chỉ được nhập số")
-          .test(
-            "zeroEmpty",
-            "Một trong hai trường không được để trống hay bằng 0",
-            (value) => value !== 0,
-          ),
+          .notOneOf([0], "Một trong hai trường không được để trống hay bằng 0"),
       }),
     totalWeight: yup
       .number()
@@ -258,11 +244,7 @@ export const FMANAGE_LAKE_FISH_ADD_FORM = yup.object().shape(
         then: yup
           .number()
           .typeError("Trường này chỉ được nhập số")
-          .test(
-            "zeroEmpty",
-            "Một trong hai trường không được để trống hay bằng 0",
-            (value) => value !== 0,
-          ),
+          .notOneOf([0], "Một trong hai trường không được để trống hay bằng 0"),
       }),
   },
   ["quantity", "totalWeight"],
@@ -273,7 +255,7 @@ export const FMANAGE_PROFILE_FORM = yup.object().shape({
   name: yup.string().required("Tên địa điểm không thể bỏ trống"),
   phone: yup
     .string()
-    .matches(/((09|03|07|08|05)+([0-9]{8})\b)/, "Số điện thoại không hợp lệ")
+    .matches(VN_PHONE_REGEX, "Số điện thoại không hợp lệ")
     .required("Số điện thoại không dược bỏ trống"),
   website: yup.string().typeError("Website không hợp lệ").ensure(),
   address: yup.string().required("Địa chỉ không được để trống"),
@@ -308,7 +290,7 @@ export const FMANAGE_SUGGESTION_FORM = yup.object().shape({
   name: yup.string().required("Tên khu hồ không thể bỏ trống"),
   phone: yup
     .string()
-    .matches(/((09|03|07|08|05)+([0-9]{8})\b)/, "Số điện thoại không hợp lệ")
+    .matches(VN_PHONE_REGEX, "Số điện thoại không hợp lệ")
     .required("Số điện thoại chủ hồ không dược bỏ trống"),
   description: yup.string().max(255, "Mô tả tối đa 255 ký tự"),
   address: yup.string().max(255, "Địa chỉ tối đa 255 ký tự"),
@@ -319,7 +301,7 @@ export const ADMIN_BLACKLIST_ADD_FORM = yup.object().shape({
   description: yup.string().max(255, "Mô tả tối đa 255 ký tự"),
   phone: yup
     .string()
-    .matches(/((09|03|07|08|05)+([0-9]{8})\b)/, "Số điện thoại không hợp lệ")
+    .matches(VN_PHONE_REGEX, "Số điện thoại không hợp lệ")
     .required("Số điện thoại không dược bỏ trống"),
   imageArray: yup.array().of(yup.string()),
 });
@@ -356,10 +338,49 @@ export const REGISTER_PHONE_AND_PASS_FORM = yup.object().shape({
 export const CHANGE_PHONE_NUMBER_FORM = yup.object().shape({
   phone: yup
     .string()
-    .matches(/((09|03|07|08|05)+([0-9]{8})\b)/, "Số điện thoại không hợp lệ")
+    .matches(VN_PHONE_REGEX, "Số điện thoại không hợp lệ")
     .required("Số điện thoại không dược bỏ trống"),
   password: yup
     .string()
     .min(8, "Mật khẩu phải chứa ít nhất 8 ký tự")
     .required("Mật khẩu không được bỏ trống"),
+});
+
+export const REGISTER_INFORMATION_FORM = yup.object().shape({
+  fullName: yup.string().required("Họ và tên không thể bỏ trống"),
+  gender: yup.bool(),
+  dob: yup.mixed().required("Ngày sinh không thể bỏ trống"),
+  address: yup.string().ensure(),
+  provinceId: yup.number().default(1),
+  districtId: yup.number().default(1),
+  wardId: yup.number().default(1),
+});
+
+export const LOGIN_FORM = yup.object().shape({
+  phoneNumber: yup
+    .string()
+    .required("Số điện thoại không thể bỏ trống")
+    .matches(VN_PHONE_REGEX, "Số điện thoại không hợp lệ")
+    .label("PhoneNumber"),
+  password: yup
+    .string()
+    .required("Mật khẩu không thể bỏ trống")
+    .label("Password"),
+});
+
+export const PHONE_NUMBER = yup.object().shape({
+  phoneNumber: yup
+    .string()
+    .required("Số điện thoại không thể bỏ trống")
+    .matches(VN_PHONE_REGEX, "Số điện thoại không hợp lệ"),
+});
+
+export const FORGOT_PASSWORD_FORM = yup.object().shape({
+  password: yup
+    .string()
+    .required("Mật khẩu không thể bỏ trống")
+    .min(8, "Mật khẩu phải chứa ít nhất 8 ký tự"),
+  passwordConfirmation: yup
+    .string()
+    .oneOf([yup.ref("password"), null], "Mật khẩu không khớp"),
 });

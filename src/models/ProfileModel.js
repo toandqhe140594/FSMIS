@@ -244,16 +244,14 @@ const model = {
   /**
    * Update new edit to personal profile information
    * @param {Object} [payload.updateData] body of the post request
-   * @param {Function} [payload.setUpdateStatus] set edit status back to the screen
    */
   editPersonalInformation: thunk(async (actions, payload) => {
-    const { updateData, setUpdateStatus } = payload;
+    const { updateData } = payload;
     try {
       await http.post(API_URL.PERSONAL_EDIT_PROFILE, updateData);
       actions.getUserInfo();
-      setUpdateStatus("SUCCESS");
     } catch (error) {
-      setUpdateStatus("FAILED");
+      throw new Error("");
     }
   }),
 
@@ -282,21 +280,18 @@ const model = {
   /**
    * Change personal account phone number
    * @param {object} [payload] params pass to function
-   * @param {Function} [payload.setSuccess] set status after request api
    * @param {string} [payload.newPhone] new phone number
    * @param {string} [payload.password] current account password
    */
   changePhoneNumber: thunk(async (actions, payload = {}) => {
     const { phone: newPhone, password } = payload;
-    const setSuccess = payload.setSuccess || (() => {});
     try {
       await http.post(API_URL.PERSONAL_PHONE_CHANGE, {
         newPhone,
         password,
       });
-      setSuccess(true);
     } catch (error) {
-      setSuccess(false);
+      throw new Error();
     }
   }),
 };

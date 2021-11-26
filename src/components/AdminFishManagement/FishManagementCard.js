@@ -11,11 +11,9 @@ import { goToAdminFishEditScreen } from "../../navigations";
 const FishManagementCard = ({ id, name, image, active }) => {
   const navigation = useNavigation();
 
-  // DucHM ADD_START 18/11/2021
   const handleOnPress = () => {
     goToAdminFishEditScreen(navigation, { id, name, image, active });
   };
-  // DucHM ADD_END 18/11/2021
 
   return (
     <Pressable onPress={handleOnPress}>
@@ -38,7 +36,7 @@ const FishManagementCard = ({ id, name, image, active }) => {
           />
           <Box flex={1} justifyContent="center" pr={1}>
             <Text
-              style={{ fontWeight: "bold", fontSize: 16 }}
+              style={{ fontWeight: "bold", fontSize: 20 }}
               numberOfLines={2}
             >
               {name}

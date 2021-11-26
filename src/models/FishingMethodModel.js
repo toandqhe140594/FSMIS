@@ -85,12 +85,11 @@ const model = {
    * If its id is available, perform edit
    * Else add new
    * @param {Object} payload.submitData updated data of the fishing method
-   * @param {Function} payload.setSubmitStatus function to set update status
    * @param {Number} [payload.id] id of the method
    * @param {Boolean} [payload.active] activation status of the method
    */
   updateFishingMethod: thunk(async (actions, payload) => {
-    const { id, active, submitData, setSubmitStatus } = payload;
+    const { id, active, submitData } = payload;
     try {
       if (id) {
         await http.put(
@@ -103,9 +102,8 @@ const model = {
       } else {
         await http.post(`${API_URL.ADMIN_FISHING_METHOD_ADD}`, submitData);
       }
-      setSubmitStatus("SUCCESS");
     } catch (error) {
-      setSubmitStatus("FAILED");
+      throw new Error();
     }
   }),
 
@@ -113,16 +111,14 @@ const model = {
    * Update fishing method status to active or inactive in admin fishing method list
    * @param {Number} payload.id the method's id
    * @param {Boolean} payload.active the method's current status
-   * @param {Function} payload.setSubmitStatus function to set update status
    */
   updateFishingMethodStatus: thunk(async (actions, payload) => {
-    const { id, active, setSubmitStatus } = payload;
+    const { id, active } = payload;
     try {
       await http.patch(`${API_URL.ADMIN_FISHING_METHOD_UPDATE_STATUS}/${id}`);
       actions.setMethodStatusInAdminList({ id, status: !active });
-      setSubmitStatus("PATCHED");
     } catch (error) {
-      setSubmitStatus("FAILED");
+      throw new Error();
     }
   }),
 };

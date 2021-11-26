@@ -74,12 +74,11 @@ const model = {
    * If its id is available, perform edit
    * Else add new
    * @param {Object} payload.submitData updated data of the fish species
-   * @param {Function} payload.setSubmitStatus function to set update status
    * @param {Number} [payload.id] id of the fish
    * @param {Boolean} [payload.active] activation status of the fish
    */
   updateFish: thunk(async (actions, payload) => {
-    const { id, active, submitData, setSubmitStatus } = payload;
+    const { id, active, submitData } = payload;
     try {
       if (id) {
         await http.put(`${API_URL.ADMIN_FISH_EDIT}/${id}`, submitData);
@@ -89,9 +88,8 @@ const model = {
       } else {
         await http.post(`${API_URL.ADMIN_FISH_ADD}`, submitData);
       }
-      setSubmitStatus("SUCCESS");
     } catch (error) {
-      setSubmitStatus("FAILED");
+      throw new Error();
     }
   }),
 
@@ -99,16 +97,14 @@ const model = {
    * Update fish species status to active or inactive in admin fish list
    * @param {Number} payload.id the fish's id
    * @param {Boolean} payload.active the fish's current status
-   * @param {Function} payload.setSubmitStatus function to set update status
    */
   updateFishStatus: thunk(async (actions, payload) => {
-    const { id, active, setSubmitStatus } = payload;
+    const { id, active } = payload;
     try {
       await http.patch(`${API_URL.ADMIN_FISH_UPDATE_STATUS}/${id}`);
       actions.setFishStatusInAdminList({ id, status: !active });
-      setSubmitStatus("PATCHED");
     } catch (error) {
-      setSubmitStatus("FAILED");
+      throw new Error();
     }
   }),
 };

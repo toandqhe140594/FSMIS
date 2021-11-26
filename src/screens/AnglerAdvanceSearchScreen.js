@@ -55,7 +55,6 @@ const AnglerAdvanceSearchScreen = () => {
   const navigation = useNavigation();
   const [isLoading, setIsLoading] = useState(true);
   const [fullScreen, setFullScreen] = useState(true);
-  const [submitStatus, setSubmitStatus] = useState(null);
   const { getFishingMethodList } = useStoreActions(
     (actions) => actions.FishingMethodModel,
   );
@@ -84,7 +83,14 @@ const AnglerAdvanceSearchScreen = () => {
     const provinceIdList =
       data.provinceIdList === 0 ? [] : [data.provinceIdList];
     const submitData = { ...data, provinceIdList };
-    searchFishingLocation({ setSubmitStatus, submitData });
+    searchFishingLocation({ submitData })
+      .then(() => {
+        navigation.pop(1);
+      })
+      .catch(() => {
+        setIsLoading(false);
+        showToastMessage("Đã có lỗi xảy ra! Vui lòng thử lại sau");
+      });
   };
 
   /**
@@ -119,19 +125,6 @@ const AnglerAdvanceSearchScreen = () => {
     };
   }, []);
 
-  /**
-   * Trigget when submit status returns
-   */
-  useEffect(() => {
-    if (submitStatus === "SUCCESS") {
-      setSubmitStatus(null);
-      navigation.pop(1);
-    } else if (submitStatus === "FAILED") {
-      setIsLoading(false);
-      setSubmitStatus(null);
-      showToastMessage("Đã có lỗi xảy ra! Vui lòng thử lại sau");
-    }
-  }, [submitStatus]);
   return (
     <>
       <HeaderTab name="Tìm kiếm nâng cao" />

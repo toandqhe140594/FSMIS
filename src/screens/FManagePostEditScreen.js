@@ -44,15 +44,13 @@ const OFFSET_BOTTOM = 85;
 const CUSTOM_SCREEN_HEIGHT = Dimensions.get("window").height - OFFSET_BOTTOM;
 
 const PostEditScreen = () => {
-  const currentPost = useStoreState(
-    (states) => states.FManageModel.currentPost,
-  );
-
   const route = useRoute();
   const navigation = useNavigation();
   const editPost = useStoreActions((actions) => actions.FManageModel.editPost);
-  const [updateStatus, setUpdateStatus] = useState("");
   const [loadingButton, setLoadingButton] = useState(false);
+  const currentPost = useStoreState(
+    (states) => states.FManageModel.currentPost,
+  );
   const methods = useForm({
     mode: "onSubmit",
     reValidateMode: "onSubmit",
@@ -94,13 +92,29 @@ const PostEditScreen = () => {
         return "";
     }
   };
+
+  const handleScreenNavigation = async () => {
+    goToFManagePostScreen(navigation);
+  };
+
   const onSubmit = (data) => {
     setLoadingButton(true);
     const url = setAttachmentUrl(watchAttachmentType);
     delete data.imageArray;
     delete data.mediaUrl;
     const updateData = { ...data, id: currentPost.id, url };
-    editPost({ updateData, setUpdateStatus });
+    editPost({ updateData })
+      .then(() => {
+        showAlertAbsoluteBox(
+          "Thông báo",
+          "Chỉnh sửa bài viết thành công",
+          handleScreenNavigation,
+        );
+      })
+      .catch(() => {
+        setLoadingButton(false);
+        showAlertBox("Thông báo", "Đã xảy ra lỗi! Vui lòng thử lại.");
+      });
   };
 
   // Fire when navigates back to this screen
@@ -113,22 +127,6 @@ const PostEditScreen = () => {
       }
     }, [route.params]),
   );
-
-  useEffect(() => {
-    if (updateStatus === "SUCCESS") {
-      showAlertAbsoluteBox(
-        "Thông báo",
-        "Gửi thông tin thành công! Đang chỉnh sửa bài viết.",
-        async () => {
-          goToFManagePostScreen(navigation);
-        },
-      );
-    } else if (updateStatus === "FAILED") {
-      showAlertBox("Thông báo", "Đã xảy ra lỗi! Vui lòng thử lại.");
-      setLoadingButton(false);
-    }
-    setUpdateStatus(null);
-  }, [updateStatus]);
 
   return (
     <>

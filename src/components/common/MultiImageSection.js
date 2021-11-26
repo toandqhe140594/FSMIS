@@ -54,12 +54,12 @@ const MultiImageSection = ({
    */
   const sectionWrapper = useMemo(() => {
     return {
-      justifyContent: imageArray.length > 0 ? "flex-start" : "center",
+      justifyContent: imageArray.length ? "flex-start" : "center",
       flexWrap: "wrap",
       flexDirection: "row",
       marginTop: 2,
     };
-  }, [imageArray]);
+  }, [imageArray.length]);
   /**
    * Style only the image array
    */

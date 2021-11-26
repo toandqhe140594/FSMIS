@@ -39,8 +39,6 @@ const styles = StyleSheet.create({
   },
 });
 
-const SUCCESS_STATUS = "SUCCESS";
-const FAILED_STATUS = "FAILED";
 const ALERT_TITLE = "Thông báo";
 const ALERT_ADD_LOCATION_SUCCESS_MSG = "Thêm điểm câu thành công";
 const ALERT_ERROR_MSG = "Đã xảy ra lỗi! Vui lòng thử lại sau.";
@@ -91,8 +89,6 @@ const FManageAddNewScreen = () => {
   const navigation = useNavigation();
   const [isLoading, setIsLoading] = useState(true);
   const [fullScreen, setFullScreen] = useState(true);
-  const [addStatus, setAddStatus] = useState(null);
-  const [otpSendSuccess, setOtpSendSuccess] = useState(null);
   const { locationLatLng } = useStoreState((states) => states.FManageModel);
   const { resetDataList, getAllProvince } = useStoreActions(
     (actions) => actions.AddressModel,
@@ -108,6 +104,11 @@ const FManageAddNewScreen = () => {
   });
   const { handleSubmit, setValue } = methods;
 
+  const handleError = () => {
+    setIsLoading(false);
+    showAlertBox(ALERT_TITLE, ALERT_ERROR_MSG);
+  };
+
   const onSubmit = (data) => {
     // if location info is missing
     if (!locationLatLng.latitude) {
@@ -119,7 +120,16 @@ const FManageAddNewScreen = () => {
     delete data.imageArray;
     const addData = { ...data, ...locationLatLng, images };
     locationData.current = addData;
-    sendOtp({ phone: data.phone, setSuccess: setOtpSendSuccess });
+    sendOtp({ phone: data.phone })
+      .then(() => {
+        setIsLoading(false);
+        goToOTPScreen(
+          navigation,
+          ROUTE_NAMES.FMANAGE_PROFILE_ADD_NEW,
+          locationData.current.phone,
+        );
+      })
+      .catch(handleError);
   };
   /**
    * Trigger first time when enters
@@ -141,45 +151,6 @@ const FManageAddNewScreen = () => {
   }, []);
 
   /**
-   * Triggers when otp status returns
-   */
-  useEffect(() => {
-    if (otpSendSuccess === true) {
-      goToOTPScreen(
-        navigation,
-        ROUTE_NAMES.FMANAGE_PROFILE_ADD_NEW,
-        locationData.current.phone,
-      );
-      setIsLoading(false);
-      setOtpSendSuccess(null);
-    } else if (otpSendSuccess === false) {
-      setIsLoading(false);
-      setOtpSendSuccess(null);
-    }
-  }, [otpSendSuccess]);
-
-  /**
-   * Triggers when add status returns
-   */
-  useEffect(() => {
-    if (addStatus === SUCCESS_STATUS) {
-      setAddStatus(null);
-      showAlertAbsoluteBox(
-        ALERT_TITLE,
-        ALERT_ADD_LOCATION_SUCCESS_MSG,
-        () => {
-          goBack(navigation);
-        },
-        CONFIRM_BUTTON_LABEL,
-      );
-    } else if (addStatus === FAILED_STATUS) {
-      setAddStatus(null);
-      setIsLoading(false);
-      showAlertBox(ALERT_TITLE, ALERT_ERROR_MSG);
-    }
-  }, [addStatus]);
-
-  /**
    * Trigger when navigation goes back to this screen
    */
   useFocusEffect(
@@ -191,7 +162,18 @@ const FManageAddNewScreen = () => {
       }
       if (route.params?.otpSuccess) {
         setIsLoading(true);
-        addNewLocation({ addData: locationData.current, setAddStatus });
+        addNewLocation({ addData: locationData.current })
+          .then(() => {
+            showAlertAbsoluteBox(
+              ALERT_TITLE,
+              ALERT_ADD_LOCATION_SUCCESS_MSG,
+              () => {
+                goBack(navigation);
+              },
+              CONFIRM_BUTTON_LABEL,
+            );
+          })
+          .catch(handleError);
       }
     }, [route.params]),
   );

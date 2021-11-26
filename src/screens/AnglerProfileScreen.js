@@ -6,10 +6,6 @@ import AvatarCard from "../components/AvatarCard";
 import MenuScreen from "../components/MenuScreen";
 import colors from "../config/colors";
 import { MENU_ANGLER, MENU_LOGOUT } from "../constants";
-import AddressModel from "../models/AddressModel";
-import store from "../utilities/Store";
-
-store.addModel("AddressModel", AddressModel);
 
 const AnglerProfileScreen = () => {
   const getUserInfo = useStoreActions(

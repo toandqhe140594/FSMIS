@@ -26,7 +26,6 @@ const AdminFishEditScreen = () => {
   const [fishId, setFishId] = useState(null);
   const [isActive, setIsActive] = useState(null);
   const [isLoading, setIsLoading] = useState(null);
-  const [submitStatus, setSubmitStatus] = useState(null);
   const { updateFish, updateFishStatus, getAdminFishList } = useStoreActions(
     (actions) => actions.FishModel,
   );
@@ -36,17 +35,39 @@ const AdminFishEditScreen = () => {
     resolver: yupResolver(SCHEMA.ADMIN_FISH_ADD_EDIT_FORM),
   });
   const { handleSubmit, setValue } = methods;
+
+  const handleError = () => {
+    setIsLoading(false);
+  };
+
   const onSubmit = (data) => {
     setIsLoading(true);
     const image = data.imageArray[0].base64;
     delete data.imageArray;
     const submitData = { ...data, image };
-    updateFish({ id: fishId, active: isActive, submitData, setSubmitStatus });
+    updateFish({ id: fishId, active: isActive, submitData })
+      .then(() => {
+        if (!fishId) {
+          getAdminFishList();
+          showToastMessage("Thêm cá thành công");
+          navigation.pop(1);
+        } else {
+          setIsLoading(false);
+          showToastMessage("Cập nhật cá thành công");
+        }
+      })
+      .catch(handleError);
   };
 
   const handleUpdateStatus = () => {
     setIsLoading(true);
-    updateFishStatus({ id: fishId, active: isActive, setSubmitStatus });
+    updateFishStatus({ id: fishId, active: isActive })
+      .then(() => {
+        setIsLoading(false);
+        setIsActive(!isActive);
+        showToastMessage("Trạng thái của cá đã được thay đổi");
+      })
+      .catch(handleError);
   };
 
   useEffect(() => {
@@ -59,25 +80,6 @@ const AdminFishEditScreen = () => {
       setIsActive(active);
     }
   }, []);
-
-  useEffect(() => {
-    if (submitStatus === "SUCCESS") {
-      if (!fishId) {
-        getAdminFishList();
-        showToastMessage("Thêm cá thành công");
-        navigation.pop(1);
-      } else {
-        showToastMessage("Cập nhật cá thành công");
-      }
-    } else if (submitStatus === "PATCHED") {
-      setIsActive(!isActive);
-      showToastMessage("Trạng thái của cá đã được thay đổi");
-    } else if (submitStatus === "FAILED") {
-      showToastMessage("Đã xảy ra lỗi! Vui lòng thử lại sau");
-    }
-    setIsLoading(false);
-    setSubmitStatus(null);
-  }, [submitStatus]);
 
   useFocusEffect(
     // useCallback will listen to route.param
