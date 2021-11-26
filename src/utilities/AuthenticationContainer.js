@@ -31,7 +31,10 @@ const AuthenticationContainer = () => {
   }, []);
 
   useEffect(() => {
-    if (errorMessage) showToastMessage(errorMessage);
+    if (errorMessage.error === "BANNED") {
+      console.log("ban");
+    }
+    if (errorMessage.responseText) showToastMessage(errorMessage.responseText);
   }, [errorMessage]);
 
   if (loginState.isLoading) {
