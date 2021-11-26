@@ -21,9 +21,13 @@ const AnglerMainNavigator = () => {
   const getUserInfo = useStoreActions(
     (actions) => actions.ProfileModel.getUserInfo,
   );
+  const getSavedLocationList = useStoreActions(
+    (actions) => actions.ProfileModel.getSavedLocationList,
+  );
 
   useEffect(() => {
     getUserInfo();
+    getSavedLocationList();
   }, []);
 
   return (
