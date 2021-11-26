@@ -75,7 +75,7 @@ const Store = createStore({
       });
       data = responseData;
     } catch (error) {
-      actions.setErrorMessage(error.response.data.responseText);
+      // actions.setErrorMessage(error.response.data.responseText);
       return;
     }
     try {
