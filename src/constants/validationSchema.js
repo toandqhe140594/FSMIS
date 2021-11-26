@@ -303,11 +303,11 @@ export const ADMIN_BLACKLIST_ADD_FORM = yup.object().shape({
     .string()
     .matches(VN_PHONE_REGEX, "Số điện thoại không hợp lệ")
     .required("Số điện thoại không dược bỏ trống"),
-  imageArray: yup.array().of(yup.string()),
+  imageArray: yup.array().min(0),
 });
 export const ADMIN_ACCOUNT_DEACTIVATE_FORM = yup.object().shape({
   description: yup.string().max(255, "Mô tả tối đa 255 ký tự"),
-  imageArray: yup.array().of(yup.string()),
+  imageArray: yup.array().min(0),
 });
 
 export const FMANAGE_POST_FORM = yup.object().shape({
