@@ -137,6 +137,8 @@ const FManageEditProfileScreen = () => {
     setIsLoading(true);
     const images = data.imageArray.map((pic) => pic.base64);
     delete data.imageArray;
+    delete data.provinceId;
+    delete data.districtId;
     const updateData = { ...data, ...locationLatLng, images };
     // New phone input need OTP validation
     if (updateData.phone !== locationDetails.phone) {
