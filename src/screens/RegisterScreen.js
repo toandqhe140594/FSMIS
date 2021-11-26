@@ -102,6 +102,7 @@ const RegisterScreen = () => {
               {/* Phone number input field */}
               <InputComponent
                 label="Số điện thoại"
+                useNumPad
                 isTitle
                 hasAsterisk
                 placeholder="Nhập số điện thoại"
