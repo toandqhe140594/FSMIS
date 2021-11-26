@@ -1,14 +1,13 @@
 import { useStoreActions } from "easy-peasy";
 import { Box, Button, Text } from "native-base";
 import PropTypes from "prop-types";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Card, Overlay } from "react-native-elements";
 
 import { showAlertConfirmBox } from "../utilities";
 import PressableCustomCard from "./PressableCustomCard";
 
 const BlacklistPhoneCard = ({ phone, description, image }) => {
-  const [success, setSuccess] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const whitelistPhoneNumber = useStoreActions(
@@ -50,7 +49,9 @@ const BlacklistPhoneCard = ({ phone, description, image }) => {
 
   const whitelistPhoneFunction = () => {
     setLoading(true);
-    whitelistPhoneNumber({ phone, setSuccess });
+    whitelistPhoneNumber({ phone }).catch(() => {
+      setLoading(false);
+    });
   };
 
   const deletePhoneNumberButtonAction = () => {
@@ -60,11 +61,6 @@ const BlacklistPhoneCard = ({ phone, description, image }) => {
       whitelistPhoneFunction,
     );
   };
-
-  useEffect(() => {
-    setLoading(false);
-    setSuccess(null);
-  }, [success]);
 
   return (
     <>

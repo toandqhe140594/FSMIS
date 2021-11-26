@@ -195,18 +195,17 @@ const model = {
    * @param {Function} payload.setSuccess - function indicate success status of api call
    */
   whitelistPhoneNumber: thunk(async (actions, payload) => {
-    const { phone, setSuccess } = payload;
+    const { phone } = payload;
     try {
       await http.delete(`${API_URL.ADMIN_ACCOUNT_BANNED_PHONE_REMOVE}`, {
         params: {
           phone,
         },
       });
-      setSuccess(true);
       actions.removeElementFromBlacklist({ phone });
       actions.changeAccountActivationByPhone({ phone });
     } catch (error) {
-      setSuccess(false);
+      throw new Error();
     }
   }),
   /**
