@@ -3,11 +3,12 @@ import { useNavigation } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import React, { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { ScrollView, View } from "react-native";
 import { Button, Text } from "react-native-elements";
 import { Divider } from "react-native-elements/dist/divider/Divider";
 
 import InputComponent from "../components/common/InputComponent";
+import InputWithClipboard from "../components/common/InputWithClipboard";
 import TextAreaComponent from "../components/common/TextAreaComponent";
 import MapOverviewBox from "../components/FLocationEditProfile/MapOverviewBox";
 import HeaderTab from "../components/HeaderTab";
@@ -41,23 +42,15 @@ const FManageSuggestLocationScreen = () => {
     (actions) => actions.FManageModel.resetLocationLatLng,
   );
 
-  const [success, setSuccess] = useState(null);
-
-  const onSubmit = (data) => {
-    const suggestObj = createSuggestObject(data);
-    suggestNewLocation({
-      data: { ...suggestObj, ...locationLatLng },
-      setSuccess,
-    });
-  };
-
   const goBackAfterSuccess = () => {
     goBack(navigation);
   };
 
   const onSubmit = (data) => {
     setIsLoading(true);
-    suggestNewLocation({ data })
+    const suggestObj = createSuggestObject(data);
+    const suggestData = { ...suggestObj, ...locationLatLng };
+    suggestNewLocation({ suggestData })
       .then(() => {
         setIsLoading(false);
         showAlertAbsoluteBox(
@@ -79,88 +72,88 @@ const FManageSuggestLocationScreen = () => {
   }, []);
 
   return (
-    <ScrollView style={{ flex: 1 }}>
+    <>
       <HeaderTab name="Gợi ý hồ câu cho hệ thống" />
-      <FormProvider {...methods}>
-        <View
-          style={{
-            width: "100%",
-            flex: 1,
-            alignItems: "center",
-            paddingTop: 40,
-          }}
-        >
-          <Text style={[styles.mdText, styles.boldText, styles.mb1]}>
-            Bạn biết hồ câu chưa có trong hệ thống?
-          </Text>
-          <Text style={[styles.mt1]}>Xin hãy giới thiệu cho chúng tôi</Text>
-          <View style={{ width: "80%", marginTop: 40 }}>
-            <InputComponent
-              isTitle
-              label="Tên địa điểm câu"
-              hasAsterisk
-              placeholder="Nhập tên địa điểm câu"
-              controllerName="name"
-            />
-            <InputComponent
-              isTitle
-              label="Số điện thoại chủ hồ"
-              hasAsterisk
-              placeholder="Nhập số điện thoại chủ hồ"
-              controllerName="phone"
-              useNumPad
-              myStyles={{ marginVertical: 20 }}
-            />
-            <Divider />
-            <InputComponent
-              isTitle
-              label="Địa chỉ"
-              placeholder="Nhập địa chỉ của khu hồ"
-              controllerName="address"
-              useNumPad
-              myStyles={{ marginVertical: 20 }}
-            />
-            <InputComponent
-              isTitle
-              label="Website"
-              placeholder="Nhập trang web của khu hồ"
-              controllerName="website"
-              useNumPad
-            />
-            {/* Map component */}
-            <View>
-              <Text
-                style={{
-                  fontWeight: "bold",
-                  fontSize: 16,
-                  marginVertical: 8,
-                }}
-              >
-                Vị trí
-              </Text>
-              <MapOverviewBox />
-            </View>
-            {/* Description textarea */}
-            <TextAreaComponent
-              myStyles={styles.mt1}
-              label="Thông tin thêm"
-              isTitle
-              placeholder="Mô tả thông tin bổ sung (nếu có)"
-              numberOfLines={6}
-              controllerName="description"
-            />
+      <ScrollView>
+        <FormProvider {...methods}>
+          <View
+            style={{
+              width: "100%",
+              flex: 1,
+              alignItems: "center",
+              paddingVertical: 20,
+            }}
+          >
+            <Text style={[styles.mdText, styles.boldText, styles.mb1]}>
+              Bạn biết hồ câu chưa có trong hệ thống?
+            </Text>
+            <Text style={[styles.mt1]}>Xin hãy giới thiệu cho chúng tôi</Text>
+            <View style={{ width: "80%", marginTop: 40 }}>
+              <InputComponent
+                isTitle
+                label="Tên địa điểm câu"
+                hasAsterisk
+                placeholder="Nhập tên địa điểm câu"
+                controllerName="name"
+              />
+              <InputComponent
+                isTitle
+                label="Số điện thoại chủ hồ"
+                hasAsterisk
+                placeholder="Nhập số điện thoại chủ hồ"
+                controllerName="phone"
+                useNumPad
+                myStyles={{ marginVertical: 20 }}
+              />
+              <Divider />
+              <InputComponent
+                isTitle
+                label="Địa chỉ"
+                placeholder="Nhập địa chỉ của khu hồ"
+                controllerName="address"
+                useNumPad
+                myStyles={{ marginVertical: 20 }}
+              />
+              <InputWithClipboard
+                isTitle
+                label="Website"
+                placeholder="Nhập trang web của khu hồ"
+                controllerName="website"
+              />
+              {/* Map component */}
+              <View>
+                <Text
+                  style={{
+                    fontWeight: "bold",
+                    fontSize: 16,
+                    marginVertical: 8,
+                  }}
+                >
+                  Vị trí
+                </Text>
+                <MapOverviewBox />
+              </View>
+              {/* Description textarea */}
+              <TextAreaComponent
+                myStyles={styles.mt1}
+                label="Thông tin thêm"
+                isTitle
+                placeholder="Mô tả thông tin bổ sung (nếu có)"
+                numberOfLines={6}
+                controllerName="description"
+              />
 
-            <Button
-              title="Gửi"
-              loading={isLoading}
-              onPress={handleSubmit(onSubmit)}
-              containerStyle={{ marginTop: 30 }}
+              <Button
+                title="Gửi"
+                loading={isLoading}
+                onPress={handleSubmit(onSubmit)}
+                containerStyle={{ marginTop: 30 }}
               />
             </View>
           </View>
-        </View>
-      </FormProvider>
-    </ScrollView>
+        </FormProvider>
+      </ScrollView>
+    </>
   );
 };
 

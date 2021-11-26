@@ -624,14 +624,12 @@ const model = {
   /**
    * Suggest a new location to admin
    * @param {Object} [payload] params pass to function
-   * @param {Object} [payload.data] some data of the fishing location
-   * @param {string} [payload.data.locationName] name of the fishing location
-   * @param {string} [payload.data.ownerPhone] phone of the owner of the fishing location
+   * @param {Object} [payload.suggestData] some data of the fishing location
    */
   suggestNewLocation: thunk(async (actions, payload) => {
-    const { data } = payload;
+    const { suggestData } = payload;
     try {
-      await http.post(API_URL.LOCATION_SUGGEST, data);
+      await http.post(API_URL.LOCATION_SUGGEST, suggestData);
     } catch (error) {
       throw new Error();
     }
