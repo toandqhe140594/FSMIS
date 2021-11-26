@@ -47,9 +47,8 @@ const styles = StyleSheet.create({
 const AnglerCatchReportScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
-  const [workingFishList, setWorkingFishList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState(null);
+  const [workingFishList, setWorkingFishList] = useState([]);
   const { lakeList, fishList } = useStoreState((states) => states.CheckInModel);
   const { increaseCatchesCount } = useStoreActions(
     (actions) => actions.ProfileModel,
@@ -71,12 +70,29 @@ const AnglerCatchReportScreen = () => {
     formState: { errors },
   } = methods;
   const watchLakeIdField = watch("lakeId");
+
+  const handleGoBack = () => {
+    navigation.pop(1);
+  };
+
   const onSubmit = (data) => {
     setIsLoading(true);
     const images = data.imageArray.map((item) => item.base64);
     delete data.imageArray;
     const submitData = { ...data, images };
-    submitCatchReport({ submitData, setSubmitStatus });
+    submitCatchReport({ submitData })
+      .then(() => {
+        increaseCatchesCount();
+        showAlertAbsoluteBox(
+          "Gửi thành công",
+          "Thông tin buổi câu được gửi thành công",
+          handleGoBack,
+        );
+      })
+      .catch(() => {
+        setIsLoading(false);
+        showAlertBox("Thông báo", "Đã xảy ra lỗi! Vui lòng thử lại sau.");
+      });
   };
 
   /**
@@ -99,27 +115,6 @@ const AnglerCatchReportScreen = () => {
       }
     }, [route.params]),
   );
-
-  /**
-   * Trigger when submit status return
-   */
-  useEffect(() => {
-    if (submitStatus === "SUCCESS") {
-      increaseCatchesCount();
-      showAlertAbsoluteBox(
-        "Gửi thành công",
-        "Thông tin buổi câu được gửi thành công",
-        () => {
-          navigation.pop(1);
-        },
-      );
-      setSubmitStatus(null);
-    } else if (submitStatus === "FAILED") {
-      setIsLoading(false);
-      setSubmitStatus(null);
-      showAlertBox("Thông báo", "Đã xảy ra lỗi! Vui lòng thử lại sau.");
-    }
-  }, [submitStatus]);
 
   return (
     <>
@@ -155,6 +150,7 @@ const AnglerCatchReportScreen = () => {
               <SelectComponent
                 myStyles={styles.sectionWrapper}
                 isTitle
+                hasAsterisk
                 label="Vị trí hồ câu"
                 placeholder="Chọn hồ câu"
                 data={lakeList}

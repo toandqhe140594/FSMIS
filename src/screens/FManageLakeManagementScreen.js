@@ -15,32 +15,29 @@ const LakeListManagementScreen = () => {
     return <Box h={3} />;
   };
 
+  const renderItem = ({ item }) => (
+    <LakeCard name={item.name} image={item.image} isManaged id={item.id} />
+  );
+
+  const keyExtractor = (item) => item.id.toString();
+
+  const addNewLakeAction = () => {
+    goToFManageLakeAddNewScreen(navigation);
+  };
+
   return (
     <Box flex={1}>
       <HeaderTab name="Quản lý hồ câu" />
       <Box flex={1} alignItems="center">
         <Center w="80%" my={5}>
-          <Button
-            onPress={() => {
-              goToFManageLakeAddNewScreen(navigation);
-            }}
-          >
-            Thêm hồ câu
-          </Button>
+          <Button onPress={addNewLakeAction}>Thêm hồ câu</Button>
         </Center>
         <Center w="80%" h="80%">
           <FlatList
             data={listOfLake}
-            renderItem={({ item }) => (
-              <LakeCard
-                name={item.name}
-                image={item.image}
-                isManaged
-                id={item.id}
-              />
-            )}
+            renderItem={renderItem}
             ItemSeparatorComponent={Separator}
-            keyExtractor={(item) => item.id.toString()}
+            keyExtractor={keyExtractor}
             w="100%"
           />
         </Center>

@@ -26,7 +26,6 @@ const CheckboxSelectorComponent = ({
   const watchSelection = useWatch({
     control,
     name: controllerName,
-    defaultValue: [],
   });
   useEffect(() => {
     if (watchSelection.length === 0) setUserSelection(placeholder);

@@ -11,22 +11,18 @@ import { goToMediaSelectScreen } from "../../navigations";
 import { showAlertConfirmBox } from "../../utilities";
 
 const styles = StyleSheet.create({
-  multipleImagesWrapper: {
+  boxWrapper: {
     width: 110,
     height: 110,
     marginTop: 4,
     marginLeft: 4,
-    borderRadius: 2,
-    borderWidth: 0.5,
   },
-  image: {
-    width: "100%",
-    height: "100%",
-  },
-  border: {
+  plusButton: {
     borderStyle: "dashed",
     alignItems: "center",
     justifyContent: "center",
+    borderRadius: 2,
+    borderWidth: 1,
   },
   error: {
     fontSize: 12,
@@ -52,20 +48,58 @@ const MultiImageSection = ({
   const imageArray = useWatch({
     control,
     name: controllerName,
-    defaultValue: [],
   });
+  /**
+   * Style entire image section
+   */
   const sectionWrapper = useMemo(() => {
     return {
+      justifyContent: imageArray.length ? "flex-start" : "center",
       flexWrap: "wrap",
       flexDirection: "row",
       marginTop: 2,
-      justifyContent: imageArray.length > 0 ? "flex-start" : "center",
     };
-  }, [imageArray]);
+  }, [imageArray.length]);
+  /**
+   * Style only the image array
+   */
+  const imagesWrapper = useMemo(
+    () =>
+      selectLimit === 1
+        ? StyleSheet.compose({ height: 210 }, containerStyle)
+        : styles.boxWrapper,
+    [selectLimit],
+  );
+  /**
+   * Style each image
+   */
+  const imageStyle = useMemo(
+    () => ({
+      resizeMode: selectLimit === 1 ? "contain" : "cover",
+      width: "100%",
+      height: "100%",
+    }),
+    [selectLimit],
+  );
+  /**
+   * Delete image from array
+   * @param {Number} id id of the image to delete
+   */
   const deleteImage = (id) => {
     const newImageArray = imageArray.filter((image) => image.id !== id);
     setValue(controllerName, newImageArray);
   };
+
+  /**
+   * Navigate to media selection screen
+   */
+  const handleNavigation = () => {
+    goToMediaSelectScreen(navigation, {
+      returnRoute: formRoute,
+      maxSelectable: selectLimit,
+    });
+  };
+
   /**
    * Displays an pop-up before delete an image
    * @param {Number} id: id of the image
@@ -80,17 +114,9 @@ const MultiImageSection = ({
       <View style={sectionWrapper}>
         {imageArray.map((image) => {
           return (
-            <View
-              // If there is only one image, make it takes up hold space
-              style={
-                selectLimit === 1
-                  ? { ...containerStyle, height: 210 }
-                  : styles.multipleImagesWrapper
-              }
-              key={image.id}
-            >
+            <View key={image.id} style={imagesWrapper}>
               <Image
-                style={styles.image}
+                style={imageStyle}
                 source={{ uri: image.base64 }}
                 alt="Alternate Text"
                 onLongPress={() => handleDelete(image.id)}
@@ -100,15 +126,10 @@ const MultiImageSection = ({
           );
         })}
         {imageArray.length !== selectLimit && (
-          <Pressable
-            onPress={() =>
-              goToMediaSelectScreen(navigation, {
-                returnRoute: formRoute,
-                maxSelectable: selectLimit,
-              })
-            }
-          >
-            <View style={[styles.multipleImagesWrapper, styles.border]}>
+          <Pressable onPress={handleNavigation}>
+            <View
+              style={StyleSheet.compose(styles.boxWrapper, styles.plusButton)}
+            >
               <Icon as={<Entypo name="plus" />} size={10} mr={1} />
             </View>
           </Pressable>

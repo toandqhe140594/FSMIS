@@ -1,21 +1,53 @@
+import { useFocusEffect } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, FlatList, Text } from "native-base";
-import React, { useEffect } from "react";
+import React, { useCallback } from "react";
 
 import PressableCustomCard from "../components/PressableCustomCard";
 
 const NotificationsScreen = () => {
-  const { notificationCurrentPage, notificationList } = useStoreState(
-    (states) => states.ProfileModel,
+  const notificationList = useStoreState(
+    (states) => states.ProfileModel.notificationList,
   );
 
   const getNotificationList = useStoreActions(
     (actions) => actions.ProfileModel.getNotificationList,
   );
+  const getNotificationListOverwrite = useStoreActions(
+    (actions) => actions.ProfileModel.getNotificationListOverwrite,
+  );
 
-  useEffect(() => {
-    if (notificationCurrentPage === 1) getNotificationList();
-  }, []);
+  useFocusEffect(
+    // useCallback will listen to route.param
+    useCallback(() => {
+      getNotificationListOverwrite();
+    }, []),
+  );
+
+  const renderItem = ({ item }) => (
+    <Box
+      borderBottomWidth="1"
+      _dark={{
+        borderColor: "gray.600",
+      }}
+      borderColor="coolGray.200"
+    >
+      <PressableCustomCard paddingX="2" paddingY="1">
+        <Box pl={5} py={3}>
+          <Text numberOfLines={2} mb={1} isTruncated>
+            {item.description}
+          </Text>
+          <Text>{item.time}</Text>
+        </Box>
+      </PressableCustomCard>
+    </Box>
+  );
+
+  const keyExtractor = (item) => item.id.toString();
+
+  const onEndReached = () => {
+    getNotificationList();
+  };
 
   return (
     <>
@@ -27,28 +59,9 @@ const NotificationsScreen = () => {
       >
         <FlatList
           data={notificationList}
-          renderItem={({ item }) => (
-            <Box
-              borderBottomWidth="1"
-              _dark={{
-                borderColor: "gray.600",
-              }}
-              borderColor="coolGray.200"
-            >
-              <PressableCustomCard paddingX="2" paddingY="1">
-                <Box pl={5} py={3}>
-                  <Text numberOfLines={2} mb={1} isTruncated>
-                    {item.description}
-                  </Text>
-                  <Text>{item.time}</Text>
-                </Box>
-              </PressableCustomCard>
-            </Box>
-          )}
-          keyExtractor={(item) => item.id.toString()}
-          onEndReached={() => {
-            getNotificationList();
-          }}
+          renderItem={renderItem}
+          keyExtractor={keyExtractor}
+          onEndReached={onEndReached}
         />
       </Box>
     </>

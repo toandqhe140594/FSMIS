@@ -48,7 +48,7 @@ const model = {
    * Reset ward list
    */
   resetWardList: action((state) => {
-    if (state.wardList) {
+    if (state.wardList.length > 0) {
       state.wardList = [];
     }
   }),
@@ -57,7 +57,7 @@ const model = {
    * Reset ward list
    */
   resetDistrictList: action((state) => {
-    if (state.districtList) {
+    if (state.districtList.length > 0) {
       state.districtList = [];
     }
   }),
@@ -80,19 +80,20 @@ const model = {
 
   /**
    * Get all provinces from api
+   * @param {Function} [payload.setGetStatus] function to set get status
    */
   getAllProvince: thunk(async (actions, payload, { getState }) => {
     const { provinceList } = getState();
     // Get province list if it is empty
     try {
-      if (!provinceList.length) {
+      if (provinceList.length === 0) {
         const { data: provinceData } = await http.get(
           `${API_URL.ADDRESS_ALL_PROVINCE}`,
         );
         actions.setProvinceList({ provinceData });
       }
     } catch (error) {
-      // handler error
+      throw new Error();
     }
   }),
 
@@ -101,37 +102,35 @@ const model = {
    * @param {Number} payload.id province id
    * @param {Function} [payload.setGetStatus] function the set api status
    */
-  getDisctrictByProvinceId: thunk(async (actions, payload, { getState }) => {
-    const setGetStatus = payload.setGetStatus || (() => {});
-    const { prevSelectedProvinceId, wardList } = getState();
-    try {
-      if (prevSelectedProvinceId !== payload.id) {
-        const { data: districtData } = await http.get(
-          `${API_URL.ADDRESS_PROVINCE_DISTRICT}`,
-          {
-            params: { provinceId: payload.id },
-          },
-        );
-        if (wardList.length) {
-          actions.resetWardList();
+  getDisctrictByProvinceId: thunk(
+    async (actions, payload = {}, { getState }) => {
+      const { prevSelectedProvinceId, wardList } = getState();
+      try {
+        if (prevSelectedProvinceId !== payload.id) {
+          const { data: districtData } = await http.get(
+            `${API_URL.ADDRESS_PROVINCE_DISTRICT}`,
+            {
+              params: { provinceId: payload.id },
+            },
+          );
+          if (wardList.length > 0) {
+            actions.resetWardList();
+          }
+          actions.setDistrictListByProvinceId({ districtData });
+          actions.setPrevSelectedProvinceId({ id: payload.id });
         }
-        actions.setDistrictListByProvinceId({ districtData });
-        actions.setPrevSelectedProvinceId({ id: payload.id });
+      } catch (error) {
+        throw new Error("FAILED");
       }
-      setGetStatus("SUCCESS");
-    } catch (error) {
-      // handle error
-      setGetStatus("FAILED");
-    }
-  }),
+    },
+  ),
 
   /**
    * Get all wards by district ID from api
    * @param {Number} payload.id district id
    * @param {Function} [payload.setGetStatus] function the set api status
    */
-  getWardByDistrictId: thunk(async (actions, payload, { getState }) => {
-    const setGetStatus = payload.setGetStatus || (() => {});
+  getWardByDistrictId: thunk(async (actions, payload = {}, { getState }) => {
     const { prevSelectedDistrictId } = getState();
     try {
       if (prevSelectedDistrictId !== payload.id) {
@@ -144,10 +143,8 @@ const model = {
         actions.setWardListByDistrictId({ wardData });
         actions.setPrevSelectedDistrictId({ id: payload.id });
       }
-      setGetStatus("SUCCESS");
     } catch (error) {
-      // handle error
-      setGetStatus("FAILED");
+      throw new Error("FAILED");
     }
   }),
 };

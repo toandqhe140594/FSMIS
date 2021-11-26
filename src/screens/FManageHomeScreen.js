@@ -8,6 +8,7 @@ import CloseFLocationComponent from "../components/CloseFLocationComponent";
 import CloseFLocationTemporaryComponent from "../components/CloseFLocationTemporaryComponent";
 import HeaderTab from "../components/HeaderTab";
 import MenuScreen from "../components/MenuScreen";
+import colors from "../config/colors";
 import {
   MENU_OWNER,
   MENU_STAFF,
@@ -61,12 +62,12 @@ const FManageHomeScreen = () => {
   if (!role || !locationDetails.id)
     return (
       <Box flex={1} justifyContent="center" alignItems="center">
-        <ActivityIndicator size="large" color="blue" />
+        <ActivityIndicator size={60} color="#2089DC" />
       </Box>
     );
 
   return (
-    <Box>
+    <Box bg={colors.defaultBackground}>
       <HeaderTab
         id={locationDetails.id}
         name={locationDetails.name || "Hồ câu"}

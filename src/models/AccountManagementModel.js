@@ -40,6 +40,21 @@ const model = {
     state.accountInformation.active = !activateStatus;
   }),
   /**
+   * Change account active status in state
+   * @param {number} payload.phone phone number of the account
+   */
+  changeAccountActivationByPhone: action((state, payload) => {
+    if (!state.accountInformation.phone) return;
+    if (!state.accountList || state.accountList.length < 1) return;
+    const activateStatus = state.accountInformation.active;
+    const { phone } = payload;
+    const foundIndex = state.accountList.findIndex(
+      (account) => account.phone === phone,
+    );
+    state.accountList[foundIndex].active = !activateStatus;
+    state.accountInformation.active = !activateStatus;
+  }),
+  /**
    * Set account total page
    * @param {number} payload number of pages, if less than 1 then set account total page = 1
    */
@@ -189,6 +204,7 @@ const model = {
       });
       setSuccess(true);
       actions.removeElementFromBlacklist({ phone });
+      actions.changeAccountActivationByPhone({ phone });
     } catch (error) {
       setSuccess(false);
     }
@@ -200,16 +216,16 @@ const model = {
    * @param {Function} payload.setSuccess - function indicate success status of api call
    */
   blacklistPhoneNumber: thunk(async (actions, payload) => {
-    const { blacklistObj, setSuccess } = payload;
+    const { blacklistObj } = payload;
     try {
       await http.post(
         `${API_URL.ADMIN_ACCOUNT_BANNED_PHONE_ADD}`,
         blacklistObj,
       );
       actions.addDataToStartOfBlacklist({ blacklistObj });
-      setSuccess(true);
+      actions.changeAccountActivationByPhone({ phone: blacklistObj.phone });
     } catch (error) {
-      setSuccess(false);
+      throw new Error();
     }
   }),
   // END OF BLACKLIST RELATED STUFF SECTION

@@ -1,7 +1,13 @@
 import { useNavigation } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
-import React, { useEffect, useState } from "react";
-import { ActivityIndicator, FlatList, View } from "react-native";
+import React, { useEffect, useMemo, useState } from "react";
+import {
+  ActivityIndicator,
+  FlatList,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { Button, Icon } from "react-native-elements";
 
 import styles from "../../config/styles";
@@ -11,23 +17,22 @@ import FLocationCard from "../FLocationCard";
 
 const ListViewRoute = () => {
   const navigation = useNavigation();
-  // DucHM ADD_START 16/11/2021
-  const [isLoading, setIsLoading] = useState(false);
-  const [getStatus, setGetStatus] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
   const { listLocationResult, pageNo, totaListLocationPage } = useStoreState(
     (states) => states.AdvanceSearchModel,
   );
   const { setPageNo, getListLocationNextPage } = useStoreActions(
     (actions) => actions.AdvanceSearchModel,
   );
+  const isListEmpty = listLocationResult.length === 0;
   /**
    * Check if pageNo small then totalPage
    * then set incremented pageNo
    */
   const handleLoadMore = () => {
     if (pageNo < totaListLocationPage) {
-      setIsLoading(true);
       setPageNo(pageNo + 1);
+      setIsLoading(true);
     }
   };
   // DucHM ADD_END 16/11/2021
@@ -51,8 +56,19 @@ const ListViewRoute = () => {
       key={location.id}
     />
   );
+  const memoizedValue = useMemo(() => renderItem, [listLocationResult]);
+  const memoizedContainerStyle = useMemo(
+    () =>
+      isListEmpty
+        ? {
+            flex: 1,
+            alignItems: "center",
+            justifyContent: "center",
+          }
+        : null,
+    [isListEmpty],
+  );
 
-  // DucHM ADD_START 16/11/2021
   const renderFooter = () => {
     return isLoading ? (
       <View style={{ marginVertical: 12, justifyContent: "center" }}>
@@ -60,37 +76,36 @@ const ListViewRoute = () => {
       </View>
     ) : null;
   };
-  // DucHM ADD_END 16/11/2021
+
+  const renderEmtpy = () => (
+    <Text style={{ color: "gray" }}>Kết quả tìm kiếm đang trống</Text>
+  );
 
   const keyExtractor = (item) => item.id.toString();
 
-  // DucHM ADD_START 16/11/2021
   /**
    * Listen to when pageNo increases
    * and call the get list next page
    */
   useEffect(() => {
-    getListLocationNextPage({ setGetStatus });
-  }, [pageNo]);
-
-  /**
-   * Trigger when get status returns
-   */
-  useEffect(() => {
-    if (getStatus === "SUCCESS") {
-      setIsLoading(false);
-      setGetStatus(null);
-    } else if (getStatus === "FAILED") {
-      setIsLoading(false);
-      showToastMessage("Đã có lỗi xảy ra!");
-      setGetStatus(null);
-      // handle error
+    if (isLoading) {
+      getListLocationNextPage()
+        .then(() => {
+          setIsLoading(false);
+        })
+        .catch(() => {
+          setIsLoading(false);
+          showToastMessage("Đã có lỗi xảy ra! Vui lòng thử lại sau");
+        });
     }
-  }, [getStatus]);
+  }, [isLoading]);
+
   // DucHM ADD_END 16/11/2021
 
   return (
-    <View style={[styles.centerBox, styles.flexBox, styles.wfull]}>
+    <View
+      style={StyleSheet.compose(styles.centerBox, styles.flexBox, styles.wfull)}
+    >
       <Button
         containerStyle={styles.mt3}
         icon={<Icon type="ionicons" name="search" color="white" />}
@@ -98,30 +113,21 @@ const ListViewRoute = () => {
         title="Tìm kiếm"
       />
 
-      {/* Draft view only */}
-      <View
-        style={[
-          styles.wfull,
-          styles.mt2,
-          styles.mb1,
-          styles.flexBox,
-          { width: "90%" },
-        ]}
-      >
+      <View style={{ width: "90%", flex: 1, marginBottom: 4, marginTop: 8 }}>
         <FlatList
           style={{ height: "100%" }}
           data={listLocationResult}
-          renderItem={renderItem}
+          renderItem={memoizedValue}
           keyExtractor={keyExtractor}
           ItemSeparatorComponent={ItemSeparatorComponent}
           initialNumToRender={3}
           maxToRenderPerBatch={5}
-          // DucHM ADD_START 16/11/2021
           bounces={false} // prevent onEndReach trigger twice
+          contentContainerStyle={memoizedContainerStyle}
           ListFooterComponent={renderFooter}
+          ListEmptyComponent={renderEmtpy}
           onEndReached={handleLoadMore}
           onEndReachedThreshold={0.2}
-          // DucHM ADD_END 16/11/2021
         />
       </View>
     </View>

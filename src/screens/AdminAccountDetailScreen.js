@@ -1,4 +1,4 @@
-import { useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, Button } from "native-base";
 import React, { useEffect, useState } from "react";
@@ -6,10 +6,13 @@ import { ActivityIndicator, Text } from "react-native";
 
 import EmployeeDetailBox from "../components/EmployeeDetailBox";
 import HeaderTab from "../components/HeaderTab";
-import { showToastMessage } from "../utilities";
+import { DEFAULT_TIMEOUT } from "../constants";
+import { goToAdminAccountDeactiveScreen } from "../navigations";
+import { showAlertConfirmBox, showToastMessage } from "../utilities";
 
 const AdminAccountDetailScreen = () => {
   const route = useRoute();
+  const navigation = useNavigation();
 
   const [isLoading, setIsLoading] = useState(false);
   const [screenLoading, setScreenLoading] = useState(true);
@@ -30,12 +33,28 @@ const AdminAccountDetailScreen = () => {
 
   let activationTimeout = null;
 
-  const changeAccountStatus = () => {
-    setIsLoading(true);
+  const activateAccountAction = () => {
     activationTimeout = setTimeout(() => {
       setIsLoading(false);
-    }, 5000);
+    }, DEFAULT_TIMEOUT);
     activateAccount({ setSuccess });
+  };
+
+  const changeAccountStatus = () => {
+    if (accountInformation.active) {
+      goToAdminAccountDeactiveScreen(navigation, {
+        phone: accountInformation.phone,
+      });
+    } else {
+      showAlertConfirmBox(
+        `Kích hoạt tài khoản ${accountInformation.phone}?`,
+        "Tài khoản được kích hoạt sẽ có thể tham gia vào ứng dụng như bình thường",
+        () => {
+          console.log("active");
+          activateAccountAction();
+        },
+      );
+    }
   };
 
   useEffect(() => {

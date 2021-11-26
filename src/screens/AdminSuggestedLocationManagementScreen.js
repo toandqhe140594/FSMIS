@@ -7,9 +7,10 @@ import { Divider } from "react-native-elements";
 
 import HeaderTab from "../components/HeaderTab";
 import PressableCustomCard from "../components/PressableCustomCard";
+import { DEFAULT_TIMEOUT } from "../constants";
 import { goToAdminFLocationSuggestedDetailScreen } from "../navigations";
 
-const keyExtractor = (item) => item.phone.toString();
+const keyExtractor = (item, index) => item.phone.toString() + index.toString();
 
 const AdminSuggestedLocationManagementScreen = () => {
   const navigation = useNavigation();
@@ -36,7 +37,7 @@ const AdminSuggestedLocationManagementScreen = () => {
     setIsLoading(true);
     const loadingTimeout = setTimeout(() => {
       setIsLoading(false);
-    }, 10000); // Test
+    }, DEFAULT_TIMEOUT); // Test
     return () => {
       clearTimeout(loadingTimeout);
     };

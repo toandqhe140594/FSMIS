@@ -45,10 +45,9 @@ const model = {
   /**
    * Submit catch report to server
    * @param {Object} [payload.submitData] data submit
-   * @param {Function} [payload.setSubmitStatus] function indicate submit success
    */
   submitCatchReport: thunk(async (actions, payload) => {
-    const { submitData, setSubmitStatus } = payload;
+    const { submitData } = payload;
     try {
       const { data } = await http.post(
         `${API_URL.SEND_CATCH_REPORT}`,
@@ -56,9 +55,8 @@ const model = {
       );
       actions.setCatchReportDetail({ ...data, id: null });
       actions.setCheckInState(false);
-      setSubmitStatus("SUCCESS");
     } catch (error) {
-      setSubmitStatus("FAILED");
+      throw new Error();
     }
   }),
   /**
@@ -137,7 +135,7 @@ const model = {
       const { data, status } = await http.get(`${API_URL.CHECKIN_STATUS}`);
       if (status === 200) {
         await actions.setFishingLocationInfo(data.fishingLocationItemDtoOut);
-        const available = data.available || true;
+        const available = data.available !== undefined ? data.available : true;
         actions.setCheckInState(!available);
         setLoading(false);
       }

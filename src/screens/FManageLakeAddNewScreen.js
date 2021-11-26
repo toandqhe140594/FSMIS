@@ -4,7 +4,7 @@ import {
   useNavigation,
   useRoute,
 } from "@react-navigation/native";
-import { useStoreActions, useStoreState } from "easy-peasy";
+import { useStoreActions } from "easy-peasy";
 import {
   Box,
   Button,
@@ -20,11 +20,11 @@ import { FormProvider, useForm } from "react-hook-form";
 import { ActivityIndicator, StyleSheet } from "react-native";
 import { Overlay } from "react-native-elements";
 
+import MethodCheckboxSelector from "../components/AdvanceSearch/MethodCheckboxSelector";
 import InputComponent from "../components/common/InputComponent";
 import MultiImageSection from "../components/common/MultiImageSection";
 import TextAreaComponent from "../components/common/TextAreaComponent";
 import HeaderTab from "../components/HeaderTab";
-import CheckboxSelectorComponent from "../components/LakeEditProfile/CheckboxSelectorComponent";
 import FishCardSection from "../components/LakeEditProfile/FishCardSection";
 import { ROUTE_NAMES, SCHEMA } from "../constants";
 import { goBack } from "../navigations";
@@ -49,12 +49,8 @@ const styles = StyleSheet.create({
 const LakeAddNewScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
-  const [addStatus, setAddStatus] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [fullScreenMode, setFullScreenMode] = useState(true);
-  const { fishingMethodList } = useStoreState(
-    (state) => state.FishingMethodModel,
-  );
   const { addNewLakeInLocation } = useStoreActions(
     (actions) => actions.FManageModel,
   );
@@ -73,54 +69,54 @@ const LakeAddNewScreen = () => {
     setValue,
     formState: { errors },
   } = methods;
+
+  const handleGoBack = () => {
+    goBack(navigation);
+  };
+
   const onSubmit = (data) => {
     setIsLoading(true);
-    // Remove in each object in fishInLake array any field has value 0
     const cleanFishArray = data.fishInLakeList.map((fishCard) =>
       Object.fromEntries(
         Object.entries(fishCard).filter((keyValPair) => keyValPair[1] !== 0),
       ),
     );
-    // Should check for empty images
     const imageUrl = data.imageArray[0].base64;
     delete data.imageArray;
     const addData = { ...data, imageUrl, fishInLakeList: cleanFishArray };
-    addNewLakeInLocation({ addData, setAddStatus });
+    addNewLakeInLocation({ addData })
+      .then(() => {
+        setIsLoading(false);
+        showAlertAbsoluteBox(
+          "Thông báo",
+          "Hồ bé thêm thành công!",
+          handleGoBack,
+          "Xác nhận",
+        );
+      })
+      .catch(() => {
+        setIsLoading(false);
+        showAlertBox("Thông báo", "Đã có lỗi xảy ra, vui lòng thử lại");
+      });
   };
   /**
    * Everytime enter the screen, call api
    * to get fishing method list and fish list
    */
   useEffect(() => {
-    (async () => {
-      getFishingMethodList();
-      await getFishList();
+    Promise.all([getFishingMethodList(), getFishList()]).then(() => {
       setIsLoading(false);
       setFullScreenMode(false);
-    })();
+    });
+    const loadingId = setTimeout(() => {
+      setIsLoading(false);
+      setFullScreenMode(false);
+    }, 10000);
+    return () => {
+      clearTimeout(loadingId);
+    };
   }, []);
 
-  /**
-   * Trigger when addStatus state value return from api call
-   */
-  useEffect(() => {
-    if (addStatus === "SUCCESS") {
-      setIsLoading(false);
-      setAddStatus(null);
-      showAlertAbsoluteBox(
-        "Thông báo",
-        "Hồ bé thêm thành công!",
-        () => {
-          goBack(navigation);
-        },
-        "Xác nhận",
-      );
-    } else if (addStatus === "FAILED") {
-      setIsLoading(false);
-      setAddStatus(null);
-      showAlertBox("Thông báo", "Đã có lỗi xảy ra, vui lòng thử lại");
-    }
-  }, [addStatus]);
   // Fire when navigates back to the screen
   useFocusEffect(
     // useCallback will listen to route.param
@@ -165,13 +161,13 @@ const LakeAddNewScreen = () => {
             </Center>
 
             <Center>
-              <CheckboxSelectorComponent
-                myStyles={styles.sectionWrapper}
+              <MethodCheckboxSelector
+                containerStyle={styles.sectionWrapper}
                 label="Loại hình câu"
                 isTitle
+                hasAsterisk
                 placeholder="Chọn loại hình câu"
-                data={fishingMethodList}
-                controllerName="methods" // this controller returns an array
+                controllerName="methods"
               />
             </Center>
 
@@ -180,8 +176,9 @@ const LakeAddNewScreen = () => {
                 myStyles={styles.sectionWrapper}
                 label="Giá vé"
                 isTitle
+                hasAsterisk
                 placeholder="Miêu tả giá vé hồ"
-                numberOfLines={3}
+                numberOfLines={6}
                 controllerName="price"
               />
             </Center>
@@ -192,18 +189,21 @@ const LakeAddNewScreen = () => {
                   Thông số
                 </Text>
                 <InputComponent
+                  hasAsterisk
                   label="Chiều dài (m)"
                   placeholder="Nhập chiều dài của hồ"
                   controllerName="length"
                   useNumPad
                 />
                 <InputComponent
+                  hasAsterisk
                   label="Chiều rộng (m)"
                   placeholder="Nhập chiều rộng của hồ"
                   controllerName="width"
                   useNumPad
                 />
                 <InputComponent
+                  hasAsterisk
                   label="Độ sâu (m)"
                   placeholder="Nhập độ sâu của hồ"
                   controllerName="depth"

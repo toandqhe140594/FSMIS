@@ -1,3 +1,4 @@
+import { MaterialIcons } from "@expo/vector-icons";
 import { yupResolver } from "@hookform/resolvers/yup";
 import {
   useFocusEffect,
@@ -5,66 +6,57 @@ import {
   useRoute,
 } from "@react-navigation/native";
 import { useStoreActions } from "easy-peasy";
-import { Button, Center, Heading, Input, Text, VStack } from "native-base";
-import React, { useCallback, useEffect, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
-import * as yup from "yup";
+import { Button, Center, Heading, Icon, Text, VStack } from "native-base";
+import React, { useCallback, useRef, useState } from "react";
+import { FormProvider, useForm } from "react-hook-form";
 
-import { phoneRegExp, ROUTE_NAMES } from "../constants";
+import InputComponent from "../components/common/InputComponent";
+import { ROUTE_NAMES, SCHEMA } from "../constants";
 import { goToChangePasswordScreen, goToOTPScreen } from "../navigations";
 
-const errMsg = "Số điện thoại không hợp lệ";
-// Validation schema for form
-const validationSchema = yup.object().shape({
-  phoneNumber: yup
-    .string()
-    .required("Số điện thoại không thể bỏ trống")
-    .min(8, errMsg)
-    .max(13, errMsg)
-    .matches(phoneRegExp, errMsg)
-    .label("PhoneNumber"),
-});
+const PhoneIcon = () => (
+  <Icon
+    as={<MaterialIcons name="phone-iphone" />}
+    size={5}
+    ml={2}
+    color="muted.500"
+  />
+);
 
 const ForgotPasswordScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({
-    resolver: yupResolver(validationSchema),
-  });
-
-  const sendOtp = useStoreActions((actions) => actions.UtilModel.sendOtp);
-
-  const [success, setSuccess] = useState(null);
+  const phoneNumber = useRef(null);
   const [loading, setLoading] = useState(false);
-  const [phone, setPhone] = useState("");
+  const methods = useForm({
+    mode: "onSubmit",
+    resolver: yupResolver(SCHEMA.PHONE_NUMBER),
+  });
+  const sendOtp = useStoreActions((actions) => actions.UtilModel.sendOtp);
+  const { handleSubmit } = methods;
 
   // Event fire when submit form
   const onSubmit = (data) => {
     setLoading(true);
-    setPhone(data.phoneNumber);
-    sendOtp({
-      phone: data.phoneNumber,
-      existedStatus: "EXISTED",
-      setSuccess,
-    });
+    phoneNumber.current = data.phoneNumber;
+    sendOtp({ phone: data.phoneNumber, existedStatus: "EXISTED" })
+      .then(() => {
+        goToOTPScreen(
+          navigation,
+          ROUTE_NAMES.PASSWORD_FORGOT,
+          data.phoneNumber,
+        );
+      })
+      .catch(() => {
+        setLoading(false);
+      });
   };
-
-  useEffect(() => {
-    if (success === true)
-      goToOTPScreen(navigation, ROUTE_NAMES.PASSWORD_FORGOT, phone);
-    setLoading(false);
-    setSuccess(null);
-  }, [success]);
 
   useFocusEffect(
     // useCallback will listen to route.param
     useCallback(() => {
       if (route.params?.otpSuccess === true)
-        goToChangePasswordScreen(navigation, { phone });
+        goToChangePasswordScreen(navigation, { ...phoneNumber.current });
     }, [route.params]),
   );
 
@@ -72,41 +64,27 @@ const ForgotPasswordScreen = () => {
     <Center flex={1}>
       <Heading size="lg">Quên mật khẩu</Heading>
       <Text fontSize="lg">Bạn hãy nhập số điện thoại</Text>
-      <VStack mt={6} space={2} w="70%">
-        {/* Phone number input field */}
-        <Controller
-          control={control}
-          name="phoneNumber"
-          render={({ field: { onChange, onBlur, value } }) => (
-            <Input
-              keyboardType="phone-pad"
-              maxLength={13}
-              placeholder="Số điện thoại"
-              size="lg"
-              w="100%"
-              onBlur={onBlur}
-              onChangeText={onChange}
-              value={value}
-            />
-          )}
-        />
-        {/* Error message view for phone number */}
-        {errors.phoneNumber?.message && (
-          <Text color="red.500" fontSize="xs" italic>
-            {errors.phoneNumber?.message}
-          </Text>
-        )}
-        {/* Submit button */}
-        <Button
-          size="lg"
-          w="100%"
-          onPress={handleSubmit(onSubmit)}
-          isLoading={loading}
-          isDisabled={loading}
-        >
-          Tiếp tục
-        </Button>
-      </VStack>
+      <FormProvider {...methods}>
+        <VStack mt={6} space={2} w="70%">
+          {/* Phone number input field */}
+          <InputComponent
+            useNumPad
+            placeholder="Nhập số điện thoại"
+            controllerName="phoneNumber"
+            leftIcon={<PhoneIcon />}
+          />
+          {/* Submit button */}
+          <Button
+            size="lg"
+            w="100%"
+            onPress={handleSubmit(onSubmit)}
+            isLoading={loading}
+            isDisabled={loading}
+          >
+            Tiếp tục
+          </Button>
+        </VStack>
+      </FormProvider>
     </Center>
   );
 };
