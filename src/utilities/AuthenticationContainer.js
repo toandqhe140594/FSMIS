@@ -1,8 +1,10 @@
+import { useNavigation } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import React, { useEffect } from "react";
 
 import { ROLE_USER } from "../constants";
 import AddressModel from "../models/AddressModel";
+import { goToBanNoticeScreen } from "../navigations";
 import AdminStackNavigator from "../navigations/AdminStackNavigator";
 import AuthenticationStackNavigator from "../navigations/AuthenticationStackNavigator";
 import RootStackNavigator from "../navigations/RootStackNavigator";
@@ -14,6 +16,7 @@ import store from "./Store";
 store.addModel("AddressModel", AddressModel);
 
 const AuthenticationContainer = () => {
+  const navigation = useNavigation();
   const loginState = useStoreState((states) => states.loginState);
   const userRole = useStoreState((states) => states.userRole);
   const errorMessage = useStoreState((states) => states.errorMessage);
@@ -33,10 +36,11 @@ const AuthenticationContainer = () => {
   }, []);
 
   useEffect(() => {
+    if (errorMessage.responseText) showToastMessage(errorMessage.responseText);
     if (errorMessage.error === "BANNED") {
       console.log("ban");
+      goToBanNoticeScreen(navigation, errorMessage);
     }
-    if (errorMessage.responseText) showToastMessage(errorMessage.responseText);
   }, [errorMessage]);
 
   if (loginState.isLoading) {

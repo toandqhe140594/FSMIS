@@ -1,4 +1,5 @@
 export const ANGLER_MAIN = "Angler Main Screen";
+export const BAN_NOTICE_SCREEN = "Ban Notice Screen";
 export const LOGO = "Logo";
 export const LOGIN = "Login";
 export const REGISTER = "Register Screen";
