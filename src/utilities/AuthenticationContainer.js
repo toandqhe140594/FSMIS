@@ -23,7 +23,9 @@ const AuthenticationContainer = () => {
     (actions) => actions.AddressModel.getAllProvince,
   );
   useEffect(() => {
-    getAllProvince();
+    getAllProvince().catch(() => {
+      console.log("loi api get all provine"); // dev only
+    });
     setTimeout(async () => {
       await retrieveToken();
     }, 1500);
