@@ -7,7 +7,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import { StyleSheet, Text, View } from "react-native";
 import { Overlay } from "react-native-elements";
 
-import { SCHEMA } from "../../constants";
+import { DICTIONARY, SCHEMA } from "../../constants";
 import { showToastMessage } from "../../utilities";
 import InputComponent from "../common/InputComponent";
 
@@ -25,6 +25,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     margin: 4,
+  },
+  buttonWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
+    margin: 4,
+    marginTop: 20,
+    justifyContent: "space-evenly",
   },
   input: { width: "65%" },
   text: { fontSize: 16, width: "35%" },
@@ -68,7 +75,7 @@ const OverlayInputSection = ({ id, name, visible, toggleOverlay }) => {
     );
     stockFishInLake({ id, updateData })
       .then(() => {
-        showToastMessage("Bồi cá thành công!");
+        showToastMessage(DICTIONARY.ALERT_LAKE_STOCKING_SUCCESS_MSG);
         handleOnExit();
       })
       .catch(() => {
@@ -110,25 +117,20 @@ const OverlayInputSection = ({ id, name, visible, toggleOverlay }) => {
           <InputComponent
             useNumPad
             myStyles={styles.input}
-            controllerName="quantity"
-            placeholder="Nhập số con muốn bồi"
+            controllerName={DICTIONARY.FORM_FIELD_FISH_QUANTITY}
+            placeholder={DICTIONARY.INPUT_FISH_STOCKING_QUANTITY_PLACEHOLDER}
           />
         </View>
         <View style={styles.inputWrapper}>
           <Text style={styles.text}>Tổng cân nặng</Text>
           <InputComponent
             useNumPad
-            controllerName="weight"
+            controllerName={DICTIONARY.FORM_FIELD_FISH_STOCKING_WEIGHT}
             myStyles={styles.input}
-            placeholder="Nhập cân nặng đợt bồi (kg)"
+            placeholder={DICTIONARY.INPUT_FISH_STOCKING_WEIGHT_PLACEHOLDER}
           />
         </View>
-        <View
-          style={StyleSheet.compose(styles.inputWrapper, {
-            marginTop: 20,
-            justifyContent: "space-evenly",
-          })}
-        >
+        <View style={styles.buttonWrapper}>
           <Button w="45%" variant="outline" onPress={handleOnExit}>
             Quay lại
           </Button>
