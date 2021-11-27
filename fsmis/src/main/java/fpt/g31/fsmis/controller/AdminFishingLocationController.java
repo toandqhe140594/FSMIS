@@ -42,8 +42,8 @@ public class AdminFishingLocationController {
         return new ResponseEntity<>(locationService.adminCreateLocation(adminFishingLocationDtoIn), HttpStatus.OK);
     }
 
-    @DeleteMapping("/suggested/remove/{suggestedLocationId}")
-    public ResponseEntity<Object> adminRemoveSuggestedLocation(@PathVariable Long suggestedLocationId) {
-        return new ResponseEntity<>(locationService.adminRemoveSuggestedLocation(suggestedLocationId), HttpStatus.OK);
+    @PatchMapping("/suggested/helpful/{suggestedLocationId}")
+    public ResponseEntity<Object> adminMarkSuggestedLocationHelpful(@PathVariable Long suggestedLocationId) {
+        return new ResponseEntity<>(locationService.adminMarkSuggestedLocationHelpful(suggestedLocationId), HttpStatus.OK);
     }
 }

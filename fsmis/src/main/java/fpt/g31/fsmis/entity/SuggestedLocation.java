@@ -13,7 +13,7 @@ import javax.persistence.*;
 @Table(name = "tbl_suggested_location")
 public class SuggestedLocation {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
     private String phone;
@@ -24,4 +24,6 @@ public class SuggestedLocation {
     @Column(columnDefinition = "TEXT")
     private String additionalInformation;
     private String senderPhone;
+    @Column(columnDefinition = "bool default false")
+    private Boolean helpful;
 }

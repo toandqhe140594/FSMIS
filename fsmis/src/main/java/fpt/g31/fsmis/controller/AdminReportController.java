@@ -1,9 +1,6 @@
 package fpt.g31.fsmis.controller;
 
-import fpt.g31.fsmis.service.FishingLocationService;
-import fpt.g31.fsmis.service.PostService;
-import fpt.g31.fsmis.service.ReportService;
-import fpt.g31.fsmis.service.ReviewService;
+import fpt.g31.fsmis.service.*;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +14,7 @@ public class AdminReportController {
     private final ReportService reportService;
     private final ReviewService reviewService;
     private final PostService postService;
+    private final CatchesService catchesService;
 
     @GetMapping("/location")
     public ResponseEntity<Object> getLocationReports(@RequestParam(defaultValue = "1", required = false) Integer pageNo,
@@ -70,6 +68,11 @@ public class AdminReportController {
     @GetMapping("/catch/{reportId}")
     public ResponseEntity<Object> getImproperCatchReportDetail(@PathVariable Long reportId) {
         return new ResponseEntity<>(reportService.getImproperCatchReportDetail(reportId), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/post/delete/{catchId}")
+    public ResponseEntity<Object> deleteCatch(@PathVariable Long catchId) {
+        return new ResponseEntity<>(catchesService.adminDeleteCatch(catchId), HttpStatus.OK);
     }
 
     @PostMapping("/solved/{reportId}")

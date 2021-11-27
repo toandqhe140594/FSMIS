@@ -192,12 +192,13 @@ public class FishingLocationService {
                 .build();
         Response response = client.newCall(request).execute();
         String result = response.body().string();
-        System.out.println(result);
+//        System.out.println(result);
         JsonFactory factory = new JsonFactory();
         ObjectMapper mapper = new ObjectMapper(factory);
         JsonParser parser = factory.createParser(result);
         JsonNode rootNode = mapper.readTree(parser);
-        if (!rootNode.get("status").toString().equals("OK")) {
+//        System.out.println(mapper.convertValue(rootNode.get("status"), String.class));
+        if (!mapper.convertValue(rootNode.get("status"), String.class).equals("OK")) {
             for (FishingLocation location : fishingLocationList) {
                 FishingLocationPinDtoOut dto = FishingLocationPinDtoOut.builder()
                         .id(location.getId())
@@ -649,7 +650,7 @@ public class FishingLocationService {
     }
 
     public List<SuggestedLocationDtoOut> adminGetSuggestedLocationList() {
-        List<SuggestedLocation> suggestedLocationList = suggestedLocationRepos.findAll();
+        List<SuggestedLocation> suggestedLocationList = suggestedLocationRepos.findAllByOrderByIdDesc();
         List<SuggestedLocationDtoOut> output = new ArrayList<>();
         for (SuggestedLocation suggestedLocation : suggestedLocationList) {
             output.add(SuggestedLocationDtoOut.builder()
@@ -667,11 +668,12 @@ public class FishingLocationService {
         return output;
     }
 
-    public ResponseTextDtoOut adminRemoveSuggestedLocation(Long suggestedLocationId) {
+    public ResponseTextDtoOut adminMarkSuggestedLocationHelpful(Long suggestedLocationId) {
         SuggestedLocation suggestedLocation = suggestedLocationRepos.findById(suggestedLocationId)
                 .orElseThrow(() -> new NotFoundException("Không tìm thấy bản ghi"));
-        suggestedLocationRepos.delete(suggestedLocation);
-        return new ResponseTextDtoOut("Xóa gợi ý khu hồ thành công");
+        suggestedLocation.setHelpful(true);
+        suggestedLocationRepos.save(suggestedLocation);
+        return new ResponseTextDtoOut("Đánh dấu thành công");
     }
 
     public ResponseTextDtoOut adminCreateLocation(AdminFishingLocationDtoIn adminFishingLocationDtoIn) {

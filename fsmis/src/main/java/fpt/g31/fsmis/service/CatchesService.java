@@ -289,4 +289,11 @@ public class CatchesService {
         NotificationService.createNotification(notificationRepos, notificationText, notificationReceiver);
         return new ResponseTextDtoOut("Phê duyệt thành công");
     }
+
+    public ResponseTextDtoOut adminDeleteCatch(Long catchId) {
+        Catches catches = catchesRepos.findById(catchId)
+                .orElseThrow(() -> new NotFoundException("Không tìm thấy báo cá"));
+        catches.setApproved(false);
+        return new ResponseTextDtoOut("Xóa báo cá thành công");
+    }
 }
