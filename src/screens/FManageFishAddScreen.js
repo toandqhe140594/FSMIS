@@ -17,7 +17,7 @@ import FieldWatcherResetter from "../components/common/FieldWatcherResetter";
 import InputComponent from "../components/common/InputComponent";
 import SelectComponent from "../components/common/SelectComponent";
 import HeaderTab from "../components/HeaderTab";
-import { SCHEMA } from "../constants";
+import { DICTIONARY, SCHEMA } from "../constants";
 import { showAlertAbsoluteBox, showAlertBox } from "../utilities";
 
 const OFFSET_BOTTOM = 85;
@@ -86,15 +86,15 @@ const FManageFishAddScreen = () => {
       .then(() => {
         setIsLoading(false);
         showAlertAbsoluteBox(
-          "Thông báo",
-          "Thêm cá thành công!",
+          DICTIONARY.ALERT_TITLE,
+          DICTIONARY.ALERT_LAKE_ADD_FISH_SUCCESS_MSG,
           handleGoBack,
-          "Xác nhận",
+          DICTIONARY.CONFIRM_BUTTON_LABEL,
         );
       })
       .catch(() => {
         setIsLoading(false);
-        showAlertBox("Thông báo", "Đã có lỗi xảy ra, vui lòng thử lại");
+        showAlertBox(DICTIONARY.ALERT_TITLE, DICTIONARY.ALERT_ERROR_MSG);
       });
   };
 
@@ -114,7 +114,7 @@ const FManageFishAddScreen = () => {
 
   return (
     <>
-      <HeaderTab name="Thêm cá vào hồ" />
+      <HeaderTab name={DICTIONARY.FMANAGE_ADD_FISH_HEADER} />
       <Overlay
         isVisible={isLoading}
         fullScreen
@@ -126,26 +126,26 @@ const FManageFishAddScreen = () => {
         <FormProvider {...methods}>
           <VStack space={2} style={styles.sectionWrapper}>
             <SelectComponent
-              label="Loại cá"
-              placeholder="Chọn loại cá"
+              label={DICTIONARY.FISH_SPECIES_LABEL}
+              placeholder={DICTIONARY.SELECT_FISH_SPECIES_PLACEHOLDER}
               data={fishList}
-              controllerName="fishSpeciesId"
+              controllerName={DICTIONARY.FORM_FIELD_FISH_SPECIES}
             />
             <View
               style={{ flexDirection: "row", justifyContent: "space-between" }}
             >
               <InputComponent
                 myStyles={{ width: "48%", marginRight: 12 }}
-                label="Biểu nhỏ"
-                placeholder="Nhập biểu nhỏ"
-                controllerName="minWeight"
+                label={DICTIONARY.FISH_MIN_WEIGHT_LABEL}
+                placeholder={DICTIONARY.INPUT_FISH_MIN_WEIGHT_PLACEHOLDER}
+                controllerName={DICTIONARY.FORM_FIELD_FISH_MIN_WEIGHT}
                 useNumPad
               />
               <InputComponent
                 myStyles={{ flexGrow: 1 }}
-                label="Biểu to"
-                placeholder="Nhập biểu to"
-                controllerName="maxWeight"
+                label={DICTIONARY.FISH_MAX_WEIGHT_LABEL}
+                placeholder={DICTIONARY.INPUT_FISH_MAX_WEIGHT_PLACEHOLDER}
+                controllerName={DICTIONARY.FORM_FIELD_FISH_MAX_WEIGHT}
                 useNumPad
               />
             </View>
@@ -153,19 +153,21 @@ const FManageFishAddScreen = () => {
               Lưu ý: Chỉ cần nhập một trong hai trường dưới đây
             </Text>
             <InputComponent
-              label="Số lượng cá"
-              placeholder="Nhập số con"
-              controllerName="quantity"
+              label={DICTIONARY.FISH_QUANTITY_LABEL}
+              placeholder={DICTIONARY.INPUT_FISH_QUANTITY_PLACEHOLDER}
+              controllerName={DICTIONARY.FORM_FIELD_FISH_QUANTITY}
               useNumPad
             />
-            <FieldWatcherResetter name="quantity" />
+            <FieldWatcherResetter name={DICTIONARY.FORM_FIELD_FISH_QUANTITY} />
             <InputComponent
-              label="Tổng cân nặng"
-              placeholder="Nhập tổng cân nặng (kg)"
-              controllerName="totalWeight"
+              label={DICTIONARY.FISH_TOTAL_WEIGHT_LABEL}
+              placeholder={DICTIONARY.INPUT_FISH_TOTAL_WEIGHT_PLACEHOLDER}
+              controllerName={DICTIONARY.FORM_FIELD_FISH_TOTAL_WEIGHT}
               useNumPad
             />
-            <FieldWatcherResetter name="totalWeight" />
+            <FieldWatcherResetter
+              name={DICTIONARY.FORM_FIELD_FISH_TOTAL_WEIGHT}
+            />
           </VStack>
           <Button style={styles.button} onPress={handleSubmit(onSubmit)}>
             Thêm cá
