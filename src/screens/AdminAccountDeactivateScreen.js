@@ -7,7 +7,7 @@ import {
 import { useStoreActions } from "easy-peasy";
 import React, { useCallback, useRef, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { View } from "react-native";
+import { ScrollView, View } from "react-native";
 import { Button, Text } from "react-native-elements";
 
 import MultiImageSection from "../components/common/MultiImageSection";
@@ -81,7 +81,7 @@ const FManageSuggestLocationScreen = () => {
   );
 
   return (
-    <View style={{ flex: 1 }}>
+    <ScrollView style={{ flex: 1 }}>
       <HeaderTab name="Vô hiệu hóa tài khoản" />
       <FormProvider {...methods}>
         <View
@@ -132,7 +132,7 @@ const FManageSuggestLocationScreen = () => {
           </View>
         </View>
       </FormProvider>
-    </View>
+    </ScrollView>
   );
 };
 
