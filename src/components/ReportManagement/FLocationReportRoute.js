@@ -8,9 +8,9 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { Overlay } from "react-native-elements";
 
 import { goToAdminFLocationReportDetailScreen } from "../../navigations";
+import OverlayLoading from "../common/OverlayLoading";
 import HeaderTab from "../HeaderTab";
 import ReportCard from "./ReportCard";
 
@@ -36,20 +36,26 @@ const FLocationReportRoute = () => {
   const { getListLocationReportLocation, resetReportList } = useStoreActions(
     (actions) => actions.ReportModel,
   );
+
+  const handleReportLocationDetailNavigate = (id, active) => () => {
+    goToAdminFLocationReportDetailScreen(navigation, {
+      isActive: active,
+      id,
+    });
+  };
+
+  const keyExtractor = (item) => item.id.toString();
+
   const renderItem = ({ item }) => {
     return (
       <TouchableOpacity
-        onPress={() => {
-          goToAdminFLocationReportDetailScreen(navigation, {
-            id: item.id,
-            isActive: item.active,
-          });
-        }}
+        onPress={handleReportLocationDetailNavigate(item.id, item.active)}
       >
         <ReportCard {...item} isFLocationReport />
       </TouchableOpacity>
     );
   };
+
   const renderFooter = () =>
     isLoading && !bigLoading ? (
       <View margin={12}>
@@ -127,17 +133,7 @@ const FLocationReportRoute = () => {
   return (
     <>
       <HeaderTab name="Quản lý báo cáo" />
-      <Overlay
-        isVisible={isLoading && bigLoading}
-        fullScreen
-        overlayStyle={{
-          justifyContent: "center",
-          alignItems: "center",
-          backgroundColor: "transparent",
-        }}
-      >
-        <ActivityIndicator size={60} color="#2089DC" />
-      </Overlay>
+      <OverlayLoading loading={isLoading && bigLoading} />
       <View marginBottom={OFF_SET}>
         <Select
           w="90%"
@@ -159,7 +155,7 @@ const FLocationReportRoute = () => {
         </Select>
         <FlatList
           height="100%"
-          keyExtractor={(item) => `${item.id}`}
+          keyExtractor={keyExtractor}
           renderItem={renderItem}
           ListFooterComponent={renderFooter}
           bounces={false}
