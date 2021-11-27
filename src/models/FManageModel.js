@@ -90,9 +90,16 @@ const model = {
   setLocationDetails: action((state, payload) => {
     state.locationDetails = payload;
   }),
+  /**
+   * Get location details by id
+   */
   getLocationDetailsById: thunk(async (actions, payload) => {
-    const { data } = await http.get(`location/${payload.id}`);
-    actions.setLocationDetails(data);
+    try {
+      const { data } = await http.get(`location/${payload.id}`);
+      actions.setLocationDetails(data);
+    } catch (error) {
+      throw new Error(error.message);
+    }
   }),
   resetLocationDetails: action((state) => {
     state.locationDetails = {};
