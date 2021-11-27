@@ -24,11 +24,14 @@ const FLocationCard = ({
   isAdmin,
   showImage,
   isClosed,
+  pending,
 }) => {
   const navigation = useNavigation();
 
   const onPress = () => {
-    if (isManaged)
+    if (pending) {
+      // TODO: goto edit pending location
+    } else if (isManaged)
       goToFManageMainScreen(navigation, {
         id,
         name,
@@ -100,6 +103,7 @@ FLocationCard.propTypes = {
   isAdmin: PropTypes.bool,
   role: PropTypes.string,
   isClosed: PropTypes.bool,
+  pending: PropTypes.bool,
 };
 FLocationCard.defaultProps = {
   image: "https://picsum.photos/200",
@@ -111,6 +115,7 @@ FLocationCard.defaultProps = {
   isAdmin: false,
   role: "ANGLER",
   isClosed: false,
+  pending: false,
 };
 
 export default FLocationCard;
