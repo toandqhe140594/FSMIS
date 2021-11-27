@@ -5,9 +5,9 @@ import {
   useRoute,
 } from "@react-navigation/native";
 import { useStoreActions } from "easy-peasy";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { View } from "react-native";
+import { ScrollView, View } from "react-native";
 import { Button, Text } from "react-native-elements";
 
 import MultiImageSection from "../components/common/MultiImageSection";
@@ -34,7 +34,8 @@ const FManageSuggestLocationScreen = () => {
   );
 
   const [loading, setLoading] = useState(false);
-  const [phoneNumber, setPhoneNumber] = useState("");
+  const phone = useRef("");
+  const [, setForceUpdate] = useState(Date.now());
 
   const goBackAfterSuccess = () => {
     goBack(navigation);
@@ -48,7 +49,7 @@ const FManageSuggestLocationScreen = () => {
       .then(() => {
         showAlertAbsoluteBox(
           "Vô hiệu hóa tài khoản thành công",
-          `Số điện thoại "${phoneNumber}" đã bị thêm vào danh sách đen `,
+          `Số điện thoại "${phone.current}" đã bị thêm vào danh sách đen `,
           goBackAfterSuccess,
         );
       })
@@ -59,9 +60,9 @@ const FManageSuggestLocationScreen = () => {
 
   const onSubmit = (data) => {
     showAlertConfirmBox(
-      `Vô hiệu tài khoản "${phoneNumber}"?`,
+      `Vô hiệu tài khoản "${phone.current}"?`,
       "Tài khoản bị vô hiệu hóa sẽ bị thêm vào danh sách đen và không thể tham gia vào ứng dụng",
-      deactivateAccount({ ...data, phone: phoneNumber }),
+      deactivateAccount({ ...data, phone: phone.current }),
     );
   };
 
@@ -72,12 +73,15 @@ const FManageSuggestLocationScreen = () => {
         setValue("imageArray", route.params?.base64Array);
         navigation.setParams({ base64Array: [] });
       }
-      if (route.params?.phone) setPhoneNumber(route.params.phone);
+      if (route.params?.phone) {
+        phone.current = route.params.phone;
+        setForceUpdate();
+      }
     }, [route.params]),
   );
 
   return (
-    <View style={{ flex: 1 }}>
+    <ScrollView style={{ flex: 1 }}>
       <HeaderTab name="Vô hiệu hóa tài khoản" />
       <FormProvider {...methods}>
         <View
@@ -89,7 +93,7 @@ const FManageSuggestLocationScreen = () => {
           }}
         >
           <Text style={[styles.mdText, styles.boldText, styles.mb1]}>
-            Vô hiệu hóa tài khoản {phoneNumber}
+            Vô hiệu hóa tài khoản {phone.current}
           </Text>
           <Text
             style={[styles.mt1, { textAlign: "center", marginHorizontal: 10 }]}
@@ -128,7 +132,7 @@ const FManageSuggestLocationScreen = () => {
           </View>
         </View>
       </FormProvider>
-    </View>
+    </ScrollView>
   );
 };
 

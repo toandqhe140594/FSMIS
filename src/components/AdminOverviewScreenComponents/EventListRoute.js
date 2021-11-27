@@ -63,7 +63,8 @@ const CatchReportRoute = () => {
                   fishList={item.fishes}
                   id={item.id}
                   imageAvatar={item.avatar}
-                  image={item.images[0]}
+                  uri={item.images[0]}
+                  typeUri="IMAGE"
                   numberOfImages={item.images.length}
                   isApproved={item.approved}
                 />
@@ -118,7 +119,8 @@ const FLocationEventRoute = () => {
                       item.postType === "STOCKING" ? "Bồi cá" : "Thông báo",
                     content: item.content,
                   }}
-                  image={item.url}
+                  typeUri={item.attachmentType}
+                  uri={item.url}
                   postStyle="LAKE_POST"
                   edited={item.edited}
                   postTime={item.postTime}

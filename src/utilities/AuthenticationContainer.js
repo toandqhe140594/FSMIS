@@ -6,8 +6,12 @@ import AddressModel from "../models/AddressModel";
 import AdminStackNavigator from "../navigations/AdminStackNavigator";
 import AuthenticationStackNavigator from "../navigations/AuthenticationStackNavigator";
 import RootStackNavigator from "../navigations/RootStackNavigator";
+import BanNoticeScreen from "../screens/BanNoticeScreen";
 import LogoScreen from "../screens/LogoScreen";
-import { setRequestErrorMessageHandling } from "./Http";
+import {
+  setBeforeRequestFunction,
+  setRequestErrorMessageHandling,
+} from "./Http";
 import { showToastMessage } from "./index";
 import store from "./Store";
 
@@ -19,6 +23,7 @@ const AuthenticationContainer = () => {
   const errorMessage = useStoreState((states) => states.errorMessage);
   const retrieveToken = useStoreActions((actions) => actions.retrieveToken);
   const setErrorMessage = useStoreActions((actions) => actions.setErrorMessage);
+  const logOut = useStoreActions((actions) => actions.logOut);
   const getAllProvince = useStoreActions(
     (actions) => actions.AddressModel.getAllProvince,
   );
@@ -30,19 +35,19 @@ const AuthenticationContainer = () => {
       await retrieveToken();
     }, 1500);
     setRequestErrorMessageHandling(setErrorMessage);
+    setBeforeRequestFunction(() => setErrorMessage({}));
   }, []);
 
   useEffect(() => {
-    if (errorMessage.error === "BANNED") {
-      console.log("ban");
-    }
     if (errorMessage.responseText) showToastMessage(errorMessage.responseText);
+    if (errorMessage.error === "BANNED") logOut();
   }, [errorMessage]);
 
   if (loginState.isLoading) {
     return <LogoScreen />;
   }
-
+  if (errorMessage && errorMessage.error === "BANNED")
+    return <BanNoticeScreen bannedInformation={errorMessage} />;
   return (
     <>
       {loginState.authToken === null && <AuthenticationStackNavigator />}

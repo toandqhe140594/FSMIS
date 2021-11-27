@@ -24,11 +24,14 @@ const FLocationCard = ({
   isAdmin,
   showImage,
   isClosed,
+  pending,
 }) => {
   const navigation = useNavigation();
 
   const onPress = () => {
-    if (isManaged)
+    if (pending) {
+      // TODO: goto edit pending location
+    } else if (isManaged)
       goToFManageMainScreen(navigation, {
         id,
         name,
@@ -47,7 +50,10 @@ const FLocationCard = ({
     <Pressable onPress={onPress}>
       <Card containerStyle={{ width: "100%", padding: 0, margin: 0 }}>
         {showImage && (
-          <Card.Image source={{ uri: image }} key={image}>
+          <Card.Image
+            source={{ uri: image || "https://picsum.photos/200" }}
+            key={image}
+          >
             <Badge
               containerStyle={{ position: "absolute", top: 4, left: 4 }}
               badgeStyle={{
@@ -100,6 +106,7 @@ FLocationCard.propTypes = {
   isAdmin: PropTypes.bool,
   role: PropTypes.string,
   isClosed: PropTypes.bool,
+  pending: PropTypes.bool,
 };
 FLocationCard.defaultProps = {
   image: "https://picsum.photos/200",
@@ -111,6 +118,7 @@ FLocationCard.defaultProps = {
   isAdmin: false,
   role: "ANGLER",
   isClosed: false,
+  pending: false,
 };
 
 export default FLocationCard;

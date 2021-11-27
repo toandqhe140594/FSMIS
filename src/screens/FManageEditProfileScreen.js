@@ -39,6 +39,15 @@ const styles = StyleSheet.create({
   },
 });
 
+const getAddressFromFullAddress = (fullAddress, addressFromWard) => {
+  let result = fullAddress;
+  result = result.replace(
+    `, ${addressFromWard.ward}, ${addressFromWard.district}, ${addressFromWard.province}`,
+    "",
+  );
+  return result;
+};
+
 const FManageEditProfileScreen = () => {
   const route = useRoute();
   const locationData = useRef(null);
@@ -62,7 +71,10 @@ const FManageEditProfileScreen = () => {
       name: locationDetails.name,
       phone: locationDetails.phone,
       website: locationDetails.website,
-      address: locationDetails.address,
+      address: getAddressFromFullAddress(
+        locationDetails.address,
+        locationDetails.addressFromWard,
+      ),
       provinceId: locationDetails.addressFromWard.provinceId,
       districtId: locationDetails.addressFromWard.districtId,
       wardId: locationDetails.addressFromWard.wardId,

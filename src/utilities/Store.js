@@ -3,11 +3,7 @@ import * as SecureStore from "expo-secure-store";
 import jwtDecode from "jwt-decode";
 
 import { AUTH_TOKEN, USER_PROFILE, USER_ROLE } from "../constants";
-import http, {
-  removeAuthToken,
-  setAuthToken,
-  setBeforeRequestFunction,
-} from "./Http";
+import http, { removeAuthToken, setAuthToken } from "./Http";
 
 const initialLoginState = {
   authToken: null,
@@ -90,10 +86,6 @@ const Store = createStore({
       );
       await setAuthToken(authToken);
 
-      await setBeforeRequestFunction(() => {
-        actions.setErrorMessage("");
-      });
-
       actions.setUserRole(data.roles);
       actions.setUserProfile(data);
     } catch (e) {
@@ -143,10 +135,6 @@ const Store = createStore({
       if (!isExpire) {
         dispatch({ type: "RETRIEVE_TOKEN", authToken });
         await setAuthToken(authToken);
-
-        await setBeforeRequestFunction(() => {
-          actions.setErrorMessage("");
-        });
 
         actions.setUserRole(userRole);
         actions.setUserProfile(userProfile);

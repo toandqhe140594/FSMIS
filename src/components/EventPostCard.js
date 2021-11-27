@@ -42,6 +42,8 @@ const EventPostCard = ({
   if (typeUri === "VIDEO") {
     try {
       const regexIframe = new RegExp("<iframe", "g");
+      const regexYouTube =
+        /^(https?\:\/\/)?(www\.youtube\.com|youtu\.?be)\/.+$/g;
 
       if (regexIframe.test(uri)) {
         const regExGetSrc = /<iframe ?.* src="([^"]+)" ?.*>/i;
@@ -60,6 +62,13 @@ const EventPostCard = ({
           widthVideo = 400;
           heightPage = 410;
         }
+      } else if (regexYouTube.test(uri)) {
+        const regexYouTubeID =
+          /(?:https?:\/{2})?(?:w{3}\.)?youtu(?:be)?\.(?:com|be)(?:\/watch\?v=|\/)([^\s&]+)/;
+        const idArray = uri.split(regexYouTubeID);
+        srcUri[1] = `https://www.youtube.com/embed/${idArray[1]}`;
+        widthVideo = 400;
+        heightPage = 410;
       } else {
         srcUri[1] = uri;
         heightVideo = 700;
@@ -219,10 +228,10 @@ const EventPostCard = ({
               showsHorizontalScrollIndicator={false}
             >
               <WebView
+                overScrollMode="content"
                 originWhitelist={["https://*"]}
                 androidHardwareAccelerationDisabled
                 scalesPageToFit={false}
-                allowsFullscreenVideo
                 style={{
                   flex: 1,
                   alignSelf: "center",

@@ -141,7 +141,7 @@ const model = {
       }
     } catch (error) {
       actions.setFishingLocationInfo({});
-      actions.setCheckInState(false);
+      actions.setCheckInState(null);
       setLoading(false);
     }
   }),
