@@ -80,7 +80,7 @@ public class FishingLocationController {
 
     @GetMapping(path = "/{locationId}")
     public ResponseEntity<Object> getFishingLocationOverviewById(HttpServletRequest request, @PathVariable Long locationId) {
-        return new ResponseEntity<>(fishingLocationService.getFishingLocationOverviewById(request, locationId), HttpStatus.OK);
+        return new ResponseEntity<>(fishingLocationService.getFishingLocationOverview(request, locationId), HttpStatus.OK);
     }
 
     @GetMapping("/manager")

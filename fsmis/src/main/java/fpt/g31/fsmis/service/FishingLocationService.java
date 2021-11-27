@@ -140,7 +140,7 @@ public class FishingLocationService {
         return new ResponseTextDtoOut("Bạn đã đóng cửa địa điểm.");
     }
 
-    public FishingLocationOverviewDtoOut getFishingLocationOverviewById(HttpServletRequest request, Long locationId) {
+    public FishingLocationOverviewDtoOut getFishingLocationOverview(HttpServletRequest request, Long locationId) {
         User user = jwtFilter.getUserFromToken(request);
         FishingLocation location = fishingLocationRepos.findById(locationId)
                 .orElseThrow(() -> new NotFoundException("Không tìm thấy khu hồ!"));

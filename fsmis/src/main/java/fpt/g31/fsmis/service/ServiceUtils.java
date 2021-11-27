@@ -44,6 +44,9 @@ public class ServiceUtils {
     }
 
     public static List<String> splitString(String input) {
+        if (input.isEmpty()){
+            return Arrays.asList();
+        }
         String[] output = input.split("\r\n");
         return Arrays.asList(output);
     }
