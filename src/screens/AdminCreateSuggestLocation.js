@@ -37,50 +37,6 @@ const styles = StyleSheet.create({
   },
 });
 
-// const ALERT_TITLE = "Thông báo";
-// const ALERT_ADD_LOCATION_SUCCESS_MSG = "Thêm điểm câu thành công";
-// const ALERT_ERROR_MSG = "Đã xảy ra lỗi! Vui lòng thử lại sau.";
-// const FMANAGE_ADD_LOCATION_HEADER = "Tạo điểm câu mới";
-
-// const FORM_FIELD_IMAGE_ARRAY = "imageArray";
-// const FORM_FIELD_LOCATION_NAME = "name";
-// const FORM_FIELD_LOCATION_PHONE = "phone";
-// const FORM_FIELD_LOCATION_WEBSITE = "website";
-// const FORM_FIELD_ADDRESS = "address";
-// const FORM_FIELD_PROVINCE = "provinceId";
-// const FORM_FIELD_DISTRICT = "districtId";
-// const FORM_FIELD_WARD = "wardId";
-// const FORM_FIELD_LOCATION_DESCRIPTION = "description";
-// const FORM_FIELD_LOCATION_TIMETABLE = "timetable";
-// const FORM_FIELD_LOCATION_SERVICE = "service";
-// const FORM_FIELD_LOCATION_RULE = "rule";
-
-// const CONFIRM_BUTTON_LABEL = "Xác nhận";
-// const LOCATION_NAME_LABEL = "Tên điểm câu";
-// const LOCATION_PHONE_LABEL = "Số điện thoại";
-// const LOCATION_WEBSITE_LABEL = "Website";
-// const ADDRESS_LABEL = "Địa chỉ";
-// const PROVINCE_LABEL = "Tỉnh/Thành phố";
-// const DISTRICT_LABEL = "Quận/Huyện";
-// const WARD_LABEL = "Phường/Xã";
-// const LOCATION_DESCRIPTION_LABEL = "Mô tả khu hồ";
-// const LOCATION_TIMETABLE_LABEL = "Thời gian hoạt động";
-// const LOCATION_SERVICE_LABEL = "Dịch vụ";
-// const LOCATION_RULE_LABEL = "Nội quy";
-
-// const INPUT_LOCATION_NAME_PLACEHOLDER = "Nhập tên địa điểm câu";
-// const INPUT_LOCATION_PHONE_PLACEHOLDER = "Nhập số điện thoại";
-// const INPUT_LOCATION_WEBSITE_PLACEHOLDER = "Nhập website/facebook";
-// const INPUT_ADDRESS_PLACEHOLDER = "Nhập địa chỉ";
-// const SELECT_PROVINCE_PLACEHOLDER = "Chọn tỉnh/thành phố";
-// const SELECT_DISTRICT_PLACEHOLDER = "Chọn quận/huyện";
-// const SELECT_WARD_PLACEHOLDER = "Chọn phường/xã";
-// const INPUT_LOCATION_DESCRIPTION_PLACEHOLDER = "Miêu tả khu hồ của bạn";
-// const INPUT_LOCATION_TIMETABLE_PLACEHOLDER =
-//   "Miêu tả thời gian hoạt động của khu hồ";
-// const INPUT_LOCATION_SERVICE_PLACEHOLDER = "Miêu tả dịch vụ khu hồ";
-// const INPUT_LOCATION_RULE_PLACEHOLDER = "Miêu tả nội quy khu hồ";
-
 const FManageAddNewScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
