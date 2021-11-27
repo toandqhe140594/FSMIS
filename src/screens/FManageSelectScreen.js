@@ -1,14 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import React, { useEffect, useMemo, useState } from "react";
-import {
-  ActivityIndicator,
-  FlatList,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 
 import OverlayLoading from "../components/common/OverlayLoading";
 import FLocationCard from "../components/FLocationCard";
@@ -40,11 +33,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignSelf: "center",
   },
-  loadingContainer: {
-    justifyContent: "center",
-    alignItems: "center",
-    flex: 1,
-  },
 });
 
 const FManageSelectScreen = () => {
@@ -67,7 +55,6 @@ const FManageSelectScreen = () => {
   };
 
   useEffect(() => {
-    // setLoading(true);
     getListOfFishingLocations({ setGetSuccess });
     const timeout = setTimeout(() => {
       setLoading(false);
