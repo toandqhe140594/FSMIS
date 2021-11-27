@@ -6,7 +6,7 @@ import {
 } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, Button, Center, Divider, Stack, Text, VStack } from "native-base";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { ActivityIndicator, ScrollView, StyleSheet } from "react-native";
 import { Overlay } from "react-native-elements";
@@ -14,13 +14,15 @@ import { Overlay } from "react-native-elements";
 import DistrictSelector from "../components/common/DistrictSelector";
 import InputComponent from "../components/common/InputComponent";
 import InputWithClipboard from "../components/common/InputWithClipboard";
+import MultiImageSection from "../components/common/MultiImageSection";
 import ProvinceSelector from "../components/common/ProvinceSelector";
 import TextAreaComponent from "../components/common/TextAreaComponent";
 import WardSelector from "../components/common/WardSelector";
 import MapOverviewBox from "../components/FLocationEditProfile/MapOverviewBox";
 import HeaderTab from "../components/HeaderTab";
-import { DICTIONARY, SCHEMA } from "../constants";
-import { showAlertAbsoluteBox, showAlertBox } from "../utilities";
+import { DICTIONARY, ROUTE_NAMES, SCHEMA } from "../constants";
+import { goToOTPScreen } from "../navigations";
+import { showAlertBox } from "../utilities";
 
 const styles = StyleSheet.create({
   sectionWrapper: {
@@ -37,68 +39,101 @@ const styles = StyleSheet.create({
   },
 });
 
-const FManageAddNewScreen = () => {
+const getAddressFromFullAddress = (fullAddress, addressFromWard) => {
+  let result = fullAddress;
+  result = result.replace(
+    `, ${addressFromWard.ward}, ${addressFromWard.district}, ${addressFromWard.province}`,
+    "",
+  );
+  return result;
+};
+
+const FManageEditPendingProfileScreen = () => {
   const route = useRoute();
+  const locationData = useRef(null);
   const navigation = useNavigation();
   const [isLoading, setIsLoading] = useState(true);
   const [fullScreen, setFullScreen] = useState(true);
-  const { locationLatLng } = useStoreState((states) => states.FManageModel);
+  const { locationLatLng, locationDetails } = useStoreState(
+    (states) => states.FManageModel,
+  );
   const { resetDataList, getAllProvince } = useStoreActions(
     (actions) => actions.AddressModel,
   );
-  const { createSuggestedLocation } = useStoreActions(
-    (actions) => actions.AdminFLocationModel,
+  const { editFishingLocation } = useStoreActions(
+    (actions) => actions.FManageModel,
   );
-
+  const sendOtp = useStoreActions((actions) => actions.UtilModel.sendOtp);
   const methods = useForm({
     mode: "onSubmit",
     reValidateMode: "onSubmit",
-    defaultValues: { provinceId: 0, districtId: 0 },
-    resolver: yupResolver(SCHEMA.ADMIN_FMANAGE_PROFILE_FORM),
+    defaultValues: {
+      name: locationDetails.name,
+      phone: locationDetails.phone,
+      website: locationDetails.website,
+      address: getAddressFromFullAddress(
+        locationDetails.address,
+        locationDetails.addressFromWard,
+      ),
+      provinceId: locationDetails.addressFromWard.provinceId,
+      districtId: locationDetails.addressFromWard.districtId,
+      wardId: locationDetails.addressFromWard.wardId,
+      description: locationDetails.description,
+      service: locationDetails.timetable,
+      timetable: locationDetails.service,
+      rule: locationDetails.rule,
+      imageArray: locationDetails.image.map((image, index) => ({
+        id: index,
+        base64: image,
+      })),
+    },
+    resolver: yupResolver(SCHEMA.FMANAGE_PROFILE_FORM),
   });
+
   const { handleSubmit, setValue } = methods;
-
-  const setDefaultValues = () => {
-    if (route.params?.suggestData) {
-      Object.entries(route.params?.suggestData).forEach(([field, value]) => {
-        if (value) setValue(field, value);
-      });
-    }
-  };
-
-  const goBackToSuggestionList = () => {
-    navigation.pop(2);
-  };
 
   const handleError = () => {
     setIsLoading(false);
     showAlertBox(DICTIONARY.ALERT_TITLE, DICTIONARY.ALERT_ERROR_MSG);
   };
 
-  const onSubmit = (data) => {
-    setIsLoading(true);
-    delete data.provinceId;
-    delete data.districtId;
-    const addData = { ...data, ...locationLatLng };
-    createSuggestedLocation({ addData })
-      .then(() => {
-        showAlertAbsoluteBox(
-          DICTIONARY.ALERT_TITLE,
-          DICTIONARY.ALERT_ADD_LOCATION_SUCCESS_MSG,
-          goBackToSuggestionList,
-          DICTIONARY.CONFIRM_BUTTON_LABEL,
-        );
-      })
-      .catch(handleError);
+  const handleEditSuccess = () => {
+    setIsLoading(false);
+    showAlertBox(
+      DICTIONARY.ALERT_TITLE,
+      DICTIONARY.ALERT_EDIT_LOCATION_SUCCESS_MSG,
+    );
   };
 
-  /**
-   * Trigger first time when enters
-   * and when screen unmounts
-   */
+  const onSubmit = (data) => {
+    setIsLoading(true);
+    const images = data.imageArray.map((pic) => pic.base64);
+    delete data.imageArray;
+    delete data.provinceId;
+    delete data.districtId;
+    const updateData = { ...data, ...locationLatLng, images };
+    // New phone input need OTP validation
+    if (updateData.phone !== locationDetails.phone) {
+      locationData.current = updateData;
+      sendOtp({ phone: updateData.phone })
+        .then(() => {
+          setIsLoading(false);
+          goToOTPScreen(
+            navigation,
+            ROUTE_NAMES.FMANAGE_PROFILE_EDIT,
+            locationData.current.phone,
+          );
+        })
+        .catch(handleError);
+    } else {
+      editFishingLocation({ updateData })
+        .then(handleEditSuccess)
+        .catch(handleError);
+    }
+  };
+
   useEffect(() => {
     getAllProvince().then(() => {
-      setDefaultValues();
       setIsLoading(false);
       setFullScreen(false);
     });
@@ -112,34 +147,48 @@ const FManageAddNewScreen = () => {
     };
   }, []);
 
-  /**
-   * Trigger when navigation goes back to this screen
-   */
+  // Fire when naviagtes back to this screen
   useFocusEffect(
     // useCallback will listen to route.param
     useCallback(() => {
       if (route.params?.base64Array && route.params.base64Array.length) {
-        setValue(DICTIONARY.FORM_FIELD_IMAGE_ARRAY, route.params?.base64Array);
+        setValue(DICTIONARY.FORM_FIELD_IMAGE_ARRAY, route.params.base64Array);
         navigation.setParams({ base64Array: [] });
+      }
+      if (route.params?.otpSuccess) {
+        setIsLoading(true);
+        editFishingLocation({ updateData: locationData.current })
+          .then(handleEditSuccess)
+          .catch(handleError);
       }
     }, [route.params]),
   );
 
   return (
     <>
-      <HeaderTab name={DICTIONARY.FMANAGE_ADD_LOCATION_HEADER} />
-      <Overlay
-        isVisible={isLoading}
-        fullScreen
-        overlayStyle={fullScreen ? styles.loadOnStart : styles.loadOnSubmit}
-      >
-        <ActivityIndicator size={60} color="#2089DC" />
-      </Overlay>
+      <HeaderTab name={DICTIONARY.FMANAGE_EDIT_LOCATION_HEADER} />
       <ScrollView>
+        <Overlay
+          isVisible={isLoading}
+          fullScreen
+          overlayStyle={fullScreen ? styles.loadOnStart : styles.loadOnSubmit}
+        >
+          <ActivityIndicator size={60} color="#2089DC" />
+        </Overlay>
         <FormProvider {...methods}>
-          <VStack mt={4} space={3} divider={<Divider />}>
+          <VStack space={3} divider={<Divider />}>
             <Center>
+              {/* Image Picker section */}
               <Stack space={2} style={styles.sectionWrapper}>
+                <Text bold fontSize="md" mt={2}>
+                  Ảnh bìa (nhiều nhất là 5)
+                </Text>
+                <MultiImageSection
+                  formRoute={ROUTE_NAMES.FMANAGE_PROFILE_EDIT}
+                  selectLimit={5}
+                  controllerName={DICTIONARY.FORM_FIELD_IMAGE_ARRAY}
+                />
+                {/* Input location name */}
                 <InputComponent
                   isTitle
                   label={DICTIONARY.LOCATION_NAME_LABEL}
@@ -154,11 +203,10 @@ const FManageAddNewScreen = () => {
                 <Text fontSize="md" bold>
                   Thông tin liên hệ
                 </Text>
+                {/* Information input and select fields */}
                 <InputComponent
-                  useNumPad
                   label={DICTIONARY.LOCATION_PHONE_LABEL}
                   placeholder={DICTIONARY.INPUT_LOCATION_PHONE_PLACEHOLDER}
-                  hasAsterisk
                   controllerName={DICTIONARY.FORM_FIELD_LOCATION_PHONE}
                 />
                 <InputWithClipboard
@@ -169,19 +217,23 @@ const FManageAddNewScreen = () => {
                 <InputComponent
                   label={DICTIONARY.ADDRESS_LABEL}
                   placeholder={DICTIONARY.INPUT_ADDRESS_PLACEHOLDER}
+                  hasAsterisk
                   controllerName={DICTIONARY.FORM_FIELD_ADDRESS}
                 />
                 <ProvinceSelector
+                  hasAsterisk
                   label={DICTIONARY.PROVINCE_LABEL}
                   placeholder={DICTIONARY.SELECT_PROVINCE_PLACEHOLDER}
                   controllerName={DICTIONARY.FORM_FIELD_PROVINCE}
                 />
                 <DistrictSelector
+                  hasAsterisk
                   label={DICTIONARY.DISTRICT_LABEL}
                   placeholder={DICTIONARY.SELECT_DISTRICT_PLACEHOLDER}
                   controllerName={DICTIONARY.FORM_FIELD_DISTRICT}
                 />
                 <WardSelector
+                  hasAsterisk
                   label={DICTIONARY.WARD_LABEL}
                   placeholder={DICTIONARY.SELECT_WARD_PLACEHOLDER}
                   controllerName={DICTIONARY.FORM_FIELD_WARD}
@@ -194,6 +246,9 @@ const FManageAddNewScreen = () => {
               <Box style={styles.sectionWrapper}>
                 <Text bold fontSize="md" mb={2}>
                   Bản đồ
+                  <Text color="danger.500" fontSize="md">
+                    *
+                  </Text>
                 </Text>
                 <MapOverviewBox />
               </Box>
@@ -205,6 +260,7 @@ const FManageAddNewScreen = () => {
                 myStyles={styles.sectionWrapper}
                 label={DICTIONARY.LOCATION_DESCRIPTION_LABEL}
                 isTitle
+                hasAsterisk
                 placeholder={DICTIONARY.INPUT_LOCATION_DESCRIPTION_PLACEHOLDER}
                 numberOfLines={6}
                 controllerName={DICTIONARY.FORM_FIELD_LOCATION_DESCRIPTION}
@@ -217,6 +273,7 @@ const FManageAddNewScreen = () => {
                 myStyles={styles.sectionWrapper}
                 label={DICTIONARY.LOCATION_TIMETABLE_LABEL}
                 isTitle
+                hasAsterisk
                 placeholder={DICTIONARY.INPUT_LOCATION_TIMETABLE_PLACEHOLDER}
                 numberOfLines={6}
                 controllerName={DICTIONARY.FORM_FIELD_LOCATION_TIMETABLE}
@@ -229,6 +286,7 @@ const FManageAddNewScreen = () => {
                 myStyles={styles.sectionWrapper}
                 label={DICTIONARY.LOCATION_SERVICE_LABEL}
                 isTitle
+                hasAsterisk
                 placeholder={DICTIONARY.INPUT_LOCATION_SERVICE_PLACEHOLDER}
                 numberOfLines={6}
                 controllerName={DICTIONARY.FORM_FIELD_LOCATION_SERVICE}
@@ -236,10 +294,12 @@ const FManageAddNewScreen = () => {
             </Center>
 
             <Center>
+              {/* rules textarea */}
               <TextAreaComponent
                 myStyles={styles.sectionWrapper}
                 label={DICTIONARY.LOCATION_RULE_LABEL}
                 isTitle
+                hasAsterisk
                 placeholder={DICTIONARY.INPUT_LOCATION_RULE_PLACEHOLDER}
                 numberOfLines={6}
                 controllerName={DICTIONARY.FORM_FIELD_LOCATION_RULE}
@@ -254,7 +314,7 @@ const FManageAddNewScreen = () => {
                   alignSelf="center"
                   onPress={handleSubmit(onSubmit)}
                 >
-                  Thêm điểm câu
+                  Lưu thông tin
                 </Button>
               </Box>
             </Center>
@@ -265,4 +325,4 @@ const FManageAddNewScreen = () => {
   );
 };
 
-export default FManageAddNewScreen;
+export default FManageEditPendingProfileScreen;

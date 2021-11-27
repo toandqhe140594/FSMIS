@@ -34,6 +34,7 @@ const RegisterInformationScreen = () => {
   const methods = useForm({
     mode: "onSubmit",
     reValidateMode: "onSubmit",
+    defaultValues: { provinceId: 0, districtId: 0 },
     resolver: yupResolver(SCHEMA.REGISTER_INFORMATION_FORM),
   });
   const { handleSubmit } = methods;
@@ -41,7 +42,7 @@ const RegisterInformationScreen = () => {
   const { getAllProvince } = useStoreActions((actions) => actions.AddressModel);
 
   useEffect(() => {
-    getAllProvince();
+    getAllProvince().catch(() => {});
     if (route.params) {
       const { phone, password } = route.params;
       accountData.current = { phone, password };

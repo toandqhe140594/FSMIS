@@ -103,7 +103,6 @@ const RegisterScreen = () => {
               <InputComponent
                 label="Số điện thoại"
                 useNumPad
-                isTitle
                 hasAsterisk
                 placeholder="Nhập số điện thoại"
                 controllerName="phoneNumber"
@@ -112,7 +111,6 @@ const RegisterScreen = () => {
               {/* Password input field */}
               <PasswordInput
                 label="Mật khẩu"
-                isTitle
                 hasAsterisk
                 placeholder="Nhập mật khẩu mới"
                 controllerName="password"
@@ -120,7 +118,6 @@ const RegisterScreen = () => {
               {/* Password confirmation input field */}
               <PasswordInput
                 label="Xác nhận mật khẩu"
-                isTitle
                 hasAsterisk
                 placeholder="Nhập lại mật khẩu mới"
                 controllerName="passwordConfirmation"

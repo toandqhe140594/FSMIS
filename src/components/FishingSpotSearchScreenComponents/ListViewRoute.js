@@ -24,7 +24,6 @@ const ListViewRoute = () => {
   const { setPageNo, getListLocationNextPage } = useStoreActions(
     (actions) => actions.AdvanceSearchModel,
   );
-  const isListEmpty = listLocationResult.length === 0;
   /**
    * Check if pageNo small then totalPage
    * then set incremented pageNo
@@ -59,14 +58,14 @@ const ListViewRoute = () => {
   const memoizedValue = useMemo(() => renderItem, [listLocationResult]);
   const memoizedContainerStyle = useMemo(
     () =>
-      isListEmpty
+      !listLocationResult.length
         ? {
             flex: 1,
             alignItems: "center",
             justifyContent: "center",
           }
         : null,
-    [isListEmpty],
+    [listLocationResult.length > 0],
   );
 
   const renderFooter = () => {

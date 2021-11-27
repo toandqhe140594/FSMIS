@@ -25,7 +25,7 @@ import MultiImageSection from "../components/common/MultiImageSection";
 import SelectComponent from "../components/common/SelectComponent";
 import TextAreaComponent from "../components/common/TextAreaComponent";
 import HeaderTab from "../components/HeaderTab";
-import { ROUTE_NAMES, SCHEMA } from "../constants";
+import { DICTIONARY, ROUTE_NAMES, SCHEMA } from "../constants";
 import { showAlertAbsoluteBox, showAlertBox } from "../utilities";
 
 const styles = StyleSheet.create({
@@ -69,7 +69,7 @@ const AnglerCatchReportScreen = () => {
     setValue,
     formState: { errors },
   } = methods;
-  const watchLakeIdField = watch("lakeId");
+  const watchLakeIdField = watch(DICTIONARY.FORM_FIELD_CATCH_REPORT_LAKE_ID);
 
   const handleGoBack = () => {
     navigation.pop(1);
@@ -84,14 +84,14 @@ const AnglerCatchReportScreen = () => {
       .then(() => {
         increaseCatchesCount();
         showAlertAbsoluteBox(
-          "Gửi thành công",
-          "Thông tin buổi câu được gửi thành công",
+          DICTIONARY.ALERT_TITLE,
+          DICTIONARY.CATCH_REPORT_SEND_SUCCESS_MSG,
           handleGoBack,
         );
       })
       .catch(() => {
         setIsLoading(false);
-        showAlertBox("Thông báo", "Đã xảy ra lỗi! Vui lòng thử lại sau.");
+        showAlertBox(DICTIONARY.ALERT_TITLE, DICTIONARY.ALERT_ERROR_MSG);
       });
   };
 
@@ -110,7 +110,7 @@ const AnglerCatchReportScreen = () => {
     // useCallback will listen to route.param
     useCallback(() => {
       if (route.params?.base64Array && route.params.base64Array[0]) {
-        setValue("imageArray", route.params.base64Array);
+        setValue(DICTIONARY.FORM_FIELD_IMAGE_ARRAY, route.params.base64Array);
         navigation.setParams({ base64Array: [] });
       }
     }, [route.params]),
@@ -118,7 +118,7 @@ const AnglerCatchReportScreen = () => {
 
   return (
     <>
-      <HeaderTab name="Báo cá" />
+      <HeaderTab name={DICTIONARY.ANGLER_CATCH_REPORT_HEADER} />
       <Overlay
         isVisible={isLoading}
         fullScreen
@@ -134,14 +134,18 @@ const AnglerCatchReportScreen = () => {
                 {/* Impage picker section */}
                 <MultiImageSection
                   formRoute={ROUTE_NAMES.CATCHES_REPORT_FORM}
-                  controllerName="imageArray"
+                  controllerName={DICTIONARY.FORM_FIELD_IMAGE_ARRAY}
                   selectLimit={3}
                 />
                 {/* Textarea input field */}
                 <TextAreaComponent
-                  placeholder="Mô tả ngày câu của bạn"
+                  placeholder={
+                    DICTIONARY.INPUT_CATCH_REPORT_DESCRIPTION_PLACEHOLDER
+                  }
                   numberOfLines={6}
-                  controllerName="description"
+                  controllerName={
+                    DICTIONARY.FROM_FIELD_CATCH_REPORT_DESCRIPTION
+                  }
                 />
               </Stack>
             </Center>
@@ -151,10 +155,10 @@ const AnglerCatchReportScreen = () => {
                 myStyles={styles.sectionWrapper}
                 isTitle
                 hasAsterisk
-                label="Vị trí hồ câu"
-                placeholder="Chọn hồ câu"
+                label={DICTIONARY.CATCH_REPORT_LAKE_LABEL}
+                placeholder={DICTIONARY.SELECT_CATCH_REPORT_LAKE_PLACEHOLDER}
                 data={lakeList}
-                controllerName="lakeId"
+                controllerName={DICTIONARY.FORM_FIELD_CATCH_REPORT_LAKE_ID}
               />
             </Center>
 
@@ -163,9 +167,9 @@ const AnglerCatchReportScreen = () => {
                 <Text bold fontSize="md">
                   Thông tin cá
                 </Text>
-                {errors.catchesDetailList?.message && (
+                {errors[DICTIONARY.FORM_FIELD_CATCH_REPORT_CARD]?.message && (
                   <Text style={styles.error}>
-                    {errors.catchesDetailList?.message}
+                    {errors[DICTIONARY.FORM_FIELD_CATCH_REPORT_CARD]?.message}
                   </Text>
                 )}
                 <CatchReportSection fishList={workingFishList} />

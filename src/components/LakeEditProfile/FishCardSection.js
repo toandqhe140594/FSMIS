@@ -5,6 +5,7 @@ import React, { useEffect } from "react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import { StyleSheet, Text, View } from "react-native";
 
+import { DICTIONARY } from "../../constants";
 import FieldWatcherResetter from "../common/FieldWatcherResetter";
 import InputComponent from "../common/InputComponent";
 import SelectComponent from "../common/SelectComponent";
@@ -32,11 +33,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 8,
     marginVertical: 5,
-    backgroundColor: "#fafafa",
+    backgroundColor: "white",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.8,
-    shadowRadius: 2,
+    shadowRadius: 1,
     elevation: 5,
   },
   rowWrapper: {
@@ -61,7 +62,7 @@ const FishCardSection = () => {
   } = useFormContext();
   const { fields, append, remove } = useFieldArray({
     control,
-    name: "fishInLakeList",
+    name: DICTIONARY.FORM_FIELD_FISH_CARD,
     shouldUnregister: true,
   });
   const handleAppend = () => {
@@ -70,7 +71,7 @@ const FishCardSection = () => {
       totalWeight: 0,
     });
   };
-  const handleRemove = (index) => {
+  const handleRemove = (index) => () => {
     remove(index);
   };
   /**
@@ -85,30 +86,42 @@ const FishCardSection = () => {
       {fields.map(({ id }, index) => (
         <View style={styles.cardWrapper} key={id}>
           <SelectComponent
-            placeholder="Chọn loại cá"
+            placeholder={DICTIONARY.SELECT_FISH_CARD_FISH_SPECIES_PLACEHOLDER}
             data={fishList}
-            controllerName={`fishInLakeList[${index}].fishSpeciesId`}
+            controllerName={`${DICTIONARY.FORM_FIELD_FISH_CARD}[${index}].${DICTIONARY.FORM_FIELD_FISH_SPECIES}`}
             useCustomError
-            myError={errors.fishInLakeList?.[index]?.fishSpeciesId}
+            myError={
+              errors[DICTIONARY.FORM_FIELD_FISH_CARD]?.[index]?.[
+                DICTIONARY.FORM_FIELD_FISH_SPECIES
+              ]
+            }
           />
           <View style={styles.rowWrapper}>
             <InputComponent
               myStyles={{ width: "48%" }}
               useNumPad
-              placeholder="Min"
+              placeholder={DICTIONARY.SELECT_FISH_CARD_MIN_WEIGHT_PLACEHOLDER}
               leftIcon={<Text style={styles.leftIconText}>Biểu</Text>}
-              controllerName={`fishInLakeList[${index}].minWeight`}
+              controllerName={`${DICTIONARY.FORM_FIELD_FISH_CARD}[${index}].${DICTIONARY.FORM_FIELD_FISH_MIN_WEIGHT}`}
               useCustomError
-              myError={errors.fishInLakeList?.[index]?.minWeight}
+              myError={
+                errors[DICTIONARY.FORM_FIELD_FISH_CARD]?.[index]?.[
+                  DICTIONARY.FORM_FIELD_FISH_MIN_WEIGHT
+                ]
+              }
             />
             <InputComponent
               myStyles={{ width: "49%" }}
               useNumPad
-              placeholder="Max"
+              placeholder={DICTIONARY.SELECT_FISH_CARD_MAX_WEIGHT_PLACEHOLDER}
               leftIcon={<Text style={styles.leftIconText}>Biểu</Text>}
-              controllerName={`fishInLakeList[${index}].maxWeight`}
+              controllerName={`${DICTIONARY.FORM_FIELD_FISH_CARD}[${index}].${DICTIONARY.FORM_FIELD_FISH_MAX_WEIGHT}`}
               useCustomError
-              myError={errors.fishInLakeList?.[index]?.maxWeight}
+              myError={
+                errors[DICTIONARY.FORM_FIELD_FISH_CARD]?.[index]?.[
+                  DICTIONARY.FORM_FIELD_FISH_MAX_WEIGHT
+                ]
+              }
             />
           </View>
           <Text style={styles.hint}>
@@ -117,28 +130,40 @@ const FishCardSection = () => {
           <InputComponent
             myStyles={{ marginBottom: 8 }}
             useNumPad
-            placeholder="Nhập số con thả hồ"
+            placeholder={DICTIONARY.SELECT_FISH_CARD_QUANTITY_PLACEHOLDER}
             leftIcon={<FishLeftIcon />}
-            controllerName={`fishInLakeList[${index}].quantity`}
+            controllerName={`${DICTIONARY.FORM_FIELD_FISH_CARD}[${index}].${DICTIONARY.FORM_FIELD_FISH_QUANTITY}`}
             useCustomError
-            myError={errors.fishInLakeList?.[index]?.quantity}
+            myError={
+              errors[DICTIONARY.FORM_FIELD_FISH_CARD]?.[index]?.[
+                DICTIONARY.FORM_FIELD_FISH_QUANTITY
+              ]
+            }
           />
-          <FieldWatcherResetter name={`fishInLakeList[${index}].quantity`} />
+          <FieldWatcherResetter
+            name={`${DICTIONARY.FORM_FIELD_FISH_CARD}[${index}].${DICTIONARY.FORM_FIELD_FISH_QUANTITY}`}
+          />
           <InputComponent
             useNumPad
-            placeholder="Nhập tổng cân nặng (kg)"
+            placeholder={DICTIONARY.SELECT_FISH_CARD_TOTAL_WEIGHT_PLACEHOLDER}
             leftIcon={<WeightLeftIcon />}
-            controllerName={`fishInLakeList[${index}].totalWeight`}
+            controllerName={`${DICTIONARY.FORM_FIELD_FISH_CARD}[${index}].${DICTIONARY.FORM_FIELD_FISH_TOTAL_WEIGHT}`}
             useCustomError
-            myError={errors.fishInLakeList?.[index]?.totalWeight}
+            myError={
+              errors[DICTIONARY.FORM_FIELD_FISH_CARD]?.[index]?.[
+                DICTIONARY.FORM_FIELD_FISH_TOTAL_WEIGHT
+              ]
+            }
           />
-          <FieldWatcherResetter name={`fishInLakeList[${index}].totalWeight`} />
+          <FieldWatcherResetter
+            name={`${DICTIONARY.FORM_FIELD_FISH_CARD}[${index}].${DICTIONARY.FORM_FIELD_FISH_TOTAL_WEIGHT}`}
+          />
           <Button
             fontSize="md"
             w="45%"
             mt={2}
             alignSelf="flex-end"
-            onPress={() => handleRemove(index)}
+            onPress={handleRemove(index)}
           >
             Xoá
           </Button>

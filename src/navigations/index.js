@@ -94,6 +94,12 @@ const goToFManageEditProfileScreen = (navigation, params) => {
   });
 };
 
+const goToFManageEditPendingProfileScreen = (navigation, params) => {
+  navigation.navigate(ROUTE_NAMES.FMANAGE_PROFILE_PENDING_EDIT, {
+    ...params,
+  });
+};
+
 const goToFManageLocationPickScreen = (navigation, params) => {
   navigation.navigate(ROUTE_NAMES.FMANAGE_LOCATION_PICK, {
     ...params,
@@ -294,6 +300,7 @@ export {
   goToFishingLocationOverviewScreen,
   goToFManageAddNewScreen,
   goToFManageAddStaffScreen,
+  goToFManageEditPendingProfileScreen,
   goToFManageEditProfileScreen,
   goToFManageFishAddScreen,
   goToFManageLakeAddNewScreen,

@@ -9,9 +9,6 @@ const styles = StyleSheet.create({
   asterisk: { color: "#f43f5e", fontSize: 16 },
   bold: { fontWeight: "bold" },
   text: { fontSize: 16, marginBottom: 6 },
-  inputComponent: {
-    backgroundColor: "white",
-  },
   disabled: { backgroundColor: "#d4d4d4" },
 });
 

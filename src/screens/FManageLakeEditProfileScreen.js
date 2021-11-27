@@ -19,13 +19,13 @@ import { FormProvider, useForm } from "react-hook-form";
 import { ActivityIndicator, StyleSheet } from "react-native";
 import { Overlay } from "react-native-elements";
 
-// import MethodCheckboxSelector from "../components/AdvanceSearch/MethodCheckboxSelector";
-import CheckboxSelectorComponent from "../components/common/CheckboxSelectorComponent";
+import MethodCheckboxSelector from "../components/AdvanceSearch/MethodCheckboxSelector";
+// import CheckboxSelectorComponent from "../components/common/CheckboxSelectorComponent";
 import InputComponent from "../components/common/InputComponent";
 import MultiImageSection from "../components/common/MultiImageSection";
 import TextAreaComponent from "../components/common/TextAreaComponent";
 import HeaderTab from "../components/HeaderTab";
-import { ROUTE_NAMES, SCHEMA } from "../constants";
+import { DICTIONARY, ROUTE_NAMES, SCHEMA } from "../constants";
 import { goBack } from "../navigations";
 import {
   showAlertAbsoluteBox,
@@ -91,7 +91,7 @@ const LakeEditProfileScreen = () => {
 
   const handleError = () => {
     setIsLoading(false);
-    showAlertBox("Thông báo", "Đã xảy ra lỗi! Vui lòng thử lại sau.");
+    showAlertBox(DICTIONARY.ALERT_TITLE, DICTIONARY.ALERT_ERROR_MSG);
   };
 
   /**
@@ -108,10 +108,10 @@ const LakeEditProfileScreen = () => {
       .then(() => {
         setIsLoading(false);
         showAlertAbsoluteBox(
-          "Thông báo",
-          "Chỉnh sửa thành công",
+          DICTIONARY.ALERT_TITLE,
+          DICTIONARY.ALERT_EDIT_LAKE_SUCCESS_MSG,
           navigateToLakeProfileScreen,
-          "Xác nhận",
+          DICTIONARY.CONFIRM_BUTTON_LABEL,
         );
       })
       .catch(handleError);
@@ -120,7 +120,7 @@ const LakeEditProfileScreen = () => {
   const handleCloseLake = (id) => () => {
     closeLakeByLakeId({ id })
       .then(() => {
-        showToastMessage("Xóa hồ thành công");
+        showToastMessage(DICTIONARY.TOAST_DELETE_LAKE_SUCCESS_MSG);
         navigation.pop(2);
       })
       .catch(handleError);
@@ -129,8 +129,8 @@ const LakeEditProfileScreen = () => {
   const promptBeforeDelete = () => {
     const { name, id } = lakeDetail;
     showAlertConfirmBox(
-      "Bạn muốn xóa hồ này?",
-      `"${name}" sẽ bị xóa vĩnh viễn. Bạn không thể hoàn tác hành động này`,
+      DICTIONARY.ALERT_DELETE_LAKE_PROMPT_TITLE,
+      `"${name}" ${DICTIONARY.ALERT_DELETE_LAKE_PROMPT_MSG}`,
       handleCloseLake(id),
     );
   };
@@ -140,7 +140,7 @@ const LakeEditProfileScreen = () => {
    */
   useEffect(() => {
     getFishingMethodList().then(() => {
-      setValue("methods", methodValue);
+      setValue(DICTIONARY.FORM_FIELD_LAKE_FISHING_METHODS, methodValue);
       setIsLoading(false);
       setFullScreenMode(false);
     });
@@ -160,7 +160,7 @@ const LakeEditProfileScreen = () => {
     // useCallback will listen to rsetIsLoading(false);
     useCallback(() => {
       if (route.params?.base64Array && route.params.base64Array[0]) {
-        setValue("imageArray", route.params?.base64Array);
+        setValue(DICTIONARY.FORM_FIELD_IMAGE_ARRAY, route.params?.base64Array);
         navigation.setParams({ base64Array: [] });
       }
     }, [route.params]),
@@ -186,28 +186,27 @@ const LakeEditProfileScreen = () => {
               <MultiImageSection
                 containerStyle={styles.sectionWrapper}
                 formRoute={ROUTE_NAMES.FMANAGE_LAKE_EDIT}
-                controllerName="imageArray"
+                controllerName={DICTIONARY.FORM_FIELD_IMAGE_ARRAY}
               />
             </Center>
 
             <Center>
               <InputComponent
                 myStyles={styles.sectionWrapper}
-                label="Tên hồ câu"
+                label={DICTIONARY.LAKE_NAME_LABEL}
                 isTitle
                 hasAsterisk
-                placeholder="Nhập tên hồ câu"
-                controllerName="name"
+                placeholder={DICTIONARY.INPUT_LAKE_NAME_PLACEHOLDER}
+                controllerName={DICTIONARY.FORM_FIELD_LAKE_NAME}
               />
             </Center>
 
             <Center>
-              <CheckboxSelectorComponent
-                myStyles={styles.sectionWrapper}
-                placeholder="Chọn loại hình câu"
-                data={fishingMethodList}
-                controllerName="methods"
-                label="Loại hình câu"
+              <MethodCheckboxSelector
+                containerStyle={styles.sectionWrapper}
+                placeholder={DICTIONARY.SELECT_LAKE_METHODS_PLACEHOLDER}
+                controllerName={DICTIONARY.FORM_FIELD_LAKE_FISHING_METHODS}
+                label={DICTIONARY.LAKE_FISHING_METHODS_LABEL}
                 hasAsterisk
                 isTitle
               />
@@ -216,12 +215,12 @@ const LakeEditProfileScreen = () => {
             <Center>
               <TextAreaComponent
                 myStyles={styles.sectionWrapper}
-                label="Giá vé"
+                label={DICTIONARY.LAKE_PRICE_LABEL}
                 isTitle
                 hasAsterisk
-                placeholder="Miêu tả giá vé hồ"
+                placeholder={DICTIONARY.INPUT_LAKE_PRICE_PLACEHOLDER}
                 numberOfLines={6}
-                controllerName="price"
+                controllerName={DICTIONARY.FORM_FIELD_LAKE_PRICE}
               />
             </Center>
 
@@ -232,23 +231,23 @@ const LakeEditProfileScreen = () => {
                 </Text>
                 <InputComponent
                   hasAsterisk
-                  label="Chiều dài (m)"
-                  placeholder="Nhập chiều dài của hồ"
-                  controllerName="length"
+                  label={DICTIONARY.LAKE_LENGTH_LABEL}
+                  placeholder={DICTIONARY.INPUT_LAKE_LENGTH_PLACEHOLDER}
+                  controllerName={DICTIONARY.FORM_FIELD_LAKE_LENGTH}
                   useNumPad
                 />
                 <InputComponent
                   hasAsterisk
-                  label="Chiều rộng (m)"
-                  placeholder="Nhập chiều rộng của hồ"
-                  controllerName="width"
+                  label={DICTIONARY.LAKE_WIDTH_LABEL}
+                  placeholder={DICTIONARY.INPUT_LAKE_WIDTH_PLACEHOLDER}
+                  controllerName={DICTIONARY.FORM_FIELD_LAKE_WIDTH}
                   useNumPad
                 />
                 <InputComponent
                   hasAsterisk
-                  label="Độ sâu (m)"
-                  placeholder="Nhập độ sâu của hồ"
-                  controllerName="depth"
+                  label={DICTIONARY.LAKE_DEPTH_LABEL}
+                  placeholder={DICTIONARY.INPUT_LAKE_DEPTH_PLACEHOLDER}
+                  controllerName={DICTIONARY.FORM_FIELD_LAKE_DEPTH}
                   useNumPad
                 />
               </VStack>

@@ -5,12 +5,15 @@ import { useFormContext, useWatch } from "react-hook-form";
 
 import SelectComponent from "./SelectComponent";
 
+const RESET_VALUE = 0;
+
 const ProvinceSelector = ({
   containerStyle,
   label,
   placeholder,
   controllerName,
   hasAsterisk,
+  dependentField,
 }) => {
   const { control, setValue } = useFormContext();
   const canBeReset = useRef(false);
@@ -24,7 +27,7 @@ const ProvinceSelector = ({
     getDisctrictByProvinceId({ id: watchProvince })
       .then(() => {
         if (canBeReset.current) {
-          setValue("districtId", 0);
+          setValue(dependentField, RESET_VALUE);
         } else canBeReset.current = true;
       })
       .catch(() => {
@@ -49,6 +52,7 @@ ProvinceSelector.propTypes = {
   label: PropTypes.string,
   placeholder: PropTypes.string,
   controllerName: PropTypes.string,
+  dependentField: PropTypes.string,
   containerStyle: PropTypes.objectOf(
     PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   ),
@@ -59,6 +63,7 @@ ProvinceSelector.defaultProps = {
   label: "",
   placeholder: "",
   controllerName: "",
+  dependentField: "districtId",
   containerStyle: {},
 };
 

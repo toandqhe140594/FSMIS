@@ -5,6 +5,7 @@ import { ROUTE_NAMES } from "../constants";
 import FManageAddNewScreen from "../screens/FManageAddNewScreen";
 import FManageCatchReportHistory from "../screens/FManageCatchReportHistory";
 import FManageCheckinHistoryScreen from "../screens/FManageCheckinHistory";
+import FManageEditPendingProfileScreen from "../screens/FManageEditPendingProfileScreen";
 import FManageEditProfileScreen from "../screens/FManageEditProfileScreen";
 import FManageEmployeeAddScreen from "../screens/FManageEmployeeAddScreen";
 import FManageEmployeeDetailScreen from "../screens/FManageEmployeeDetailScreen";
@@ -126,6 +127,10 @@ const ManageNavigator = () => {
       <ManageStack.Screen
         name={ROUTE_NAMES.FMANAGE_POST_CREATE}
         component={FManagePostCreateScreen}
+      />
+      <ManageStack.Screen
+        name={ROUTE_NAMES.FMANAGE_PROFILE_PENDING_EDIT}
+        component={FManageEditPendingProfileScreen}
       />
     </ManageStack.Navigator>
   );

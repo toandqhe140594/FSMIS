@@ -172,7 +172,6 @@ const OTPScreen = () => {
           </Text>
         ) : (
           <Button
-            height={12}
             isLoading={waitNewOTP}
             isLoadingText="Đang gửi"
             size="lg"
