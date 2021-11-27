@@ -27,7 +27,7 @@ const AnglerMainNavigator = () => {
 
   useEffect(() => {
     getUserInfo();
-    getSavedLocationList();
+    getSavedLocationList({ mode: "refresh" });
   }, []);
 
   return (
