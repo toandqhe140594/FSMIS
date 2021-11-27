@@ -217,9 +217,9 @@ const LakeAddNewScreen = () => {
                 <Text fontSize="md" bold>
                   Các loại cá
                 </Text>
-                {errors.fishInLakeList?.message && (
+                {errors[DICTIONARY.FORM_FIELD_FISH_CARD]?.message && (
                   <Text style={styles.error}>
-                    {errors.fishInLakeList?.message}
+                    {errors[DICTIONARY.FORM_FIELD_FISH_CARD]?.message}
                   </Text>
                 )}
                 <FishCardSection />
