@@ -136,6 +136,7 @@ const FManageSelectScreen = () => {
       role={item.role}
       isManaged
       isClosed={item.closed}
+      pending={item.pending}
       key={item.id}
     />
   );
