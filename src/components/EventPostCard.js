@@ -228,10 +228,10 @@ const EventPostCard = ({
               showsHorizontalScrollIndicator={false}
             >
               <WebView
+                overScrollMode="content"
                 originWhitelist={["https://*"]}
                 androidHardwareAccelerationDisabled
                 scalesPageToFit={false}
-                allowsFullscreenVideo
                 style={{
                   flex: 1,
                   alignSelf: "center",
