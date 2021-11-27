@@ -148,7 +148,7 @@ const FManageEditProfileScreen = () => {
           setIsLoading(false);
           goToOTPScreen(
             navigation,
-            ROUTE_NAMES.FMANAGE_PROFILE_ADD_NEW,
+            ROUTE_NAMES.FMANAGE_PROFILE_EDIT,
             locationData.current.phone,
           );
         })
