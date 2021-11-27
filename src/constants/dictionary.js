@@ -34,6 +34,7 @@ export const FORM_FIELD_ADDRESS = "address";
 export const FORM_FIELD_PROVINCE = "provinceId";
 export const FORM_FIELD_DISTRICT = "districtId";
 export const FORM_FIELD_WARD = "wardId";
+export const FORM_FIELD_DOB = "dob";
 export const FORM_FIELD_IMAGE_ARRAY = "imageArray";
 export const FORM_FIELD_LOCATION_NAME = "name";
 export const FORM_FIELD_LOCATION_PHONE = "phone";
