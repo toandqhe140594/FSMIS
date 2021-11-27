@@ -33,11 +33,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 8,
     marginVertical: 5,
-    backgroundColor: "#fafafa",
+    backgroundColor: "white",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.8,
-    shadowRadius: 2,
+    shadowRadius: 1,
     elevation: 5,
   },
   rowWrapper: {
