@@ -110,12 +110,14 @@ const AnglerAdvanceSearchScreen = () => {
    * Get all api data for select options
    */
   useEffect(() => {
-    Promise.all([getAllProvince(), getFishingMethodList(), getFishList()]).then(
-      () => {
+    Promise.all([getAllProvince(), getFishingMethodList(), getFishList()])
+      .then(() => {
         setIsLoading(false);
         setFullScreen(false);
-      },
-    );
+      })
+      .catch(() => {
+        navigation.pop(1);
+      });
     const timeoutId = setTimeout(() => {
       setIsLoading(false);
       setFullScreen(false);
