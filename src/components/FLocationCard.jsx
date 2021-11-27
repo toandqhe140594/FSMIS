@@ -54,16 +54,29 @@ const FLocationCard = ({
             source={{ uri: image || "https://picsum.photos/200" }}
             key={image}
           >
-            <Badge
-              containerStyle={{ position: "absolute", top: 4, left: 4 }}
-              badgeStyle={{
-                borderRadius: 0,
-                paddingVertical: 10,
-                paddingHorizontal: 8,
-              }}
-              value={isClosed ? "Đóng cửa" : "Mở cửa"}
-              status={isClosed ? "error" : "success"}
-            />
+            {pending ? (
+              <Badge
+                containerStyle={{ position: "absolute", top: 4, left: 4 }}
+                badgeStyle={{
+                  borderRadius: 0,
+                  paddingVertical: 10,
+                  paddingHorizontal: 8,
+                }}
+                value="Thiếu thông tin"
+                status="warning"
+              />
+            ) : (
+              <Badge
+                containerStyle={{ position: "absolute", top: 4, left: 4 }}
+                badgeStyle={{
+                  borderRadius: 0,
+                  paddingVertical: 10,
+                  paddingHorizontal: 8,
+                }}
+                value={isClosed ? "Đóng cửa" : "Mở cửa"}
+                status={isClosed ? "error" : "success"}
+              />
+            )}
           </Card.Image>
         )}
         <VStack mt={1.5} mb={2} ml={3} space={1.5}>
