@@ -138,6 +138,7 @@ const FManageSelectScreen = () => {
                   address,
                   role,
                   closed,
+                  pending,
                 } = location;
                 return (
                   <FLocationCard
@@ -150,6 +151,7 @@ const FManageSelectScreen = () => {
                     role={role}
                     isManaged
                     isClosed={closed}
+                    pending={pending}
                     key={id}
                   />
                 );

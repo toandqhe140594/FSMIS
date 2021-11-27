@@ -151,7 +151,7 @@ const model = {
     state.savedLocationCurrentPage = payload;
   }),
   setSavedLocationTotalPage: action((state, payload) => {
-    state.savedLocationTotalPage = payload;
+    state.savedLocationTotalPage = payload < 1 ? 1 : payload;
   }),
   setSavedLocationList: action((state, payload) => {
     // If mode is overwrite then overwrite the list, else append the list with new data
