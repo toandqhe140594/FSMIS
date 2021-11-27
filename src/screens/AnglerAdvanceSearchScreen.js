@@ -3,17 +3,16 @@ import { useStoreActions, useStoreState } from "easy-peasy";
 import { Button, VStack } from "native-base";
 import React, { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { ActivityIndicator, Dimensions, StyleSheet, View } from "react-native";
-import { Overlay } from "react-native-elements";
+import { Dimensions, StyleSheet, View } from "react-native";
 
 import FishCheckboxSelector from "../components/AdvanceSearch/FishCheckboxSelector";
 import MethodCheckboxSelector from "../components/AdvanceSearch/MethodCheckboxSelector";
 import InputComponent from "../components/common/InputComponent";
-// import ProvinceSelector from "../components/common/ProvinceSelector";
+import OverlayLoading from "../components/common/OverlayLoading";
 import SelectComponent from "../components/common/SelectComponent";
 import HeaderTab from "../components/HeaderTab";
 import { DEFAULT_TIMEOUT, DICTIONARY } from "../constants";
-import { goToFManageSuggestScreen } from "../navigations";
+import { goBack, goToFManageSuggestScreen } from "../navigations";
 import { showToastMessage } from "../utilities";
 
 const OFFSET_BOTTOM = 80;
@@ -44,12 +43,6 @@ const styles = StyleSheet.create({
   },
   button: {
     width: "47%",
-  },
-  loadOnStart: { justifyContent: "center", alignItems: "center" },
-  loadOnSubmit: {
-    backgroundColor: "transparent",
-    justifyContent: "center",
-    alignItems: "center",
   },
 });
 
@@ -92,7 +85,7 @@ const AnglerAdvanceSearchScreen = () => {
     const submitData = { ...data, provinceIdList };
     searchFishingLocation({ submitData })
       .then(() => {
-        navigation.pop(1);
+        goBack(navigation);
       })
       .catch(() => {
         setIsLoading(false);
@@ -123,9 +116,8 @@ const AnglerAdvanceSearchScreen = () => {
         setFullScreen(false);
       })
       .catch(() => {
-        navigation.pop(1);
+        goBack(navigation);
       });
-
     const timeoutId = setTimeout(() => {
       setIsLoading(false);
       setFullScreen(false);
@@ -136,6 +128,9 @@ const AnglerAdvanceSearchScreen = () => {
     };
   }, []);
 
+  if (isLoading && fullScreen) {
+    return <OverlayLoading coverScreen />;
+  }
   return (
     <>
       <HeaderTab
@@ -147,13 +142,7 @@ const AnglerAdvanceSearchScreen = () => {
           onPress: navigateToSuggestionScreen,
         }}
       />
-      <Overlay
-        isVisible={isLoading && fullScreen}
-        fullScreen
-        overlayStyle={styles.loadOnStart}
-      >
-        <ActivityIndicator size={60} color="#2089DC" />
-      </Overlay>
+      <OverlayLoading loading={isLoading} />
       <View style={styles.appContainer}>
         <FormProvider {...methods}>
           <VStack flex={1} space={2} style={styles.sectionWrapper}>
@@ -163,12 +152,6 @@ const AnglerAdvanceSearchScreen = () => {
               placeholder={DICTIONARY.INPUT_SEARCH_TERM_PLACEHOLDER}
               controllerName={DICTIONARY.FORM_FIELD_SEARCH_INPUT}
             />
-            {/* <ProvinceSelector
-              containerStyle={{ width: "90%" }}
-              label="Tỉnh/Thành phố"
-              placeholder="Chọn tỉnh/thành phố"
-              controllerName="provinceIdList"
-            /> */}
             <SelectComponent
               myStyles={{ width: "90%" }}
               label={DICTIONARY.SEARCH_PROVINCE_LABEL}

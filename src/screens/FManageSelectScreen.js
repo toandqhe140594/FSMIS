@@ -10,9 +10,9 @@ import {
   View,
 } from "react-native";
 
+import OverlayLoading from "../components/common/OverlayLoading";
 import FLocationCard from "../components/FLocationCard";
 import HeaderTab from "../components/HeaderTab";
-// import listOfFishingLocations from "../data";
 import FishingMethodModel from "../models/FishingMethodModel";
 import FishModel from "../models/FishModel";
 import {
@@ -141,12 +141,7 @@ const FManageSelectScreen = () => {
     />
   );
 
-  if (loading)
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size={60} color="#2089DC" />
-      </View>
-    );
+  if (loading) return <OverlayLoading coverScreen />;
   return (
     <>
       <HeaderTab

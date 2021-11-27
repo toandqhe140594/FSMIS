@@ -8,13 +8,13 @@ import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, Button, Center, Divider, Stack, Text, VStack } from "native-base";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { ActivityIndicator, ScrollView, StyleSheet } from "react-native";
-import { Overlay } from "react-native-elements";
+import { ScrollView, StyleSheet } from "react-native";
 
 import DistrictSelector from "../components/common/DistrictSelector";
 import InputComponent from "../components/common/InputComponent";
 import InputWithClipboard from "../components/common/InputWithClipboard";
 import MultiImageSection from "../components/common/MultiImageSection";
+import OverlayLoading from "../components/common/OverlayLoading";
 import ProvinceSelector from "../components/common/ProvinceSelector";
 import TextAreaComponent from "../components/common/TextAreaComponent";
 import WardSelector from "../components/common/WardSelector";
@@ -27,15 +27,6 @@ import { showAlertBox } from "../utilities";
 const styles = StyleSheet.create({
   sectionWrapper: {
     width: "90%",
-  },
-  button: {
-    width: "90%",
-  },
-  loadOnStart: { justifyContent: "center", alignItems: "center" },
-  loadOnSubmit: {
-    backgroundColor: "transparent",
-    justifyContent: "center",
-    alignItems: "center",
   },
 });
 
@@ -164,17 +155,14 @@ const FManageEditProfileScreen = () => {
     }, [route.params]),
   );
 
+  if (isLoading && fullScreen) {
+    return <OverlayLoading coverScreen />;
+  }
   return (
     <>
       <HeaderTab name={DICTIONARY.FMANAGE_EDIT_LOCATION_HEADER} />
+      <OverlayLoading loading={isLoading} />
       <ScrollView>
-        <Overlay
-          isVisible={isLoading}
-          fullScreen
-          overlayStyle={fullScreen ? styles.loadOnStart : styles.loadOnSubmit}
-        >
-          <ActivityIndicator size={60} color="#2089DC" />
-        </Overlay>
         <FormProvider {...methods}>
           <VStack space={3} divider={<Divider />}>
             <Center>
@@ -310,7 +298,7 @@ const FManageEditProfileScreen = () => {
               <Box style={styles.sectionWrapper} mb={5}>
                 {/* Submit button */}
                 <Button
-                  style={styles.button}
+                  w="90%"
                   alignSelf="center"
                   onPress={handleSubmit(onSubmit)}
                 >

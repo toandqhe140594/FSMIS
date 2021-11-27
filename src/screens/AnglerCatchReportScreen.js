@@ -17,11 +17,11 @@ import {
 } from "native-base";
 import React, { useCallback, useEffect, useState } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
-import { ActivityIndicator, ScrollView, StyleSheet } from "react-native";
-import { Overlay } from "react-native-elements";
+import { ScrollView, StyleSheet } from "react-native";
 
 import CatchReportSection from "../components/CatchReport/CatchReportSection";
 import MultiImageSection from "../components/common/MultiImageSection";
+import OverlayLoading from "../components/common/OverlayLoading";
 import SelectComponent from "../components/common/SelectComponent";
 import TextAreaComponent from "../components/common/TextAreaComponent";
 import HeaderTab from "../components/HeaderTab";
@@ -32,16 +32,7 @@ const styles = StyleSheet.create({
   sectionWrapper: {
     width: "90%",
   },
-  button: {
-    width: "90%",
-  },
   error: { fontStyle: "italic", color: "red", fontSize: 12 },
-  loadOnStart: { justifyContent: "center", alignItems: "center" },
-  loadOnSubmit: {
-    backgroundColor: "transparent",
-    justifyContent: "center",
-    alignItems: "center",
-  },
 });
 
 const AnglerCatchReportScreen = () => {
@@ -119,13 +110,7 @@ const AnglerCatchReportScreen = () => {
   return (
     <>
       <HeaderTab name={DICTIONARY.ANGLER_CATCH_REPORT_HEADER} />
-      <Overlay
-        isVisible={isLoading}
-        fullScreen
-        overlayStyle={styles.loadOnSubmit}
-      >
-        <ActivityIndicator size={60} color="#2089DC" />
-      </Overlay>
+      <OverlayLoading loading={isLoading} />
       <ScrollView>
         <FormProvider {...methods}>
           <VStack space={3} divider={<Divider />}>
@@ -207,7 +192,7 @@ const AnglerCatchReportScreen = () => {
                 />
                 {/* Submit button */}
                 <Button
-                  style={styles.button}
+                  w="90%"
                   alignSelf="center"
                   onPress={handleSubmit(onSubmit)}
                 >

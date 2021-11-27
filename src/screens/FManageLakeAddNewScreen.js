@@ -17,12 +17,12 @@ import {
 } from "native-base";
 import React, { useCallback, useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { ActivityIndicator, StyleSheet } from "react-native";
-import { Overlay } from "react-native-elements";
+import { StyleSheet } from "react-native";
 
 import MethodCheckboxSelector from "../components/AdvanceSearch/MethodCheckboxSelector";
 import InputComponent from "../components/common/InputComponent";
 import MultiImageSection from "../components/common/MultiImageSection";
+import OverlayLoading from "../components/common/OverlayLoading";
 import TextAreaComponent from "../components/common/TextAreaComponent";
 import HeaderTab from "../components/HeaderTab";
 import FishCardSection from "../components/LakeEditProfile/FishCardSection";
@@ -38,12 +38,6 @@ const styles = StyleSheet.create({
     width: "90%",
   },
   error: { color: "#f43f5e", fontSize: 12, fontStyle: "italic" },
-  loadOnStart: { justifyContent: "center", alignItems: "center" },
-  loadOnSubmit: {
-    backgroundColor: "transparent",
-    justifyContent: "center",
-    alignItems: "center",
-  },
 });
 
 const LakeAddNewScreen = () => {
@@ -127,19 +121,15 @@ const LakeAddNewScreen = () => {
       }
     }, [route.params]),
   );
+
+  if (isLoading && fullScreenMode) {
+    return <OverlayLoading coverScreen />;
+  }
   return (
     <>
       <HeaderTab name={DICTIONARY.FMANAGE_ADD_LAKE_HEADER} />
+      <OverlayLoading loading={isLoading} />
       <ScrollView>
-        <Overlay
-          isVisible={isLoading}
-          fullScreen
-          overlayStyle={
-            fullScreenMode ? styles.loadOnStart : styles.loadOnSubmit
-          }
-        >
-          <ActivityIndicator size={60} color="#2089DC" />
-        </Overlay>
         <FormProvider {...methods}>
           <VStack space={3} divider={<Divider />}>
             <Center mt={1}>

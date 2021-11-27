@@ -8,34 +8,26 @@ import { useStoreActions, useStoreState } from "easy-peasy";
 import { Button, Center, VStack } from "native-base";
 import React, { useCallback, useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { ActivityIndicator, Alert, ScrollView, StyleSheet } from "react-native";
-import { Overlay } from "react-native-elements";
+import { Alert, ScrollView } from "react-native";
 
 import AvatarSection from "../components/AnglerEditProfile/AvatarSection";
 import DatePickerInput from "../components/common/DatePickerInput";
 import DistrictSelector from "../components/common/DistrictSelector";
 import InputComponent from "../components/common/InputComponent";
+import OverlayLoading from "../components/common/OverlayLoading";
 import ProvinceSelector from "../components/common/ProvinceSelector";
 import SelectComponent from "../components/common/SelectComponent";
 import WardSelector from "../components/common/WardSelector";
 import HeaderTab from "../components/HeaderTab";
 import moment from "../config/moment";
 import { DICTIONARY, SCHEMA } from "../constants";
+import { goBack } from "../navigations";
 import { showAlertBox } from "../utilities";
 
 const genderList = [
   { id: true, name: "Nam" },
   { id: false, name: "Nữ" },
 ];
-
-const styles = StyleSheet.create({
-  loadOnStart: { justifyContent: "center", alignItems: "center" },
-  loadOnSubmit: {
-    backgroundColor: "transparent",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-});
 
 const EditProfileScreen = () => {
   const route = useRoute();
@@ -121,7 +113,7 @@ const EditProfileScreen = () => {
         setFullScreen(false);
       })
       .catch(() => {
-        navigation.pop(1);
+        goBack(navigation);
       });
     const loadingId = setTimeout(() => {
       setIsLoading(false);
@@ -150,16 +142,13 @@ const EditProfileScreen = () => {
     }, [route.params]),
   );
 
+  if (isLoading && fullScreen) {
+    return <OverlayLoading coverScreen />;
+  }
   return (
     <>
       <HeaderTab name={DICTIONARY.ANGLER_EDIT_PROFILE_HEADER_NAME} />
-      <Overlay
-        isVisible={isLoading}
-        fullScreen
-        overlayStyle={fullScreen ? styles.loadOnStart : styles.loadOnSubmit}
-      >
-        <ActivityIndicator size={60} color="#2089DC" />
-      </Overlay>
+      <OverlayLoading loading={isLoading} />
       <ScrollView>
         <Center flex={1}>
           <FormProvider {...methods}>
@@ -179,9 +168,7 @@ const EditProfileScreen = () => {
               />
               <InputComponent
                 label={DICTIONARY.FULL_NAME_LABEL}
-                isTitle
                 placeholder={DICTIONARY.INPUT_NAME_PLACEHOLDER}
-                type="text"
                 hasAsterisk
                 controllerName={DICTIONARY.FORM_FIELD_FULL_NAME}
               />
@@ -192,14 +179,12 @@ const EditProfileScreen = () => {
               />
               <SelectComponent
                 label={DICTIONARY.GENDER_LABEL}
-                isTitle
                 placeholder={DICTIONARY.SELECT_GENDER_PLACEHOLDER}
                 controllerName={DICTIONARY.FORM_FIELD_GENDER}
                 data={genderList}
               />
               <InputComponent
                 label={DICTIONARY.ADDRESS_LABEL}
-                isTitle
                 placeholder={DICTIONARY.INPUT_ADDRESS_PLACEHOLDER}
                 controllerName={DICTIONARY.FORM_FIELD_ADDRESS}
               />
