@@ -12,7 +12,8 @@ import InputComponent from "../components/common/InputComponent";
 // import ProvinceSelector from "../components/common/ProvinceSelector";
 import SelectComponent from "../components/common/SelectComponent";
 import HeaderTab from "../components/HeaderTab";
-import { DICTIONARY } from "../constants";
+import { DEFAULT_TIMEOUT, DICTIONARY } from "../constants";
+import { goToFManageSuggestScreen } from "../navigations";
 import { showToastMessage } from "../utilities";
 
 const OFFSET_BOTTOM = 80;
@@ -80,6 +81,10 @@ const AnglerAdvanceSearchScreen = () => {
   });
   const { handleSubmit, setValue } = methods;
 
+  const navigateToSuggestionScreen = () => {
+    goToFManageSuggestScreen(navigation);
+  };
+
   const onSubmit = (data) => {
     setIsLoading(true);
     const provinceIdList =
@@ -120,10 +125,12 @@ const AnglerAdvanceSearchScreen = () => {
       .catch(() => {
         navigation.pop(1);
       });
+
     const timeoutId = setTimeout(() => {
       setIsLoading(false);
       setFullScreen(false);
-    }, 10000);
+    }, DEFAULT_TIMEOUT);
+
     return () => {
       clearTimeout(timeoutId);
     };
@@ -131,7 +138,15 @@ const AnglerAdvanceSearchScreen = () => {
 
   return (
     <>
-      <HeaderTab name={DICTIONARY.ANGLER_ADVANCED_SEARCH_HEADER} />
+      <HeaderTab
+        name={DICTIONARY.ANGLER_ADVANCED_SEARCH_HEADER}
+        customIcon={{
+          name: "info-outline",
+          color: "blue",
+          type: "material",
+          onPress: navigateToSuggestionScreen,
+        }}
+      />
       <Overlay
         isVisible={isLoading && fullScreen}
         fullScreen

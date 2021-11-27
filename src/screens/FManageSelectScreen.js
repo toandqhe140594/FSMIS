@@ -15,14 +15,12 @@ import HeaderTab from "../components/HeaderTab";
 // import listOfFishingLocations from "../data";
 import FishingMethodModel from "../models/FishingMethodModel";
 import FishModel from "../models/FishModel";
-import FManageModel from "../models/FManageModel";
 import {
   goToFManageAddNewScreen,
   goToFManageSuggestScreen,
 } from "../navigations";
 import store from "../utilities/Store";
 
-store.addModel("FManageModel", FManageModel);
 store.addModel("FishModel", FishModel);
 store.addModel("FishingMethodModel", FishingMethodModel);
 const styles = StyleSheet.create({
