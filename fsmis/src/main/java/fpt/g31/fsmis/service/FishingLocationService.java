@@ -661,6 +661,7 @@ public class FishingLocationService {
                     .longitude(suggestedLocation.getLongitude())
                     .additionalInformation(suggestedLocation.getAdditionalInformation())
                     .senderPhone(suggestedLocation.getSenderPhone())
+                    .helpful(suggestedLocation.getHelpful())
                     .build());
         }
         return output;
@@ -671,6 +672,13 @@ public class FishingLocationService {
                 .orElseThrow(() -> new NotFoundException("Không tìm thấy bản ghi"));
         suggestedLocation.setHelpful(true);
         suggestedLocationRepos.save(suggestedLocation);
+        Optional<User> sender = userRepos.findByPhone(suggestedLocation.getSenderPhone());
+        if (sender.isPresent()) {
+            String notificationDesctipion = "Cảm ơn đóng góp của bạn về  " + suggestedLocation.getName();
+            List<User> notificationReceiver = new ArrayList<>();
+            notificationReceiver.add(sender.get());
+            NotificationService.createNotification(notificationRepos, notificationDesctipion, notificationReceiver);
+        }
         return new ResponseTextDtoOut("Đánh dấu thành công");
     }
 

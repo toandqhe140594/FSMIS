@@ -19,4 +19,5 @@ public class SuggestedLocationDtoOut {
     private Float latitude;
     private String additionalInformation;
     private String senderPhone;
+    private Boolean helpful;
 }
