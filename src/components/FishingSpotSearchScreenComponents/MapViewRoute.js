@@ -129,7 +129,7 @@ const MapViewOverlay = ({ visible, toggleOverlay }) => {
 
         {/* Search radius */}
         <Text>
-          <Text bold>Quãng đường ước tính:</Text> {sliderValue}km
+          <Text bold>Bán kính:</Text> {sliderValue}km
         </Text>
         <Slider
           thumbStyle={{
