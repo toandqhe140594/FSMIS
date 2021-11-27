@@ -292,7 +292,7 @@ export const FMANAGE_SUGGESTION_FORM = yup.object().shape({
     .string()
     .matches(VN_PHONE_REGEX, "Số điện thoại không hợp lệ")
     .required("Số điện thoại chủ hồ không dược bỏ trống"),
-  description: yup.string().max(255, "Mô tả tối đa 255 ký tự"),
+  additionalInformation: yup.string().max(255, "Mô tả tối đa 255 ký tự"),
   address: yup.string().max(255, "Địa chỉ tối đa 255 ký tự"),
   website: yup.string(),
 });

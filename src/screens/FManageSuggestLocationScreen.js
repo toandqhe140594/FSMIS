@@ -21,7 +21,8 @@ const createSuggestObject = (data) => {
   const suggestObj = data;
   if (!suggestObj.address) delete suggestObj.address;
   if (!suggestObj.website) delete suggestObj.website;
-  if (!suggestObj.description) delete suggestObj.description;
+  if (!suggestObj.additionalInformation)
+    delete suggestObj.additionalInformation;
   return suggestObj;
 };
 const FManageSuggestLocationScreen = () => {
@@ -132,14 +133,14 @@ const FManageSuggestLocationScreen = () => {
                 </Text>
                 <MapOverviewBox />
               </View>
-              {/* Description textarea */}
+              {/* additionalInformation textarea */}
               <TextAreaComponent
                 myStyles={styles.mt1}
                 label="Thông tin thêm"
                 isTitle
                 placeholder="Mô tả thông tin bổ sung (nếu có)"
                 numberOfLines={6}
-                controllerName="description"
+                controllerName="additionalInformation"
               />
 
               <Button
