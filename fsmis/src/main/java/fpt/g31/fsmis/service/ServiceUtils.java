@@ -52,6 +52,9 @@ public class ServiceUtils {
     }
 
     public static String mergeString(List<String> input) {
+        if (input.isEmpty()) {
+            return "https://picsum.photos/200";
+        }
         StringBuilder sbd = new StringBuilder();
         for (String s :
                 input) {
