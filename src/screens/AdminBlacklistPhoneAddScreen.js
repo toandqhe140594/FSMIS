@@ -46,7 +46,7 @@ const FManageSuggestLocationScreen = () => {
       .then(() => {
         showAlertAbsoluteBox(
           "Chặn số điện thoại thành công",
-          `Số điện thoại "${data.phone}"" đã bị thêm vào danh sách đen `,
+          `Số điện thoại "${data.phone}" đã bị thêm vào danh sách đen `,
           goBackAfterSuccess,
         );
       })
