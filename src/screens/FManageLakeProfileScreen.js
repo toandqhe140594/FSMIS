@@ -47,6 +47,9 @@ const FishCard = ({
   toggleEditOverlay,
   onDeleteFish,
 }) => {
+  const handleDeleteFish = () => {
+    onDeleteFish(id);
+  };
   return (
     <Card>
       <Card.Title>{name}</Card.Title>
@@ -63,11 +66,7 @@ const FishCard = ({
           title="Xóa"
           type="clear"
           titleStyle={{ color: "#f43f5e" }}
-          onPress={() => {
-            // DucHM ADD_START 8/11/2021
-            onDeleteFish(id);
-            // DucHM ADD_END 8/11/2021
-          }}
+          onPress={handleDeleteFish}
         />
         <Button
           title="Bồi cá"
@@ -110,6 +109,7 @@ const FManageEmployeeManagementScreen = () => {
     (actions) => actions.FManageModel.getLakeDetailByLakeId,
   );
 
+  // DucHM ADD_START 8/11/2021
   const deleteFishFromLake = useStoreActions(
     (actions) => actions.FManageModel.deleteFishFromLake,
   );
