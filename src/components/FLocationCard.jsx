@@ -50,7 +50,10 @@ const FLocationCard = ({
     <Pressable onPress={onPress}>
       <Card containerStyle={{ width: "100%", padding: 0, margin: 0 }}>
         {showImage && (
-          <Card.Image source={{ uri: image }} key={image}>
+          <Card.Image
+            source={{ uri: image || "https://picsum.photos/200" }}
+            key={image}
+          >
             <Badge
               containerStyle={{ position: "absolute", top: 4, left: 4 }}
               badgeStyle={{
