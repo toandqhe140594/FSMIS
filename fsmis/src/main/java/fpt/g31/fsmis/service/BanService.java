@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.validation.ValidationException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,11 +24,13 @@ public class BanService {
 
     public List<BannedPhoneDtoOut> getBannedPhone() {
         List<BannedPhoneDtoOut> output = new ArrayList<>();
-        List<BannedPhone> bannedPhoneList = bannedPhoneRepos.findAll();
+        List<BannedPhone> bannedPhoneList = bannedPhoneRepos.findAllByOrderByBannedDateDesc();
         for (BannedPhone bannedPhone : bannedPhoneList) {
             BannedPhoneDtoOut dto = BannedPhoneDtoOut.builder()
                     .phone(bannedPhone.getPhone())
                     .description(bannedPhone.getDescription() == null ? "" : bannedPhone.getDescription())
+                    .image(bannedPhone.getImage())
+                    .bannedDate(ServiceUtils.convertDateToString(bannedPhone.getBannedDate()))
                     .build();
             output.add(dto);
         }
@@ -42,6 +45,7 @@ public class BanService {
                 .phone(banPhoneDtoIn.getPhone())
                 .description(banPhoneDtoIn.getDescription())
                 .image(banPhoneDtoIn.getImage())
+                .bannedDate(LocalDateTime.now())
                 .build();
         bannedPhoneRepos.save(bannedPhone);
         User user = userRepos.findByPhone(bannedPhone.getPhone())

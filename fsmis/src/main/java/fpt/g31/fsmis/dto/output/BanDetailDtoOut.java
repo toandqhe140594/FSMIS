@@ -14,4 +14,6 @@ public class BanDetailDtoOut {
     private String description;
     private String image;
     private String error;
+    private String phone;
+    private String name;
 }

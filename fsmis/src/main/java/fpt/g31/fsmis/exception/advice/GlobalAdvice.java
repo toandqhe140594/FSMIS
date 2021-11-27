@@ -120,6 +120,8 @@ public class GlobalAdvice {
         return BanDetailDtoOut.builder()
                 .responseText("Tài khoản của bạn đã bị cấm")
                 .description(ex.getBannedPhone().getDescription())
+                .phone(ex.getBannedPhone().getPhone())
+                .name(ex.getName())
                 .image(ex.getBannedPhone().getImage())
                 .error("BANNED")
                 .build();

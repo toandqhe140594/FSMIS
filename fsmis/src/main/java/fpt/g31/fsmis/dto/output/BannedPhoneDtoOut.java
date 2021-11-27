@@ -12,4 +12,6 @@ import lombok.NoArgsConstructor;
 public class BannedPhoneDtoOut {
     private String phone;
     private String description;
+    private String image;
+    private String bannedDate;
 }

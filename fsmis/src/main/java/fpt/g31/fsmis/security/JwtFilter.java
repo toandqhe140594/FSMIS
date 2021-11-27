@@ -67,6 +67,7 @@ public class JwtFilter extends OncePerRequestFilter {
         } else {
             BannedException bannedException = new BannedException();
             bannedException.setBannedPhone(bannedPhoneRepos.getById(phone));
+            bannedException.setName(user.getFullName());
             throw bannedException;
         }
     }

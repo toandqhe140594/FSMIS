@@ -27,7 +27,7 @@ public class AdminFishSpeciesController {
     }
 
     @PutMapping("/edit/{speciesId}")
-    public ResponseEntity<Object> adminEditSpecies(@RequestBody SpeciesDtoIn speciesDtoIn,
+    public ResponseEntity<Object> adminEditSpecies(@RequestBody @Valid SpeciesDtoIn speciesDtoIn,
                                                    @PathVariable Long speciesId) {
         return new ResponseEntity<>(fishSpeciesService.editSpecies(speciesDtoIn, speciesId), HttpStatus.OK);
     }

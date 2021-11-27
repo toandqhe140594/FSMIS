@@ -81,6 +81,7 @@ public class AuthService {
                 .orElseThrow(() -> new ValidationException("Tài khoản không tồn tại!"));
         if (Boolean.FALSE.equals(user.getActive())) {
             BannedException bannedException = new BannedException();
+            bannedException.setName(user.getFullName());
             bannedException.setBannedPhone(bannedPhoneRepos.getById(user.getPhone()));
             throw bannedException;
         }
