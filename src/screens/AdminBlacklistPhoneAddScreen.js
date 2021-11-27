@@ -7,7 +7,7 @@ import {
 import { useStoreActions } from "easy-peasy";
 import React, { useCallback, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { View } from "react-native";
+import { ScrollView, View } from "react-native";
 import { Button, Text } from "react-native-elements";
 
 import InputComponent from "../components/common/InputComponent";
@@ -46,7 +46,7 @@ const FManageSuggestLocationScreen = () => {
       .then(() => {
         showAlertAbsoluteBox(
           "Chặn số điện thoại thành công",
-          `Số điện thoại "${data.phone}"" đã bị thêm vào danh sách đen `,
+          `Số điện thoại "${data.phone}" đã bị thêm vào danh sách đen `,
           goBackAfterSuccess,
         );
       })
@@ -66,7 +66,7 @@ const FManageSuggestLocationScreen = () => {
   );
 
   return (
-    <View style={{ flex: 1 }}>
+    <ScrollView style={{ flex: 1 }}>
       <HeaderTab name="Chặn số điện thoại" />
       <FormProvider {...methods}>
         <View
@@ -127,7 +127,7 @@ const FManageSuggestLocationScreen = () => {
           </View>
         </View>
       </FormProvider>
-    </View>
+    </ScrollView>
   );
 };
 
