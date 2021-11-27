@@ -148,6 +148,7 @@ public class FishingLocationService {
         dtoOut.setLastEditedDate(ServiceUtils.convertDateToString(location.getLastEditedDate()));
         dtoOut.setAddressFromWard(ServiceUtils.getAddressByWard(location.getWard()));
         dtoOut.setImage(ServiceUtils.splitString(location.getImageUrl()));
+        dtoOut.setAddress(ServiceUtils.getAddress(location.getAddress(), location.getWard()));
         dtoOut.setSaved(false);
         for (FishingLocation fishinglocation : user.getSavedFishingLocations()) {
             if (fishinglocation == location) {
@@ -513,17 +514,13 @@ public class FishingLocationService {
     }
 
     private void addFishingLocationItemDtoOut(List<FishingLocationItemDtoOut> output, FishingLocation location) {
-        Double score = reviewRepos.getAverageScoreByFishingLocationIdAndActiveIsTrue(location.getId());
-        if (score == null) {
-            score = 0.0;
-        }
         FishingLocationItemDtoOut fishingLocationItemDtoOut = FishingLocationItemDtoOut.builder()
                 .id(location.getId())
                 .name(location.getName())
                 .image(ServiceUtils.splitString(location.getImageUrl()).get(0))
                 .verify(location.getVerify())
-                .score(score)
-                .address(location.getAddress())
+                .score(location.getScore().doubleValue())
+                .address(ServiceUtils.getAddress(location.getAddress(), location.getWard()))
                 .closed(location.getClosed())
                 .build();
         output.add(fishingLocationItemDtoOut);
