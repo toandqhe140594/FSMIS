@@ -84,9 +84,10 @@ const INPUT_LOCATION_RULE_PLACEHOLDER = "Miêu tả nội quy khu hồ";
 
 const getAddressFromFullAddress = (fullAddress, addressFromWard) => {
   let result = fullAddress;
-  result = result.substr(0, result.lastIndexOf(addressFromWard.province));
-  result = result.substr(0, result.lastIndexOf(addressFromWard.district));
-  result = result.substr(0, result.lastIndexOf(addressFromWard.ward) - 2);
+  result = result.replace(
+    `, ${addressFromWard.ward}, ${addressFromWard.district}, ${addressFromWard.province}`,
+    "",
+  );
   return result;
 };
 const FManageEditProfileScreen = () => {
