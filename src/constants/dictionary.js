@@ -23,6 +23,9 @@ export const FMANAGE_ADD_FISH_HEADER = "Thêm cá vào hồ";
 export const ALERT_LAKE_STOCKING_SUCCESS_MSG = "Bồi cá thành công!";
 export const ANGLER_ADVANCED_SEARCH_HEADER = "Tìm kiếm nâng cao";
 export const SEARCH_LOADING_TEXT = "Đang tìm kiếm";
+export const CATCH_REPORT_SEND_SUCCESS_MSG =
+  "Kết quả báo cá được gửi thành công!";
+export const ANGLER_CATCH_REPORT_HEADER = "Báo cá";
 
 export const FORM_FIELD_AVATAR = "avatarUrl";
 export const FORM_FIELD_FULL_NAME = "fullName";
@@ -57,6 +60,13 @@ export const FORM_FIELD_SEARCH_PROVINCE = "provinceIdList";
 export const FORM_FIELD_SEARCH_METHODS = "fishingMethodIdList";
 export const FORM_FIELD_SEARCH_SPECIES = "fishSpeciesIdList";
 export const FORM_FIELD_SEARCH_SCORE = "score";
+export const FORM_FIELD_CATCH_REPORT_LAKE_ID = "lakeId";
+export const FROM_FIELD_CATCH_REPORT_DESCRIPTION = "description";
+export const FORM_FIELD_CATCH_REPORT_CARD = "catchesDetailList";
+export const FORM_FIELD_CATCH_REPORT_FISH_IN_LAKE = "fishInLakeId";
+export const FORM_FIELD_CATCH_REPORT_FISH_QUANTITY = "quantity";
+export const FORM_FIELD_CATCH_REPORT_FISH_WEIGHT = "weight";
+export const FORM_FIELD_CATCH_REPORT_FISH_RETURN_TO_OWNER = "returnToOwner";
 
 export const FULL_NAME_LABEL = "Họ và tên";
 export const GENDER_LABEL = "Giới tính";
@@ -88,6 +98,7 @@ export const SEARCH_PROVINCE_LABEL = "Tỉnh/Thành phố";
 export const SEARCH_METHODS_LABEL = "Loại hình câu";
 export const SEARCH_SPECIES_LABEL = "Loại cá";
 export const SEARCH_SCORE_LABEL = "Đánh giá";
+export const CATCH_REPORT_LAKE_LABEL = "Vị trí hồ câu";
 
 export const INPUT_NAME_PLACEHOLDER = "Nhập họ và tên";
 export const SELECT_BIRTHDATE_PLACEHOLDER = "Chọn ngày sinh";
@@ -128,3 +139,10 @@ export const SELECT_SEARCH_PROVINCE_PLACEHOLDER = "Chọn tỉnh/thành phố";
 export const SELECT_SEARCH_METHODS_PLACEHOLDER = "Chọn loại hình câu";
 export const INPUT_SEARCH_SPECIES_PLACEHOLDER = "Chọn loại cá";
 export const INPUT_SEARCH_SCORE_PLACEHOLDER = "Lọc theo đánh giá";
+export const INPUT_CATCH_REPORT_DESCRIPTION_PLACEHOLDER =
+  "Mô tả ngày câu của bạn";
+export const SELECT_CATCH_REPORT_LAKE_PLACEHOLDER = "Chọn hồ câu";
+export const SELECT_CATCH_REPORT_SPECIES_PLACEHOLDER = "Chọn loại cá bắt được";
+export const INPUT_CATCH_REPORT_QUANTITY_PLACEHOLDER = "Nhập số con bắt được";
+export const INPUT_CATCH_REPORT_WEIGHT_PLACEHOLDER =
+  "Nhập cân nặng bắt được (kg)";
