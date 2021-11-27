@@ -197,16 +197,19 @@ const FManageAddNewScreen = () => {
                   controllerName={DICTIONARY.FORM_FIELD_ADDRESS}
                 />
                 <ProvinceSelector
+                  hasAsterisk
                   label={DICTIONARY.PROVINCE_LABEL}
                   placeholder={DICTIONARY.SELECT_PROVINCE_PLACEHOLDER}
                   controllerName={DICTIONARY.FORM_FIELD_PROVINCE}
                 />
                 <DistrictSelector
+                  hasAsterisk
                   label={DICTIONARY.DISTRICT_LABEL}
                   placeholder={DICTIONARY.SELECT_DISTRICT_PLACEHOLDER}
                   controllerName={DICTIONARY.FORM_FIELD_DISTRICT}
                 />
                 <WardSelector
+                  hasAsterisk
                   label={DICTIONARY.WARD_LABEL}
                   placeholder={DICTIONARY.SELECT_WARD_PLACEHOLDER}
                   controllerName={DICTIONARY.FORM_FIELD_WARD}
