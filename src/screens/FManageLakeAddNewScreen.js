@@ -226,12 +226,11 @@ const LakeAddNewScreen = () => {
               </Stack>
             </Center>
             <Center>
-              <Box style={styles.sectionWrapper} mb={5}>
+              <Box style={styles.sectionWrapper} mb={4}>
                 {/* Submit button */}
                 <Button
                   style={styles.button}
                   alignSelf="center"
-                  mb={2}
                   onPress={handleSubmit(onSubmit)}
                 >
                   Thêm hồ câu
