@@ -67,13 +67,19 @@ const model = {
   setListOfFishingLocations: action((state, payload) => {
     state.listOfFishingLocations = payload;
   }),
-  getListOfFishingLocations: thunk(async (actions, payload = () => {}) => {
+  /**
+   * Get list of the owner's fishing locations
+   * @param {Function} [payload] params for actions
+   * @param {Function} [payload.setGetSuccess] function to set get status
+   */
+  getListOfFishingLocations: thunk(async (actions, payload = {}) => {
+    const setGetSuccess = payload.setGetSuccess || (() => {});
     try {
       const { data } = await http.get(`${API_URL.PERSONAL_OWNED_LOCATION}`);
-      payload(true);
+      setGetSuccess(true);
       actions.setListOfFishingLocations(data);
     } catch (error) {
-      payload(false);
+      setGetSuccess(false);
     }
   }),
 
