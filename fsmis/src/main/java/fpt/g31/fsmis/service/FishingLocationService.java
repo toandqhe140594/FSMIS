@@ -706,6 +706,7 @@ public class FishingLocationService {
                 .service(adminFishingLocationDtoIn.getService())
                 .timetable(adminFishingLocationDtoIn.getTimetable())
                 .ward(ward)
+                .imageUrl(ServiceUtils.mergeString(adminFishingLocationDtoIn.getImages()))
                 .build();
         User owner = userRepos.findByPhone(fishingLocation.getPhone())
                 .orElse(userRepos.getById(1L));

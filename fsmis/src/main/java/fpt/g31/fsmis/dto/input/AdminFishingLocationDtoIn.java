@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -36,4 +37,6 @@ public class AdminFishingLocationDtoIn {
     private String service;
 
     private String rule;
+
+    private List<String> images;
 }
