@@ -265,7 +265,7 @@ EventPostCard.propTypes = {
   iconEvent: PropTypes.arrayOf(
     PropTypes.shape({ name: PropTypes.string, onPress: PropTypes.func }),
   ),
-  image: PropTypes.string,
+  uri: PropTypes.string,
   edited: PropTypes.bool,
   postTime: PropTypes.string,
   id: PropTypes.number.isRequired,
@@ -282,7 +282,7 @@ EventPostCard.defaultProps = {
   postStyle: "LAKE_POST",
   iconName: "",
   iconEvent: [],
-  image: "https://picsum.photos/500",
+  uri: "",
   edited: false,
   postTime: "",
   isApproved: undefined,
