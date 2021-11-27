@@ -125,6 +125,8 @@ const FManageSelectScreen = () => {
     return <View style={{ height: 8 }} />;
   };
 
+  const keyExtractor = (item) => item.id.toString();
+
   const renderItem = ({ item }) => (
     <FLocationCard
       id={item.id}
@@ -164,7 +166,7 @@ const FManageSelectScreen = () => {
           renderItem={renderItem}
           data={listOfFishingLocations}
           ItemSeparatorComponent={ItemSeparator}
-          keyExtractor={(item) => item.id.toString()}
+          keyExtractor={keyExtractor}
           ListHeaderComponent={renderHeader}
         />
       </View>
