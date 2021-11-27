@@ -20,7 +20,7 @@ import SelectComponent from "../components/common/SelectComponent";
 import WardSelector from "../components/common/WardSelector";
 import HeaderTab from "../components/HeaderTab";
 import moment from "../config/moment";
-import { SCHEMA } from "../constants";
+import { DICTIONARY, SCHEMA } from "../constants";
 import { showAlertBox } from "../utilities";
 
 const genderList = [
@@ -36,38 +36,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 });
-
-// const STATUS_SUCCESS = "SUCCESS";
-// const STATUS_FAILED = "FAILED";
-const ALERT_TITLE = "Thông báo";
-const ALERT_EDIT_PROFILE_SUCCESS_MSG = "Cập nhật thông tin cá nhân thành công!";
-const ALERT_ERROR_MSG = "Đã xảy ra lỗi! Vui lòng thử lại sau.";
-const ANGLER_EDIT_PROFILE_HEADER_NAME = "Thông tin cá nhân";
-
-const FORM_FIELD_AVATAR = "avatarUrl";
-const FORM_FIELD_FULL_NAME = "fullName";
-const FORM_FIELD_GENDER = "gender";
-const FORM_FIELD_ADDRESS = "address";
-const FORM_FIELD_PROVINCE = "provinceId";
-const FORM_FIELD_DISTRICT = "districtId";
-const FORM_FIELD_WARD = "wardId";
-const FORM_FIELD_DOB = "dob";
-
-const DOB_LABEL = "Ngày sinh";
-const FULL_NAME_LABEL = "Họ và tên";
-const GENDER_LABEL = "Giới tính";
-const ADDRESS_LABEL = "Địa chỉ";
-const PROVINCE_LABEL = "Tỉnh/Thành phố";
-const DISTRICT_LABEL = "Quận/Huyện";
-const WARD_LABEL = "Phường/xã";
-
-const INPUT_NAME_PLACEHOLDER = "Nhập họ và tên";
-const SELECT_BIRTHDATE_PLACEHOLDER = "Chọn ngày sinh";
-const SELECT_GENDER_PLACEHOLDER = "Chọn giới tính";
-const INPUT_ADDRESS_PLACEHOLDER = "Nhập địa chỉ thường trú";
-const SELECT_PROVINCE_PLACEHOLDER = "Chọn tỉnh/thành phố";
-const SELECT_DISTRICT_PLACEHOLDER = "Chọn quận/huyện";
-const SELECT_WARD_PLACEHOLDER = "Chọn phường/xã";
 
 const EditProfileScreen = () => {
   const route = useRoute();
@@ -133,11 +101,14 @@ const EditProfileScreen = () => {
     editPersonalInformation({ updateData })
       .then(() => {
         setIsLoading(false);
-        showAlertBox(ALERT_TITLE, ALERT_EDIT_PROFILE_SUCCESS_MSG);
+        showAlertBox(
+          DICTIONARY.ALERT_TITLE,
+          DICTIONARY.ALERT_EDIT_PROFILE_SUCCESS_MSG,
+        );
       })
       .catch(() => {
         setIsLoading(false);
-        showAlertBox(ALERT_TITLE, ALERT_ERROR_MSG);
+        showAlertBox(DICTIONARY.ALERT_TITLE, DICTIONARY.ALERT_ERROR_MSG);
       });
   };
   /**
@@ -170,7 +141,10 @@ const EditProfileScreen = () => {
     // useCallback will listen to route.param
     useCallback(() => {
       if (route.params?.base64Array && route.params.base64Array[0]) {
-        setValue(FORM_FIELD_AVATAR, route.params?.base64Array[0].base64);
+        setValue(
+          DICTIONARY.FORM_FIELD_AVATAR,
+          route.params?.base64Array[0].base64,
+        );
         navigation.setParams({ base64Array: [] });
       }
     }, [route.params]),
@@ -178,7 +152,7 @@ const EditProfileScreen = () => {
 
   return (
     <>
-      <HeaderTab name={ANGLER_EDIT_PROFILE_HEADER_NAME} />
+      <HeaderTab name={DICTIONARY.ANGLER_EDIT_PROFILE_HEADER_NAME} />
       <Overlay
         isVisible={isLoading}
         fullScreen
@@ -200,49 +174,49 @@ const EditProfileScreen = () => {
               <AvatarSection
                 containerStyle={{ alignSelf: "center" }}
                 navigation={navigation}
-                name={FORM_FIELD_AVATAR}
+                name={DICTIONARY.FORM_FIELD_AVATAR}
                 handleDelete={deleteImage}
               />
               <InputComponent
-                label={FULL_NAME_LABEL}
+                label={DICTIONARY.FULL_NAME_LABEL}
                 isTitle
-                placeholder={INPUT_NAME_PLACEHOLDER}
+                placeholder={DICTIONARY.INPUT_NAME_PLACEHOLDER}
                 type="text"
                 hasAsterisk
-                controllerName={FORM_FIELD_FULL_NAME}
+                controllerName={DICTIONARY.FORM_FIELD_FULL_NAME}
               />
               <DatePickerInput
-                label={DOB_LABEL}
-                placeholder={SELECT_BIRTHDATE_PLACEHOLDER}
-                controllerName={FORM_FIELD_DOB}
+                label={DICTIONARY.DOB_LABEL}
+                placeholder={DICTIONARY.SELECT_BIRTHDATE_PLACEHOLDER}
+                controllerName={DICTIONARY.FORM_FIELD_DOB}
               />
               <SelectComponent
-                label={GENDER_LABEL}
+                label={DICTIONARY.GENDER_LABEL}
                 isTitle
-                placeholder={SELECT_GENDER_PLACEHOLDER}
-                controllerName={FORM_FIELD_GENDER}
+                placeholder={DICTIONARY.SELECT_GENDER_PLACEHOLDER}
+                controllerName={DICTIONARY.FORM_FIELD_GENDER}
                 data={genderList}
               />
               <InputComponent
-                label={ADDRESS_LABEL}
+                label={DICTIONARY.ADDRESS_LABEL}
                 isTitle
-                placeholder={INPUT_ADDRESS_PLACEHOLDER}
-                controllerName={FORM_FIELD_ADDRESS}
+                placeholder={DICTIONARY.INPUT_ADDRESS_PLACEHOLDER}
+                controllerName={DICTIONARY.FORM_FIELD_ADDRESS}
               />
               <ProvinceSelector
-                label={PROVINCE_LABEL}
-                placeholder={SELECT_PROVINCE_PLACEHOLDER}
-                controllerName={FORM_FIELD_PROVINCE}
+                label={DICTIONARY.PROVINCE_LABEL}
+                placeholder={DICTIONARY.SELECT_PROVINCE_PLACEHOLDER}
+                controllerName={DICTIONARY.FORM_FIELD_PROVINCE}
               />
               <DistrictSelector
-                label={DISTRICT_LABEL}
-                placeholder={SELECT_DISTRICT_PLACEHOLDER}
-                controllerName={FORM_FIELD_DISTRICT}
+                label={DICTIONARY.DISTRICT_LABEL}
+                placeholder={DICTIONARY.SELECT_DISTRICT_PLACEHOLDER}
+                controllerName={DICTIONARY.FORM_FIELD_DISTRICT}
               />
               <WardSelector
-                label={WARD_LABEL}
-                placeholder={SELECT_WARD_PLACEHOLDER}
-                controllerName={FORM_FIELD_WARD}
+                label={DICTIONARY.WARD_LABEL}
+                placeholder={DICTIONARY.SELECT_WARD_PLACEHOLDER}
+                controllerName={DICTIONARY.FORM_FIELD_WARD}
               />
               <Button mt={6} size="lg" onPress={handleSubmit(onSubmit)}>
                 Lưu thay đổi
