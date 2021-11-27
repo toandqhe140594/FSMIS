@@ -10,6 +10,7 @@ const RESET_VALUE = 0;
 const ProvinceSelector = ({
   containerStyle,
   label,
+  isTitle,
   placeholder,
   controllerName,
   hasAsterisk,
@@ -37,6 +38,7 @@ const ProvinceSelector = ({
 
   return (
     <SelectComponent
+      isTitle={isTitle}
       myStyles={containerStyle}
       label={label}
       placeholder={placeholder}
@@ -49,6 +51,7 @@ const ProvinceSelector = ({
 
 ProvinceSelector.propTypes = {
   hasAsterisk: PropTypes.bool,
+  isTitle: PropTypes.bool,
   label: PropTypes.string,
   placeholder: PropTypes.string,
   controllerName: PropTypes.string,
@@ -60,6 +63,7 @@ ProvinceSelector.propTypes = {
 
 ProvinceSelector.defaultProps = {
   hasAsterisk: false,
+  isTitle: false,
   label: "",
   placeholder: "",
   controllerName: "",
