@@ -133,7 +133,7 @@ public class LakeService {
 
     public List<LakeOverviewDtoOut> getAllByLocationId(Long locationId) {
         Optional<FishingLocation> fishingLocationOptional = fishingLocationRepos.findById(locationId);
-        if (!fishingLocationOptional.isPresent() || Boolean.FALSE.equals(fishingLocationOptional.get().getActive())) {
+        if (!fishingLocationOptional.isPresent()) {
             throw new NotFoundException("Không tìm thấy khu hồ!");
         }
         List<Lake> lakeList = lakeRepos.findByFishingLocationIdAndActiveIsTrue(locationId);

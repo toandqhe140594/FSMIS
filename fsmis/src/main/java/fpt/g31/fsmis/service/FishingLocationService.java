@@ -214,11 +214,9 @@ public class FishingLocationService {
             DistanceJsonResult[] resultList = mapper.convertValue(rootNode.get("rows").get(0).get("elements"), DistanceJsonResult[].class);
             int count = 0;
             for (DistanceJsonResult distanceJsonResult : resultList) {
-                if (!distanceJsonResult.getStatus().equals("ZERO_RESULTS") && distanceJsonResult.getDistance().getValue() / 1000 <= distance) {
-                    FishingLocationPinDtoOut fishingLocationPinDtoOut = modelMapper.map(fishingLocationList.get(count), FishingLocationPinDtoOut.class);
-                    fishingLocationPinDtoOut.setDistance((float) distanceJsonResult.getDistance().getValue() / 1000);
-                    fishingLocationPinDtoOutList.add(fishingLocationPinDtoOut);
-                }
+                FishingLocationPinDtoOut fishingLocationPinDtoOut = modelMapper.map(fishingLocationList.get(count), FishingLocationPinDtoOut.class);
+                fishingLocationPinDtoOut.setDistance((float) distanceJsonResult.getDistance().getValue() / 1000);
+                fishingLocationPinDtoOutList.add(fishingLocationPinDtoOut);
                 count++;
             }
         }
