@@ -216,7 +216,7 @@ const FLocationEventRoute = () => {
 
   return (
     <>
-      {locationPostList.length > 0 && (
+      {locationPostList.length > 0 ? (
         <FlatList
           ListHeaderComponent={pinPostComponent}
           ListFooterComponent={footerComponent}
@@ -230,6 +230,10 @@ const FLocationEventRoute = () => {
           keyExtractor={(item) => item.id.toString()}
           nestedScrollEnabled
         />
+      ) : (
+        <Box flex={1} justifyContent="center" alignItems="center">
+          <Text>Chưa có bài đăng được tạo.</Text>
+        </Box>
       )}
     </>
   );
