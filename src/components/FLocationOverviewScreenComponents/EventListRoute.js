@@ -193,10 +193,7 @@ const FLocationEventRoute = () => {
               typeUri={currentPinPost.attachmentType}
               itemData={currentPinPost}
               lakePost={{
-                badge:
-                  currentPinPost.postType === "STOCKING"
-                    ? "Bồi cá"
-                    : "Thông báo",
+                badge: currentPinPost.postType,
                 content: currentPinPost.content,
               }}
               postTime={currentPinPost.postTime}

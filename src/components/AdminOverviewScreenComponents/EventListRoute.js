@@ -109,7 +109,7 @@ const FLocationEventRoute = () => {
             return (
               <EventPostCard
                 lakePost={{
-                  badge: item.postType === "STOCKING" ? "Bồi cá" : "Thông báo",
+                  badge: item.postType,
                   content: item.content,
                 }}
                 typeUri={item.attachmentType}
