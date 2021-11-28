@@ -7,6 +7,7 @@ import { BackHandler, Linking, ScrollView, StyleSheet } from "react-native";
 import HeaderTab from "../components/HeaderTab";
 import ImageResizeMode from "../components/ImageResizeMode";
 import colors from "../config/colors";
+import { DICTIONARY } from "../constants";
 import { showAlertConfirmBox } from "../utilities";
 
 const styles = StyleSheet.create({
@@ -33,8 +34,8 @@ const BanNoticeScreen = ({ bannedInformation }) => {
      */
     const backAction = () => {
       showAlertConfirmBox(
-        "Cảnh báo",
-        "Bạn có muốn quay về màn hình đăng nhập không",
+        DICTIONARY.ALERT_WARNING_TITLE,
+        DICTIONARY.ALERT_BACK_TO_LOGIN_MSG,
         resetErrorMessage,
       );
       return true;
