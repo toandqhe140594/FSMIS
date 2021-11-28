@@ -17,7 +17,7 @@ import {
 
 import InputComponent from "../components/common/InputComponent";
 import PasswordInput from "../components/common/PasswordInput";
-import { ROUTE_NAMES, SCHEMA } from "../constants";
+import { DICTIONARY, ROUTE_NAMES, SCHEMA } from "../constants";
 import {
   goToLoginScreen,
   goToOTPScreen,
@@ -52,7 +52,10 @@ const RegisterScreen = () => {
   const onSubmit = (data) => {
     accountData.current = data;
     setLoading(true);
-    sendOtp({ phone: data.phoneNumber, existedStatus: "NONEXISTED" })
+    sendOtp({
+      phone: data.phoneNumber,
+      existedStatus: DICTIONARY.STATUS_NON_EXISTED,
+    })
       .then(() => {
         goToOTPScreen(
           navigation,
@@ -62,7 +65,7 @@ const RegisterScreen = () => {
       })
       .catch(() => {
         setLoading(false);
-        showToastMessage("Số điện thoại không hợp lệ hoặc đã tồn tại");
+        showToastMessage(DICTIONARY.TOAST_NON_EXISTED_INVALID_PHONE_MSG);
       });
   };
 
@@ -101,26 +104,26 @@ const RegisterScreen = () => {
 
               {/* Phone number input field */}
               <InputComponent
-                label="Số điện thoại"
+                label={DICTIONARY.PHONE_NUMBER_LABEL}
                 useNumPad
                 hasAsterisk
-                placeholder="Nhập số điện thoại"
-                controllerName="phoneNumber"
+                placeholder={DICTIONARY.INPUT_PHONE_NUMBER_PLACEHOLDER}
+                controllerName={DICTIONARY.FORM_FIELD_PHONE_NUMBER}
                 leftIcon={<PhoneIcon />}
               />
               {/* Password input field */}
               <PasswordInput
-                label="Mật khẩu"
+                label={DICTIONARY.PASSWORD_LABEL}
                 hasAsterisk
-                placeholder="Nhập mật khẩu mới"
-                controllerName="password"
+                placeholder={DICTIONARY.INPUT_PASSWORD_PLACEHOLDER}
+                controllerName={DICTIONARY.FORM_FIELD_PASSWORD}
               />
               {/* Password confirmation input field */}
               <PasswordInput
-                label="Xác nhận mật khẩu"
+                label={DICTIONARY.PASSWORD_CONFIRMATION_LABEL}
                 hasAsterisk
-                placeholder="Nhập lại mật khẩu mới"
-                controllerName="passwordConfirmation"
+                placeholder={DICTIONARY.INPUT_PASSWORD_CONFIRMATION_PLACEHOLDER}
+                controllerName={DICTIONARY.FORM_FIELD_PASSWORD_CONFIRMATION}
               />
               {/* Submit button */}
               <Button

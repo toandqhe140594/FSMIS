@@ -1,32 +1,84 @@
+/**
+ * RELATED TOAST MESSAGE SECTION
+ */
+export const TOAST_LOGIN_SUCCESS_MSG = "Đăng nhập thành công";
+export const TOAST_NON_EXISTED_INVALID_PHONE_MSG =
+  "Số điện thoại không hợp lệ hoặc đã tồn tại";
+export const TOAST_REGISTER_INFORMATION_SUCCESS_MSG = "Đăng ký thành công";
+export const TOAST_CHANGE_PASSWORD_SUCCESS_MSG = "Đổi mật khẩu thành công";
+export const TOAST_CHANGE_PHONE_NUMBER_SUCCESS_MSG =
+  "Thay đổi số điện thoại thành công";
+export const TOAST_FISH_DELETE_SUCCESS_MSG = "Cá đã được xóa khỏi hồ";
+export const TOAST_DELETE_LAKE_SUCCESS_MSG = "Xóa hồ bé thành công";
+// END OF RELATED TOAST MESSAGE SECTION
+
+/**
+ * RANDOM STRING SECTION
+ * Random string that not belong to any categories here
+ */
+export const INVALID_OTP_CODE_MSG = "Mã OTP không chính xác";
+// END OF RANDOM STRING SECTION
+
+/**
+ * RELATED STATUS LABEL
+ */
 export const STATUS_SUCCESS = "SUCCESS";
 export const STATUS_FAILED = "FAILED";
+export const STATUS_EXISTED = "EXISTED";
+export const STATUS_NON_EXISTED = "NONEXISTED";
+// END OF RELATED STATUS LABEL
+
+/**
+ * RELATED SCREEN HEADER SECTION
+ */
+export const FMANAGE_ADD_FISH_HEADER = "Thêm cá vào hồ";
+export const FMANAGE_ADD_LAKE_HEADER = "Thêm hồ bé";
+export const FMANAGE_EDIT_LOCATION_HEADER = "Thông tin điểm câu";
+export const FMANAGE_ADD_LOCATION_HEADER = "Tạo điểm câu mới";
+export const ANGLER_EDIT_PROFILE_HEADER_NAME = "Thông tin cá nhân";
+export const ANGLER_CHANGE_PHONE_NUMBER_HEADER = "Thay đổi số điện thoại";
+export const FMANAGE_SELECT_SCREEN_HEADER = "Chọn điểm câu làm việc";
+export const ANGLER_ADVANCED_SEARCH_HEADER = "Tìm kiếm nâng cao";
+export const ANGLER_CATCH_REPORT_HEADER = "Báo cá";
+export const ANGLER_RESET_PASSWORD_HEADER = "Thay đổi mật khẩu";
+// END OF RELATED SCREEN HEADER SECTION
+
+/**
+ * RELATED ALERT SECTION
+ * Add any titles, message, prompt, confirmation related to ALERT
+ */
 export const ALERT_TITLE = "Thông báo";
+export const ALERT_ERROR_MSG = "Đã xảy ra lỗi! Vui lòng thử lại sau.";
 export const ALERT_EDIT_PROFILE_SUCCESS_MSG =
   "Cập nhật thông tin cá nhân thành công!";
-export const ALERT_ERROR_MSG = "Đã xảy ra lỗi! Vui lòng thử lại sau.";
-export const ANGLER_EDIT_PROFILE_HEADER_NAME = "Thông tin cá nhân";
 export const ALERT_ADD_LOCATION_SUCCESS_MSG = "Thêm điểm câu thành công";
-export const FMANAGE_ADD_LOCATION_HEADER = "Tạo điểm câu mới";
 export const ALERT_EDIT_LOCATION_SUCCESS_MSG = "Cập nhật điểm câu thành công";
-export const FMANAGE_EDIT_LOCATION_HEADER = "Thông tin điểm câu";
 export const ALERT_LOCATION_POSITION_EMPTY =
   "Vị trí hồ câu trên bản đồ không thể bỏ trống";
 export const ALERT_ADD_LAKE_SUCCESS_MSG = "Thêm hồ bé thành công!";
-export const FMANAGE_ADD_LAKE_HEADER = "Thêm hồ bé";
 export const ALERT_EDIT_LAKE_SUCCESS_MSG = "Chỉnh sửa hồ bé thành công";
-export const TOAST_DELETE_LAKE_SUCCESS_MSG = "Xóa hồ bé thành công";
 export const ALERT_DELETE_LAKE_PROMPT_TITLE = "Bạn muốn xóa hồ này?";
 export const ALERT_DELETE_LAKE_PROMPT_MSG =
   "sẽ bị xóa vĩnh viễn. Bạn không thể hoàn tác hành động này";
 export const ALERT_LAKE_ADD_FISH_SUCCESS_MSG = "Thêm cá thành công!";
-export const FMANAGE_ADD_FISH_HEADER = "Thêm cá vào hồ";
 export const ALERT_LAKE_STOCKING_SUCCESS_MSG = "Bồi cá thành công!";
-export const ANGLER_ADVANCED_SEARCH_HEADER = "Tìm kiếm nâng cao";
-export const SEARCH_LOADING_TEXT = "Đang tìm kiếm";
-export const CATCH_REPORT_SEND_SUCCESS_MSG =
+export const ALERT_CATCH_REPORT_SEND_SUCCESS_MSG =
   "Kết quả báo cá được gửi thành công!";
-export const ANGLER_CATCH_REPORT_HEADER = "Báo cá";
+export const ALERT_CHANGE_PHONE_PROMPT_MSG =
+  "Bạn muốn thay đổi số điện thoại liên kết với tài khoản này?";
+export const ALERT_DELTE_FISH_PROMPT_MSG =
+  "Bạn chắc chắn muốn xóa loài cá này khỏi hồ?";
 
+/**
+ * RELATED FORM FIELD NAME TO REGISTER HOOK FORM SECTION
+ */
+export const FORM_FIELD_PHONE_NUMBER = "phoneNumber";
+export const FORM_FIELD_PASSWORD = "password";
+export const FORM_FIELD_PASSWORD_CONFIRMATION = "passwordConfirmation";
+export const FORM_FIELD_OLD_PASSWORD = "oldPassword";
+export const FORM_FIELD_NEW_PASSWORD = "newPassword";
+export const FORM_FIELD_NEW_PASSWORD_CONFIRMATION = "repeatPassword";
+export const FORM_FIELD_ANGLER_PHONE = "phone";
 export const FORM_FIELD_AVATAR = "avatarUrl";
 export const FORM_FIELD_FULL_NAME = "fullName";
 export const FORM_FIELD_GENDER = "gender";
@@ -68,15 +120,38 @@ export const FORM_FIELD_CATCH_REPORT_FISH_IN_LAKE = "fishInLakeId";
 export const FORM_FIELD_CATCH_REPORT_FISH_QUANTITY = "quantity";
 export const FORM_FIELD_CATCH_REPORT_FISH_WEIGHT = "weight";
 export const FORM_FIELD_CATCH_REPORT_FISH_RETURN_TO_OWNER = "returnToOwner";
+// END OF RELATED FORM FIELD NAME TO REGISTER HOOK FORM SECTION
 
+/**
+ * RELATED BUTTON LABELS SECTION
+ */
+export const SEARCH_LOADING_TEXT = "Đang tìm kiếm";
+export const SEND_BUTTON_LABEL = "Gửi";
+export const CONFIRM_BUTTON_LABEL = "Xác nhận";
+export const PROCESSING_BUTTON_LABEL = "Đang xử lý";
+export const SENDING_BUTTON_LABEL = "Đang gửi";
+export const LAKE_INFORMATION_BUTTON_LABEL = "Thông tin hồ câu";
+export const ADD_FISH_BUTTON_LABEL = "Thêm loại cá";
+// END OF RELATED BUTTON LABELS SECTION
+
+/**
+ * RELATED LABEL SECTIONS
+ */
+export const PHONE_NUMBER_LABEL = "Số điện thoại";
+export const PASSWORD_LABEL = "Mật khẩu";
+export const PASSWORD_CONFIRMATION_LABEL = "Xác nhận mật khẩu";
+export const OLD_PASSWORD_LABEL = "Mật khẩu cũ";
+export const NEW_PASSWORD_LABEL = "Mật khẩu mới";
+export const NEW_PASSWORD_CONFIRMATION_LABEL = "Xác nhận mật khẩu mới";
 export const DOB_LABEL = "Ngày sinh";
+export const REQUIRED_FULL_NAME_LABEL = "Họ và tên*";
+export const REQUIRED_DOB_LABEL = "Họ và tên*";
 export const FULL_NAME_LABEL = "Họ và tên";
 export const GENDER_LABEL = "Giới tính";
 export const ADDRESS_LABEL = "Địa chỉ";
 export const PROVINCE_LABEL = "Tỉnh/Thành phố";
 export const DISTRICT_LABEL = "Quận/Huyện";
 export const WARD_LABEL = "Phường/xã";
-export const CONFIRM_BUTTON_LABEL = "Xác nhận";
 export const LOCATION_NAME_LABEL = "Tên điểm câu";
 export const LOCATION_PHONE_LABEL = "Số điện thoại";
 export const LOCATION_WEBSITE_LABEL = "Website";
@@ -101,7 +176,18 @@ export const SEARCH_METHODS_LABEL = "Loại hình câu";
 export const SEARCH_SPECIES_LABEL = "Loại cá";
 export const SEARCH_SCORE_LABEL = "Đánh giá";
 export const CATCH_REPORT_LAKE_LABEL = "Vị trí hồ câu";
+// END OF RELATED LABEL SECTIONS
 
+/**
+ * RELATED PLACEHOLDER TITLES SECTION
+ */
+export const INPUT_PHONE_NUMBER_PLACEHOLDER = "Nhập số điện thoại";
+export const INPUT_PASSWORD_PLACEHOLDER = "Nhập mật khẩu";
+export const INPUT_PASSWORD_CONFIRMATION_PLACEHOLDER = "Nhập lại mật khẩu mới";
+export const INPUT_OLD_PASSWORD_PLACEHOLDER = "Nhập mật khẩu cũ";
+export const INPUT_NEW_PASSWORD_PLACEHOLDER = "Nhập mật khẩu mới";
+export const INPUT_NEW_PASSWORD_CONFIRMATION_PLACEHOLDER =
+  "Nhập lại mật khẩu mới";
 export const INPUT_NAME_PLACEHOLDER = "Nhập họ và tên";
 export const SELECT_BIRTHDATE_PLACEHOLDER = "Chọn ngày sinh";
 export const SELECT_GENDER_PLACEHOLDER = "Chọn giới tính";
@@ -148,3 +234,4 @@ export const SELECT_CATCH_REPORT_SPECIES_PLACEHOLDER = "Chọn loại cá bắt 
 export const INPUT_CATCH_REPORT_QUANTITY_PLACEHOLDER = "Nhập số con bắt được";
 export const INPUT_CATCH_REPORT_WEIGHT_PLACEHOLDER =
   "Nhập cân nặng bắt được (kg)";
+// END OF RELATED PLACEHOLDER TITLES SECTION

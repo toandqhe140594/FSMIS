@@ -7,7 +7,7 @@ import { Button } from "react-native-elements";
 
 import PasswordInput from "../components/common/PasswordInput";
 import HeaderTab from "../components/HeaderTab";
-import { SCHEMA } from "../constants";
+import { DICTIONARY, SCHEMA } from "../constants";
 import { showToastMessage } from "../utilities";
 
 const ResetPasswordScreen = () => {
@@ -26,8 +26,8 @@ const ResetPasswordScreen = () => {
     setLoading(true);
     changePassword({ updateData: data })
       .then(() => {
-        showToastMessage("Đổi mật khẩu thành công");
-        logOut(); // Logout after change password successfully
+        showToastMessage(DICTIONARY.TOAST_CHANGE_PASSWORD_SUCCESS_MSG);
+        logOut();
       })
       .catch(() => {
         setLoading(false);
@@ -36,7 +36,7 @@ const ResetPasswordScreen = () => {
 
   return (
     <View style={{ flex: 1 }}>
-      <HeaderTab name="Thay đổi mật khẩu" />
+      <HeaderTab name={DICTIONARY.ANGLER_RESET_PASSWORD_HEADER} />
       <FormProvider {...methods}>
         <View
           style={{
@@ -49,29 +49,31 @@ const ResetPasswordScreen = () => {
           <View style={{ width: "80%" }}>
             <PasswordInput
               isTitle
-              label="Mật khẩu cũ"
               hasAsterisk
-              placeholder="Nhập mật khẩu cũ"
-              controllerName="oldPassword"
+              label={DICTIONARY.OLD_PASSWORD_LABEL}
+              placeholder={DICTIONARY.INPUT_OLD_PASSWORD_PLACEHOLDER}
+              controllerName={DICTIONARY.FORM_FIELD_OLD_PASSWORD}
             />
             <PasswordInput
               isTitle
-              label="Mật khẩu mới"
               hasAsterisk
-              placeholder="Nhập mật khẩu mới"
-              controllerName="newPassword"
+              label={DICTIONARY.NEW_PASSWORD_LABEL}
+              placeholder={DICTIONARY.INPUT_NEW_PASSWORD_PLACEHOLDER}
+              controllerName={DICTIONARY.FORM_FIELD_NEW_PASSWORD}
               myStyles={{ marginVertical: 20 }}
             />
             <PasswordInput
               isTitle
-              label="Nhập lại mật khẩu mới"
               hasAsterisk
-              placeholder="Nhập lại mật khẩu mới"
-              controllerName="repeatPassword"
+              label={DICTIONARY.NEW_PASSWORD_CONFIRMATION_LABEL}
+              controllerName={DICTIONARY.FORM_FIELD_NEW_PASSWORD_CONFIRMATION}
+              placeholder={
+                DICTIONARY.INPUT_NEW_PASSWORD_CONFIRMATION_PLACEHOLDER
+              }
             />
 
             <Button
-              title="Gửi"
+              title={DICTIONARY.SEND_BUTTON_LABEL}
               onPress={handleSubmit(onSubmit)}
               containerStyle={{ marginTop: 30 }}
               loading={loading}

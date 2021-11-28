@@ -23,7 +23,7 @@ import {
 
 import InputComponent from "../components/common/InputComponent";
 import PasswordInput from "../components/common/PasswordInput";
-import { SCHEMA } from "../constants";
+import { DICTIONARY, SCHEMA } from "../constants";
 import { goToForgotPasswordScreen, goToRegisterScreen } from "../navigations";
 import { showToastMessage } from "../utilities";
 
@@ -62,7 +62,7 @@ const LoginScreen = () => {
     setIsLoading(true);
     login({ phone: data.phoneNumber, password: data.password })
       .then(() => {
-        showToastMessage("Đăng nhập thành công");
+        showToastMessage(DICTIONARY.TOAST_LOGIN_SUCCESS_MSG);
       })
       .catch(() => {
         setIsLoading(false);
@@ -72,8 +72,8 @@ const LoginScreen = () => {
   // Development only
   useEffect(() => {
     // 0921485233 admin
-    // setValue("phoneNumber", "0963372727");
-    setValue("phoneNumber", "0921485233");
+    setValue("phoneNumber", "0963372727");
+    // setValue("phoneNumber", "0921485233");
     setValue("password", "Asdf2k@!");
   }, []);
 
@@ -98,14 +98,14 @@ const LoginScreen = () => {
                 {/* Phone number input field */}
                 <InputComponent
                   useNumPad
-                  placeholder="Số điện thoại"
-                  controllerName="phoneNumber"
+                  placeholder={DICTIONARY.INPUT_PHONE_NUMBER_PLACEHOLDER}
+                  controllerName={DICTIONARY.FORM_FIELD_PHONE_NUMBER}
                   leftIcon={<PhoneIcon />}
                 />
                 {/* Password input field */}
                 <PasswordInput
-                  placeholder="Nhập mật khẩu"
-                  controllerName="password"
+                  placeholder={DICTIONARY.INPUT_PASSWORD_PLACEHOLDER}
+                  controllerName={DICTIONARY.FORM_FIELD_PASSWORD}
                 />
                 <Text
                   underline

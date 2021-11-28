@@ -77,7 +77,7 @@ const AnglerCatchReportScreen = () => {
         increaseCatchesCount();
         showAlertAbsoluteBox(
           DICTIONARY.ALERT_TITLE,
-          DICTIONARY.CATCH_REPORT_SEND_SUCCESS_MSG,
+          DICTIONARY.ALERT_CATCH_REPORT_SEND_SUCCESS_MSG,
           handleGoBack,
         );
       })
