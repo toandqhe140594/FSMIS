@@ -21,8 +21,9 @@ const ListViewRoute = () => {
   const { listLocationResult, pageNo, totaListLocationPage } = useStoreState(
     (states) => states.AdvanceSearchModel,
   );
-  const { setPageNo, getListLocationNextPage, clearSearchData } =
-    useStoreActions((actions) => actions.AdvanceSearchModel);
+  const { setPageNo, getListLocationNextPage } = useStoreActions(
+    (actions) => actions.AdvanceSearchModel,
+  );
   /**
    * Check if pageNo small then totalPage
    * then set incremented pageNo
@@ -80,15 +81,6 @@ const ListViewRoute = () => {
   );
 
   const keyExtractor = (item) => item.id.toString();
-
-  /**
-   * Clear all data when unmount screen
-   */
-  useEffect(() => {
-    return () => {
-      clearSearchData();
-    };
-  }, []);
 
   /**
    * Listen to when pageNo increases

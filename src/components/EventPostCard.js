@@ -39,6 +39,21 @@ const EventPostCard = ({
   let heightVideo = 400;
   let heightPage = 410;
   let isYouTubeVideo = false;
+  let typeBadge = "";
+
+  switch (lakePost.badge) {
+    case "STOCKING":
+      typeBadge = "Bồi cá";
+      break;
+    case "REPORTING":
+      typeBadge = "Báo cá";
+      break;
+    case "ANNOUNCING":
+      typeBadge = "Thông báo";
+      break;
+    default:
+      typeBadge = lakePost.badge;
+  }
 
   if (typeUri === "VIDEO") {
     try {
@@ -102,7 +117,7 @@ const EventPostCard = ({
                 }}
                 textStyle={{ fontSize: 16, fontWeight: "bold" }}
                 status="primary"
-                value={lakePost.badge}
+                value={typeBadge}
               />
               {postTime !== undefined && (
                 <Text style={styles.ml1}>{postTime}</Text>
