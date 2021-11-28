@@ -1,5 +1,6 @@
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import React from "react";
+import { useStoreActions } from "easy-peasy";
+import React, { useEffect } from "react";
 import { StyleSheet } from "react-native";
 
 import ListViewRoute from "../components/FishingSpotSearchScreenComponents/ListViewRoute";
@@ -24,6 +25,20 @@ const styles = StyleSheet.create({
 });
 
 export default function FishingSpotSearchScreen() {
+  const resetMapSearchModel = useStoreActions(
+    (actions) => actions.MapSearchModel.reset,
+  );
+  const resetAdvanceSearchModel = useStoreActions(
+    (actions) => actions.AdvanceSearchModel.reset,
+  );
+
+  useEffect(() => {
+    return () => {
+      resetMapSearchModel();
+      resetAdvanceSearchModel();
+    };
+  }, []);
+
   return (
     <Tab.Navigator
       screenOptions={{

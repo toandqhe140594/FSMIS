@@ -3,6 +3,16 @@ import { action, thunk } from "easy-peasy";
 import { API_URL } from "../constants";
 import http from "../utilities/Http";
 
+const initialState = {
+  listLocationReport: [],
+  listPostReport: [],
+  listReviewReport: [],
+  listCatchReport: [],
+  totalLocationReportPage: 0,
+  totalPostReportPage: 0,
+  totalReviewReportPage: 0,
+  totalCatchReportPage: 0,
+};
 const model = {
   listLocationReport: [],
   listPostReport: [],
@@ -319,6 +329,12 @@ const model = {
     }
   }),
   deleteCatch: "",
+  /**
+   * Reset all state of model to default value
+   */
+  reset: action(() => ({
+    ...initialState,
+  })),
 };
 
 export default model;

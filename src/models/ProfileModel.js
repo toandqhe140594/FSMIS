@@ -3,6 +3,28 @@ import { action, thunk } from "easy-peasy";
 import { API_URL } from "../constants";
 import http from "../utilities/Http";
 
+const initialState = {
+  userInfo: {
+    id: 1,
+    fullName: "Người dùng",
+    avatarUrl: "",
+    catchesCount: 0,
+  },
+  savedLocationList: [],
+  notificationList: [],
+  catchReportHistory: [],
+  checkinHistoryList: [],
+  catchReportDetail: {},
+  catchHistoryCurrentPage: 1,
+  catchHistoryTotalPage: 1,
+  checkinHistoryCurrentPage: 1,
+  checkinHistoryTotalPage: 1,
+  savedLocationCurrentPage: 1,
+  savedLocationTotalPage: 1,
+  notificationCurrentPage: 1,
+  notificationTotalPage: 1,
+};
+
 const model = {
   // Shape of useInfo from api return
   userInfo: {
@@ -291,5 +313,13 @@ const model = {
       throw new Error();
     }
   }),
+
+  /**
+   * Reset all state of model to default value
+   */
+  reset: action(() => ({
+    ...initialState,
+  })),
 };
+
 export default model;

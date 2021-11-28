@@ -4,6 +4,53 @@ import { API_URL } from "../constants";
 import { convertDateFormat } from "../utilities";
 import http from "../utilities/Http";
 
+const initialState = {
+  locationLatLng: {},
+  currentId: 2,
+  listOfFishingLocations: [],
+  locationDetails: {},
+
+  listOfLake: [],
+  lakeDetail: {},
+
+  staffManagementErrorMsg: "",
+  listOfStaff: [],
+  staffOverview: {},
+  staffDetail: {},
+
+  catchReportDetail: {},
+  unresolvedCatchReportList: [],
+  unresolvedCatchReportTotalPage: 1,
+  unresolvedCatchReportCurrentPage: 1,
+  catchReportHistory: [],
+  catchHistoryCurrentPage: 1,
+  catchHistoryTotalPage: 1,
+
+  checkinHistoryList: [],
+  anglerCheckinOverviewInfor: {},
+
+  locationReviewScore: {
+    score: null,
+    totalReviews: null,
+  },
+  locationReviewList: [],
+  totalReviewPage: 1,
+
+  locationPostList: [],
+  totalPostPage: 1,
+
+  locationCatchList: [], // List of public catch report to display on overview screen
+  totalCatchPage: 1,
+
+  currentPost: {},
+  postDetail: {},
+
+  checkinHistoryCurrentPage: 1,
+  checkinHistoryTotalPage: 1,
+
+  lakePostPageNo: 1,
+  currentPinPost: {},
+};
 // Need change in getCatchReportHistoryOverwrite about dates
 const model = {
   locationLatLng: {},
@@ -1083,6 +1130,13 @@ const model = {
       setPinSuccess(false);
     }
   }),
+
+  /**
+   * Reset all state of model to default value
+   */
+  reset: action(() => ({
+    ...initialState,
+  })),
 };
 
 export default model;

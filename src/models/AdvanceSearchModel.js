@@ -10,7 +10,14 @@ const DEFAULT_STATE = {
   fishSpeciesIdList: [],
   score: 0,
 };
-
+const initialState = {
+  prevStateData: {
+    ...DEFAULT_STATE,
+  },
+  totaListLocationPage: 0,
+  listLocationResult: [],
+  pageNo: 1,
+};
 const model = {
   prevStateData: {
     ...DEFAULT_STATE,
@@ -125,6 +132,13 @@ const model = {
       throw new Error();
     }
   }),
+
+  /**
+   * Reset all state of model to default value
+   */
+  reset: action(() => ({
+    ...initialState,
+  })),
 };
 
 export default model;

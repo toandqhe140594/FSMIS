@@ -3,6 +3,27 @@ import { action, thunk } from "easy-peasy";
 import { API_URL } from "../constants";
 import http from "../utilities/Http";
 
+const initialState = {
+  checkInState: null, // State indicate that the user is currently checkin at a fishing location or not
+  fishingLocationInfo: {},
+  lakeList: [],
+  fishList: [],
+  currentLakeId: null,
+  catchReportDetail: {
+    catchesDetailList: [
+      {
+        fishSpeciesId: 0,
+        quantity: 0,
+        returnToOwner: true,
+        weight: 0,
+      },
+    ],
+    description: "string",
+    hidden: true,
+    images: ["string"],
+    lakeId: 0,
+  },
+};
 const model = {
   checkInState: null, // State indicate that the user is currently checkin at a fishing location or not
   fishingLocationInfo: {},
@@ -163,5 +184,12 @@ const model = {
   }),
 
   // END OF CHECKIN RELATED STUFF
+
+  /**
+   * Reset all state of model to default value
+   */
+  reset: action(() => ({
+    ...initialState,
+  })),
 };
 export default model;

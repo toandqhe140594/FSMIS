@@ -26,10 +26,20 @@ const AnglerMainNavigator = () => {
   const getSavedLocationList = useStoreActions(
     (actions) => actions.ProfileModel.getSavedLocationList,
   );
+  const resetProfileModel = useStoreActions(
+    (actions) => actions.ProfileModel.reset,
+  );
+  const resetFManageModel = useStoreActions(
+    (actions) => actions.FManageModel.reset,
+  );
 
   useEffect(() => {
     getUserInfo();
     getSavedLocationList({ mode: "refresh" });
+    return () => {
+      resetProfileModel();
+      resetFManageModel();
+    };
   }, []);
 
   return (
