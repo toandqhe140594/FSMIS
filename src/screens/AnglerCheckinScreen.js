@@ -150,8 +150,17 @@ const CheckinScreen = () => {
   const setCheckInState = useStoreActions(
     (actions) => actions.CheckInModel.setCheckInState,
   );
+  const resetCheckInModel = useStoreActions(
+    (actions) => actions.CheckInModel.reset,
+  );
 
   const [isCheckin, setCheckin] = useState(false);
+
+  useEffect(() => {
+    return () => {
+      resetCheckInModel();
+    };
+  }, []);
 
   useEffect(() => {
     if (stateCheckIn === false) {

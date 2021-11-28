@@ -9,6 +9,7 @@ import ChangePhoneNumberScreen from "../screens/AnglerChangePhoneNumberScreen";
 import EditProfileScreen from "../screens/AnglerEditProfileScreen";
 import ResetPasswordScreen from "../screens/AnglerResetPasswordScreen";
 import FishingLocationOverviewScreen from "../screens/FLocationOverviewScreen";
+import FManageSuggestLocationScreen from "../screens/FManageSuggestLocationScreen";
 import LakeDetailScreen from "../screens/LakeDetailScreen";
 import MediaSelectScreen from "../screens/MediaSelectScreen";
 import OTPScreen from "../screens/OTPScreen";
@@ -82,6 +83,10 @@ const RootStackNavigator = () => {
       <RootStack.Screen
         name={ROUTE_NAMES.ADVANCE_SEARCH}
         component={AnglerAdvanceSearchScreen}
+      />
+      <RootStack.Screen
+        name={ROUTE_NAMES.FMANAGE_LOCATION_SUGGEST}
+        component={FManageSuggestLocationScreen}
       />
       <RootStack.Screen name={ROUTE_NAMES.OTP_SCREEN} component={OTPScreen} />
     </RootStack.Navigator>

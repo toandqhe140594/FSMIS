@@ -3,15 +3,16 @@ import { useStoreActions, useStoreState } from "easy-peasy";
 import { Button, VStack } from "native-base";
 import React, { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { ActivityIndicator, Dimensions, StyleSheet, View } from "react-native";
-import { Overlay } from "react-native-elements";
+import { Dimensions, StyleSheet, View } from "react-native";
 
 import FishCheckboxSelector from "../components/AdvanceSearch/FishCheckboxSelector";
 import MethodCheckboxSelector from "../components/AdvanceSearch/MethodCheckboxSelector";
 import InputComponent from "../components/common/InputComponent";
-import ProvinceSelector from "../components/common/ProvinceSelector";
+import OverlayLoading from "../components/common/OverlayLoading";
 import SelectComponent from "../components/common/SelectComponent";
 import HeaderTab from "../components/HeaderTab";
+import { DEFAULT_TIMEOUT, DICTIONARY } from "../constants";
+import { goBack, goToFManageSuggestScreen } from "../navigations";
 import { showToastMessage } from "../utilities";
 
 const OFFSET_BOTTOM = 80;
@@ -43,18 +44,13 @@ const styles = StyleSheet.create({
   button: {
     width: "47%",
   },
-  loadOnStart: { justifyContent: "center", alignItems: "center" },
-  loadOnSubmit: {
-    backgroundColor: "transparent",
-    justifyContent: "center",
-    alignItems: "center",
-  },
 });
 
 const AnglerAdvanceSearchScreen = () => {
   const navigation = useNavigation();
   const [isLoading, setIsLoading] = useState(true);
   const [fullScreen, setFullScreen] = useState(true);
+  const { provinceList } = useStoreState((state) => state.AddressModel);
   const { getFishingMethodList } = useStoreActions(
     (actions) => actions.FishingMethodModel,
   );
@@ -78,6 +74,10 @@ const AnglerAdvanceSearchScreen = () => {
   });
   const { handleSubmit, setValue } = methods;
 
+  const navigateToSuggestionScreen = () => {
+    goToFManageSuggestScreen(navigation);
+  };
+
   const onSubmit = (data) => {
     setIsLoading(true);
     const provinceIdList =
@@ -85,11 +85,11 @@ const AnglerAdvanceSearchScreen = () => {
     const submitData = { ...data, provinceIdList };
     searchFishingLocation({ submitData })
       .then(() => {
-        navigation.pop(1);
+        goBack(navigation);
       })
       .catch(() => {
         setIsLoading(false);
-        showToastMessage("Đã có lỗi xảy ra! Vui lòng thử lại sau");
+        showToastMessage(DICTIONARY.ALERT_ERROR_MSG);
       });
   };
 
@@ -99,75 +99,83 @@ const AnglerAdvanceSearchScreen = () => {
    */
   const handleReset = () => {
     resetPrevStateData();
-    setValue("input", "");
-    setValue("provinceIdList", 0);
-    setValue("fishingMethodIdList", []);
-    setValue("fishSpeciesIdList", []);
-    setValue("score", 0);
+    setValue(DICTIONARY.FORM_FIELD_SEARCH_INPUT, "");
+    setValue(DICTIONARY.FORM_FIELD_SEARCH_PROVINCE, 0);
+    setValue(DICTIONARY.FORM_FIELD_SEARCH_METHODS, []);
+    setValue(DICTIONARY.FORM_FIELD_SEARCH_SPECIES, []);
+    setValue(DICTIONARY.FORM_FIELD_SEARCH_SCORE, 0);
   };
 
   /**
    * Get all api data for select options
    */
   useEffect(() => {
-    Promise.all([getAllProvince(), getFishingMethodList(), getFishList()]).then(
-      () => {
+    Promise.all([getAllProvince(), getFishingMethodList(), getFishList()])
+      .then(() => {
         setIsLoading(false);
         setFullScreen(false);
-      },
-    );
+      })
+      .catch(() => {
+        goBack(navigation);
+      });
     const timeoutId = setTimeout(() => {
       setIsLoading(false);
       setFullScreen(false);
-    }, 10000);
+    }, DEFAULT_TIMEOUT);
+
     return () => {
       clearTimeout(timeoutId);
     };
   }, []);
 
+  if (isLoading && fullScreen) {
+    return <OverlayLoading coverScreen />;
+  }
   return (
     <>
-      <HeaderTab name="Tìm kiếm nâng cao" />
-      <Overlay
-        isVisible={isLoading && fullScreen}
-        fullScreen
-        overlayStyle={styles.loadOnStart}
-      >
-        <ActivityIndicator size={60} color="#2089DC" />
-      </Overlay>
+      <HeaderTab
+        name={DICTIONARY.ANGLER_ADVANCED_SEARCH_HEADER}
+        customIcon={{
+          name: "info-outline",
+          color: "blue",
+          type: "material",
+          onPress: navigateToSuggestionScreen,
+        }}
+      />
       <View style={styles.appContainer}>
         <FormProvider {...methods}>
           <VStack flex={1} space={2} style={styles.sectionWrapper}>
             <InputComponent
               myStyles={{ width: "90%", marginBottom: 4 }}
-              label="Từ khoá tìm kiếm"
-              placeholder="Nhập số điện thoại, tên hồ câu"
-              controllerName="input"
-            />
-            <ProvinceSelector
-              containerStyle={{ width: "90%" }}
-              label="Tỉnh/Thành phố"
-              placeholder="Chọn tỉnh/thành phố"
-              controllerName="provinceIdList"
-            />
-            <MethodCheckboxSelector
-              containerStyle={{ width: "90%" }}
-              label="Loại hình câu"
-              placeholder="Chọn loại hình câu"
-              controllerName="fishingMethodIdList"
-            />
-            <FishCheckboxSelector
-              containerStyle={{ width: "90%" }}
-              label="Loại cá"
-              placeholder="Chọn loại cá"
-              controllerName="fishSpeciesIdList"
+              label={DICTIONARY.SEARCH_INPUT_LABEL}
+              placeholder={DICTIONARY.INPUT_SEARCH_TERM_PLACEHOLDER}
+              controllerName={DICTIONARY.FORM_FIELD_SEARCH_INPUT}
             />
             <SelectComponent
               myStyles={{ width: "90%" }}
-              label="Đánh giá"
-              placeholder="Lọc theo đánh giá"
+              label={DICTIONARY.SEARCH_PROVINCE_LABEL}
+              placeholder={DICTIONARY.SELECT_SEARCH_PROVINCE_PLACEHOLDER}
+              controllerName={DICTIONARY.FORM_FIELD_SEARCH_PROVINCE}
+              data={provinceList}
+            />
+            <MethodCheckboxSelector
+              containerStyle={{ width: "90%" }}
+              label={DICTIONARY.SEARCH_METHODS_LABEL}
+              placeholder={DICTIONARY.SELECT_SEARCH_METHODS_PLACEHOLDER}
+              controllerName={DICTIONARY.FORM_FIELD_SEARCH_METHODS}
+            />
+            <FishCheckboxSelector
+              containerStyle={{ width: "90%" }}
+              label={DICTIONARY.SEARCH_SPECIES_LABEL}
+              placeholder={DICTIONARY.INPUT_SEARCH_SPECIES_PLACEHOLDER}
+              controllerName={DICTIONARY.FORM_FIELD_SEARCH_SPECIES}
+            />
+            <SelectComponent
+              myStyles={{ width: "90%" }}
+              label={DICTIONARY.SEARCH_SCORE_LABEL}
+              placeholder={DICTIONARY.INPUT_SEARCH_SCORE_PLACEHOLDER}
               data={scoreData}
-              controllerName="score"
+              controllerName={DICTIONARY.FORM_FIELD_SEARCH_SCORE}
             />
           </VStack>
           <View style={styles.buttonWrapper}>
@@ -175,7 +183,7 @@ const AnglerAdvanceSearchScreen = () => {
               variant="outline"
               style={styles.button}
               isLoading={isLoading}
-              isLoadingText="Đang tìm kiếm"
+              isLoadingText={DICTIONARY.SEARCH_LOADING_TEXT}
               onPress={handleReset}
             >
               Xoá bộ lọc
@@ -183,7 +191,7 @@ const AnglerAdvanceSearchScreen = () => {
             <Button
               style={styles.button}
               isLoading={isLoading}
-              isLoadingText="Đang tìm kiếm"
+              isLoadingText={DICTIONARY.SEARCH_LOADING_TEXT}
               onPress={handleSubmit(onSubmit)}
             >
               Tìm kiếm

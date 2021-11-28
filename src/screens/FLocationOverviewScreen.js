@@ -24,6 +24,9 @@ const FishingSpotDetailScreen = () => {
   const setCurrentId = useStoreActions(
     (actions) => actions.LocationModel.setCurrentId,
   );
+  const resetLocationModel = useStoreActions(
+    (actions) => actions.LocationModel.reset,
+  );
   const {
     getLocationOverviewById,
     getCheckinStatus,
@@ -43,6 +46,7 @@ const FishingSpotDetailScreen = () => {
       resetPersonalReview();
       setLocationReviewList({ data: [], status: "Overwrite" });
       setLocationOverview({});
+      resetLocationModel();
     };
   }, []);
 

@@ -5,6 +5,7 @@ import { ROUTE_NAMES } from "../constants";
 import FManageAddNewScreen from "../screens/FManageAddNewScreen";
 import FManageCatchReportHistory from "../screens/FManageCatchReportHistory";
 import FManageCheckinHistoryScreen from "../screens/FManageCheckinHistory";
+import FManageEditPendingProfileScreen from "../screens/FManageEditPendingProfileScreen";
 import FManageEditProfileScreen from "../screens/FManageEditProfileScreen";
 import FManageEmployeeAddScreen from "../screens/FManageEmployeeAddScreen";
 import FManageEmployeeDetailScreen from "../screens/FManageEmployeeDetailScreen";
@@ -21,7 +22,6 @@ import FManagePostCreateScreen from "../screens/FManagePostCreateScreen";
 import FManagePostEditScreen from "../screens/FManagePostEditScreen";
 import FManageScanQRCodeScreen from "../screens/FManageScanQRCodeScreen";
 import FManageSelectScreen from "../screens/FManageSelectScreen";
-import FManageSuggestLocationScreen from "../screens/FManageSuggestLocationScreen";
 import FManageVerifyCatchReportDetailScreen from "../screens/FManageVerifyCatchReportDetailScreen";
 import FManageVerifyCatchReportScreen from "../screens/FManageVerifyCatchReportScreen";
 import FManageVerifyCheckinScreen from "../screens/FManageVerifyCheckinScreen";
@@ -38,10 +38,6 @@ const ManageNavigator = () => {
       <ManageStack.Screen
         name={ROUTE_NAMES.FMANAGE_SELECTOR}
         component={FManageSelectScreen}
-      />
-      <ManageStack.Screen
-        name={ROUTE_NAMES.FMANAGE_LOCATION_SUGGEST}
-        component={FManageSuggestLocationScreen}
       />
       <ManageStack.Screen
         name={ROUTE_NAMES.FMANAGE_MAIN}
@@ -126,6 +122,10 @@ const ManageNavigator = () => {
       <ManageStack.Screen
         name={ROUTE_NAMES.FMANAGE_POST_CREATE}
         component={FManagePostCreateScreen}
+      />
+      <ManageStack.Screen
+        name={ROUTE_NAMES.FMANAGE_PROFILE_PENDING_EDIT}
+        component={FManageEditPendingProfileScreen}
       />
     </ManageStack.Navigator>
   );

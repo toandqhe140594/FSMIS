@@ -7,13 +7,14 @@ import { FormProvider, useForm } from "react-hook-form";
 import { StyleSheet, Text, View } from "react-native";
 import { Overlay } from "react-native-elements";
 
-import { SCHEMA } from "../../constants";
+import { DICTIONARY, SCHEMA } from "../../constants";
 import { showToastMessage } from "../../utilities";
 import InputComponent from "../common/InputComponent";
 
 const styles = StyleSheet.create({
   overlayContainer: {
     width: "90%",
+    backgroundColor: "white",
   },
   title: {
     fontSize: 20,
@@ -26,10 +27,19 @@ const styles = StyleSheet.create({
     alignItems: "center",
     margin: 4,
   },
+  buttonWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
+    margin: 4,
+    marginTop: 20,
+    justifyContent: "space-evenly",
+  },
   input: { width: "65%" },
   text: { fontSize: 16, width: "35%" },
   hint: { fontStyle: "italic", marginBottom: 6, alignSelf: "center" },
 });
+
+const RESET_VALUE = 0;
 
 const OverlayInputSection = ({ id, name, visible, toggleOverlay }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -38,25 +48,20 @@ const OverlayInputSection = ({ id, name, visible, toggleOverlay }) => {
   );
   const methods = useForm({
     mode: "onSubmit",
-    reValidateMode: "onChange",
+    reValidateMode: "onSubmit",
     defaultValues: { quantity: 0, weight: 0 },
     resolver: yupResolver(SCHEMA.FMANAGE_LAKE_FISH_EDIT_FORM),
   });
-  const { handleSubmit, reset, watch } = methods;
-  const watchQuantity = watch("quantity");
-  const watchWeight = watch("weight");
+  const { handleSubmit, reset, watch, setValue } = methods;
+  const watchQuantity = watch(DICTIONARY.FORM_FIELD_FISH_QUANTITY);
+  const watchWeight = watch(DICTIONARY.FORM_FIELD_FISH_STOCKING_WEIGHT);
   /**
    * To exit overlay, reset any error or previous input by use
    * setIsLoading to false
    * set visible to false to hide overlay
    */
   const handleOnExit = () => {
-    reset(
-      { quantity: 0, weight: 0 },
-      {
-        keepErrors: false,
-      },
-    );
+    reset({ quantity: 0, weight: 0 }, { keepErrors: false });
     setIsLoading(false);
     toggleOverlay({ visible: false });
   };
@@ -68,7 +73,7 @@ const OverlayInputSection = ({ id, name, visible, toggleOverlay }) => {
     );
     stockFishInLake({ id, updateData })
       .then(() => {
-        showToastMessage("Bồi cá thành công!");
+        showToastMessage(DICTIONARY.ALERT_LAKE_STOCKING_SUCCESS_MSG);
         handleOnExit();
       })
       .catch(() => {
@@ -82,7 +87,7 @@ const OverlayInputSection = ({ id, name, visible, toggleOverlay }) => {
    */
   useEffect(() => {
     if (watchQuantity === "") {
-      reset({ quantity: 0 }, { keepErrors: false });
+      setValue(DICTIONARY.FORM_FIELD_FISH_QUANTITY, RESET_VALUE);
     }
   }, [watchQuantity]);
 
@@ -92,7 +97,7 @@ const OverlayInputSection = ({ id, name, visible, toggleOverlay }) => {
    */
   useEffect(() => {
     if (watchWeight === "") {
-      reset({ weight: 0 }, { keepErrors: false });
+      setValue(DICTIONARY.FORM_FIELD_FISH_STOCKING_WEIGHT, RESET_VALUE);
     }
   }, [watchWeight]);
 
@@ -110,25 +115,20 @@ const OverlayInputSection = ({ id, name, visible, toggleOverlay }) => {
           <InputComponent
             useNumPad
             myStyles={styles.input}
-            controllerName="quantity"
-            placeholder="Nhập số con muốn bồi"
+            controllerName={DICTIONARY.FORM_FIELD_FISH_QUANTITY}
+            placeholder={DICTIONARY.INPUT_FISH_STOCKING_QUANTITY_PLACEHOLDER}
           />
         </View>
         <View style={styles.inputWrapper}>
           <Text style={styles.text}>Tổng cân nặng</Text>
           <InputComponent
             useNumPad
-            controllerName="weight"
+            controllerName={DICTIONARY.FORM_FIELD_FISH_STOCKING_WEIGHT}
             myStyles={styles.input}
-            placeholder="Nhập cân nặng đợt bồi (kg)"
+            placeholder={DICTIONARY.INPUT_FISH_STOCKING_WEIGHT_PLACEHOLDER}
           />
         </View>
-        <View
-          style={StyleSheet.compose(styles.inputWrapper, {
-            marginTop: 20,
-            justifyContent: "space-evenly",
-          })}
-        >
+        <View style={styles.buttonWrapper}>
           <Button w="45%" variant="outline" onPress={handleOnExit}>
             Quay lại
           </Button>

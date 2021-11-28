@@ -15,7 +15,28 @@ const initialPersonalReviewShape = {
   upvote: 0,
   downvote: 0,
 };
-
+const initialState = {
+  currentId: 1,
+  locationReviewScore: {
+    score: null,
+    totalReviews: null,
+  },
+  checkinStatus: null, // State that indicates if user is checked in the fishing location before
+  personalReview: {},
+  locationReviewList: [],
+  totalReviewPage: 1,
+  locationPostPageNumber: 0,
+  locationCatchPageNumber: 0,
+  locationOverview: {},
+  lakeList: [],
+  lakeDetail: {},
+  locationPostList: [],
+  locationCatchList: [],
+  totalPostPage: 1,
+  totalCatchPage: 1,
+  catchReportDetail: {},
+  currentPinPost: {},
+};
 const model = {
   currentId: 1,
   locationReviewScore: {
@@ -339,5 +360,12 @@ const model = {
       payload.setIsLoading(false);
     }
   }),
+
+  /**
+   * Reset all state of model to default value
+   */
+  reset: action(() => ({
+    ...initialState,
+  })),
 };
 export default model;

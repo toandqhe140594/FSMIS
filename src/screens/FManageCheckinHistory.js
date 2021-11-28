@@ -70,6 +70,33 @@ const FManageCheckinHistoryScreen = () => {
     resetCheckinHistory();
     onLoadMore();
   };
+
+  const closeModal = () => setModalVisible(false);
+
+  const renderItem = ({ item }) => (
+    <Box
+      borderBottomWidth="1"
+      _dark={{
+        borderColor: "gray.600",
+      }}
+      borderColor="coolGray.200"
+      pb="2"
+      backgroundColor="white"
+    >
+      <PressableCustomCard paddingX="3" paddingY="1">
+        <CheckInCard timeIn={item.checkInTime} timeOut={item.checkOutTime}>
+          <AvatarCard
+            avatarSize="md"
+            nameUser={item.name}
+            image={item.avatar}
+          />
+        </CheckInCard>
+      </PressableCustomCard>
+    </Box>
+  );
+
+  const keyExtractor = (item, index) => index.toString();
+
   return (
     <Box>
       <HeaderTab name="Lịch sử Check-in" />
@@ -80,11 +107,7 @@ const FManageCheckinHistoryScreen = () => {
           md: "25%",
         }}
       >
-        <Modal
-          isOpen={modalVisible}
-          onClose={() => setModalVisible(false)}
-          size="full"
-        >
+        <Modal isOpen={modalVisible} onClose={closeModal} size="full">
           <Modal.Content>
             <Modal.CloseButton />
             <Modal.Header>Chọn ngày</Modal.Header>
@@ -125,31 +148,8 @@ const FManageCheckinHistoryScreen = () => {
         <FlatList
           h="82%"
           data={checkinHistoryList}
-          renderItem={({ item }) => (
-            <Box
-              borderBottomWidth="1"
-              _dark={{
-                borderColor: "gray.600",
-              }}
-              borderColor="coolGray.200"
-              pb="2"
-              backgroundColor="white"
-            >
-              <PressableCustomCard paddingX="3" paddingY="1">
-                <CheckInCard
-                  timeIn={item.checkInTime}
-                  timeOut={item.checkOutTime}
-                >
-                  <AvatarCard
-                    avatarSize="md"
-                    nameUser={item.name}
-                    image={item.avatar}
-                  />
-                </CheckInCard>
-              </PressableCustomCard>
-            </Box>
-          )}
-          keyExtractor={(item, index) => index.toString()}
+          renderItem={renderItem}
+          keyExtractor={keyExtractor}
           onEndReached={onLoadMore}
         />
         <Box mt="10">

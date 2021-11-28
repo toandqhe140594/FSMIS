@@ -1,5 +1,7 @@
+import { AntDesign } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { Button, Input } from "native-base";
+import { useStoreActions } from "easy-peasy";
+import { Button, Icon, Input } from "native-base";
 import PropTypes from "prop-types";
 import React, { useEffect, useRef, useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
@@ -7,7 +9,8 @@ import { Text } from "react-native-elements";
 
 import HeaderTab from "../components/HeaderTab";
 import MiniMapView from "../components/MiniMapView";
-import { goBack, goToAdminCreateSuggestLocation } from "../navigations";
+import { goToAdminCreateSuggestLocation } from "../navigations";
+import { showAlertConfirmBox, showToastMessage } from "../utilities";
 // import { showToastMessage } from "../utilities";
 
 const styles = StyleSheet.create({
@@ -45,42 +48,49 @@ const AdminSuggestedLocationDetailScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const data = useRef(null);
-  // const [success, setSuccess] = useState(null);
+
+  const markHelpfulSuggested = useStoreActions(
+    (actions) => actions.AdminFLocationModel.markHelpfulSuggested,
+  );
+
   const [loading, setLoading] = useState(false);
+  const [, setForceUpdate] = useState(Date.now());
 
-  // const goBackAfterSuccess = () => {
-  //   goBack(navigation);
-  // };
-
-  const removeSuggestedRecord = () => {
+  const markRecordAsHelpfulCall = () => {
     setLoading(true);
+    markHelpfulSuggested({ id: data.current?.id })
+      .then(() => {
+        data.current.helpful = true;
+        setForceUpdate();
+        setLoading(false);
+        showToastMessage("Đánh dấu hữu ích thành công");
+      })
+      .catch(() => {
+        setLoading(false);
+      });
+  };
+  const markAsHelpfulAction = () => {
+    showAlertConfirmBox(
+      "Đánh dấu bản ghi này là hữu ích?",
+      "Cần thủ sẽ nhận được thông báo cảm ơn vì đóng góp của họ",
+      markRecordAsHelpfulCall,
+    );
   };
 
   const navigateToAdminCreateSuggestLocation = () => {
     goToAdminCreateSuggestLocation(navigation, { suggestData: data.current });
   };
+
   useEffect(() => {
     if (route.params) {
       data.current = route.params;
-      delete data.current.id;
-      delete data.current.senderPhone;
     }
+    setForceUpdate();
   }, []);
-
-  // useEffect(() => {
-  //   if (success) {
-  //     showToastMessage("Xóa bản ghi thành công");
-  //     goBackAfterSuccess();
-  //   } else if (success === false) {
-  //     showToastMessage("Có lỗi xảy ra");
-  //     setLoading(false);
-  //   }
-  //   setSuccess(null);
-  // }, [success]);
 
   return (
     <ScrollView style={{ backgroundColor: "white" }}>
-      <HeaderTab name={route.params?.name} />
+      <HeaderTab name={data.current?.name} />
       <View
         style={{
           width: "100%",
@@ -90,7 +100,7 @@ const AdminSuggestedLocationDetailScreen = () => {
         }}
       >
         <Text style={styles.labelStyle}>
-          Số điện thoại người gửi: {route.params?.senderPhone}
+          Số điện thoại người gửi: {data.current?.senderPhone}
         </Text>
         <View
           style={{
@@ -98,27 +108,27 @@ const AdminSuggestedLocationDetailScreen = () => {
             marginTop: 10,
           }}
         >
-          <InputDataView label="Tên địa điểm câu" value={route.params?.name} />
+          <InputDataView label="Tên địa điểm câu" value={data.current?.name} />
           <InputDataView
             label="Số điện thoại chủ hồ"
-            value={route.params?.phone}
+            value={data.current?.phone}
           />
-          <InputDataView label="Website" value={route.params?.website} />
-          <InputDataView label="Địa chỉ" value={route.params?.address} />
-          {route.params?.latitude ? (
+          <InputDataView label="Website" value={data.current?.website} />
+          <InputDataView label="Địa chỉ" value={data.current?.address} />
+          {data.current?.latitude ? (
             <>
               <Text style={styles.labelStyle}>Vị trí</Text>
               <View style={{ height: 150, marginTop: 10 }}>
                 <MiniMapView
-                  latitude={route.params.latitude}
-                  longitude={route.params.longitude}
+                  latitude={data.current.latitude}
+                  longitude={data.current.longitude}
                 />
               </View>
             </>
           ) : (
             <></>
           )}
-          {route.params?.additionalInformation ? (
+          {data.current?.additionalInformation ? (
             <>
               <Text
                 style={{ fontSize: 16, fontWeight: "bold", marginVertical: 8 }}
@@ -126,7 +136,7 @@ const AdminSuggestedLocationDetailScreen = () => {
                 Thông tin thêm
               </Text>
               <Input
-                value={`${route.params?.additionalInformation}`}
+                value={`${data.current?.additionalInformation}`}
                 fontSize="md"
                 isDisabled
                 multiline
@@ -143,19 +153,27 @@ const AdminSuggestedLocationDetailScreen = () => {
           <Button.Group direction="column" mt={5} mb={5}>
             <Button
               onPress={navigateToAdminCreateSuggestLocation}
-              isLoading={loading}
               isDisabled={loading}
             >
               Tạo điểm câu với thông tin
             </Button>
-            <Button
-              colorScheme="emerald"
-              onPress={removeSuggestedRecord}
-              isLoading={loading}
-              isDisabled={loading}
-            >
-              Đánh dấu hữu ích
-            </Button>
+            {data.current?.helpful ? (
+              <Button
+                colorScheme="emerald"
+                disabled
+                leftIcon={<Icon as={AntDesign} name="check" size={5} />}
+              >
+                Hữu ích
+              </Button>
+            ) : (
+              <Button
+                onPress={markAsHelpfulAction}
+                isLoading={loading}
+                isDisabled={loading}
+              >
+                Đánh dấu hữu ích
+              </Button>
+            )}
           </Button.Group>
         </View>
       </View>

@@ -11,7 +11,7 @@ import React, { useCallback, useRef, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 
 import InputComponent from "../components/common/InputComponent";
-import { ROUTE_NAMES, SCHEMA } from "../constants";
+import { DICTIONARY, ROUTE_NAMES, SCHEMA } from "../constants";
 import { goToChangePasswordScreen, goToOTPScreen } from "../navigations";
 
 const PhoneIcon = () => (
@@ -39,8 +39,12 @@ const ForgotPasswordScreen = () => {
   const onSubmit = (data) => {
     setLoading(true);
     phoneNumber.current = data.phoneNumber;
-    sendOtp({ phone: data.phoneNumber, existedStatus: "EXISTED" })
+    sendOtp({
+      phone: data.phoneNumber,
+      existedStatus: DICTIONARY.STATUS_EXISTED,
+    })
       .then(() => {
+        setLoading(false);
         goToOTPScreen(
           navigation,
           ROUTE_NAMES.PASSWORD_FORGOT,
@@ -55,8 +59,9 @@ const ForgotPasswordScreen = () => {
   useFocusEffect(
     // useCallback will listen to route.param
     useCallback(() => {
-      if (route.params?.otpSuccess === true)
+      if (route.params?.otpSuccess === true) {
         goToChangePasswordScreen(navigation, { ...phoneNumber.current });
+      }
     }, [route.params]),
   );
 
@@ -69,8 +74,8 @@ const ForgotPasswordScreen = () => {
           {/* Phone number input field */}
           <InputComponent
             useNumPad
-            placeholder="Nhập số điện thoại"
-            controllerName="phoneNumber"
+            placeholder={DICTIONARY.INPUT_PHONE_NUMBER_PLACEHOLDER}
+            controllerName={DICTIONARY.FORM_FIELD_PHONE_NUMBER}
             leftIcon={<PhoneIcon />}
           />
           {/* Submit button */}

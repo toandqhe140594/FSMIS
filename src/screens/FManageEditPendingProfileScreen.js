@@ -20,8 +20,8 @@ import TextAreaComponent from "../components/common/TextAreaComponent";
 import WardSelector from "../components/common/WardSelector";
 import MapOverviewBox from "../components/FLocationEditProfile/MapOverviewBox";
 import HeaderTab from "../components/HeaderTab";
-import { DICTIONARY, ROUTE_NAMES, SCHEMA } from "../constants";
-import { goToOTPScreen } from "../navigations";
+import { DEFAULT_TIMEOUT, DICTIONARY, ROUTE_NAMES, SCHEMA } from "../constants";
+import { goBack, goToOTPScreen } from "../navigations";
 import { showAlertBox } from "../utilities";
 
 const styles = StyleSheet.create({
@@ -39,7 +39,7 @@ const getAddressFromFullAddress = (fullAddress, addressFromWard) => {
   return result;
 };
 
-const FManageEditProfileScreen = () => {
+const FManageEditPendingProfileScreen = () => {
   const route = useRoute();
   const locationData = useRef(null);
   const navigation = useNavigation();
@@ -48,40 +48,54 @@ const FManageEditProfileScreen = () => {
   const { locationLatLng, locationDetails } = useStoreState(
     (states) => states.FManageModel,
   );
-  const { resetDataList, getAllProvince } = useStoreActions(
-    (actions) => actions.AddressModel,
-  );
-  const { editFishingLocation } = useStoreActions(
-    (actions) => actions.FManageModel,
-  );
+  const { resetDataList } = useStoreActions((actions) => actions.AddressModel);
+  const { editFishingLocation, getLocationDetailsById, setLocationLatLng } =
+    useStoreActions((actions) => actions.FManageModel);
   const sendOtp = useStoreActions((actions) => actions.UtilModel.sendOtp);
   const methods = useForm({
     mode: "onSubmit",
     reValidateMode: "onSubmit",
     defaultValues: {
-      name: locationDetails.name,
-      phone: locationDetails.phone,
-      website: locationDetails.website,
-      address: getAddressFromFullAddress(
-        locationDetails.address,
-        locationDetails.addressFromWard,
-      ),
-      provinceId: locationDetails.addressFromWard.provinceId,
-      districtId: locationDetails.addressFromWard.districtId,
-      wardId: locationDetails.addressFromWard.wardId,
-      description: locationDetails.description,
-      service: locationDetails.timetable,
-      timetable: locationDetails.service,
-      rule: locationDetails.rule,
-      imageArray: locationDetails.image.map((image, index) => ({
-        id: index,
-        base64: image,
-      })),
+      provinceId: 0,
+      districtId: 0,
+      wardId: 0,
+      imageArray: [],
     },
     resolver: yupResolver(SCHEMA.FMANAGE_PROFILE_FORM),
   });
 
   const { handleSubmit, setValue } = methods;
+
+  const setDefaultValues = () => {
+    setValue("name", locationDetails.name);
+    setValue("phone", locationDetails.phone);
+    setValue("website", locationDetails.website);
+    setValue(
+      "address",
+      getAddressFromFullAddress(
+        locationDetails.address,
+        locationDetails.addressFromWard,
+      ),
+    );
+    setValue("provinceId", locationDetails.addressFromWard.provinceId);
+    setValue("districtId", locationDetails.addressFromWard.districtId);
+    setValue("wardId", locationDetails.addressFromWard.wardId);
+    setValue("description", locationDetails.description);
+    setValue("service", locationDetails.timetable);
+    setValue("timetable", locationDetails.service);
+    setValue("rule", locationDetails.rule);
+    setValue(
+      "imageArray",
+      locationDetails.image.map((image, index) => ({
+        id: index,
+        base64: image,
+      })),
+    );
+    setLocationLatLng({
+      longitude: locationDetails.longitude,
+      latitude: locationDetails.latitude,
+    });
+  };
 
   const handleError = () => {
     setIsLoading(false);
@@ -97,6 +111,13 @@ const FManageEditProfileScreen = () => {
   };
 
   const onSubmit = (data) => {
+    if (!locationLatLng.latitude) {
+      showAlertBox(
+        DICTIONARY.ALERT_TITLE,
+        DICTIONARY.ALERT_LOCATION_POSITION_EMPTY,
+      );
+      return;
+    }
     setIsLoading(true);
     const images = data.imageArray.map((pic) => pic.base64);
     delete data.imageArray;
@@ -111,7 +132,7 @@ const FManageEditProfileScreen = () => {
           setIsLoading(false);
           goToOTPScreen(
             navigation,
-            ROUTE_NAMES.FMANAGE_PROFILE_EDIT,
+            ROUTE_NAMES.FMANAGE_PROFILE_PENDING_EDIT,
             locationData.current.phone,
           );
         })
@@ -124,19 +145,32 @@ const FManageEditProfileScreen = () => {
   };
 
   useEffect(() => {
-    getAllProvince().then(() => {
-      setIsLoading(false);
-      setFullScreen(false);
-    });
+    if (route.params?.id) {
+      getLocationDetailsById({ id: route.params.id }).catch(() => {
+        handleError();
+        goBack(navigation);
+      });
+    }
     const loadingId = setTimeout(() => {
       setIsLoading(false);
       setFullScreen(false);
-    }, 10000);
+    }, DEFAULT_TIMEOUT);
     return () => {
       resetDataList();
       clearTimeout(loadingId);
     };
   }, []);
+
+  /**
+   * Set default values for fields when data returns
+   */
+  useEffect(() => {
+    if (Object.keys(locationDetails).length) {
+      setDefaultValues();
+      setIsLoading(false);
+      setFullScreen(false);
+    }
+  }, [locationDetails]);
 
   // Fire when naviagtes back to this screen
   useFocusEffect(
@@ -161,8 +195,8 @@ const FManageEditProfileScreen = () => {
   return (
     <>
       <HeaderTab name={DICTIONARY.FMANAGE_EDIT_LOCATION_HEADER} />
-      <OverlayLoading loading={isLoading} />
       <ScrollView>
+        <OverlayLoading loading={isLoading} />
         <FormProvider {...methods}>
           <VStack space={3} divider={<Divider />}>
             <Center>
@@ -313,4 +347,4 @@ const FManageEditProfileScreen = () => {
   );
 };
 
-export default FManageEditProfileScreen;
+export default FManageEditPendingProfileScreen;

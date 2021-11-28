@@ -15,6 +15,10 @@ const createFilterObject = (data) => {
   return filterObject;
 };
 
+const initialState = {
+  currentLocation: null,
+  locationList: [],
+};
 const model = {
   currentLocation: null,
   locationList: [],
@@ -31,5 +35,11 @@ const model = {
     });
     actions.setLocationList(data);
   }),
+  /**
+   * Reset all state of model to default value
+   */
+  reset: action(() => ({
+    ...initialState,
+  })),
 };
 export default model;

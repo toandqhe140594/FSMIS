@@ -5,6 +5,7 @@ import React, { useEffect } from "react";
 import { Controller, useFieldArray, useFormContext } from "react-hook-form";
 import { StyleSheet, Text, View } from "react-native";
 
+import { DICTIONARY } from "../../constants";
 import FieldWatcherResetter from "../common/FieldWatcherResetter";
 import InputComponent from "../common/InputComponent";
 import SelectComponent from "../common/SelectComponent";
@@ -33,11 +34,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 8,
     marginVertical: 5,
-    backgroundColor: "#fafafa",
+    backgroundColor: "white",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.8,
-    shadowRadius: 2,
+    shadowRadius: 1,
     elevation: 5,
   },
   rowWrapper: {
@@ -62,11 +63,15 @@ const CatchReportSection = ({ fishList }) => {
   } = useFormContext();
   const { fields, append, remove } = useFieldArray({
     control,
-    name: "catchesDetailList",
+    name: DICTIONARY.FORM_FIELD_CATCH_REPORT_CARD,
     shouldUnregister: true,
   });
   const handleAppend = () => {
-    append({ fishSpeciesId: 0, weight: 0, quantity: 0 });
+    append({
+      [DICTIONARY.FORM_FIELD_FISH_SPECIES]: 0,
+      [DICTIONARY.FORM_FIELD_CATCH_REPORT_FISH_WEIGHT]: 0,
+      [DICTIONARY.FORM_FIELD_CATCH_REPORT_FISH_QUANTITY]: 0,
+    });
   };
   const handleRemove = (index) => () => {
     remove(index);
@@ -77,6 +82,7 @@ const CatchReportSection = ({ fishList }) => {
   useEffect(() => {
     handleAppend();
   }, []);
+
   return (
     <>
       {/* fields controls each object with field fishType, catches, totalWeight and isReleased */}
@@ -85,15 +91,19 @@ const CatchReportSection = ({ fishList }) => {
           <SelectComponent
             myStyles={{ marginBottom: 8 }}
             data={fishList}
-            itemKeyIdentifier="fishInLakeId"
-            placeholder="Chọn loại cá bắt được"
-            controllerName={`catchesDetailList[${index}].fishInLakeId`}
+            itemKeyIdentifier={DICTIONARY.FORM_FIELD_CATCH_REPORT_FISH_IN_LAKE}
+            placeholder={DICTIONARY.SELECT_CATCH_REPORT_SPECIES_PLACEHOLDER}
+            controllerName={`${DICTIONARY.FORM_FIELD_CATCH_REPORT_CARD}[${index}].${DICTIONARY.FORM_FIELD_CATCH_REPORT_FISH_IN_LAKE}`}
             useCustomError
-            myError={errors.catchesDetailList?.[index]?.fishInLakeId}
+            myError={
+              errors[DICTIONARY.FORM_FIELD_CATCH_REPORT_CARD]?.[index]?.[
+                DICTIONARY.FORM_FIELD_CATCH_REPORT_FISH_IN_LAKE
+              ]
+            }
           />
           <DependentFieldWatcher
-            name={`catchesDetailList[${index}].fishInLakeId`}
-            dependentField={`catchesDetailList[${index}].fishSpeciesId`}
+            name={`${DICTIONARY.FORM_FIELD_CATCH_REPORT_CARD}[${index}].${DICTIONARY.FORM_FIELD_CATCH_REPORT_FISH_IN_LAKE}`}
+            dependentField={`${DICTIONARY.FORM_FIELD_CATCH_REPORT_CARD}[${index}].${DICTIONARY.FORM_FIELD_FISH_SPECIES}`}
             data={fishList}
           />
           <Text style={styles.hint}>
@@ -102,25 +112,37 @@ const CatchReportSection = ({ fishList }) => {
           <InputComponent
             useNumPad
             myStyles={{ marginBottom: 8 }}
-            placeholder="Nhập số con bắt được"
+            placeholder={DICTIONARY.INPUT_CATCH_REPORT_QUANTITY_PLACEHOLDER}
             leftIcon={<FishIcon />}
-            controllerName={`catchesDetailList[${index}].quantity`}
+            controllerName={`${DICTIONARY.FORM_FIELD_CATCH_REPORT_CARD}[${index}].${DICTIONARY.FORM_FIELD_CATCH_REPORT_FISH_QUANTITY}`}
             useCustomError
-            myError={errors.catchesDetailList?.[index]?.quantity}
+            myError={
+              errors[DICTIONARY.FORM_FIELD_CATCH_REPORT_CARD]?.[index]?.[
+                DICTIONARY.FORM_FIELD_CATCH_REPORT_FISH_QUANTITY
+              ]
+            }
           />
-          <FieldWatcherResetter name={`catchesDetailList[${index}].quantity`} />
+          <FieldWatcherResetter
+            name={`${DICTIONARY.FORM_FIELD_CATCH_REPORT_CARD}[${index}].${DICTIONARY.FORM_FIELD_CATCH_REPORT_FISH_QUANTITY}`}
+          />
           <InputComponent
             useNumPad
-            placeholder="Nhập cân nặng bắt được (kg)"
+            placeholder={DICTIONARY.INPUT_CATCH_REPORT_WEIGHT_PLACEHOLDER}
             leftIcon={<WeightIcon />}
-            controllerName={`catchesDetailList[${index}].weight`}
+            controllerName={`${DICTIONARY.FORM_FIELD_CATCH_REPORT_CARD}[${index}].${DICTIONARY.FORM_FIELD_CATCH_REPORT_FISH_WEIGHT}`}
             useCustomError
-            myError={errors.catchesDetailList?.[index]?.weight}
+            myError={
+              errors[DICTIONARY.FORM_FIELD_CATCH_REPORT_CARD]?.[index]?.[
+                DICTIONARY.FORM_FIELD_CATCH_REPORT_FISH_WEIGHT
+              ]
+            }
           />
-          <FieldWatcherResetter name={`catchesDetailList[${index}].weight`} />
+          <FieldWatcherResetter
+            name={`${DICTIONARY.FORM_FIELD_CATCH_REPORT_CARD}[${index}].${DICTIONARY.FORM_FIELD_CATCH_REPORT_FISH_WEIGHT}`}
+          />
           <View style={styles.rowWrapper}>
             <Controller
-              name={`catchesDetailList[${index}].returnToOwner`}
+              name={`${DICTIONARY.FORM_FIELD_CATCH_REPORT_CARD}[${index}].${DICTIONARY.FORM_FIELD_CATCH_REPORT_FISH_RETURN_TO_OWNER}`}
               control={control}
               render={({ field: { value, onChange } }) => (
                 <Checkbox value={value} onChange={onChange}>

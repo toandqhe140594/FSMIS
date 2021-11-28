@@ -5,7 +5,15 @@ import { useFormContext, useWatch } from "react-hook-form";
 
 import SelectComponent from "./SelectComponent";
 
-const DistrictSelector = ({ label, placeholder, controllerName }) => {
+const RESET_VALUE = 0;
+
+const DistrictSelector = ({
+  label,
+  hasAsterisk,
+  placeholder,
+  controllerName,
+  dependentField,
+}) => {
   const { control, setValue } = useFormContext();
   const canBeReset = useRef(false);
   const watchDistrict = useWatch({ control, name: controllerName });
@@ -18,7 +26,7 @@ const DistrictSelector = ({ label, placeholder, controllerName }) => {
     getWardByDistrictId({ id: watchDistrict })
       .then(() => {
         if (canBeReset.current) {
-          setValue("wardId", 0);
+          setValue(dependentField, RESET_VALUE);
         } else canBeReset.current = true;
       })
       .catch(() => {
@@ -30,7 +38,7 @@ const DistrictSelector = ({ label, placeholder, controllerName }) => {
     <SelectComponent
       label={label}
       placeholder={placeholder}
-      hasAsterisk
+      hasAsterisk={hasAsterisk}
       controllerName={controllerName}
       data={districtList}
     />
@@ -39,14 +47,18 @@ const DistrictSelector = ({ label, placeholder, controllerName }) => {
 
 DistrictSelector.propTypes = {
   label: PropTypes.string,
+  hasAsterisk: PropTypes.bool,
   placeholder: PropTypes.string,
   controllerName: PropTypes.string,
+  dependentField: PropTypes.string,
 };
 
 DistrictSelector.defaultProps = {
   label: "",
+  hasAsterisk: false,
   placeholder: "",
   controllerName: "",
+  dependentField: "wardId",
 };
 
 export default React.memo(DistrictSelector);

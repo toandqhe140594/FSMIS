@@ -8,9 +8,9 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { Overlay } from "react-native-elements";
 
 import { goToAdminReviewReportDetailScreen } from "../../navigations";
+import OverlayLoading from "../common/OverlayLoading";
 import HeaderTab from "../HeaderTab";
 import ReportCard from "./ReportCard";
 
@@ -36,18 +36,24 @@ const ReviewReportRoute = () => {
   const { getListReviewReport, resetReportList } = useStoreActions(
     (actions) => actions.ReportModel,
   );
+
+  const handleReportReviewDetailNavigate = (id, active) => () => {
+    goToAdminReviewReportDetailScreen(navigation, {
+      isActive: active,
+      id,
+    });
+  };
+
+  const keyExtractor = (item) => item.id.toString();
+
   const renderItem = ({ item }) => (
     <TouchableOpacity
-      onPress={() => {
-        goToAdminReviewReportDetailScreen(navigation, {
-          id: item.id,
-          isActive: item.active,
-        });
-      }}
+      onPress={handleReportReviewDetailNavigate(item.id, item.active)}
     >
       <ReportCard {...item} isReviewReport />
     </TouchableOpacity>
   );
+
   const renderFooter = () =>
     isLoading && !bigLoading ? (
       <View margin={12}>
@@ -118,17 +124,7 @@ const ReviewReportRoute = () => {
   return (
     <>
       <HeaderTab name="Quản lý báo cáo" />
-      <Overlay
-        isVisible={isLoading && bigLoading}
-        fullScreen
-        overlayStyle={{
-          justifyContent: "center",
-          alignItems: "center",
-          backgroundColor: "transparent",
-        }}
-      >
-        <ActivityIndicator size={60} color="#2089DC" />
-      </Overlay>
+      <OverlayLoading loading={isLoading && bigLoading} />
       <View marginBottom={OFF_SET}>
         <Select
           w="90%"
@@ -151,7 +147,7 @@ const ReviewReportRoute = () => {
 
         <FlatList
           height="100%"
-          keyExtractor={(item) => `${item.id}`}
+          keyExtractor={keyExtractor}
           data={listReviewReport}
           renderItem={renderItem}
           ListFooterComponent={renderFooter}

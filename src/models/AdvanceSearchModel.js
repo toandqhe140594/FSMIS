@@ -10,7 +10,14 @@ const DEFAULT_STATE = {
   fishSpeciesIdList: [],
   score: 0,
 };
-
+const initialState = {
+  prevStateData: {
+    ...DEFAULT_STATE,
+  },
+  totaListLocationPage: 0,
+  listLocationResult: [],
+  pageNo: 1,
+};
 const model = {
   prevStateData: {
     ...DEFAULT_STATE,
@@ -44,6 +51,16 @@ const model = {
    */
   setTotalPage: action((state, payload) => {
     state.totaListLocationPage = payload.totalPage;
+  }),
+
+  /**
+   * Clear all state to default
+   */
+  clearSearchData: action((state) => {
+    state.prevStateData = { ...DEFAULT_STATE };
+    state.totaListLocationPage = 0;
+    state.listLocationResult = [];
+    state.pageNo = 1;
   }),
 
   /**
@@ -115,6 +132,13 @@ const model = {
       throw new Error();
     }
   }),
+
+  /**
+   * Reset all state of model to default value
+   */
+  reset: action(() => ({
+    ...initialState,
+  })),
 };
 
 export default model;

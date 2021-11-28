@@ -13,7 +13,7 @@ import { useWindowDimensions } from "react-native";
 import InputComponent from "../components/common/InputComponent";
 import PasswordInput from "../components/common/PasswordInput";
 import HeaderTab from "../components/HeaderTab";
-import { ROUTE_NAMES, SCHEMA } from "../constants";
+import { DICTIONARY, ROUTE_NAMES, SCHEMA } from "../constants";
 import { goToOTPScreen } from "../navigations";
 import { showAlertConfirmBox, showToastMessage } from "../utilities";
 
@@ -24,6 +24,7 @@ const ChangePhoneNumberScreen = () => {
   const formData = useRef(null);
   const methods = useForm({
     mode: "onSubmit",
+    reValidateMode: "onSubmit",
     resolver: yupResolver(SCHEMA.CHANGE_PHONE_NUMBER_FORM),
   });
   const { handleSubmit } = methods;
@@ -48,7 +49,7 @@ const ChangePhoneNumberScreen = () => {
   const changePhoneNumberAction = (data) => () => {
     setIsLoading(true);
     formData.current = data;
-    sendOtp({ phone: data.phone, existedStatus: "NONEXISTED" })
+    sendOtp({ phone: data.phone, existedStatus: DICTIONARY.STATUS_NON_EXISTED })
       .then(() => {
         setIsLoading(false);
         goToOTPScreen(
@@ -62,8 +63,8 @@ const ChangePhoneNumberScreen = () => {
 
   const onSubmit = (data) => {
     showAlertConfirmBox(
-      "Đổi số điện thoại",
-      "Bạn muốn thay đổi số điện thoại liên kết với tài khoản này?",
+      DICTIONARY.ALERT_TITLE,
+      DICTIONARY.ALERT_CHANGE_PHONE_PROMPT_MSG,
       changePhoneNumberAction(data),
     );
   };
@@ -78,7 +79,7 @@ const ChangePhoneNumberScreen = () => {
         setIsLoading(true);
         changePhoneNumber({ ...formData.current })
           .then(() => {
-            showToastMessage("Thay đổi số điện thoại thành công");
+            showToastMessage(DICTIONARY.TOAST_CHANGE_PHONE_NUMBER_SUCCESS_MSG);
             logOut();
           })
           .catch(handleError);
@@ -88,7 +89,7 @@ const ChangePhoneNumberScreen = () => {
 
   return (
     <Center flex={1} minHeight={Math.round(useWindowDimensions().height)}>
-      <HeaderTab name="Thay đổi số điện thoại" />
+      <HeaderTab name={DICTIONARY.ANGLER_CHANGE_PHONE_NUMBER_HEADER} />
       <FormProvider {...methods}>
         <VStack
           flex={1}
@@ -98,25 +99,25 @@ const ChangePhoneNumberScreen = () => {
           w={{ base: "70%", md: "50%", lg: "30%" }}
         >
           <InputComponent
-            label="Số điện thoại"
+            label={DICTIONARY.PHONE_NUMBER_LABEL}
             useNumPad
             isTitle
             hasAsterisk
-            placeholder="Nhập số điện thoại"
-            controllerName="phone"
+            placeholder={DICTIONARY.INPUT_PHONE_NUMBER_PLACEHOLDER}
+            controllerName={DICTIONARY.FORM_FIELD_ANGLER_PHONE}
           />
           <PasswordInput
-            label="Mật khẩu"
+            label={DICTIONARY.PASSWORD_LABEL}
             isTitle
             hasAsterisk
-            placeholder="Nhập mật khẩu"
-            controllerName="password"
+            placeholder={DICTIONARY.INPUT_PASSWORD_PLACEHOLDER}
+            controllerName={DICTIONARY.FORM_FIELD_PASSWORD}
           />
           {/* Continue/Submit button */}
           <Button
             mt={4}
             isLoading={isLoading}
-            isLoadingText="Đang xử lý"
+            isLoadingText={DICTIONARY.PROCESSING_BUTTON_LABEL}
             onPress={handleSubmit(onSubmit)}
           >
             Tiếp tục

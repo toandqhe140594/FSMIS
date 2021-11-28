@@ -8,20 +8,20 @@ import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, Button, Center, Divider, Stack, Text, VStack } from "native-base";
 import React, { useCallback, useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { ActivityIndicator, ScrollView, StyleSheet } from "react-native";
-import { Overlay } from "react-native-elements";
+import { ScrollView, StyleSheet } from "react-native";
 
 import DistrictSelector from "../components/common/DistrictSelector";
 import InputComponent from "../components/common/InputComponent";
 import InputWithClipboard from "../components/common/InputWithClipboard";
-// import MultiImageSection from "../components/common/MultiImageSection";
+import MultiImageSection from "../components/common/MultiImageSection";
+import OverlayLoading from "../components/common/OverlayLoading";
 import ProvinceSelector from "../components/common/ProvinceSelector";
 import TextAreaComponent from "../components/common/TextAreaComponent";
 import WardSelector from "../components/common/WardSelector";
 import MapOverviewBox from "../components/FLocationEditProfile/MapOverviewBox";
 import HeaderTab from "../components/HeaderTab";
-import { SCHEMA } from "../constants";
-// import { goBack } from "../navigations";
+import { DICTIONARY, ROUTE_NAMES, SCHEMA } from "../constants";
+import { goBack } from "../navigations";
 import { showAlertAbsoluteBox, showAlertBox } from "../utilities";
 
 const styles = StyleSheet.create({
@@ -31,57 +31,7 @@ const styles = StyleSheet.create({
   button: {
     width: "90%",
   },
-  loadOnStart: { justifyContent: "center", alignItems: "center" },
-  loadOnSubmit: {
-    backgroundColor: "transparent",
-    justifyContent: "center",
-    alignItems: "center",
-  },
 });
-
-const ALERT_TITLE = "Thông báo";
-const ALERT_ADD_LOCATION_SUCCESS_MSG = "Thêm điểm câu thành công";
-const ALERT_ERROR_MSG = "Đã xảy ra lỗi! Vui lòng thử lại sau.";
-const FMANAGE_ADD_LOCATION_HEADER = "Tạo điểm câu mới";
-
-const FORM_FIELD_IMAGE_ARRAY = "imageArray";
-const FORM_FIELD_LOCATION_NAME = "name";
-const FORM_FIELD_LOCATION_PHONE = "phone";
-const FORM_FIELD_LOCATION_WEBSITE = "website";
-const FORM_FIELD_ADDRESS = "address";
-const FORM_FIELD_PROVINCE = "provinceId";
-const FORM_FIELD_DISTRICT = "districtId";
-const FORM_FIELD_WARD = "wardId";
-const FORM_FIELD_LOCATION_DESCRIPTION = "description";
-const FORM_FIELD_LOCATION_TIMETABLE = "timetable";
-const FORM_FIELD_LOCATION_SERVICE = "service";
-const FORM_FIELD_LOCATION_RULE = "rule";
-
-const CONFIRM_BUTTON_LABEL = "Xác nhận";
-const LOCATION_NAME_LABEL = "Tên điểm câu";
-const LOCATION_PHONE_LABEL = "Số điện thoại";
-const LOCATION_WEBSITE_LABEL = "Website";
-const ADDRESS_LABEL = "Địa chỉ";
-const PROVINCE_LABEL = "Tỉnh/Thành phố";
-const DISTRICT_LABEL = "Quận/Huyện";
-const WARD_LABEL = "Phường/Xã";
-const LOCATION_DESCRIPTION_LABEL = "Mô tả khu hồ";
-const LOCATION_TIMETABLE_LABEL = "Thời gian hoạt động";
-const LOCATION_SERVICE_LABEL = "Dịch vụ";
-const LOCATION_RULE_LABEL = "Nội quy";
-
-const INPUT_LOCATION_NAME_PLACEHOLDER = "Nhập tên địa điểm câu";
-const INPUT_LOCATION_PHONE_PLACEHOLDER = "Nhập số điện thoại";
-const INPUT_LOCATION_WEBSITE_PLACEHOLDER = "Nhập website/facebook";
-const INPUT_ADDRESS_PLACEHOLDER = "Nhập địa chỉ";
-const SELECT_PROVINCE_PLACEHOLDER = "Chọn tỉnh/thành phố";
-const SELECT_DISTRICT_PLACEHOLDER = "Chọn quận/huyện";
-const SELECT_WARD_PLACEHOLDER = "Chọn phường/xã";
-const INPUT_LOCATION_DESCRIPTION_PLACEHOLDER = "Miêu tả khu hồ của bạn";
-const INPUT_LOCATION_TIMETABLE_PLACEHOLDER =
-  "Miêu tả thời gian hoạt động của khu hồ";
-const INPUT_LOCATION_SERVICE_PLACEHOLDER = "Miêu tả dịch vụ khu hồ";
-const INPUT_LOCATION_RULE_PLACEHOLDER = "Miêu tả nội quy khu hồ";
 
 const FManageAddNewScreen = () => {
   const route = useRoute();
@@ -99,7 +49,7 @@ const FManageAddNewScreen = () => {
   const methods = useForm({
     mode: "onSubmit",
     reValidateMode: "onSubmit",
-    defaultValues: { provinceId: 0, districtId: 0 },
+    defaultValues: { imageArray: [], provinceId: 0, districtId: 0 },
     resolver: yupResolver(SCHEMA.ADMIN_FMANAGE_PROFILE_FORM),
   });
   const { handleSubmit, setValue } = methods;
@@ -113,26 +63,28 @@ const FManageAddNewScreen = () => {
   };
 
   const goBackToSuggestionList = () => {
-    navigation.pop(2);
+    goBack(navigation);
   };
 
   const handleError = () => {
     setIsLoading(false);
-    showAlertBox(ALERT_TITLE, ALERT_ERROR_MSG);
+    showAlertBox(DICTIONARY.ALERT_TITLE, DICTIONARY.ALERT_ERROR_MSG);
   };
 
   const onSubmit = (data) => {
     setIsLoading(true);
+    const images = data.imageArray.map((image) => image.base64);
+    delete data.imageArray;
     delete data.provinceId;
     delete data.districtId;
-    const addData = { ...data, ...locationLatLng };
+    const addData = { ...data, ...locationLatLng, images };
     createSuggestedLocation({ addData })
       .then(() => {
         showAlertAbsoluteBox(
-          ALERT_TITLE,
-          ALERT_ADD_LOCATION_SUCCESS_MSG,
+          DICTIONARY.ALERT_TITLE,
+          DICTIONARY.ALERT_ADD_LOCATION_SUCCESS_MSG,
           goBackToSuggestionList,
-          CONFIRM_BUTTON_LABEL,
+          DICTIONARY.CONFIRM_BUTTON_LABEL,
         );
       })
       .catch(handleError);
@@ -165,33 +117,38 @@ const FManageAddNewScreen = () => {
     // useCallback will listen to route.param
     useCallback(() => {
       if (route.params?.base64Array && route.params.base64Array.length) {
-        setValue(FORM_FIELD_IMAGE_ARRAY, route.params?.base64Array);
+        setValue(DICTIONARY.FORM_FIELD_IMAGE_ARRAY, route.params?.base64Array);
         navigation.setParams({ base64Array: [] });
       }
     }, [route.params]),
   );
 
+  if (isLoading && fullScreen) {
+    return <OverlayLoading coverScreen />;
+  }
   return (
     <>
-      <HeaderTab name={FMANAGE_ADD_LOCATION_HEADER} />
-      <Overlay
-        isVisible={isLoading}
-        fullScreen
-        overlayStyle={fullScreen ? styles.loadOnStart : styles.loadOnSubmit}
-      >
-        <ActivityIndicator size={60} color="#2089DC" />
-      </Overlay>
+      <HeaderTab name={DICTIONARY.FMANAGE_ADD_LOCATION_HEADER} />
+      <OverlayLoading loading={isLoading} />
       <ScrollView>
         <FormProvider {...methods}>
           <VStack mt={4} space={3} divider={<Divider />}>
             <Center>
               <Stack space={2} style={styles.sectionWrapper}>
+                <Text bold fontSize="md" mt={2}>
+                  Ảnh bìa (nhiều nhất là 5)
+                </Text>
+                <MultiImageSection
+                  formRoute={ROUTE_NAMES.ADMIN_CREATE_SUGGEST_LOCATION}
+                  selectLimit={5}
+                  controllerName={DICTIONARY.FORM_FIELD_IMAGE_ARRAY}
+                />
                 <InputComponent
                   isTitle
-                  label={LOCATION_NAME_LABEL}
+                  label={DICTIONARY.LOCATION_NAME_LABEL}
                   hasAsterisk
-                  placeholder={INPUT_LOCATION_NAME_PLACEHOLDER}
-                  controllerName={FORM_FIELD_LOCATION_NAME}
+                  placeholder={DICTIONARY.INPUT_LOCATION_NAME_PLACEHOLDER}
+                  controllerName={DICTIONARY.FORM_FIELD_LOCATION_NAME}
                 />
               </Stack>
             </Center>
@@ -202,36 +159,35 @@ const FManageAddNewScreen = () => {
                 </Text>
                 <InputComponent
                   useNumPad
-                  label={LOCATION_PHONE_LABEL}
-                  placeholder={INPUT_LOCATION_PHONE_PLACEHOLDER}
+                  label={DICTIONARY.LOCATION_PHONE_LABEL}
+                  placeholder={DICTIONARY.INPUT_LOCATION_PHONE_PLACEHOLDER}
                   hasAsterisk
-                  controllerName={FORM_FIELD_LOCATION_PHONE}
+                  controllerName={DICTIONARY.FORM_FIELD_LOCATION_PHONE}
                 />
                 <InputWithClipboard
-                  label={LOCATION_WEBSITE_LABEL}
-                  placeholder={INPUT_LOCATION_WEBSITE_PLACEHOLDER}
-                  controllerName={FORM_FIELD_LOCATION_WEBSITE}
+                  label={DICTIONARY.LOCATION_WEBSITE_LABEL}
+                  placeholder={DICTIONARY.INPUT_LOCATION_WEBSITE_PLACEHOLDER}
+                  controllerName={DICTIONARY.FORM_FIELD_LOCATION_WEBSITE}
                 />
                 <InputComponent
-                  label={ADDRESS_LABEL}
-                  placeholder={INPUT_ADDRESS_PLACEHOLDER}
-                  hasAsterisk
-                  controllerName={FORM_FIELD_ADDRESS}
+                  label={DICTIONARY.ADDRESS_LABEL}
+                  placeholder={DICTIONARY.INPUT_ADDRESS_PLACEHOLDER}
+                  controllerName={DICTIONARY.FORM_FIELD_ADDRESS}
                 />
                 <ProvinceSelector
-                  label={PROVINCE_LABEL}
-                  placeholder={SELECT_PROVINCE_PLACEHOLDER}
-                  controllerName={FORM_FIELD_PROVINCE}
+                  label={DICTIONARY.PROVINCE_LABEL}
+                  placeholder={DICTIONARY.SELECT_PROVINCE_PLACEHOLDER}
+                  controllerName={DICTIONARY.FORM_FIELD_PROVINCE}
                 />
                 <DistrictSelector
-                  label={DISTRICT_LABEL}
-                  placeholder={SELECT_DISTRICT_PLACEHOLDER}
-                  controllerName={FORM_FIELD_DISTRICT}
+                  label={DICTIONARY.DISTRICT_LABEL}
+                  placeholder={DICTIONARY.SELECT_DISTRICT_PLACEHOLDER}
+                  controllerName={DICTIONARY.FORM_FIELD_DISTRICT}
                 />
                 <WardSelector
-                  label={WARD_LABEL}
-                  placeholder={SELECT_WARD_PLACEHOLDER}
-                  controllerName={FORM_FIELD_WARD}
+                  label={DICTIONARY.WARD_LABEL}
+                  placeholder={DICTIONARY.SELECT_WARD_PLACEHOLDER}
+                  controllerName={DICTIONARY.FORM_FIELD_WARD}
                 />
               </VStack>
             </Center>
@@ -241,9 +197,6 @@ const FManageAddNewScreen = () => {
               <Box style={styles.sectionWrapper}>
                 <Text bold fontSize="md" mb={2}>
                   Bản đồ
-                  <Text color="danger.500" fontSize="md">
-                    *
-                  </Text>
                 </Text>
                 <MapOverviewBox />
               </Box>
@@ -253,12 +206,11 @@ const FManageAddNewScreen = () => {
               {/* Description textarea */}
               <TextAreaComponent
                 myStyles={styles.sectionWrapper}
-                label={LOCATION_DESCRIPTION_LABEL}
+                label={DICTIONARY.LOCATION_DESCRIPTION_LABEL}
                 isTitle
-                hasAsterisk
-                placeholder={INPUT_LOCATION_DESCRIPTION_PLACEHOLDER}
+                placeholder={DICTIONARY.INPUT_LOCATION_DESCRIPTION_PLACEHOLDER}
                 numberOfLines={6}
-                controllerName={FORM_FIELD_LOCATION_DESCRIPTION}
+                controllerName={DICTIONARY.FORM_FIELD_LOCATION_DESCRIPTION}
               />
             </Center>
 
@@ -266,12 +218,11 @@ const FManageAddNewScreen = () => {
               {/* Schedule textarea  */}
               <TextAreaComponent
                 myStyles={styles.sectionWrapper}
-                label={LOCATION_TIMETABLE_LABEL}
+                label={DICTIONARY.LOCATION_TIMETABLE_LABEL}
                 isTitle
-                hasAsterisk
-                placeholder={INPUT_LOCATION_TIMETABLE_PLACEHOLDER}
+                placeholder={DICTIONARY.INPUT_LOCATION_TIMETABLE_PLACEHOLDER}
                 numberOfLines={6}
-                controllerName={FORM_FIELD_LOCATION_TIMETABLE}
+                controllerName={DICTIONARY.FORM_FIELD_LOCATION_TIMETABLE}
               />
             </Center>
 
@@ -279,24 +230,22 @@ const FManageAddNewScreen = () => {
               {/* Service textarea */}
               <TextAreaComponent
                 myStyles={styles.sectionWrapper}
-                label={LOCATION_SERVICE_LABEL}
+                label={DICTIONARY.LOCATION_SERVICE_LABEL}
                 isTitle
-                hasAsterisk
-                placeholder={INPUT_LOCATION_SERVICE_PLACEHOLDER}
+                placeholder={DICTIONARY.INPUT_LOCATION_SERVICE_PLACEHOLDER}
                 numberOfLines={6}
-                controllerName={FORM_FIELD_LOCATION_SERVICE}
+                controllerName={DICTIONARY.FORM_FIELD_LOCATION_SERVICE}
               />
             </Center>
 
             <Center>
               <TextAreaComponent
                 myStyles={styles.sectionWrapper}
-                label={LOCATION_RULE_LABEL}
+                label={DICTIONARY.LOCATION_RULE_LABEL}
                 isTitle
-                hasAsterisk
-                placeholder={INPUT_LOCATION_RULE_PLACEHOLDER}
+                placeholder={DICTIONARY.INPUT_LOCATION_RULE_PLACEHOLDER}
                 numberOfLines={6}
-                controllerName={FORM_FIELD_LOCATION_RULE}
+                controllerName={DICTIONARY.FORM_FIELD_LOCATION_RULE}
               />
             </Center>
 

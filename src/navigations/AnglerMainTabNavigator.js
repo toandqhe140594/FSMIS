@@ -4,6 +4,7 @@ import { useStoreActions } from "easy-peasy";
 import React, { useEffect } from "react";
 
 import colors from "../config/colors";
+import FManageModel from "../models/FManageModel";
 import ProfileModel from "../models/ProfileModel";
 import UtilModel from "../models/UtilModel";
 import CheckinScreen from "../screens/AnglerCheckinScreen";
@@ -15,6 +16,7 @@ import ProfileNavigator from "./NestedProfileNavigator";
 
 store.addModel("ProfileModel", ProfileModel);
 store.addModel("UtilModel", UtilModel);
+store.addModel("FManageModel", FManageModel);
 
 const Tab = createBottomTabNavigator();
 const AnglerMainNavigator = () => {
@@ -24,10 +26,20 @@ const AnglerMainNavigator = () => {
   const getSavedLocationList = useStoreActions(
     (actions) => actions.ProfileModel.getSavedLocationList,
   );
+  const resetProfileModel = useStoreActions(
+    (actions) => actions.ProfileModel.reset,
+  );
+  const resetFManageModel = useStoreActions(
+    (actions) => actions.FManageModel.reset,
+  );
 
   useEffect(() => {
     getUserInfo();
     getSavedLocationList({ mode: "refresh" });
+    return () => {
+      resetProfileModel();
+      resetFManageModel();
+    };
   }, []);
 
   return (
