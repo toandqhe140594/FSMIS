@@ -8,6 +8,7 @@ import { Divider, SearchBar } from "react-native-elements";
 import FishingMethodManagementCard from "../components/AdminMethodManagement/FishingMethodManagementCard";
 import HeaderTab from "../components/HeaderTab";
 import styles from "../config/styles";
+import { DEFAULT_TIMEOUT } from "../constants";
 import FishingMethodModel from "../models/FishingMethodModel";
 import { goToAdminFishingMethodEditScreen } from "../navigations";
 import store from "../utilities/Store";

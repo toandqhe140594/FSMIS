@@ -9,6 +9,7 @@ import AvatarCard from "../components/AvatarCard";
 import FishInformationCard from "../components/FishInformationCard";
 import HeaderTab from "../components/HeaderTab";
 import ImageResizeMode from "../components/ImageResizeMode";
+import { DEFAULT_TIMEOUT } from "../constants";
 import { goToFishingLocationOverviewScreen } from "../navigations";
 
 const AnglerCatchReportDetailScreen = () => {
