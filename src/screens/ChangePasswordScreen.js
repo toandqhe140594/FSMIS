@@ -2,13 +2,14 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useStoreActions } from "easy-peasy";
 import { Button, Center, Heading, VStack } from "native-base";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
+import { BackHandler } from "react-native";
 
 import PasswordInput from "../components/common/PasswordInput";
 import { SCHEMA } from "../constants";
 import { goToLoginScreen } from "../navigations";
-import { showToastMessage } from "../utilities";
+import { showAlertConfirmBox, showToastMessage } from "../utilities";
 
 const ChangePasswordScreen = () => {
   const route = useRoute();
@@ -35,6 +36,34 @@ const ChangePasswordScreen = () => {
         setLoading(false);
       });
   };
+
+  const goBackToLoginScreen = () => {
+    goToLoginScreen(navigation);
+  };
+
+  useEffect(() => {
+    /**
+     * Show alert box confirm go back to login screen action
+     * @returns true
+     */
+    const backAction = () => {
+      showAlertConfirmBox(
+        "Cảnh báo",
+        "Bạn có muốn quay về màn hình đăng nhập không",
+        goBackToLoginScreen,
+      );
+      return true;
+    };
+
+    // Overwrite android back press
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction,
+    );
+
+    // Remove back press handler when unmount screen
+    return () => backHandler.remove();
+  }, []);
 
   return (
     <Center flex={1}>
