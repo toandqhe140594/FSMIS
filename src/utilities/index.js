@@ -20,15 +20,23 @@ const showToastMessage = (message) => {
  * @param {String} title title of the alert box
  * @param {String} message message to display
  * @param {Function} onSuccess function when click ok button
+ * @param {String} [successButtonTitle] label for success button
+ * @param {String} [cancelButtonTitle] label for cancel button
  */
-const showAlertConfirmBox = (title, message, onSuccess) => {
+const showAlertConfirmBox = (
+  title,
+  message,
+  onSuccess,
+  successButtonTitle = "Xác nhận",
+  cancelButtonTitle = "Hủy",
+) => {
   Alert.alert(title, message, [
     {
-      text: "Hủy",
+      text: cancelButtonTitle,
       style: "cancel",
     },
     {
-      text: "Xác nhận",
+      text: successButtonTitle,
       onPress: onSuccess,
     },
   ]);
