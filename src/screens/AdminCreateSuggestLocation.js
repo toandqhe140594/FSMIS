@@ -13,13 +13,15 @@ import { ScrollView, StyleSheet } from "react-native";
 import DistrictSelector from "../components/common/DistrictSelector";
 import InputComponent from "../components/common/InputComponent";
 import InputWithClipboard from "../components/common/InputWithClipboard";
+import MultiImageSection from "../components/common/MultiImageSection";
 import OverlayLoading from "../components/common/OverlayLoading";
 import ProvinceSelector from "../components/common/ProvinceSelector";
 import TextAreaComponent from "../components/common/TextAreaComponent";
 import WardSelector from "../components/common/WardSelector";
 import MapOverviewBox from "../components/FLocationEditProfile/MapOverviewBox";
 import HeaderTab from "../components/HeaderTab";
-import { DICTIONARY, SCHEMA } from "../constants";
+import { DICTIONARY, ROUTE_NAMES, SCHEMA } from "../constants";
+import { goBack } from "../navigations";
 import { showAlertAbsoluteBox, showAlertBox } from "../utilities";
 
 const styles = StyleSheet.create({
@@ -47,7 +49,7 @@ const FManageAddNewScreen = () => {
   const methods = useForm({
     mode: "onSubmit",
     reValidateMode: "onSubmit",
-    defaultValues: { provinceId: 0, districtId: 0 },
+    defaultValues: { imageArray: [], provinceId: 0, districtId: 0 },
     resolver: yupResolver(SCHEMA.ADMIN_FMANAGE_PROFILE_FORM),
   });
   const { handleSubmit, setValue } = methods;
@@ -61,7 +63,7 @@ const FManageAddNewScreen = () => {
   };
 
   const goBackToSuggestionList = () => {
-    navigation.pop(2);
+    goBack(navigation);
   };
 
   const handleError = () => {
@@ -71,9 +73,13 @@ const FManageAddNewScreen = () => {
 
   const onSubmit = (data) => {
     setIsLoading(true);
+    const images = data.imageArray.length
+      ? data.imageArray.map((image) => image.base64)
+      : [];
+    delete data.imageArray;
     delete data.provinceId;
     delete data.districtId;
-    const addData = { ...data, ...locationLatLng };
+    const addData = { ...data, ...locationLatLng, images };
     createSuggestedLocation({ addData })
       .then(() => {
         showAlertAbsoluteBox(
@@ -131,6 +137,14 @@ const FManageAddNewScreen = () => {
           <VStack mt={4} space={3} divider={<Divider />}>
             <Center>
               <Stack space={2} style={styles.sectionWrapper}>
+                <Text bold fontSize="md" mt={2}>
+                  Ảnh bìa (nhiều nhất là 5)
+                </Text>
+                <MultiImageSection
+                  formRoute={ROUTE_NAMES.ADMIN_CREATE_SUGGEST_LOCATION}
+                  selectLimit={5}
+                  controllerName={DICTIONARY.FORM_FIELD_IMAGE_ARRAY}
+                />
                 <InputComponent
                   isTitle
                   label={DICTIONARY.LOCATION_NAME_LABEL}
