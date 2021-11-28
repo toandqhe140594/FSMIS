@@ -13,22 +13,20 @@ import fpt.g31.fsmis.entity.*;
 import fpt.g31.fsmis.entity.address.District;
 import fpt.g31.fsmis.entity.address.Province;
 import fpt.g31.fsmis.entity.address.Ward;
-import fpt.g31.fsmis.entity.distancematrix.DistanceJsonResult;
+import fpt.g31.fsmis.entity.distancematrix.BingDistanceJsonResult;
 import fpt.g31.fsmis.exception.NotFoundException;
 import fpt.g31.fsmis.exception.UnauthorizedException;
 import fpt.g31.fsmis.repository.*;
 import fpt.g31.fsmis.security.JwtFilter;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import javax.persistence.criteria.Join;
 import javax.servlet.http.HttpServletRequest;
@@ -177,74 +175,72 @@ public class FishingLocationService {
         if (fishingLocationList.isEmpty()) {
             return fishingLocationPinDtoOutList;
         }
-        StringBuilder uri = new StringBuilder("https://maps.googleapis.com/maps/api/distancematrix/json?origins=");
-        uri.append(latitude).append("%2C").append(longitude).append("&destinations=");
-        for (FishingLocation fishingLocation : fishingLocationList) {
-            uri.append(fishingLocation.getLatitude()).append("%2C").append(fishingLocation.getLongitude()).append("%7C");
-        }
-        String key = "AIzaSyCWkEPRlvNk7-z06foiZnfGFpm91THyVZQ";
-        uri.delete(uri.length() - 3, uri.length()).append("&key=").append(key);
-        OkHttpClient client = new OkHttpClient().newBuilder()
-                .build();
-        Request request = new Request.Builder()
-                .url(uri.toString())
-                .method("GET", null)
-                .build();
-        Response response = client.newCall(request).execute();
-        String result = response.body().string();
-//        System.out.println(result);
-        JsonFactory factory = new JsonFactory();
-        ObjectMapper mapper = new ObjectMapper(factory);
-        JsonParser parser = factory.createParser(result);
-        JsonNode rootNode = mapper.readTree(parser);
-//        System.out.println(mapper.convertValue(rootNode.get("status"), String.class));
-        if (!mapper.convertValue(rootNode.get("status"), String.class).equals("OK")) {
-            for (FishingLocation location : fishingLocationList) {
-                FishingLocationPinDtoOut dto = FishingLocationPinDtoOut.builder()
-                        .id(location.getId())
-                        .name(location.getName())
-                        .verify(location.getVerify())
-                        .score(location.getScore())
-                        .longitude(location.getLongitude())
-                        .latitude(location.getLatitude())
-                        .build();
-                fishingLocationPinDtoOutList.add(dto);
-            }
-        } else {
-            DistanceJsonResult[] resultList = mapper.convertValue(rootNode.get("rows").get(0).get("elements"), DistanceJsonResult[].class);
-            int count = 0;
-            for (DistanceJsonResult distanceJsonResult : resultList) {
-                FishingLocationPinDtoOut fishingLocationPinDtoOut = modelMapper.map(fishingLocationList.get(count), FishingLocationPinDtoOut.class);
-                fishingLocationPinDtoOut.setDistance((float) distanceJsonResult.getDistance().getValue() / 1000);
-                fishingLocationPinDtoOutList.add(fishingLocationPinDtoOut);
-                count++;
-            }
-        }
-//        StringBuilder uri = new StringBuilder("https://dev.virtualearth.net/REST/v1/Routes/DistanceMatrix?origins=" + latitude + "," + longitude + "&destinations=");
+        //google map
+//        StringBuilder uri = new StringBuilder("https://maps.googleapis.com/maps/api/distancematrix/json?origins=");
+//        uri.append(latitude).append("%2C").append(longitude).append("&destinations=");
 //        for (FishingLocation fishingLocation : fishingLocationList) {
-//            uri.append(fishingLocation.getLatitude() + "," + fishingLocation.getLongitude() + ";");
+//            uri.append(fishingLocation.getLatitude()).append("%2C").append(fishingLocation.getLongitude()).append("%7C");
 //        }
-//        uri.delete(uri.length() - 1, uri.length());
-//        uri.append("&travelMode=driving&key=AifuNyF5Q8Kh-xzvqV9icNvlkP_dFS89AZE7zIqJj_8UYpqfM15BSG1TiC-GC1jh");
-//        RestTemplate restTemplate = new RestTemplate();
-//        String result = restTemplate.getForObject(uri.toString(), String.class);
+//        String key = "AIzaSyCWkEPRlvNk7-z06foiZnfGFpm91THyVZQ";
+//        uri.delete(uri.length() - 3, uri.length()).append("&key=").append(key);
+//        OkHttpClient client = new OkHttpClient().newBuilder()
+//                .build();
+//        Request request = new Request.Builder()
+//                .url(uri.toString())
+//                .method("GET", null)
+//                .build();
+//        Response response = client.newCall(request).execute();
+//        String result = response.body().string();
 //        JsonFactory factory = new JsonFactory();
 //        ObjectMapper mapper = new ObjectMapper(factory);
 //        JsonParser parser = factory.createParser(result);
 //        JsonNode rootNode = mapper.readTree(parser);
-//        JsonNode resourceSetsNode = rootNode.get("resourceSets");
-//        JsonNode resourcesNode = resourceSetsNode.get(0).get("resources");
-//        JsonNode resultNode = resourcesNode.get(0).get("results");
-//        DistanceJsonResult[] resultList = mapper.convertValue(resultNode, DistanceJsonResult[].class);
-//        int count = 0;
-//        for (DistanceJsonResult distanceJsonResult : resultList) {
-//            if (distanceJsonResult.getTravelDistance() <= distance && distanceJsonResult.getTravelDistance() > 0) {
-//                FishingLocationPinDtoOut fishingLocationPinDtoOut = modelMapper.map(fishingLocationList.get(count), FishingLocationPinDtoOut.class);
-//                fishingLocationPinDtoOut.setDistance(distanceJsonResult.getTravelDistance());
-//                fishingLocationPinDtoOutList.add(fishingLocationPinDtoOut);
+//        if (!mapper.convertValue(rootNode.get("status"), String.class).equals("OK")) {
+//            for (FishingLocation location : fishingLocationList) {
+//                FishingLocationPinDtoOut dto = FishingLocationPinDtoOut.builder()
+//                        .id(location.getId())
+//                        .name(location.getName())
+//                        .verify(location.getVerify())
+//                        .score(location.getScore())
+//                        .longitude(location.getLongitude())
+//                        .latitude(location.getLatitude())
+//                        .build();
+//                fishingLocationPinDtoOutList.add(dto);
 //            }
-//            count++;
+//        } else {
+//            DistanceJsonResult[] resultList = mapper.convertValue(rootNode.get("rows").get(0).get("elements"), DistanceJsonResult[].class);
+//            int count = 0;
+//            for (DistanceJsonResult distanceJsonResult : resultList) {
+//                FishingLocationPinDtoOut fishingLocationPinDtoOut = modelMapper.map(fishingLocationList.get(count), FishingLocationPinDtoOut.class);
+//                fishingLocationPinDtoOut.setDistance((float) distanceJsonResult.getDistance().getValue() / 1000);
+//                fishingLocationPinDtoOutList.add(fishingLocationPinDtoOut);
+//                count++;
+//            }
 //        }
+        StringBuilder uri = new StringBuilder("https://dev.virtualearth.net/REST/v1/Routes/DistanceMatrix?origins=" + latitude + "," + longitude + "&destinations=");
+        for (FishingLocation fishingLocation : fishingLocationList) {
+            uri.append(fishingLocation.getLatitude() + "," + fishingLocation.getLongitude() + ";");
+        }
+        uri.delete(uri.length() - 1, uri.length());
+        uri.append("&travelMode=driving&key=AifuNyF5Q8Kh-xzvqV9icNvlkP_dFS89AZE7zIqJj_8UYpqfM15BSG1TiC-GC1jh");
+        RestTemplate restTemplate = new RestTemplate();
+        String result = restTemplate.getForObject(uri.toString(), String.class);
+        System.out.println(result);
+        JsonFactory factory = new JsonFactory();
+        ObjectMapper mapper = new ObjectMapper(factory);
+        JsonParser parser = factory.createParser(result);
+        JsonNode rootNode = mapper.readTree(parser);
+        JsonNode resourceSetsNode = rootNode.get("resourceSets");
+        JsonNode resourcesNode = resourceSetsNode.get(0).get("resources");
+        JsonNode resultNode = resourcesNode.get(0).get("results");
+        BingDistanceJsonResult[] resultList = mapper.convertValue(resultNode, BingDistanceJsonResult[].class);
+        int count = 0;
+        for (BingDistanceJsonResult distanceJsonResult : resultList) {
+            FishingLocationPinDtoOut fishingLocationPinDtoOut = modelMapper.map(fishingLocationList.get(count), FishingLocationPinDtoOut.class);
+            fishingLocationPinDtoOut.setDistance(distanceJsonResult.getTravelDistance());
+            fishingLocationPinDtoOutList.add(fishingLocationPinDtoOut);
+            count++;
+        }
         return fishingLocationPinDtoOutList;
     }
 

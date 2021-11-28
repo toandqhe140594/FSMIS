@@ -93,7 +93,7 @@ public class FishingLocationController {
 
     @GetMapping("/{locationId}/lake")
     public ResponseEntity<Object> getAllLakeByLocationId(@PathVariable Long locationId) {
-        return new ResponseEntity<>(lakeService.getAllByLocationId(locationId), HttpStatus.OK);
+        return new ResponseEntity<>(lakeService.getAllLakeByLocationId(locationId), HttpStatus.OK);
     }
 
     @GetMapping("/fishes/{locationId}")
@@ -102,8 +102,8 @@ public class FishingLocationController {
     }
 
     @GetMapping("/{locationId}/lake/{lakeId}")
-    public ResponseEntity<Object> getLakeById(@PathVariable Long locationId, @PathVariable Long lakeId) {
-        return new ResponseEntity<>(lakeService.getLakeById(locationId, lakeId), HttpStatus.OK);
+    public ResponseEntity<Object> getLakeById(@PathVariable Long lakeId) {
+        return new ResponseEntity<>(lakeService.getLakeById(lakeId), HttpStatus.OK);
     }
 
     @PostMapping("/{locationId}/lake/add")

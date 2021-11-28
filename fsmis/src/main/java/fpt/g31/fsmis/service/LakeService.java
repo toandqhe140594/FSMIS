@@ -90,12 +90,9 @@ public class LakeService {
         }
     }
 
-    public LakeDtoOut getLakeById(Long locationId, long lakeId) {
+    public LakeDtoOut getLakeById(Long lakeId) {
         Lake lake = lakeRepos.findById(lakeId)
                 .orElseThrow(() -> new NotFoundException("Không tìm thấy hồ câu"));
-        if (lake.getFishingLocation().getId().equals(locationId) && Boolean.TRUE.equals(!lake.getActive())) {
-            throw new ValidationException("Hồ này không tồn tại");
-        }
         List<String> fishingMethodList = new ArrayList<>();
         for (FishingMethod fishingMethod : lake.getFishingMethodSet()) {
             fishingMethodList.add(fishingMethod.getName());
@@ -116,7 +113,6 @@ public class LakeService {
                     .build();
             fishes.add(fish);
         }
-
         return LakeDtoOut.builder()
                 .id(lake.getId())
                 .name(lake.getName())
@@ -131,7 +127,7 @@ public class LakeService {
                 .build();
     }
 
-    public List<LakeOverviewDtoOut> getAllByLocationId(Long locationId) {
+    public List<LakeOverviewDtoOut> getAllLakeByLocationId(Long locationId) {
         Optional<FishingLocation> fishingLocationOptional = fishingLocationRepos.findById(locationId);
         if (!fishingLocationOptional.isPresent()) {
             throw new NotFoundException("Không tìm thấy khu hồ!");
