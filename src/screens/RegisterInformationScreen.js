@@ -16,7 +16,7 @@ import InputComponent from "../components/common/InputComponent";
 import ProvinceSelector from "../components/common/ProvinceSelector";
 import SelectComponent from "../components/common/SelectComponent";
 import WardSelector from "../components/common/WardSelector";
-import { SCHEMA } from "../constants";
+import { DICTIONARY, SCHEMA } from "../constants";
 import { goToLoginScreen } from "../navigations";
 import { showToastMessage } from "../utilities";
 
@@ -59,7 +59,7 @@ const RegisterInformationScreen = () => {
     };
     register({ registerData })
       .then(() => {
-        showToastMessage("Đăng ký thành công");
+        showToastMessage(DICTIONARY.TOAST_REGISTER_INFORMATION_SUCCESS_MSG);
         goToLoginScreen(navigation);
       })
       .catch(() => {
@@ -91,30 +91,39 @@ const RegisterInformationScreen = () => {
               </Center>
 
               <InputComponent
-                placeholder="Họ và tên*"
-                controllerName="fullName"
+                placeholder={DICTIONARY.REQUIRED_FULL_NAME_LABEL}
+                controllerName={DICTIONARY.FORM_FIELD_FULL_NAME}
               />
-              <DatePickerInput placeholder="Ngày sinh*" controllerName="dob" />
+              <DatePickerInput
+                placeholder={DICTIONARY.REQUIRED_DOB_LABEL}
+                controllerName={DICTIONARY.FORM_FIELD_DOB}
+              />
               {/* Gender select box */}
               <SelectComponent
-                placeholder="Giới tính"
-                controllerName="gender"
+                placeholder={DICTIONARY.GENDER_LABEL}
+                controllerName={DICTIONARY.FORM_FIELD_GENDER}
                 data={genderList}
               />
               {/* Address input field */}
-              <InputComponent placeholder="Địa chỉ" controllerName="address" />
+              <InputComponent
+                placeholder={DICTIONARY.ADDRESS_LABEL}
+                controllerName={DICTIONARY.FORM_FIELD_ADDRESS}
+              />
               {/* City select box */}
               <ProvinceSelector
-                placeholder="Tỉnh/Thành phố"
-                controllerName="provinceId"
+                placeholder={DICTIONARY.PROVINCE_LABEL}
+                controllerName={DICTIONARY.FORM_FIELD_PROVINCE}
               />
               {/* District select box */}
               <DistrictSelector
-                placeholder="Quận/Huyện"
-                controllerName="districtId"
+                placeholder={DICTIONARY.DISTRICT_LABEL}
+                controllerName={DICTIONARY.FORM_FIELD_DISTRICT}
               />
               {/* Ward select box */}
-              <WardSelector placeholder="Phường/xã" controllerName="wardId" />
+              <WardSelector
+                placeholder={DICTIONARY.WARD_LABEL}
+                controllerName={DICTIONARY.FORM_FIELD_WARD}
+              />
               {/* Submit button */}
               <Button
                 mt={3}

@@ -9,6 +9,7 @@ import { Button, Card, Text } from "react-native-elements";
 import OverlayLoading from "../components/common/OverlayLoading";
 import HeaderTab from "../components/HeaderTab";
 import OverlayInputSection from "../components/LakeProfile/OverlayInputSection";
+import { DICTIONARY } from "../constants";
 import {
   goBack,
   goToFManageFishAddScreen,
@@ -50,6 +51,9 @@ const FishCard = ({
   const handleDeleteFish = () => {
     onDeleteFish(id);
   };
+  const handleToggleEditOverlay = () => {
+    toggleEditOverlay({ id, name, visible: true });
+  };
   return (
     <Card>
       <Card.Title>{name}</Card.Title>
@@ -68,15 +72,7 @@ const FishCard = ({
           titleStyle={{ color: "#f43f5e" }}
           onPress={handleDeleteFish}
         />
-        <Button
-          title="Bồi cá"
-          type="clear"
-          // DucHM ADD_START 8/11/2021
-          onPress={() => {
-            toggleEditOverlay({ id, name, visible: true });
-          }}
-          // DucHM ADD_END 8/11/2021
-        />
+        <Button title="Bồi cá" type="clear" onPress={handleToggleEditOverlay} />
       </Box>
     </Card>
   );
@@ -109,7 +105,6 @@ const FManageEmployeeManagementScreen = () => {
     (actions) => actions.FManageModel.getLakeDetailByLakeId,
   );
 
-  // DucHM ADD_START 8/11/2021
   const deleteFishFromLake = useStoreActions(
     (actions) => actions.FManageModel.deleteFishFromLake,
   );
@@ -131,13 +126,13 @@ const FManageEmployeeManagementScreen = () => {
     const handleFishDelete = () => {
       deleteFishFromLake({ id })
         .then(() => {
-          showToastMessage("Cá đã được xóa khỏi hồ");
+          showToastMessage(DICTIONARY.TOAST_FISH_DELETE_SUCCESS_MSG);
         })
         .catch(() => {});
     };
     showAlertConfirmBox(
-      "Thông báo",
-      "Bạn chắc chắn muốn xóa loài cá này khỏi hồ?",
+      DICTIONARY.ALERT_TITLE,
+      DICTIONARY.ALERT_DELTE_FISH_PROMPT_MSG,
       handleFishDelete,
     );
   };
@@ -181,12 +176,12 @@ const FManageEmployeeManagementScreen = () => {
           justifyContent="space-evenly"
         >
           <Button
-            title="Thông tin hồ câu"
+            title={DICTIONARY.LAKE_INFORMATION_BUTTON_LABEL}
             containerStyle={{ width: "40%" }}
             onPress={handleLakeEditNavigate}
           />
           <Button
-            title="Thêm loại cá"
+            title={DICTIONARY.ADD_FISH_BUTTON_LABEL}
             containerStyle={{ width: "40%" }}
             onPress={handleAddFishNavigate}
           />

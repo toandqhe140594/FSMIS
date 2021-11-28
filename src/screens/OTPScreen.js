@@ -10,6 +10,7 @@ import {
   useClearByFocusCell,
 } from "react-native-confirmation-code-field";
 
+import { DICTIONARY } from "../constants";
 import { goToScreen } from "../navigations";
 
 const styles = StyleSheet.create({
@@ -107,7 +108,7 @@ const OTPScreen = () => {
         {route.params?.phone}
       </Text>
       <Text fontSize="lg" color="error.500" textAlign="left" w="70%" italic>
-        {wrongOTP && "Mã OTP không chính xác"}
+        {wrongOTP && DICTIONARY.INVALID_OTP_CODE_MSG}
       </Text>
       <VStack mt={2} mb={8} space={4} w="70%">
         {/* OTP code field */}
@@ -143,7 +144,7 @@ const OTPScreen = () => {
               color: "#000",
             },
           }}
-          isLoadingText="Đang xử lý"
+          isLoadingText={DICTIONARY.PROCESSING_BUTTON_LABEL}
           size="lg"
           w="100%"
           _text={{ fontSize: 18 }}
@@ -173,7 +174,7 @@ const OTPScreen = () => {
         ) : (
           <Button
             isLoading={waitNewOTP}
-            isLoadingText="Đang gửi"
+            isLoadingText={DICTIONARY.SENDING_BUTTON_LABEL}
             size="lg"
             w="40%"
             _text={{ fontSize: 18 }}
