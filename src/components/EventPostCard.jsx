@@ -38,7 +38,6 @@ const EventPostCard = ({
   let widthVideo = 400;
   let heightVideo = 400;
   let heightPage = 410;
-  let isYouTubeVideo = false;
   let typeBadge = "";
 
   switch (lakePost.badge) {
@@ -59,7 +58,7 @@ const EventPostCard = ({
     try {
       const regexIframe = new RegExp("<iframe", "g");
       const regexYouTubeLink =
-        /^(https?\:\/\/)?(www\.youtube\.com|youtu\.?be)\/.+$/g;
+        /^(https?:\/\/)?(www\.youtube\.com|youtu\.?be)\/.+$/g;
       const regexYouTubeID =
         /(?:https?:\/{2})?(?:w{3}\.)?youtu(?:be)?\.(?:com|be)(?:\/watch\?v=|\/)([^\s&]+)/;
 
@@ -71,9 +70,6 @@ const EventPostCard = ({
         srcUri = uri.match(regExGetSrc);
         widthUri = uri.match(regExGetWidth);
         heightUri = uri.match(regExGetHeight);
-        if (regexYouTubeID.test(uri)) {
-          isYouTubeVideo = true;
-        }
 
         if (widthUri + 50 < heightUri) {
           widthVideo = 300;
@@ -89,7 +85,6 @@ const EventPostCard = ({
         srcUri[1] = `https://www.youtube.com/embed/${idArray[1]}`;
         widthVideo = 400;
         heightPage = 410;
-        isYouTubeVideo = true;
       } else {
         srcUri[1] = uri;
         heightVideo = 700;
@@ -249,10 +244,9 @@ const EventPostCard = ({
               showsHorizontalScrollIndicator={false}
             >
               <WebView
-                allowsFullscreenVideo={!isYouTubeVideo}
+                allowsFullscreenVideo={false}
                 overScrollMode="content"
                 originWhitelist={["https://*"]}
-                // androidHardwareAccelerationDisabled
                 scalesPageToFit={false}
                 style={{
                   flex: 1,
@@ -263,7 +257,6 @@ const EventPostCard = ({
                   opacity: 0.99,
                 }}
                 source={{
-                  // html: `<iframe  src="${srcUri[1]}" height=${heightVideo} width=${widthVideo} allow="fullscreen" >`,
                   uri: srcUri[1],
                 }}
               />

@@ -9,6 +9,8 @@ import { goToAdminCatchDetail } from "../../navigations";
 import EventPostCard from "../EventPostCard";
 import PressableCustomCard from "../PressableCustomCard";
 
+const keyExtractor = (item) => item.id.toString();
+
 const styles = StyleSheet.create({
   tabBarStyle: {
     height: 40,
@@ -35,9 +37,37 @@ const CatchReportRoute = () => {
     getLocationCatchListByPage({ pageNo: lakeCatchPage });
     setLakeCatchPage(lakeCatchPage + 1);
   }, []);
+
   const loadMoreLakeCatchData = () => {
     getLocationCatchListByPage({ pageNo: lakeCatchPage });
     setLakeCatchPage(lakeCatchPage + 1);
+  };
+
+  const renderItem = ({ item }) => {
+    return (
+      <PressableCustomCard
+        paddingX="1"
+        onPress={() => {
+          goToAdminCatchDetail(navigation, {
+            id: item.id,
+          });
+        }}
+      >
+        <EventPostCard
+          postStyle="ANGLER_POST"
+          anglerName={item.userFullName}
+          anglerContent={item.description}
+          postTime={item.time}
+          fishList={item.fishes}
+          id={item.id}
+          imageAvatar={item.avatar}
+          uri={item.images[0]}
+          typeUri="IMAGE"
+          numberOfImages={item.images.length}
+          isApproved={item.approved}
+        />
+      </PressableCustomCard>
+    );
   };
 
   return (
@@ -45,36 +75,9 @@ const CatchReportRoute = () => {
       {locationCatchList.length > 0 && (
         <FlatList
           data={locationCatchList}
-          renderItem={({ item }) => {
-            return (
-              <PressableCustomCard
-                paddingX="1"
-                onPress={() => {
-                  goToAdminCatchDetail(navigation, {
-                    id: item.id,
-                  });
-                }}
-              >
-                <EventPostCard
-                  postStyle="ANGLER_POST"
-                  anglerName={item.userFullName}
-                  anglerContent={item.description}
-                  postTime={item.time}
-                  fishList={item.fishes}
-                  id={item.id}
-                  imageAvatar={item.avatar}
-                  uri={item.images[0]}
-                  typeUri="IMAGE"
-                  numberOfImages={item.images.length}
-                  isApproved={item.approved}
-                />
-              </PressableCustomCard>
-            );
-          }}
-          onEndReached={() => {
-            loadMoreLakeCatchData();
-          }}
-          keyExtractor={(item) => item.id.toString()}
+          renderItem={renderItem}
+          onEndReached={loadMoreLakeCatchData()}
+          keyExtractor={keyExtractor}
         />
       )}
     </>
@@ -99,33 +102,34 @@ const FLocationEventRoute = () => {
     getLocationPostListByPage({ pageNo: lakePostPage });
     setLakePostPage(lakePostPage + 1);
   };
+
+  const renderItem = ({ item }) => {
+    return (
+      <EventPostCard
+        lakePost={{
+          badge: item.postType,
+          content: item.content,
+        }}
+        typeUri={item.attachmentType}
+        uri={item.url}
+        postStyle="LAKE_POST"
+        edited={item.edited}
+        postTime={item.postTime}
+        id={item.id}
+        iconName="flag"
+      />
+    );
+  };
+
   return (
     <>
       {locationPostList.length > 0 && (
         <FlatList
           nestedScrollEnabled
           data={locationPostList}
-          renderItem={({ item }) => {
-            return (
-              <EventPostCard
-                lakePost={{
-                  badge: item.postType,
-                  content: item.content,
-                }}
-                typeUri={item.attachmentType}
-                uri={item.url}
-                postStyle="LAKE_POST"
-                edited={item.edited}
-                postTime={item.postTime}
-                id={item.id}
-                iconName="flag"
-              />
-            );
-          }}
-          onEndReached={() => {
-            loadMoreLakePostData();
-          }}
-          keyExtractor={(item) => item.id.toString()}
+          renderItem={renderItem}
+          onEndReached={loadMoreLakePostData}
+          keyExtractor={keyExtractor}
         />
       )}
     </>

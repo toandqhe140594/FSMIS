@@ -38,7 +38,7 @@ const AdminSuggestedLocationManagementScreen = () => {
     setIsLoading(true);
     const loadingTimeout = setTimeout(() => {
       setIsLoading(false);
-    }, DEFAULT_TIMEOUT); // Test
+    }, DEFAULT_TIMEOUT);
     return () => {
       clearTimeout(loadingTimeout);
     };

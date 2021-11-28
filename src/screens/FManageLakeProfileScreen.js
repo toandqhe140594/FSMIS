@@ -9,7 +9,7 @@ import { Button, Card, Text } from "react-native-elements";
 import OverlayLoading from "../components/common/OverlayLoading";
 import HeaderTab from "../components/HeaderTab";
 import OverlayInputSection from "../components/LakeProfile/OverlayInputSection";
-import { DICTIONARY } from "../constants";
+import { DEFAULT_TIMEOUT, DICTIONARY } from "../constants";
 import {
   goBack,
   goToFManageFishAddScreen,
@@ -157,7 +157,7 @@ const FManageEmployeeManagementScreen = () => {
           goBack(navigation);
         });
     }
-    const loadingId = setTimeout(() => setIsLoading(false), 10000);
+    const loadingId = setTimeout(() => setIsLoading(false), DEFAULT_TIMEOUT);
     return () => {
       setLakeDetail({ id: null });
       clearTimeout(loadingId);

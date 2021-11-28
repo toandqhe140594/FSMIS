@@ -27,7 +27,7 @@ const MapOverviewBox = () => {
   return (
     <TouchableOpacity onPress={onPressAction}>
       <View style={styles.mapviewContainer}>
-        {!locationLatLng.latitude && (
+        {!locationLatLng.latitude ? (
           <MapView
             ref={mapRef}
             initialRegion={{
@@ -39,8 +39,10 @@ const MapOverviewBox = () => {
             style={{ height: "100%", width: "100%" }}
             liteMode
           />
+        ) : (
+          <></>
         )}
-        {locationLatLng.latitude && (
+        {locationLatLng.latitude ? (
           <MapView
             ref={mapRef}
             region={{
@@ -59,6 +61,8 @@ const MapOverviewBox = () => {
               }}
             />
           </MapView>
+        ) : (
+          <></>
         )}
       </View>
     </TouchableOpacity>

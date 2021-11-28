@@ -8,6 +8,7 @@ import { Divider, SearchBar } from "react-native-elements";
 import FishManagementCard from "../components/AdminFishManagement/FishManagementCard";
 import HeaderTab from "../components/HeaderTab";
 import styles from "../config/styles";
+import { DEFAULT_TIMEOUT } from "../constants";
 import FishModel from "../models/FishModel";
 import { goToAdminFishEditScreen } from "../navigations";
 import store from "../utilities/Store";
@@ -65,16 +66,22 @@ const AdminFishManagementScreen = () => {
   useEffect(() => {
     setIsLoading(true);
     getAdminFishList();
-    // Hide the activity indicator after 5 seconds aka request timeout
+    // Hide the activity indicator after 10 seconds aka request timeout
     const loadingTimeout = setTimeout(() => {
       setIsLoading(false);
-    }, 5000);
+    }, DEFAULT_TIMEOUT);
     return () => {
       clearTimeout(loadingTimeout);
     };
   }, []);
 
+  const navigateToAddFishScreen = () => {
+    goToAdminFishEditScreen(navigation, { id: null });
+  };
+
   const ListView = () => {
+    const keyExtractor = (item) => item.id.toString();
+
     if (isLoading)
       return (
         <Center flex={1}>
@@ -87,7 +94,7 @@ const AdminFishManagementScreen = () => {
         <FlatList
           data={displayedList}
           renderItem={renderRow}
-          keyExtractor={(item) => item.id.toString()}
+          keyExtractor={keyExtractor}
           ItemSeparatorComponent={Divider}
         />
       </Box>
@@ -109,13 +116,7 @@ const AdminFishManagementScreen = () => {
             onEndEditing={onEndEditing}
             onClear={onClear}
           />
-          <Button
-            my={2}
-            w="70%"
-            onPress={() => {
-              goToAdminFishEditScreen(navigation, { id: null });
-            }}
-          >
+          <Button my={2} w="70%" onPress={navigateToAddFishScreen}>
             Thêm loại cá
           </Button>
 

@@ -8,6 +8,7 @@ import { Divider, SearchBar } from "react-native-elements";
 import FishingMethodManagementCard from "../components/AdminMethodManagement/FishingMethodManagementCard";
 import HeaderTab from "../components/HeaderTab";
 import styles from "../config/styles";
+import { DEFAULT_TIMEOUT } from "../constants";
 import FishingMethodModel from "../models/FishingMethodModel";
 import { goToAdminFishingMethodEditScreen } from "../navigations";
 import store from "../utilities/Store";
@@ -58,7 +59,7 @@ const AdminFishingMethodManagementScreen = () => {
     getAdminFishingMethodList();
     const loadingTimeout = setTimeout(() => {
       setIsLoading(false);
-    }, 1000); // Test
+    }, DEFAULT_TIMEOUT);
     return () => {
       clearTimeout(loadingTimeout);
     };
@@ -68,6 +69,15 @@ const AdminFishingMethodManagementScreen = () => {
     setDisplayedList(adminFishingMethodList);
     if (adminFishingMethodList) setIsLoading(false);
   }, [adminFishingMethodList]);
+
+  const goToAddFishingMethodScreen = () => {
+    goToAdminFishingMethodEditScreen(navigation, {
+      id: null,
+      name: null,
+    });
+  };
+
+  const keyExtractor = (item) => item.id.toString();
 
   if (isLoading)
     return (
@@ -91,16 +101,7 @@ const AdminFishingMethodManagementScreen = () => {
             onEndEditing={onEndEditing}
             onClear={onClear}
           />
-          <Button
-            my={2}
-            w="70%"
-            onPress={() => {
-              goToAdminFishingMethodEditScreen(navigation, {
-                id: null,
-                name: null,
-              });
-            }}
-          >
+          <Button my={2} w="70%" onPress={goToAddFishingMethodScreen}>
             Thêm loại hình câu
           </Button>
 
@@ -108,7 +109,7 @@ const AdminFishingMethodManagementScreen = () => {
             <FlatList
               data={displayedList}
               renderItem={renderRow}
-              keyExtractor={(item) => item.id.toString()}
+              keyExtractor={keyExtractor}
               ItemSeparatorComponent={Divider}
             />
           </Box>

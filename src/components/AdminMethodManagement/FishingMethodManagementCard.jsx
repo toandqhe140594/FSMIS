@@ -29,7 +29,6 @@ const FishingMethodManagementCard = ({ id, name, active }) => {
             {name}
           </Text>
         </Box>
-        {/* // DucHM ADD_START 18/11/2021 */}
         <Badge
           value={active ? "Đang hoạt động" : "Đang ẩn"}
           containerStyle={{
@@ -44,7 +43,6 @@ const FishingMethodManagementCard = ({ id, name, active }) => {
               : Colors.defaultDanger,
           }}
         />
-        {/* // DucHM ADD_END 18/11/2021 */}
       </Box>
     </Pressable>
   );

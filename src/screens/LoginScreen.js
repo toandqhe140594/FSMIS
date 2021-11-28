@@ -12,7 +12,7 @@ import {
   Text,
   VStack,
 } from "native-base";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import {
   KeyboardAvoidingView,
@@ -47,7 +47,7 @@ const LoginScreen = () => {
     reValidateMode: "onSubmit",
     resolver: yupResolver(SCHEMA.LOGIN_FORM),
   });
-  const { handleSubmit, setValue } = methods;
+  const { handleSubmit } = methods;
   const login = useStoreActions((actions) => actions.login);
 
   const registerAction = () => {
@@ -68,14 +68,6 @@ const LoginScreen = () => {
         setIsLoading(false);
       });
   };
-
-  // Development only
-  useEffect(() => {
-    // 0921485233 admin
-    setValue("phoneNumber", "0963372727");
-    // setValue("phoneNumber", "0921485233");
-    setValue("password", "Asdf2k@!");
-  }, []);
 
   return (
     <KeyboardAvoidingView>

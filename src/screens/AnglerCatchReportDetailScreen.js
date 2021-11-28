@@ -9,6 +9,7 @@ import AvatarCard from "../components/AvatarCard";
 import FishInformationCard from "../components/FishInformationCard";
 import HeaderTab from "../components/HeaderTab";
 import ImageResizeMode from "../components/ImageResizeMode";
+import { DEFAULT_TIMEOUT } from "../constants";
 import { goToFishingLocationOverviewScreen } from "../navigations";
 
 const AnglerCatchReportDetailScreen = () => {
@@ -33,7 +34,7 @@ const AnglerCatchReportDetailScreen = () => {
   useEffect(() => {
     const timeOut = setTimeout(() => {
       setIsLoading(false);
-    }, 5000);
+    }, DEFAULT_TIMEOUT);
     if (route.params) {
       const { id } = route.params;
       getCatchReportDetailById({ id, setIsLoading });
