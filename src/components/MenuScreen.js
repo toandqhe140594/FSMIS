@@ -14,7 +14,7 @@ const MenuScreen = ({ menuTitle, menuListItem, locationId }) => {
 
   const logOut = useStoreActions((actions) => actions.logOut);
 
-  const navigateToScreen = (route) => {
+  const navigateToScreen = (route) => () => {
     if (route === ROUTE_NAMES.PROFILE_LOGOUT) logOut();
     else if (route === ROUTE_NAMES.FMANAGE_LOCATION_OVERVIEW)
       goToFishingLocationOverviewScreen(navigation, { id: locationId });
@@ -27,12 +27,7 @@ const MenuScreen = ({ menuTitle, menuListItem, locationId }) => {
         <Text style={styles.menuScreenListItemText}> {menuTitle}</Text>
       )}
       {menuListItem.map((item) => (
-        <ListItem
-          key={item.id}
-          onPress={() => {
-            navigateToScreen(item.route);
-          }}
-        >
+        <ListItem key={item.id} onPress={navigateToScreen(item.route)}>
           <Icon name={item.icon} size={26} type={item.type || "material"} />
           <ListItem.Content style={{ height: 40 }}>
             <ListItem.Title>{item.title}</ListItem.Title>

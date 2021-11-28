@@ -70,6 +70,15 @@ const AdminFishingMethodManagementScreen = () => {
     if (adminFishingMethodList) setIsLoading(false);
   }, [adminFishingMethodList]);
 
+  const goToAddFishingMethodScreen = () => {
+    goToAdminFishingMethodEditScreen(navigation, {
+      id: null,
+      name: null,
+    });
+  };
+
+  const keyExtractor = (item) => item.id.toString();
+
   if (isLoading)
     return (
       <Center flex={1}>
@@ -92,16 +101,7 @@ const AdminFishingMethodManagementScreen = () => {
             onEndEditing={onEndEditing}
             onClear={onClear}
           />
-          <Button
-            my={2}
-            w="70%"
-            onPress={() => {
-              goToAdminFishingMethodEditScreen(navigation, {
-                id: null,
-                name: null,
-              });
-            }}
-          >
+          <Button my={2} w="70%" onPress={goToAddFishingMethodScreen}>
             Thêm loại hình câu
           </Button>
 
@@ -109,7 +109,7 @@ const AdminFishingMethodManagementScreen = () => {
             <FlatList
               data={displayedList}
               renderItem={renderRow}
-              keyExtractor={(item) => item.id.toString()}
+              keyExtractor={keyExtractor}
               ItemSeparatorComponent={Divider}
             />
           </Box>

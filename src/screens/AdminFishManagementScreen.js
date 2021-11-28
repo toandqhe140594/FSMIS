@@ -75,7 +75,13 @@ const AdminFishManagementScreen = () => {
     };
   }, []);
 
+  const navigateToAddFishScreen = () => {
+    goToAdminFishEditScreen(navigation, { id: null });
+  };
+
   const ListView = () => {
+    const keyExtractor = (item) => item.id.toString();
+
     if (isLoading)
       return (
         <Center flex={1}>
@@ -88,7 +94,7 @@ const AdminFishManagementScreen = () => {
         <FlatList
           data={displayedList}
           renderItem={renderRow}
-          keyExtractor={(item) => item.id.toString()}
+          keyExtractor={keyExtractor}
           ItemSeparatorComponent={Divider}
         />
       </Box>
@@ -110,13 +116,7 @@ const AdminFishManagementScreen = () => {
             onEndEditing={onEndEditing}
             onClear={onClear}
           />
-          <Button
-            my={2}
-            w="70%"
-            onPress={() => {
-              goToAdminFishEditScreen(navigation, { id: null });
-            }}
-          >
+          <Button my={2} w="70%" onPress={navigateToAddFishScreen}>
             Thêm loại cá
           </Button>
 

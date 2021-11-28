@@ -43,7 +43,6 @@ const FishManagementCard = ({ id, name, image, active }) => {
             </Text>
           </Box>
         </Box>
-        {/* // DucHM ADD_START 18/11/2021 */}
         <Badge
           value={active ? "Đang hoạt động" : "Đang ẩn"}
           containerStyle={{
@@ -59,7 +58,6 @@ const FishManagementCard = ({ id, name, image, active }) => {
               : Colors.defaultDanger,
           }}
         />
-        {/* // DucHM ADD_END 18/11/2021 */}
       </Box>
     </Pressable>
   );
