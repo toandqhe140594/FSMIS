@@ -73,9 +73,7 @@ const FManageAddNewScreen = () => {
 
   const onSubmit = (data) => {
     setIsLoading(true);
-    const images = data.imageArray.length
-      ? data.imageArray.map((image) => image.base64)
-      : [];
+    const images = data.imageArray.map((image) => image.base64);
     delete data.imageArray;
     delete data.provinceId;
     delete data.districtId;
