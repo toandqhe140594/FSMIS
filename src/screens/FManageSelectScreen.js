@@ -6,7 +6,7 @@ import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 import OverlayLoading from "../components/common/OverlayLoading";
 import FLocationCard from "../components/FLocationCard";
 import HeaderTab from "../components/HeaderTab";
-import { DICTIONARY } from "../constants";
+import { DEFAULT_TIMEOUT, DICTIONARY } from "../constants";
 import FishingMethodModel from "../models/FishingMethodModel";
 import FishModel from "../models/FishModel";
 import {
@@ -59,7 +59,7 @@ const FManageSelectScreen = () => {
     getListOfFishingLocations({ setGetSuccess });
     const timeout = setTimeout(() => {
       setLoading(false);
-    }, 10000);
+    }, DEFAULT_TIMEOUT);
     return () => {
       clearTimeout(timeout);
     };
