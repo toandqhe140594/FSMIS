@@ -47,16 +47,6 @@ const model = {
   }),
 
   /**
-   * Clear all state to default
-   */
-  clearSearchData: action((state) => {
-    state.prevStateData = { ...DEFAULT_STATE };
-    state.totaListLocationPage = 0;
-    state.listLocationResult = [];
-    state.pageNo = 1;
-  }),
-
-  /**
    * Set new pageNo state
    * Use to set increment pageNo
    * Due to synchronous behaviour,
