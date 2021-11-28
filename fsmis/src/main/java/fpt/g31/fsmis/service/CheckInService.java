@@ -141,6 +141,7 @@ public class CheckInService {
                     .checkOutTime(checkIn.getCheckOutTime() == null
                             ? "Chưa check-out"
                             : ServiceUtils.convertDateToString(checkIn.getCheckOutTime()))
+                    .performerName(userRepos.getById(checkIn.getPerfomrerId()).getFullName())
                     .build();
             output.add(item);
         }

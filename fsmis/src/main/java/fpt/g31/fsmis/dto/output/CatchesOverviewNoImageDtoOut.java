@@ -32,4 +32,6 @@ public class CatchesOverviewNoImageDtoOut {
     private List<String> fishes;
 
     private Boolean approved;
+
+    private String approverName;
 }

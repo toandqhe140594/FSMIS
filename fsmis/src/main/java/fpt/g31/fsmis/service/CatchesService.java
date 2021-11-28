@@ -31,6 +31,7 @@ public class CatchesService {
     private final FishInLakeRepos fishInLakeRepos;
     private final JwtFilter jwtFilter;
     private final NotificationRepos notificationRepos;
+    private final UserRepos userRepos;
 
     public PaginationDtoOut getLocationPublicCatchesList(Long locationId, int pageNo) {
         if (pageNo <= 0) {
@@ -92,6 +93,8 @@ public class CatchesService {
                     .id(catches.getId())
                     .description(catches.getDescription())
                     .time(ServiceUtils.convertDateToString(catches.getTime()))
+                    .approverName(userRepos.getById(catches.getApproverId()).getFullName())
+                    .approved(catches.getApproved())
                     .build();
             List<String> fishes = new ArrayList<>();
             for (CatchesDetail catchesDetail : catches.getCatchesDetailList()) {
@@ -282,6 +285,7 @@ public class CatchesService {
             }
         }
         catches.setApproved(isApprove);
+        catches.setApproverId(user.getId());
         catchesRepos.save(catches);
         String notificationText = "Báo cá của bạn tại " + catches.getFishingLocation().getName() + " đã " + (Boolean.TRUE.equals(catches.getApproved()) ? "được duyệt" : "bị từ chối");
         List<User> notificationReceiver = new ArrayList<>();

@@ -13,6 +13,7 @@ import fpt.g31.fsmis.exception.UnauthorizedException;
 import fpt.g31.fsmis.repository.FishingLocationRepos;
 import fpt.g31.fsmis.repository.NotificationRepos;
 import fpt.g31.fsmis.repository.PostRepos;
+import fpt.g31.fsmis.repository.UserRepos;
 import fpt.g31.fsmis.security.JwtFilter;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -30,11 +31,12 @@ import java.util.Optional;
 @Service
 @AllArgsConstructor
 public class PostService {
-    private PostRepos postRepos;
-    private JwtFilter jwtFilter;
-    private ModelMapper modelMapper;
-    private FishingLocationRepos locationRepos;
+    private final PostRepos postRepos;
+    private final JwtFilter jwtFilter;
+    private final ModelMapper modelMapper;
+    private final FishingLocationRepos locationRepos;
     private final NotificationRepos notificationRepos;
+    private final UserRepos userRepos;
     private static final String POST_NOT_FOUND = "Không tìm thấy bài viết!";
 
     public PaginationDtoOut getPostByLocationId(Long locationId, int pageNo) {
@@ -46,6 +48,7 @@ public class PostService {
         for (Post post : postList) {
             PostDtoOut item = modelMapper.map(post, PostDtoOut.class);
             item.setPostTime(ServiceUtils.convertDateToString(post.getPostTime()));
+            item.setPosterName(userRepos.getById(post.getPosterId()).getFullName());
             output.add(item);
         }
         return PaginationDtoOut.builder()
@@ -71,6 +74,7 @@ public class PostService {
                     .postType(postDtoIn.getPostType())
                     .edited(false)
                     .active(true)
+                    .pinned(false)
                     .attachmentType(postDtoIn.getAttachmentType())
                     .url(postDtoIn.getUrl())
                     .posterId(user.getId())
@@ -146,6 +150,7 @@ public class PostService {
                     .postType(pinnedPost.getPostType().toString())
                     .url(pinnedPost.getUrl())
                     .attachmentType(pinnedPost.getAttachmentType().toString())
+                    .posterName(userRepos.getById(pinnedPost.getPosterId()).getFullName())
                     .pinned(true)
                     .edited(pinnedPost.getEdited()).build();
         }

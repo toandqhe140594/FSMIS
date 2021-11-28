@@ -15,4 +15,5 @@ public class LocationCheckInHistoryDtoOut {
     private String avatar;
     private String checkInTime;
     private String checkOutTime;
+    private String performerName;
 }

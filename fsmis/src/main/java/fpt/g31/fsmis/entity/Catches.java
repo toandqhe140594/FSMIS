@@ -47,4 +47,6 @@ public class Catches {
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "catches_id")
     private List<CatchesDetail> catchesDetailList;
+
+    private Long approverId;
 }
