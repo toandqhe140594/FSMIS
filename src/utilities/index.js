@@ -24,14 +24,12 @@ const showToastMessage = (message) => {
 const showAlertConfirmBox = (title, message, onSuccess) => {
   Alert.alert(title, message, [
     {
-      text: "Quay lại",
+      text: "Hủy",
       style: "cancel",
     },
     {
       text: "Xác nhận",
-      onPress: () => {
-        onSuccess();
-      },
+      onPress: onSuccess,
     },
   ]);
 };
@@ -82,9 +80,7 @@ const showAlertAbsoluteBox = (
     [
       {
         text: buttonTitle,
-        onPress: () => {
-          onSuccess();
-        },
+        onPress: onSuccess,
       },
     ],
     {
