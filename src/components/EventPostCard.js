@@ -38,12 +38,15 @@ const EventPostCard = ({
   let widthVideo = 400;
   let heightVideo = 400;
   let heightPage = 410;
+  let isYouTubeVideo = false;
 
   if (typeUri === "VIDEO") {
     try {
       const regexIframe = new RegExp("<iframe", "g");
-      const regexYouTube =
+      const regexYouTubeLink =
         /^(https?\:\/\/)?(www\.youtube\.com|youtu\.?be)\/.+$/g;
+      const regexYouTubeID =
+        /(?:https?:\/{2})?(?:w{3}\.)?youtu(?:be)?\.(?:com|be)(?:\/watch\?v=|\/)([^\s&]+)/;
 
       if (regexIframe.test(uri)) {
         const regExGetSrc = /<iframe ?.* src="([^"]+)" ?.*>/i;
@@ -53,22 +56,25 @@ const EventPostCard = ({
         srcUri = uri.match(regExGetSrc);
         widthUri = uri.match(regExGetWidth);
         heightUri = uri.match(regExGetHeight);
+        if (regexYouTubeID.test(uri)) {
+          isYouTubeVideo = true;
+        }
+
         if (widthUri + 50 < heightUri) {
           widthVideo = 300;
-          heightVideo = 500;
-          heightPage = 510;
+          heightVideo = 510;
+          heightPage = 520;
         }
         if (widthUri >= heightUri) {
           widthVideo = 400;
           heightPage = 410;
         }
-      } else if (regexYouTube.test(uri)) {
-        const regexYouTubeID =
-          /(?:https?:\/{2})?(?:w{3}\.)?youtu(?:be)?\.(?:com|be)(?:\/watch\?v=|\/)([^\s&]+)/;
+      } else if (regexYouTubeLink.test(uri)) {
         const idArray = uri.split(regexYouTubeID);
         srcUri[1] = `https://www.youtube.com/embed/${idArray[1]}`;
         widthVideo = 400;
         heightPage = 410;
+        isYouTubeVideo = true;
       } else {
         srcUri[1] = uri;
         heightVideo = 700;
@@ -228,9 +234,10 @@ const EventPostCard = ({
               showsHorizontalScrollIndicator={false}
             >
               <WebView
+                allowsFullscreenVideo={!isYouTubeVideo}
                 overScrollMode="content"
                 originWhitelist={["https://*"]}
-                androidHardwareAccelerationDisabled
+                // androidHardwareAccelerationDisabled
                 scalesPageToFit={false}
                 style={{
                   flex: 1,
@@ -241,6 +248,7 @@ const EventPostCard = ({
                   opacity: 0.99,
                 }}
                 source={{
+                  // html: `<iframe  src="${srcUri[1]}" height=${heightVideo} width=${widthVideo} allow="fullscreen" >`,
                   uri: srcUri[1],
                 }}
               />
