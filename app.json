@@ -4,7 +4,7 @@
     "slug": "FSMIS",
     "version": "1.2.1",
     "orientation": "portrait",
-    "icon": "./src/assets/images/icon.png",
+    "icon": "./src/assets/icons/icon.png",
     "splash": {
       "image": "./src/assets/images/splash.png",
       "resizeMode": "cover",
@@ -19,7 +19,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./src/assets/images/icon.png",
+        "foregroundImage": "./src/assets/images/admin-image.png",
         "backgroundColor": "#FFFFFF"
       },
       "package": "com.g31.fsmis",
