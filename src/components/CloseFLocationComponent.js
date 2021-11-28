@@ -13,7 +13,7 @@ import styles from "../config/styles";
 import { ROUTE_NAMES } from "../constants";
 import { goToFManageSelectScreen, goToOTPScreen } from "../navigations";
 import { showAlertConfirmBox, showToastMessage } from "../utilities";
-import OverlayLoading from "./OverLayLoading";
+import OverlayLoading from "./common/OverlayLoading";
 
 const CloseFLocationComponent = ({ name, phone }) => {
   const navigation = useNavigation();
@@ -74,7 +74,7 @@ const CloseFLocationComponent = ({ name, phone }) => {
 
   return (
     <>
-      <OverlayLoading isLoading={loading} />
+      <OverlayLoading loading={loading} />
       <View style={styles.menuScreenListItemView}>
         <ListItem onPress={closeConfirmationAction}>
           <Icon name="delete" size={26} type="antdesign" color="red" />

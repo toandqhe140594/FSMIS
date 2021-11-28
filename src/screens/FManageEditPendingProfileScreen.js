@@ -8,34 +8,25 @@ import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, Button, Center, Divider, Stack, Text, VStack } from "native-base";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { ActivityIndicator, ScrollView, StyleSheet } from "react-native";
-import { Overlay } from "react-native-elements";
+import { ScrollView, StyleSheet } from "react-native";
 
 import DistrictSelector from "../components/common/DistrictSelector";
 import InputComponent from "../components/common/InputComponent";
 import InputWithClipboard from "../components/common/InputWithClipboard";
 import MultiImageSection from "../components/common/MultiImageSection";
+import OverlayLoading from "../components/common/OverlayLoading";
 import ProvinceSelector from "../components/common/ProvinceSelector";
 import TextAreaComponent from "../components/common/TextAreaComponent";
 import WardSelector from "../components/common/WardSelector";
 import MapOverviewBox from "../components/FLocationEditProfile/MapOverviewBox";
 import HeaderTab from "../components/HeaderTab";
 import { DICTIONARY, ROUTE_NAMES, SCHEMA } from "../constants";
-import { goToOTPScreen } from "../navigations";
+import { goBack, goToOTPScreen } from "../navigations";
 import { showAlertBox } from "../utilities";
 
 const styles = StyleSheet.create({
   sectionWrapper: {
     width: "90%",
-  },
-  button: {
-    width: "90%",
-  },
-  loadOnStart: { justifyContent: "center", alignItems: "center" },
-  loadOnSubmit: {
-    backgroundColor: "transparent",
-    justifyContent: "center",
-    alignItems: "center",
   },
 });
 
@@ -57,40 +48,54 @@ const FManageEditPendingProfileScreen = () => {
   const { locationLatLng, locationDetails } = useStoreState(
     (states) => states.FManageModel,
   );
-  const { resetDataList, getAllProvince } = useStoreActions(
-    (actions) => actions.AddressModel,
-  );
-  const { editFishingLocation } = useStoreActions(
-    (actions) => actions.FManageModel,
-  );
+  const { resetDataList } = useStoreActions((actions) => actions.AddressModel);
+  const { editFishingLocation, getLocationDetailsById, setLocationLatLng } =
+    useStoreActions((actions) => actions.FManageModel);
   const sendOtp = useStoreActions((actions) => actions.UtilModel.sendOtp);
   const methods = useForm({
     mode: "onSubmit",
     reValidateMode: "onSubmit",
     defaultValues: {
-      name: locationDetails.name,
-      phone: locationDetails.phone,
-      website: locationDetails.website,
-      address: getAddressFromFullAddress(
-        locationDetails.address,
-        locationDetails.addressFromWard,
-      ),
-      provinceId: locationDetails.addressFromWard.provinceId,
-      districtId: locationDetails.addressFromWard.districtId,
-      wardId: locationDetails.addressFromWard.wardId,
-      description: locationDetails.description,
-      service: locationDetails.timetable,
-      timetable: locationDetails.service,
-      rule: locationDetails.rule,
-      imageArray: locationDetails.image.map((image, index) => ({
-        id: index,
-        base64: image,
-      })),
+      provinceId: 0,
+      districtId: 0,
+      wardId: 0,
+      imageArray: [],
     },
     resolver: yupResolver(SCHEMA.FMANAGE_PROFILE_FORM),
   });
 
   const { handleSubmit, setValue } = methods;
+
+  const setDefaultValues = () => {
+    setValue("name", locationDetails.name);
+    setValue("phone", locationDetails.phone);
+    setValue("website", locationDetails.website);
+    setValue(
+      "address",
+      getAddressFromFullAddress(
+        locationDetails.address,
+        locationDetails.addressFromWard,
+      ),
+    );
+    setValue("provinceId", locationDetails.addressFromWard.provinceId);
+    setValue("districtId", locationDetails.addressFromWard.districtId);
+    setValue("wardId", locationDetails.addressFromWard.wardId);
+    setValue("description", locationDetails.description);
+    setValue("service", locationDetails.timetable);
+    setValue("timetable", locationDetails.service);
+    setValue("rule", locationDetails.rule);
+    setValue(
+      "imageArray",
+      locationDetails.image.map((image, index) => ({
+        id: index,
+        base64: image,
+      })),
+    );
+    setLocationLatLng({
+      longitude: locationDetails.longitude,
+      latitude: locationDetails.latitude,
+    });
+  };
 
   const handleError = () => {
     setIsLoading(false);
@@ -106,6 +111,13 @@ const FManageEditPendingProfileScreen = () => {
   };
 
   const onSubmit = (data) => {
+    if (!locationLatLng.latitude) {
+      showAlertBox(
+        DICTIONARY.ALERT_TITLE,
+        DICTIONARY.ALERT_LOCATION_POSITION_EMPTY,
+      );
+      return;
+    }
     setIsLoading(true);
     const images = data.imageArray.map((pic) => pic.base64);
     delete data.imageArray;
@@ -120,7 +132,7 @@ const FManageEditPendingProfileScreen = () => {
           setIsLoading(false);
           goToOTPScreen(
             navigation,
-            ROUTE_NAMES.FMANAGE_PROFILE_EDIT,
+            ROUTE_NAMES.FMANAGE_PROFILE_PENDING_EDIT,
             locationData.current.phone,
           );
         })
@@ -133,10 +145,12 @@ const FManageEditPendingProfileScreen = () => {
   };
 
   useEffect(() => {
-    getAllProvince().then(() => {
-      setIsLoading(false);
-      setFullScreen(false);
-    });
+    if (route.params?.id) {
+      getLocationDetailsById({ id: route.params.id }).catch(() => {
+        handleError();
+        goBack(navigation);
+      });
+    }
     const loadingId = setTimeout(() => {
       setIsLoading(false);
       setFullScreen(false);
@@ -146,6 +160,17 @@ const FManageEditPendingProfileScreen = () => {
       clearTimeout(loadingId);
     };
   }, []);
+
+  /**
+   * Set default values for fields when data returns
+   */
+  useEffect(() => {
+    if (Object.keys(locationDetails).length) {
+      setDefaultValues();
+      setIsLoading(false);
+      setFullScreen(false);
+    }
+  }, [locationDetails]);
 
   // Fire when naviagtes back to this screen
   useFocusEffect(
@@ -164,17 +189,14 @@ const FManageEditPendingProfileScreen = () => {
     }, [route.params]),
   );
 
+  if (isLoading && fullScreen) {
+    return <OverlayLoading coverScreen />;
+  }
   return (
     <>
       <HeaderTab name={DICTIONARY.FMANAGE_EDIT_LOCATION_HEADER} />
       <ScrollView>
-        <Overlay
-          isVisible={isLoading}
-          fullScreen
-          overlayStyle={fullScreen ? styles.loadOnStart : styles.loadOnSubmit}
-        >
-          <ActivityIndicator size={60} color="#2089DC" />
-        </Overlay>
+        <OverlayLoading loading={isLoading} />
         <FormProvider {...methods}>
           <VStack space={3} divider={<Divider />}>
             <Center>
@@ -310,7 +332,7 @@ const FManageEditPendingProfileScreen = () => {
               <Box style={styles.sectionWrapper} mb={5}>
                 {/* Submit button */}
                 <Button
-                  style={styles.button}
+                  w="90%"
                   alignSelf="center"
                   onPress={handleSubmit(onSubmit)}
                 >

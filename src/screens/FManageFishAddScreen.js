@@ -4,20 +4,15 @@ import { useStoreActions, useStoreState } from "easy-peasy";
 import { Button, VStack } from "native-base";
 import React, { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import {
-  ActivityIndicator,
-  Dimensions,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
-import { Overlay } from "react-native-elements";
+import { Dimensions, StyleSheet, Text, View } from "react-native";
 
 import FieldWatcherResetter from "../components/common/FieldWatcherResetter";
 import InputComponent from "../components/common/InputComponent";
+import OverlayLoading from "../components/common/OverlayLoading";
 import SelectComponent from "../components/common/SelectComponent";
 import HeaderTab from "../components/HeaderTab";
 import { DICTIONARY, SCHEMA } from "../constants";
+import { goBack } from "../navigations";
 import { showAlertAbsoluteBox, showAlertBox } from "../utilities";
 
 const OFFSET_BOTTOM = 85;
@@ -42,19 +37,11 @@ const styles = StyleSheet.create({
     flexShrink: 1,
     flexBasis: "auto",
   },
-  loadOnStart: {
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  loadOnSubmit: {
-    backgroundColor: "transparent",
-    justifyContent: "center",
-    alignItems: "center",
-  },
   hint: {
     fontSize: 12,
     fontStyle: "italic",
     alignSelf: "center",
+    marginTop: 8,
   },
 });
 
@@ -74,7 +61,7 @@ const FManageFishAddScreen = () => {
   const { handleSubmit } = methods;
 
   const handleGoBack = () => {
-    navigation.goBack();
+    goBack(navigation);
   };
 
   const onSubmit = (data) => {
@@ -112,16 +99,13 @@ const FManageFishAddScreen = () => {
     };
   }, []);
 
+  if (isLoading && fullScreenMode) {
+    return <OverlayLoading coverScreen />;
+  }
   return (
     <>
       <HeaderTab name={DICTIONARY.FMANAGE_ADD_FISH_HEADER} />
-      <Overlay
-        isVisible={isLoading}
-        fullScreen
-        overlayStyle={fullScreenMode ? styles.loadOnStart : styles.loadOnSubmit}
-      >
-        <ActivityIndicator size={60} color="#2089DC" />
-      </Overlay>
+      <OverlayLoading loading={isLoading} />
       <View style={styles.appContainer}>
         <FormProvider {...methods}>
           <VStack space={2} style={styles.sectionWrapper}>

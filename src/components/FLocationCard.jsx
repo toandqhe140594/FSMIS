@@ -9,6 +9,7 @@ import { Rating } from "react-native-ratings";
 import {
   goToAdminFLocationOverviewScreen,
   goToFishingLocationOverviewScreen,
+  goToFManageEditPendingProfileScreen,
   goToFManageMainScreen,
 } from "../navigations";
 
@@ -30,7 +31,7 @@ const FLocationCard = ({
 
   const onPress = () => {
     if (pending) {
-      // TODO: goto edit pending location
+      goToFManageEditPendingProfileScreen(navigation, { id });
     } else if (isManaged)
       goToFManageMainScreen(navigation, {
         id,

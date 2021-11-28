@@ -16,13 +16,12 @@ import {
 } from "native-base";
 import React, { useCallback, useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { ActivityIndicator, StyleSheet } from "react-native";
-import { Overlay } from "react-native-elements";
+import { StyleSheet } from "react-native";
 
 import MethodCheckboxSelector from "../components/AdvanceSearch/MethodCheckboxSelector";
-// import CheckboxSelectorComponent from "../components/common/CheckboxSelectorComponent";
 import InputComponent from "../components/common/InputComponent";
 import MultiImageSection from "../components/common/MultiImageSection";
+import OverlayLoading from "../components/common/OverlayLoading";
 import TextAreaComponent from "../components/common/TextAreaComponent";
 import HeaderTab from "../components/HeaderTab";
 import { DICTIONARY, ROUTE_NAMES, SCHEMA } from "../constants";
@@ -40,12 +39,6 @@ const styles = StyleSheet.create({
   },
   button: {
     width: "90%",
-  },
-  loadOnStart: { alignItems: "center", justifyContent: "center" },
-  loadOnSubmit: {
-    backgroundColor: "transparent",
-    alignItems: "center",
-    justifyContent: "center",
   },
 });
 
@@ -79,7 +72,7 @@ const LakeEditProfileScreen = () => {
       length: lakeDetail.length.toString(),
       depth: lakeDetail.depth.toString(),
       imageArray: [{ id: 1, base64: lakeDetail.imageUrl }],
-      methods: [],
+      methods: methodValue,
     },
     resolver: yupResolver(SCHEMA.FMANAGE_LAKE_FORM),
   });
@@ -140,7 +133,7 @@ const LakeEditProfileScreen = () => {
    */
   useEffect(() => {
     getFishingMethodList().then(() => {
-      setValue(DICTIONARY.FORM_FIELD_LAKE_FISHING_METHODS, methodValue);
+      // setValue(DICTIONARY.FORM_FIELD_LAKE_FISHING_METHODS, methodValue);
       setIsLoading(false);
       setFullScreenMode(false);
     });
@@ -166,19 +159,14 @@ const LakeEditProfileScreen = () => {
     }, [route.params]),
   );
 
+  if (isLoading && fullScreenMode) {
+    return <OverlayLoading coverScreen />;
+  }
   return (
     <>
       <HeaderTab name="Chỉnh sửa hồ bé" />
+      <OverlayLoading loading={isLoading} />
       <ScrollView>
-        <Overlay
-          isVisible={isLoading}
-          fullScreen
-          overlayStyle={
-            fullScreenMode ? styles.loadOnStart : styles.loadOnSubmit
-          }
-        >
-          <ActivityIndicator size={60} color="#2089DC" />
-        </Overlay>
         <FormProvider {...methods}>
           <VStack space={3} divider={<Divider />}>
             <Center mt={1}>
@@ -257,15 +245,16 @@ const LakeEditProfileScreen = () => {
               <Box style={styles.sectionWrapper} mb={5}>
                 {/* Submit button */}
                 <Button
-                  style={styles.button}
-                  alignSelf="center"
+                  w="90%"
                   mb={2}
+                  alignSelf="center"
                   onPress={handleSubmit(onSubmit)}
                 >
                   Lưu thông tin hồ câu
                 </Button>
                 <Button
-                  style={styles.button}
+                  w="90%"
+                  colorScheme="red"
                   variant="outline"
                   alignSelf="center"
                   onPress={promptBeforeDelete}

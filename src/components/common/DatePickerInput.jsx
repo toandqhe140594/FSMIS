@@ -59,7 +59,7 @@ const DatePickerInput = ({ label, placeholder, controllerName }) => {
         />
       )}
       {label.length > 0 && (
-        <Text bold fontSize="md" mb={1}>
+        <Text fontSize="md" mb={1}>
           {label}
         </Text>
       )}

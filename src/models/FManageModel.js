@@ -90,9 +90,16 @@ const model = {
   setLocationDetails: action((state, payload) => {
     state.locationDetails = payload;
   }),
+  /**
+   * Get location details by id
+   */
   getLocationDetailsById: thunk(async (actions, payload) => {
-    const { data } = await http.get(`location/${payload.id}`);
-    actions.setLocationDetails(data);
+    try {
+      const { data } = await http.get(`location/${payload.id}`);
+      actions.setLocationDetails(data);
+    } catch (error) {
+      throw new Error(error.message);
+    }
   }),
   resetLocationDetails: action((state) => {
     state.locationDetails = {};
@@ -732,19 +739,17 @@ const model = {
 
   /**
    * Delete a fish from lake by id
-   * @param {Number} [payload.id] id of the fish to delete from lake
-   * @param {Number} [payload.setDeleteStatus] the function to set delete status
+   * @param {Number} payload.id id of the fish to delete from lake
    */
   deleteFishFromLake: thunk(async (actions, payload, { getState }) => {
-    const { id: fishId, setDeleteStatus } = payload;
+    const { id: fishId } = payload;
     const { id: lakeId } = getState().lakeDetail;
     try {
       await http.delete(`location/lake/fish/delete/${fishId}`);
       actions.getLakeDetailByLakeId({ id: lakeId }); // purpose to fetch new fishInLake in lakeDetail
-      setDeleteStatus("SUCCESS");
     } catch (error) {
       // handle error
-      setDeleteStatus("FAILED");
+      throw new Error();
     }
   }),
 

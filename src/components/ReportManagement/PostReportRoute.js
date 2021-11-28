@@ -8,9 +8,9 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { Overlay } from "react-native-elements";
 
 import { goToAdminPostReportDetailScreen } from "../../navigations";
+import OverlayLoading from "../common/OverlayLoading";
 import HeaderTab from "../HeaderTab";
 import ReportCard from "./ReportCard";
 
@@ -36,14 +36,19 @@ const PostReportRoute = () => {
   const { getListPostReport, resetReportList } = useStoreActions(
     (actions) => actions.ReportModel,
   );
+
+  const handleReportPostDetailNavigate = (id, active) => () => {
+    goToAdminPostReportDetailScreen(navigation, {
+      isActive: active,
+      id,
+    });
+  };
+
+  const keyExtractor = (item) => item.id.toString();
+
   const renderItem = ({ item }) => (
     <TouchableOpacity
-      onPress={() => {
-        goToAdminPostReportDetailScreen(navigation, {
-          id: item.id,
-          isActive: item.active,
-        });
-      }}
+      onPress={handleReportPostDetailNavigate(item.id, item.active)}
     >
       <ReportCard {...item} isPostReport />
     </TouchableOpacity>
@@ -117,20 +122,11 @@ const PostReportRoute = () => {
       setGetStatus(null);
     }
   }, [getStatus]);
+
   return (
     <>
       <HeaderTab name="Quản lý báo cáo" />
-      <Overlay
-        isVisible={isLoading && bigLoading}
-        fullScreen
-        overlayStyle={{
-          justifyContent: "center",
-          alignItems: "center",
-          backgroundColor: "transparent",
-        }}
-      >
-        <ActivityIndicator size={60} color="#2089DC" />
-      </Overlay>
+      <OverlayLoading loading={isLoading && bigLoading} />
       <View marginBottom={OFF_SET}>
         <Select
           w="90%"
@@ -153,7 +149,7 @@ const PostReportRoute = () => {
 
         <FlatList
           height="100%"
-          keyExtractor={(item) => `${item.id}`}
+          keyExtractor={keyExtractor}
           data={listPostReport}
           renderItem={renderItem}
           ListFooterComponent={renderFooter}

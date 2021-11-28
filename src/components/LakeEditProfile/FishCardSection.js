@@ -67,8 +67,8 @@ const FishCardSection = () => {
   });
   const handleAppend = () => {
     append({
-      quantity: 0,
-      totalWeight: 0,
+      [DICTIONARY.SELECT_FISH_CARD_QUANTITY_PLACEHOLDER]: 0,
+      [DICTIONARY.FORM_FIELD_FISH_TOTAL_WEIGHT]: 0,
     });
   };
   const handleRemove = (index) => () => {

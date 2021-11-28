@@ -34,6 +34,7 @@ export const FORM_FIELD_ADDRESS = "address";
 export const FORM_FIELD_PROVINCE = "provinceId";
 export const FORM_FIELD_DISTRICT = "districtId";
 export const FORM_FIELD_WARD = "wardId";
+export const FORM_FIELD_DOB = "dob";
 export const FORM_FIELD_IMAGE_ARRAY = "imageArray";
 export const FORM_FIELD_LOCATION_NAME = "name";
 export const FORM_FIELD_LOCATION_PHONE = "phone";
@@ -68,6 +69,7 @@ export const FORM_FIELD_CATCH_REPORT_FISH_QUANTITY = "quantity";
 export const FORM_FIELD_CATCH_REPORT_FISH_WEIGHT = "weight";
 export const FORM_FIELD_CATCH_REPORT_FISH_RETURN_TO_OWNER = "returnToOwner";
 
+export const DOB_LABEL = "Ngày sinh";
 export const FULL_NAME_LABEL = "Họ và tên";
 export const GENDER_LABEL = "Giới tính";
 export const ADDRESS_LABEL = "Địa chỉ";

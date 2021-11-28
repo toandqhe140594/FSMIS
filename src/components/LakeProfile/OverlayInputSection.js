@@ -14,6 +14,7 @@ import InputComponent from "../common/InputComponent";
 const styles = StyleSheet.create({
   overlayContainer: {
     width: "90%",
+    backgroundColor: "white",
   },
   title: {
     fontSize: 20,
@@ -38,6 +39,8 @@ const styles = StyleSheet.create({
   hint: { fontStyle: "italic", marginBottom: 6, alignSelf: "center" },
 });
 
+const RESET_VALUE = 0;
+
 const OverlayInputSection = ({ id, name, visible, toggleOverlay }) => {
   const [isLoading, setIsLoading] = useState(false);
   const { stockFishInLake } = useStoreActions(
@@ -45,25 +48,20 @@ const OverlayInputSection = ({ id, name, visible, toggleOverlay }) => {
   );
   const methods = useForm({
     mode: "onSubmit",
-    reValidateMode: "onChange",
+    reValidateMode: "onSubmit",
     defaultValues: { quantity: 0, weight: 0 },
     resolver: yupResolver(SCHEMA.FMANAGE_LAKE_FISH_EDIT_FORM),
   });
-  const { handleSubmit, reset, watch } = methods;
-  const watchQuantity = watch("quantity");
-  const watchWeight = watch("weight");
+  const { handleSubmit, reset, watch, setValue } = methods;
+  const watchQuantity = watch(DICTIONARY.FORM_FIELD_FISH_QUANTITY);
+  const watchWeight = watch(DICTIONARY.FORM_FIELD_FISH_STOCKING_WEIGHT);
   /**
    * To exit overlay, reset any error or previous input by use
    * setIsLoading to false
    * set visible to false to hide overlay
    */
   const handleOnExit = () => {
-    reset(
-      { quantity: 0, weight: 0 },
-      {
-        keepErrors: false,
-      },
-    );
+    reset({ quantity: 0, weight: 0 }, { keepErrors: false });
     setIsLoading(false);
     toggleOverlay({ visible: false });
   };
@@ -89,7 +87,7 @@ const OverlayInputSection = ({ id, name, visible, toggleOverlay }) => {
    */
   useEffect(() => {
     if (watchQuantity === "") {
-      reset({ quantity: 0 }, { keepErrors: false });
+      setValue(DICTIONARY.FORM_FIELD_FISH_QUANTITY, RESET_VALUE);
     }
   }, [watchQuantity]);
 
@@ -99,7 +97,7 @@ const OverlayInputSection = ({ id, name, visible, toggleOverlay }) => {
    */
   useEffect(() => {
     if (watchWeight === "") {
-      reset({ weight: 0 }, { keepErrors: false });
+      setValue(DICTIONARY.FORM_FIELD_FISH_STOCKING_WEIGHT, RESET_VALUE);
     }
   }, [watchWeight]);
 
