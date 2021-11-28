@@ -67,7 +67,11 @@ const CatchReportSection = ({ fishList }) => {
     shouldUnregister: true,
   });
   const handleAppend = () => {
-    append({ fishSpeciesId: 0, weight: 0, quantity: 0 });
+    append({
+      [DICTIONARY.FORM_FIELD_FISH_SPECIES]: 0,
+      [DICTIONARY.FORM_FIELD_CATCH_REPORT_FISH_WEIGHT]: 0,
+      [DICTIONARY.FORM_FIELD_CATCH_REPORT_FISH_QUANTITY]: 0,
+    });
   };
   const handleRemove = (index) => () => {
     remove(index);
@@ -78,6 +82,7 @@ const CatchReportSection = ({ fishList }) => {
   useEffect(() => {
     handleAppend();
   }, []);
+
   return (
     <>
       {/* fields controls each object with field fishType, catches, totalWeight and isReleased */}

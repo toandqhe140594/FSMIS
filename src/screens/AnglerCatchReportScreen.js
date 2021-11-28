@@ -26,6 +26,7 @@ import SelectComponent from "../components/common/SelectComponent";
 import TextAreaComponent from "../components/common/TextAreaComponent";
 import HeaderTab from "../components/HeaderTab";
 import { DICTIONARY, ROUTE_NAMES, SCHEMA } from "../constants";
+import { goBack } from "../navigations";
 import { showAlertAbsoluteBox, showAlertBox } from "../utilities";
 
 const styles = StyleSheet.create({
@@ -63,7 +64,7 @@ const AnglerCatchReportScreen = () => {
   const watchLakeIdField = watch(DICTIONARY.FORM_FIELD_CATCH_REPORT_LAKE_ID);
 
   const handleGoBack = () => {
-    navigation.pop(1);
+    goBack(navigation);
   };
 
   const onSubmit = (data) => {

@@ -41,6 +41,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontStyle: "italic",
     alignSelf: "center",
+    marginTop: 8,
   },
 });
 
