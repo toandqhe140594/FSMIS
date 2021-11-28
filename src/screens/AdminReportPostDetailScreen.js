@@ -95,7 +95,7 @@ const AdminReportPostDetailScreen = () => {
             <EventPostCard
               id={postDtoOut.id}
               iconEvent={listEvent}
-              iconName="ellipsis-vertical"
+              iconName={isActive ? "ellipsis-vertical" : ""}
               postStyle="LAKE_POST"
               uri={postDtoOut.uri}
               typeUri={postDtoOut.attachmentType}
