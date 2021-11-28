@@ -4,6 +4,7 @@ import { FlatList, Text, View } from "react-native";
 
 import FLocationCard from "../components/FLocationCard";
 import styles from "../config/styles";
+import { DEFAULT_TIMEOUT } from "../constants";
 
 const ItemSeparator = () => {
   return <View style={{ height: 6 }} />;
@@ -44,10 +45,10 @@ const FLocationSaveScreen = () => {
   const handleRefresh = () => {
     setRefreshing(true);
     getSavedLocationList({ mode: "refresh" });
-    // If the list is not changed then hide refresh icon after 5 seconds
+    // If the list is not changed then hide refresh icon after 10 seconds
     setTimeout(() => {
       setRefreshing(false);
-    }, 5000);
+    }, DEFAULT_TIMEOUT);
   };
 
   /**

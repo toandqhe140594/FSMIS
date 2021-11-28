@@ -6,6 +6,7 @@ import React, { useEffect, useState } from "react";
 
 import AvatarCard from "../components/AvatarCard";
 import HeaderTab from "../components/HeaderTab";
+import { DEFAULT_TIMEOUT } from "../constants";
 import { goToCatchReportVerifyDetailScreen } from "../navigations";
 
 const UnresolvedCatchReportComponent = ({
@@ -34,7 +35,7 @@ const UnresolvedCatchReportComponent = ({
     setLoading(true);
     timeOut = setTimeout(() => {
       setLoading(false);
-    }, 5000);
+    }, DEFAULT_TIMEOUT);
     approveCatchReport({ id, isApprove: true, setSuccess });
   };
 

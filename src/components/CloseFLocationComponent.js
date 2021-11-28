@@ -10,7 +10,7 @@ import { View } from "react-native";
 import { Icon, ListItem } from "react-native-elements";
 
 import styles from "../config/styles";
-import { ROUTE_NAMES } from "../constants";
+import { DEFAULT_TIMEOUT, ROUTE_NAMES } from "../constants";
 import { goToFManageSelectScreen, goToOTPScreen } from "../navigations";
 import { showAlertConfirmBox, showToastMessage } from "../utilities";
 import OverlayLoading from "./common/OverlayLoading";
@@ -32,7 +32,7 @@ const CloseFLocationComponent = ({ name, phone }) => {
     setLoading(true);
     setTimeout(() => {
       sendOtp({ phone, setSuccess: setOtpSendSuccess });
-    }, 5000);
+    }, DEFAULT_TIMEOUT);
   };
 
   const closeConfirmationAction = () => {

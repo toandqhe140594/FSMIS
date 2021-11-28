@@ -20,7 +20,7 @@ import SelectComponent from "../components/common/SelectComponent";
 import WardSelector from "../components/common/WardSelector";
 import HeaderTab from "../components/HeaderTab";
 import moment from "../config/moment";
-import { DICTIONARY, SCHEMA } from "../constants";
+import { DEFAULT_TIMEOUT, DICTIONARY, SCHEMA } from "../constants";
 import { goBack } from "../navigations";
 import { showAlertBox } from "../utilities";
 
@@ -118,7 +118,7 @@ const EditProfileScreen = () => {
     const loadingId = setTimeout(() => {
       setIsLoading(false);
       setFullScreen(false);
-    }, 10000);
+    }, DEFAULT_TIMEOUT);
     return () => {
       clearTimeout(loadingId);
       resetDataList();

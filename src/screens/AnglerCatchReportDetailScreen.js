@@ -33,7 +33,7 @@ const AnglerCatchReportDetailScreen = () => {
   useEffect(() => {
     const timeOut = setTimeout(() => {
       setIsLoading(false);
-    }, 5000);
+    }, DEFAULT_TIMEOUT);
     if (route.params) {
       const { id } = route.params;
       getCatchReportDetailById({ id, setIsLoading });

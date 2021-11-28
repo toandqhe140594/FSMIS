@@ -20,7 +20,7 @@ import TextAreaComponent from "../components/common/TextAreaComponent";
 import WardSelector from "../components/common/WardSelector";
 import MapOverviewBox from "../components/FLocationEditProfile/MapOverviewBox";
 import HeaderTab from "../components/HeaderTab";
-import { DICTIONARY, ROUTE_NAMES, SCHEMA } from "../constants";
+import { DEFAULT_TIMEOUT, DICTIONARY, ROUTE_NAMES, SCHEMA } from "../constants";
 import { goBack, goToOTPScreen } from "../navigations";
 import { showAlertAbsoluteBox, showAlertBox } from "../utilities";
 
@@ -102,7 +102,7 @@ const FManageAddNewScreen = () => {
     const loadingId = setTimeout(() => {
       setIsLoading(false);
       setFullScreen(false);
-    }, 10000);
+    }, DEFAULT_TIMEOUT);
     return () => {
       resetDataList();
       clearTimeout(loadingId);

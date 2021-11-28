@@ -20,7 +20,7 @@ import TextAreaComponent from "../components/common/TextAreaComponent";
 import WardSelector from "../components/common/WardSelector";
 import MapOverviewBox from "../components/FLocationEditProfile/MapOverviewBox";
 import HeaderTab from "../components/HeaderTab";
-import { DICTIONARY, ROUTE_NAMES, SCHEMA } from "../constants";
+import { DEFAULT_TIMEOUT, DICTIONARY, ROUTE_NAMES, SCHEMA } from "../constants";
 import { goToOTPScreen } from "../navigations";
 import { showAlertBox } from "../utilities";
 
@@ -131,7 +131,7 @@ const FManageEditProfileScreen = () => {
     const loadingId = setTimeout(() => {
       setIsLoading(false);
       setFullScreen(false);
-    }, 10000);
+    }, DEFAULT_TIMEOUT);
     return () => {
       resetDataList();
       clearTimeout(loadingId);

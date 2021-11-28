@@ -58,7 +58,7 @@ const AdminFishingMethodManagementScreen = () => {
     getAdminFishingMethodList();
     const loadingTimeout = setTimeout(() => {
       setIsLoading(false);
-    }, 1000); // Test
+    }, DEFAULT_TIMEOUT);
     return () => {
       clearTimeout(loadingTimeout);
     };
