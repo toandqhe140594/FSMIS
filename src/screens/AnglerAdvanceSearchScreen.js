@@ -142,7 +142,6 @@ const AnglerAdvanceSearchScreen = () => {
           onPress: navigateToSuggestionScreen,
         }}
       />
-      <OverlayLoading loading={isLoading} />
       <View style={styles.appContainer}>
         <FormProvider {...methods}>
           <VStack flex={1} space={2} style={styles.sectionWrapper}>
