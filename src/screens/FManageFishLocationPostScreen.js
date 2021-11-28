@@ -166,6 +166,8 @@ const PostListContainerComponent = () => {
     getPinPost();
   }, []);
 
+  const keyExtractor = (item) => item.id.toString();
+
   return (
     <Box>
       <FlatList
@@ -178,7 +180,7 @@ const PostListContainerComponent = () => {
         data={locationPostList}
         renderItem={renderItem}
         onEndReached={loadMoreLakeCatchData}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={keyExtractor}
         nestedScrollEnabled
       />
     </Box>

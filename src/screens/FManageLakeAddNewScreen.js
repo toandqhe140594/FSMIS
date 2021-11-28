@@ -26,7 +26,7 @@ import OverlayLoading from "../components/common/OverlayLoading";
 import TextAreaComponent from "../components/common/TextAreaComponent";
 import HeaderTab from "../components/HeaderTab";
 import FishCardSection from "../components/LakeEditProfile/FishCardSection";
-import { DICTIONARY, ROUTE_NAMES, SCHEMA } from "../constants";
+import { DEFAULT_TIMEOUT, DICTIONARY, ROUTE_NAMES, SCHEMA } from "../constants";
 import { goBack } from "../navigations";
 import { showAlertAbsoluteBox, showAlertBox } from "../utilities";
 
@@ -105,7 +105,7 @@ const LakeAddNewScreen = () => {
     const loadingId = setTimeout(() => {
       setIsLoading(false);
       setFullScreenMode(false);
-    }, 10000);
+    }, DEFAULT_TIMEOUT);
     return () => {
       clearTimeout(loadingId);
     };

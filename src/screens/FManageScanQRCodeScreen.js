@@ -66,6 +66,8 @@ const ScanQRCodeScreen = () => {
     };
   }, []);
 
+  const resetScanner = () => setScanned(false);
+
   if (hasPermission === null) {
     return (
       <Box flex={1}>
@@ -108,7 +110,7 @@ const ScanQRCodeScreen = () => {
           />
         </Box>
         {scanned && (
-          <Button onPress={() => setScanned(false)} alignSelf="center" mb="5%">
+          <Button onPress={resetScanner} alignSelf="center" mb="5%">
             Quét lại mã
           </Button>
         )}

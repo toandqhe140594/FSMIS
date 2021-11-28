@@ -51,9 +51,11 @@ const FishCard = ({
   const handleDeleteFish = () => {
     onDeleteFish(id);
   };
+
   const handleToggleEditOverlay = () => {
     toggleEditOverlay({ id, name, visible: true });
   };
+
   return (
     <Card>
       <Card.Title>{name}</Card.Title>

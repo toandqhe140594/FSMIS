@@ -27,36 +27,38 @@ const FManageEmployeeManagementScreen = () => {
     setDisplayedList(listOfStaff);
   }, [listOfStaff]);
 
+  const navigateToAddStaffScreen = () => {
+    goToFManageAddStaffScreen(navigation);
+  };
+
+  const renderItem = ({ item }) => {
+    const { id, name, phone, avatar } = item;
+    return (
+      <EmployeeCard
+        employee={{
+          id,
+          name,
+          phoneNumber: phone,
+          image: avatar,
+        }}
+      />
+    );
+  };
+
+  const keyExtractor = (item) => item.id.toString();
+
   return (
     <>
       <HeaderTab name="Quản lý nhân viên" />
       <Box flex={1} alignItems="center">
         <Center w="80%" my={5}>
-          <Button
-            onPress={() => {
-              goToFManageAddStaffScreen(navigation);
-            }}
-          >
-            Thêm nhân viên
-          </Button>
+          <Button onPress={navigateToAddStaffScreen}>Thêm nhân viên</Button>
         </Center>
         <Box flex={1} w="100%">
           <FlatList
             data={displayedList}
-            renderItem={({ item }) => {
-              const { id, name, phone, avatar } = item;
-              return (
-                <EmployeeCard
-                  employee={{
-                    id,
-                    name,
-                    phoneNumber: phone,
-                    image: avatar,
-                  }}
-                />
-              );
-            }}
-            keyExtractor={(item) => item.id.toString()}
+            renderItem={renderItem}
+            keyExtractor={keyExtractor}
             ItemSeparatorComponent={Divider}
             ListHeaderComponent={Divider}
             ListFooterComponent={Divider}

@@ -11,7 +11,7 @@ import InputComponent from "../components/common/InputComponent";
 import OverlayLoading from "../components/common/OverlayLoading";
 import SelectComponent from "../components/common/SelectComponent";
 import HeaderTab from "../components/HeaderTab";
-import { DICTIONARY, SCHEMA } from "../constants";
+import { DEFAULT_TIMEOUT, DICTIONARY, SCHEMA } from "../constants";
 import { goBack } from "../navigations";
 import { showAlertAbsoluteBox, showAlertBox } from "../utilities";
 
@@ -93,7 +93,7 @@ const FManageFishAddScreen = () => {
     const loadingId = setTimeout(() => {
       setIsLoading(false);
       setFullScreenMode(false);
-    }, 10000);
+    }, DEFAULT_TIMEOUT);
     return () => {
       clearTimeout(loadingId);
     };
