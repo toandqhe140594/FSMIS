@@ -94,7 +94,11 @@ const AdminAccountDetailScreen = () => {
               dob={accountInformation.dob.split(" ")[0] || "Không có dữ liệu"}
               phoneNumber={accountInformation.phone}
               gender={accountInformation.gender}
-              address={accountInformation.address}
+              address={
+                accountInformation.address.startsWith(",")
+                  ? accountInformation.address.slice(1)
+                  : accountInformation.address
+              }
               isDetailed
               status={accountInformation.active ? "active" : "inactive"}
               key={accountInformation.id}
