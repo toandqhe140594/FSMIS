@@ -298,6 +298,7 @@ const model = {
     const { id, setIsSuccess } = payload;
     try {
       const { status } = await http.post(`/admin/report/solved/${id}`);
+
       if (status === 200) {
         setIsSuccess(true);
       }

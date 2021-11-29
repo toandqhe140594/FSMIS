@@ -139,6 +139,7 @@ const FManageCatchReportHistory = () => {
             <Modal.Body>
               <CalendarPicker
                 allowRangeSelection
+                allowBackwardRangeSelect
                 scrollable
                 todayBackgroundColor="#00e673"
                 selectedDayColor="#00ccff"
