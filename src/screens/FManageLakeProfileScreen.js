@@ -2,8 +2,8 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, Center } from "native-base";
 import React, { useEffect, useMemo, useState } from "react";
-import { FlatList } from "react-native";
-import { Button, Text } from "react-native-elements";
+import { FlatList, Text } from "react-native";
+import { Button } from "react-native-elements";
 
 import OverlayLoading from "../components/common/OverlayLoading";
 import HeaderTab from "../components/HeaderTab";
