@@ -251,7 +251,7 @@ const FLocationEventRoute = () => {
         />
       ) : (
         <Center flex={1} minHeight={600}>
-          <Text>Không có bài viết </Text>
+          <Text>Chưa có bài đăng được tạo.</Text>
         </Center>
       )}
     </>

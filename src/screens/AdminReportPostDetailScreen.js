@@ -171,7 +171,7 @@ const AdminReportPostDetailScreen = () => {
     if (isSolvedSuccess === true) {
       showAlertAbsoluteBox(
         "Xử lý thành công",
-        ``,
+        `Báo cáo đã được chuyển sang mục "Đã sử lý".`,
         () => {
           navigation.goBack();
         },

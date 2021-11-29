@@ -8,7 +8,11 @@ import AvatarCard from "../components/AvatarCard";
 import EventPostCard from "../components/EventPostCard";
 import styles from "../config/styles";
 import { goToAdminFLocationOverviewScreen } from "../navigations";
-import { showAlertAbsoluteBox } from "../utilities";
+import {
+  showAlertAbsoluteBox,
+  showAlertBox,
+  showAlertConfirmBox,
+} from "../utilities";
 
 // View report about angler catch.
 const AdminReportCatchDetailScreen = () => {
@@ -19,16 +23,14 @@ const AdminReportCatchDetailScreen = () => {
   const [isSolvedSuccess, setIsSolvedSuccess] = useState(null); // post solved report handler success
   const [isLoading, setIsLoading] = useState(null);
   const [reportId, setReportId] = useState();
+  const [isDeleteSuccess, setIsDeleteSuccess] = useState(null);
   const catchReportDetail = useStoreState(
     (states) => states.ReportModel.catchReportDetail,
   );
-  const getCatchReportDetail = useStoreActions(
-    (actions) => actions.ReportModel.getCatchReportDetail,
+
+  const { solvedReport, getCatchReportDetail, deleteCatch } = useStoreActions(
+    (actions) => actions.ReportModel,
   );
-  const solvedReport = useStoreActions(
-    (actions) => actions.ReportModel.solvedReport,
-  );
-  const listEvent = [{ name: "Xóa bài viết", onPress: () => {} }];
   const {
     locationId,
     locationName,
@@ -36,13 +38,30 @@ const AdminReportCatchDetailScreen = () => {
     catchesOverviewDtoOut,
     reportDetailList,
   } = catchReportDetail;
+
   const goToFLocationDetailHandler = () => {
     goToAdminFLocationOverviewScreen(navigation, { id: locationId });
+  };
+  const deleteCatchHandler = () => {
+    deleteCatch({
+      id: catchesOverviewDtoOut.id,
+      setIsSuccess: setIsDeleteSuccess,
+    });
+    setIsLoading(true);
+  };
+  const onPressHandler = () => {
+    showAlertConfirmBox(
+      "Xác nhận xóa báo cá.",
+      `Báo cá đăng tại hồ ${locationName} của ${catchesOverviewDtoOut.userFullName} sẽ bị xóa.`,
+      deleteCatchHandler,
+    );
   };
   const solvedReportHandler = () => {
     solvedReport({ id: reportId, setIsSuccess: setIsSolvedSuccess });
     setIsLoading(true);
   };
+  const listEvent = [{ name: "Xóa bài viết", onPress: onPressHandler }];
+
   const renderItem = ({ item }) => (
     <Box
       borderTopWidth="1"
@@ -142,7 +161,7 @@ const AdminReportCatchDetailScreen = () => {
     if (isSolvedSuccess === true) {
       showAlertAbsoluteBox(
         "Xử lý thành công",
-        ``,
+        `Báo cáo đã được chuyển sang mục "Đã sử lý".`,
         () => {
           navigation.goBack();
         },
@@ -160,6 +179,19 @@ const AdminReportCatchDetailScreen = () => {
     setIsLoading(false);
     setIsSolvedSuccess(null);
   }, [isSolvedSuccess]);
+  useEffect(() => {
+    if (isDeleteSuccess === true) {
+      showAlertBox(
+        "Thành công",
+        `Bài viết đã được gỡ khỏi trang báo cá của hồ ${locationName}.`,
+      );
+    }
+    if (isDeleteSuccess === false) {
+      showAlertBox("Lỗi", `Đã xảy ra lỗi, vui lòng thử lại.`);
+    }
+    setIsLoading(false);
+    setIsDeleteSuccess(null);
+  }, [isDeleteSuccess]);
   return (
     <AdminReport
       isActive={isActive}
