@@ -9,7 +9,7 @@ import SmallScreenLoadingIndicator from "../components/common/SmallScreenLoading
 import HeaderTab from "../components/HeaderTab";
 import PressableCustomCard from "../components/PressableCustomCard";
 import styles from "../config/styles";
-import { DEFAULT_TIMEOUT } from "../constants";
+import { DEFAULT_TIMEOUT, KEY_EXTRACTOR } from "../constants";
 import { goToAdminAccountManagementDetailScreen } from "../navigations";
 
 const AdminAccountManagementScreen = () => {
@@ -110,7 +110,6 @@ const AdminAccountManagementScreen = () => {
     );
   };
 
-  const keyExtractor = (item) => item.id.toString();
   const onViewRef = React.useRef((viewableItems) => {
     const foundIndex = viewableItems.changed.findIndex(
       (item) => item.index === 9,
@@ -144,7 +143,7 @@ const AdminAccountManagementScreen = () => {
               <FlatList
                 data={userList}
                 renderItem={renderItem}
-                keyExtractor={keyExtractor}
+                keyExtractor={KEY_EXTRACTOR}
                 ItemSeparatorComponent={Divider}
                 onEndReached={loadMoreUserData}
                 initialNumToRender={10}
