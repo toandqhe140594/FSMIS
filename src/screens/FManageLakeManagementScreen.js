@@ -6,6 +6,7 @@ import { Text } from "react-native";
 
 import HeaderTab from "../components/HeaderTab";
 import LakeCard from "../components/LakeCard";
+import { KEY_EXTRACTOR } from "../constants";
 import { goToFManageLakeAddNewScreen } from "../navigations";
 
 const LakeListManagementScreen = () => {
@@ -34,8 +35,6 @@ const LakeListManagementScreen = () => {
     </Text>
   );
 
-  const keyExtractor = (item) => item.id.toString();
-
   const addNewLakeAction = () => {
     goToFManageLakeAddNewScreen(navigation);
   };
@@ -52,7 +51,7 @@ const LakeListManagementScreen = () => {
             w="100%"
             data={listOfLake}
             renderItem={renderItem}
-            keyExtractor={keyExtractor}
+            keyExtractor={KEY_EXTRACTOR}
             ListEmptyComponent={renderEmpty}
             ItemSeparatorComponent={Separator}
             contentContainerStyle={memoizedStyle}

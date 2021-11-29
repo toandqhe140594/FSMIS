@@ -298,6 +298,7 @@ const model = {
     const { id, setIsSuccess } = payload;
     try {
       const { status } = await http.post(`/admin/report/solved/${id}`);
+
       if (status === 200) {
         setIsSuccess(true);
       }
@@ -328,7 +329,17 @@ const model = {
       setIsSuccess(false);
     }
   }),
-  deleteCatch: "",
+  deleteCatch: thunk(async (actions, payload) => {
+    const { id, setIsSuccess } = payload;
+    try {
+      const { status } = await http.delete(`/admin/report/catch/delete/${id}`);
+      if (status === 200) {
+        setIsSuccess(true);
+      }
+    } catch (error) {
+      setIsSuccess(false);
+    }
+  }),
   /**
    * Reset all state of model to default value
    */

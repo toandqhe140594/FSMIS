@@ -1,5 +1,6 @@
 import { action, thunk } from "easy-peasy";
 
+import { showToastMessage } from "../utilities";
 import http from "../utilities/Http";
 
 /**
@@ -33,6 +34,7 @@ const model = {
     const { data } = await http.get(`location/nearby`, {
       params,
     });
+    if (data.length === 0) showToastMessage("Không tìm thấy kết quả tương ứng");
     actions.setLocationList(data);
   }),
   /**

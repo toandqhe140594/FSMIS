@@ -1,3 +1,4 @@
+/* eslint-disable prefer-template */
 import { yupResolver } from "@hookform/resolvers/yup";
 import {
   useFocusEffect,
@@ -63,6 +64,22 @@ const OFFSET_BOTTOM = 85;
 // Get window height without status bar height
 const CUSTOM_SCREEN_HEIGHT = Dimensions.get("window").height - OFFSET_BOTTOM;
 
+const getEditDate = () => {
+  const currentdate = new Date();
+  const datetime =
+    ("0" + currentdate.getDate()).slice(-2) +
+    "/" +
+    ("0" + (currentdate.getMonth() + 1)).slice(-2) +
+    "/" +
+    currentdate.getFullYear() +
+    " " +
+    ("0" + currentdate.getHours()).slice(-2) +
+    ":" +
+    ("0" + currentdate.getMinutes()).slice(-2) +
+    ":" +
+    ("0" + currentdate.getSeconds()).slice(-2);
+  return datetime;
+};
 const PostEditScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
@@ -122,9 +139,10 @@ const PostEditScreen = () => {
   const onSubmit = (data) => {
     setLoadingButton(true);
     const url = setAttachmentUrl(watchAttachmentType);
+    const datetime = getEditDate();
     delete data.imageArray;
     delete data.mediaUrl;
-    const updateData = { ...data, id: currentPost.id, url };
+    const updateData = { ...data, id: currentPost.id, url, postTime: datetime };
     editPost({ updateData })
       .then(() => {
         showAlertAbsoluteBox(

@@ -7,6 +7,7 @@ import CalendarPicker from "react-native-calendar-picker";
 import AvatarCard from "../components/AvatarCard";
 import HeaderTab from "../components/HeaderTab";
 import PressableCustomCard from "../components/PressableCustomCard";
+import { KEY_EXTRACTOR } from "../constants";
 import { goToCatchReportDetailScreen } from "../navigations";
 
 const FManageCatchReportHistory = () => {
@@ -76,7 +77,7 @@ const FManageCatchReportHistory = () => {
     });
   }, []);
 
-  const closeModel = () => setModalVisible(false);
+  const closeModal = () => setModalVisible(false);
 
   const navigateToDetailScreen = (id) => () => {
     goToCatchReportDetailScreen(navigation, { id });
@@ -126,8 +127,6 @@ const FManageCatchReportHistory = () => {
     </Text>
   );
 
-  const keyExtractor = (item) => item.id.toString();
-
   const onEndReached = () => {
     getCatchReportHistoryOverwrite({
       startDate: startDate ? startDate.toJSON() : null,
@@ -140,13 +139,14 @@ const FManageCatchReportHistory = () => {
     <Box flex={1}>
       <HeaderTab name="Lịch sử báo cá" />
       <Box w={{ base: "100%", md: "25%" }} flex={1}>
-        <Modal isOpen={modalVisible} onClose={closeModel} size="full">
+        <Modal isOpen={modalVisible} onClose={closeModal} size="full">
           <Modal.Content>
             <Modal.CloseButton />
             <Modal.Header>Chọn ngày</Modal.Header>
             <Modal.Body>
               <CalendarPicker
                 allowRangeSelection
+                allowBackwardRangeSelect
                 scrollable
                 todayBackgroundColor="#00e673"
                 selectedDayColor="#00ccff"
@@ -179,7 +179,7 @@ const FManageCatchReportHistory = () => {
           <FlatList
             data={catchReportHistory}
             renderItem={renderItem}
-            keyExtractor={keyExtractor}
+            keyExtractor={KEY_EXTRACTOR}
             onEndReached={onEndReached}
             contentContainerStyle={memoizedStyle}
             ListEmptyComponent={renderEmpty}

@@ -9,7 +9,7 @@ import OverlayLoading from "../components/common/OverlayLoading";
 import HeaderTab from "../components/HeaderTab";
 import FishCard from "../components/LakeProfile/FishCard";
 import OverlayInputSection from "../components/LakeProfile/OverlayInputSection";
-import { DEFAULT_TIMEOUT, DICTIONARY } from "../constants";
+import { DEFAULT_TIMEOUT, DICTIONARY, KEY_EXTRACTOR } from "../constants";
 import {
   goBack,
   goToFManageFishAddScreen,
@@ -51,8 +51,6 @@ const FManageEmployeeManagementScreen = () => {
   const handleAddFishNavigate = () => {
     goToFManageFishAddScreen(navigation);
   };
-
-  const keyExtractor = (item) => item.id.toString();
 
   const promptForFishDelete = (id) => {
     const handleFishDelete = () => {
@@ -128,7 +126,7 @@ const FManageEmployeeManagementScreen = () => {
           <FlatList
             data={lakeDetail.fishInLake}
             renderItem={renderItem}
-            keyExtractor={keyExtractor}
+            keyExtractor={KEY_EXTRACTOR}
             ListEmptyComponent={renderEmpty}
             contentContainerStyle={memoizedStyle}
           />

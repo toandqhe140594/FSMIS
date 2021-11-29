@@ -120,7 +120,7 @@ const ChangePhoneNumberScreen = () => {
             isLoadingText={DICTIONARY.PROCESSING_BUTTON_LABEL}
             onPress={handleSubmit(onSubmit)}
           >
-            Tiếp tục
+            {DICTIONARY.CONTINUE_BUTTON_LABEL}
           </Button>
         </VStack>
       </FormProvider>

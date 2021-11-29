@@ -20,13 +20,15 @@ const FManageEmployeeDetailScreen = () => {
 
   const [deleteSuccess, setDeleteSuccess] = useState(false);
 
+  const removeEmployeeById = () => {
+    deleteStaffById({ userId: staffDetail.id, setDeleteSuccess });
+  };
+
   const onDeleteEmployee = () => {
     showAlertConfirmBox(
       "Bạn muốn xóa nhân viên này khỏi hồ",
       `"${staffDetail.fullName}" sẽ bị xóa vĩnh viễn. Bạn không thể hoàn tác hành động này`,
-      () => {
-        deleteStaffById({ userId: staffDetail.id, setDeleteSuccess });
-      },
+      removeEmployeeById,
     );
   };
 

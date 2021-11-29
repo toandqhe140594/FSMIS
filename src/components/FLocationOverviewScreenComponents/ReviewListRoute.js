@@ -7,7 +7,9 @@ import { Divider, Text } from "react-native-elements";
 import { Rating } from "react-native-ratings";
 
 import styles from "../../config/styles";
+import { KEY_EXTRACTOR } from "../../constants";
 import { goToWriteReviewScreen } from "../../navigations";
+import SmallScreenLoadingIndicator from "../common/SmallScreenLoadingIndicator";
 import ReviewFromAnglerSection from "../ReviewFromAnglerSection";
 
 const FilterButton = ({ filterType, content, value, changeFilterAction }) => {
@@ -98,9 +100,6 @@ PersonalReviewSection.propTypes = {
 };
 
 const ReviewListRoute = () => {
-  const [reviewPage, setReviewPage] = useState(1);
-  const [filterType, setFilterType] = useState("newest");
-
   const {
     checkinStatus,
     currentId,
@@ -115,6 +114,13 @@ const ReviewListRoute = () => {
     getLocationReviewListByPage,
   } = useStoreActions((actions) => actions.LocationModel);
 
+  const [reviewPage, setReviewPage] = useState(1);
+  const [filterType, setFilterType] = useState("newest");
+  const [loading, setLoading] = useState(true);
+
+  // Hide loading indicator
+  const closeLoadingIndicator = () => setLoading(false);
+
   const loadMoreReviewData = () => {
     getLocationReviewListByPage({ pageNo: reviewPage, filter: filterType });
     setReviewPage(reviewPage + 1);
@@ -127,10 +133,13 @@ const ReviewListRoute = () => {
 
   useFocusEffect(
     useCallback(() => {
-      getLocationReviewScore();
-      getPersonalReview();
-      resetReviewData();
-      return () => {};
+      Promise.all([
+        getLocationReviewScore(),
+        getPersonalReview(),
+        resetReviewData(),
+      ])
+        .then(closeLoadingIndicator)
+        .catch(closeLoadingIndicator);
     }, []),
   );
 
@@ -142,27 +151,22 @@ const ReviewListRoute = () => {
     loadMoreReviewData();
   };
 
-  const keyExtractor = (item) => item.id.toString();
-
   const renderItem = ({ item }) => {
     const { userVoteType } = item;
     return (
-      <Box key={item.id}>
-        <ReviewFromAnglerSection
-          name={item.userFullName}
-          content={item.description}
-          isPositive={userVoteType === true}
-          isNeutral={userVoteType === null}
-          date={item.time}
-          positiveCount={item.upvote}
-          negativeCount={item.downvote}
-          rate={item.score}
-          id={item.id}
-          key={item.id}
-          userImage={item.userAvatar}
-        />
-        <Divider />
-      </Box>
+      <ReviewFromAnglerSection
+        name={item.userFullName}
+        content={item.description}
+        isPositive={userVoteType === true}
+        isNeutral={userVoteType === null}
+        date={item.time}
+        positiveCount={item.upvote}
+        negativeCount={item.downvote}
+        rate={item.score}
+        id={item.id}
+        key={item.id}
+        userImage={item.userAvatar}
+      />
     );
   };
 
@@ -227,14 +231,24 @@ const ReviewListRoute = () => {
     </>
   );
 
+  const ListEmptyComponent = () => (
+    <Center flex={1} minHeight={300}>
+      <Text>Không có đánh giá </Text>
+    </Center>
+  );
+
+  if (loading) return <SmallScreenLoadingIndicator />;
+
   return (
     <Box flex={1}>
       <FlatList
         data={locationReviewList}
         renderItem={renderItem}
-        keyExtractor={keyExtractor}
+        keyExtractor={KEY_EXTRACTOR}
         ListHeaderComponent={ListHeaderComponent}
         onEndReached={onEndReached}
+        ListEmptyComponent={ListEmptyComponent}
+        ItemSeparatorComponent={Divider}
       />
     </Box>
   );

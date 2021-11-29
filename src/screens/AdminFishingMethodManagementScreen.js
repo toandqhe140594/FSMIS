@@ -8,7 +8,7 @@ import { Divider, SearchBar } from "react-native-elements";
 import FishingMethodManagementCard from "../components/AdminMethodManagement/FishingMethodManagementCard";
 import HeaderTab from "../components/HeaderTab";
 import styles from "../config/styles";
-import { DEFAULT_TIMEOUT } from "../constants";
+import { DEFAULT_TIMEOUT, KEY_EXTRACTOR } from "../constants";
 import FishingMethodModel from "../models/FishingMethodModel";
 import { goToAdminFishingMethodEditScreen } from "../navigations";
 import store from "../utilities/Store";
@@ -77,8 +77,6 @@ const AdminFishingMethodManagementScreen = () => {
     });
   };
 
-  const keyExtractor = (item) => item.id.toString();
-
   if (isLoading)
     return (
       <Center flex={1}>
@@ -109,7 +107,7 @@ const AdminFishingMethodManagementScreen = () => {
             <FlatList
               data={displayedList}
               renderItem={renderRow}
-              keyExtractor={keyExtractor}
+              keyExtractor={KEY_EXTRACTOR}
               ItemSeparatorComponent={Divider}
             />
           </Box>
