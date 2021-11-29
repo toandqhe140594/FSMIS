@@ -3,12 +3,18 @@ import PropTypes from "prop-types";
 import React, { useState } from "react";
 import CalendarPicker from "react-native-calendar-picker";
 
-const DateRangeModalSelector = ({ handleDatePickerChange, onSubmitDate }) => {
+const DateRangeModalSelector = ({
+  onSelectValue,
+  handleDatePickerChange,
+  onSubmitDate,
+}) => {
   const [modalVisible, setModalVisible] = useState(false);
   const closeModal = () => setModalVisible(false);
   const handleValueChange = (value) => {
     if (value === "BY_DATE") {
       setModalVisible(true);
+    } else {
+      onSelectValue();
     }
   };
   const handleOnSubmitDate = () => {
@@ -61,6 +67,11 @@ const DateRangeModalSelector = ({ handleDatePickerChange, onSubmitDate }) => {
 DateRangeModalSelector.propTypes = {
   handleDatePickerChange: PropTypes.func.isRequired,
   onSubmitDate: PropTypes.func.isRequired,
+  onSelectValue: PropTypes.func,
+};
+
+DateRangeModalSelector.defaultProps = {
+  onSelectValue: () => {},
 };
 
 export default DateRangeModalSelector;
