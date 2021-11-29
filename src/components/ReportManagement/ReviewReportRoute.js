@@ -40,9 +40,7 @@ const ReviewReportRoute = () => {
 
   const memoizedStyle = useMemo(
     () =>
-      !listReviewReport.length
-        ? { flex: 1, justifyContent: "center", alignItem: "center" }
-        : null,
+      !listReviewReport.length ? { flex: 1, justifyContent: "center" } : null,
     [listReviewReport.length > 0],
   );
 
@@ -56,7 +54,9 @@ const ReviewReportRoute = () => {
   const keyExtractor = (item) => item.id.toString();
 
   const renderEmpty = () => (
-    <Text style={{ color: "gray" }}>Chưa có báo cáo nào</Text>
+    <Text style={{ color: "gray", alignSelf: "center" }}>
+      Chưa có báo cáo nào
+    </Text>
   );
 
   const renderItem = ({ item }) => (
@@ -69,9 +69,11 @@ const ReviewReportRoute = () => {
 
   const renderFooter = () =>
     isLoading && !bigLoading ? (
-      <View margin={12}>
-        <ActivityIndicator size="large" color="#2089DC" />
-      </View>
+      <ActivityIndicator
+        style={{ marginVertical: 12 }}
+        size="large"
+        color="#2089DC"
+      />
     ) : null;
   /**
    * Change to new list

@@ -40,9 +40,7 @@ const FLocationReportRoute = () => {
 
   const memoizedStyle = useMemo(
     () =>
-      !listLocationReport.length
-        ? { flex: 1, justifyContent: "center", alignItem: "center" }
-        : null,
+      !listLocationReport.length ? { flex: 1, justifyContent: "center" } : null,
     [listLocationReport.length > 0],
   );
 
@@ -56,7 +54,9 @@ const FLocationReportRoute = () => {
   const keyExtractor = (item) => item.id.toString();
 
   const renderEmpty = () => (
-    <Text style={{ color: "gray" }}>Chưa có báo cáo nào</Text>
+    <Text style={{ color: "gray", alignSelf: "center" }}>
+      Chưa có báo cáo nào
+    </Text>
   );
 
   const renderItem = ({ item }) => {
@@ -71,9 +71,11 @@ const FLocationReportRoute = () => {
 
   const renderFooter = () =>
     isLoading && !bigLoading ? (
-      <View margin={12}>
-        <ActivityIndicator size="large" color="#2089DC" />
-      </View>
+      <ActivityIndicator
+        style={{ marginVertical: 12 }}
+        size="large"
+        color="#2089DC"
+      />
     ) : null;
   /**
    * Change to new list

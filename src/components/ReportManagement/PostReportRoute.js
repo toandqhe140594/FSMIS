@@ -39,9 +39,7 @@ const PostReportRoute = () => {
   );
   const memoizedStyle = useMemo(
     () =>
-      !listPostReport.length
-        ? { flex: 1, justifyContent: "center", alignItem: "center" }
-        : null,
+      !listPostReport.length ? { flex: 1, justifyContent: "center" } : null,
     [listPostReport.length > 0],
   );
 
@@ -55,7 +53,9 @@ const PostReportRoute = () => {
   const keyExtractor = (item) => item.id.toString();
 
   const renderEmpty = () => (
-    <Text style={{ color: "gray" }}>Chưa có báo cáo nào</Text>
+    <Text style={{ color: "gray", alignSelf: "center" }}>
+      Chưa có báo cáo nào
+    </Text>
   );
 
   const renderItem = ({ item }) => (
@@ -67,7 +67,11 @@ const PostReportRoute = () => {
   );
   const renderFooter = () =>
     isLoading && !bigLoading ? (
-      <ActivityIndicator size="large" color="#2089DC" />
+      <ActivityIndicator
+        style={{ marginVertical: 12 }}
+        size="large"
+        color="#2089DC"
+      />
     ) : null;
   /**
    * Change to new list
