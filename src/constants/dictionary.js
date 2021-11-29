@@ -17,6 +17,8 @@ export const TOAST_DELETE_LAKE_SUCCESS_MSG = "Xóa hồ bé thành công";
  * Random string that not belong to any categories here
  */
 export const EMPTY_STRING = "";
+export const EMPTY_ARRAY = [];
+export const ZERO_NUMBER = 0;
 export const INVALID_OTP_CODE_MSG = "Mã OTP không chính xác";
 export const POST_TYPE_ANNOUNCING_ID = "ANNOUNCING";
 export const POST_TYPE_ANNOUNCING_DISPLAY_LABEL = "STOCKING";
