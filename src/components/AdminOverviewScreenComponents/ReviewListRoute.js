@@ -80,24 +80,21 @@ const ReviewListRoute = () => {
   const renderItem = ({ item }) => {
     const { userVoteType } = item;
     return (
-      <Box key={item.id}>
-        <ReviewFromAnglerSection
-          name={item.userFullName}
-          content={item.description}
-          isPositive={userVoteType === true}
-          isNeutral={userVoteType === null}
-          isDisabled
-          date={item.time}
-          positiveCount={item.upvote}
-          negativeCount={item.downvote}
-          rate={item.score}
-          id={item.id}
-          key={item.id}
-          isAdminView
-          userImage={item.userAvatar}
-        />
-        <Divider />
-      </Box>
+      <ReviewFromAnglerSection
+        name={item.userFullName}
+        content={item.description}
+        isPositive={userVoteType === true}
+        isNeutral={userVoteType === null}
+        isDisabled
+        date={item.time}
+        positiveCount={item.upvote}
+        negativeCount={item.downvote}
+        rate={item.score}
+        id={item.id}
+        key={item.id}
+        isAdminView
+        userImage={item.userAvatar}
+      />
     );
   };
 
@@ -164,6 +161,7 @@ const ReviewListRoute = () => {
         ListHeaderComponent={ListHeaderComponent}
         onEndReached={onEndReached}
         ListEmptyComponent={ListEmptyComponent}
+        ItemSeparatorComponent={Divider}
       />
     </Box>
   );
