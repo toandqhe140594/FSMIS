@@ -1,10 +1,11 @@
 import { useNavigation } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, FlatList, View } from "react-native";
+import { FlatList, View } from "react-native";
 import { Badge, Divider, SearchBar } from "react-native-elements";
 
 import AvatarCard from "../components/AvatarCard";
+import SmallScreenLoadingIndicator from "../components/common/SmallScreenLoadingIndicator";
 import HeaderTab from "../components/HeaderTab";
 import PressableCustomCard from "../components/PressableCustomCard";
 import styles from "../config/styles";
@@ -137,9 +138,7 @@ const AdminAccountManagementScreen = () => {
           />
 
           {isLoading ? (
-            <View style={styles.centerBox}>
-              <ActivityIndicator size="large" color="blue" />
-            </View>
+            <SmallScreenLoadingIndicator />
           ) : (
             <View style={[styles.flexBox, { width: "90%" }]}>
               <FlatList
