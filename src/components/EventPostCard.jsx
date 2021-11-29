@@ -257,10 +257,7 @@ const EventPostCard = ({
               height: heightPage,
               width: widthVideo,
               flex: 0,
-              position: "relative",
-              right: 5,
               alignSelf: "center",
-              backgroundColor: "black",
             }}
           >
             <ScrollView
