@@ -6,7 +6,7 @@ import React, { useEffect, useState } from "react";
 
 import AvatarCard from "../components/AvatarCard";
 import HeaderTab from "../components/HeaderTab";
-import { DEFAULT_TIMEOUT } from "../constants";
+import { DEFAULT_TIMEOUT, KEY_EXTRACTOR } from "../constants";
 import { goToCatchReportVerifyDetailScreen } from "../navigations";
 
 const UnresolvedCatchReportComponent = ({
@@ -127,8 +127,6 @@ const VerifyCatchReportScreen = () => {
 
   const renderItem = ({ item }) => <UnresolvedCatchReportComponent {...item} />;
 
-  const keyExtractor = (item) => item.id.toString();
-
   return (
     <Box>
       <HeaderTab name="Xác nhận báo cá" />
@@ -142,7 +140,7 @@ const VerifyCatchReportScreen = () => {
           pt="0.5"
           data={unresolvedCatchReportList}
           renderItem={renderItem}
-          keyExtractor={keyExtractor}
+          keyExtractor={KEY_EXTRACTOR}
           onEndReached={onEndReached}
         />
       </Box>

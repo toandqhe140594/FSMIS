@@ -67,7 +67,7 @@ const ChangePasswordScreen = () => {
 
   return (
     <Center flex={1}>
-      <Heading size="lg">Thay đổi mật khẩu</Heading>
+      <Heading size="lg">{DICTIONARY.ANGLER_RESET_PASSWORD_HEADER}</Heading>
       <FormProvider {...methods}>
         <VStack mt={4} space={4} w="70%">
           {/* Password input field */}

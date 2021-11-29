@@ -5,11 +5,10 @@ import { Box } from "native-base";
 import React, { useEffect, useState } from "react";
 import { FlatList, StyleSheet } from "react-native";
 
+import { KEY_EXTRACTOR } from "../../constants";
 import { goToAdminCatchDetail } from "../../navigations";
 import EventPostCard from "../EventPostCard";
 import PressableCustomCard from "../PressableCustomCard";
-
-const keyExtractor = (item) => item.id.toString();
 
 const styles = StyleSheet.create({
   tabBarStyle: {
@@ -43,15 +42,17 @@ const CatchReportRoute = () => {
     setLakeCatchPage(lakeCatchPage + 1);
   };
 
+  const goToCatchDetailScreen = (id) => () => {
+    goToAdminCatchDetail(navigation, {
+      id,
+    });
+  };
+
   const renderItem = ({ item }) => {
     return (
       <PressableCustomCard
         paddingX="1"
-        onPress={() => {
-          goToAdminCatchDetail(navigation, {
-            id: item.id,
-          });
-        }}
+        onPress={goToCatchDetailScreen(item.id)}
       >
         <EventPostCard
           postStyle="ANGLER_POST"
@@ -77,7 +78,7 @@ const CatchReportRoute = () => {
           data={locationCatchList}
           renderItem={renderItem}
           onEndReached={loadMoreLakeCatchData()}
-          keyExtractor={keyExtractor}
+          keyExtractor={KEY_EXTRACTOR}
         />
       )}
     </>
@@ -129,7 +130,7 @@ const FLocationEventRoute = () => {
           data={locationPostList}
           renderItem={renderItem}
           onEndReached={loadMoreLakePostData}
-          keyExtractor={keyExtractor}
+          keyExtractor={KEY_EXTRACTOR}
         />
       )}
     </>

@@ -6,6 +6,7 @@ import React, { useEffect } from "react";
 import AvatarCard from "../components/AvatarCard";
 import HeaderTab from "../components/HeaderTab";
 import PressableCustomCard from "../components/PressableCustomCard";
+import { KEY_EXTRACTOR } from "../constants";
 import { goToCatchReportDetailScreen } from "../navigations";
 
 const AnglerCatchReportsHistoryScreen = () => {
@@ -25,6 +26,16 @@ const AnglerCatchReportsHistoryScreen = () => {
       resetCatchReportHistory(); // Clear list data when screen unmount
     };
   }, []);
+
+  const viewCatchReportDetail = (id) => () => {
+    goToCatchReportDetailScreen(navigation, {
+      id,
+    });
+  };
+
+  const onEndReached = () => {
+    getCatchReportHistory();
+  };
 
   return (
     <Box>
@@ -53,11 +64,7 @@ const AnglerCatchReportsHistoryScreen = () => {
               >
                 <PressableCustomCard
                   paddingX="3"
-                  onPress={() => {
-                    goToCatchReportDetailScreen(navigation, {
-                      id: item.id,
-                    });
-                  }}
+                  onPress={viewCatchReportDetail(item.id)}
                 >
                   <Box pl="2" pb="1">
                     <AvatarCard
@@ -85,10 +92,8 @@ const AnglerCatchReportsHistoryScreen = () => {
                 </PressableCustomCard>
               </Box>
             )}
-            keyExtractor={(item) => item.id.toString()}
-            onEndReached={() => {
-              getCatchReportHistory();
-            }}
+            keyExtractor={KEY_EXTRACTOR}
+            onEndReached={onEndReached}
           />
         )}
       </Box>

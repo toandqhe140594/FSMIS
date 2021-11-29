@@ -7,6 +7,7 @@ import { Divider, Text } from "react-native-elements";
 import { Rating } from "react-native-ratings";
 
 import styles from "../../config/styles";
+import { KEY_EXTRACTOR } from "../../constants";
 import { goToWriteReviewScreen } from "../../navigations";
 import ReviewFromAnglerSection from "../ReviewFromAnglerSection";
 
@@ -142,8 +143,6 @@ const ReviewListRoute = () => {
     loadMoreReviewData();
   };
 
-  const keyExtractor = (item) => item.id.toString();
-
   const renderItem = ({ item }) => {
     const { userVoteType } = item;
     return (
@@ -232,7 +231,7 @@ const ReviewListRoute = () => {
       <FlatList
         data={locationReviewList}
         renderItem={renderItem}
-        keyExtractor={keyExtractor}
+        keyExtractor={KEY_EXTRACTOR}
         ListHeaderComponent={ListHeaderComponent}
         onEndReached={onEndReached}
       />

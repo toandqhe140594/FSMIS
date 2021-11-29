@@ -8,7 +8,7 @@ import { Divider, SearchBar } from "react-native-elements";
 import FishManagementCard from "../components/AdminFishManagement/FishManagementCard";
 import HeaderTab from "../components/HeaderTab";
 import styles from "../config/styles";
-import { DEFAULT_TIMEOUT } from "../constants";
+import { DEFAULT_TIMEOUT, KEY_EXTRACTOR } from "../constants";
 import FishModel from "../models/FishModel";
 import { goToAdminFishEditScreen } from "../navigations";
 import store from "../utilities/Store";
@@ -80,8 +80,6 @@ const AdminFishManagementScreen = () => {
   };
 
   const ListView = () => {
-    const keyExtractor = (item) => item.id.toString();
-
     if (isLoading)
       return (
         <Center flex={1}>
@@ -94,7 +92,7 @@ const AdminFishManagementScreen = () => {
         <FlatList
           data={displayedList}
           renderItem={renderRow}
-          keyExtractor={keyExtractor}
+          keyExtractor={KEY_EXTRACTOR}
           ItemSeparatorComponent={Divider}
         />
       </Box>

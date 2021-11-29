@@ -4,6 +4,7 @@ import { Box, FlatList, Text } from "native-base";
 import React, { useCallback } from "react";
 
 import PressableCustomCard from "../components/PressableCustomCard";
+import { KEY_EXTRACTOR } from "../constants";
 
 const NotificationsScreen = () => {
   const notificationList = useStoreState(
@@ -43,8 +44,6 @@ const NotificationsScreen = () => {
     </Box>
   );
 
-  const keyExtractor = (item) => item.id.toString();
-
   const onEndReached = () => {
     getNotificationList();
   };
@@ -60,7 +59,7 @@ const NotificationsScreen = () => {
         <FlatList
           data={notificationList}
           renderItem={renderItem}
-          keyExtractor={keyExtractor}
+          keyExtractor={KEY_EXTRACTOR}
           onEndReached={onEndReached}
         />
       </Box>

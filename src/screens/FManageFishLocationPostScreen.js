@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 
 import EventPostCard from "../components/EventPostCard";
 import HeaderTab from "../components/HeaderTab";
+import { KEY_EXTRACTOR } from "../constants";
 import { goToPostCreateScreen, goToPostEditScreen } from "../navigations";
 import { showAlertConfirmBox, showToastMessage } from "../utilities";
 
@@ -165,8 +166,6 @@ const PostListContainerComponent = () => {
     getPinPost();
   }, []);
 
-  const keyExtractor = (item) => item.id.toString();
-
   return (
     <Box>
       <FlatList
@@ -179,7 +178,7 @@ const PostListContainerComponent = () => {
         data={locationPostList}
         renderItem={renderItem}
         onEndReached={loadMoreLakeCatchData}
-        keyExtractor={keyExtractor}
+        keyExtractor={KEY_EXTRACTOR}
         nestedScrollEnabled
       />
     </Box>

@@ -9,7 +9,7 @@ import { Button, Card, Text } from "react-native-elements";
 import OverlayLoading from "../components/common/OverlayLoading";
 import HeaderTab from "../components/HeaderTab";
 import OverlayInputSection from "../components/LakeProfile/OverlayInputSection";
-import { DEFAULT_TIMEOUT, DICTIONARY } from "../constants";
+import { DEFAULT_TIMEOUT, DICTIONARY, KEY_EXTRACTOR } from "../constants";
 import {
   goBack,
   goToFManageFishAddScreen,
@@ -122,8 +122,6 @@ const FManageEmployeeManagementScreen = () => {
     goToFManageFishAddScreen(navigation);
   };
 
-  const keyExtractor = (item) => item.id.toString();
-
   const promptForFishDelete = (id) => {
     const handleFishDelete = () => {
       deleteFishFromLake({ id })
@@ -138,14 +136,6 @@ const FManageEmployeeManagementScreen = () => {
       handleFishDelete,
     );
   };
-
-  const renderItem = ({ item }) => (
-    <FishCard
-      {...item}
-      toggleEditOverlay={setOverlayState}
-      onDeleteFish={promptForFishDelete}
-    />
-  );
 
   useEffect(() => {
     if (route.params.id) {
@@ -163,6 +153,14 @@ const FManageEmployeeManagementScreen = () => {
       clearTimeout(loadingId);
     };
   }, []);
+
+  const renderItem = ({ item }) => (
+    <FishCard
+      {...item}
+      toggleEditOverlay={setOverlayState}
+      onDeleteFish={promptForFishDelete}
+    />
+  );
 
   if (isLoading) return <OverlayLoading coverScreen />;
   return (
@@ -192,7 +190,7 @@ const FManageEmployeeManagementScreen = () => {
           <FlatList
             data={lakeDetail.fishInLake}
             renderItem={renderItem}
-            keyExtractor={keyExtractor}
+            keyExtractor={KEY_EXTRACTOR}
           />
         </Box>
       </Box>

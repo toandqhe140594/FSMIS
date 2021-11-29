@@ -6,7 +6,7 @@ import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 import OverlayLoading from "../components/common/OverlayLoading";
 import FLocationCard from "../components/FLocationCard";
 import HeaderTab from "../components/HeaderTab";
-import { DEFAULT_TIMEOUT, DICTIONARY } from "../constants";
+import { DEFAULT_TIMEOUT, DICTIONARY, KEY_EXTRACTOR } from "../constants";
 import FishingMethodModel from "../models/FishingMethodModel";
 import FishModel from "../models/FishModel";
 import {
@@ -111,8 +111,6 @@ const FManageSelectScreen = () => {
     return <View style={{ height: 8 }} />;
   };
 
-  const keyExtractor = (item) => item.id.toString();
-
   const renderItem = ({ item }) => (
     <FLocationCard
       id={item.id}
@@ -148,7 +146,7 @@ const FManageSelectScreen = () => {
           renderItem={renderItem}
           data={listOfFishingLocations}
           ItemSeparatorComponent={ItemSeparator}
-          keyExtractor={keyExtractor}
+          keyExtractor={KEY_EXTRACTOR}
           ListHeaderComponent={renderHeader}
         />
       </View>

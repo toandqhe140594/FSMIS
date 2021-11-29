@@ -7,6 +7,7 @@ import { Divider } from "react-native-elements";
 
 import EmployeeCard from "../components/EmployeeCard";
 import HeaderTab from "../components/HeaderTab";
+import { KEY_EXTRACTOR } from "../constants";
 import { goToFManageAddStaffScreen } from "../navigations";
 
 const FManageEmployeeManagementScreen = () => {
@@ -45,8 +46,6 @@ const FManageEmployeeManagementScreen = () => {
     );
   };
 
-  const keyExtractor = (item) => item.id.toString();
-
   return (
     <>
       <HeaderTab name="Quản lý nhân viên" />
@@ -58,7 +57,7 @@ const FManageEmployeeManagementScreen = () => {
           <FlatList
             data={displayedList}
             renderItem={renderItem}
-            keyExtractor={keyExtractor}
+            keyExtractor={KEY_EXTRACTOR}
             ItemSeparatorComponent={Divider}
             ListHeaderComponent={Divider}
             ListFooterComponent={Divider}

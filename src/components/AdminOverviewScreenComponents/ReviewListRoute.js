@@ -7,6 +7,7 @@ import { Divider, Text } from "react-native-elements";
 import { Rating } from "react-native-ratings";
 
 import styles from "../../config/styles";
+import { KEY_EXTRACTOR } from "../../constants";
 import ReviewFromAnglerSection from "../ReviewFromAnglerSection";
 
 const FilterButton = ({ filterType, content, value, changeFilterAction }) => {
@@ -73,8 +74,6 @@ const ReviewListRoute = () => {
   const onEndReached = () => {
     loadMoreReviewData();
   };
-
-  const keyExtractor = (item) => item.id.toString();
 
   const renderItem = ({ item }) => {
     const { userVoteType } = item;
@@ -152,7 +151,7 @@ const ReviewListRoute = () => {
         <FlatList
           data={locationReviewList}
           renderItem={renderItem}
-          keyExtractor={keyExtractor}
+          keyExtractor={KEY_EXTRACTOR}
           ListHeaderComponent={ListHeaderComponent}
           onEndReached={onEndReached}
         />

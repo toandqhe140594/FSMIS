@@ -5,7 +5,7 @@ import { Box, Divider, Text } from "native-base";
 import React, { useEffect, useState } from "react";
 import { FlatList, StyleSheet } from "react-native";
 
-import { VIEW_ROLE_ANGLER } from "../../constants";
+import { KEY_EXTRACTOR, VIEW_ROLE_ANGLER } from "../../constants";
 import {
   goToCatchReportDetailScreen,
   goToWriteReportScreen,
@@ -94,7 +94,7 @@ const CatchReportRoute = () => {
           data={locationCatchList}
           renderItem={renderItem}
           onEndReached={loadMoreLakeCatchData}
-          keyExtractor={(item) => item.id.toString()}
+          keyExtractor={KEY_EXTRACTOR}
         />
       )}
     </>
@@ -214,8 +214,6 @@ const FLocationEventRoute = () => {
   );
   const footerComponent = () => <Divider mt={20} />;
 
-  const keyExtractor = (item) => item.id.toString();
-
   return (
     <>
       {locationPostList.length > 0 && (
@@ -229,7 +227,7 @@ const FLocationEventRoute = () => {
           data={locationPostList}
           renderItem={renderItem}
           onEndReached={loadMoreLakePostData}
-          keyExtractor={keyExtractor}
+          keyExtractor={KEY_EXTRACTOR}
           nestedScrollEnabled
         />
       )}

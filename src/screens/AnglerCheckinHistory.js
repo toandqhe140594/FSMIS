@@ -7,6 +7,7 @@ import CheckInCard from "../components/CheckInCard";
 import HeaderTab from "../components/HeaderTab";
 import PressableCustomCard from "../components/PressableCustomCard";
 import styles from "../config/styles";
+import { KEY_EXTRACTOR } from "../constants";
 
 const AnglerCheckInHistory = () => {
   // Destructure checkinHistoryCurrentPage and checkinReportHistory list from ProfileModel
@@ -24,6 +25,10 @@ const AnglerCheckInHistory = () => {
       resetCheckinHistory(); // Clear list data when screen unmount
     };
   }, []);
+
+  const onEndReached = () => {
+    getCheckinHistoryList();
+  };
 
   return (
     <>
@@ -60,10 +65,8 @@ const AnglerCheckInHistory = () => {
                 </PressableCustomCard>
               </Box>
             )}
-            keyExtractor={(item) => item.id.toString()}
-            onEndReached={() => {
-              getCheckinHistoryList();
-            }}
+            keyExtractor={KEY_EXTRACTOR}
+            onEndReached={onEndReached}
           />
         )}
       </Box>

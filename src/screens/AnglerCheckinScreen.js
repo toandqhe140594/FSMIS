@@ -31,14 +31,20 @@ const CheckinSuccessScreen = () => {
     getAllFishes();
   }, []);
 
+  const checkOutWithoutReport = () => {
+    personalCheckout();
+  };
+
   const showCheckoutAlert = () => {
     showAlertConfirmBox(
       "Checkout",
       "Bạn có muốn checkout mà không báo kết quả câu?",
-      () => {
-        personalCheckout();
-      },
+      checkOutWithoutReport,
     );
+  };
+
+  const navigateToWriteCatchReportScreen = () => {
+    goToCatchReportFormScreen(navigation);
   };
 
   return (
@@ -64,21 +70,10 @@ const CheckinSuccessScreen = () => {
         />
       </Box>
       <Box w="70%">
-        <Button
-          mb={3}
-          size="lg"
-          onPress={() => {
-            goToCatchReportFormScreen(navigation);
-          }}
-        >
+        <Button mb={3} size="lg" onPress={navigateToWriteCatchReportScreen}>
           Báo kết quả câu
         </Button>
-        <Button
-          size="lg"
-          onPress={() => {
-            showCheckoutAlert();
-          }}
-        >
+        <Button size="lg" onPress={showCheckoutAlert}>
           Checkout
         </Button>
       </Box>
@@ -131,9 +126,7 @@ const DefaultQRCodeScreen = () => {
           mt={4}
           size="lg"
           px={3}
-          onPress={() => {
-            onRefresh();
-          }}
+          onPress={onRefresh}
           w="50%"
           isLoading={loading}
         >
