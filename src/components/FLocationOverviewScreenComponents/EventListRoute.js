@@ -1,7 +1,7 @@
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { useNavigation } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
-import { Box, Divider, Text } from "native-base";
+import { Box, Center, Divider, Text } from "native-base";
 import React, { useEffect, useState } from "react";
 import { FlatList, StyleSheet } from "react-native";
 
@@ -10,6 +10,7 @@ import {
   goToCatchReportDetailScreen,
   goToWriteReportScreen,
 } from "../../navigations";
+import SmallScreenLoadingIndicator from "../common/SmallScreenLoadingIndicator";
 import EventPostCard from "../EventPostCard";
 import PressableCustomCard from "../PressableCustomCard";
 
@@ -26,7 +27,6 @@ const styles = StyleSheet.create({
 
 const CatchReportRoute = () => {
   const navigation = useNavigation();
-  const [lakeCatchPage, setLakeCatchPage] = useState(1);
 
   const locationCatchList = useStoreState(
     (states) => states.LocationModel.locationCatchList,
@@ -34,10 +34,15 @@ const CatchReportRoute = () => {
   const { role } = useStoreState(
     (states) => states.LocationModel.locationOverview,
   );
-
   const getLocationCatchListByPage = useStoreActions(
     (actions) => actions.LocationModel.getLocationCatchListByPage,
   );
+
+  const [lakeCatchPage, setLakeCatchPage] = useState(1);
+  const [screenLoading, setScreenLoading] = useState(true);
+
+  // Hide loading indicator
+  const closeScreenLoadingIndicator = () => setScreenLoading(false);
 
   const loadMoreLakeCatchData = () => {
     getLocationCatchListByPage({ pageNo: lakeCatchPage });
@@ -50,7 +55,9 @@ const CatchReportRoute = () => {
   const listEvent = [{ name: "Báo cáo bài viết", onPress: reportHandler }];
 
   useEffect(() => {
-    getLocationCatchListByPage({ pageNo: lakeCatchPage });
+    getLocationCatchListByPage({ pageNo: lakeCatchPage })
+      .then(closeScreenLoadingIndicator)
+      .catch(closeScreenLoadingIndicator);
     setLakeCatchPage(lakeCatchPage + 1);
   }, []);
 
@@ -83,19 +90,24 @@ const CatchReportRoute = () => {
       </PressableCustomCard>
     );
   };
+
+  if (screenLoading) return <SmallScreenLoadingIndicator />;
+
   return (
     <>
-      {locationCatchList.length > 0 && (
+      {locationCatchList.length > 0 ? (
         <FlatList
-          removeClippedSubviews
-          initialNumToRender={5}
-          updateCellsBatchingPeriod={10}
-          maxToRenderPerBatch={20}
+          initialNumToRender={3}
+          maxToRenderPerBatch={3}
           data={locationCatchList}
           renderItem={renderItem}
           onEndReached={loadMoreLakeCatchData}
           keyExtractor={KEY_EXTRACTOR}
         />
+      ) : (
+        <Center flex={1} minHeight={600}>
+          <Text>Không có báo cá </Text>
+        </Center>
       )}
     </>
   );
@@ -103,7 +115,7 @@ const CatchReportRoute = () => {
 
 const FLocationEventRoute = () => {
   const navigation = useNavigation();
-  const [lakePostPage, setLakePostPage] = useState(1);
+
   const locationPostList = useStoreState(
     (states) => states.LocationModel.locationPostList,
   );
@@ -119,6 +131,11 @@ const FLocationEventRoute = () => {
   const getPinPost = useStoreActions(
     (actions) => actions.LocationModel.getPinPost,
   );
+  const [lakePostPage, setLakePostPage] = useState(1);
+  const [screenLoading, setScreenLoading] = useState(true);
+
+  // Hide loading indicator
+  const closeScreenLoadingIndicator = () => setScreenLoading(false);
 
   const loadMoreLakePostData = () => {
     getLocationPostListByPage({ pageNo: lakePostPage });
@@ -129,7 +146,9 @@ const FLocationEventRoute = () => {
   };
 
   useEffect(() => {
-    getLocationPostListByPage({ pageNo: lakePostPage });
+    getLocationPostListByPage({ pageNo: lakePostPage })
+      .then(closeScreenLoadingIndicator)
+      .catch(closeScreenLoadingIndicator);
     setLakePostPage(lakePostPage + 1);
     getPinPost();
   }, []);
@@ -214,22 +233,26 @@ const FLocationEventRoute = () => {
   );
   const footerComponent = () => <Divider mt={20} />;
 
+  if (screenLoading) return <SmallScreenLoadingIndicator />;
+
   return (
     <>
-      {locationPostList.length > 0 && (
+      {locationPostList.length > 0 ? (
         <FlatList
           ListHeaderComponent={pinPostComponent}
           ListFooterComponent={footerComponent}
-          removeClippedSubviews
-          initialNumToRender={5}
-          updateCellsBatchingPeriod={10}
-          maxToRenderPerBatch={20}
+          initialNumToRender={3}
+          maxToRenderPerBatch={3}
           data={locationPostList}
           renderItem={renderItem}
           onEndReached={loadMoreLakePostData}
           keyExtractor={KEY_EXTRACTOR}
           nestedScrollEnabled
         />
+      ) : (
+        <Center flex={1} minHeight={600}>
+          <Text>Không có bài viết </Text>
+        </Center>
       )}
     </>
   );
@@ -239,7 +262,7 @@ const Tab = createMaterialTopTabNavigator();
 
 const EventListRoute = () => {
   return (
-    <Box style={{ flex: 1 }}>
+    <Box flex={1}>
       <Divider />
       <Tab.Navigator
         sceneContainerStyle={{

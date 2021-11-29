@@ -8,6 +8,7 @@ import { Rating } from "react-native-ratings";
 
 import styles from "../../config/styles";
 import { KEY_EXTRACTOR } from "../../constants";
+import SmallScreenLoadingIndicator from "../common/SmallScreenLoadingIndicator";
 import ReviewFromAnglerSection from "../ReviewFromAnglerSection";
 
 const FilterButton = ({ filterType, content, value, changeFilterAction }) => {
@@ -36,18 +37,19 @@ FilterButton.propTypes = {
 };
 
 const ReviewListRoute = () => {
-  const [reviewPage, setReviewPage] = useState(1);
-  const [filterType, setFilterType] = useState("newest");
-
   const { locationReviewScore, locationReviewList } = useStoreState(
     (states) => states.LocationModel,
   );
 
-  const {
-    getLocationReviewScore,
-    getPersonalReview,
-    getLocationReviewListByPage,
-  } = useStoreActions((actions) => actions.LocationModel);
+  const { getLocationReviewScore, getLocationReviewListByPage } =
+    useStoreActions((actions) => actions.LocationModel);
+
+  const [reviewPage, setReviewPage] = useState(1);
+  const [filterType, setFilterType] = useState("newest");
+  const [loading, setLoading] = useState(true);
+
+  // Hide loading indicator
+  const closeLoadingIndicator = () => setLoading(false);
 
   const loadMoreReviewData = () => {
     getLocationReviewListByPage({ pageNo: reviewPage, filter: filterType });
@@ -61,9 +63,9 @@ const ReviewListRoute = () => {
 
   useFocusEffect(
     useCallback(() => {
-      getLocationReviewScore();
-      getPersonalReview();
-      resetReviewData();
+      Promise.all([getLocationReviewScore(), resetReviewData()])
+        .then(closeLoadingIndicator)
+        .catch(closeLoadingIndicator);
     }, []),
   );
 
@@ -145,17 +147,24 @@ const ReviewListRoute = () => {
     </>
   );
 
+  const ListEmptyComponent = () => (
+    <Center flex={1} minHeight={300}>
+      <Text>Không có đánh giá </Text>
+    </Center>
+  );
+
+  if (loading) return <SmallScreenLoadingIndicator />;
+
   return (
     <Box flex={1}>
-      <Box flex={1}>
-        <FlatList
-          data={locationReviewList}
-          renderItem={renderItem}
-          keyExtractor={KEY_EXTRACTOR}
-          ListHeaderComponent={ListHeaderComponent}
-          onEndReached={onEndReached}
-        />
-      </Box>
+      <FlatList
+        data={locationReviewList}
+        renderItem={renderItem}
+        keyExtractor={KEY_EXTRACTOR}
+        ListHeaderComponent={ListHeaderComponent}
+        onEndReached={onEndReached}
+        ListEmptyComponent={ListEmptyComponent}
+      />
     </Box>
   );
 };

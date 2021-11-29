@@ -15,10 +15,11 @@ const LakeListViewRoute = () => {
 
   const [loading, setLoading] = useState(true);
 
+  // Hide screen loading indicator
+  const closeLoadingIndicator = () => setLoading(false);
+
   useEffect(() => {
-    getLakeList()
-      .then(() => setLoading(false))
-      .catch(() => setLoading(false));
+    getLakeList().then(closeLoadingIndicator).catch(closeLoadingIndicator);
   }, []);
 
   if (loading) return <SmallScreenLoadingIndicator />;
