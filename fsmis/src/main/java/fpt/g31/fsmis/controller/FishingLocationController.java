@@ -159,7 +159,7 @@ public class FishingLocationController {
     public ResponseEntity<Object> checkIn(@PathVariable Long locationId,
                                           @RequestBody @Valid CheckInDtoIn checkInDtoIn,
                                           HttpServletRequest request) {
-        return new ResponseEntity<>(checkInService.checkIn(checkInDtoIn, locationId, request), HttpStatus.OK);
+        return new ResponseEntity<>(checkInService.performCheckIn(checkInDtoIn, locationId, request), HttpStatus.OK);
     }
 
     @GetMapping("/{locationId}/checkin/status")

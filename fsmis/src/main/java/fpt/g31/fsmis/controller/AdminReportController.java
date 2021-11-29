@@ -70,7 +70,7 @@ public class AdminReportController {
         return new ResponseEntity<>(reportService.getImproperCatchReportDetail(reportId), HttpStatus.OK);
     }
 
-    @DeleteMapping("/post/delete/{catchId}")
+    @DeleteMapping("/catch/delete/{catchId}")
     public ResponseEntity<Object> deleteCatch(@PathVariable Long catchId) {
         return new ResponseEntity<>(catchesService.adminDeleteCatch(catchId), HttpStatus.OK);
     }

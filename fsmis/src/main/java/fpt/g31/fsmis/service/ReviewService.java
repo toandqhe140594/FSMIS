@@ -37,6 +37,27 @@ public class ReviewService {
     private final ModelMapper modelMapper;
     private final NotificationRepos notificationRepos;
 
+    static ReviewDtoOut addReviewDtoOut(User user, Review review, ModelMapper modelMapper, VoteRepos voteRepos) {
+        ReviewDtoOut item = modelMapper.map(review, ReviewDtoOut.class);
+        item.setUserId(review.getUser().getId());
+        item.setUserFullName(review.getUser().getFullName());
+        item.setUserAvatar(review.getUser().getAvatarUrl());
+        item.setTime(ServiceUtils.convertDateToString(review.getTime()));
+        item.setUpvote(voteRepos.getVoteCountByReviewId(review.getId(), 1));
+        item.setDownvote(voteRepos.getVoteCountByReviewId(review.getId(), 0));
+        Vote vote = voteRepos.findByReviewIdAndUserId(review.getId(), user.getId());
+        if (vote != null) {
+            if (vote.getVoteType() == VoteType.UPVOTE) {
+                item.setUserVoteType(true);
+            } else if (vote.getVoteType() == VoteType.DOWNVOTE) {
+                item.setUserVoteType(false);
+            }
+        }
+        return item;
+    }
+
+    // PERSONAL REVIEW
+
     public ReviewScoreDtoOut getReviewScore(Long locationId) {
         Double score = reviewRepos.getAverageScoreByFishingLocationIdAndActiveIsTrue(locationId);
         if (score == null) {
@@ -47,8 +68,6 @@ public class ReviewService {
                 .totalReviews(reviewRepos.countByFishingLocationIdAndActiveIsTrue(locationId))
                 .build();
     }
-
-    // PERSONAL REVIEW
 
     public Object getMyReview(HttpServletRequest request, Long locationId) {
         User user = jwtFilter.getUserFromToken(request);
@@ -73,7 +92,7 @@ public class ReviewService {
 
     public ReviewDtoOut postReview(HttpServletRequest request, Long locationId, ReviewDtoIn reviewDtoIn) {
         User user = jwtFilter.getUserFromToken(request);
-        if (reviewRepos.findByFishingLocationIdAndUserIdAndActiveIsTrue(locationId, user.getId()) != null) {
+        if (reviewRepos.existsByFishingLocationIdAndUserIdAndActiveIsTrue(locationId, user.getId())) {
             throw new ValidationException("Bạn đã đánh giá ở địa điểm này rồi");
         }
         FishingLocation fishingLocation = fishingLocationRepos.findById(locationId)
@@ -115,14 +134,12 @@ public class ReviewService {
         return "Xóa đánh giá thành công";
     }
 
-    // ALL REVIEWS
-
     public PaginationDtoOut getAllReviews(HttpServletRequest request, Long locationId, String filter, int pageNo) {
         if (pageNo <= 0) {
-            throw new ValidationException("Địa chỉ không tồn tại");
+            throw new ValidationException("Số trang không hợp lệ");
         }
         if (!filter.equals("newest") && !filter.equals("highest") && !filter.equals("lowest")) {
-            throw new ValidationException("Địa chỉ không tồn tại");
+            throw new ValidationException("Bộ lọc không hợp lệ");
         }
         User user = jwtFilter.getUserFromToken(request);
         Pageable pageable = PageRequest.of(pageNo - 1, 10);
@@ -139,26 +156,13 @@ public class ReviewService {
             if (review.getUser() == user) {
                 continue;
             }
-            ReviewDtoOut item = modelMapper.map(review, ReviewDtoOut.class);
-            item.setUserId(review.getUser().getId());
-            item.setUserFullName(review.getUser().getFullName());
-            item.setUserAvatar(review.getUser().getAvatarUrl());
-            item.setTime(ServiceUtils.convertDateToString(review.getTime()));
-            item.setUpvote(voteRepos.getVoteCountByReviewId(review.getId(), 1));
-            item.setDownvote(voteRepos.getVoteCountByReviewId(review.getId(), 0));
-            Vote vote = voteRepos.findByReviewIdAndUserId(review.getId(), user.getId());
-            if (vote != null) {
-                if (vote.getVoteType() == VoteType.UPVOTE) {
-                    item.setUserVoteType(true);
-                } else if (vote.getVoteType() == VoteType.DOWNVOTE) {
-                    item.setUserVoteType(false);
-                }
-            }
+            ReviewDtoOut item = addReviewDtoOut(user, review, modelMapper, voteRepos);
             output.add(item);
         }
         return PaginationDtoOut.builder()
                 .totalPage(reviews.getTotalPages())
                 .pageNo(pageNo)
+                .totalItem(reviews.getTotalElements())
                 .items(output)
                 .build();
     }

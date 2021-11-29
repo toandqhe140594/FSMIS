@@ -26,7 +26,7 @@ public class VoteService {
 
     public ReviewDtoOut vote(HttpServletRequest request, Long reviewId, Long voteType) {
         if (voteType != 0 && voteType != 1) {
-            throw new ValidationException("Địa chỉ không tồn tại");
+            throw new ValidationException("Vote không hợp lệ");
         }
         User user = jwtFilter.getUserFromToken(request);
         Vote vote = voteRepos.findByReviewIdAndUserId(reviewId, user.getId());
@@ -37,11 +37,10 @@ public class VoteService {
                     .build();
             if (voteType == 1) {
                 vote.setVoteType(VoteType.UPVOTE);
-                voteRepos.save(vote);
-            } else if (voteType == 0) {
+            } else {
                 vote.setVoteType(VoteType.DOWNVOTE);
-                voteRepos.save(vote);
             }
+            voteRepos.save(vote);
         } else {
             if ((voteType == 1 && vote.getVoteType() == VoteType.UPVOTE)
                     || (voteType == 0 && vote.getVoteType() == VoteType.DOWNVOTE)) {
@@ -55,21 +54,6 @@ public class VoteService {
             }
         }
         Review review = reviewRepos.getById(reviewId);
-        ReviewDtoOut output = modelMapper.map(review, ReviewDtoOut.class);
-        output.setUserId(review.getUser().getId());
-        output.setUserFullName(review.getUser().getFullName());
-        output.setUserAvatar(review.getUser().getAvatarUrl());
-        output.setTime(ServiceUtils.convertDateToString(review.getTime()));
-        output.setUpvote(voteRepos.getVoteCountByReviewId(review.getId(), 1));
-        output.setDownvote(voteRepos.getVoteCountByReviewId(review.getId(), 0));
-        Vote voteOutput = voteRepos.findByReviewIdAndUserId(review.getId(), user.getId());
-        if(voteOutput != null) {
-            if (voteOutput.getVoteType() == VoteType.UPVOTE) {
-                output.setUserVoteType(true);
-            } else if (voteOutput.getVoteType() == VoteType.DOWNVOTE) {
-                output.setUserVoteType(false);
-            }
-        }
-        return output;
+        return ReviewService.addReviewDtoOut(user, review, modelMapper, voteRepos);
     }
 }

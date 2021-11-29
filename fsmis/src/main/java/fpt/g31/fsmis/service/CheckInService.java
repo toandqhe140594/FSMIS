@@ -29,7 +29,7 @@ public class CheckInService {
     private final FishingLocationRepos fishingLocationRepos;
     private final JwtFilter jwtFilter;
 
-    public UserCheckInDtoOut checkIn(CheckInDtoIn checkInDtoIn, Long fishingLocationId, HttpServletRequest request) {
+    public UserCheckInDtoOut performCheckIn(CheckInDtoIn checkInDtoIn, Long fishingLocationId, HttpServletRequest request) {
         User performer = jwtFilter.getUserFromToken(request);
         User user = userRepos.findByQrString(checkInDtoIn.getQr())
                 .orElseThrow(() -> new NotFoundException("Không tìm thấy tài khoản!"));
