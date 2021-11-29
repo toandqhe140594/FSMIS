@@ -327,8 +327,8 @@ export const FMANAGE_POST_FORM = yup.object().shape({
 export const REGISTER_PHONE_AND_PASS_FORM = yup.object().shape({
   phoneNumber: yup
     .string()
-    .required("Số điện thoại không thể bỏ trống")
-    .label("PhoneNumber"),
+    .matches(VN_PHONE_REGEX, "Số điện thoại không hợp lệ")
+    .required("Số điện thoại không thể bỏ trống"),
   password: yup
     .string()
     .required("Mật khẩu không thể bỏ trống")
