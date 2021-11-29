@@ -5,6 +5,7 @@ import React from "react";
 
 import HeaderTab from "../components/HeaderTab";
 import LakeCard from "../components/LakeCard";
+import { KEY_EXTRACTOR } from "../constants";
 import { goToFManageLakeAddNewScreen } from "../navigations";
 
 const LakeListManagementScreen = () => {
@@ -18,8 +19,6 @@ const LakeListManagementScreen = () => {
   const renderItem = ({ item }) => (
     <LakeCard name={item.name} image={item.image} isManaged id={item.id} />
   );
-
-  const keyExtractor = (item) => item.id.toString();
 
   const addNewLakeAction = () => {
     goToFManageLakeAddNewScreen(navigation);
@@ -37,7 +36,7 @@ const LakeListManagementScreen = () => {
             data={listOfLake}
             renderItem={renderItem}
             ItemSeparatorComponent={Separator}
-            keyExtractor={keyExtractor}
+            keyExtractor={KEY_EXTRACTOR}
             w="100%"
           />
         </Center>

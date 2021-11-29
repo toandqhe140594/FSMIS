@@ -2,13 +2,14 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useStoreActions } from "easy-peasy";
 import { Button, Center, Heading, VStack } from "native-base";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
+import { BackHandler } from "react-native";
 
 import PasswordInput from "../components/common/PasswordInput";
-import { SCHEMA } from "../constants";
+import { DICTIONARY, SCHEMA } from "../constants";
 import { goToLoginScreen } from "../navigations";
-import { showToastMessage } from "../utilities";
+import { showAlertConfirmBox, showToastMessage } from "../utilities";
 
 const ChangePasswordScreen = () => {
   const route = useRoute();
@@ -28,7 +29,7 @@ const ChangePasswordScreen = () => {
     setLoading(true);
     resetPassword({ password: data.password, phone: route.params?.phone })
       .then(() => {
-        showToastMessage("Đổi mật khẩu thành công");
+        showToastMessage(DICTIONARY.TOAST_CHANGE_PASSWORD_SUCCESS_MSG);
         goToLoginScreen(navigation);
       })
       .catch(() => {
@@ -36,20 +37,48 @@ const ChangePasswordScreen = () => {
       });
   };
 
+  const goBackToLoginScreen = () => {
+    goToLoginScreen(navigation);
+  };
+
+  useEffect(() => {
+    /**
+     * Show alert box confirm go back to login screen action
+     * @returns true
+     */
+    const backAction = () => {
+      showAlertConfirmBox(
+        DICTIONARY.ALERT_WARNING_TITLE,
+        DICTIONARY.ALERT_BACK_TO_LOGIN_MSG,
+        goBackToLoginScreen,
+      );
+      return true;
+    };
+
+    // Overwrite android back press
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction,
+    );
+
+    // Remove back press handler when unmount screen
+    return () => backHandler.remove();
+  }, []);
+
   return (
     <Center flex={1}>
-      <Heading size="lg">Thay đổi mật khẩu</Heading>
+      <Heading size="lg">{DICTIONARY.ANGLER_RESET_PASSWORD_HEADER}</Heading>
       <FormProvider {...methods}>
         <VStack mt={4} space={4} w="70%">
           {/* Password input field */}
           <PasswordInput
-            placeholder="Nhập mật khẩu mới"
-            controllerName="password"
+            placeholder={DICTIONARY.NEW_PASSWORD_LABEL}
+            controllerName={DICTIONARY.FORM_FIELD_PASSWORD}
           />
           {/* Password confirmation */}
           <PasswordInput
-            placeholder="Nhập lại mật khẩu mới"
-            controllerName="passwordConfirmation"
+            placeholder={DICTIONARY.NEW_PASSWORD_CONFIRMATION_LABEL}
+            controllerName={DICTIONARY.FORM_FIELD_PASSWORD_CONFIRMATION}
           />
           {/* Submit button */}
           <Button
@@ -59,7 +88,7 @@ const ChangePasswordScreen = () => {
             isLoading={loading}
             isDisabled={loading}
           >
-            Tiếp tục
+            {DICTIONARY.CONTINUE_BUTTON_LABEL}
           </Button>
         </VStack>
       </FormProvider>

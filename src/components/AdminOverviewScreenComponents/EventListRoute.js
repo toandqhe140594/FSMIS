@@ -1,15 +1,15 @@
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { useNavigation } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
-import { Box } from "native-base";
+import { Box, Center, Text } from "native-base";
 import React, { useEffect, useState } from "react";
 import { FlatList, StyleSheet } from "react-native";
 
+import { KEY_EXTRACTOR } from "../../constants";
 import { goToAdminCatchDetail } from "../../navigations";
+import SmallScreenLoadingIndicator from "../common/SmallScreenLoadingIndicator";
 import EventPostCard from "../EventPostCard";
 import PressableCustomCard from "../PressableCustomCard";
-
-const keyExtractor = (item) => item.id.toString();
 
 const styles = StyleSheet.create({
   tabBarStyle: {
@@ -24,7 +24,6 @@ const styles = StyleSheet.create({
 
 const CatchReportRoute = () => {
   const navigation = useNavigation();
-  const [lakeCatchPage, setLakeCatchPage] = useState(1);
 
   const getLocationCatchListByPage = useStoreActions(
     (actions) => actions.LocationModel.getLocationCatchListByPage,
@@ -33,8 +32,16 @@ const CatchReportRoute = () => {
     (states) => states.LocationModel.locationCatchList,
   );
 
+  const [lakeCatchPage, setLakeCatchPage] = useState(1);
+  const [screenLoading, setScreenLoading] = useState(true);
+
+  // Hide loading indicator
+  const closeScreenLoadingIndicator = () => setScreenLoading(false);
+
   useEffect(() => {
-    getLocationCatchListByPage({ pageNo: lakeCatchPage });
+    getLocationCatchListByPage({ pageNo: lakeCatchPage })
+      .then(closeScreenLoadingIndicator)
+      .catch(closeScreenLoadingIndicator);
     setLakeCatchPage(lakeCatchPage + 1);
   }, []);
 
@@ -43,15 +50,17 @@ const CatchReportRoute = () => {
     setLakeCatchPage(lakeCatchPage + 1);
   };
 
+  const goToCatchDetailScreen = (id) => () => {
+    goToAdminCatchDetail(navigation, {
+      id,
+    });
+  };
+
   const renderItem = ({ item }) => {
     return (
       <PressableCustomCard
         paddingX="1"
-        onPress={() => {
-          goToAdminCatchDetail(navigation, {
-            id: item.id,
-          });
-        }}
+        onPress={goToCatchDetailScreen(item.id)}
       >
         <EventPostCard
           postStyle="ANGLER_POST"
@@ -70,22 +79,29 @@ const CatchReportRoute = () => {
     );
   };
 
+  if (screenLoading) return <SmallScreenLoadingIndicator />;
+
   return (
     <>
-      {locationCatchList.length > 0 && (
+      {locationCatchList.length > 0 ? (
         <FlatList
+          initialNumToRender={3}
+          maxToRenderPerBatch={3}
           data={locationCatchList}
           renderItem={renderItem}
-          onEndReached={loadMoreLakeCatchData()}
-          keyExtractor={keyExtractor}
+          onEndReached={loadMoreLakeCatchData}
+          keyExtractor={KEY_EXTRACTOR}
         />
+      ) : (
+        <Center flex={1} minHeight={600}>
+          <Text>Không có báo cá </Text>
+        </Center>
       )}
     </>
   );
 };
 
 const FLocationEventRoute = () => {
-  const [lakePostPage, setLakePostPage] = useState(1);
   const locationPostList = useStoreState(
     (states) => states.LocationModel.locationPostList,
   );
@@ -93,8 +109,16 @@ const FLocationEventRoute = () => {
     (actions) => actions.LocationModel.getLocationPostListByPage,
   );
 
+  const [lakePostPage, setLakePostPage] = useState(1);
+  const [screenLoading, setScreenLoading] = useState(true);
+
+  // Hide loading indicator
+  const closeScreenLoadingIndicator = () => setScreenLoading(false);
+
   useEffect(() => {
-    getLocationPostListByPage({ pageNo: lakePostPage });
+    getLocationPostListByPage({ pageNo: lakePostPage })
+      .then(closeScreenLoadingIndicator)
+      .catch(closeScreenLoadingIndicator);
     setLakePostPage(lakePostPage + 1);
   }, []);
 
@@ -121,16 +145,24 @@ const FLocationEventRoute = () => {
     );
   };
 
+  if (screenLoading) return <SmallScreenLoadingIndicator />;
+
   return (
     <>
-      {locationPostList.length > 0 && (
+      {locationPostList.length > 0 ? (
         <FlatList
           nestedScrollEnabled
           data={locationPostList}
           renderItem={renderItem}
           onEndReached={loadMoreLakePostData}
-          keyExtractor={keyExtractor}
+          keyExtractor={KEY_EXTRACTOR}
+          maxToRenderPerBatch={3}
+          initialNumToRender={3}
         />
+      ) : (
+        <Center flex={1} minHeight={600}>
+          <Text>Không có bài viết </Text>
+        </Center>
       )}
     </>
   );

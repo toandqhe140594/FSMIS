@@ -4,7 +4,7 @@ import { FlatList, Text, View } from "react-native";
 
 import FLocationCard from "../components/FLocationCard";
 import styles from "../config/styles";
-import { DEFAULT_TIMEOUT } from "../constants";
+import { DEFAULT_TIMEOUT, KEY_EXTRACTOR } from "../constants";
 
 const ItemSeparator = () => {
   return <View style={{ height: 6 }} />;
@@ -30,8 +30,6 @@ const FLocationSaveScreen = () => {
         : null,
     [savedLocationList.length > 0],
   );
-
-  const keyExtractor = (item) => item.id.toString();
 
   useEffect(() => {
     if (savedLocationCurrentPage === 1)
@@ -87,7 +85,7 @@ const FLocationSaveScreen = () => {
           contentContainerStyle={memoizedContainerStyle}
           data={savedLocationList}
           renderItem={renderItem}
-          keyExtractor={keyExtractor}
+          keyExtractor={KEY_EXTRACTOR}
           ItemSeparatorComponent={ItemSeparator}
           onEndReached={getSavedLocationList}
           ListEmptyComponent={renderEmpty}

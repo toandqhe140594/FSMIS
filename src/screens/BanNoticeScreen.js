@@ -2,17 +2,13 @@ import { useStoreActions } from "easy-peasy";
 import { Box, Divider, Text } from "native-base";
 import PropTypes from "prop-types";
 import React, { useEffect } from "react";
-import {
-  Alert,
-  BackHandler,
-  Linking,
-  ScrollView,
-  StyleSheet,
-} from "react-native";
+import { BackHandler, Linking, ScrollView, StyleSheet } from "react-native";
 
 import HeaderTab from "../components/HeaderTab";
 import ImageResizeMode from "../components/ImageResizeMode";
 import colors from "../config/colors";
+import { DICTIONARY } from "../constants";
+import { showAlertConfirmBox } from "../utilities";
 
 const styles = StyleSheet.create({
   text: {
@@ -30,27 +26,28 @@ const BanNoticeScreen = ({ bannedInformation }) => {
   const resetErrorMessage = () => {
     setErrorMessage({});
   };
+
   useEffect(() => {
+    /**
+     * Show alert box confirm go back to login screen action
+     * @returns true
+     */
     const backAction = () => {
-      Alert.alert("Thông báo", "Bạn có muốn quay về màn hình đăng nhập không", [
-        {
-          text: "Hủy",
-          onPress: () => null,
-          style: "cancel",
-        },
-        {
-          text: "Đồng ý",
-          onPress: resetErrorMessage,
-        },
-      ]);
+      showAlertConfirmBox(
+        DICTIONARY.ALERT_WARNING_TITLE,
+        DICTIONARY.ALERT_BACK_TO_LOGIN_MSG,
+        resetErrorMessage,
+      );
       return true;
     };
 
+    // Overwrite android back press
     const backHandler = BackHandler.addEventListener(
       "hardwareBackPress",
       backAction,
     );
 
+    // Remove back press handler when unmount screen
     return () => backHandler.remove();
   }, []);
 
@@ -120,7 +117,7 @@ const BanNoticeScreen = ({ bannedInformation }) => {
           <Text style={styles.text}>
             Tài khoản:{" "}
             <Text bold style={styles.text}>
-              091123431
+              {bannedInformation.phone}
             </Text>
           </Text>
           <Text>
