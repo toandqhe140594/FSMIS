@@ -10,6 +10,68 @@ import styles from "../config/styles";
 import AvatarCard from "./AvatarCard";
 import ImageResizeMode from "./ImageResizeMode";
 
+const uriExtract = (uri) => {
+  let srcUri = [];
+  let widthUri;
+  let heightUri;
+  let widthVideo = 400;
+  let heightVideo = 400;
+  let heightPage = 410;
+  try {
+    const regexIframe = new RegExp("<iframe", "g");
+    const regexYouTubeLink =
+      /^(https?:\/\/)?(www\.youtube\.com|youtu\.?be)\/.+$/g;
+    const regexYouTubeID =
+      /(?:https?:\/{2})?(?:w{3}\.)?youtu(?:be)?\.(?:com|be)(?:\/watch\?v=|\/)([^\s&]+)/;
+    const regexFacebookFWacth = /^https:\/\/fb\.watch\//;
+    const regexFacebookLink =
+      /^https:\/\/www\.facebook\.com\/([^\/?].+\/)?video(s|\.php)[\/?].*$/;
+    if (regexIframe.test(uri)) {
+      const regExGetSrc = /<iframe ?.* src="([^"]+)" ?.*>/i;
+      const regExGetWidth = /<iframe ?.* width="([^"]+)" ?.*>/i;
+      const regExGetHeight = /<iframe ?.* height="([^"]+)" ?.*>/i;
+
+      srcUri = uri.match(regExGetSrc);
+      widthUri = uri.match(regExGetWidth);
+      heightUri = uri.match(regExGetHeight);
+
+      if (widthUri + 50 < heightUri) {
+        widthVideo = 300;
+        heightVideo = 510;
+        heightPage = 520;
+      }
+      if (widthUri >= heightUri) {
+        widthVideo = 400;
+        heightPage = 410;
+      }
+    } else if (regexYouTubeLink.test(uri)) {
+      const idArray = uri.split(regexYouTubeID);
+      srcUri[1] = `https://www.youtube.com/embed/${idArray[1]}`;
+      widthVideo = 400;
+      heightPage = 410;
+    } else if (regexFacebookFWacth.test(uri) || regexFacebookLink.test(uri)) {
+      const mapObj = {
+        ":": "%3A",
+        "/": "%2F",
+      };
+      uri = uri.replace(/(?:\:|\/|\/\/)/gi, (matched) => mapObj[matched]);
+      srcUri[1] = `https://www.facebook.com/plugins/video.php?href=${uri}&width=${widthVideo}&show_text=false&height=${heightVideo}`;
+    } else {
+      srcUri[1] = uri;
+      heightVideo = 700;
+    }
+  } catch (err) {
+    srcUri[1] = uri;
+  }
+  const videoInfo = {
+    uri: srcUri[1],
+    videoHeight: heightVideo,
+    videoWidth: widthVideo,
+    pageHeight: heightPage,
+  };
+
+  return videoInfo;
+};
 const EventPostCard = ({
   postStyle,
   anglerName,
@@ -32,9 +94,7 @@ const EventPostCard = ({
   const onlyUnique = (value, index, self) => {
     return self.indexOf(value) === index;
   };
-  let srcUri = [];
-  let widthUri;
-  let heightUri;
+  let srcUri;
   let widthVideo = 400;
   let heightVideo = 400;
   let heightPage = 410;
@@ -55,43 +115,11 @@ const EventPostCard = ({
   }
 
   if (typeUri === "VIDEO") {
-    try {
-      const regexIframe = new RegExp("<iframe", "g");
-      const regexYouTubeLink =
-        /^(https?:\/\/)?(www\.youtube\.com|youtu\.?be)\/.+$/g;
-      const regexYouTubeID =
-        /(?:https?:\/{2})?(?:w{3}\.)?youtu(?:be)?\.(?:com|be)(?:\/watch\?v=|\/)([^\s&]+)/;
-
-      if (regexIframe.test(uri)) {
-        const regExGetSrc = /<iframe ?.* src="([^"]+)" ?.*>/i;
-        const regExGetWidth = /<iframe ?.* width="([^"]+)" ?.*>/i;
-        const regExGetHeight = /<iframe ?.* height="([^"]+)" ?.*>/i;
-
-        srcUri = uri.match(regExGetSrc);
-        widthUri = uri.match(regExGetWidth);
-        heightUri = uri.match(regExGetHeight);
-
-        if (widthUri + 50 < heightUri) {
-          widthVideo = 300;
-          heightVideo = 510;
-          heightPage = 520;
-        }
-        if (widthUri >= heightUri) {
-          widthVideo = 400;
-          heightPage = 410;
-        }
-      } else if (regexYouTubeLink.test(uri)) {
-        const idArray = uri.split(regexYouTubeID);
-        srcUri[1] = `https://www.youtube.com/embed/${idArray[1]}`;
-        widthVideo = 400;
-        heightPage = 410;
-      } else {
-        srcUri[1] = uri;
-        heightVideo = 700;
-      }
-    } catch (err) {
-      srcUri[1] = uri;
-    }
+    const videoInfo = uriExtract(uri);
+    widthVideo = videoInfo.videoWidth;
+    heightVideo = videoInfo.videoHeight;
+    heightPage = videoInfo.pageHeight;
+    srcUri = videoInfo.uri;
   }
   return (
     <Box mt="1" px="1.4">
@@ -232,6 +260,7 @@ const EventPostCard = ({
               position: "relative",
               right: 5,
               alignSelf: "center",
+              backgroundColor: "black",
             }}
           >
             <ScrollView
@@ -244,10 +273,12 @@ const EventPostCard = ({
               showsHorizontalScrollIndicator={false}
             >
               <WebView
-                allowsFullscreenVideo={false}
+                allowsFullscreenVideo
                 overScrollMode="content"
                 originWhitelist={["https://*"]}
                 scalesPageToFit={false}
+                domStorageEnabled
+                // injectedJavaScript={`const meta = document.createElement('meta'); meta.setAttribute('content', 'width=width, initial-scale=0.5, maximum-scale=0.5, user-scalable=2.0'); meta.setAttribute('name', 'viewport'); document.getElementsByTagName('head')[0].appendChild(meta); `}
                 style={{
                   flex: 1,
                   alignSelf: "center",
@@ -257,7 +288,8 @@ const EventPostCard = ({
                   opacity: 0.99,
                 }}
                 source={{
-                  uri: srcUri[1],
+                  // uri: `https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Ffb.watch%2F9Ai9dhzAct%2F&width=${widthVideo}&show_text=false&height=${heightVideo}`,
+                  uri: srcUri,
                 }}
               />
             </ScrollView>
