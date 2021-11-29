@@ -1,11 +1,13 @@
 import { useNavigation } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
-import { Box, FlatList, Text } from "native-base";
-import React, { useEffect } from "react";
+import { Box, Center, FlatList, Text } from "native-base";
+import React, { useEffect, useState } from "react";
+import { ActivityIndicator } from "react-native";
 
 import AvatarCard from "../components/AvatarCard";
 import HeaderTab from "../components/HeaderTab";
 import PressableCustomCard from "../components/PressableCustomCard";
+import colors from "../config/colors";
 import { KEY_EXTRACTOR } from "../constants";
 import { goToCatchReportDetailScreen } from "../navigations";
 
@@ -19,9 +21,18 @@ const AnglerCatchReportsHistoryScreen = () => {
     (actions) => actions.ProfileModel,
   );
 
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     // If the current page = 1 aka the list is empty then call api to init the list
-    if (catchHistoryCurrentPage === 1) getCatchReportHistory();
+    if (catchHistoryCurrentPage === 1)
+      getCatchReportHistory()
+        .then(() => {
+          setLoading(false);
+        })
+        .catch(() => {
+          setLoading(false);
+        });
     return () => {
       resetCatchReportHistory(); // Clear list data when screen unmount
     };
@@ -33,68 +44,78 @@ const AnglerCatchReportsHistoryScreen = () => {
     });
   };
 
+  const renderItem = ({ item }) => (
+    <Box
+      borderBottomWidth="1"
+      _dark={{
+        borderColor: "gray.600",
+      }}
+      borderColor="coolGray.200"
+      backgroundColor="white"
+      mb="0.5"
+    >
+      <PressableCustomCard
+        paddingX="3"
+        onPress={viewCatchReportDetail(item.id)}
+      >
+        <Box pl="2" pb="1">
+          <AvatarCard
+            avatarSize="md"
+            nameUser={item.userFullName}
+            subText={item.locationName}
+            image={item.avatar}
+            watermarkType={item.approved}
+          />
+          <Box>
+            <Text numberOfLines={1} isTruncated>
+              {item.time}
+            </Text>
+            <Text numberOfLines={1} isTruncated>
+              <Text bold>Đã câu được: </Text>
+              {item.fishes.join(", ").toString()}
+            </Text>
+          </Box>
+        </Box>
+      </PressableCustomCard>
+    </Box>
+  );
+
   const onEndReached = () => {
     getCatchReportHistory();
   };
 
+  if (loading)
+    return (
+      <Box flex={1}>
+        <HeaderTab name="Lịch sử báo cá" />
+        <Center flex={1}>
+          <ActivityIndicator size="large" color={colors.primary["500"]} />
+        </Center>
+      </Box>
+    );
+
   return (
-    <Box>
+    <Box flex={1}>
       <HeaderTab name="Lịch sử báo cá" />
       <Box
         w={{
           base: "100%",
           md: "25%",
         }}
-        pb="20%"
+        flex={1}
       >
-        {catchReportHistory.length !== 0 && (
+        {catchReportHistory.length !== 0 ? (
           <FlatList
             pt="0.5"
             data={catchReportHistory}
-            renderItem={({ item }) => (
-              <Box
-                borderBottomWidth="1"
-                _dark={{
-                  borderColor: "gray.600",
-                }}
-                borderColor="coolGray.200"
-                backgroundColor="white"
-                mb="0.5"
-                // keyExtractor={(item.id) => item.index_id.toString()}
-              >
-                <PressableCustomCard
-                  paddingX="3"
-                  onPress={viewCatchReportDetail(item.id)}
-                >
-                  <Box pl="2" pb="1">
-                    <AvatarCard
-                      avatarSize="md"
-                      nameUser={item.userFullName}
-                      subText={item.locationName}
-                      image={item.avatar}
-                      watermarkType={item.approved}
-                    />
-                    <Box>
-                      <Text numberOfLines={1} isTruncated>
-                        {item.time}
-                      </Text>
-                      <Text numberOfLines={1} isTruncated>
-                        <Text bold>Đã câu được: </Text>
-                        {item.fishes.join(", ").toString()}
-                      </Text>
-                    </Box>
-                    <Box mt={1}>
-                      {/* <Text italic numberOfLines={2} isTruncated pl={1}>
-                        &quot; {item.description} &quot;
-                      </Text> */}
-                    </Box>
-                  </Box>
-                </PressableCustomCard>
-              </Box>
-            )}
+            renderItem={renderItem}
             keyExtractor={KEY_EXTRACTOR}
             onEndReached={onEndReached}
           />
+        ) : (
+          <Center flex={1}>
+            <Text>Không có dữ liệu</Text>
+          </Center>
         )}
       </Box>
     </Box>
