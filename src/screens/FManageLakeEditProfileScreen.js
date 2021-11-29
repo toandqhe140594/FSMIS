@@ -42,6 +42,18 @@ const styles = StyleSheet.create({
   },
 });
 
+/**
+ * Compare to database method list and return id of all methods in lake
+ * @param {Array} methodData list of all methods, each contains name and id
+ * @param {Array} lakeMethods list of method's names availble in lake
+ * @returns Array of method ids
+ */
+const getMethodIds = (methodData, lakeMethods) =>
+  methodData.reduce((acc, { name, id }) => {
+    if (lakeMethods.includes(name)) acc.push(id);
+    return acc;
+  }, []);
+
 const LakeEditProfileScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
@@ -57,11 +69,6 @@ const LakeEditProfileScreen = () => {
   const { editLakeDetail, closeLakeByLakeId } = useStoreActions(
     (actions) => actions.FManageModel,
   );
-  const methodValue = () =>
-    fishingMethodList.reduce((acc, { name, id }) => {
-      if (lakeDetail.fishingMethodList.includes(name)) acc.push(id);
-      return acc;
-    }, []);
   const methods = useForm({
     mode: "onSubmit",
     reValidateMode: "onSubmit",
@@ -72,7 +79,7 @@ const LakeEditProfileScreen = () => {
       length: lakeDetail.length.toString(),
       depth: lakeDetail.depth.toString(),
       imageArray: [{ id: 1, base64: lakeDetail.imageUrl }],
-      methods: methodValue,
+      methods: [],
     },
     resolver: yupResolver(SCHEMA.FMANAGE_LAKE_FORM),
   });
@@ -114,7 +121,7 @@ const LakeEditProfileScreen = () => {
     closeLakeByLakeId({ id })
       .then(() => {
         showToastMessage(DICTIONARY.TOAST_DELETE_LAKE_SUCCESS_MSG);
-        navigation.pop(2);
+        goBack(navigation);
       })
       .catch(handleError);
   };
@@ -133,7 +140,6 @@ const LakeEditProfileScreen = () => {
    */
   useEffect(() => {
     getFishingMethodList().then(() => {
-      // setValue(DICTIONARY.FORM_FIELD_LAKE_FISHING_METHODS, methodValue);
       setIsLoading(false);
       setFullScreenMode(false);
     });
@@ -145,6 +151,15 @@ const LakeEditProfileScreen = () => {
       clearTimeout(loadingId);
     };
   }, []);
+
+  useEffect(() => {
+    if (fishingMethodList.length) {
+      setValue(
+        DICTIONARY.FORM_FIELD_LAKE_FISHING_METHODS,
+        getMethodIds(fishingMethodList, lakeDetail.fishingMethodList),
+      );
+    }
+  }, [fishingMethodList.length]);
 
   /**
    * Fire when navigates back to the screen
