@@ -33,7 +33,7 @@ public interface FishingLocationRepos extends JpaRepository<FishingLocation, Lon
             " (\n" +
             "  select distinct\n" +
             "  tfl.id, tfl.active, tfl.address, tfl.created_date, tfl.description, tfl.image_url, tfl.last_edited_date, tfl.latitude, tfl.longitude,\n" +
-            "  tfl.name, tfl.phone, tfl.rule, tfl.service, tfl.timetable, tfl.verify, tfl.website, tfl.owner_id, tfl.ward_id, tfl.closed, tfl.unsigned_name, tfl.score, (\n" +
+            "  tfl.name, tfl.phone, tfl.rule, tfl.service, tfl.timetable, tfl.verify, tfl.website, tfl.owner_id, tfl.ward_id, tfl.closed, tfl.unsigned_name, tfl.score, tfl.pending, (\n" +
             "    ACOS(SIN(PI()*?2/180.0)*SIN(PI()*latitude/180.0)+COS(PI()*?2/180.0)*COS(PI()*latitude/180.0)*COS(PI()*longitude/180.0-PI()*?1/180.0))*6371\n" +
             "  ) as distance\n" +
             "  FROM tbl_fishing_location tfl\n" +

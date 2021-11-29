@@ -114,7 +114,7 @@ public class ReportService {
         return new ResponseTextDtoOut("Báo cáo bài viết thành công");
     }
 
-    public ResponseTextDtoOut reportCatch(HttpServletRequest request, Long catchId, ReportDtoIn reportDtoIn) {
+    public ResponseTextDtoOut reportInappropriateCatch(HttpServletRequest request, Long catchId, ReportDtoIn reportDtoIn) {
         User user = jwtFilter.getUserFromToken(request);
         Catches catches = catchesRepos.findById(catchId)
                 .orElseThrow(() -> new NotFoundException("Không tìm thấy báo cá"));

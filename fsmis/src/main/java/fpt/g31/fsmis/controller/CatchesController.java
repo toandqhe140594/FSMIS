@@ -24,8 +24,8 @@ public class CatchesController {
     private final CheckInService checkInService;
 
     @GetMapping("/{catchesId}")
-    public ResponseEntity<Object> getCatchesDetails(HttpServletRequest request, @PathVariable Long catchesId) {
-        return new ResponseEntity<>(catchesService.getCatchesDetail(request, catchesId), HttpStatus.OK);
+    public ResponseEntity<Object> getCatchDetails(HttpServletRequest request, @PathVariable Long catchesId) {
+        return new ResponseEntity<>(catchesService.getCatchDetail(request, catchesId), HttpStatus.OK);
     }
 
     @PostMapping("/approve/{catchesId}")
@@ -43,9 +43,9 @@ public class CatchesController {
 
     @PostMapping("/report-improper/{catchesId}")
     @ApiOperation("Report improper catch")
-    public ResponseEntity<Object> catchReport(HttpServletRequest request,
-                                              @PathVariable Long catchesId,
-                                              @RequestBody @Valid ReportDtoIn reportDtoIn) {
-        return new ResponseEntity<>(reportService.reportCatch(request, catchesId, reportDtoIn), HttpStatus.OK);
+    public ResponseEntity<Object> reportInappropriateCatch(HttpServletRequest request,
+                                                           @PathVariable Long catchesId,
+                                                           @RequestBody @Valid ReportDtoIn reportDtoIn) {
+        return new ResponseEntity<>(reportService.reportInappropriateCatch(request, catchesId, reportDtoIn), HttpStatus.OK);
     }
 }
