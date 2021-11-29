@@ -2,12 +2,11 @@ import { useNavigation } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, Center, FlatList, Text } from "native-base";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator } from "react-native";
 
 import AvatarCard from "../components/AvatarCard";
+import SmallScreenLoadingIndicator from "../components/common/SmallScreenLoadingIndicator";
 import HeaderTab from "../components/HeaderTab";
 import PressableCustomCard from "../components/PressableCustomCard";
-import colors from "../config/colors";
 import { KEY_EXTRACTOR } from "../constants";
 import { goToCatchReportDetailScreen } from "../navigations";
 
@@ -88,9 +87,7 @@ const AnglerCatchReportsHistoryScreen = () => {
     return (
       <Box flex={1}>
         <HeaderTab name="Lịch sử báo cá" />
-        <Center flex={1}>
-          <ActivityIndicator size="large" color={colors.primary["500"]} />
-        </Center>
+        <SmallScreenLoadingIndicator />
       </Box>
     );
 
@@ -104,7 +101,7 @@ const AnglerCatchReportsHistoryScreen = () => {
         }}
         flex={1}
       >
-        {catchReportHistory.length !== 0 ? (
+        {catchReportHistory.length > 0 ? (
           <FlatList
             pt="0.5"
             data={catchReportHistory}
