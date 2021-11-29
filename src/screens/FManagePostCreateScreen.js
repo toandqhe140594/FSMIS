@@ -157,7 +157,7 @@ const PostCreateScreen = () => {
               />
               <SelectComponent
                 data={attachmentData}
-                label={DICTIONARY.POST_ATTACHMENT_TYPE_LABE}
+                label={DICTIONARY.POST_ATTACHMENT_TYPE_LABEL}
                 placeholder={DICTIONARY.SELECT_ATTACHMENT_TYPE_PLACEHOLDER}
                 controllerName={DICTIONARY.FORM_FIELD_POST_ATTACHMENT_TYPE}
               />
