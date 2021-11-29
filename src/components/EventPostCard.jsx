@@ -17,6 +17,9 @@ const uriExtract = (uri) => {
   let widthVideo = 400;
   let heightVideo = 320;
   let heightPage = 340;
+
+  uri = uri.replace("fb.gg/v/", "fb.watch/"); // Convert fb.gg link to fb.watch link
+
   try {
     const regexIframe = new RegExp("<iframe", "g");
     const regexYouTubeLink =
