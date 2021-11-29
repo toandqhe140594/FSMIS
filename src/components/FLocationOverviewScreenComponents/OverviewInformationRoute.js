@@ -139,8 +139,10 @@ const OverviewInformationRoute = () => {
                 Bản đồ
               </Text>
               <Box m={3}>
-                {latitude && (
+                {latitude ? (
                   <MiniMapView latitude={latitude} longitude={longitude} />
+                ) : (
+                  <></>
                 )}
               </Box>
               <Divider />
