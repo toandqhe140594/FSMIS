@@ -84,3 +84,5 @@ FishCard.defaultProps = {
   toggleEditOverlay: () => {},
   onDeleteFish: () => {},
 };
+
+export default FishCard;
