@@ -22,7 +22,7 @@ const AdminReportPostDetailScreen = () => {
   const [isLoading, setIsLoading] = useState(null);
   const [isSolvedSuccess, setIsSolvedSuccess] = useState(null);
   const [isDeleteSuccess, setIsDeleteSuccess] = useState(null);
-  // const [reportId, setReportId] = useState(null);
+  const [reportId, setReportId] = useState(null);
   // const [postId, setPostId] = useState(null);
   const postReportDetail = useStoreState(
     (states) => states.ReportModel.postReportDetail,
@@ -36,7 +36,7 @@ const AdminReportPostDetailScreen = () => {
     postReportDetail;
 
   const solvedReportHandler = () => {
-    solvedReport({ id: postDtoOut.id, setIsSuccess: setIsSolvedSuccess });
+    solvedReport({ id: reportId, setIsSuccess: setIsSolvedSuccess });
     setIsLoading(true);
   };
 
@@ -149,7 +149,7 @@ const AdminReportPostDetailScreen = () => {
   useEffect(() => {
     if (route.params.id) {
       getPostReportDetail({ id: route.params.id, setIsSuccess });
-      // setReportId(route.params.id);
+      setReportId(route.params.id);
     }
     setActive(route.params.isActive);
   }, []);
