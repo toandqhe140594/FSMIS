@@ -15,15 +15,15 @@ const uriExtract = (uri) => {
   let widthUri;
   let heightUri;
   let widthVideo = 400;
-  let heightVideo = 400;
-  let heightPage = 410;
+  let heightVideo = 320;
+  let heightPage = 340;
   try {
     const regexIframe = new RegExp("<iframe", "g");
     const regexYouTubeLink =
       /^(https?:\/\/)?(www\.youtube\.com|youtu\.?be)\/.+$/g;
     const regexYouTubeID =
       /(?:https?:\/{2})?(?:w{3}\.)?youtu(?:be)?\.(?:com|be)(?:\/watch\?v=|\/)([^\s&]+)/;
-    const regexFacebookFWacth = /^https:\/\/fb\.watch\//;
+    const regexFacebookFWacth = /https:\/\/fb\.(?:watch|gg)\//;
     const regexFacebookLink =
       /^https:\/\/www\.facebook\.com\/([^\/?].+\/)?video(s|\.php)[\/?].*$/;
     if (regexIframe.test(uri)) {
@@ -35,20 +35,23 @@ const uriExtract = (uri) => {
       widthUri = uri.match(regExGetWidth);
       heightUri = uri.match(regExGetHeight);
 
-      if (widthUri + 50 < heightUri) {
-        widthVideo = 300;
-        heightVideo = 510;
-        heightPage = 520;
+      if (widthUri[1] + 50 < heightUri[1]) {
+        heightVideo = 500;
+        widthVideo = 0.56 * heightVideo;
+        heightPage = heightVideo + 10;
       }
-      if (widthUri >= heightUri) {
+
+      if (widthUri[1] >= heightUri[1]) {
         widthVideo = 400;
-        heightPage = 410;
+        heightVideo = Number(heightUri[1] / widthUri[1]) * widthVideo;
+        heightPage = heightVideo + 10;
       }
     } else if (regexYouTubeLink.test(uri)) {
       const idArray = uri.split(regexYouTubeID);
       srcUri[1] = `https://www.youtube.com/embed/${idArray[1]}`;
-      widthVideo = 400;
-      heightPage = 410;
+      widthVideo = 410;
+      heightVideo = widthVideo * 0.8;
+      heightPage = heightVideo + 10;
     } else if (regexFacebookFWacth.test(uri) || regexFacebookLink.test(uri)) {
       const mapObj = {
         ":": "%3A",
@@ -56,6 +59,9 @@ const uriExtract = (uri) => {
       };
       uri = uri.replace(/(?:\:|\/|\/\/)/gi, (matched) => mapObj[matched]);
       srcUri[1] = `https://www.facebook.com/plugins/video.php?href=${uri}&width=${widthVideo}&show_text=false&height=${heightVideo}`;
+      widthVideo = 400;
+      heightVideo = widthVideo * 0.8;
+      heightPage = heightVideo + 10;
     } else {
       srcUri[1] = uri;
       heightVideo = 700;
