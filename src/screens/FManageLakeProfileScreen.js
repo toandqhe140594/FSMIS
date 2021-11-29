@@ -2,7 +2,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, Center } from "native-base";
 import PropTypes from "prop-types";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { FlatList } from "react-native";
 import { Button, Card, Text } from "react-native-elements";
 
@@ -106,12 +106,22 @@ const FManageEmployeeManagementScreen = () => {
   const getLakeDetailByLakeId = useStoreActions(
     (actions) => actions.FManageModel.getLakeDetailByLakeId,
   );
-
   const deleteFishFromLake = useStoreActions(
     (actions) => actions.FManageModel.deleteFishFromLake,
   );
   const setLakeDetail = useStoreActions(
     (actions) => actions.FManageModel.setLakeDetail,
+  );
+
+  const memoizedStyle = useMemo(
+    () =>
+      lakeDetail.fishInLake && lakeDetail.fishInLake.length > 0
+        ? null
+        : {
+            flex: 1,
+            justifyContent: "center",
+          },
+    [lakeDetail.fishInLake && lakeDetail.fishInLake.length > 0],
   );
 
   const handleLakeEditNavigate = () => {
@@ -138,6 +148,12 @@ const FManageEmployeeManagementScreen = () => {
       handleFishDelete,
     );
   };
+
+  const renderEmpty = () => (
+    <Text style={{ color: "gray", alignSelf: "center" }}>
+      Chưa có cá trong hồ
+    </Text>
+  );
 
   const renderItem = ({ item }) => (
     <FishCard
@@ -193,6 +209,8 @@ const FManageEmployeeManagementScreen = () => {
             data={lakeDetail.fishInLake}
             renderItem={renderItem}
             keyExtractor={keyExtractor}
+            ListEmptyComponent={renderEmpty}
+            contentContainerStyle={memoizedStyle}
           />
         </Box>
       </Box>
