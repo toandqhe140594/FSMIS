@@ -4,20 +4,15 @@ import { useStoreActions, useStoreState } from "easy-peasy";
 import { Button, VStack } from "native-base";
 import React, { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import {
-  ActivityIndicator,
-  Dimensions,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
-import { Overlay } from "react-native-elements";
+import { Dimensions, StyleSheet, Text, View } from "react-native";
 
 import FieldWatcherResetter from "../components/common/FieldWatcherResetter";
 import InputComponent from "../components/common/InputComponent";
+import OverlayLoading from "../components/common/OverlayLoading";
 import SelectComponent from "../components/common/SelectComponent";
 import HeaderTab from "../components/HeaderTab";
-import { SCHEMA } from "../constants";
+import { DEFAULT_TIMEOUT, DICTIONARY, SCHEMA } from "../constants";
+import { goBack } from "../navigations";
 import { showAlertAbsoluteBox, showAlertBox } from "../utilities";
 
 const OFFSET_BOTTOM = 85;
@@ -42,19 +37,11 @@ const styles = StyleSheet.create({
     flexShrink: 1,
     flexBasis: "auto",
   },
-  loadOnStart: {
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  loadOnSubmit: {
-    backgroundColor: "transparent",
-    justifyContent: "center",
-    alignItems: "center",
-  },
   hint: {
     fontSize: 12,
     fontStyle: "italic",
     alignSelf: "center",
+    marginTop: 8,
   },
 });
 
@@ -62,7 +49,6 @@ const FManageFishAddScreen = () => {
   const navigation = useNavigation();
   const [isLoading, setIsLoading] = useState(true);
   const [fullScreenMode, setFullScreenMode] = useState(true);
-  const [addStatus, setAddStatus] = useState("");
   const { fishList } = useStoreState((state) => state.FishModel);
   const { getFishList } = useStoreActions((actions) => actions.FishModel);
   const { addFishToLake } = useStoreActions((actions) => actions.FManageModel);
@@ -73,90 +59,77 @@ const FManageFishAddScreen = () => {
     resolver: yupResolver(SCHEMA.FMANAGE_LAKE_FISH_ADD_FORM),
   });
   const { handleSubmit } = methods;
-  // const watchQuantity = watch("quantity", 0);
-  // const watchTotalWeight = watch("totalWeight", 0);
+
+  const handleGoBack = () => {
+    goBack(navigation);
+  };
+
   const onSubmit = (data) => {
     setIsLoading(true);
     const addData = Object.fromEntries(
       Object.entries(data).filter((keyValPair) => keyValPair[1] !== 0),
     );
-    addFishToLake({ addData, setAddStatus });
+    addFishToLake({ addData })
+      .then(() => {
+        setIsLoading(false);
+        showAlertAbsoluteBox(
+          DICTIONARY.ALERT_TITLE,
+          DICTIONARY.ALERT_LAKE_ADD_FISH_SUCCESS_MSG,
+          handleGoBack,
+          DICTIONARY.CONFIRM_BUTTON_LABEL,
+        );
+      })
+      .catch(() => {
+        setIsLoading(false);
+        showAlertBox(DICTIONARY.ALERT_TITLE, DICTIONARY.ALERT_ERROR_MSG);
+      });
   };
 
   useEffect(() => {
-    (async () => {
-      await getFishList();
+    getFishList().then(() => {
       setIsLoading(false);
       setFullScreenMode(false);
-    })();
+    });
+    const loadingId = setTimeout(() => {
+      setIsLoading(false);
+      setFullScreenMode(false);
+    }, DEFAULT_TIMEOUT);
+    return () => {
+      clearTimeout(loadingId);
+    };
   }, []);
 
-  // useEffect(() => {
-  //   if (watchQuantity === "") {
-  //     setValue("quantity", 0);
-  //     clearErrors("quantity");
-  //   }
-  // }, [watchQuantity]);
-
-  // useEffect(() => {
-  //   if (watchTotalWeight === "") {
-  //     setValue("totalWeight", 0);
-  //     clearErrors("totalWeight");
-  //   }
-  // }, [watchTotalWeight]);
-
-  useEffect(() => {
-    if (addStatus === "SUCCESS") {
-      setIsLoading(false);
-      setAddStatus(null);
-      showAlertAbsoluteBox(
-        "Thông báo",
-        "Thêm cá thành công!",
-        () => {
-          navigation.goBack();
-        },
-        "Xác nhận",
-      );
-    } else if (addStatus === "FAILED") {
-      setIsLoading(false);
-      setAddStatus(null);
-      showAlertBox("Thông báo", "Đã có lỗi xảy ra, vui lòng thử lại");
-    }
-  }, [addStatus]);
+  if (isLoading && fullScreenMode) {
+    return <OverlayLoading coverScreen />;
+  }
   return (
     <>
-      <HeaderTab name="Thêm cá vào hồ" />
-      <Overlay
-        isVisible={isLoading}
-        fullScreen
-        overlayStyle={fullScreenMode ? styles.loadOnStart : styles.loadOnSubmit}
-      >
-        <ActivityIndicator size={60} color="#2089DC" />
-      </Overlay>
+      <HeaderTab name={DICTIONARY.FMANAGE_ADD_FISH_HEADER} />
+      <OverlayLoading loading={isLoading} />
       <View style={styles.appContainer}>
         <FormProvider {...methods}>
           <VStack space={2} style={styles.sectionWrapper}>
             <SelectComponent
-              label="Loại cá"
-              placeholder="Chọn loại cá"
+              label={DICTIONARY.FISH_SPECIES_LABEL}
+              placeholder={DICTIONARY.SELECT_FISH_SPECIES_PLACEHOLDER}
               data={fishList}
-              controllerName="fishSpeciesId"
+              controllerName={DICTIONARY.FORM_FIELD_FISH_SPECIES}
             />
             <View
               style={{ flexDirection: "row", justifyContent: "space-between" }}
             >
               <InputComponent
                 myStyles={{ width: "48%", marginRight: 12 }}
-                label="Biểu nhỏ"
-                placeholder="Nhập biểu nhỏ"
-                controllerName="minWeight"
+                label={DICTIONARY.FISH_MIN_WEIGHT_LABEL}
+                placeholder={DICTIONARY.INPUT_FISH_MIN_WEIGHT_PLACEHOLDER}
+                controllerName={DICTIONARY.FORM_FIELD_FISH_MIN_WEIGHT}
                 useNumPad
               />
               <InputComponent
                 myStyles={{ flexGrow: 1 }}
-                label="Biểu to"
-                placeholder="Nhập biểu to"
-                controllerName="maxWeight"
+                label={DICTIONARY.FISH_MAX_WEIGHT_LABEL}
+                placeholder={DICTIONARY.INPUT_FISH_MAX_WEIGHT_PLACEHOLDER}
+                controllerName={DICTIONARY.FORM_FIELD_FISH_MAX_WEIGHT}
                 useNumPad
               />
             </View>
@@ -164,19 +137,21 @@ const FManageFishAddScreen = () => {
               Lưu ý: Chỉ cần nhập một trong hai trường dưới đây
             </Text>
             <InputComponent
-              label="Số lượng cá"
-              placeholder="Nhập số con"
-              controllerName="quantity"
+              label={DICTIONARY.FISH_QUANTITY_LABEL}
+              placeholder={DICTIONARY.INPUT_FISH_QUANTITY_PLACEHOLDER}
+              controllerName={DICTIONARY.FORM_FIELD_FISH_QUANTITY}
               useNumPad
             />
-            <FieldWatcherResetter name="quantity" />
+            <FieldWatcherResetter name={DICTIONARY.FORM_FIELD_FISH_QUANTITY} />
             <InputComponent
-              label="Tổng cân nặng"
-              placeholder="Nhập tổng cân nặng (kg)"
-              controllerName="totalWeight"
+              label={DICTIONARY.FISH_TOTAL_WEIGHT_LABEL}
+              placeholder={DICTIONARY.INPUT_FISH_TOTAL_WEIGHT_PLACEHOLDER}
+              controllerName={DICTIONARY.FORM_FIELD_FISH_TOTAL_WEIGHT}
               useNumPad
             />
-            <FieldWatcherResetter name="totalWeight" />
+            <FieldWatcherResetter
+              name={DICTIONARY.FORM_FIELD_FISH_TOTAL_WEIGHT}
+            />
           </VStack>
           <Button style={styles.button} onPress={handleSubmit(onSubmit)}>
             Thêm cá

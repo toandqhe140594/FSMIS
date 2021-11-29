@@ -36,6 +36,8 @@ export const FMANAGE_CATCH_VERIFY = "FManage Verify Catch Report";
 export const FMANAGE_CATCH_DETAIL = "FManage Detail Catch Report";
 export const FMANAGE_SELECTOR = "FManage Select Fishing Location";
 export const FMANAGE_PROFILE_EDIT = "FManage Edit Fishing Location";
+export const FMANAGE_PROFILE_PENDING_EDIT =
+  "FManage Edit Pending Fishing Location";
 export const FMANAGE_PROFILE_ADD_NEW = "FManage Add New Fishing Location";
 export const FMANAGE_MAIN = "FManage Fishing Location Management Screen";
 export const FMANAGE_STAFF_MANAGEMENT = "FManage Staff List";
@@ -58,10 +60,13 @@ export const ADMIN_MAIN = "Admin Management Main Screen";
 export const ADMIN_ACCOUNT_MANAGEMENT = "Admin Account Management Screen";
 export const ADMIN_ACCOUNT_MANAGEMENT_DETAIL =
   "Admin Account Management Detail Screen";
+export const ADMIN_ACCOUNT_MANAGEMENT_DEACTIVATE =
+  "Admin Account Management Deactivate Screen";
 export const ADMIN_LOCATION_SUGGEST_MANAGEMENT =
   "Admin Suggested Fishing Location Management Screen";
 export const ADMIN_LOCATION_SUGGEST_DETAIL =
   "Admin Suggested Fishing Location Detail";
+export const ADMIN_CREATE_SUGGEST_LOCATION = "Admin Create Suggested Location";
 export const ADMIN_LOCATION_MANAGEMENT =
   "Admin Fishing Location Management Screen";
 export const ADMIN_LOCATION_MANAGEMENT_OVERVIEW =

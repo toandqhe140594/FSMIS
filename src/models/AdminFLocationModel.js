@@ -182,6 +182,20 @@ const model = {
     if (foundIndex !== -1) state.suggestedLocationList.splice(foundIndex, 1);
   }),
 
+  /**
+   * Mark suggested location record in state as helpful by id
+   */
+  markSuggestedLocation: action((state, payload) => {
+    const foundIndex = state.suggestedLocationList.findIndex(
+      (record) => record.id === payload.id,
+    );
+    if (foundIndex !== -1)
+      state.suggestedLocationList[foundIndex].helpful = true;
+  }),
+
+  /**
+   * Get list of suggested location record
+   */
   getSuggestedLocationList: thunk(async (actions) => {
     try {
       const { data } = await http.get(
@@ -203,6 +217,48 @@ const model = {
       actions.removeSuggestedLocationRecordFromList({ id });
     } catch (error) {
       setSuccess(false);
+    }
+  }),
+
+  /**
+   * Mark a suggest location record as helpful
+   */
+  markHelpfulSuggested: thunk(async (actions, payload) => {
+    const { id } = payload;
+    try {
+      await http.patch(
+        `${API_URL.ADMIN_FISHING_LOCATION_SUGGEST_HELPFUL_MARK}/${id}`,
+      );
+      actions.markSuggestedLocation({ id });
+    } catch (error) {
+      throw new Error();
+    }
+  }),
+
+  /**
+   * Admin create new location
+   * @param {Object} payload.addData data of new location
+   * @param {String} payload.addData.address
+   * @param {String} payload.addData.description
+   * @param {Number} payload.addData.latitude
+   * @param {Number} payload.addData.longitude
+   * @param {String} payload.addData.name
+   * @param {String} payload.addData.phone
+   * @param {String} payload.addData.rule
+   * @param {String} payload.addData.service
+   * @param {String} payload.addData.timetable
+   * @param {Number} payload.addData.wardId
+   * @param {String} payload.addData.website
+   */
+  createSuggestedLocation: thunk(async (actions, payload) => {
+    const { addData } = payload;
+    try {
+      await http.post(
+        `${API_URL.ADMIN_FISHING_LOCATION_SUGGEST_CREATE}`,
+        addData,
+      );
+    } catch (error) {
+      throw new Error();
     }
   }),
 };

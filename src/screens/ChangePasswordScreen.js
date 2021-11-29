@@ -1,119 +1,97 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useStoreActions } from "easy-peasy";
-import { Button, Center, Heading, Input, Text, VStack } from "native-base";
+import { Button, Center, Heading, VStack } from "native-base";
 import React, { useEffect, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
-import * as yup from "yup";
+import { FormProvider, useForm } from "react-hook-form";
+import { BackHandler } from "react-native";
 
+import PasswordInput from "../components/common/PasswordInput";
+import { DICTIONARY, SCHEMA } from "../constants";
 import { goToLoginScreen } from "../navigations";
-import { showToastMessage } from "../utilities";
-
-// Validation schema for form
-const validationSchema = yup.object().shape({
-  password: yup
-    .string()
-    .required("Mật khẩu không thể bỏ trống")
-    .min(8, "Mật khẩu phải chứa ít nhất 8 ký tự"),
-  passwordConfirmation: yup
-    .string()
-    .oneOf([yup.ref("password"), null], "Mật khẩu không khớp"),
-});
+import { showAlertConfirmBox, showToastMessage } from "../utilities";
 
 const ChangePasswordScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({
-    mode: "onChange",
-    reValidateMode: "onChange",
-    resolver: yupResolver(validationSchema),
+  const [loading, setLoading] = useState(false);
+  const methods = useForm({
+    mode: "onSubmit",
+    reValidateMode: "onSubmit",
+    resolver: yupResolver(SCHEMA.FORGOT_PASSWORD_FORM),
   });
-
+  const { handleSubmit } = methods;
   const resetPassword = useStoreActions(
     (actions) => actions.UtilModel.resetPassword,
   );
-  const [success, setSuccess] = useState(null);
-  const [loading, setLoading] = useState(false);
 
   const onSubmit = (data) => {
     setLoading(true);
-    resetPassword({ ...data, phone: route.params?.phone, setSuccess });
+    resetPassword({ password: data.password, phone: route.params?.phone })
+      .then(() => {
+        showToastMessage(DICTIONARY.TOAST_CHANGE_PASSWORD_SUCCESS_MSG);
+        goToLoginScreen(navigation);
+      })
+      .catch(() => {
+        setLoading(false);
+      });
+  };
+
+  const goBackToLoginScreen = () => {
+    goToLoginScreen(navigation);
   };
 
   useEffect(() => {
-    if (success === true) {
-      showToastMessage("Đổi mật khẩu thành công");
-      goToLoginScreen(navigation);
-    }
-    setLoading(false);
-    setSuccess(null);
-  }, [success]);
+    /**
+     * Show alert box confirm go back to login screen action
+     * @returns true
+     */
+    const backAction = () => {
+      showAlertConfirmBox(
+        DICTIONARY.ALERT_WARNING_TITLE,
+        DICTIONARY.ALERT_BACK_TO_LOGIN_MSG,
+        goBackToLoginScreen,
+      );
+      return true;
+    };
+
+    // Overwrite android back press
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction,
+    );
+
+    // Remove back press handler when unmount screen
+    return () => backHandler.remove();
+  }, []);
 
   return (
     <Center flex={1}>
       <Heading size="lg">Thay đổi mật khẩu</Heading>
-      <VStack mt={4} space={2} w="70%">
-        {/* Password input field */}
-        <Controller
-          control={control}
-          name="password"
-          render={({ field: { onChange, onBlur, value } }) => (
-            <Input
-              placeholder="Mật khẩu"
-              secureTextEntry
-              size="lg"
-              type="password"
-              w="100%"
-              onBlur={onBlur}
-              onChangeText={onChange}
-              value={value}
-            />
-          )}
-        />
-        {/* Error message view for password */}
-        {errors.password?.message && (
-          <Text color="red.500" fontSize="xs" italic>
-            {errors.password?.message}
-          </Text>
-        )}
-        {/* Password confirmation */}
-        <Controller
-          control={control}
-          name="passwordConfirmation"
-          render={({ field: { onChange, onBlur, value } }) => (
-            <Input
-              placeholder="Nhập lại mật khẩu"
-              secureTextEntry
-              size="lg"
-              type="password"
-              w="100%"
-              onBlur={onBlur}
-              onChangeText={onChange}
-              value={value}
-            />
-          )}
-        />
-        {/* Error message view for password confirmation */}
-        {errors.passwordConfirmation?.message && (
-          <Text color="red.500" fontSize="xs" italic>
-            {errors.passwordConfirmation?.message}
-          </Text>
-        )}
-        {/* Submit button */}
-        <Button
-          size="lg"
-          w="100%"
-          onPress={handleSubmit(onSubmit)}
-          isLoading={loading}
-          isDisabled={loading}
-        >
-          Tiếp tục
-        </Button>
-      </VStack>
+      <FormProvider {...methods}>
+        <VStack mt={4} space={4} w="70%">
+          {/* Password input field */}
+          <PasswordInput
+            placeholder={DICTIONARY.NEW_PASSWORD_LABEL}
+            controllerName={DICTIONARY.FORM_FIELD_PASSWORD}
+          />
+          {/* Password confirmation */}
+          <PasswordInput
+            placeholder={DICTIONARY.NEW_PASSWORD_CONFIRMATION_LABEL}
+            controllerName={DICTIONARY.FORM_FIELD_PASSWORD_CONFIRMATION}
+          />
+          {/* Submit button */}
+          <Button
+            size="lg"
+            w="100%"
+            onPress={handleSubmit(onSubmit)}
+            isLoading={loading}
+            isDisabled={loading}
+          >
+            {DICTIONARY.CONTINUE_BUTTON_LABEL}
+          </Button>
+        </VStack>
+      </FormProvider>
     </Center>
   );
 };

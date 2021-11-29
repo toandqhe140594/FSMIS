@@ -45,9 +45,7 @@ export const setRequestErrorMessageHandling = (setErrorMessage) => {
   http.interceptors.response.use(
     (response) => response,
     (error) => {
-      setErrorMessage(
-        error.response?.data?.responseText || "Lỗi không xác định",
-      );
+      setErrorMessage(error.response?.data || {});
       throw error;
     },
   );

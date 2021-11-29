@@ -2,22 +2,12 @@ import { useNavigation } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import { Button, Center } from "native-base";
 import React, { useEffect, useState } from "react";
-import { ToastAndroid } from "react-native";
 import { SearchBar } from "react-native-elements";
 
 import EmployeeDetailBox from "../components/EmployeeDetailBox";
 import HeaderTab from "../components/HeaderTab";
 import { goBack } from "../navigations";
-
-const showToastMessage = (message) => {
-  ToastAndroid.showWithGravityAndOffset(
-    message,
-    ToastAndroid.LONG,
-    ToastAndroid.BOTTOM,
-    25,
-    50,
-  );
-};
+import { showToastMessage } from "../utilities";
 
 const FManageEmployeeAddScreen = () => {
   const navigation = useNavigation();
@@ -97,12 +87,7 @@ const FManageEmployeeAddScreen = () => {
               image={staffOverview.avatar}
             />
             <Center w="70%" bg="lightBlue.100" mb={5}>
-              <Button
-                w="100%"
-                onPress={() => {
-                  addStaff();
-                }}
-              >
+              <Button w="100%" onPress={addStaff}>
                 Thêm nhân viên
               </Button>
             </Center>

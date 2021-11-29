@@ -94,6 +94,12 @@ const goToFManageEditProfileScreen = (navigation, params) => {
   });
 };
 
+const goToFManageEditPendingProfileScreen = (navigation, params) => {
+  navigation.navigate(ROUTE_NAMES.FMANAGE_PROFILE_PENDING_EDIT, {
+    ...params,
+  });
+};
+
 const goToFManageLocationPickScreen = (navigation, params) => {
   navigation.navigate(ROUTE_NAMES.FMANAGE_LOCATION_PICK, {
     ...params,
@@ -167,6 +173,12 @@ const goToAdminAccountManagementScreen = (navigation, params) => {
   });
 };
 
+const goToAdminAccountDeactiveScreen = (navigation, params) => {
+  navigation.navigate(ROUTE_NAMES.ADMIN_ACCOUNT_MANAGEMENT_DEACTIVATE, {
+    ...params,
+  });
+};
+
 const goToAdminAccountManagementDetailScreen = (navigation, params) => {
   navigation.navigate(ROUTE_NAMES.ADMIN_ACCOUNT_MANAGEMENT_DETAIL, {
     ...params,
@@ -227,6 +239,12 @@ const goToAdminFLocationReportDetailScreen = (navigation, params) => {
   });
 };
 
+const goToAdminCreateSuggestLocation = (navigation, params) => {
+  navigation.navigate(ROUTE_NAMES.ADMIN_CREATE_SUGGEST_LOCATION, {
+    ...params,
+  });
+};
+
 const goToAdminReviewReportDetailScreen = (navigation, params) => {
   navigation.navigate(ROUTE_NAMES.ADMIN_REPORT_MANAGEMENT_REVIEW_DETAIL, {
     ...params,
@@ -257,11 +275,13 @@ const goToAdminCatchDetail = (navigation, params) => {
 
 export {
   goBack,
+  goToAdminAccountDeactiveScreen,
   goToAdminAccountManagementDetailScreen,
   goToAdminAccountManagementScreen,
   goToAdminBlacklistPhoneAddScreen,
   goToAdminCatchDetail,
   goToAdminCatchReportDetail,
+  goToAdminCreateSuggestLocation,
   goToAdminFishEditScreen,
   goToAdminFishingMethodEditScreen,
   goToAdminFishingMethodManagementScreen,
@@ -280,6 +300,7 @@ export {
   goToFishingLocationOverviewScreen,
   goToFManageAddNewScreen,
   goToFManageAddStaffScreen,
+  goToFManageEditPendingProfileScreen,
   goToFManageEditProfileScreen,
   goToFManageFishAddScreen,
   goToFManageLakeAddNewScreen,

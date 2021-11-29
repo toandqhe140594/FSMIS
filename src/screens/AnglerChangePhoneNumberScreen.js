@@ -1,4 +1,3 @@
-import { MaterialIcons } from "@expo/vector-icons";
 import { yupResolver } from "@hookform/resolvers/yup";
 import {
   useFocusEffect,
@@ -6,46 +5,26 @@ import {
   useRoute,
 } from "@react-navigation/native";
 import { useStoreActions } from "easy-peasy";
-import { Button, Center, Icon, VStack } from "native-base";
-import PropTypes from "prop-types";
-import React, { useCallback, useEffect, useState } from "react";
+import { Button, Center, VStack } from "native-base";
+import React, { useCallback, useRef, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { Pressable, useWindowDimensions } from "react-native";
+import { useWindowDimensions } from "react-native";
 
 import InputComponent from "../components/common/InputComponent";
+import PasswordInput from "../components/common/PasswordInput";
 import HeaderTab from "../components/HeaderTab";
-import { ROUTE_NAMES, SCHEMA } from "../constants";
+import { DICTIONARY, ROUTE_NAMES, SCHEMA } from "../constants";
 import { goToOTPScreen } from "../navigations";
 import { showAlertConfirmBox, showToastMessage } from "../utilities";
-
-const VisibilityIcon = ({ visible, toggleVisible }) => (
-  <Pressable onPress={toggleVisible}>
-    <Icon
-      color="muted.500"
-      as={<MaterialIcons name={visible ? "visibility" : "visibility-off"} />}
-      size={6}
-      mx={2}
-    />
-  </Pressable>
-);
-
-VisibilityIcon.propTypes = {
-  visible: PropTypes.bool,
-  toggleVisible: PropTypes.func,
-};
-
-VisibilityIcon.defaultProps = {
-  visible: false,
-  toggleVisible: () => {},
-};
 
 const ChangePhoneNumberScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const [isLoading, setIsLoading] = useState(false);
-  const [visible, setVisible] = useState(false);
+  const formData = useRef(null);
   const methods = useForm({
     mode: "onSubmit",
+    reValidateMode: "onSubmit",
     resolver: yupResolver(SCHEMA.CHANGE_PHONE_NUMBER_FORM),
   });
   const { handleSubmit } = methods;
@@ -56,50 +35,8 @@ const ChangePhoneNumberScreen = () => {
   );
   const logOut = useStoreActions((actions) => actions.logOut);
 
-  const [formData, setFormData] = useState({});
-  const [otpSendSuccess, setOtpSendSuccess] = useState(null);
-  const [success, setSuccess] = useState(null);
-
-  useEffect(() => {
-    if (otpSendSuccess === true) {
-      goToOTPScreen(
-        navigation,
-        ROUTE_NAMES.PROFILE_CHANGE_PHONE_NUMBER,
-        formData.phone,
-      );
-    }
+  const handleError = () => {
     setIsLoading(false);
-    setOtpSendSuccess(null);
-  }, [otpSendSuccess]);
-
-  useEffect(() => {
-    if (success) {
-      showToastMessage("Thay đổi số điện thoại thành công");
-      logOut();
-    } else {
-      setSuccess(null);
-      setIsLoading(false);
-    }
-  }, [success]);
-
-  /**
-   * Trigger when navigation goes back to this screen
-   */
-  useFocusEffect(
-    // useCallback will listen to route.param
-    useCallback(() => {
-      if (route.params?.otpSuccess) {
-        setIsLoading(true);
-        changePhoneNumber({ ...formData, setSuccess });
-      }
-    }, [route.params]),
-  );
-
-  /**
-   * Toggle password field visibility
-   */
-  const handleToggle = () => {
-    setVisible(!visible);
   };
 
   /**
@@ -110,26 +47,49 @@ const ChangePhoneNumberScreen = () => {
    * @returns nothing
    */
   const changePhoneNumberAction = (data) => () => {
-    setFormData(data);
-    sendOtp({
-      phone: data.phone,
-      setSuccess: setOtpSendSuccess,
-      existedStatus: "NONEXISTED",
-    });
     setIsLoading(true);
+    formData.current = data;
+    sendOtp({ phone: data.phone, existedStatus: DICTIONARY.STATUS_NON_EXISTED })
+      .then(() => {
+        setIsLoading(false);
+        goToOTPScreen(
+          navigation,
+          ROUTE_NAMES.PROFILE_CHANGE_PHONE_NUMBER,
+          formData.current.phone,
+        );
+      })
+      .catch(handleError);
   };
 
   const onSubmit = (data) => {
     showAlertConfirmBox(
-      "Đổi số điện thoại",
-      "Bạn muốn thay đổi số điện thoại liên kết với tài khoản này?",
+      DICTIONARY.ALERT_TITLE,
+      DICTIONARY.ALERT_CHANGE_PHONE_PROMPT_MSG,
       changePhoneNumberAction(data),
     );
   };
 
+  /**
+   * Trigger when navigation goes back to this screen
+   */
+  useFocusEffect(
+    // useCallback will listen to route.param
+    useCallback(() => {
+      if (route.params?.otpSuccess) {
+        setIsLoading(true);
+        changePhoneNumber({ ...formData.current })
+          .then(() => {
+            showToastMessage(DICTIONARY.TOAST_CHANGE_PHONE_NUMBER_SUCCESS_MSG);
+            logOut();
+          })
+          .catch(handleError);
+      }
+    }, [route.params]),
+  );
+
   return (
     <Center flex={1} minHeight={Math.round(useWindowDimensions().height)}>
-      <HeaderTab name="Thay đổi số điện thoại" />
+      <HeaderTab name={DICTIONARY.ANGLER_CHANGE_PHONE_NUMBER_HEADER} />
       <FormProvider {...methods}>
         <VStack
           flex={1}
@@ -138,33 +98,26 @@ const ChangePhoneNumberScreen = () => {
           mb={10}
           w={{ base: "70%", md: "50%", lg: "30%" }}
         >
-          {/* Phone number input field */}
           <InputComponent
-            label="Số điện thoại"
+            label={DICTIONARY.PHONE_NUMBER_LABEL}
             useNumPad
             isTitle
             hasAsterisk
-            placeholder="Nhập số điện thoại"
-            controllerName="phone"
+            placeholder={DICTIONARY.INPUT_PHONE_NUMBER_PLACEHOLDER}
+            controllerName={DICTIONARY.FORM_FIELD_ANGLER_PHONE}
           />
-
-          {/* Password input field */}
-          <InputComponent
-            label="Mật khẩu"
+          <PasswordInput
+            label={DICTIONARY.PASSWORD_LABEL}
             isTitle
             hasAsterisk
-            placeholder="Nhập mật khẩu"
-            controllerName="password"
-            useSecureInput={!visible}
-            rightIcon={
-              <VisibilityIcon visible={visible} toggleVisible={handleToggle} />
-            }
+            placeholder={DICTIONARY.INPUT_PASSWORD_PLACEHOLDER}
+            controllerName={DICTIONARY.FORM_FIELD_PASSWORD}
           />
           {/* Continue/Submit button */}
           <Button
             mt={4}
             isLoading={isLoading}
-            isLoadingText="Đang xử lý"
+            isLoadingText={DICTIONARY.PROCESSING_BUTTON_LABEL}
             onPress={handleSubmit(onSubmit)}
           >
             Tiếp tục

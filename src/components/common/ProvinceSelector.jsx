@@ -1,19 +1,23 @@
 import { useStoreActions, useStoreState } from "easy-peasy";
 import PropTypes from "prop-types";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { useFormContext, useWatch } from "react-hook-form";
 
 import SelectComponent from "./SelectComponent";
 
+const RESET_VALUE = 0;
+
 const ProvinceSelector = ({
   containerStyle,
   label,
+  isTitle,
   placeholder,
   controllerName,
   hasAsterisk,
+  dependentField,
 }) => {
   const { control, setValue } = useFormContext();
-  const [getStatus, setGetStatus] = useState(null);
+  const canBeReset = useRef(false);
   const watchProvince = useWatch({ control, name: controllerName });
   const { provinceList } = useStoreState((state) => state.AddressModel);
   const { getDisctrictByProvinceId, resetDistrictList } = useStoreActions(
@@ -21,21 +25,20 @@ const ProvinceSelector = ({
   );
 
   useEffect(() => {
-    getDisctrictByProvinceId({ id: watchProvince, setGetStatus });
+    getDisctrictByProvinceId({ id: watchProvince })
+      .then(() => {
+        if (canBeReset.current) {
+          setValue(dependentField, RESET_VALUE);
+        } else canBeReset.current = true;
+      })
+      .catch(() => {
+        resetDistrictList();
+      });
   }, [watchProvince]);
-
-  useEffect(() => {
-    if (getStatus === "SUCCESS") {
-      setValue(controllerName, 0);
-      setGetStatus(null);
-    } else if (getStatus === "FAILED") {
-      resetDistrictList();
-      setGetStatus(null);
-    }
-  }, [getStatus]);
 
   return (
     <SelectComponent
+      isTitle={isTitle}
       myStyles={containerStyle}
       label={label}
       placeholder={placeholder}
@@ -48,9 +51,11 @@ const ProvinceSelector = ({
 
 ProvinceSelector.propTypes = {
   hasAsterisk: PropTypes.bool,
+  isTitle: PropTypes.bool,
   label: PropTypes.string,
   placeholder: PropTypes.string,
   controllerName: PropTypes.string,
+  dependentField: PropTypes.string,
   containerStyle: PropTypes.objectOf(
     PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   ),
@@ -58,9 +63,11 @@ ProvinceSelector.propTypes = {
 
 ProvinceSelector.defaultProps = {
   hasAsterisk: false,
+  isTitle: false,
   label: "",
   placeholder: "",
   controllerName: "",
+  dependentField: "districtId",
   containerStyle: {},
 };
 

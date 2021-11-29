@@ -6,7 +6,7 @@ import {
 } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import { Button, VStack } from "native-base";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { Dimensions, ScrollView, StyleSheet, View } from "react-native";
 
@@ -48,7 +48,6 @@ const PostCreateScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
   const currentID = useStoreState((states) => states.FManageModel.currentId);
-  const [updateStatus, setUpdateStatus] = useState();
   const [loadingButton, setLoadingButton] = useState(false);
 
   const createPost = useStoreActions(
@@ -75,6 +74,10 @@ const PostCreateScreen = () => {
     }
   };
 
+  const handleScreenNavigation = () => {
+    goToFManagePostScreen(navigation);
+  };
+
   const onSubmit = (data) => {
     setLoadingButton(true);
     const url = setAttachmentUrl(watchAttachmentType);
@@ -82,7 +85,18 @@ const PostCreateScreen = () => {
     delete data.imageArray;
     delete data.mediaUrl;
     const updateData = { ...data, attachmentType, id: currentID, url };
-    createPost({ updateData, setUpdateStatus });
+    createPost({ updateData })
+      .then(() => {
+        showAlertAbsoluteBox(
+          "Thông báo",
+          "Gửi thông tin thành công! Bài viết đang được tạo",
+          handleScreenNavigation,
+        );
+      })
+      .catch(() => {
+        setLoadingButton(false);
+        showAlertBox("Thông báo", "Đã xảy ra lỗi! Vui lòng thử lại.");
+      });
   };
 
   // Fire when navigates back to this screen
@@ -96,22 +110,6 @@ const PostCreateScreen = () => {
     }, [route.params]),
   );
 
-  useEffect(() => {
-    if (updateStatus === true) {
-      showAlertAbsoluteBox(
-        "Thông báo",
-        "Gửi thông tin thành công! Bài viết đang được tạo",
-        () => {
-          goToFManagePostScreen(navigation);
-        },
-      );
-      setUpdateStatus(null);
-    } else if (updateStatus === false) {
-      showAlertBox("Thông báo", "Đã xảy ra lỗi! Vui lòng thử lại.");
-      setLoadingButton(false);
-      setUpdateStatus(null);
-    }
-  }, [updateStatus]);
   return (
     <>
       <HeaderTab name="Bài đăng" />

@@ -4,11 +4,14 @@ import React from "react";
 import { ROUTE_NAMES } from "../constants";
 import AccountManagementModel from "../models/AccountManagementModel";
 import AdminFLocationModel from "../models/AdminFLocationModel";
+import AdminLocationLatLngModel from "../models/AdminLocationLatLngModel";
+import AdminAccountDeactivateScreen from "../screens/AdminAccountDeactivateScreen";
 import AdminAccountDetailScreen from "../screens/AdminAccountDetailScreen";
 import AdminAccountManagementScreen from "../screens/AdminAccountManagementScreen";
 import AdminBlacklistPhoneAddScreen from "../screens/AdminBlacklistPhoneAddScreen";
 import AdminBlacklistManagementScreen from "../screens/AdminBlacklistPhoneScreen";
 import AdminCatchReportDetailScreen from "../screens/AdminCatchReportDetailScreen";
+import AdminCreateSuggestLocation from "../screens/AdminCreateSuggestLocation";
 import AdminFishEditScreen from "../screens/AdminFishEditScreen";
 import AdminFishingMethodEditScreen from "../screens/AdminFishingMethodEditScreen";
 import AdminFishingMethodManagementScreen from "../screens/AdminFishingMethodManagementScreen";
@@ -31,6 +34,7 @@ const AdminStack = createNativeStackNavigator();
 
 store.addModel("AccountManagementModel", AccountManagementModel);
 store.addModel("AdminFLocationModel", AdminFLocationModel);
+store.addModel("FManageModel", AdminLocationLatLngModel);
 const AdminStackNavigator = () => {
   return (
     <AdminStack.Navigator
@@ -38,6 +42,12 @@ const AdminStackNavigator = () => {
         headerShown: false,
       }}
       initialRouteName={ROUTE_NAMES.ADMIN_MAIN}
+      theme={{
+        colors: {
+          primary: "rbg(255,255,255)",
+          background: "white",
+        },
+      }}
     >
       <AdminStack.Screen
         name={ROUTE_NAMES.ADMIN_MAIN}
@@ -50,6 +60,10 @@ const AdminStackNavigator = () => {
       <AdminStack.Screen
         name={ROUTE_NAMES.ADMIN_ACCOUNT_MANAGEMENT_DETAIL}
         component={AdminAccountDetailScreen}
+      />
+      <AdminStack.Screen
+        name={ROUTE_NAMES.ADMIN_ACCOUNT_MANAGEMENT_DEACTIVATE}
+        component={AdminAccountDeactivateScreen}
       />
       <AdminStack.Screen
         name={ROUTE_NAMES.ADMIN_FISH_MANAGEMENT}
@@ -122,6 +136,10 @@ const AdminStackNavigator = () => {
       <AdminStack.Screen
         name={ROUTE_NAMES.ADMIN_LOCATION_SUGGEST_DETAIL}
         component={AdminSuggestedLocationDetailScreen}
+      />
+      <AdminStack.Screen
+        name={ROUTE_NAMES.ADMIN_CREATE_SUGGEST_LOCATION}
+        component={AdminCreateSuggestLocation}
       />
     </AdminStack.Navigator>
   );

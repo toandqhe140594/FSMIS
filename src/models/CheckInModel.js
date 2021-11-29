@@ -3,6 +3,27 @@ import { action, thunk } from "easy-peasy";
 import { API_URL } from "../constants";
 import http from "../utilities/Http";
 
+const initialState = {
+  checkInState: null, // State indicate that the user is currently checkin at a fishing location or not
+  fishingLocationInfo: {},
+  lakeList: [],
+  fishList: [],
+  currentLakeId: null,
+  catchReportDetail: {
+    catchesDetailList: [
+      {
+        fishSpeciesId: 0,
+        quantity: 0,
+        returnToOwner: true,
+        weight: 0,
+      },
+    ],
+    description: "string",
+    hidden: true,
+    images: ["string"],
+    lakeId: 0,
+  },
+};
 const model = {
   checkInState: null, // State indicate that the user is currently checkin at a fishing location or not
   fishingLocationInfo: {},
@@ -45,10 +66,9 @@ const model = {
   /**
    * Submit catch report to server
    * @param {Object} [payload.submitData] data submit
-   * @param {Function} [payload.setSubmitStatus] function indicate submit success
    */
   submitCatchReport: thunk(async (actions, payload) => {
-    const { submitData, setSubmitStatus } = payload;
+    const { submitData } = payload;
     try {
       const { data } = await http.post(
         `${API_URL.SEND_CATCH_REPORT}`,
@@ -56,9 +76,8 @@ const model = {
       );
       actions.setCatchReportDetail({ ...data, id: null });
       actions.setCheckInState(false);
-      setSubmitStatus("SUCCESS");
     } catch (error) {
-      setSubmitStatus("FAILED");
+      throw new Error();
     }
   }),
   /**
@@ -143,7 +162,7 @@ const model = {
       }
     } catch (error) {
       actions.setFishingLocationInfo({});
-      actions.setCheckInState(false);
+      actions.setCheckInState(null);
       setLoading(false);
     }
   }),
@@ -165,5 +184,12 @@ const model = {
   }),
 
   // END OF CHECKIN RELATED STUFF
+
+  /**
+   * Reset all state of model to default value
+   */
+  reset: action(() => ({
+    ...initialState,
+  })),
 };
 export default model;

@@ -13,7 +13,12 @@ const ClipboardIcon = ({ handlePress }) => (
   </Pressable>
 );
 
-const InputWithClipboard = ({ label, placeholder, controllerName }) => {
+const InputWithClipboard = ({
+  label,
+  isTitle,
+  placeholder,
+  controllerName,
+}) => {
   const { setValue } = useFormContext();
   const pasteData = async () => {
     const data = await Clipboard.getStringAsync();
@@ -21,6 +26,7 @@ const InputWithClipboard = ({ label, placeholder, controllerName }) => {
   };
   return (
     <InputComponent
+      isTitle={isTitle}
       label={label}
       placeholder={placeholder}
       controllerName={controllerName}
@@ -34,9 +40,11 @@ InputWithClipboard.propTypes = {
   label: PropTypes.string,
   placeholder: PropTypes.string,
   controllerName: PropTypes.string,
+  isTitle: PropTypes.bool,
 };
 InputWithClipboard.defaultProps = {
   label: "",
+  isTitle: false,
   placeholder: "",
   controllerName: "",
 };

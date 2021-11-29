@@ -8,12 +8,14 @@ import { SearchBar } from "react-native-elements";
 import BlacklistPhoneCard from "../components/BlacklistPhoneCard";
 import HeaderTab from "../components/HeaderTab";
 import styles from "../config/styles";
+import { DEFAULT_TIMEOUT } from "../constants";
 import { goToAdminBlacklistPhoneAddScreen } from "../navigations";
 
 const renderItem = ({ item }) => (
   <BlacklistPhoneCard
     phone={item.phone}
     description={item.description}
+    image={item.image}
     key={item.phone}
   />
 );
@@ -64,7 +66,7 @@ const AdminBlacklistManagementScreen = () => {
     getBlacklist();
     const loadingTimeout = setTimeout(() => {
       setIsLoading(false);
-    }, 1000); // Test
+    }, DEFAULT_TIMEOUT);
     return () => {
       clearTimeout(loadingTimeout);
     };

@@ -1,13 +1,21 @@
 import { useStoreActions, useStoreState } from "easy-peasy";
 import PropTypes from "prop-types";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { useFormContext, useWatch } from "react-hook-form";
 
 import SelectComponent from "./SelectComponent";
 
-const DistrictSelector = ({ label, placeholder, controllerName }) => {
+const RESET_VALUE = 0;
+
+const DistrictSelector = ({
+  label,
+  hasAsterisk,
+  placeholder,
+  controllerName,
+  dependentField,
+}) => {
   const { control, setValue } = useFormContext();
-  const [getStatus, setGetStatus] = useState(null);
+  const canBeReset = useRef(false);
   const watchDistrict = useWatch({ control, name: controllerName });
   const { districtList } = useStoreState((state) => state.AddressModel);
   const { getWardByDistrictId, resetWardList } = useStoreActions(
@@ -15,24 +23,22 @@ const DistrictSelector = ({ label, placeholder, controllerName }) => {
   );
 
   useEffect(() => {
-    getWardByDistrictId({ id: watchDistrict, setGetStatus });
+    getWardByDistrictId({ id: watchDistrict })
+      .then(() => {
+        if (canBeReset.current) {
+          setValue(dependentField, RESET_VALUE);
+        } else canBeReset.current = true;
+      })
+      .catch(() => {
+        resetWardList();
+      });
   }, [watchDistrict]);
-
-  useEffect(() => {
-    if (getStatus === "SUCCESS") {
-      setValue(controllerName, 0);
-      setGetStatus(null);
-    } else if (getStatus === "FAILED") {
-      resetWardList();
-      setGetStatus(null);
-    }
-  }, [getStatus]);
 
   return (
     <SelectComponent
       label={label}
       placeholder={placeholder}
-      hasAsterisk
+      hasAsterisk={hasAsterisk}
       controllerName={controllerName}
       data={districtList}
     />
@@ -41,14 +47,18 @@ const DistrictSelector = ({ label, placeholder, controllerName }) => {
 
 DistrictSelector.propTypes = {
   label: PropTypes.string,
+  hasAsterisk: PropTypes.bool,
   placeholder: PropTypes.string,
   controllerName: PropTypes.string,
+  dependentField: PropTypes.string,
 };
 
 DistrictSelector.defaultProps = {
   label: "",
+  hasAsterisk: false,
   placeholder: "",
   controllerName: "",
+  dependentField: "wardId",
 };
 
 export default React.memo(DistrictSelector);

@@ -3,6 +3,28 @@ import { action, thunk } from "easy-peasy";
 import { API_URL } from "../constants";
 import http from "../utilities/Http";
 
+const initialState = {
+  userInfo: {
+    id: 1,
+    fullName: "Người dùng",
+    avatarUrl: "",
+    catchesCount: 0,
+  },
+  savedLocationList: [],
+  notificationList: [],
+  catchReportHistory: [],
+  checkinHistoryList: [],
+  catchReportDetail: {},
+  catchHistoryCurrentPage: 1,
+  catchHistoryTotalPage: 1,
+  checkinHistoryCurrentPage: 1,
+  checkinHistoryTotalPage: 1,
+  savedLocationCurrentPage: 1,
+  savedLocationTotalPage: 1,
+  notificationCurrentPage: 1,
+  notificationTotalPage: 1,
+};
+
 const model = {
   // Shape of useInfo from api return
   userInfo: {
@@ -151,7 +173,7 @@ const model = {
     state.savedLocationCurrentPage = payload;
   }),
   setSavedLocationTotalPage: action((state, payload) => {
-    state.savedLocationTotalPage = payload;
+    state.savedLocationTotalPage = payload < 1 ? 1 : payload;
   }),
   setSavedLocationList: action((state, payload) => {
     // If mode is overwrite then overwrite the list, else append the list with new data
@@ -244,23 +266,20 @@ const model = {
   /**
    * Update new edit to personal profile information
    * @param {Object} [payload.updateData] body of the post request
-   * @param {Function} [payload.setUpdateStatus] set edit status back to the screen
    */
   editPersonalInformation: thunk(async (actions, payload) => {
-    const { updateData, setUpdateStatus } = payload;
+    const { updateData } = payload;
     try {
       await http.post(API_URL.PERSONAL_EDIT_PROFILE, updateData);
       actions.getUserInfo();
-      setUpdateStatus("SUCCESS");
     } catch (error) {
-      setUpdateStatus("FAILED");
+      throw new Error("");
     }
   }),
 
   /**
    * Change personal password
    * @param {object} [payload] params pass to function
-   * @param {Function} [payload.setSuccess] set status after request api
    * @param {object} [payload.updateData] object body pass to api
    * @param {string} [updateData.oldPassword] user old password
    * @param {string} [updateData.newPassword] new password
@@ -270,34 +289,37 @@ const model = {
       newPassword: "",
       oldPassword: "",
     };
-    const setSuccess = payload.setSuccess || (() => {});
     try {
       await http.post(API_URL.PERSONAL_PASSWORD_CHANGE, updateData);
-      setSuccess(true);
     } catch (error) {
-      setSuccess(false);
+      throw new Error();
     }
   }),
 
   /**
    * Change personal account phone number
    * @param {object} [payload] params pass to function
-   * @param {Function} [payload.setSuccess] set status after request api
    * @param {string} [payload.newPhone] new phone number
    * @param {string} [payload.password] current account password
    */
   changePhoneNumber: thunk(async (actions, payload = {}) => {
     const { phone: newPhone, password } = payload;
-    const setSuccess = payload.setSuccess || (() => {});
     try {
       await http.post(API_URL.PERSONAL_PHONE_CHANGE, {
         newPhone,
         password,
       });
-      setSuccess(true);
     } catch (error) {
-      setSuccess(false);
+      throw new Error();
     }
   }),
+
+  /**
+   * Reset all state of model to default value
+   */
+  reset: action(() => ({
+    ...initialState,
+  })),
 };
+
 export default model;

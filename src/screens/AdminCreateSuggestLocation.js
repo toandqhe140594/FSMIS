@@ -6,7 +6,7 @@ import {
 } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, Button, Center, Divider, Stack, Text, VStack } from "native-base";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { ScrollView, StyleSheet } from "react-native";
 
@@ -21,7 +21,7 @@ import WardSelector from "../components/common/WardSelector";
 import MapOverviewBox from "../components/FLocationEditProfile/MapOverviewBox";
 import HeaderTab from "../components/HeaderTab";
 import { DEFAULT_TIMEOUT, DICTIONARY, ROUTE_NAMES, SCHEMA } from "../constants";
-import { goBack, goToOTPScreen } from "../navigations";
+import { goBack } from "../navigations";
 import { showAlertAbsoluteBox, showAlertBox } from "../utilities";
 
 const styles = StyleSheet.create({
@@ -35,7 +35,6 @@ const styles = StyleSheet.create({
 
 const FManageAddNewScreen = () => {
   const route = useRoute();
-  const locationData = useRef(null);
   const navigation = useNavigation();
   const [isLoading, setIsLoading] = useState(true);
   const [fullScreen, setFullScreen] = useState(true);
@@ -43,59 +42,61 @@ const FManageAddNewScreen = () => {
   const { resetDataList, getAllProvince } = useStoreActions(
     (actions) => actions.AddressModel,
   );
-  const { addNewLocation } = useStoreActions((actions) => actions.FManageModel);
-  const sendOtp = useStoreActions((actions) => actions.UtilModel.sendOtp);
+  const { createSuggestedLocation } = useStoreActions(
+    (actions) => actions.AdminFLocationModel,
+  );
 
   const methods = useForm({
     mode: "onSubmit",
     reValidateMode: "onSubmit",
     defaultValues: { imageArray: [], provinceId: 0, districtId: 0 },
-    resolver: yupResolver(SCHEMA.FMANAGE_PROFILE_FORM),
+    resolver: yupResolver(SCHEMA.ADMIN_FMANAGE_PROFILE_FORM),
   });
   const { handleSubmit, setValue } = methods;
+
+  const setDefaultValues = () => {
+    if (route.params?.suggestData) {
+      Object.entries(route.params?.suggestData).forEach(([field, value]) => {
+        if (value) setValue(field, value);
+      });
+    }
+  };
+
+  const goBackToSuggestionList = () => {
+    goBack(navigation);
+  };
 
   const handleError = () => {
     setIsLoading(false);
     showAlertBox(DICTIONARY.ALERT_TITLE, DICTIONARY.ALERT_ERROR_MSG);
   };
 
-  const handleGoBack = () => {
-    goBack(navigation);
-  };
-
   const onSubmit = (data) => {
-    // if location info is missing
-    if (!locationLatLng.latitude) {
-      showAlertBox(
-        DICTIONARY.ALERT_TITLE,
-        DICTIONARY.ALERT_LOCATION_POSITION_EMPTY,
-      );
-      return;
-    }
     setIsLoading(true);
     const images = data.imageArray.map((image) => image.base64);
     delete data.imageArray;
     delete data.provinceId;
     delete data.districtId;
     const addData = { ...data, ...locationLatLng, images };
-    locationData.current = addData;
-    sendOtp({ phone: data.phone })
+    createSuggestedLocation({ addData })
       .then(() => {
-        setIsLoading(false);
-        goToOTPScreen(
-          navigation,
-          ROUTE_NAMES.FMANAGE_PROFILE_ADD_NEW,
-          locationData.current.phone,
+        showAlertAbsoluteBox(
+          DICTIONARY.ALERT_TITLE,
+          DICTIONARY.ALERT_ADD_LOCATION_SUCCESS_MSG,
+          goBackToSuggestionList,
+          DICTIONARY.CONFIRM_BUTTON_LABEL,
         );
       })
       .catch(handleError);
   };
+
   /**
    * Trigger first time when enters
    * and when screen unmounts
    */
   useEffect(() => {
     getAllProvince().then(() => {
+      setDefaultValues();
       setIsLoading(false);
       setFullScreen(false);
     });
@@ -119,19 +120,6 @@ const FManageAddNewScreen = () => {
         setValue(DICTIONARY.FORM_FIELD_IMAGE_ARRAY, route.params?.base64Array);
         navigation.setParams({ base64Array: [] });
       }
-      if (route.params?.otpSuccess) {
-        setIsLoading(true);
-        addNewLocation({ addData: locationData.current })
-          .then(() => {
-            showAlertAbsoluteBox(
-              DICTIONARY.ALERT_TITLE,
-              DICTIONARY.ALERT_ADD_LOCATION_SUCCESS_MSG,
-              handleGoBack,
-              DICTIONARY.CONFIRM_BUTTON_LABEL,
-            );
-          })
-          .catch(handleError);
-      }
     }, [route.params]),
   );
 
@@ -144,14 +132,14 @@ const FManageAddNewScreen = () => {
       <OverlayLoading loading={isLoading} />
       <ScrollView>
         <FormProvider {...methods}>
-          <VStack space={3} divider={<Divider />}>
+          <VStack mt={4} space={3} divider={<Divider />}>
             <Center>
               <Stack space={2} style={styles.sectionWrapper}>
                 <Text bold fontSize="md" mt={2}>
                   Ảnh bìa (nhiều nhất là 5)
                 </Text>
                 <MultiImageSection
-                  formRoute={ROUTE_NAMES.FMANAGE_PROFILE_ADD_NEW}
+                  formRoute={ROUTE_NAMES.ADMIN_CREATE_SUGGEST_LOCATION}
                   selectLimit={5}
                   controllerName={DICTIONARY.FORM_FIELD_IMAGE_ARRAY}
                 />
@@ -184,23 +172,19 @@ const FManageAddNewScreen = () => {
                 <InputComponent
                   label={DICTIONARY.ADDRESS_LABEL}
                   placeholder={DICTIONARY.INPUT_ADDRESS_PLACEHOLDER}
-                  hasAsterisk
                   controllerName={DICTIONARY.FORM_FIELD_ADDRESS}
                 />
                 <ProvinceSelector
-                  hasAsterisk
                   label={DICTIONARY.PROVINCE_LABEL}
                   placeholder={DICTIONARY.SELECT_PROVINCE_PLACEHOLDER}
                   controllerName={DICTIONARY.FORM_FIELD_PROVINCE}
                 />
                 <DistrictSelector
-                  hasAsterisk
                   label={DICTIONARY.DISTRICT_LABEL}
                   placeholder={DICTIONARY.SELECT_DISTRICT_PLACEHOLDER}
                   controllerName={DICTIONARY.FORM_FIELD_DISTRICT}
                 />
                 <WardSelector
-                  hasAsterisk
                   label={DICTIONARY.WARD_LABEL}
                   placeholder={DICTIONARY.SELECT_WARD_PLACEHOLDER}
                   controllerName={DICTIONARY.FORM_FIELD_WARD}
@@ -213,9 +197,6 @@ const FManageAddNewScreen = () => {
               <Box style={styles.sectionWrapper}>
                 <Text bold fontSize="md" mb={2}>
                   Bản đồ
-                  <Text color="danger.500" fontSize="md">
-                    *
-                  </Text>
                 </Text>
                 <MapOverviewBox />
               </Box>
@@ -227,7 +208,6 @@ const FManageAddNewScreen = () => {
                 myStyles={styles.sectionWrapper}
                 label={DICTIONARY.LOCATION_DESCRIPTION_LABEL}
                 isTitle
-                hasAsterisk
                 placeholder={DICTIONARY.INPUT_LOCATION_DESCRIPTION_PLACEHOLDER}
                 numberOfLines={6}
                 controllerName={DICTIONARY.FORM_FIELD_LOCATION_DESCRIPTION}
@@ -240,7 +220,6 @@ const FManageAddNewScreen = () => {
                 myStyles={styles.sectionWrapper}
                 label={DICTIONARY.LOCATION_TIMETABLE_LABEL}
                 isTitle
-                hasAsterisk
                 placeholder={DICTIONARY.INPUT_LOCATION_TIMETABLE_PLACEHOLDER}
                 numberOfLines={6}
                 controllerName={DICTIONARY.FORM_FIELD_LOCATION_TIMETABLE}
@@ -253,7 +232,6 @@ const FManageAddNewScreen = () => {
                 myStyles={styles.sectionWrapper}
                 label={DICTIONARY.LOCATION_SERVICE_LABEL}
                 isTitle
-                hasAsterisk
                 placeholder={DICTIONARY.INPUT_LOCATION_SERVICE_PLACEHOLDER}
                 numberOfLines={6}
                 controllerName={DICTIONARY.FORM_FIELD_LOCATION_SERVICE}
@@ -265,7 +243,6 @@ const FManageAddNewScreen = () => {
                 myStyles={styles.sectionWrapper}
                 label={DICTIONARY.LOCATION_RULE_LABEL}
                 isTitle
-                hasAsterisk
                 placeholder={DICTIONARY.INPUT_LOCATION_RULE_PLACEHOLDER}
                 numberOfLines={6}
                 controllerName={DICTIONARY.FORM_FIELD_LOCATION_RULE}

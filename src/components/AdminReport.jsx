@@ -5,8 +5,8 @@ import React from "react";
 import colors from "../config/colors";
 import styles from "../config/styles";
 import { showAlertConfirmBox } from "../utilities";
+import OverLayLoading from "./common/OverlayLoading";
 import HeaderTab from "./HeaderTab";
-import OverLayLoading from "./OverLayLoading";
 
 const AdminReport = ({ isLoading, isActive, eventPress, ...props }) => {
   const onPressHandler = () => {
@@ -19,7 +19,7 @@ const AdminReport = ({ isLoading, isActive, eventPress, ...props }) => {
   return (
     <>
       <HeaderTab name="Chi tiết báo cáo" />
-      <OverLayLoading isLoading={isLoading} />
+      <OverLayLoading loading={isLoading} />
       {props.children}
 
       <Button

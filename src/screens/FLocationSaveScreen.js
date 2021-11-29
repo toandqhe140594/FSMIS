@@ -1,9 +1,10 @@
 import { useStoreActions, useStoreState } from "easy-peasy";
-import React, { useEffect, useState } from "react";
-import { FlatList, View } from "react-native";
+import React, { useEffect, useMemo, useState } from "react";
+import { FlatList, Text, View } from "react-native";
 
 import FLocationCard from "../components/FLocationCard";
 import styles from "../config/styles";
+import { DEFAULT_TIMEOUT } from "../constants";
 
 const ItemSeparator = () => {
   return <View style={{ height: 6 }} />;
@@ -18,6 +19,19 @@ const FLocationSaveScreen = () => {
   const getSavedLocationList = useStoreActions(
     (actions) => actions.ProfileModel.getSavedLocationList,
   );
+  const memoizedContainerStyle = useMemo(
+    () =>
+      !savedLocationList.length
+        ? {
+            flex: 1,
+            alignItems: "center",
+            justifyContent: "center",
+          }
+        : null,
+    [savedLocationList.length > 0],
+  );
+
+  const keyExtractor = (item) => item.id.toString();
 
   useEffect(() => {
     if (savedLocationCurrentPage === 1)
@@ -31,10 +45,10 @@ const FLocationSaveScreen = () => {
   const handleRefresh = () => {
     setRefreshing(true);
     getSavedLocationList({ mode: "refresh" });
-    // If the list is not changed then hide refresh icon after 5 seconds
+    // If the list is not changed then hide refresh icon after 10 seconds
     setTimeout(() => {
       setRefreshing(false);
-    }, 5000);
+    }, DEFAULT_TIMEOUT);
   };
 
   /**
@@ -54,6 +68,10 @@ const FLocationSaveScreen = () => {
     />
   );
 
+  const renderEmpty = () => (
+    <Text style={{ color: "gray" }}>Bạn chưa lưu hồ câu nào</Text>
+  );
+
   return (
     <View
       style={{
@@ -66,11 +84,13 @@ const FLocationSaveScreen = () => {
     >
       {savedLocationList && (
         <FlatList
+          contentContainerStyle={memoizedContainerStyle}
           data={savedLocationList}
           renderItem={renderItem}
-          keyExtractor={(item) => item.id.toString()}
+          keyExtractor={keyExtractor}
           ItemSeparatorComponent={ItemSeparator}
           onEndReached={getSavedLocationList}
+          ListEmptyComponent={renderEmpty}
           refreshing={refreshing}
           onRefresh={handleRefresh}
           initialNumToRender={5}

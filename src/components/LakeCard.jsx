@@ -17,11 +17,7 @@ const LakeCard = ({ id, image, listOfFishes, name, isManaged }) => {
   };
 
   return (
-    <Pressable
-      onPress={() => {
-        onPress();
-      }}
-    >
+    <Pressable onPress={onPress}>
       <Box borderWidth={1} flexDirection="row">
         <Image
           alt="LW"

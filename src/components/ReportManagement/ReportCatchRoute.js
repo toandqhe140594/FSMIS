@@ -8,9 +8,9 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { Overlay } from "react-native-elements";
 
 import { goToAdminCatchReportDetail } from "../../navigations";
+import OverlayLoading from "../common/OverlayLoading";
 import HeaderTab from "../HeaderTab";
 import ReportCard from "./ReportCard";
 
@@ -36,18 +36,24 @@ const ReportCatchRoute = () => {
   const { getListReportCatch, resetReportList } = useStoreActions(
     (actions) => actions.ReportModel,
   );
+
+  const handleCatchReportDetailNavigate = (id, active) => () => {
+    goToAdminCatchReportDetail(navigation, {
+      isActive: active,
+      id,
+    });
+  };
+
+  const keyExtractor = (item) => item.id.toString();
+
   const renderItem = ({ item }) => (
     <TouchableOpacity
-      onPress={() => {
-        goToAdminCatchReportDetail(navigation, {
-          id: item.id,
-          isActive: item.active,
-        });
-      }}
+      onPress={handleCatchReportDetailNavigate(item.id, item.active)}
     >
       <ReportCard {...item} isCatchReportType />
     </TouchableOpacity>
   );
+
   const renderFooter = () =>
     isLoading && !bigLoading ? (
       <View margin={12}>
@@ -118,17 +124,7 @@ const ReportCatchRoute = () => {
   return (
     <>
       <HeaderTab name="Quản lý báo cáo" />
-      <Overlay
-        isVisible={isLoading && bigLoading}
-        fullScreen
-        overlayStyle={{
-          justifyContent: "center",
-          alignItems: "center",
-          backgroundColor: "transparent",
-        }}
-      >
-        <ActivityIndicator size={60} color="#2089DC" />
-      </Overlay>
+      <OverlayLoading loading={isLoading && bigLoading} />
       <View marginBottom={OFF_SET}>
         <Select
           w="90%"
@@ -151,7 +147,7 @@ const ReportCatchRoute = () => {
 
         <FlatList
           height="100%"
-          keyExtractor={(item) => `${item.id}`}
+          keyExtractor={keyExtractor}
           data={listCatchReport}
           renderItem={renderItem}
           ListFooterComponent={renderFooter}

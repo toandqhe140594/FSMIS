@@ -1,63 +1,51 @@
 import { useNavigation } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
-import { VStack } from "native-base";
-import React, { useEffect, useState } from "react";
-import {
-  ActivityIndicator,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import React, { useEffect, useMemo, useState } from "react";
+import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 
+import OverlayLoading from "../components/common/OverlayLoading";
 import FLocationCard from "../components/FLocationCard";
 import HeaderTab from "../components/HeaderTab";
+import { DEFAULT_TIMEOUT, DICTIONARY } from "../constants";
 import FishingMethodModel from "../models/FishingMethodModel";
 import FishModel from "../models/FishModel";
-import FManageModel from "../models/FManageModel";
 import {
   goToFManageAddNewScreen,
   goToFManageSuggestScreen,
 } from "../navigations";
 import store from "../utilities/Store";
 
-store.addModel("FManageModel", FManageModel);
 store.addModel("FishModel", FishModel);
 store.addModel("FishingMethodModel", FishingMethodModel);
 const styles = StyleSheet.create({
-  center: {
-    alignItems: "center",
+  flatList: {
+    width: "90%",
+    height: "90%",
+    marginTop: 16,
   },
-  border: {
+  addButton: {
     width: 110,
     height: 110,
-    marginTop: 8,
+    marginBottom: 16,
     borderRadius: 2,
     borderWidth: 1,
     borderStyle: "dashed",
     alignItems: "center",
     justifyContent: "center",
-  },
-  loadingContainer: {
-    justifyContent: "center",
-    alignItems: "center",
-    flex: 1,
+    alignSelf: "center",
   },
 });
 
 const FManageSelectScreen = () => {
   const navigation = useNavigation();
-
+  const [getSuccess, setGetSuccess] = useState(null);
+  const [loading, setLoading] = useState(true);
   const listOfFishingLocations = useStoreState(
     (states) => states.FManageModel.listOfFishingLocations,
   );
   const getListOfFishingLocations = useStoreActions(
     (actions) => actions.FManageModel.getListOfFishingLocations,
   );
-
-  const [success, setSuccess] = useState(null);
-  const [loading, setLoading] = useState(true);
 
   const navigateToSuggestionScreen = () => {
     goToFManageSuggestScreen(navigation);
@@ -68,49 +56,84 @@ const FManageSelectScreen = () => {
   };
 
   useEffect(() => {
-    setLoading(true);
+    getListOfFishingLocations({ setGetSuccess });
     const timeout = setTimeout(() => {
       setLoading(false);
-    }, 10000);
-    getListOfFishingLocations(setSuccess);
+    }, DEFAULT_TIMEOUT);
     return () => {
       clearTimeout(timeout);
     };
   }, []);
 
   useEffect(() => {
-    if (success !== null) {
-      setSuccess(null);
+    if (getSuccess !== null) {
+      setGetSuccess(null);
       setLoading(false);
     }
-  }, [success]);
+  }, [getSuccess]);
 
-  // Center the add button if the list is emtpy
-  const getEmptyListStyling = () =>
-    listOfFishingLocations.length === 0
-      ? { flex: 1, justifyContent: "center" }
-      : {};
+  /**
+   * Center the add button
+   * when there isn't any fishing location owned
+   */
+  const getEmptyListStyling = useMemo(
+    () =>
+      !listOfFishingLocations.length
+        ? { flex: 1, justifyContent: "center" }
+        : null,
+    [listOfFishingLocations.length > 0],
+  );
 
-  const isStaffStyle = () => {
-    if (
-      listOfFishingLocations.length > 0 &&
+  /**
+   * Hide the add button if angler role is STAFF
+   */
+  const isStaffStyle = useMemo(
+    () =>
+      listOfFishingLocations.length &&
       listOfFishingLocations[0].role === "STAFF"
-    )
-      return { display: "none" };
-    return {};
+        ? { display: "none" }
+        : null,
+    [
+      listOfFishingLocations.length &&
+        listOfFishingLocations[0].role === "STAFF",
+    ],
+  );
+
+  const renderHeader = () => (
+    <Pressable onPress={goToAddLocationScreen}>
+      <View style={StyleSheet.compose(styles.addButton, isStaffStyle)}>
+        <Text style={{ fontSize: 12 }}>Thêm điểm câu</Text>
+      </View>
+    </Pressable>
+  );
+
+  const ItemSeparator = () => {
+    return <View style={{ height: 8 }} />;
   };
 
-  if (loading)
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size={60} color="#2089DC" />
-      </View>
-    );
+  const keyExtractor = (item) => item.id.toString();
 
+  const renderItem = ({ item }) => (
+    <FLocationCard
+      id={item.id}
+      name={item.name}
+      image={item.image}
+      isVerifed={item.verify}
+      rate={item.score}
+      address={item.address}
+      role={item.role}
+      isManaged
+      isClosed={item.closed}
+      pending={item.pending}
+      key={item.id}
+    />
+  );
+
+  if (loading) return <OverlayLoading coverScreen />;
   return (
     <>
       <HeaderTab
-        name="Chọn điểm câu làm việc"
+        name={DICTIONARY.FMANAGE_SELECT_SCREEN_HEADER}
         customIcon={{
           name: "info-outline",
           color: "blue",
@@ -118,46 +141,17 @@ const FManageSelectScreen = () => {
           onPress: navigateToSuggestionScreen,
         }}
       />
-      <ScrollView contentContainerStyle={getEmptyListStyling()}>
-        <View style={[styles.center, getEmptyListStyling()]}>
-          <Pressable onPress={goToAddLocationScreen}>
-            <View style={[styles.border, isStaffStyle()]}>
-              <Text style={{ fontSize: 12 }}>Thêm điểm câu</Text>
-            </View>
-          </Pressable>
-
-          {listOfFishingLocations.length > 0 && (
-            <VStack w="90%" space={2} my={2}>
-              {listOfFishingLocations.map((location) => {
-                const {
-                  id,
-                  name,
-                  image,
-                  verify,
-                  score,
-                  address,
-                  role,
-                  closed,
-                } = location;
-                return (
-                  <FLocationCard
-                    id={id}
-                    name={name}
-                    image={image}
-                    isVerifed={verify}
-                    rate={score}
-                    address={address}
-                    role={role}
-                    isManaged
-                    isClosed={closed}
-                    key={id}
-                  />
-                );
-              })}
-            </VStack>
-          )}
-        </View>
-      </ScrollView>
+      <View style={{ alignItems: "center" }}>
+        <FlatList
+          style={styles.flatList}
+          contentContainerStyle={getEmptyListStyling}
+          renderItem={renderItem}
+          data={listOfFishingLocations}
+          ItemSeparatorComponent={ItemSeparator}
+          keyExtractor={keyExtractor}
+          ListHeaderComponent={renderHeader}
+        />
+      </View>
     </>
   );
 };

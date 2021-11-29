@@ -7,16 +7,25 @@ import { Icon, Text } from "react-native-elements";
 import styles from "../config/styles";
 import { goBack, goToWriteReportScreen } from "../navigations";
 
-const HeaderTab = ({ name, isVerified, flagable, id, customIcon }) => {
+const HeaderTab = ({
+  name,
+  isVerified,
+  flagable,
+  id,
+  customIcon,
+  popToTop,
+}) => {
   const navigation = useNavigation();
 
   const goToWriteReportScreenAction = () => {
     if (id) goToWriteReportScreen(navigation, { id, type: "LOCATION" });
   };
 
-  const goBackAction = () => {
-    goBack(navigation);
-  };
+  const goBackAction =
+    popToTop ||
+    (() => {
+      goBack(navigation);
+    });
 
   return (
     <>
@@ -81,6 +90,7 @@ HeaderTab.propTypes = {
     type: PropTypes.string,
     onPress: PropTypes.func,
   }),
+  popToTop: PropTypes.func,
 };
 HeaderTab.defaultProps = {
   name: "",
@@ -93,6 +103,7 @@ HeaderTab.defaultProps = {
     type: null,
     onPress: () => {},
   },
+  popToTop: null,
 };
 
 export default HeaderTab;

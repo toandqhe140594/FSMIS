@@ -8,6 +8,7 @@ import AvatarCard from "../components/AvatarCard";
 import HeaderTab from "../components/HeaderTab";
 import PressableCustomCard from "../components/PressableCustomCard";
 import styles from "../config/styles";
+import { DEFAULT_TIMEOUT } from "../constants";
 import { goToAdminAccountManagementDetailScreen } from "../navigations";
 
 const AdminAccountManagementScreen = () => {
@@ -54,7 +55,7 @@ const AdminAccountManagementScreen = () => {
     getUserList({ pageNo: 1, setIsLoading });
     const loadingTimeout = setTimeout(() => {
       setIsLoading(false);
-    }, 5000); // Test
+    }, DEFAULT_TIMEOUT);
     return () => {
       clearTimeout(loadingTimeout);
       clearAccountList();
@@ -66,7 +67,12 @@ const AdminAccountManagementScreen = () => {
   }, [userList]);
 
   useEffect(() => {
-    if (firstPageLastItemView !== -1 && page === 2) loadMoreUserData(0);
+    if (firstPageLastItemView === null) return;
+    if (firstPageLastItemView !== -1 && page === 2) {
+      getUserList({ pageNo: 2, keyword: search, setIsLoading });
+      setPage(3);
+      setFirstPageLastItemView(null);
+    }
   }, [firstPageLastItemView]);
 
   const goToAccountDetailScreen = (id) => () => {
@@ -108,7 +114,9 @@ const AdminAccountManagementScreen = () => {
     const foundIndex = viewableItems.changed.findIndex(
       (item) => item.index === 9,
     );
-    setFirstPageLastItemView(foundIndex);
+    if (firstPageLastItemView !== null && foundIndex !== -1) {
+      setFirstPageLastItemView(foundIndex);
+    }
   });
   const viewConfigRef = React.useRef({ viewAreaCoveragePercentThreshold: 50 });
 
@@ -144,6 +152,7 @@ const AdminAccountManagementScreen = () => {
                 maxToRenderPerBatch={10}
                 onViewableItemsChanged={onViewRef.current}
                 viewabilityConfig={viewConfigRef.current}
+                onEndReachedThreshold={0.1}
               />
             </View>
           )}

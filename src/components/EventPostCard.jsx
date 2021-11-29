@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import { Ionicons } from "@expo/vector-icons";
-import { Box, HStack, Menu, Pressable, VStack } from "native-base";
+import { Box, HStack, Menu, Pressable, ScrollView, VStack } from "native-base";
 import PropTypes from "prop-types";
 import React from "react";
 import { Badge, Divider, Text } from "react-native-elements";
@@ -32,6 +32,67 @@ const EventPostCard = ({
   const onlyUnique = (value, index, self) => {
     return self.indexOf(value) === index;
   };
+  let srcUri = [];
+  let widthUri;
+  let heightUri;
+  let widthVideo = 400;
+  let heightVideo = 400;
+  let heightPage = 410;
+  let typeBadge = "";
+
+  switch (lakePost.badge) {
+    case "STOCKING":
+      typeBadge = "Bồi cá";
+      break;
+    case "REPORTING":
+      typeBadge = "Báo cá";
+      break;
+    case "ANNOUNCING":
+      typeBadge = "Thông báo";
+      break;
+    default:
+      typeBadge = lakePost.badge;
+  }
+
+  if (typeUri === "VIDEO") {
+    try {
+      const regexIframe = new RegExp("<iframe", "g");
+      const regexYouTubeLink =
+        /^(https?:\/\/)?(www\.youtube\.com|youtu\.?be)\/.+$/g;
+      const regexYouTubeID =
+        /(?:https?:\/{2})?(?:w{3}\.)?youtu(?:be)?\.(?:com|be)(?:\/watch\?v=|\/)([^\s&]+)/;
+
+      if (regexIframe.test(uri)) {
+        const regExGetSrc = /<iframe ?.* src="([^"]+)" ?.*>/i;
+        const regExGetWidth = /<iframe ?.* width="([^"]+)" ?.*>/i;
+        const regExGetHeight = /<iframe ?.* height="([^"]+)" ?.*>/i;
+
+        srcUri = uri.match(regExGetSrc);
+        widthUri = uri.match(regExGetWidth);
+        heightUri = uri.match(regExGetHeight);
+
+        if (widthUri + 50 < heightUri) {
+          widthVideo = 300;
+          heightVideo = 510;
+          heightPage = 520;
+        }
+        if (widthUri >= heightUri) {
+          widthVideo = 400;
+          heightPage = 410;
+        }
+      } else if (regexYouTubeLink.test(uri)) {
+        const idArray = uri.split(regexYouTubeID);
+        srcUri[1] = `https://www.youtube.com/embed/${idArray[1]}`;
+        widthVideo = 400;
+        heightPage = 410;
+      } else {
+        srcUri[1] = uri;
+        heightVideo = 700;
+      }
+    } catch (err) {
+      srcUri[1] = uri;
+    }
+  }
   return (
     <Box mt="1" px="1.4">
       {postStyle === "LAKE_POST" && (
@@ -51,7 +112,7 @@ const EventPostCard = ({
                 }}
                 textStyle={{ fontSize: 16, fontWeight: "bold" }}
                 status="primary"
-                value={lakePost.badge}
+                value={typeBadge}
               />
               {postTime !== undefined && (
                 <Text style={styles.ml1}>{postTime}</Text>
@@ -158,91 +219,51 @@ const EventPostCard = ({
         </VStack>
       )}
 
-      <VStack backgroundColor="gray.100">
+      <Box backgroundColor="gray.100">
         {typeUri === "IMAGE" && uri !== null && uri.length > 10 && (
           <ImageResizeMode imgUri={uri} height={400} />
         )}
         {typeUri === "VIDEO" && uri !== null ? (
           <Box
             style={{
-              height: 500,
-              width: 400,
+              height: heightPage,
+              width: widthVideo,
               flex: 0,
-              justifyContent: "center",
               position: "relative",
-              right: 10,
-              bottom: 5,
-              overflow: "hidden",
+              right: 5,
+              alignSelf: "center",
             }}
           >
-            <WebView
-              overScrollMode="never"
+            <ScrollView
+              style={{
+                flex: 1,
+                marginBottom: 4,
+              }}
+              vertical
+              nestedScrollEnabled
               showsHorizontalScrollIndicator={false}
-              originWhitelist={["https://*"]}
-              automaticallyAdjustContentInsets={false}
-              scalesPageToFit={false}
-              containerStyle={{
-                flex: 0,
-                height: 490,
-                width: "100%",
-              }}
-              style={{ flex: 0, height: 490 }}
-              allowsFullscreenVideo
-              source={{
-                html: `
-            <html>
-            <head>
-               <style>
-                  body{
-                 
-                  width: 900px;
-                  height: 900px; 
-                
-                 }  
-                  .container {
-                  width: inherit;
-                  height: inherit;
-                  overflow: hidden;
-                  border-style: solid;
-                 
-                  }          
-                  iframe {
-                  display : block;
-                  width: 100%;
-                  height: 100%;
-                  overflow: hidden;
-                  background-color:transparent;  
-                }
-               </style>
-            </head>
-            <body>
-               <div class="container">
-                  ${uri}
-               </div>
-               <script>
-                  var elements = document.getElementsByTagName("iframe");
-                  var container = document.getElementsByClassName("container");
-                  var body = document.getElementsByTagName("body");
-                   if(elements[0].width < elements[0].height){
-                    body[0].style.width= 300 + "px" ;
-              
-                    body[0].style.margin= "0 auto"
-                  }
-                  if(elements[0].width >= elements[0].height){
-                    body[0].style.width= "100%";
-                    body[0].style.height= "100%";
-                    body[0].style.margin= "0 auto"
-                    body[0].style.paddingTop= 25;                   
-                  }  
-               </script>
-            </body>
-         </html>
-          `,
-              }}
-            />
+            >
+              <WebView
+                allowsFullscreenVideo={false}
+                overScrollMode="content"
+                originWhitelist={["https://*"]}
+                scalesPageToFit={false}
+                style={{
+                  flex: 1,
+                  alignSelf: "center",
+                  justifyContent: "center",
+                  height: heightVideo,
+                  width: widthVideo,
+                  opacity: 0.99,
+                }}
+                source={{
+                  uri: srcUri[1],
+                }}
+              />
+            </ScrollView>
           </Box>
         ) : null}
-      </VStack>
+      </Box>
       <Divider />
     </Box>
   );
@@ -260,7 +281,7 @@ EventPostCard.propTypes = {
   iconEvent: PropTypes.arrayOf(
     PropTypes.shape({ name: PropTypes.string, onPress: PropTypes.func }),
   ),
-  image: PropTypes.string,
+  uri: PropTypes.string,
   edited: PropTypes.bool,
   postTime: PropTypes.string,
   id: PropTypes.number.isRequired,
@@ -277,7 +298,7 @@ EventPostCard.defaultProps = {
   postStyle: "LAKE_POST",
   iconName: "",
   iconEvent: [],
-  image: "https://picsum.photos/500",
+  uri: "",
   edited: false,
   postTime: "",
   isApproved: undefined,

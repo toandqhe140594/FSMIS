@@ -131,8 +131,7 @@ const PostListContainerComponent = () => {
             uri={currentPinPost.url}
             itemData={currentPinPost}
             lakePost={{
-              badge:
-                currentPinPost.postType === "STOCKING" ? "Bồi cá" : "Thông báo",
+              badge: currentPinPost.postType,
               content: currentPinPost.content,
             }}
             postTime={currentPinPost.postTime}
@@ -166,6 +165,8 @@ const PostListContainerComponent = () => {
     getPinPost();
   }, []);
 
+  const keyExtractor = (item) => item.id.toString();
+
   return (
     <Box>
       <FlatList
@@ -178,7 +179,8 @@ const PostListContainerComponent = () => {
         data={locationPostList}
         renderItem={renderItem}
         onEndReached={loadMoreLakeCatchData}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={keyExtractor}
+        nestedScrollEnabled
       />
     </Box>
   );

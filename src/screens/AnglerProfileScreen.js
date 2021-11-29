@@ -4,11 +4,8 @@ import React, { useEffect } from "react";
 
 import AvatarCard from "../components/AvatarCard";
 import MenuScreen from "../components/MenuScreen";
+import colors from "../config/colors";
 import { MENU_ANGLER, MENU_LOGOUT } from "../constants";
-import AddressModel from "../models/AddressModel";
-import store from "../utilities/Store";
-
-store.addModel("AddressModel", AddressModel);
 
 const AnglerProfileScreen = () => {
   const getUserInfo = useStoreActions(
@@ -22,7 +19,7 @@ const AnglerProfileScreen = () => {
   }, []);
 
   return (
-    <Box>
+    <Box bg={colors.defaultBackground}>
       <VStack
         _dark={{
           borderColor: "gray.600",
@@ -36,6 +33,7 @@ const AnglerProfileScreen = () => {
           avatarSize="xl"
           nameFontSize="21"
           subText={`Số lần báo cá: ${userInfo.catchesCount} lần`}
+          subTextFontSize="16"
           nameUser={userInfo.fullName}
           image={userInfo.avatarUrl}
         />

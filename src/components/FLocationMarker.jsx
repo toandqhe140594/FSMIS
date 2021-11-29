@@ -80,7 +80,7 @@ SpotMarker.propTypes = {
     rate: PropTypes.number,
     isVerified: PropTypes.bool,
     id: PropTypes.number,
-    distance: PropTypes.string,
+    distance: PropTypes.number,
   }).isRequired,
   onPress: PropTypes.func.isRequired,
 };

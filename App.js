@@ -1,4 +1,4 @@
-import { NavigationContainer } from "@react-navigation/native";
+import { DefaultTheme, NavigationContainer } from "@react-navigation/native";
 import { StoreProvider } from "easy-peasy";
 import { extendTheme, NativeBaseProvider } from "native-base";
 import React from "react";
@@ -15,11 +15,19 @@ export default function App() {
     components,
   });
 
+  const navigatorThem = {
+    ...DefaultTheme,
+    colors: {
+      ...DefaultTheme.colors,
+      background: "white",
+    },
+  };
+
   return (
     <NativeBaseProvider theme={theme}>
       <SafeAreaProvider>
         <SafeAreaView flex={1}>
-          <NavigationContainer>
+          <NavigationContainer theme={navigatorThem}>
             <StoreProvider store={store}>
               <AuthenticationContainer />
             </StoreProvider>

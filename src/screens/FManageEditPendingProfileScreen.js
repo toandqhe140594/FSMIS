@@ -22,49 +22,95 @@ import MapOverviewBox from "../components/FLocationEditProfile/MapOverviewBox";
 import HeaderTab from "../components/HeaderTab";
 import { DEFAULT_TIMEOUT, DICTIONARY, ROUTE_NAMES, SCHEMA } from "../constants";
 import { goBack, goToOTPScreen } from "../navigations";
-import { showAlertAbsoluteBox, showAlertBox } from "../utilities";
+import { showAlertBox } from "../utilities";
 
 const styles = StyleSheet.create({
   sectionWrapper: {
     width: "90%",
   },
-  button: {
-    width: "90%",
-  },
 });
 
-const FManageAddNewScreen = () => {
+const getAddressFromFullAddress = (fullAddress, addressFromWard) => {
+  let result = fullAddress;
+  result = result.replace(
+    `, ${addressFromWard.ward}, ${addressFromWard.district}, ${addressFromWard.province}`,
+    "",
+  );
+  return result;
+};
+
+const FManageEditPendingProfileScreen = () => {
   const route = useRoute();
   const locationData = useRef(null);
   const navigation = useNavigation();
   const [isLoading, setIsLoading] = useState(true);
   const [fullScreen, setFullScreen] = useState(true);
-  const { locationLatLng } = useStoreState((states) => states.FManageModel);
-  const { resetDataList, getAllProvince } = useStoreActions(
-    (actions) => actions.AddressModel,
+  const { locationLatLng, locationDetails } = useStoreState(
+    (states) => states.FManageModel,
   );
-  const { addNewLocation } = useStoreActions((actions) => actions.FManageModel);
+  const { resetDataList } = useStoreActions((actions) => actions.AddressModel);
+  const { editFishingLocation, getLocationDetailsById, setLocationLatLng } =
+    useStoreActions((actions) => actions.FManageModel);
   const sendOtp = useStoreActions((actions) => actions.UtilModel.sendOtp);
-
   const methods = useForm({
     mode: "onSubmit",
     reValidateMode: "onSubmit",
-    defaultValues: { imageArray: [], provinceId: 0, districtId: 0 },
+    defaultValues: {
+      provinceId: 0,
+      districtId: 0,
+      wardId: 0,
+      imageArray: [],
+    },
     resolver: yupResolver(SCHEMA.FMANAGE_PROFILE_FORM),
   });
+
   const { handleSubmit, setValue } = methods;
+
+  const setDefaultValues = () => {
+    setValue("name", locationDetails.name);
+    setValue("phone", locationDetails.phone);
+    setValue("website", locationDetails.website);
+    setValue(
+      "address",
+      getAddressFromFullAddress(
+        locationDetails.address,
+        locationDetails.addressFromWard,
+      ),
+    );
+    setValue("provinceId", locationDetails.addressFromWard.provinceId);
+    setValue("districtId", locationDetails.addressFromWard.districtId);
+    setValue("wardId", locationDetails.addressFromWard.wardId);
+    setValue("description", locationDetails.description);
+    setValue("service", locationDetails.timetable);
+    setValue("timetable", locationDetails.service);
+    setValue("rule", locationDetails.rule);
+    setValue(
+      "imageArray",
+      locationDetails.image.map((image, index) => ({
+        id: index,
+        base64: image,
+      })),
+    );
+    setLocationLatLng({
+      longitude: locationDetails.longitude,
+      latitude: locationDetails.latitude,
+    });
+  };
 
   const handleError = () => {
     setIsLoading(false);
     showAlertBox(DICTIONARY.ALERT_TITLE, DICTIONARY.ALERT_ERROR_MSG);
   };
 
-  const handleGoBack = () => {
-    goBack(navigation);
+  const handleEditSuccess = () => {
+    setIsLoading(false);
+    showAlertBox(
+      DICTIONARY.ALERT_TITLE,
+      DICTIONARY.ALERT_EDIT_LOCATION_SUCCESS_MSG,
+    );
   };
 
   const onSubmit = (data) => {
-    // if location info is missing
     if (!locationLatLng.latitude) {
       showAlertBox(
         DICTIONARY.ALERT_TITLE,
@@ -73,32 +119,38 @@ const FManageAddNewScreen = () => {
       return;
     }
     setIsLoading(true);
-    const images = data.imageArray.map((image) => image.base64);
+    const images = data.imageArray.map((pic) => pic.base64);
     delete data.imageArray;
     delete data.provinceId;
     delete data.districtId;
-    const addData = { ...data, ...locationLatLng, images };
-    locationData.current = addData;
-    sendOtp({ phone: data.phone })
-      .then(() => {
-        setIsLoading(false);
-        goToOTPScreen(
-          navigation,
-          ROUTE_NAMES.FMANAGE_PROFILE_ADD_NEW,
-          locationData.current.phone,
-        );
-      })
-      .catch(handleError);
+    const updateData = { ...data, ...locationLatLng, images };
+    // New phone input need OTP validation
+    if (updateData.phone !== locationDetails.phone) {
+      locationData.current = updateData;
+      sendOtp({ phone: updateData.phone })
+        .then(() => {
+          setIsLoading(false);
+          goToOTPScreen(
+            navigation,
+            ROUTE_NAMES.FMANAGE_PROFILE_PENDING_EDIT,
+            locationData.current.phone,
+          );
+        })
+        .catch(handleError);
+    } else {
+      editFishingLocation({ updateData })
+        .then(handleEditSuccess)
+        .catch(handleError);
+    }
   };
-  /**
-   * Trigger first time when enters
-   * and when screen unmounts
-   */
+
   useEffect(() => {
-    getAllProvince().then(() => {
-      setIsLoading(false);
-      setFullScreen(false);
-    });
+    if (route.params?.id) {
+      getLocationDetailsById({ id: route.params.id }).catch(() => {
+        handleError();
+        goBack(navigation);
+      });
+    }
     const loadingId = setTimeout(() => {
       setIsLoading(false);
       setFullScreen(false);
@@ -110,26 +162,28 @@ const FManageAddNewScreen = () => {
   }, []);
 
   /**
-   * Trigger when navigation goes back to this screen
+   * Set default values for fields when data returns
    */
+  useEffect(() => {
+    if (Object.keys(locationDetails).length) {
+      setDefaultValues();
+      setIsLoading(false);
+      setFullScreen(false);
+    }
+  }, [locationDetails]);
+
+  // Fire when naviagtes back to this screen
   useFocusEffect(
     // useCallback will listen to route.param
     useCallback(() => {
       if (route.params?.base64Array && route.params.base64Array.length) {
-        setValue(DICTIONARY.FORM_FIELD_IMAGE_ARRAY, route.params?.base64Array);
+        setValue(DICTIONARY.FORM_FIELD_IMAGE_ARRAY, route.params.base64Array);
         navigation.setParams({ base64Array: [] });
       }
       if (route.params?.otpSuccess) {
         setIsLoading(true);
-        addNewLocation({ addData: locationData.current })
-          .then(() => {
-            showAlertAbsoluteBox(
-              DICTIONARY.ALERT_TITLE,
-              DICTIONARY.ALERT_ADD_LOCATION_SUCCESS_MSG,
-              handleGoBack,
-              DICTIONARY.CONFIRM_BUTTON_LABEL,
-            );
-          })
+        editFishingLocation({ updateData: locationData.current })
+          .then(handleEditSuccess)
           .catch(handleError);
       }
     }, [route.params]),
@@ -140,21 +194,23 @@ const FManageAddNewScreen = () => {
   }
   return (
     <>
-      <HeaderTab name={DICTIONARY.FMANAGE_ADD_LOCATION_HEADER} />
-      <OverlayLoading loading={isLoading} />
+      <HeaderTab name={DICTIONARY.FMANAGE_EDIT_LOCATION_HEADER} />
       <ScrollView>
+        <OverlayLoading loading={isLoading} />
         <FormProvider {...methods}>
           <VStack space={3} divider={<Divider />}>
             <Center>
+              {/* Image Picker section */}
               <Stack space={2} style={styles.sectionWrapper}>
                 <Text bold fontSize="md" mt={2}>
                   Ảnh bìa (nhiều nhất là 5)
                 </Text>
                 <MultiImageSection
-                  formRoute={ROUTE_NAMES.FMANAGE_PROFILE_ADD_NEW}
+                  formRoute={ROUTE_NAMES.FMANAGE_PROFILE_EDIT}
                   selectLimit={5}
                   controllerName={DICTIONARY.FORM_FIELD_IMAGE_ARRAY}
                 />
+                {/* Input location name */}
                 <InputComponent
                   isTitle
                   label={DICTIONARY.LOCATION_NAME_LABEL}
@@ -169,11 +225,10 @@ const FManageAddNewScreen = () => {
                 <Text fontSize="md" bold>
                   Thông tin liên hệ
                 </Text>
+                {/* Information input and select fields */}
                 <InputComponent
-                  useNumPad
                   label={DICTIONARY.LOCATION_PHONE_LABEL}
                   placeholder={DICTIONARY.INPUT_LOCATION_PHONE_PLACEHOLDER}
-                  hasAsterisk
                   controllerName={DICTIONARY.FORM_FIELD_LOCATION_PHONE}
                 />
                 <InputWithClipboard
@@ -261,6 +316,7 @@ const FManageAddNewScreen = () => {
             </Center>
 
             <Center>
+              {/* rules textarea */}
               <TextAreaComponent
                 myStyles={styles.sectionWrapper}
                 label={DICTIONARY.LOCATION_RULE_LABEL}
@@ -276,11 +332,11 @@ const FManageAddNewScreen = () => {
               <Box style={styles.sectionWrapper} mb={5}>
                 {/* Submit button */}
                 <Button
-                  style={styles.button}
+                  w="90%"
                   alignSelf="center"
                   onPress={handleSubmit(onSubmit)}
                 >
-                  Thêm điểm câu
+                  Lưu thông tin
                 </Button>
               </Box>
             </Center>
@@ -291,4 +347,4 @@ const FManageAddNewScreen = () => {
   );
 };
 
-export default FManageAddNewScreen;
+export default FManageEditPendingProfileScreen;

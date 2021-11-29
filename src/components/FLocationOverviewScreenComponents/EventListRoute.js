@@ -53,15 +53,18 @@ const CatchReportRoute = () => {
     getLocationCatchListByPage({ pageNo: lakeCatchPage });
     setLakeCatchPage(lakeCatchPage + 1);
   }, []);
+
+  const goToCatchDetailScreen = (id) => () => {
+    goToCatchReportDetailScreen(navigation, {
+      id,
+    });
+  };
+
   const renderItem = ({ item }) => {
     return (
       <PressableCustomCard
         paddingX="1"
-        onPress={() => {
-          goToCatchReportDetailScreen(navigation, {
-            id: item.id,
-          });
-        }}
+        onPress={goToCatchDetailScreen(item.id)}
       >
         <EventPostCard
           postStyle="ANGLER_POST"
@@ -90,9 +93,7 @@ const CatchReportRoute = () => {
           maxToRenderPerBatch={20}
           data={locationCatchList}
           renderItem={renderItem}
-          onEndReached={() => {
-            loadMoreLakeCatchData();
-          }}
+          onEndReached={loadMoreLakeCatchData}
           keyExtractor={(item) => item.id.toString()}
         />
       )}
@@ -126,6 +127,13 @@ const FLocationEventRoute = () => {
   const reportHandler = (id) => {
     goToWriteReportScreen(navigation, { id, type: "POST" });
   };
+
+  useEffect(() => {
+    getLocationPostListByPage({ pageNo: lakePostPage });
+    setLakePostPage(lakePostPage + 1);
+    getPinPost();
+  }, []);
+
   const listEvent = [{ name: "Báo cáo bài viết", onPress: reportHandler }];
 
   const renderItem = ({ item }) => {
@@ -193,10 +201,7 @@ const FLocationEventRoute = () => {
               typeUri={currentPinPost.attachmentType}
               itemData={currentPinPost}
               lakePost={{
-                badge:
-                  currentPinPost.postType === "STOCKING"
-                    ? "Bồi cá"
-                    : "Thông báo",
+                badge: currentPinPost.postType,
                 content: currentPinPost.content,
               }}
               postTime={currentPinPost.postTime}
@@ -209,13 +214,7 @@ const FLocationEventRoute = () => {
   );
   const footerComponent = () => <Divider mt={20} />;
 
-  useEffect(() => {
-    getLocationPostListByPage({ pageNo: lakePostPage });
-    setLakePostPage(lakePostPage + 1);
-  }, []);
-  useEffect(() => {
-    getPinPost();
-  }, []);
+  const keyExtractor = (item) => item.id.toString();
 
   return (
     <>
@@ -230,7 +229,8 @@ const FLocationEventRoute = () => {
           data={locationPostList}
           renderItem={renderItem}
           onEndReached={loadMoreLakePostData}
-          keyExtractor={(item) => item.id.toString()}
+          keyExtractor={keyExtractor}
+          nestedScrollEnabled
         />
       )}
     </>

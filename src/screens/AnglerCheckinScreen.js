@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import QRCode from "react-native-qrcode-svg";
 
 import FLocationCard from "../components/FLocationCard";
+import { DEFAULT_TIMEOUT } from "../constants";
 import CheckInModel from "../models/CheckInModel";
 import { goToCatchReportFormScreen } from "../navigations";
 import { showAlertConfirmBox, showToastMessage } from "../utilities";
@@ -98,7 +99,7 @@ const DefaultQRCodeScreen = () => {
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
-    }, 5000);
+    }, DEFAULT_TIMEOUT);
     getCheckInState({ setLoading });
   };
 
@@ -150,8 +151,17 @@ const CheckinScreen = () => {
   const setCheckInState = useStoreActions(
     (actions) => actions.CheckInModel.setCheckInState,
   );
+  const resetCheckInModel = useStoreActions(
+    (actions) => actions.CheckInModel.reset,
+  );
 
   const [isCheckin, setCheckin] = useState(false);
+
+  useEffect(() => {
+    return () => {
+      resetCheckInModel();
+    };
+  }, []);
 
   useEffect(() => {
     if (stateCheckIn === false) {

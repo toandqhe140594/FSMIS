@@ -7,13 +7,14 @@ import { FormProvider, useForm } from "react-hook-form";
 import { StyleSheet, Text, View } from "react-native";
 import { Overlay } from "react-native-elements";
 
-import { SCHEMA } from "../../constants";
+import { DICTIONARY, SCHEMA } from "../../constants";
 import { showToastMessage } from "../../utilities";
 import InputComponent from "../common/InputComponent";
 
 const styles = StyleSheet.create({
   overlayContainer: {
     width: "90%",
+    backgroundColor: "white",
   },
   title: {
     fontSize: 20,
@@ -26,82 +27,79 @@ const styles = StyleSheet.create({
     alignItems: "center",
     margin: 4,
   },
+  buttonWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
+    margin: 4,
+    marginTop: 20,
+    justifyContent: "space-evenly",
+  },
   input: { width: "65%" },
   text: { fontSize: 16, width: "35%" },
   hint: { fontStyle: "italic", marginBottom: 6, alignSelf: "center" },
 });
 
+const RESET_VALUE = 0;
+
 const OverlayInputSection = ({ id, name, visible, toggleOverlay }) => {
-  const [updateStatus, setUpdateStatus] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { stockFishInLake } = useStoreActions(
     (actions) => actions.FManageModel,
   );
   const methods = useForm({
     mode: "onSubmit",
-    reValidateMode: "onChange",
+    reValidateMode: "onSubmit",
     defaultValues: { quantity: 0, weight: 0 },
     resolver: yupResolver(SCHEMA.FMANAGE_LAKE_FISH_EDIT_FORM),
   });
-  const { handleSubmit, clearErrors, reset, watch, setValue } = methods;
-  const watchQuantity = watch("quantity", 0);
-  const watchWeight = watch("weight", 0);
+  const { handleSubmit, reset, watch, setValue } = methods;
+  const watchQuantity = watch(DICTIONARY.FORM_FIELD_FISH_QUANTITY);
+  const watchWeight = watch(DICTIONARY.FORM_FIELD_FISH_STOCKING_WEIGHT);
   /**
    * To exit overlay, reset any error or previous input by use
    * setIsLoading to false
    * set visible to false to hide overlay
    */
   const handleOnExit = () => {
-    reset({ quantity: 0, weight: 0 }); // this reset will not work with select dropdown
-    clearErrors(["quantity", "weight"]);
+    reset({ quantity: 0, weight: 0 }, { keepErrors: false });
     setIsLoading(false);
     toggleOverlay({ visible: false });
   };
 
   const onSubmit = (data) => {
-    // if (bothFieldNotEmpty()) {
     setIsLoading(true);
     const updateData = Object.fromEntries(
       Object.entries(data).filter((keyValPair) => keyValPair[1] !== 0),
     );
-    stockFishInLake({ updateData, id, setUpdateStatus });
-    // }
+    stockFishInLake({ id, updateData })
+      .then(() => {
+        showToastMessage(DICTIONARY.ALERT_LAKE_STOCKING_SUCCESS_MSG);
+        handleOnExit();
+      })
+      .catch(() => {
+        setIsLoading(false);
+      });
   };
 
   /**
    * Reset quantity "" to 0
-   * Fire when use deletes the value
+   * Trigger when use deletes the value
    */
   useEffect(() => {
     if (watchQuantity === "") {
-      setValue("quantity", 0);
-      clearErrors("quantity");
+      setValue(DICTIONARY.FORM_FIELD_FISH_QUANTITY, RESET_VALUE);
     }
   }, [watchQuantity]);
 
   /**
    * Reset weight "" to 0
-   * Fire when use deletes the value
+   * Trigger when use deletes the value
    */
   useEffect(() => {
     if (watchWeight === "") {
-      setValue("weight", 0);
-      clearErrors("weight");
+      setValue(DICTIONARY.FORM_FIELD_FISH_STOCKING_WEIGHT, RESET_VALUE);
     }
   }, [watchWeight]);
-
-  useEffect(() => {
-    if (updateStatus === "SUCCESS") {
-      setIsLoading(false);
-      showToastMessage("Bồi cá thành công!");
-      setUpdateStatus(null);
-      handleOnExit();
-    } else if (updateStatus === "FAILED") {
-      setIsLoading(false);
-      setUpdateStatus(null);
-      handleOnExit();
-    }
-  }, [updateStatus]);
 
   return (
     <Overlay overlayStyle={styles.overlayContainer} isVisible={visible}>
@@ -115,33 +113,24 @@ const OverlayInputSection = ({ id, name, visible, toggleOverlay }) => {
         <View style={styles.inputWrapper}>
           <Text style={styles.text}>Số cá bồi</Text>
           <InputComponent
-            myStyles={styles.input}
-            label=""
-            placeholder="Nhập số con muốn bồi"
-            controllerName="quantity"
             useNumPad
-            // shouldDisable={watchWeight.length > 0}
+            myStyles={styles.input}
+            controllerName={DICTIONARY.FORM_FIELD_FISH_QUANTITY}
+            placeholder={DICTIONARY.INPUT_FISH_STOCKING_QUANTITY_PLACEHOLDER}
           />
         </View>
         <View style={styles.inputWrapper}>
           <Text style={styles.text}>Tổng cân nặng</Text>
           <InputComponent
-            myStyles={styles.input}
-            label=""
-            placeholder="Nhập cân nặng đợt bồi (kg)"
-            controllerName="weight"
             useNumPad
-            // shouldDisable={watchQuantity.length > 0}
+            controllerName={DICTIONARY.FORM_FIELD_FISH_STOCKING_WEIGHT}
+            myStyles={styles.input}
+            placeholder={DICTIONARY.INPUT_FISH_STOCKING_WEIGHT_PLACEHOLDER}
           />
         </View>
-        <View
-          style={[
-            styles.inputWrapper,
-            { marginTop: 20, justifyContent: "space-evenly" },
-          ]}
-        >
+        <View style={styles.buttonWrapper}>
           <Button w="45%" variant="outline" onPress={handleOnExit}>
-            Hủy
+            Quay lại
           </Button>
           <Button
             w="45%"

@@ -16,16 +16,15 @@ import {
 } from "native-base";
 import React, { useCallback, useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { ActivityIndicator, StyleSheet } from "react-native";
-import { Overlay } from "react-native-elements";
+import { StyleSheet } from "react-native";
 
-// import MethodCheckboxSelector from "../components/AdvanceSearch/MethodCheckboxSelector";
-import CheckboxSelectorComponent from "../components/common/CheckboxSelectorComponent";
+import MethodCheckboxSelector from "../components/AdvanceSearch/MethodCheckboxSelector";
 import InputComponent from "../components/common/InputComponent";
 import MultiImageSection from "../components/common/MultiImageSection";
+import OverlayLoading from "../components/common/OverlayLoading";
 import TextAreaComponent from "../components/common/TextAreaComponent";
 import HeaderTab from "../components/HeaderTab";
-import { ROUTE_NAMES, SCHEMA } from "../constants";
+import { DEFAULT_TIMEOUT, DICTIONARY, ROUTE_NAMES, SCHEMA } from "../constants";
 import { goBack } from "../navigations";
 import {
   showAlertAbsoluteBox,
@@ -41,18 +40,11 @@ const styles = StyleSheet.create({
   button: {
     width: "90%",
   },
-  loadOnStart: { alignItems: "center", justifyContent: "center" },
-  loadOnSubmit: {
-    backgroundColor: "transparent",
-    alignItems: "center",
-    justifyContent: "center",
-  },
 });
 
 const LakeEditProfileScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
-  const [updateStatus, setUpdateStatus] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [fullScreenMode, setFullScreenMode] = useState(true);
   const { fishingMethodList } = useStoreState(
@@ -80,12 +72,21 @@ const LakeEditProfileScreen = () => {
       length: lakeDetail.length.toString(),
       depth: lakeDetail.depth.toString(),
       imageArray: [{ id: 1, base64: lakeDetail.imageUrl }],
-      methods: [],
+      methods: methodValue,
     },
     resolver: yupResolver(SCHEMA.FMANAGE_LAKE_FORM),
   });
   const { handleSubmit, setValue } = methods;
-  const [deleteSuccess, setDeleteSuccess] = useState(false);
+
+  const navigateToLakeProfileScreen = () => {
+    goBack(navigation);
+  };
+
+  const handleError = () => {
+    setIsLoading(false);
+    showAlertBox(DICTIONARY.ALERT_TITLE, DICTIONARY.ALERT_ERROR_MSG);
+  };
+
   /**
    * Submit lake changes
    * @param {Object} data data from controller
@@ -96,22 +97,35 @@ const LakeEditProfileScreen = () => {
     const imageUrl = data.imageArray[0].base64;
     delete data.imageArray;
     const updateData = { ...data, imageUrl };
-    editLakeDetail({ updateData, setUpdateStatus, id });
+    editLakeDetail({ updateData, id })
+      .then(() => {
+        setIsLoading(false);
+        showAlertAbsoluteBox(
+          DICTIONARY.ALERT_TITLE,
+          DICTIONARY.ALERT_EDIT_LAKE_SUCCESS_MSG,
+          navigateToLakeProfileScreen,
+          DICTIONARY.CONFIRM_BUTTON_LABEL,
+        );
+      })
+      .catch(handleError);
   };
 
-  const handleLakeDelete = () => {
+  const handleCloseLake = (id) => () => {
+    closeLakeByLakeId({ id })
+      .then(() => {
+        showToastMessage(DICTIONARY.TOAST_DELETE_LAKE_SUCCESS_MSG);
+        navigation.pop(2);
+      })
+      .catch(handleError);
+  };
+
+  const promptBeforeDelete = () => {
     const { name, id } = lakeDetail;
     showAlertConfirmBox(
-      "Bạn muốn xóa hồ này?",
-      `"${name}" sẽ bị xóa vĩnh viễn. Bạn không thể hoàn tác hành động này`,
-      () => {
-        closeLakeByLakeId({ id, setDeleteSuccess });
-      },
+      DICTIONARY.ALERT_DELETE_LAKE_PROMPT_TITLE,
+      `"${name}" ${DICTIONARY.ALERT_DELETE_LAKE_PROMPT_MSG}`,
+      handleCloseLake(id),
     );
-  };
-
-  const navigateToLakeProfileScreen = () => {
-    goBack(navigation);
   };
 
   /**
@@ -119,14 +133,14 @@ const LakeEditProfileScreen = () => {
    */
   useEffect(() => {
     getFishingMethodList().then(() => {
-      setValue("methods", methodValue);
+      // setValue(DICTIONARY.FORM_FIELD_LAKE_FISHING_METHODS, methodValue);
       setIsLoading(false);
       setFullScreenMode(false);
     });
     const loadingId = setTimeout(() => {
       setIsLoading(false);
       setFullScreenMode(false);
-    }, 10000);
+    }, DEFAULT_TIMEOUT);
     return () => {
       clearTimeout(loadingId);
     };
@@ -139,52 +153,20 @@ const LakeEditProfileScreen = () => {
     // useCallback will listen to rsetIsLoading(false);
     useCallback(() => {
       if (route.params?.base64Array && route.params.base64Array[0]) {
-        setValue("imageArray", route.params?.base64Array);
+        setValue(DICTIONARY.FORM_FIELD_IMAGE_ARRAY, route.params?.base64Array);
         navigation.setParams({ base64Array: [] });
       }
     }, [route.params]),
   );
 
-  /**
-   * When updateState return, open Alert
-   */
-  useEffect(() => {
-    if (updateStatus === "SUCCESS") {
-      setIsLoading(false);
-      setUpdateStatus(null);
-      showAlertAbsoluteBox(
-        "Thông báo",
-        "Chỉnh sửa thành công",
-        navigateToLakeProfileScreen,
-        "Xác nhận",
-      );
-    } else if (updateStatus === "FAILED") {
-      setIsLoading(false);
-      setUpdateStatus(null);
-      showAlertBox("Thông báo", "Đã xảy ra lỗi! Vui lòng thử lại sau.");
-    }
-  }, [updateStatus]);
-
-  useEffect(() => {
-    if (deleteSuccess) {
-      showToastMessage("Xóa hồ thành công");
-      navigation.pop(2);
-    }
-  }, [deleteSuccess]);
-
+  if (isLoading && fullScreenMode) {
+    return <OverlayLoading coverScreen />;
+  }
   return (
     <>
       <HeaderTab name="Chỉnh sửa hồ bé" />
+      <OverlayLoading loading={isLoading} />
       <ScrollView>
-        <Overlay
-          isVisible={isLoading}
-          fullScreen
-          overlayStyle={
-            fullScreenMode ? styles.loadOnStart : styles.loadOnSubmit
-          }
-        >
-          <ActivityIndicator size={60} color="#2089DC" />
-        </Overlay>
         <FormProvider {...methods}>
           <VStack space={3} divider={<Divider />}>
             <Center mt={1}>
@@ -192,28 +174,27 @@ const LakeEditProfileScreen = () => {
               <MultiImageSection
                 containerStyle={styles.sectionWrapper}
                 formRoute={ROUTE_NAMES.FMANAGE_LAKE_EDIT}
-                controllerName="imageArray"
+                controllerName={DICTIONARY.FORM_FIELD_IMAGE_ARRAY}
               />
             </Center>
 
             <Center>
               <InputComponent
                 myStyles={styles.sectionWrapper}
-                label="Tên hồ câu"
+                label={DICTIONARY.LAKE_NAME_LABEL}
                 isTitle
                 hasAsterisk
-                placeholder="Nhập tên hồ câu"
-                controllerName="name"
+                placeholder={DICTIONARY.INPUT_LAKE_NAME_PLACEHOLDER}
+                controllerName={DICTIONARY.FORM_FIELD_LAKE_NAME}
               />
             </Center>
 
             <Center>
-              <CheckboxSelectorComponent
-                myStyles={styles.sectionWrapper}
-                placeholder="Chọn loại hình câu"
-                data={fishingMethodList}
-                controllerName="methods"
-                label="Loại hình câu"
+              <MethodCheckboxSelector
+                containerStyle={styles.sectionWrapper}
+                placeholder={DICTIONARY.SELECT_LAKE_METHODS_PLACEHOLDER}
+                controllerName={DICTIONARY.FORM_FIELD_LAKE_FISHING_METHODS}
+                label={DICTIONARY.LAKE_FISHING_METHODS_LABEL}
                 hasAsterisk
                 isTitle
               />
@@ -222,12 +203,12 @@ const LakeEditProfileScreen = () => {
             <Center>
               <TextAreaComponent
                 myStyles={styles.sectionWrapper}
-                label="Giá vé"
+                label={DICTIONARY.LAKE_PRICE_LABEL}
                 isTitle
                 hasAsterisk
-                placeholder="Miêu tả giá vé hồ"
+                placeholder={DICTIONARY.INPUT_LAKE_PRICE_PLACEHOLDER}
                 numberOfLines={6}
-                controllerName="price"
+                controllerName={DICTIONARY.FORM_FIELD_LAKE_PRICE}
               />
             </Center>
 
@@ -238,23 +219,23 @@ const LakeEditProfileScreen = () => {
                 </Text>
                 <InputComponent
                   hasAsterisk
-                  label="Chiều dài (m)"
-                  placeholder="Nhập chiều dài của hồ"
-                  controllerName="length"
+                  label={DICTIONARY.LAKE_LENGTH_LABEL}
+                  placeholder={DICTIONARY.INPUT_LAKE_LENGTH_PLACEHOLDER}
+                  controllerName={DICTIONARY.FORM_FIELD_LAKE_LENGTH}
                   useNumPad
                 />
                 <InputComponent
                   hasAsterisk
-                  label="Chiều rộng (m)"
-                  placeholder="Nhập chiều rộng của hồ"
-                  controllerName="width"
+                  label={DICTIONARY.LAKE_WIDTH_LABEL}
+                  placeholder={DICTIONARY.INPUT_LAKE_WIDTH_PLACEHOLDER}
+                  controllerName={DICTIONARY.FORM_FIELD_LAKE_WIDTH}
                   useNumPad
                 />
                 <InputComponent
                   hasAsterisk
-                  label="Độ sâu (m)"
-                  placeholder="Nhập độ sâu của hồ"
-                  controllerName="depth"
+                  label={DICTIONARY.LAKE_DEPTH_LABEL}
+                  placeholder={DICTIONARY.INPUT_LAKE_DEPTH_PLACEHOLDER}
+                  controllerName={DICTIONARY.FORM_FIELD_LAKE_DEPTH}
                   useNumPad
                 />
               </VStack>
@@ -264,18 +245,19 @@ const LakeEditProfileScreen = () => {
               <Box style={styles.sectionWrapper} mb={5}>
                 {/* Submit button */}
                 <Button
-                  style={styles.button}
-                  alignSelf="center"
+                  w="90%"
                   mb={2}
+                  alignSelf="center"
                   onPress={handleSubmit(onSubmit)}
                 >
                   Lưu thông tin hồ câu
                 </Button>
                 <Button
-                  style={styles.button}
+                  w="90%"
+                  colorScheme="red"
                   variant="outline"
                   alignSelf="center"
-                  onPress={handleLakeDelete}
+                  onPress={promptBeforeDelete}
                 >
                   Xoá hồ câu
                 </Button>

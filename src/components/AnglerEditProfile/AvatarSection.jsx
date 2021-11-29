@@ -9,6 +9,12 @@ import { goToMediaSelectScreen } from "../../navigations";
 const AvatarSection = ({ containerStyle, navigation, name, handleDelete }) => {
   const { control } = useFormContext();
   const avatarUrl = useWatch({ control, name });
+  const navigateToMediaSelectScreen = () => {
+    goToMediaSelectScreen(navigation, {
+      returnRoute: ROUTE_NAMES.PROFILE_CHANGE_INFORMATION,
+      maxSelectable: 1,
+    });
+  };
   return (
     <Avatar
       containerStyle={containerStyle}
@@ -18,12 +24,7 @@ const AvatarSection = ({ containerStyle, navigation, name, handleDelete }) => {
         uri: avatarUrl,
       }}
       onLongPress={handleDelete}
-      onPress={() =>
-        goToMediaSelectScreen(navigation, {
-          returnRoute: ROUTE_NAMES.PROFILE_CHANGE_INFORMATION,
-          maxSelectable: 1,
-        })
-      }
+      onPress={navigateToMediaSelectScreen}
     />
   );
 };

@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
     bottom: 17,
     alignItems: "center",
     justifyContent: "center",
-    elevation: 99,
+    elevation: 999,
   },
   image: {
     width: iconSize,

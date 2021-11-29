@@ -7,6 +7,7 @@ import { ActivityIndicator, StyleSheet } from "react-native";
 import { Overlay } from "react-native-elements";
 
 import HeaderTab from "../components/HeaderTab";
+import { DEFAULT_TIMEOUT } from "../constants";
 import { goToFManageVerifyCheckinScreen } from "../navigations";
 import { showAlertBox, showToastMessage } from "../utilities";
 
@@ -38,7 +39,7 @@ const ScanQRCodeScreen = () => {
     setLoading(true);
     timeout = setTimeout(() => {
       setLoading(false);
-    }, 5000);
+    }, DEFAULT_TIMEOUT);
     checkInAngler({ qrString: data, setSuccess });
   };
 
@@ -65,6 +66,8 @@ const ScanQRCodeScreen = () => {
       clearLoadingTimeout();
     };
   }, []);
+
+  const resetScanner = () => setScanned(false);
 
   if (hasPermission === null) {
     return (
@@ -108,7 +111,7 @@ const ScanQRCodeScreen = () => {
           />
         </Box>
         {scanned && (
-          <Button onPress={() => setScanned(false)} alignSelf="center" mb="5%">
+          <Button onPress={resetScanner} alignSelf="center" mb="5%">
             Quét lại mã
           </Button>
         )}

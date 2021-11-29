@@ -4,12 +4,14 @@ import { Box, Center, Text } from "native-base";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, FlatList } from "react-native";
 import { Divider } from "react-native-elements";
+import { Icon } from "react-native-elements/dist/icons/Icon";
 
 import HeaderTab from "../components/HeaderTab";
 import PressableCustomCard from "../components/PressableCustomCard";
+import { DEFAULT_TIMEOUT } from "../constants";
 import { goToAdminFLocationSuggestedDetailScreen } from "../navigations";
 
-const keyExtractor = (item) => item.phone.toString();
+const keyExtractor = (item, index) => item.phone.toString() + index.toString();
 
 const AdminSuggestedLocationManagementScreen = () => {
   const navigation = useNavigation();
@@ -36,7 +38,7 @@ const AdminSuggestedLocationManagementScreen = () => {
     setIsLoading(true);
     const loadingTimeout = setTimeout(() => {
       setIsLoading(false);
-    }, 10000); // Test
+    }, DEFAULT_TIMEOUT);
     return () => {
       clearTimeout(loadingTimeout);
     };
@@ -57,6 +59,17 @@ const AdminSuggestedLocationManagementScreen = () => {
         <Text flex={1} isTruncated numberOfLines={1}>
           Điện thoại chủ hồ: {item.phone}
         </Text>
+        {item.helpful && (
+          <Icon
+            type="antdesign"
+            name="check"
+            color="green"
+            containerStyle={{
+              position: "absolute",
+              right: 18,
+            }}
+          />
+        )}
       </Box>
     </PressableCustomCard>
   );

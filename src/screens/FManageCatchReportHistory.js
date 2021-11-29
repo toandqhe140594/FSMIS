@@ -68,6 +68,60 @@ const FManageCatchReportHistory = () => {
     });
   }, []);
 
+  const closeModel = () => setModalVisible(false);
+
+  const navigateToDetailScreen = (id) => () => {
+    goToCatchReportDetailScreen(navigation, { id });
+  };
+
+  const renderItem = ({ item }) => {
+    const { userFullName, avatar, description, time, fishes } = item;
+    return (
+      <Box
+        borderBottomWidth="1"
+        backgroundColor="white"
+        _dark={{
+          borderColor: "gray.600",
+        }}
+        borderColor="coolGray.200"
+      >
+        <PressableCustomCard
+          paddingX="3"
+          paddingY="1"
+          onPress={navigateToDetailScreen(item.id)}
+        >
+          <Box pl="2">
+            <AvatarCard
+              avatarSize="md"
+              nameUser={userFullName}
+              image={avatar}
+              subText={time}
+            />
+            <Box mt={2}>
+              <Text italic>{description}</Text>
+              <Text>
+                <Text bold>Đã câu được: </Text>
+                {fishes.map((fish) => (
+                  <Text key={fish}>{fish}. </Text>
+                ))}
+              </Text>
+            </Box>
+          </Box>
+        </PressableCustomCard>
+      </Box>
+    );
+  };
+
+  const keyExtractor = (item) => item.id.toString();
+
+  const onEndReached = () => {
+    getCatchReportHistoryOverwrite({
+      startDate: startDate ? startDate.toJSON() : null,
+      endDate: endDate ? endDate.toJSON() : null,
+      status: "APPEND",
+    });
+  };
+
   return (
     <Box flex={1}>
       <HeaderTab name="Lịch sử báo cá" />
@@ -78,11 +132,7 @@ const FManageCatchReportHistory = () => {
         }}
         flex={1}
       >
-        <Modal
-          isOpen={modalVisible}
-          onClose={() => setModalVisible(false)}
-          size="full"
-        >
+        <Modal isOpen={modalVisible} onClose={closeModel} size="full">
           <Modal.Content>
             <Modal.CloseButton />
             <Modal.Header>Chọn ngày</Modal.Header>
@@ -120,61 +170,9 @@ const FManageCatchReportHistory = () => {
         <Box flex={1}>
           <FlatList
             data={catchReportHistory}
-            renderItem={({ item }) => {
-              const {
-                userFullName,
-                avatar,
-                description,
-                time,
-                fishes,
-                approved,
-              } = item;
-              return (
-                <Box
-                  borderBottomWidth="1"
-                  backgroundColor="white"
-                  _dark={{
-                    borderColor: "gray.600",
-                  }}
-                  borderColor="coolGray.200"
-                >
-                  <PressableCustomCard
-                    paddingX="3"
-                    paddingY="1"
-                    onPress={() => {
-                      goToCatchReportDetailScreen(navigation, { id: item.id });
-                    }}
-                  >
-                    <Box pl="2">
-                      <AvatarCard
-                        avatarSize="md"
-                        nameUser={userFullName}
-                        image={avatar}
-                        subText={time}
-                        watermarkType={approved}
-                      />
-                      <Box mt={2}>
-                        <Text italic>{description}</Text>
-                        <Text>
-                          <Text bold>Đã câu được: </Text>
-                          {fishes.map((fish) => (
-                            <Text key={fish}>{fish}. </Text>
-                          ))}
-                        </Text>
-                      </Box>
-                    </Box>
-                  </PressableCustomCard>
-                </Box>
-              );
-            }}
-            keyExtractor={(item) => item.id.toString()}
-            onEndReached={() => {
-              getCatchReportHistoryOverwrite({
-                startDate: startDate ? startDate.toJSON() : null,
-                endDate: endDate ? endDate.toJSON() : null,
-                status: "APPEND",
-              });
-            }}
+            renderItem={renderItem}
+            keyExtractor={keyExtractor}
+            onEndReached={onEndReached}
           />
         </Box>
       </Box>

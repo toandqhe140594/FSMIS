@@ -21,7 +21,6 @@ const AdminFishingMethodEditScreen = () => {
   const [methodId, setMethodId] = useState(null);
   const [isActive, setIsActive] = useState(null);
   const [isLoading, setIsLoading] = useState(null);
-  const [submitStatus, setSubmitStatus] = useState(null);
   const {
     updateFishingMethod,
     updateFishingMethodStatus,
@@ -34,23 +33,35 @@ const AdminFishingMethodEditScreen = () => {
   });
   const { handleSubmit, setValue } = methods;
 
+  const handleError = () => {
+    setIsLoading(false);
+  };
+
   const onSubmit = (data) => {
     setIsLoading(true);
-    updateFishingMethod({
-      id: methodId,
-      submitData: data,
-      active: isActive,
-      setSubmitStatus,
-    });
+    updateFishingMethod({ id: methodId, submitData: data, active: isActive })
+      .then(() => {
+        if (!methodId) {
+          getAdminFishingMethodList();
+          showToastMessage("Thêm loại hình câu thành công");
+          navigation.pop(1);
+        } else {
+          setIsLoading(false);
+          showToastMessage("Cập nhật loại hình câu thành công");
+        }
+      })
+      .catch(handleError);
   };
 
   const handleUpdateStatus = () => {
     setIsLoading(true);
-    updateFishingMethodStatus({
-      id: methodId,
-      active: isActive,
-      setSubmitStatus,
-    });
+    updateFishingMethodStatus({ id: methodId, active: isActive })
+      .then(() => {
+        setIsLoading(false);
+        setIsActive(!isActive);
+        showToastMessage("Trạng thái của loại hình câu đã được thay đổi");
+      })
+      .catch(handleError);
   };
 
   useEffect(() => {
@@ -61,25 +72,6 @@ const AdminFishingMethodEditScreen = () => {
       setIsActive(active);
     }
   }, []);
-
-  useEffect(() => {
-    if (submitStatus === "SUCCESS") {
-      if (!methodId) {
-        getAdminFishingMethodList();
-        showToastMessage("Thêm loại hình câu thành công");
-        navigation.pop(1);
-      } else {
-        showToastMessage("Cập nhật loại hình câu thành công");
-      }
-    } else if (submitStatus === "PATCHED") {
-      setIsActive(!isActive);
-      showToastMessage("Trạng thái của loại hình câu đã được thay đổi");
-    } else if (submitStatus === "FAILED") {
-      showToastMessage("Đã xảy ra lỗi! Vui lòng thử lại sau");
-    }
-    setIsLoading(false);
-    setSubmitStatus(null);
-  }, [submitStatus]);
 
   return (
     <>

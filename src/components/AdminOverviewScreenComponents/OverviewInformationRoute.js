@@ -26,6 +26,8 @@ const OverviewInformationRoute = () => {
     longitude,
     latitude,
     image,
+    pending,
+    closed,
   } = locationOverview;
 
   useEffect(() => {
@@ -66,16 +68,29 @@ const OverviewInformationRoute = () => {
                       />
                     )}
                   </Swiper>
-                  <Badge
-                    containerStyle={{ position: "absolute", top: 4, left: 4 }}
-                    badgeStyle={{
-                      borderRadius: 0,
-                      paddingVertical: 10,
-                      paddingHorizontal: 8,
-                    }}
-                    value="Mở cửa"
-                    status="success"
-                  />
+                  {pending ? (
+                    <Badge
+                      containerStyle={{ position: "absolute", top: 4, left: 4 }}
+                      badgeStyle={{
+                        borderRadius: 0,
+                        paddingVertical: 10,
+                        paddingHorizontal: 8,
+                      }}
+                      value="Thiếu thông tin"
+                      status="warning"
+                    />
+                  ) : (
+                    <Badge
+                      containerStyle={{ position: "absolute", top: 4, left: 4 }}
+                      badgeStyle={{
+                        borderRadius: 0,
+                        paddingVertical: 10,
+                        paddingHorizontal: 8,
+                      }}
+                      value={closed ? "Đóng cửa" : "Mở cửa"}
+                      status={closed ? "error" : "success"}
+                    />
+                  )}
                 </Box>
 
                 <Card.Divider />

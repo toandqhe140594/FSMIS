@@ -10,7 +10,14 @@ const DEFAULT_STATE = {
   fishSpeciesIdList: [],
   score: 0,
 };
-
+const initialState = {
+  prevStateData: {
+    ...DEFAULT_STATE,
+  },
+  totaListLocationPage: 0,
+  listLocationResult: [],
+  pageNo: 1,
+};
 const model = {
   prevStateData: {
     ...DEFAULT_STATE,
@@ -74,10 +81,9 @@ const model = {
   /**
    * Call search location api method
    * @param {Object} [payload.submitData] body's data for post method
-   * @param {Function} [payload.setSubmitStatus] function to set api call status
    */
   searchFishingLocation: thunk(async (actions, payload) => {
-    const { submitData, setSubmitStatus } = payload;
+    const { submitData } = payload;
     try {
       const { data } = await http.post(
         API_URL.LOCATION_ADVANCED_SEARCH,
@@ -91,19 +97,15 @@ const model = {
       actions.setPrevStateData({ submitData });
       actions.setTotalPage({ totalPage });
       actions.setListLocationResult({ setMode: "NEW", items });
-      setSubmitStatus("SUCCESS");
     } catch (error) {
-      setSubmitStatus("FAILED");
-      // handle error
+      throw new Error();
     }
   }),
 
   /**
    * Get list location next page
-   * @param {Function} [payload.setGetStatus] function to set get api's status
    */
   getListLocationNextPage: thunk(async (actions, payload, { getState }) => {
-    const { setGetStatus } = payload;
     const { prevStateData, pageNo } = getState();
     try {
       const { data } = await http.post(
@@ -116,12 +118,17 @@ const model = {
       const { totalPage, items } = data;
       actions.setTotalPage({ totalPage });
       actions.setListLocationResult({ setMode: "APPEND", items });
-      setGetStatus("SUCCESS");
     } catch (error) {
-      setGetStatus("FAILED");
-      // handle error
+      throw new Error();
     }
   }),
+
+  /**
+   * Reset all state of model to default value
+   */
+  reset: action(() => ({
+    ...initialState,
+  })),
 };
 
 export default model;

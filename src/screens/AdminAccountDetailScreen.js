@@ -1,4 +1,4 @@
-import { useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, Button } from "native-base";
 import React, { useEffect, useState } from "react";
@@ -6,20 +6,19 @@ import { ActivityIndicator, Text } from "react-native";
 
 import EmployeeDetailBox from "../components/EmployeeDetailBox";
 import HeaderTab from "../components/HeaderTab";
-import { showToastMessage } from "../utilities";
+import { DEFAULT_TIMEOUT } from "../constants";
+import { goToAdminAccountDeactiveScreen } from "../navigations";
+import { showAlertConfirmBox, showToastMessage } from "../utilities";
 
 const AdminAccountDetailScreen = () => {
   const route = useRoute();
+  const navigation = useNavigation();
 
   const [isLoading, setIsLoading] = useState(false);
   const [screenLoading, setScreenLoading] = useState(true);
-  const [success, setSuccess] = useState(null);
 
   const accountInformation = useStoreState(
     (states) => states.AccountManagementModel.accountInformation,
-  );
-  const activateAccount = useStoreActions(
-    (actions) => actions.AccountManagementModel.activateAccount,
   );
   const getAccountInformation = useStoreActions(
     (actions) => actions.AccountManagementModel.getAccountInformation,
@@ -27,15 +26,38 @@ const AdminAccountDetailScreen = () => {
   const clearAccountInformation = useStoreActions(
     (actions) => actions.AccountManagementModel.clearAccountInformation,
   );
+  const whitelistPhoneNumber = useStoreActions(
+    (actions) => actions.AccountManagementModel.whitelistPhoneNumber,
+  );
 
   let activationTimeout = null;
 
-  const changeAccountStatus = () => {
+  const activateAccountAction = () => {
     setIsLoading(true);
     activationTimeout = setTimeout(() => {
       setIsLoading(false);
-    }, 5000);
-    activateAccount({ setSuccess });
+    }, DEFAULT_TIMEOUT);
+    whitelistPhoneNumber({ phone: accountInformation.phone })
+      .then(() => {
+        showToastMessage("Kích hoạt tài khoản thành công");
+      })
+      .catch(() => {
+        setIsLoading(false);
+      });
+  };
+
+  const changeAccountStatus = () => {
+    if (accountInformation.active) {
+      goToAdminAccountDeactiveScreen(navigation, {
+        phone: accountInformation.phone,
+      });
+    } else {
+      showAlertConfirmBox(
+        `Kích hoạt tài khoản "${accountInformation.phone}"?`,
+        "Tài khoản được kích hoạt sẽ có thể tham gia vào ứng dụng như bình thường",
+        activateAccountAction,
+      );
+    }
   };
 
   useEffect(() => {
@@ -50,14 +72,6 @@ const AdminAccountDetailScreen = () => {
       if (activationTimeout !== null) clearTimeout(activationTimeout);
     };
   }, []);
-
-  useEffect(() => {
-    if (success !== null) {
-      setIsLoading(false);
-    }
-    if (success === false) showToastMessage("Thao tác thất bại");
-    setSuccess(null);
-  }, [success]);
 
   if (screenLoading)
     return (
@@ -80,7 +94,11 @@ const AdminAccountDetailScreen = () => {
               dob={accountInformation.dob.split(" ")[0] || "Không có dữ liệu"}
               phoneNumber={accountInformation.phone}
               gender={accountInformation.gender}
-              address={accountInformation.address}
+              address={
+                accountInformation.address.startsWith(",")
+                  ? accountInformation.address.slice(1)
+                  : accountInformation.address
+              }
               isDetailed
               status={accountInformation.active ? "active" : "inactive"}
               key={accountInformation.id}

@@ -17,16 +17,16 @@ import {
 } from "native-base";
 import React, { useCallback, useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { ActivityIndicator, StyleSheet } from "react-native";
-import { Overlay } from "react-native-elements";
+import { StyleSheet } from "react-native";
 
 import MethodCheckboxSelector from "../components/AdvanceSearch/MethodCheckboxSelector";
 import InputComponent from "../components/common/InputComponent";
 import MultiImageSection from "../components/common/MultiImageSection";
+import OverlayLoading from "../components/common/OverlayLoading";
 import TextAreaComponent from "../components/common/TextAreaComponent";
 import HeaderTab from "../components/HeaderTab";
 import FishCardSection from "../components/LakeEditProfile/FishCardSection";
-import { ROUTE_NAMES, SCHEMA } from "../constants";
+import { DEFAULT_TIMEOUT, DICTIONARY, ROUTE_NAMES, SCHEMA } from "../constants";
 import { goBack } from "../navigations";
 import { showAlertAbsoluteBox, showAlertBox } from "../utilities";
 
@@ -38,18 +38,11 @@ const styles = StyleSheet.create({
     width: "90%",
   },
   error: { color: "#f43f5e", fontSize: 12, fontStyle: "italic" },
-  loadOnStart: { justifyContent: "center", alignItems: "center" },
-  loadOnSubmit: {
-    backgroundColor: "transparent",
-    justifyContent: "center",
-    alignItems: "center",
-  },
 });
 
 const LakeAddNewScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
-  const [addStatus, setAddStatus] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [fullScreenMode, setFullScreenMode] = useState(true);
   const { addNewLakeInLocation } = useStoreActions(
@@ -70,19 +63,35 @@ const LakeAddNewScreen = () => {
     setValue,
     formState: { errors },
   } = methods;
+
+  const handleGoBack = () => {
+    goBack(navigation);
+  };
+
   const onSubmit = (data) => {
     setIsLoading(true);
-    // Remove in each object in fishInLake array any field has value 0
     const cleanFishArray = data.fishInLakeList.map((fishCard) =>
       Object.fromEntries(
         Object.entries(fishCard).filter((keyValPair) => keyValPair[1] !== 0),
       ),
     );
-    // Should check for empty images
     const imageUrl = data.imageArray[0].base64;
     delete data.imageArray;
     const addData = { ...data, imageUrl, fishInLakeList: cleanFishArray };
-    addNewLakeInLocation({ addData, setAddStatus });
+    addNewLakeInLocation({ addData })
+      .then(() => {
+        setIsLoading(false);
+        showAlertAbsoluteBox(
+          DICTIONARY.ALERT_TITLE,
+          DICTIONARY.ALERT_ADD_LAKE_SUCCESS_MSG,
+          handleGoBack,
+          DICTIONARY.CONFIRM_BUTTON_LABEL,
+        );
+      })
+      .catch(() => {
+        setIsLoading(false);
+        showAlertBox(DICTIONARY.ALERT_TITLE, DICTIONARY.ALERT_ERROR_MSG);
+      });
   };
   /**
    * Everytime enter the screen, call api
@@ -96,96 +105,71 @@ const LakeAddNewScreen = () => {
     const loadingId = setTimeout(() => {
       setIsLoading(false);
       setFullScreenMode(false);
-    }, 10000);
+    }, DEFAULT_TIMEOUT);
     return () => {
       clearTimeout(loadingId);
     };
   }, []);
 
-  /**
-   * Trigger when addStatus state value return from api call
-   */
-  useEffect(() => {
-    if (addStatus === "SUCCESS") {
-      setIsLoading(false);
-      setAddStatus(null);
-      showAlertAbsoluteBox(
-        "Thông báo",
-        "Hồ bé thêm thành công!",
-        () => {
-          goBack(navigation);
-        },
-        "Xác nhận",
-      );
-    } else if (addStatus === "FAILED") {
-      setIsLoading(false);
-      setAddStatus(null);
-      showAlertBox("Thông báo", "Đã có lỗi xảy ra, vui lòng thử lại");
-    }
-  }, [addStatus]);
   // Fire when navigates back to the screen
   useFocusEffect(
     // useCallback will listen to route.param
     useCallback(() => {
       if (route.params?.base64Array && route.params.base64Array.length) {
-        setValue("imageArray", route.params?.base64Array);
+        setValue(DICTIONARY.FORM_FIELD_IMAGE_ARRAY, route.params?.base64Array);
         navigation.setParams({ base64Array: [] });
       }
     }, [route.params]),
   );
+
+  if (isLoading && fullScreenMode) {
+    return <OverlayLoading coverScreen />;
+  }
   return (
     <>
-      <HeaderTab name="Thêm hồ bé" />
+      <HeaderTab name={DICTIONARY.FMANAGE_ADD_LAKE_HEADER} />
+      <OverlayLoading loading={isLoading} />
       <ScrollView>
-        <Overlay
-          isVisible={isLoading}
-          fullScreen
-          overlayStyle={
-            fullScreenMode ? styles.loadOnStart : styles.loadOnSubmit
-          }
-        >
-          <ActivityIndicator size={60} color="#2089DC" />
-        </Overlay>
         <FormProvider {...methods}>
           <VStack space={3} divider={<Divider />}>
             <Center mt={1}>
               <MultiImageSection
                 containerStyle={styles.sectionWrapper}
                 formRoute={ROUTE_NAMES.FMANAGE_LAKE_ADD}
-                controllerName="imageArray"
+                controllerName={DICTIONARY.FORM_FIELD_IMAGE_ARRAY}
               />
             </Center>
 
             <Center>
               <InputComponent
                 myStyles={styles.sectionWrapper}
-                label="Tên hồ câu"
+                label={DICTIONARY.LAKE_NAME_LABEL}
                 isTitle
-                placeholder="Nhập tên hồ câu"
-                controllerName="name"
+                placeholder={DICTIONARY.INPUT_LAKE_NAME_PLACEHOLDER}
+                controllerName={DICTIONARY.FORM_FIELD_LAKE_NAME}
               />
             </Center>
 
             <Center>
               <MethodCheckboxSelector
                 containerStyle={styles.sectionWrapper}
-                label="Loại hình câu"
+                label={DICTIONARY.LAKE_FISHING_METHODS_LABEL}
                 isTitle
                 hasAsterisk
-                placeholder="Chọn loại hình câu"
-                controllerName="methods"
+                placeholder={DICTIONARY.SELECT_LAKE_METHODS_PLACEHOLDER}
+                controllerName={DICTIONARY.FORM_FIELD_LAKE_FISHING_METHODS}
               />
             </Center>
 
             <Center>
               <TextAreaComponent
                 myStyles={styles.sectionWrapper}
-                label="Giá vé"
+                label={DICTIONARY.LAKE_PRICE_LABEL}
                 isTitle
                 hasAsterisk
-                placeholder="Miêu tả giá vé hồ"
+                placeholder={DICTIONARY.INPUT_LAKE_PRICE_PLACEHOLDER}
                 numberOfLines={6}
-                controllerName="price"
+                controllerName={DICTIONARY.FORM_FIELD_LAKE_PRICE}
               />
             </Center>
 
@@ -196,23 +180,23 @@ const LakeAddNewScreen = () => {
                 </Text>
                 <InputComponent
                   hasAsterisk
-                  label="Chiều dài (m)"
-                  placeholder="Nhập chiều dài của hồ"
-                  controllerName="length"
+                  label={DICTIONARY.LAKE_LENGTH_LABEL}
+                  placeholder={DICTIONARY.INPUT_LAKE_LENGTH_PLACEHOLDER}
+                  controllerName={DICTIONARY.FORM_FIELD_LAKE_LENGTH}
                   useNumPad
                 />
                 <InputComponent
                   hasAsterisk
-                  label="Chiều rộng (m)"
-                  placeholder="Nhập chiều rộng của hồ"
-                  controllerName="width"
+                  label={DICTIONARY.LAKE_WIDTH_LABEL}
+                  placeholder={DICTIONARY.INPUT_LAKE_WIDTH_PLACEHOLDER}
+                  controllerName={DICTIONARY.FORM_FIELD_LAKE_WIDTH}
                   useNumPad
                 />
                 <InputComponent
                   hasAsterisk
-                  label="Độ sâu (m)"
-                  placeholder="Nhập độ sâu của hồ"
-                  controllerName="depth"
+                  label={DICTIONARY.LAKE_DEPTH_LABEL}
+                  placeholder={DICTIONARY.INPUT_LAKE_DEPTH_PLACEHOLDER}
+                  controllerName={DICTIONARY.FORM_FIELD_LAKE_DEPTH}
                   useNumPad
                 />
               </VStack>
@@ -223,21 +207,20 @@ const LakeAddNewScreen = () => {
                 <Text fontSize="md" bold>
                   Các loại cá
                 </Text>
-                {errors.fishInLakeList?.message && (
+                {errors[DICTIONARY.FORM_FIELD_FISH_CARD]?.message && (
                   <Text style={styles.error}>
-                    {errors.fishInLakeList?.message}
+                    {errors[DICTIONARY.FORM_FIELD_FISH_CARD]?.message}
                   </Text>
                 )}
                 <FishCardSection />
               </Stack>
             </Center>
             <Center>
-              <Box style={styles.sectionWrapper} mb={5}>
+              <Box style={styles.sectionWrapper} mb={4}>
                 {/* Submit button */}
                 <Button
                   style={styles.button}
                   alignSelf="center"
-                  mb={2}
                   onPress={handleSubmit(onSubmit)}
                 >
                   Thêm hồ câu

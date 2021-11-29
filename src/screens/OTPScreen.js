@@ -10,6 +10,7 @@ import {
   useClearByFocusCell,
 } from "react-native-confirmation-code-field";
 
+import { DICTIONARY } from "../constants";
 import { goToScreen } from "../navigations";
 
 const styles = StyleSheet.create({
@@ -36,17 +37,15 @@ const CELL_COUNT = 6; // Length of the OTP code
 const OTPScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
-
+  const [countdown, setCountdown] = useState(initialCountdown);
+  const [loading, setLoading] = useState(false); // State placeholder for future API implement
+  const [wrongOTP, setWrongOTP] = useState(false);
+  const [waitNewOTP, setWaitNewOTP] = useState(false);
+  const [value, setValue] = useState("");
   const validateOtp = useStoreActions(
     (actions) => actions.UtilModel.validateOtp,
   );
   const sendOtp = useStoreActions((actions) => actions.UtilModel.sendOtp);
-
-  const [countdown, setCountdown] = useState(initialCountdown);
-  const [loading, setLoading] = useState(false); // State placeholder for future API implement
-  const [wrongOTP, setWrongOTP] = useState(false);
-  const [value, setValue] = useState("");
-  const [success, setSuccess] = useState(null);
   const [props, getCellOnLayoutHandler] = useClearByFocusCell({
     value,
     setValue,
@@ -55,22 +54,34 @@ const OTPScreen = () => {
 
   // Reset the countdown timer
   const resetCountdown = () => {
-    sendOtp({ phone: route.params.phone });
-    setCountdown(initialCountdown); // Reset countdown value
-    // Run the countdown timer
-    countdownInterval = setInterval(() => {
-      setCountdown((prev) => prev - 1);
-    }, 1000);
+    setWaitNewOTP(true);
+    sendOtp({ phone: route.params.phone })
+      .then(() => {
+        setWaitNewOTP(false);
+        setCountdown(initialCountdown); // Reset countdown value
+        // Run the countdown timer
+        countdownInterval = setInterval(() => {
+          setCountdown((prev) => prev - 1);
+        }, 1000);
+      })
+      .catch(() => {
+        setWaitNewOTP(false);
+      });
   };
 
   // Event fire when submit OTP
   const onSubmit = (data) => () => {
     setLoading(true);
-    validateOtp({
-      otp: data,
-      phone: route.params.phone,
-      setSuccess,
-    });
+    validateOtp({ otp: data, phone: route.params.phone })
+      .then(() => {
+        goToScreen(navigation, route.params.previousScreen, {
+          otpSuccess: true,
+        });
+      })
+      .catch(() => {
+        setWrongOTP(true);
+        setLoading(false);
+      });
   };
 
   // Start the countdown timer when component mount
@@ -86,28 +97,18 @@ const OTPScreen = () => {
     if (countdown <= 0) clearInterval(countdownInterval);
   }, [countdown]);
 
-  useEffect(() => {
-    if (success === true) {
-      goToScreen(navigation, route.params.previousScreen, { otpSuccess: true });
-    } else if (success === false) {
-      setWrongOTP(true);
-      setLoading(false);
-      setSuccess(null);
-    }
-  }, [success]);
-
   return (
     <Center flex={1}>
       <Heading size="lg">Xác nhận OTP</Heading>
       <Text fontSize="lg" noOfLines={2} textAlign="center" w="70%">
-        Vui lòng nhập mã xác nhận đã được gửi tới SĐT của bạn
+        Vui lòng nhập mã xác nhận đã được gửi tới số điện thoại của bạn
       </Text>
       {/* Placeholder for phonenumber | Phonenumber will need to get from store state */}
       <Text bold fontSize="lg" mt={4} textAlign="center">
         {route.params?.phone}
       </Text>
       <Text fontSize="lg" color="error.500" textAlign="left" w="70%" italic>
-        {wrongOTP && "Mã OTP không chính xác"}
+        {wrongOTP && DICTIONARY.INVALID_OTP_CODE_MSG}
       </Text>
       <VStack mt={2} mb={8} space={4} w="70%">
         {/* OTP code field */}
@@ -143,14 +144,13 @@ const OTPScreen = () => {
               color: "#000",
             },
           }}
-          isLoadingText="Đang xử lý"
+          isLoadingText={DICTIONARY.PROCESSING_BUTTON_LABEL}
           size="lg"
           w="100%"
+          _text={{ fontSize: 18 }}
           onPress={onSubmit(value)}
         >
-          <Text color="white" fontSize="lg">
-            Tiếp tục
-          </Text>
+          Tiếp tục
         </Button>
       </VStack>
       <Center mb={4}>
@@ -172,10 +172,15 @@ const OTPScreen = () => {
               .padStart(2, "0")}`}
           </Text>
         ) : (
-          <Button height={12} size="lg" w="40%" onPress={resetCountdown}>
-            <Text color="white" fontSize="xl">
-              Gửi lại
-            </Text>
+          <Button
+            isLoading={waitNewOTP}
+            isLoadingText={DICTIONARY.SENDING_BUTTON_LABEL}
+            size="lg"
+            w="40%"
+            _text={{ fontSize: 18 }}
+            onPress={resetCountdown}
+          >
+            Gửi lại
           </Button>
         ))}
     </Center>

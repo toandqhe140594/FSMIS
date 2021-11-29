@@ -8,56 +8,47 @@ import {
   Center,
   Heading,
   Icon,
-  IconButton,
   Image,
-  Input,
   Text,
   VStack,
 } from "native-base";
-import React, { useEffect, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import React, { useState } from "react";
+import { FormProvider, useForm } from "react-hook-form";
 import {
   KeyboardAvoidingView,
   ScrollView,
   StatusBar,
   useWindowDimensions,
 } from "react-native";
-import * as yup from "yup";
 
-import { phoneRegExp } from "../constants";
+import InputComponent from "../components/common/InputComponent";
+import PasswordInput from "../components/common/PasswordInput";
+import { DICTIONARY, SCHEMA } from "../constants";
 import { goToForgotPasswordScreen, goToRegisterScreen } from "../navigations";
+import { showToastMessage } from "../utilities";
 
-// Validation schema for form
-const validationSchema = yup.object().shape({
-  phoneNumber: yup
-    .string()
-    .required("Số điện thoại không thể bỏ trống")
-    .matches(phoneRegExp, "Số điện thoại không hợp lệ")
-    .label("PhoneNumber"),
-  password: yup
-    .string()
-    .required("Mật khẩu không thể bỏ trống")
-    .label("Password"),
-});
+const PhoneIcon = () => (
+  <Icon
+    as={<MaterialIcons name="phone-iphone" />}
+    size={5}
+    ml={2}
+    color="muted.500"
+  />
+);
 
 const LoginScreen = () => {
   const navigation = useNavigation();
-  const {
-    control,
-    handleSubmit,
-    // setValue,
-    formState: { errors },
-  } = useForm({
-    resolver: yupResolver(validationSchema),
+  const [isLoading, setIsLoading] = useState(false);
+  const minHeight = Math.round(
+    useWindowDimensions().height - StatusBar.currentHeight,
+  );
+  const methods = useForm({
+    mode: "onSubmit",
+    reValidateMode: "onSubmit",
+    resolver: yupResolver(SCHEMA.LOGIN_FORM),
   });
-
+  const { handleSubmit } = methods;
   const login = useStoreActions((actions) => actions.login);
-
-  const [visible, setVisible] = useState(false);
-
-  const toggleVisible = () => {
-    setVisible(!visible);
-  };
 
   const registerAction = () => {
     goToRegisterScreen(navigation);
@@ -67,21 +58,16 @@ const LoginScreen = () => {
     goToForgotPasswordScreen(navigation);
   };
 
-  // Development only
-  useEffect(() => {
-    // 0921485233 admin
-    // setValue("phoneNumber", "0963372727");
-    // setValue("phoneNumber", "0921485233");
-    // setValue("password", "Asdf2k@!");
-  }, []);
-
   const onSubmit = (data) => {
-    login({ phone: data.phoneNumber, password: data.password });
+    setIsLoading(true);
+    login({ phone: data.phoneNumber, password: data.password })
+      .then(() => {
+        showToastMessage(DICTIONARY.TOAST_LOGIN_SUCCESS_MSG);
+      })
+      .catch(() => {
+        setIsLoading(false);
+      });
   };
-
-  const minHeight = Math.round(
-    useWindowDimensions().height - StatusBar.currentHeight,
-  );
 
   return (
     <KeyboardAvoidingView>
@@ -99,93 +85,34 @@ const LoginScreen = () => {
             <Text fontSize="lg">
               Hãy cùng khám phá với <Text bold>FSMIS</Text>!
             </Text>
-            <VStack flex={1} mt={6} space={1} w={{ base: "70%", md: "50" }}>
-              {/* Phone number input field */}
-              <Controller
-                control={control}
-                name="phoneNumber"
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <Input
-                    InputLeftElement={
-                      <Icon
-                        as={<MaterialIcons name="phone-iphone" />}
-                        size={5}
-                        ml={2}
-                        color="muted.500"
-                      />
-                    }
-                    keyboardType="phone-pad"
-                    maxLength={13}
-                    paddingLeft={0}
-                    placeholder="Số điện thoại"
-                    size="lg"
-                    onBlur={onBlur}
-                    onChangeText={onChange}
-                    value={value}
-                  />
-                )}
-              />
-              {errors.phoneNumber?.message && (
-                <Text color="red.500" fontSize="xs" italic>
-                  {errors.phoneNumber?.message}
+            <FormProvider {...methods}>
+              <VStack flex={1} mt={6} space={2} w={{ base: "70%", md: "50" }}>
+                {/* Phone number input field */}
+                <InputComponent
+                  useNumPad
+                  placeholder={DICTIONARY.INPUT_PHONE_NUMBER_PLACEHOLDER}
+                  controllerName={DICTIONARY.FORM_FIELD_PHONE_NUMBER}
+                  leftIcon={<PhoneIcon />}
+                />
+                {/* Password input field */}
+                <PasswordInput
+                  placeholder={DICTIONARY.INPUT_PASSWORD_PLACEHOLDER}
+                  controllerName={DICTIONARY.FORM_FIELD_PASSWORD}
+                />
+                <Text
+                  underline
+                  alignSelf="flex-end"
+                  onPress={forgotPasswordAction}
+                >
+                  Quên mật khẩu?
                 </Text>
-              )}
 
-              {/* Password input field */}
-              <Controller
-                control={control}
-                name="password"
-                render={({ field: { onChange, onBlur, value } }) => (
-                  <Box position="relative" justifyContent="center">
-                    <Input
-                      placeholder="Mật khẩu"
-                      size="lg"
-                      type={visible ? "text" : "password"}
-                      onBlur={onBlur}
-                      onChangeText={onChange}
-                      value={value}
-                    />
-                    <IconButton
-                      h="100%"
-                      icon={
-                        <Icon
-                          alignSelf="flex-end"
-                          as={
-                            <MaterialIcons
-                              name={visible ? "visibility" : "visibility-off"}
-                            />
-                          }
-                          color="muted.500"
-                          mr={2}
-                          size={5}
-                        />
-                      }
-                      justifyContent="center"
-                      position="absolute"
-                      right={0}
-                      w="20%"
-                      onPress={toggleVisible}
-                    />
-                  </Box>
-                )}
-              />
-              {errors.password?.message && (
-                <Text color="red.500" fontSize="xs" italic>
-                  {errors.password?.message}
-                </Text>
-              )}
-
-              <Text
-                alignSelf="flex-end"
-                underline
-                onPress={forgotPasswordAction}
-              >
-                Quên mật khẩu?
-              </Text>
-
-              {/* Submit button */}
-              <Button onPress={handleSubmit(onSubmit)}>Đăng nhập</Button>
-            </VStack>
+                {/* Submit button */}
+                <Button isLoading={isLoading} onPress={handleSubmit(onSubmit)}>
+                  Đăng nhập
+                </Button>
+              </VStack>
+            </FormProvider>
           </Center>
           <Box justifyContent="flex-end" alignItems="center" mb={6}>
             <Text>
