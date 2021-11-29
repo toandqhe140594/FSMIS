@@ -1,10 +1,11 @@
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import { Select } from "native-base";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
+  Text,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -37,6 +38,14 @@ const FLocationReportRoute = () => {
     (actions) => actions.ReportModel,
   );
 
+  const memoizedStyle = useMemo(
+    () =>
+      !listLocationReport.length
+        ? { flex: 1, justifyContent: "center", alignItem: "center" }
+        : null,
+    [listLocationReport.length > 0],
+  );
+
   const handleReportLocationDetailNavigate = (id, active) => () => {
     goToAdminFLocationReportDetailScreen(navigation, {
       isActive: active,
@@ -45,6 +54,10 @@ const FLocationReportRoute = () => {
   };
 
   const keyExtractor = (item) => item.id.toString();
+
+  const renderEmpty = () => (
+    <Text style={{ color: "gray" }}>Chưa có báo cáo nào</Text>
+  );
 
   const renderItem = ({ item }) => {
     return (
@@ -155,9 +168,11 @@ const FLocationReportRoute = () => {
         </Select>
         <FlatList
           height="100%"
+          contentContainerStyle={memoizedStyle}
           keyExtractor={keyExtractor}
           renderItem={renderItem}
           ListFooterComponent={renderFooter}
+          ListEmptyComponent={renderEmpty}
           bounces={false}
           data={listLocationReport}
           onEndReached={handleLoadMore}

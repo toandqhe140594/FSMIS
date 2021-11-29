@@ -1,10 +1,11 @@
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import { Select } from "native-base";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
+  Text,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -37,6 +38,14 @@ const ReportCatchRoute = () => {
     (actions) => actions.ReportModel,
   );
 
+  const memoizedStyle = useMemo(
+    () =>
+      !listCatchReport.length
+        ? { flex: 1, justifyContent: "center", alignItem: "center" }
+        : null,
+    [listCatchReport.length > 0],
+  );
+
   const handleCatchReportDetailNavigate = (id, active) => () => {
     goToAdminCatchReportDetail(navigation, {
       isActive: active,
@@ -45,6 +54,10 @@ const ReportCatchRoute = () => {
   };
 
   const keyExtractor = (item) => item.id.toString();
+
+  const renderEmpty = () => (
+    <Text style={{ color: "gray" }}>Chưa có báo cáo nào</Text>
+  );
 
   const renderItem = ({ item }) => (
     <TouchableOpacity
@@ -73,6 +86,7 @@ const ReportCatchRoute = () => {
       setIsLoading(true);
     }
   };
+
   /**
    * When FlatList scroll to bottom,
    * process to the next catch report page
@@ -147,9 +161,11 @@ const ReportCatchRoute = () => {
 
         <FlatList
           height="100%"
+          contentContainerStyle={memoizedStyle}
           keyExtractor={keyExtractor}
           data={listCatchReport}
           renderItem={renderItem}
+          ListEmptyComponent={renderEmpty}
           ListFooterComponent={renderFooter}
           onEndReached={handleLoadMore}
           onEndReachedThreshold={0.2}

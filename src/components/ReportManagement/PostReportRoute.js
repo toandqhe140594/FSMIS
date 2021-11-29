@@ -1,10 +1,11 @@
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import { Select } from "native-base";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
+  Text,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -36,6 +37,13 @@ const PostReportRoute = () => {
   const { getListPostReport, resetReportList } = useStoreActions(
     (actions) => actions.ReportModel,
   );
+  const memoizedStyle = useMemo(
+    () =>
+      !listPostReport.length
+        ? { flex: 1, justifyContent: "center", alignItem: "center" }
+        : null,
+    [listPostReport.length > 0],
+  );
 
   const handleReportPostDetailNavigate = (id, active) => () => {
     goToAdminPostReportDetailScreen(navigation, {
@@ -45,6 +53,10 @@ const PostReportRoute = () => {
   };
 
   const keyExtractor = (item) => item.id.toString();
+
+  const renderEmpty = () => (
+    <Text style={{ color: "gray" }}>Chưa có báo cáo nào</Text>
+  );
 
   const renderItem = ({ item }) => (
     <TouchableOpacity
@@ -149,9 +161,11 @@ const PostReportRoute = () => {
 
         <FlatList
           height="100%"
+          contentContainerStyle={memoizedStyle}
           keyExtractor={keyExtractor}
           data={listPostReport}
           renderItem={renderItem}
+          ListEmptyComponent={renderEmpty}
           ListFooterComponent={renderFooter}
           bounces={false}
           onEndReached={handleLoadMore}

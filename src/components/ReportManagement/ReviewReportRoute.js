@@ -1,10 +1,11 @@
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import { Select } from "native-base";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
+  Text,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -37,6 +38,14 @@ const ReviewReportRoute = () => {
     (actions) => actions.ReportModel,
   );
 
+  const memoizedStyle = useMemo(
+    () =>
+      !listReviewReport.length
+        ? { flex: 1, justifyContent: "center", alignItem: "center" }
+        : null,
+    [listReviewReport.length > 0],
+  );
+
   const handleReportReviewDetailNavigate = (id, active) => () => {
     goToAdminReviewReportDetailScreen(navigation, {
       isActive: active,
@@ -45,6 +54,10 @@ const ReviewReportRoute = () => {
   };
 
   const keyExtractor = (item) => item.id.toString();
+
+  const renderEmpty = () => (
+    <Text style={{ color: "gray" }}>Chưa có báo cáo nào</Text>
+  );
 
   const renderItem = ({ item }) => (
     <TouchableOpacity
@@ -147,9 +160,11 @@ const ReviewReportRoute = () => {
 
         <FlatList
           height="100%"
+          contentContainerStyle={memoizedStyle}
           keyExtractor={keyExtractor}
           data={listReviewReport}
           renderItem={renderItem}
+          ListEmptyComponent={renderEmpty}
           ListFooterComponent={renderFooter}
           bounces={false}
           onEndReached={handleLoadMore}
