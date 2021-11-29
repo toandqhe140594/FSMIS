@@ -48,6 +48,9 @@ export const ANGLER_RESET_PASSWORD_HEADER = "Thay đổi mật khẩu";
  * Add any titles, message, prompt, confirmation related to ALERT
  */
 export const ALERT_TITLE = "Thông báo";
+export const ALERT_WARNING_TITLE = "Cảnh báo";
+export const ALERT_BACK_TO_LOGIN_MSG =
+  "Bạn có muốn quay về màn hình đăng nhập không?";
 export const ALERT_ERROR_MSG = "Đã xảy ra lỗi! Vui lòng thử lại sau.";
 export const ALERT_EDIT_PROFILE_SUCCESS_MSG =
   "Cập nhật thông tin cá nhân thành công!";
@@ -125,6 +128,7 @@ export const FORM_FIELD_CATCH_REPORT_FISH_RETURN_TO_OWNER = "returnToOwner";
 /**
  * RELATED BUTTON LABELS SECTION
  */
+export const CONTINUE_BUTTON_LABEL = "Tiếp tục";
 export const SEARCH_LOADING_TEXT = "Đang tìm kiếm";
 export const SEND_BUTTON_LABEL = "Gửi";
 export const CONFIRM_BUTTON_LABEL = "Xác nhận";

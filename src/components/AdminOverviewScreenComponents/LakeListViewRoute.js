@@ -1,36 +1,34 @@
 import { useStoreActions, useStoreState } from "easy-peasy";
-import { Box, VStack } from "native-base";
+import { Box, Center, Text, VStack } from "native-base";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, ScrollView } from "react-native";
+import { ScrollView } from "react-native";
 
+import SmallScreenLoadingIndicator from "../common/SmallScreenLoadingIndicator";
 import LakeCard from "../LakeCard";
 
 const LakeListViewRoute = () => {
   const lakeList = useStoreState((states) => states.LocationModel.lakeList);
+
   const getLakeList = useStoreActions(
     (actions) => actions.LocationModel.getLakeList,
   );
 
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    getLakeList();
-  }, []);
+  // Hide screen loading indicator
+  const closeLoadingIndicator = () => setLoading(false);
 
   useEffect(() => {
-    if (lakeList !== null) setLoading(false);
-  }, [lakeList]);
+    getLakeList().then(closeLoadingIndicator).catch(closeLoadingIndicator);
+  }, []);
+
+  if (loading) return <SmallScreenLoadingIndicator />;
 
   return (
     <ScrollView>
-      <Box>
-        <Box mx="7%">
-          {loading && (
-            <Box flex={1} justifyContent="center" alignItems="center">
-              <ActivityIndicator size="large" color="blue" />
-            </Box>
-          )}
-          {!loading && (
+      <Box mx="7%">
+        {lakeList.length > 0 ? (
+          <>
             <VStack mt={5} space={2}>
               {lakeList.map((lake) => (
                 <LakeCard
@@ -42,8 +40,12 @@ const LakeListViewRoute = () => {
                 />
               ))}
             </VStack>
-          )}
-        </Box>
+          </>
+        ) : (
+          <Center flex={1} minHeight={600}>
+            <Text>Không có dữ liệu </Text>
+          </Center>
+        )}
       </Box>
     </ScrollView>
   );

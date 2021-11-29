@@ -8,6 +8,7 @@ import FLocationCard from "../components/FLocationCard";
 import HeaderTab from "../components/HeaderTab";
 import colors from "../config/colors";
 import styles from "../config/styles";
+import { KEY_EXTRACTOR } from "../constants";
 
 const AdminFLocationManagementScreen = () => {
   const fishingLocationList = useStoreState(
@@ -98,8 +99,6 @@ const AdminFLocationManagementScreen = () => {
     getFishingLocationList({ keyword: search, filterType: filter });
   };
 
-  const keyExtractor = (item) => item.id.toString();
-
   return (
     <>
       <HeaderTab name="Quản lý điểm câu" />
@@ -141,7 +140,7 @@ const AdminFLocationManagementScreen = () => {
             style={[styles.mt1, { width: "90%" }]}
             data={fishingLocationList}
             renderItem={renderItem}
-            keyExtractor={keyExtractor}
+            keyExtractor={KEY_EXTRACTOR}
             onEndReached={onEndReached}
             onEndReachedThreshold={0.2}
           />

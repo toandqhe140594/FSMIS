@@ -1,9 +1,12 @@
 import { useFocusEffect } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, FlatList, Text } from "native-base";
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
+import { View } from "react-native";
 
+import SmallScreenLoadingIndicator from "../components/common/SmallScreenLoadingIndicator";
 import PressableCustomCard from "../components/PressableCustomCard";
+import { KEY_EXTRACTOR } from "../constants";
 
 const NotificationsScreen = () => {
   const notificationList = useStoreState(
@@ -17,10 +20,18 @@ const NotificationsScreen = () => {
     (actions) => actions.ProfileModel.getNotificationListOverwrite,
   );
 
+  const [loading, setLoading] = useState(true);
+
   useFocusEffect(
-    // useCallback will listen to route.param
+    // useCallback will call when navigate back to screen
     useCallback(() => {
-      getNotificationListOverwrite();
+      getNotificationListOverwrite()
+        .then(() => {
+          setLoading(false);
+        })
+        .catch(() => {
+          setLoading(false);
+        });
     }, []),
   );
 
@@ -43,11 +54,19 @@ const NotificationsScreen = () => {
     </Box>
   );
 
-  const keyExtractor = (item) => item.id.toString();
-
   const onEndReached = () => {
     getNotificationList();
   };
+
+  const ListEmptyComponent = () => {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <Text>Không có dữ liệu</Text>
+      </View>
+    );
+  };
+
+  if (loading) return <SmallScreenLoadingIndicator />;
 
   return (
     <>
@@ -60,8 +79,9 @@ const NotificationsScreen = () => {
         <FlatList
           data={notificationList}
           renderItem={renderItem}
-          keyExtractor={keyExtractor}
+          keyExtractor={KEY_EXTRACTOR}
           onEndReached={onEndReached}
+          ListEmptyComponent={ListEmptyComponent}
         />
       </Box>
     </>

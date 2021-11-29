@@ -8,7 +8,7 @@ import { useStoreActions, useStoreState } from "easy-peasy";
 import { Button, Center, VStack } from "native-base";
 import React, { useCallback, useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { Alert, ScrollView } from "react-native";
+import { ScrollView } from "react-native";
 
 import AvatarSection from "../components/AnglerEditProfile/AvatarSection";
 import DatePickerInput from "../components/common/DatePickerInput";
@@ -22,7 +22,7 @@ import HeaderTab from "../components/HeaderTab";
 import moment from "../config/moment";
 import { DEFAULT_TIMEOUT, DICTIONARY, SCHEMA } from "../constants";
 import { goBack } from "../navigations";
-import { showAlertBox } from "../utilities";
+import { showAlertBox, showAlertConfirmBox } from "../utilities";
 
 const genderList = [
   { id: true, name: "Nam" },
@@ -62,23 +62,8 @@ const EditProfileScreen = () => {
    * Call an alert box to reset avatar image back to default avatar
    */
   const deleteImage = () => {
-    Alert.alert(
-      "Thông báo",
-      "Bạn chắc chắn muốn xóa ảnh này?",
-      [
-        {
-          text: "Hủy",
-          onPress: () => {},
-          style: "cancel",
-        },
-        {
-          text: "Đồng ý",
-          onPress: () => setValue("avatarUrl", userInfo.avatarUrl),
-        },
-      ],
-      {
-        cancelable: true,
-      },
+    showAlertConfirmBox("Thông báo", "Bạn chắc chắn muốn xóa ảnh này?", () =>
+      setValue("avatarUrl", userInfo.avatarUrl),
     );
   };
 
