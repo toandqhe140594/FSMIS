@@ -1,7 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, Button, FlatList, Modal, Select, Text } from "native-base";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import CalendarPicker from "react-native-calendar-picker";
 
 import AvatarCard from "../components/AvatarCard";
@@ -24,6 +24,14 @@ const FManageCatchReportHistory = () => {
   const [endDate, setEndDate] = useState("");
   const [shouldReload, setShouldReload] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+
+  const memoizedStyle = useMemo(
+    () =>
+      catchReportHistory && catchReportHistory.length > 0
+        ? null
+        : { flex: 1, justifyContent: "center" },
+    [catchReportHistory && catchReportHistory.length > 0],
+  );
 
   const dateChangeHandler = (date, type) => {
     if (type === "END_DATE") {
@@ -112,6 +120,12 @@ const FManageCatchReportHistory = () => {
     );
   };
 
+  const renderEmpty = () => (
+    <Text color="gray.400" alignSelf="center">
+      Lịch sử check-in đang trống
+    </Text>
+  );
+
   const keyExtractor = (item) => item.id.toString();
 
   const onEndReached = () => {
@@ -125,13 +139,7 @@ const FManageCatchReportHistory = () => {
   return (
     <Box flex={1}>
       <HeaderTab name="Lịch sử báo cá" />
-      <Box
-        w={{
-          base: "100%",
-          md: "25%",
-        }}
-        flex={1}
-      >
+      <Box w={{ base: "100%", md: "25%" }} flex={1}>
         <Modal isOpen={modalVisible} onClose={closeModel} size="full">
           <Modal.Content>
             <Modal.CloseButton />
@@ -173,6 +181,8 @@ const FManageCatchReportHistory = () => {
             renderItem={renderItem}
             keyExtractor={keyExtractor}
             onEndReached={onEndReached}
+            contentContainerStyle={memoizedStyle}
+            ListEmptyComponent={renderEmpty}
           />
         </Box>
       </Box>
