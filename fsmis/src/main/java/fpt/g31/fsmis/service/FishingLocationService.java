@@ -1,9 +1,5 @@
 package fpt.g31.fsmis.service;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import fpt.g31.fsmis.dto.input.AdminFishingLocationDtoIn;
 import fpt.g31.fsmis.dto.input.FilterDtoIn;
 import fpt.g31.fsmis.dto.input.FishingLocationDtoIn;
@@ -13,7 +9,6 @@ import fpt.g31.fsmis.entity.*;
 import fpt.g31.fsmis.entity.address.District;
 import fpt.g31.fsmis.entity.address.Province;
 import fpt.g31.fsmis.entity.address.Ward;
-import fpt.g31.fsmis.entity.distancematrix.BingDistanceJsonResult;
 import fpt.g31.fsmis.exception.NotFoundException;
 import fpt.g31.fsmis.exception.UnauthorizedException;
 import fpt.g31.fsmis.repository.*;
@@ -26,7 +21,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import javax.persistence.criteria.Join;
 import javax.servlet.http.HttpServletRequest;
@@ -45,6 +39,7 @@ public class FishingLocationService {
     private static final String LOCATION_NOT_FOUND = "Không tìm thấy hồ câu!";
     private static final String ACCOUNT_NOT_FOUND = "Không tìm thấy tài khoản!";
     private static final String INVALID_PAGE_NUMBER = "Số trang không hợp lệ";
+    private static final String WARD_NOT_FOUND = "Không tìm thấy phường/xã!";
     private final JwtFilter jwtFilter;
     private final FishingLocationRepos fishingLocationRepos;
     private final UserRepos userRepos;
@@ -59,7 +54,7 @@ public class FishingLocationService {
                                                     HttpServletRequest request) {
         User owner = jwtFilter.getUserFromToken(request);
         Ward ward = wardRepos.findById(fishingLocationDtoIn.getWardId())
-                .orElseThrow(() -> new NotFoundException("Không tìm thấy phường/xã!"));
+                .orElseThrow(() -> new NotFoundException(WARD_NOT_FOUND));
         if (bannedPhoneRepos.existsById(fishingLocationDtoIn.getPhone())) {
             throw new ValidationException("Số điện thoại bị cấm khỏi hệ thống");
         }
@@ -98,7 +93,7 @@ public class FishingLocationService {
             throw new ValidationException("Không có quyền chỉnh sửa hồ");
         }
         Ward ward = wardRepos.findById(fishingLocationDtoIn.getWardId())
-                .orElseThrow(() -> new NotFoundException("Không tìm thấy phường/xã!"));
+                .orElseThrow(() -> new NotFoundException(WARD_NOT_FOUND));
         location.setName(fishingLocationDtoIn.getName().trim());
         location.setUnsignedName(VNCharacterUtils.removeAccent(fishingLocationDtoIn.getName().toLowerCase().trim()));
         location.setPhone(fishingLocationDtoIn.getPhone().trim());
@@ -181,7 +176,7 @@ public class FishingLocationService {
 //        for (FishingLocation fishingLocation : fishingLocationList) {
 //            uri.append(fishingLocation.getLatitude()).append("%2C").append(fishingLocation.getLongitude()).append("%7C");
 //        }
-//        String key = "AIzaSyCWkEPRlvNk7-z06foiZnfGFpm91THyVZQ";
+//        String key = "";
 //        uri.delete(uri.length() - 3, uri.length()).append("&key=").append(key);
 //        OkHttpClient client = new OkHttpClient().newBuilder()
 //                .build();
@@ -217,29 +212,33 @@ public class FishingLocationService {
 //                count++;
 //            }
 //        }
-        StringBuilder uri = new StringBuilder("https://dev.virtualearth.net/REST/v1/Routes/DistanceMatrix?origins=" + latitude + "," + longitude + "&destinations=");
-        for (FishingLocation fishingLocation : fishingLocationList) {
-            uri.append(fishingLocation.getLatitude() + "," + fishingLocation.getLongitude() + ";");
-        }
-        uri.delete(uri.length() - 1, uri.length());
-        uri.append("&travelMode=driving&key=AifuNyF5Q8Kh-xzvqV9icNvlkP_dFS89AZE7zIqJj_8UYpqfM15BSG1TiC-GC1jh");
-        RestTemplate restTemplate = new RestTemplate();
-        String result = restTemplate.getForObject(uri.toString(), String.class);
-        System.out.println(result);
-        JsonFactory factory = new JsonFactory();
-        ObjectMapper mapper = new ObjectMapper(factory);
-        JsonParser parser = factory.createParser(result);
-        JsonNode rootNode = mapper.readTree(parser);
-        JsonNode resourceSetsNode = rootNode.get("resourceSets");
-        JsonNode resourcesNode = resourceSetsNode.get(0).get("resources");
-        JsonNode resultNode = resourcesNode.get(0).get("results");
-        BingDistanceJsonResult[] resultList = mapper.convertValue(resultNode, BingDistanceJsonResult[].class);
-        int count = 0;
-        for (BingDistanceJsonResult distanceJsonResult : resultList) {
-            FishingLocationPinDtoOut fishingLocationPinDtoOut = modelMapper.map(fishingLocationList.get(count), FishingLocationPinDtoOut.class);
-            fishingLocationPinDtoOut.setDistance(distanceJsonResult.getTravelDistance());
+//        StringBuilder uri = new StringBuilder("https://dev.virtualearth.net/REST/v1/Routes/DistanceMatrix?origins=" + latitude + "," + longitude + "&destinations=");
+//        for (FishingLocation fishingLocation : fishingLocationList) {
+//            uri.append(fishingLocation.getLatitude() + "," + fishingLocation.getLongitude() + ";");
+//        }
+//        uri.delete(uri.length() - 1, uri.length());
+//        uri.append("&travelMode=driving&key=AifuNyF5Q8Kh-xzvqV9icNvlkP_dFS89AZE7zIqJj_8UYpqfM15BSG1TiC-GC1jh");
+//        RestTemplate restTemplate = new RestTemplate();
+//        String result = restTemplate.getForObject(uri.toString(), String.class);
+//        System.out.println(result);
+//        JsonFactory factory = new JsonFactory();
+//        ObjectMapper mapper = new ObjectMapper(factory);
+//        JsonParser parser = factory.createParser(result);
+//        JsonNode rootNode = mapper.readTree(parser);
+//        JsonNode resourceSetsNode = rootNode.get("resourceSets");
+//        JsonNode resourcesNode = resourceSetsNode.get(0).get("resources");
+//        JsonNode resultNode = resourcesNode.get(0).get("results");
+//        BingDistanceJsonResult[] resultList = mapper.convertValue(resultNode, BingDistanceJsonResult[].class);
+//        int count = 0;
+//        for (BingDistanceJsonResult distanceJsonResult : resultList) {
+//            FishingLocationPinDtoOut fishingLocationPinDtoOut = modelMapper.map(fishingLocationList.get(count), FishingLocationPinDtoOut.class);
+//            fishingLocationPinDtoOut.setDistance(distanceJsonResult.getTravelDistance());
+//            fishingLocationPinDtoOutList.add(fishingLocationPinDtoOut);
+//            count++;
+//        }
+        for (FishingLocation location : fishingLocationList) {
+            FishingLocationPinDtoOut fishingLocationPinDtoOut = modelMapper.map(location, FishingLocationPinDtoOut.class);
             fishingLocationPinDtoOutList.add(fishingLocationPinDtoOut);
-            count++;
         }
         return fishingLocationPinDtoOutList;
     }
@@ -680,7 +679,7 @@ public class FishingLocationService {
 
     public ResponseTextDtoOut adminCreateLocation(AdminFishingLocationDtoIn adminFishingLocationDtoIn) {
         Ward ward = wardRepos.findById(adminFishingLocationDtoIn.getWardId())
-                .orElseThrow(() -> new NotFoundException("Không tìm thấy phường/xã!"));
+                .orElseThrow(() -> new NotFoundException(WARD_NOT_FOUND));
         FishingLocation fishingLocation = FishingLocation.builder()
                 .name(adminFishingLocationDtoIn.getName())
                 .unsignedName(VNCharacterUtils.removeAccent(adminFishingLocationDtoIn.getName().toLowerCase()))
