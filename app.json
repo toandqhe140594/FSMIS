@@ -22,12 +22,7 @@
         "foregroundImage": "./src/assets/images/admin-image.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "com.g31.fsmis",
-      "config": {
-        "googleMaps": {
-          "apiKey": "AIzaSyDA0QPfk3Pi5hGyCdcOF5tFpzLDbatTKck"
-        }
-      }
+      "package": "com.g31.fsmis"
     },
     "web": {
       "favicon": "./src/assets/images/favicon.png"
