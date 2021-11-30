@@ -5,6 +5,7 @@ import fpt.g31.fsmis.dto.input.CatchReportDtoIn;
 import fpt.g31.fsmis.dto.output.*;
 import fpt.g31.fsmis.entity.*;
 import fpt.g31.fsmis.exception.NotFoundException;
+import fpt.g31.fsmis.exception.UnauthorizedException;
 import fpt.g31.fsmis.repository.*;
 import fpt.g31.fsmis.security.JwtFilter;
 import lombok.AllArgsConstructor;
@@ -24,6 +25,7 @@ public class CatchesService {
 
     private static final String UNAUTHORIZED = "Không có quyền truy cập";
     private static final String INVALID_PAGE_NUMBER = "SỐ trang không hợp lệ";
+    private static final String LOCATION_NOT_FOUND = "Không tìm thấy điểm câu";
     private final FishingLocationRepos fishingLocationRepos;
     private final CatchesRepos catchesRepos;
     private final LakeRepos lakeRepos;
@@ -181,8 +183,11 @@ public class CatchesService {
         User user = jwtFilter.getUserFromToken(request);
         Catches catches = catchesRepos.findById(catchesId)
                 .orElseThrow(() -> new NotFoundException("Không tìm thấy bản ghi này!"));
-        if (Boolean.TRUE.equals(catches.getHidden()) && catches.getUser() != user && Boolean.TRUE.equals(!isOwnerOrStaff(catches.getFishingLocation().getId(), user))) {
-            throw new ValidationException(UNAUTHORIZED);
+//        if catch is hidden and user is not owner of that catch or staff in the location where the catch happened, throw an unauthorized exception
+        if (Boolean.TRUE.equals(catches.getHidden())
+                && catches.getUser() != user
+                && Boolean.TRUE.equals(!isOwnerOrStaff(catches.getFishingLocation().getId(), user))) {
+            throw new UnauthorizedException(UNAUTHORIZED);
         }
         List<CatchesDetail> catchesDetailList = catches.getCatchesDetailList();
         List<CaughtFishDtoOut> fishes = new ArrayList<>();
@@ -214,7 +219,8 @@ public class CatchesService {
     }
 
     private Boolean isOwnerOrStaff(Long locationId, User user) {
-        FishingLocation fishingLocation = fishingLocationRepos.getById(locationId);
+        FishingLocation fishingLocation = fishingLocationRepos.findById(locationId)
+                .orElseThrow(() -> new NotFoundException(LOCATION_NOT_FOUND));
         if (fishingLocation.getOwner() == user) {
             return true;
         }
@@ -298,6 +304,7 @@ public class CatchesService {
         Catches catches = catchesRepos.findById(catchId)
                 .orElseThrow(() -> new NotFoundException("Không tìm thấy báo cá"));
         catches.setApproved(false);
+        catchesRepos.save(catches);
         return new ResponseTextDtoOut("Xóa báo cá thành công");
     }
 }
