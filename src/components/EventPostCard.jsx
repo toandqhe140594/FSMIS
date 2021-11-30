@@ -25,8 +25,13 @@ const uriExtract = (uri) => {
   let widthVideo = 400;
   let heightVideo = 320;
   let heightPage = 340;
+  let isAllowsFullscreen = true;
   try {
     const regexIframe = new RegExp("<iframe", "g");
+    const regexYouTubeIframe = new RegExp(
+      '<iframe[^>]*srcs*=s*"?https?://[^s"/]*youtube.com(?:/[^s"]*)?"?[^>]*>.*?</iframe>',
+      "",
+    );
     const regexYouTubeLink =
       /^(https?:\/\/)?(www\.youtube\.com|youtu\.?be)\/.+$/g;
     const regexYouTubeID =
@@ -34,6 +39,9 @@ const uriExtract = (uri) => {
     const regexFacebookFWacth = /https:\/\/fb\.(?:watch|gg)\//;
     const regexFacebookLink =
       /^https:\/\/www\.facebook\.com\/([^\/?].+\/)?video(s|\.php)[\/?].*$/;
+    if (regexYouTubeIframe.test(uri)) {
+      isAllowsFullscreen = false;
+    }
     if (regexIframe.test(uri)) {
       const regExGetSrc = /<iframe ?.* src="([^"]+)" ?.*>/i;
       const regExGetWidth = /<iframe ?.* width="([^"]+)" ?.*>/i;
@@ -48,7 +56,6 @@ const uriExtract = (uri) => {
         widthVideo = 0.56 * heightVideo;
         heightPage = heightVideo + 10;
       }
-
       if (widthUri[1] >= heightUri[1]) {
         widthVideo = 400;
         heightVideo = Number(heightUri[1] / widthUri[1]) * widthVideo;
@@ -60,6 +67,7 @@ const uriExtract = (uri) => {
       widthVideo = 410;
       heightVideo = widthVideo * 0.85;
       heightPage = heightVideo + 10;
+      isAllowsFullscreen = false;
     } else if (regexFacebookFWacth.test(uri) || regexFacebookLink.test(uri)) {
       const mapObj = {
         ":": "%3A",
@@ -82,6 +90,7 @@ const uriExtract = (uri) => {
     videoHeight: heightVideo,
     videoWidth: widthVideo,
     pageHeight: heightPage,
+    allowFullscreen: isAllowsFullscreen,
   };
 
   return videoInfo;
@@ -113,6 +122,7 @@ const EventPostCard = ({
   let heightVideo = 400;
   let heightPage = 410;
   let typeBadge = "";
+  let isAllowsFullscreen;
   switch (lakePost.badge) {
     case "STOCKING":
       typeBadge = "Bồi cá";
@@ -133,6 +143,7 @@ const EventPostCard = ({
     heightVideo = videoInfo.videoHeight;
     heightPage = videoInfo.pageHeight;
     srcUri = videoInfo.uri;
+    isAllowsFullscreen = videoInfo.allowFullscreen;
   }
   return (
     <Box mt="1" px="1.4">
@@ -301,7 +312,7 @@ const EventPostCard = ({
               showsHorizontalScrollIndicator={false}
             >
               <WebView
-                allowsFullscreenVideo
+                allowsFullscreenVideo={isAllowsFullscreen}
                 overScrollMode="content"
                 originWhitelist={["https://*"]}
                 scalesPageToFit={false}
