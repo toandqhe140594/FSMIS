@@ -46,14 +46,17 @@ const FManageCheckinHistoryScreen = () => {
     [checkinHistoryList && checkinHistoryList.length > 0],
   );
 
-  const dateChangeHandler = useCallback((date, type) => {
-    if (type === "END_DATE") {
-      setEndDate(date);
-    } else {
-      setStartDate(date);
-      setEndDate(null);
-    }
-  }, []);
+  const dateChangeHandler = useCallback(
+    (date, type) => {
+      if (type === "END_DATE") {
+        setEndDate(date);
+      } else {
+        setStartDate(date);
+        setEndDate(null);
+      }
+    },
+    [startDate, endDate],
+  );
 
   const onLoadMore = () => {
     const objParams = {};
@@ -71,7 +74,7 @@ const FManageCheckinHistoryScreen = () => {
   const submitDateFilterHandler = useCallback(() => {
     resetCheckinHistory();
     onLoadMore();
-  }, []);
+  }, [startDate, endDate]);
 
   const renderEmpty = () => (
     <Text color="gray.400" alignSelf="center">

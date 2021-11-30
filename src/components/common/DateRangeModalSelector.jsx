@@ -8,7 +8,6 @@ const DateRangeModalSelector = ({
   handleDatePickerChange,
   onSubmitDate,
 }) => {
-  console.log("Child render");
   const [modalVisible, setModalVisible] = useState(false);
   const closeModal = () => setModalVisible(false);
   const handleValueChange = (value) => {

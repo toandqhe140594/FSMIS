@@ -33,15 +33,18 @@ const FManageCatchReportHistory = () => {
     [catchReportHistory && catchReportHistory.length > 0],
   );
 
-  const dateChangeHandler = useCallback((date, type) => {
-    if (type === "END_DATE") {
-      setEndDate(date);
-    } else {
-      setStartDate(date);
-      setEndDate(null);
-    }
-    setShouldReload(true);
-  }, []);
+  const dateChangeHandler = useCallback(
+    (date, type) => {
+      if (type === "END_DATE") {
+        setEndDate(date);
+      } else {
+        setStartDate(date);
+        setEndDate(null);
+      }
+      setShouldReload(true);
+    },
+    [startDate, endDate],
+  );
 
   const selectedFilterHandler = useCallback((type) => {
     if (type !== "BY_DATE") {
@@ -63,7 +66,7 @@ const FManageCatchReportHistory = () => {
       });
       setShouldReload(false);
     }
-  }, []);
+  }, [startDate, endDate]);
 
   useEffect(() => {
     getCatchReportHistoryOverwrite({
