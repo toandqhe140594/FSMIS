@@ -96,17 +96,6 @@ const AdminAccountManagementScreen = () => {
   });
   const viewConfigRef = React.useRef({ viewAreaCoveragePercentThreshold: 50 });
 
-  useEffect(() => {
-    getUserList({ pageNo: 1, setIsLoading });
-    const loadingTimeout = setTimeout(() => {
-      setIsLoading(false);
-    }, DEFAULT_TIMEOUT);
-    return () => {
-      clearTimeout(loadingTimeout);
-      clearAccountList();
-    };
-  }, []);
-
   const ListView = () => {
     return (
       <FlatList
@@ -124,6 +113,17 @@ const AdminAccountManagementScreen = () => {
       />
     );
   };
+
+  useEffect(() => {
+    getUserList({ pageNo: 1, setIsLoading });
+    const loadingTimeout = setTimeout(() => {
+      setIsLoading(false);
+    }, DEFAULT_TIMEOUT);
+    return () => {
+      clearTimeout(loadingTimeout);
+      clearAccountList();
+    };
+  }, []);
 
   useEffect(() => {
     if (userList) setIsLoading(false);
