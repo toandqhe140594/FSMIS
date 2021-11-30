@@ -22,11 +22,7 @@ import MapOverviewBox from "../components/FLocationEditProfile/MapOverviewBox";
 import HeaderTab from "../components/HeaderTab";
 import { DEFAULT_TIMEOUT, DICTIONARY, ROUTE_NAMES, SCHEMA } from "../constants";
 import { goBack, goToOTPScreen } from "../navigations";
-import {
-  showAlertAbsoluteBox,
-  showAlertBox,
-  showToastMessage,
-} from "../utilities";
+import { showAlertAbsoluteBox, showAlertBox } from "../utilities";
 
 const styles = StyleSheet.create({
   sectionWrapper: {
