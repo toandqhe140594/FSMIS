@@ -1,9 +1,17 @@
 /* eslint-disable react/prop-types */
 import { Ionicons } from "@expo/vector-icons";
-import { Box, HStack, Menu, Pressable, ScrollView, VStack } from "native-base";
+import {
+  Box,
+  HStack,
+  Menu,
+  Pressable,
+  ScrollView,
+  Text,
+  VStack,
+} from "native-base";
 import PropTypes from "prop-types";
 import React from "react";
-import { Badge, Divider, Text } from "react-native-elements";
+import { Badge, Divider } from "react-native-elements";
 import { WebView } from "react-native-webview";
 
 import styles from "../config/styles";
@@ -50,7 +58,7 @@ const uriExtract = (uri) => {
       const idArray = uri.split(regexYouTubeID);
       srcUri[1] = `https://www.youtube.com/embed/${idArray[1]}`;
       widthVideo = 410;
-      heightVideo = widthVideo * 0.8;
+      heightVideo = widthVideo * 0.85;
       heightPage = heightVideo + 10;
     } else if (regexFacebookFWacth.test(uri) || regexFacebookLink.test(uri)) {
       const mapObj = {
@@ -105,7 +113,6 @@ const EventPostCard = ({
   let heightVideo = 400;
   let heightPage = 410;
   let typeBadge = "";
-
   switch (lakePost.badge) {
     case "STOCKING":
       typeBadge = "Bồi cá";
@@ -132,7 +139,7 @@ const EventPostCard = ({
       {postStyle === "LAKE_POST" && (
         <>
           <HStack px="2" space={2} mt={4} pb={3} justifyContent="space-between">
-            <HStack alignItems="baseline" space={1}>
+            <HStack alignItems="center" space={1}>
               <Badge
                 badgeStyle={{
                   borderRadius: 7,
@@ -148,9 +155,27 @@ const EventPostCard = ({
                 status="primary"
                 value={typeBadge}
               />
-              {postTime !== undefined && (
-                <Text style={styles.ml1}>{postTime}</Text>
-              )}
+              <VStack>
+                {postTime !== undefined && (
+                  <Text style={styles.ml1} bold position="relative" top={1}>
+                    {postTime}
+                  </Text>
+                )}
+                {lakePost.posterName !== undefined &&
+                lakePost.posterName.length > 0 ? (
+                  <Text
+                    style={{
+                      fontSize: 11,
+                      textAlign: "left",
+                      marginLeft: 6,
+                    }}
+                    position="relative"
+                    top={-1}
+                  >
+                    {lakePost.posterName}
+                  </Text>
+                ) : null}
+              </VStack>
             </HStack>
 
             <Menu
