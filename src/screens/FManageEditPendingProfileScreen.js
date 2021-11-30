@@ -108,6 +108,7 @@ const FManageEditPendingProfileScreen = () => {
       DICTIONARY.ALERT_TITLE,
       DICTIONARY.ALERT_EDIT_LOCATION_SUCCESS_MSG,
     );
+    goBack(navigation);
   };
 
   const onSubmit = (data) => {
