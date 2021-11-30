@@ -148,7 +148,6 @@ const FManageEditPendingProfileScreen = () => {
   useEffect(() => {
     if (route.params?.id) {
       getLocationDetailsById({ id: route.params.id }).catch(() => {
-        handleError();
         goBack(navigation);
       });
     }
