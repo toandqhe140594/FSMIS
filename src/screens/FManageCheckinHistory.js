@@ -1,19 +1,10 @@
 import { useStoreActions, useStoreState } from "easy-peasy";
-import {
-  Box,
-  Button,
-  CheckIcon,
-  Divider,
-  FlatList,
-  Modal,
-  Select,
-  Text,
-} from "native-base";
-import React, { useEffect, useMemo, useState } from "react";
-import CalendarPicker from "react-native-calendar-picker";
+import { Box, Divider, FlatList, Text } from "native-base";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 
 import AvatarCard from "../components/AvatarCard";
 import CheckInCard from "../components/CheckInCard";
+import DateRangeModalSelector from "../components/common/DateRangeModalSelector";
 import HeaderTab from "../components/HeaderTab";
 import PressableCustomCard from "../components/PressableCustomCard";
 
@@ -39,7 +30,6 @@ const FManageCheckinHistoryScreen = () => {
   const { checkinHistoryCurrentPage, checkinHistoryList } = useStoreState(
     (states) => states.FManageModel,
   );
-  const [modalVisible, setModalVisible] = useState(false);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const {
@@ -47,12 +37,6 @@ const FManageCheckinHistoryScreen = () => {
     getCheckinHistoryListByDate,
     resetCheckinHistory,
   } = useStoreActions((actions) => actions.FManageModel);
-
-  const selectedFilterHandler = (type) => {
-    if (type === "BY_DATE") {
-      setModalVisible(true);
-    }
-  };
 
   const memoizedStyle = useMemo(
     () =>
@@ -62,14 +46,14 @@ const FManageCheckinHistoryScreen = () => {
     [checkinHistoryList && checkinHistoryList.length > 0],
   );
 
-  const dateChangeHandler = (date, type) => {
+  const dateChangeHandler = useCallback((date, type) => {
     if (type === "END_DATE") {
       setEndDate(date);
     } else {
       setStartDate(date);
       setEndDate(null);
     }
-  };
+  }, []);
 
   const onLoadMore = () => {
     const objParams = {};
@@ -84,15 +68,10 @@ const FManageCheckinHistoryScreen = () => {
     }
   };
 
-  const submitDateFilterHandler = () => {
-    setModalVisible(false);
+  const submitDateFilterHandler = useCallback(() => {
     resetCheckinHistory();
     onLoadMore();
-  };
-
-  const handleFilterChange = (itemValue) => selectedFilterHandler(itemValue);
-
-  const closeModal = () => setModalVisible(false);
+  }, []);
 
   const renderEmpty = () => (
     <Text color="gray.400" alignSelf="center">
@@ -116,44 +95,10 @@ const FManageCheckinHistoryScreen = () => {
     <Box>
       <HeaderTab name="Lịch sử Check-in" />
       <Box w={{ base: "100%", md: "25%" }}>
-        <Modal isOpen={modalVisible} onClose={closeModal} size="full">
-          <Modal.Content>
-            <Modal.CloseButton />
-            <Modal.Header>Chọn ngày</Modal.Header>
-            <Modal.Body>
-              <CalendarPicker
-                allowRangeSelection
-                scrollable
-                todayBackgroundColor="#00e673"
-                selectedDayColor="#00ccff"
-                selectedDayTextColor="#000000"
-                onDateChange={dateChangeHandler}
-              />
-              <Button size="lg" onPress={submitDateFilterHandler}>
-                OK
-              </Button>
-            </Modal.Body>
-          </Modal.Content>
-        </Modal>
-
-        <Select
-          mt={1}
-          mb={0.5}
-          minWidth="200"
-          accessibilityLabel="Chọn chế độ lọc"
-          placeholder="Chọn chế độ lọc"
-          backgroundColor="#ffffff"
-          onValueChange={handleFilterChange}
-          fontSize="md"
-          _selectedItem={{
-            bg: "primary.200",
-            endIcon: <CheckIcon size="5" />,
-          }}
-        >
-          <Select.Item label="Tất cả" value="All" />
-          <Select.Item label="Theo ngày" value="BY_DATE" />
-        </Select>
-
+        <DateRangeModalSelector
+          handleDatePickerChange={dateChangeHandler}
+          onSubmitDate={submitDateFilterHandler}
+        />
         <FlatList
           h="82%"
           data={checkinHistoryList}
