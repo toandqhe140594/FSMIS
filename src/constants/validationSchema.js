@@ -402,3 +402,8 @@ export const ADMIN_FMANAGE_PROFILE_FORM = yup.object().shape({
   service: yup.string().ensure(),
   timetable: yup.string().ensure(),
 });
+
+export const WRITE_REVIEW_FORM = yup.object().shape({
+  score: yup.number().moreThan(0, "Số sao không được để trống"),
+  description: yup.string().required("Đánh giá không được để trống"),
+});

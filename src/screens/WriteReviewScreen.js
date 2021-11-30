@@ -5,12 +5,11 @@ import React from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { StyleSheet, Text, View } from "react-native";
 import { Avatar, Button, Divider } from "react-native-elements";
-import * as yup from "yup";
 
 import TextAreaComponent from "../components/common/TextAreaComponent";
 import HeaderTab from "../components/HeaderTab";
 import StarInputComponent from "../components/WriteReview/StarInputComponent";
-import { DICTIONARY } from "../constants";
+import { DICTIONARY, SCHEMA } from "../constants";
 import { goBack } from "../navigations";
 import { showToastMessage } from "../utilities";
 
@@ -29,11 +28,6 @@ const styles = StyleSheet.create({
   },
 });
 
-const validationSchema = yup.object().shape({
-  score: yup.number().moreThan(0, "Số sao không được để trống"),
-  description: yup.string().required("Đánh giá không được để trống"),
-});
-
 const WriteReviewScreen = () => {
   const navigation = useNavigation();
 
@@ -41,7 +35,7 @@ const WriteReviewScreen = () => {
     mode: "onSubmit",
     reValidateMode: "onChange",
     defaultValues: { score: 1 },
-    resolver: yupResolver(validationSchema),
+    resolver: yupResolver(SCHEMA.WRITE_REVIEW_FORM),
   });
 
   const { handleSubmit } = methods;
