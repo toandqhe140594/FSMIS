@@ -1029,76 +1029,60 @@ const model = {
   }),
 
   // LOCATION CHECK-IN HISTORY
+  /**
+   * Set check-in history list
+   * @param {String} payload.mode mode for setting
+   * @param {Array} payload.items data to set up the list
+   */
   setCheckinHistoryList: action((state, payload) => {
-    state.checkinHistoryList = state.checkinHistoryList.concat(payload);
-  }),
-  rewriteCheckinHistory: action((state, payload) => {
-    state.checkinHistoryList = payload;
-  }),
-  setCheckinHistoryCurrentPage: action((state, payload) => {
-    state.checkinHistoryCurrentPage = payload;
-  }),
-  setCheckinHistoryTotalPage: action((state, payload) => {
-    state.checkinHistoryTotalPage = payload;
-  }),
-  getCheckinHistoryList: thunk(async (actions, payload, { getState }) => {
-    const { checkinHistoryCurrentPage, checkinHistoryTotalPage, currentId } =
-      getState();
-    // If current page is smaller than 0 or larger than maximum page then return
-    if (
-      checkinHistoryCurrentPage <= 0 ||
-      checkinHistoryCurrentPage > checkinHistoryTotalPage
-    )
-      return;
-    const { data } = await http.get(`location/${currentId}/checkin/history`, {
-      params: { pageNo: checkinHistoryCurrentPage },
-    });
-
-    const { totalPage, items } = data;
-    actions.setCheckinHistoryCurrentPage(checkinHistoryCurrentPage + 1);
-    actions.setCheckinHistoryTotalPage(totalPage);
-    actions.setCheckinHistoryList(items);
-  }),
-
-  getCheckinHistoryListByDate: thunk(async (actions, payload, { getState }) => {
-    const { checkinHistoryCurrentPage, checkinHistoryTotalPage, currentId } =
-      getState();
-
-    // If current page is smaller than 0 or larger than maximum page then return
-    if (
-      checkinHistoryCurrentPage <= 0 ||
-      checkinHistoryCurrentPage > checkinHistoryTotalPage
-    )
-      return;
-
-    const objParams = { pageNo: checkinHistoryCurrentPage };
-    if (typeof payload === "object") {
-      if ("startDate" in payload) {
-        objParams.startDate = payload.startDate.toJSON();
-      }
-      if ("endDate" in payload) {
-        objParams.endDate = payload.endDate.toJSON();
-      }
+    const { mode, items } = payload;
+    if (mode === "NEW") {
+      state.checkinHistoryList = items;
+    } else {
+      state.checkinHistoryList = state.checkinHistoryList.concat(items);
     }
-    if (objParams.startDate !== null)
-      objParams.startDate = convertDateFormat(objParams.startDate);
-    if (objParams.endDate !== null)
-      objParams.endDate = convertDateFormat(objParams.endDate);
-
-    const { data } = await http.get(`location/${currentId}/checkin/history`, {
-      params: objParams,
-    });
-
-    const { totalPage, items } = data;
-    actions.setCheckinHistoryCurrentPage(checkinHistoryCurrentPage + 1);
-    actions.setCheckinHistoryTotalPage(totalPage);
-    actions.setCheckinHistoryList(items);
   }),
 
-  resetCheckinHistory: thunk(async (actions) => {
-    actions.setCheckinHistoryCurrentPage(1);
-    actions.setCheckinHistoryTotalPage(1);
-    actions.rewriteCheckinHistory([]);
+  /**
+   * Set total check-in history page
+   * @param {Number} payload.totalPage total page of check-in history list
+   */
+  setCheckinHistoryTotalPage: action((state, payload) => {
+    state.checkinHistoryTotalPage = payload.totalPage;
+  }),
+
+  /**
+   * Get check-in history list
+   * @param {Number} payload.pageNo next page to get
+   * @param {String} payload.startDate start range to sort check-in records
+   * @param {String} payload.endDate end range to sort check-in records
+   */
+  getCheckinHistoryList: thunk(async (actions, payload, { getState }) => {
+    const { currentId } = getState();
+    const { pageNo } = payload;
+    let { startDate, endDate } = payload;
+    // Kiểm tra startDate ko null thì convert, không thì giữ null
+    // Làm tương tự với endDate
+    startDate = startDate ? convertDateFormat(startDate) : null;
+    endDate = endDate ? convertDateFormat(endDate) : null;
+    const { data } = await http.get(`location/${currentId}/checkin/history`, {
+      params: { pageNo, startDate, endDate },
+    });
+    const { totalPage, items } = data;
+    actions.setCheckinHistoryTotalPage({ totalPage });
+    // Nếu pageNo mà là 1 thì đặt chết độ nối list là mới (reset lại từ đầu)
+    if (pageNo === 1) {
+      actions.setCheckinHistoryList({ mode: "NEW", items });
+    } else actions.setCheckinHistoryList({ mode: "APPEND", items });
+    // Nếu pageNo > 1 (tức lúc này trang đã tăng lên), đặt chế độ nối list là tiếp tục (nối vào sau)
+  }),
+
+  /**
+   * Reset check-in history list to default state
+   */
+  resetCheckinHistory: action((state) => {
+    state.checkinHistoryTotalPage = 0;
+    state.checkinHistoryList = [];
   }),
   // END OF CHECKIN RELATED SECTION
 
