@@ -10,6 +10,8 @@ export const TOAST_CHANGE_PHONE_NUMBER_SUCCESS_MSG =
   "Thay đổi số điện thoại thành công";
 export const TOAST_FISH_DELETE_SUCCESS_MSG = "Cá đã được xóa khỏi hồ";
 export const TOAST_DELETE_LAKE_SUCCESS_MSG = "Xóa hồ bé thành công";
+export const TOAST_EDIT_PENDING_PROFILE_SUCCESS_MSG =
+  "Cập nhật điểm câu thành công";
 // END OF RELATED TOAST MESSAGE SECTION
 
 /**

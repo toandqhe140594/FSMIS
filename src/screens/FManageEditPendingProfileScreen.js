@@ -22,7 +22,7 @@ import MapOverviewBox from "../components/FLocationEditProfile/MapOverviewBox";
 import HeaderTab from "../components/HeaderTab";
 import { DEFAULT_TIMEOUT, DICTIONARY, ROUTE_NAMES, SCHEMA } from "../constants";
 import { goBack, goToOTPScreen } from "../navigations";
-import { showAlertBox } from "../utilities";
+import { showAlertBox, showToastMessage } from "../utilities";
 
 const styles = StyleSheet.create({
   sectionWrapper: {
@@ -103,11 +103,7 @@ const FManageEditPendingProfileScreen = () => {
   };
 
   const handleEditSuccess = () => {
-    setIsLoading(false);
-    showAlertBox(
-      DICTIONARY.ALERT_TITLE,
-      DICTIONARY.ALERT_EDIT_LOCATION_SUCCESS_MSG,
-    );
+    showToastMessage(DICTIONARY.TOAST_EDIT_PENDING_PROFILE_SUCCESS_MSG);
     goBack(navigation);
   };
 
