@@ -52,30 +52,6 @@ const AdminAccountManagementScreen = () => {
     setPage(2);
   };
 
-  useEffect(() => {
-    getUserList({ pageNo: 1, setIsLoading });
-    const loadingTimeout = setTimeout(() => {
-      setIsLoading(false);
-    }, DEFAULT_TIMEOUT);
-    return () => {
-      clearTimeout(loadingTimeout);
-      clearAccountList();
-    };
-  }, []);
-
-  useEffect(() => {
-    if (userList) setIsLoading(false);
-  }, [userList]);
-
-  useEffect(() => {
-    if (firstPageLastItemView === null) return;
-    if (firstPageLastItemView !== -1 && page === 2) {
-      getUserList({ pageNo: 2, keyword: search, setIsLoading });
-      setPage(3);
-      setFirstPageLastItemView(null);
-    }
-  }, [firstPageLastItemView]);
-
   const goToAccountDetailScreen = (id) => () => {
     goToAdminAccountManagementDetailScreen(navigation, {
       id,
@@ -120,6 +96,48 @@ const AdminAccountManagementScreen = () => {
   });
   const viewConfigRef = React.useRef({ viewAreaCoveragePercentThreshold: 50 });
 
+  useEffect(() => {
+    getUserList({ pageNo: 1, setIsLoading });
+    const loadingTimeout = setTimeout(() => {
+      setIsLoading(false);
+    }, DEFAULT_TIMEOUT);
+    return () => {
+      clearTimeout(loadingTimeout);
+      clearAccountList();
+    };
+  }, []);
+
+  const ListView = () => {
+    return (
+      <FlatList
+        style={{ width: "90%" }}
+        data={userList}
+        renderItem={renderItem}
+        keyExtractor={KEY_EXTRACTOR}
+        ItemSeparatorComponent={Divider}
+        onEndReached={loadMoreUserData}
+        initialNumToRender={10}
+        maxToRenderPerBatch={10}
+        onViewableItemsChanged={onViewRef.current}
+        viewabilityConfig={viewConfigRef.current}
+        onEndReachedThreshold={0.1}
+      />
+    );
+  };
+
+  useEffect(() => {
+    if (userList) setIsLoading(false);
+  }, [userList]);
+
+  useEffect(() => {
+    if (firstPageLastItemView === null) return;
+    if (firstPageLastItemView !== -1 && page === 2) {
+      getUserList({ pageNo: 2, keyword: search, setIsLoading });
+      setPage(3);
+      setFirstPageLastItemView(null);
+    }
+  }, [firstPageLastItemView]);
+
   return (
     <>
       <HeaderTab name="Quản lý tài khoản" />
@@ -136,24 +154,7 @@ const AdminAccountManagementScreen = () => {
             onClear={onClear}
           />
 
-          {isLoading ? (
-            <SmallScreenLoadingIndicator />
-          ) : (
-            <View style={[styles.flexBox, { width: "90%" }]}>
-              <FlatList
-                data={userList}
-                renderItem={renderItem}
-                keyExtractor={KEY_EXTRACTOR}
-                ItemSeparatorComponent={Divider}
-                onEndReached={loadMoreUserData}
-                initialNumToRender={10}
-                maxToRenderPerBatch={10}
-                onViewableItemsChanged={onViewRef.current}
-                viewabilityConfig={viewConfigRef.current}
-                onEndReachedThreshold={0.1}
-              />
-            </View>
-          )}
+          {isLoading ? <SmallScreenLoadingIndicator /> : <ListView />}
         </View>
       </View>
     </>
