@@ -2,7 +2,7 @@
   "expo": {
     "name": "FSMIS",
     "slug": "FSMIS",
-    "version": "1.2.1",
+    "version": "1.2.2",
     "orientation": "portrait",
     "icon": "./src/assets/icons/icon.png",
     "splash": {
@@ -32,7 +32,7 @@
     "web": {
       "favicon": "./src/assets/images/favicon.png"
     },
-    "description": "The Fishing Spot Management Information System project - v1.2.1",
+    "description": "The Fishing Spot Management Information System project - v1.2.2",
     "githubUrl": "https://github.com/toandqhe140594/FSMIS"
   }
 }
