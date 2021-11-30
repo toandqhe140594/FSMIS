@@ -59,6 +59,7 @@ export const ANGLER_CATCH_REPORT_HEADER = "Báo cá";
 export const ANGLER_RESET_PASSWORD_HEADER = "Thay đổi mật khẩu";
 export const FMANAGE_POST_HEADER = "Bài đăng";
 export const ANGLER_WRITE_REVIEW_HEADER = "Đánh giá của bạn";
+export const FMANAGE_CHECK_IN_HISTORY_HEADER = "Lịch sử Check-in";
 // END OF RELATED SCREEN HEADER SECTION
 
 /**
