@@ -133,6 +133,7 @@ const FLocationEventRoute = () => {
         lakePost={{
           badge: item.postType,
           content: item.content,
+          posterName: item.posterName,
         }}
         typeUri={item.attachmentType}
         uri={item.url}
@@ -140,7 +141,6 @@ const FLocationEventRoute = () => {
         edited={item.edited}
         postTime={item.postTime}
         id={item.id}
-        iconName="flag"
       />
     );
   };

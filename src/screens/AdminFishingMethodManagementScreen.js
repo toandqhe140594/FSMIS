@@ -1,11 +1,13 @@
 import { useNavigation } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, Button, Center } from "native-base";
+import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, FlatList } from "react-native";
+import { FlatList } from "react-native";
 import { Divider, SearchBar } from "react-native-elements";
 
 import FishingMethodManagementCard from "../components/AdminMethodManagement/FishingMethodManagementCard";
+import SmallScreenLoadingIndicator from "../components/common/SmallScreenLoadingIndicator";
 import HeaderTab from "../components/HeaderTab";
 import styles from "../config/styles";
 import { DEFAULT_TIMEOUT, KEY_EXTRACTOR } from "../constants";
@@ -14,6 +16,29 @@ import { goToAdminFishingMethodEditScreen } from "../navigations";
 import store from "../utilities/Store";
 
 store.addModel("FishingMethodModel", FishingMethodModel);
+
+const ListView = React.memo(({ data }) => {
+  const renderRow = ({ item }) => (
+    <FishingMethodManagementCard
+      id={item.id}
+      name={item.name}
+      active={item.active}
+    />
+  );
+  return (
+    <FlatList
+      style={{ width: "100%" }}
+      data={data}
+      renderItem={renderRow}
+      keyExtractor={KEY_EXTRACTOR}
+      ItemSeparatorComponent={Divider}
+    />
+  );
+});
+
+ListView.propTypes = {
+  data: PropTypes.arrayOf(PropTypes.object).isRequired,
+};
 
 const AdminFishingMethodManagementScreen = () => {
   const navigation = useNavigation();
@@ -28,14 +53,6 @@ const AdminFishingMethodManagementScreen = () => {
   const [search, setSearch] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [displayedList, setDisplayedList] = useState(adminFishingMethodList);
-
-  const renderRow = ({ item }) => (
-    <FishingMethodManagementCard
-      id={item.id}
-      name={item.name}
-      active={item.active}
-    />
-  );
 
   const updateSearch = (searchKey) => {
     setSearch(searchKey);
@@ -77,13 +94,6 @@ const AdminFishingMethodManagementScreen = () => {
     });
   };
 
-  if (isLoading)
-    return (
-      <Center flex={1}>
-        <ActivityIndicator size="large" color="blue" />
-      </Center>
-    );
-
   return (
     <>
       <HeaderTab name="Quản lý loại hình câu" />
@@ -102,15 +112,11 @@ const AdminFishingMethodManagementScreen = () => {
           <Button my={2} w="70%" onPress={goToAddFishingMethodScreen}>
             Thêm loại hình câu
           </Button>
-
-          <Box flex={1} w="100%">
-            <FlatList
-              data={displayedList}
-              renderItem={renderRow}
-              keyExtractor={KEY_EXTRACTOR}
-              ItemSeparatorComponent={Divider}
-            />
-          </Box>
+          {isLoading ? (
+            <SmallScreenLoadingIndicator />
+          ) : (
+            <ListView data={displayedList} />
+          )}
         </Box>
       </Center>
     </>

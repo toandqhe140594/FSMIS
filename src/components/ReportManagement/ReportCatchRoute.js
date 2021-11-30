@@ -1,16 +1,12 @@
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import { Select } from "native-base";
-import React, { useEffect, useRef, useState } from "react";
-import {
-  ActivityIndicator,
-  FlatList,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { FlatList, Text, TouchableOpacity, View } from "react-native";
 
+import { KEY_EXTRACTOR } from "../../constants";
 import { goToAdminCatchReportDetail } from "../../navigations";
-import OverlayLoading from "../common/OverlayLoading";
+import SmallScreenLoadingIndicator from "../common/SmallScreenLoadingIndicator";
 import HeaderTab from "../HeaderTab";
 import ReportCard from "./ReportCard";
 
@@ -37,6 +33,12 @@ const ReportCatchRoute = () => {
     (actions) => actions.ReportModel,
   );
 
+  const memoizedStyle = useMemo(
+    () =>
+      !listCatchReport.length ? { flex: 1, justifyContent: "center" } : null,
+    [listCatchReport.length > 0],
+  );
+
   const handleCatchReportDetailNavigate = (id, active) => () => {
     goToAdminCatchReportDetail(navigation, {
       isActive: active,
@@ -44,7 +46,17 @@ const ReportCatchRoute = () => {
     });
   };
 
-  const keyExtractor = (item) => item.id.toString();
+  const renderEmpty = () =>
+    !isLoading && (
+      <Text style={{ color: "gray", alignSelf: "center" }}>
+        Chưa có báo cáo nào
+      </Text>
+    );
+
+  const renderHeader = () =>
+    bigLoading && isLoading ? (
+      <SmallScreenLoadingIndicator containerStyle={{ marginBottom: 12 }} />
+    ) : null;
 
   const renderItem = ({ item }) => (
     <TouchableOpacity
@@ -56,10 +68,9 @@ const ReportCatchRoute = () => {
 
   const renderFooter = () =>
     isLoading && !bigLoading ? (
-      <View margin={12}>
-        <ActivityIndicator size="large" color="#2089DC" />
-      </View>
+      <SmallScreenLoadingIndicator containerStyle={{ marginVertical: 12 }} />
     ) : null;
+
   /**
    * Change to new list
    * @param {String} value selected value
@@ -73,6 +84,7 @@ const ReportCatchRoute = () => {
       setIsLoading(true);
     }
   };
+
   /**
    * When FlatList scroll to bottom,
    * process to the next catch report page
@@ -124,7 +136,6 @@ const ReportCatchRoute = () => {
   return (
     <>
       <HeaderTab name="Quản lý báo cáo" />
-      <OverlayLoading loading={isLoading && bigLoading} />
       <View marginBottom={OFF_SET}>
         <Select
           w="90%"
@@ -147,9 +158,12 @@ const ReportCatchRoute = () => {
 
         <FlatList
           height="100%"
-          keyExtractor={keyExtractor}
+          contentContainerStyle={memoizedStyle}
+          keyExtractor={KEY_EXTRACTOR}
           data={listCatchReport}
           renderItem={renderItem}
+          ListHeaderComponent={renderHeader}
+          ListEmptyComponent={renderEmpty}
           ListFooterComponent={renderFooter}
           onEndReached={handleLoadMore}
           onEndReachedThreshold={0.2}

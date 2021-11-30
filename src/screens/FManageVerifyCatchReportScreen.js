@@ -2,7 +2,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, Button, FlatList, HStack, Text, VStack } from "native-base";
 import PropTypes from "prop-types";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 import AvatarCard from "../components/AvatarCard";
 import HeaderTab from "../components/HeaderTab";
@@ -113,6 +113,14 @@ const VerifyCatchReportScreen = () => {
     (states) => states.FManageModel.unresolvedCatchReportList,
   );
 
+  const memoizedStyle = useMemo(
+    () =>
+      unresolvedCatchReportList && unresolvedCatchReportList.length > 0
+        ? null
+        : { flex: 1, justifyContent: "center" },
+    [unresolvedCatchReportList && unresolvedCatchReportList.length > 0],
+  );
+
   const getUnresolvedCatchReportList = useStoreActions(
     (actions) => actions.FManageModel.getUnresolvedCatchReportList,
   );
@@ -125,21 +133,25 @@ const VerifyCatchReportScreen = () => {
     getUnresolvedCatchReportList({ status: "OVERWRITE" });
   }, []);
 
+  const renderEmtpy = () => (
+    <Text color="gray.500" alignSelf="center">
+      Chưa có báo cá nào cần duyệt
+    </Text>
+  );
+
   const renderItem = ({ item }) => <UnresolvedCatchReportComponent {...item} />;
 
   return (
     <Box>
       <HeaderTab name="Xác nhận báo cá" />
-      <Box
-        w={{
-          base: "100%",
-          md: "25%",
-        }}
-      >
+      <Box w={{ base: "100%", md: "25%" }}>
         <FlatList
           pt="0.5"
+          height="90%"
+          contentContainerStyle={memoizedStyle}
           data={unresolvedCatchReportList}
           renderItem={renderItem}
+          ListEmptyComponent={renderEmtpy}
           keyExtractor={KEY_EXTRACTOR}
           onEndReached={onEndReached}
         />

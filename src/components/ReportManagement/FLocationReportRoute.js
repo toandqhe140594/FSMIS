@@ -1,16 +1,12 @@
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import { Select } from "native-base";
-import React, { useEffect, useRef, useState } from "react";
-import {
-  ActivityIndicator,
-  FlatList,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { FlatList, Text, TouchableOpacity, View } from "react-native";
 
+import { KEY_EXTRACTOR } from "../../constants";
 import { goToAdminFLocationReportDetailScreen } from "../../navigations";
-import OverlayLoading from "../common/OverlayLoading";
+import SmallScreenLoadingIndicator from "../common/SmallScreenLoadingIndicator";
 import HeaderTab from "../HeaderTab";
 import ReportCard from "./ReportCard";
 
@@ -37,6 +33,12 @@ const FLocationReportRoute = () => {
     (actions) => actions.ReportModel,
   );
 
+  const memoizedStyle = useMemo(
+    () =>
+      !listLocationReport.length ? { flex: 1, justifyContent: "center" } : null,
+    [listLocationReport.length > 0],
+  );
+
   const handleReportLocationDetailNavigate = (id, active) => () => {
     goToAdminFLocationReportDetailScreen(navigation, {
       isActive: active,
@@ -44,7 +46,17 @@ const FLocationReportRoute = () => {
     });
   };
 
-  const keyExtractor = (item) => item.id.toString();
+  const renderEmpty = () =>
+    !isLoading && (
+      <Text style={{ color: "gray", alignSelf: "center" }}>
+        Chưa có báo cáo nào
+      </Text>
+    );
+
+  const renderHeader = () =>
+    bigLoading && isLoading ? (
+      <SmallScreenLoadingIndicator containerStyle={{ marginBottom: 12 }} />
+    ) : null;
 
   const renderItem = ({ item }) => {
     return (
@@ -58,9 +70,7 @@ const FLocationReportRoute = () => {
 
   const renderFooter = () =>
     isLoading && !bigLoading ? (
-      <View margin={12}>
-        <ActivityIndicator size="large" color="#2089DC" />
-      </View>
+      <SmallScreenLoadingIndicator containerStyle={{ marginVertical: 12 }} />
     ) : null;
   /**
    * Change to new list
@@ -133,7 +143,7 @@ const FLocationReportRoute = () => {
   return (
     <>
       <HeaderTab name="Quản lý báo cáo" />
-      <OverlayLoading loading={isLoading && bigLoading} />
+      {/* <OverlayLoading loading={isLoading && bigLoading} /> */}
       <View marginBottom={OFF_SET}>
         <Select
           w="90%"
@@ -155,9 +165,12 @@ const FLocationReportRoute = () => {
         </Select>
         <FlatList
           height="100%"
-          keyExtractor={keyExtractor}
+          contentContainerStyle={memoizedStyle}
+          keyExtractor={KEY_EXTRACTOR}
           renderItem={renderItem}
+          ListHeaderComponent={renderHeader}
           ListFooterComponent={renderFooter}
+          ListEmptyComponent={renderEmpty}
           bounces={false}
           data={listLocationReport}
           onEndReached={handleLoadMore}

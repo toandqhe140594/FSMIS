@@ -66,9 +66,9 @@ const AnglerAdvanceSearchScreen = () => {
     reValidateMode: "onSubmit",
     defaultValues: {
       input: prevStateData.input,
-      fishingMethodIdList: prevStateData.fishingMethodIdList || [],
-      fishSpeciesIdList: prevStateData.fishSpeciesIdList || [],
-      provinceIdList: prevStateData.provinceIdList[0] || 0,
+      fishingMethodIdList: prevStateData.fishingMethodIdList,
+      fishSpeciesIdList: prevStateData.fishSpeciesIdList,
+      provinceIdList: prevStateData.provinceIdList[0] || DICTIONARY.ZERO_NUMBER,
       score: prevStateData.score,
     },
   });
@@ -81,7 +81,9 @@ const AnglerAdvanceSearchScreen = () => {
   const onSubmit = (data) => {
     setIsLoading(true);
     const provinceIdList =
-      data.provinceIdList === 0 ? [] : [data.provinceIdList];
+      data.provinceIdList !== DICTIONARY.ZERO_NUMBER
+        ? [data.provinceIdList]
+        : [];
     const submitData = { ...data, provinceIdList };
     searchFishingLocation({ submitData })
       .then(() => {
@@ -99,11 +101,11 @@ const AnglerAdvanceSearchScreen = () => {
    */
   const handleReset = () => {
     resetPrevStateData();
-    setValue(DICTIONARY.FORM_FIELD_SEARCH_INPUT, "");
-    setValue(DICTIONARY.FORM_FIELD_SEARCH_PROVINCE, 0);
-    setValue(DICTIONARY.FORM_FIELD_SEARCH_METHODS, []);
-    setValue(DICTIONARY.FORM_FIELD_SEARCH_SPECIES, []);
-    setValue(DICTIONARY.FORM_FIELD_SEARCH_SCORE, 0);
+    setValue(DICTIONARY.FORM_FIELD_SEARCH_INPUT, DICTIONARY.EMPTY_STRING);
+    setValue(DICTIONARY.FORM_FIELD_SEARCH_PROVINCE, DICTIONARY.ZERO_NUMBER);
+    setValue(DICTIONARY.FORM_FIELD_SEARCH_METHODS, DICTIONARY.EMPTY_ARRAY);
+    setValue(DICTIONARY.FORM_FIELD_SEARCH_SPECIES, DICTIONARY.EMPTY_ARRAY);
+    setValue(DICTIONARY.FORM_FIELD_SEARCH_SCORE, DICTIONARY.ZERO_NUMBER);
   };
 
   /**

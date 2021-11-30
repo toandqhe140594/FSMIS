@@ -180,6 +180,7 @@ const FLocationEventRoute = () => {
           lakePost={{
             badge: typeBadge,
             content: item.content,
+            posterName: item.posterName,
           }}
           postTime={item.postTime}
         />
@@ -222,6 +223,7 @@ const FLocationEventRoute = () => {
               lakePost={{
                 badge: currentPinPost.postType,
                 content: currentPinPost.content,
+                posterName: currentPinPost.posterName,
               }}
               postTime={currentPinPost.postTime}
             />
