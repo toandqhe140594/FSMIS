@@ -136,6 +136,7 @@ const model = {
    */
   setLocationDetails: action((state, payload) => {
     state.locationDetails = payload;
+    state.currentId = payload.id;
   }),
   /**
    * Get location details by id
