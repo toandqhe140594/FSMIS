@@ -1,10 +1,10 @@
 import { useNavigation } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
-import { Box, Button, FlatList, Modal, Select, Text } from "native-base";
-import React, { useEffect, useState } from "react";
-import CalendarPicker from "react-native-calendar-picker";
+import { Box, FlatList, Text } from "native-base";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 
 import AvatarCard from "../components/AvatarCard";
+import DateRangeModalSelector from "../components/common/DateRangeModalSelector";
 import HeaderTab from "../components/HeaderTab";
 import PressableCustomCard from "../components/PressableCustomCard";
 import { KEY_EXTRACTOR } from "../constants";
@@ -24,9 +24,16 @@ const FManageCatchReportHistory = () => {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [shouldReload, setShouldReload] = useState(false);
-  const [modalVisible, setModalVisible] = useState(false);
 
-  const dateChangeHandler = (date, type) => {
+  const memoizedStyle = useMemo(
+    () =>
+      catchReportHistory && catchReportHistory.length > 0
+        ? null
+        : { flex: 1, justifyContent: "center" },
+    [catchReportHistory && catchReportHistory.length > 0],
+  );
+
+  const dateChangeHandler = useCallback((date, type) => {
     if (type === "END_DATE") {
       setEndDate(date);
     } else {
@@ -34,21 +41,19 @@ const FManageCatchReportHistory = () => {
       setEndDate(null);
     }
     setShouldReload(true);
-  };
+  }, []);
 
-  const selectedFilterHandler = (type) => {
-    if (type === "BY_DATE") {
-      setModalVisible(true);
-    } else {
+  const selectedFilterHandler = useCallback((type) => {
+    if (type !== "BY_DATE") {
       getCatchReportHistoryOverwrite({
         startDate: null,
         endDate: null,
         status: "OVERWRITE",
       });
     }
-  };
+  }, []);
 
-  const submitDateFilterHandler = () => {
+  const submitDateFilterHandler = useCallback(() => {
     dateChangeHandler();
     if (shouldReload === true) {
       getCatchReportHistoryOverwrite({
@@ -58,8 +63,7 @@ const FManageCatchReportHistory = () => {
       });
       setShouldReload(false);
     }
-    setModalVisible(false);
-  };
+  }, []);
 
   useEffect(() => {
     getCatchReportHistoryOverwrite({
@@ -68,8 +72,6 @@ const FManageCatchReportHistory = () => {
       status: "OVERWRITE",
     });
   }, []);
-
-  const closeModal = () => setModalVisible(false);
 
   const navigateToDetailScreen = (id) => () => {
     goToCatchReportDetailScreen(navigation, { id });
@@ -113,6 +115,12 @@ const FManageCatchReportHistory = () => {
     );
   };
 
+  const renderEmpty = () => (
+    <Text color="gray.400" alignSelf="center">
+      Lịch sử check-in đang trống
+    </Text>
+  );
+
   const onEndReached = () => {
     getCatchReportHistoryOverwrite({
       startDate: startDate ? startDate.toJSON() : null,
@@ -124,55 +132,20 @@ const FManageCatchReportHistory = () => {
   return (
     <Box flex={1}>
       <HeaderTab name="Lịch sử báo cá" />
-      <Box
-        w={{
-          base: "100%",
-          md: "25%",
-        }}
-        flex={1}
-      >
-        <Modal isOpen={modalVisible} onClose={closeModal} size="full">
-          <Modal.Content>
-            <Modal.CloseButton />
-            <Modal.Header>Chọn ngày</Modal.Header>
-            <Modal.Body>
-              <CalendarPicker
-                allowRangeSelection
-                allowBackwardRangeSelect
-                scrollable
-                todayBackgroundColor="#00e673"
-                selectedDayColor="#00ccff"
-                selectedDayTextColor="#000000"
-                scaleFactor={375}
-                onDateChange={dateChangeHandler}
-              />
-              <Button size="lg" onPress={submitDateFilterHandler}>
-                OK
-              </Button>
-            </Modal.Body>
-          </Modal.Content>
-        </Modal>
-
-        <Select
-          //   selectedValue={dateFilter}
-          minWidth="200"
-          accessibilityLabel="Chọn kiểu lọc"
-          placeholder="Chọn kiểu lọc"
-          _selectedItem={{
-            bg: "primary.200",
-          }}
-          onValueChange={(itemValue) => selectedFilterHandler(itemValue)}
-          backgroundColor="#ffffff"
-        >
-          <Select.Item label="Tất cả" value="All" />
-          <Select.Item label="Theo Ngày" value="BY_DATE" />
-        </Select>
+      <Box w={{ base: "100%", md: "25%" }} flex={1}>
+        <DateRangeModalSelector
+          doExtraOnSelectValue={selectedFilterHandler}
+          handleDatePickerChange={dateChangeHandler}
+          onSubmitDate={submitDateFilterHandler}
+        />
         <Box flex={1}>
           <FlatList
             data={catchReportHistory}
             renderItem={renderItem}
             keyExtractor={KEY_EXTRACTOR}
             onEndReached={onEndReached}
+            contentContainerStyle={memoizedStyle}
+            ListEmptyComponent={renderEmpty}
           />
         </Box>
       </Box>

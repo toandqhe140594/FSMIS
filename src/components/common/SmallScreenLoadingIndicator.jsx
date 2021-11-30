@@ -1,3 +1,4 @@
+import PropType from "prop-types";
 import React from "react";
 import { ActivityIndicator, StyleSheet, View } from "react-native";
 
@@ -11,12 +12,22 @@ const styles = StyleSheet.create({
   },
 });
 
-const SmallScreenLoadingIndicator = () => {
+const SmallScreenLoadingIndicator = ({ containerStyle }) => {
   return (
-    <View style={styles.indicatorContainer}>
+    <View style={StyleSheet.compose(styles.indicatorContainer, containerStyle)}>
       <ActivityIndicator size="large" color={colors.primary["500"]} />
     </View>
   );
+};
+
+SmallScreenLoadingIndicator.propTypes = {
+  containerStyle: PropType.objectOf(
+    PropType.oneOfType([PropType.string, PropType.number]),
+  ),
+};
+
+SmallScreenLoadingIndicator.defaultProps = {
+  containerStyle: {},
 };
 
 export default SmallScreenLoadingIndicator;

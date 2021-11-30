@@ -1,8 +1,8 @@
 import { useNavigation } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, Button, Center } from "native-base";
-import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Divider, FlatList } from "react-native";
+import React, { useEffect, useMemo, useState } from "react";
+import { ActivityIndicator, Divider, FlatList, Text } from "react-native";
 import { SearchBar } from "react-native-elements";
 
 import BlacklistPhoneCard from "../components/BlacklistPhoneCard";
@@ -20,6 +20,12 @@ const renderItem = ({ item }) => (
   />
 );
 
+const renderEmtpy = () => (
+  <Text style={{ color: "gray", alignSelf: "center" }}>
+    Danh sách đang trống
+  </Text>
+);
+
 const keyExtractor = (item) => item.phone.toString();
 
 const AdminBlacklistManagementScreen = () => {
@@ -30,10 +36,21 @@ const AdminBlacklistManagementScreen = () => {
   const getBlacklist = useStoreActions(
     (actions) => actions.AccountManagementModel.getBlacklist,
   );
-
   const [search, setSearch] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [displayedList, setDisplayedList] = useState(blacklist);
+
+  const memoizedStyle = useMemo(
+    () =>
+      blacklist && blacklist.length > 0
+        ? null
+        : {
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+          },
+    [blacklist && blacklist.length > 0],
+  );
 
   const updateSearch = (searchKey) => {
     setSearch(searchKey);
@@ -55,6 +72,15 @@ const AdminBlacklistManagementScreen = () => {
     goToAdminBlacklistPhoneAddScreen(navigation);
   };
 
+  const renderFooter = () =>
+    isLoading && (
+      <ActivityIndicator
+        style={{ marginVertical: 12 }}
+        size="large"
+        color="#2089DC"
+      />
+    );
+
   useEffect(() => {
     if (blacklist) {
       setDisplayedList(blacklist);
@@ -71,28 +97,6 @@ const AdminBlacklistManagementScreen = () => {
       clearTimeout(loadingTimeout);
     };
   }, []);
-
-  const ListView = () => {
-    if (isLoading)
-      return (
-        <>
-          <Center flex={1}>
-            <ActivityIndicator size="large" color="blue" />
-          </Center>
-        </>
-      );
-
-    return (
-      <Box w="90%" flex={1} mb={12}>
-        <FlatList
-          data={displayedList}
-          renderItem={renderItem}
-          keyExtractor={keyExtractor}
-          ItemSeparatorComponent={Divider}
-        />
-      </Box>
-    );
-  };
 
   return (
     <>
@@ -112,8 +116,17 @@ const AdminBlacklistManagementScreen = () => {
           <Button size="lg" my={3} onPress={goToAddPhoneToBlacklistScreen}>
             Chặn số điện thoại
           </Button>
-
-          <ListView />
+          <Box w="90%" flex={1} mb={12}>
+            <FlatList
+              data={displayedList}
+              renderItem={renderItem}
+              keyExtractor={keyExtractor}
+              ItemSeparatorComponent={Divider}
+              ListEmptyComponent={renderEmtpy}
+              ListFooterComponent={renderFooter}
+              contentContainerStyle={memoizedStyle}
+            />
+          </Box>
         </Box>
       </Center>
     </>

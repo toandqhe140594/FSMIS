@@ -1,8 +1,8 @@
 import { useNavigation } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, Button, Center } from "native-base";
-import React, { useEffect, useState } from "react";
-import { FlatList } from "react-native";
+import React, { useEffect, useMemo, useState } from "react";
+import { FlatList, Text } from "react-native";
 import { Divider } from "react-native-elements";
 
 import EmployeeCard from "../components/EmployeeCard";
@@ -20,13 +20,13 @@ const FManageEmployeeManagementScreen = () => {
   );
   const [displayedList, setDisplayedList] = useState(listOfStaff);
 
-  useEffect(() => {
-    getListOfStaff();
-  }, []);
-
-  useEffect(() => {
-    setDisplayedList(listOfStaff);
-  }, [listOfStaff]);
+  const memoizedStyle = useMemo(
+    () =>
+      listOfStaff && listOfStaff.length > 0
+        ? null
+        : { flex: 1, justifyContent: "center" },
+    [listOfStaff && listOfStaff.length > 0],
+  );
 
   const navigateToAddStaffScreen = () => {
     goToFManageAddStaffScreen(navigation);
@@ -46,23 +46,36 @@ const FManageEmployeeManagementScreen = () => {
     );
   };
 
+  const renderEmpty = () => (
+    <Text style={{ color: "gray", alignSelf: "center" }}>
+      Điểm câu chưa có nhân viên
+    </Text>
+  );
+
+  useEffect(() => {
+    getListOfStaff();
+  }, []);
+
+  useEffect(() => {
+    setDisplayedList(listOfStaff);
+  }, [listOfStaff]);
+
   return (
     <>
       <HeaderTab name="Quản lý nhân viên" />
       <Box flex={1} alignItems="center">
-        <Center w="80%" my={5}>
+        <Center w="80%" my={3}>
           <Button onPress={navigateToAddStaffScreen}>Thêm nhân viên</Button>
         </Center>
-        <Box flex={1} w="100%">
-          <FlatList
-            data={displayedList}
-            renderItem={renderItem}
-            keyExtractor={KEY_EXTRACTOR}
-            ItemSeparatorComponent={Divider}
-            ListHeaderComponent={Divider}
-            ListFooterComponent={Divider}
-          />
-        </Box>
+        <FlatList
+          style={{ width: "100%" }}
+          data={displayedList}
+          renderItem={renderItem}
+          keyExtractor={KEY_EXTRACTOR}
+          ItemSeparatorComponent={Divider}
+          ListEmptyComponent={renderEmpty}
+          contentContainerStyle={memoizedStyle}
+        />
       </Box>
     </>
   );

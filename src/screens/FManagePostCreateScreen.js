@@ -15,19 +15,38 @@ import MultiImageSection from "../components/common/MultiImageSection";
 import SelectComponent from "../components/common/SelectComponent";
 import TextAreaComponent from "../components/common/TextAreaComponent";
 import HeaderTab from "../components/HeaderTab";
-import { ROUTE_NAMES, SCHEMA } from "../constants";
+import { DICTIONARY, ROUTE_NAMES, SCHEMA } from "../constants";
 import { goToFManagePostScreen } from "../navigations";
 import { showAlertAbsoluteBox, showAlertBox } from "../utilities";
 
 const postTypeData = [
-  { name: "Thông báo", id: "ANNOUNCING" },
-  { name: "Bồi cá", id: "STOCKING" },
-  { name: "Báo cá", id: "REPORTING" },
+  {
+    name: DICTIONARY.POST_TYPE_ANNOUNCING_DISPLAY_LABEL,
+    id: DICTIONARY.POST_TYPE_ANNOUNCING_ID,
+  },
+  {
+    name: DICTIONARY.POST_TYPE_STOCKING_DISPLAY_LABEL,
+    id: DICTIONARY.POST_TYPE_STOCKING_ID,
+  },
+  {
+    name: DICTIONARY.POST_TYPE_REPORTING_DISPLAY_LABEL,
+    id: DICTIONARY.POST_TYPE_REPORTING_ID,
+  },
 ];
+
 const attachmentData = [
-  { id: "VIDEO", name: "Video" },
-  { id: "IMAGE", name: "Ảnh" },
-  { id: "NONE", name: "Không đính kèm" },
+  {
+    id: DICTIONARY.ATTACHMENT_TYPE_VIDEO_ID,
+    name: DICTIONARY.ATTACHMENT_TYPE_VIDEO_DISPLAY_LABEL,
+  },
+  {
+    id: DICTIONARY.ATTACHMENT_TYPE_IMAGE_ID,
+    name: DICTIONARY.ATTACHMENT_TYPE_IMAGE_DISPLAY_LABEL,
+  },
+  {
+    id: DICTIONARY.ATTACHMENT_TYPE_NONE_ID,
+    name: DICTIONARY.ATTACHMENT_TYPE_NONE_DISPLAY_LABEL,
+  },
 ];
 
 const styles = StyleSheet.create({
@@ -61,16 +80,16 @@ const PostCreateScreen = () => {
     resolver: yupResolver(SCHEMA.FMANAGE_POST_FORM),
   });
   const { handleSubmit, watch, getValues, setValue } = methods;
-  const watchAttachmentType = watch("attachmentType");
+  const watchAttachmentType = watch(DICTIONARY.FORM_FIELD_POST_ATTACHMENT_TYPE);
 
   const setAttachmentUrl = (type) => {
     switch (type) {
-      case "IMAGE":
-        return getValues("imageArray")[0].base64;
-      case "VIDEO":
-        return getValues("mediaUrl");
+      case DICTIONARY.ATTACHMENT_TYPE_IMAGE_ID:
+        return getValues(DICTIONARY.FORM_FIELD_IMAGE_ARRAY)[0].base64;
+      case DICTIONARY.ATTACHMENT_TYPE_VIDEO_ID:
+        return getValues(DICTIONARY.FORM_FIELD_POST_MEDIA_URL);
       default:
-        return "";
+        return DICTIONARY.EMPTY_STRING;
     }
   };
 
@@ -88,14 +107,14 @@ const PostCreateScreen = () => {
     createPost({ updateData })
       .then(() => {
         showAlertAbsoluteBox(
-          "Thông báo",
-          "Gửi thông tin thành công! Bài viết đang được tạo",
+          DICTIONARY.ALERT_TITLE,
+          DICTIONARY.ALERT_CREATE_POST_SUCCESS_MSG,
           handleScreenNavigation,
         );
       })
       .catch(() => {
         setLoadingButton(false);
-        showAlertBox("Thông báo", "Đã xảy ra lỗi! Vui lòng thử lại.");
+        showAlertBox(DICTIONARY.ALERT_TITLE, DICTIONARY.ALERT_ERROR_MSG);
       });
   };
 
@@ -104,7 +123,7 @@ const PostCreateScreen = () => {
     // useCallback will listen to route.param
     useCallback(() => {
       if (route.params?.base64Array && route.params.base64Array[0]) {
-        setValue("imageArray", route.params?.base64Array);
+        setValue(DICTIONARY.FORM_FIELD_IMAGE_ARRAY, route.params?.base64Array);
         navigation.setParams({ base64Array: [] });
       }
     }, [route.params]),
@@ -112,7 +131,7 @@ const PostCreateScreen = () => {
 
   return (
     <>
-      <HeaderTab name="Bài đăng" />
+      <HeaderTab name={DICTIONARY.FMANAGE_POST_HEADER} />
       <FormProvider {...methods}>
         <ScrollView
           contentContainerStyle={{
@@ -125,36 +144,36 @@ const PostCreateScreen = () => {
           <View style={StyleSheet.compose(styles.sectionWrapper, { flex: 1 })}>
             <VStack space={3} mb={2}>
               <SelectComponent
-                label="Sự kiện"
-                placeholder="Chọn sự kiện"
                 data={postTypeData}
-                controllerName="postType"
+                label={DICTIONARY.POST_TYPE_LABEL}
+                placeholder={DICTIONARY.SELECT_POST_TYPE_PLACEHOLDER}
+                controllerName={DICTIONARY.FORM_FIELD_POST_TYPE}
               />
               <TextAreaComponent
-                label="Miêu tả"
-                placeholder="Nội dung bài đăng"
                 numberOfLines={6}
-                controllerName="content"
+                label={DICTIONARY.POST_CONTENT_LABEL}
+                placeholder={DICTIONARY.INPUT_POST_CONTENT_PLACEHOLDER}
+                controllerName={DICTIONARY.FORM_FIELD_POST_CONTENT}
               />
               <SelectComponent
-                placeholder="Chọn đính kèm"
                 data={attachmentData}
-                label="Đính kèm"
-                controllerName="attachmentType"
+                label={DICTIONARY.POST_ATTACHMENT_TYPE_LABEL}
+                placeholder={DICTIONARY.SELECT_ATTACHMENT_TYPE_PLACEHOLDER}
+                controllerName={DICTIONARY.FORM_FIELD_POST_ATTACHMENT_TYPE}
               />
-              {watchAttachmentType === "VIDEO" && (
+              {watchAttachmentType === DICTIONARY.ATTACHMENT_TYPE_VIDEO_ID && (
                 <InputWithClipboard
-                  label="Đường dẫn"
-                  placeholder="Nhập mã nhúng video"
-                  controllerName="mediaUrl"
+                  label={DICTIONARY.POST_ATTACHMENT_MEDIA_LABEL}
+                  placeholder={DICTIONARY.INPUT_ATTACHMENT_MEDIA_PLACEHOLDER}
+                  controllerName={DICTIONARY.FORM_FIELD_POST_MEDIA_URL}
                 />
               )}
             </VStack>
-            {watchAttachmentType === "IMAGE" && (
+            {watchAttachmentType === DICTIONARY.ATTACHMENT_TYPE_IMAGE_ID && (
               <MultiImageSection
                 containerStyle={{ width: "100%" }}
                 formRoute={ROUTE_NAMES.FMANAGE_POST_CREATE}
-                controllerName="imageArray"
+                controllerName={DICTIONARY.FORM_FIELD_IMAGE_ARRAY}
               />
             )}
           </View>
@@ -162,7 +181,7 @@ const PostCreateScreen = () => {
             <Button
               onPress={handleSubmit(onSubmit)}
               isLoading={loadingButton}
-              isLoadingText="Đang tạo bài viết"
+              isLoadingText={DICTIONARY.CREATING_BUTTON_LABEL}
             >
               Đăng
             </Button>
