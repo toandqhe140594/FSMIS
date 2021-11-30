@@ -77,9 +77,10 @@ const ListViewRoute = () => {
     ) : null;
   };
 
-  const renderEmtpy = () => (
-    <Text style={{ color: "gray" }}>Kết quả tìm kiếm đang trống</Text>
-  );
+  const renderEmtpy = () =>
+    !isLoading && (
+      <Text style={{ color: "gray" }}>Kết quả tìm kiếm đang trống</Text>
+    );
 
   /**
    * Listen to when pageNo increases
