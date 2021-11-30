@@ -93,6 +93,7 @@ const PostListContainerComponent = () => {
           lakePost={{
             badge: typeBadge,
             content: item.content,
+            posterName: item.posterName,
           }}
           postTime={item.postTime}
         />
@@ -134,6 +135,7 @@ const PostListContainerComponent = () => {
             lakePost={{
               badge: currentPinPost.postType,
               content: currentPinPost.content,
+              posterName: currentPinPost.posterName,
             }}
             postTime={currentPinPost.postTime}
           />

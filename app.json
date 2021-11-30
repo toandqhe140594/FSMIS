@@ -2,7 +2,7 @@
   "expo": {
     "name": "FSMIS",
     "slug": "FSMIS",
-    "version": "1.2.1",
+    "version": "1.2.2",
     "orientation": "portrait",
     "icon": "./src/assets/icons/icon.png",
     "splash": {
@@ -22,17 +22,12 @@
         "foregroundImage": "./src/assets/images/admin-image.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "com.g31.fsmis",
-      "config": {
-        "googleMaps": {
-          "apiKey": "AIzaSyDA0QPfk3Pi5hGyCdcOF5tFpzLDbatTKck"
-        }
-      }
+      "package": "com.g31.fsmis"
     },
     "web": {
       "favicon": "./src/assets/images/favicon.png"
     },
-    "description": "The Fishing Spot Management Information System project - v1.2.1",
+    "description": "The Fishing Spot Management Information System project - v1.2.2",
     "githubUrl": "https://github.com/toandqhe140594/FSMIS"
   }
 }

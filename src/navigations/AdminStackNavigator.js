@@ -26,6 +26,7 @@ import AdminReportPostDetailScreen from "../screens/AdminReportPostDetailScreen"
 import AdminReportReviewDetailScreen from "../screens/AdminReportReviewDetailScreen";
 import AdminSuggestedLocationDetailScreen from "../screens/AdminSuggestedLocationDetailScreen";
 import AdminSuggestedLocationManagementScreen from "../screens/AdminSuggestedLocationManagementScreen";
+import FManagePickLocationScreen from "../screens/FManagePickLocationScreen";
 import LakeDetailScreen from "../screens/LakeDetailScreen";
 import MediaSelectScreen from "../screens/MediaSelectScreen";
 import store from "../utilities/Store";
@@ -140,6 +141,10 @@ const AdminStackNavigator = () => {
       <AdminStack.Screen
         name={ROUTE_NAMES.ADMIN_CREATE_SUGGEST_LOCATION}
         component={AdminCreateSuggestLocation}
+      />
+      <AdminStack.Screen
+        name={ROUTE_NAMES.FMANAGE_LOCATION_PICK}
+        component={FManagePickLocationScreen}
       />
     </AdminStack.Navigator>
   );

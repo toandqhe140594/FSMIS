@@ -1,9 +1,17 @@
 /* eslint-disable react/prop-types */
 import { Ionicons } from "@expo/vector-icons";
-import { Box, HStack, Menu, Pressable, ScrollView, VStack } from "native-base";
+import {
+  Box,
+  HStack,
+  Menu,
+  Pressable,
+  ScrollView,
+  Text,
+  VStack,
+} from "native-base";
 import PropTypes from "prop-types";
 import React from "react";
-import { Badge, Divider, Text } from "react-native-elements";
+import { Badge, Divider } from "react-native-elements";
 import { WebView } from "react-native-webview";
 
 import styles from "../config/styles";
@@ -17,11 +25,16 @@ const uriExtract = (uri) => {
   let widthVideo = 400;
   let heightVideo = 320;
   let heightPage = 340;
+  let isAllowsFullscreen = true;
 
   uri = uri.replace("fb.gg/v/", "fb.watch/"); // Convert fb.gg link to fb.watch link
 
   try {
     const regexIframe = new RegExp("<iframe", "g");
+    const regexYouTubeIframe = new RegExp(
+      '<iframe[^>]*srcs*=s*"?https?://[^s"/]*youtube.com(?:/[^s"]*)?"?[^>]*>.*?</iframe>',
+      "",
+    );
     const regexYouTubeLink =
       /^(https?:\/\/)?(www\.youtube\.com|youtu\.?be)\/.+$/g;
     const regexYouTubeID =
@@ -29,6 +42,9 @@ const uriExtract = (uri) => {
     const regexFacebookFWacth = /https:\/\/fb\.(?:watch|gg)\//;
     const regexFacebookLink =
       /^https:\/\/www\.facebook\.com\/([^\/?].+\/)?video(s|\.php)[\/?].*$/;
+    if (regexYouTubeIframe.test(uri)) {
+      isAllowsFullscreen = false;
+    }
     if (regexIframe.test(uri)) {
       const regExGetSrc = /<iframe ?.* src="([^"]+)" ?.*>/i;
       const regExGetWidth = /<iframe ?.* width="([^"]+)" ?.*>/i;
@@ -43,7 +59,6 @@ const uriExtract = (uri) => {
         widthVideo = 0.56 * heightVideo;
         heightPage = heightVideo + 10;
       }
-
       if (widthUri[1] >= heightUri[1]) {
         widthVideo = 400;
         heightVideo = Number(heightUri[1] / widthUri[1]) * widthVideo;
@@ -53,8 +68,9 @@ const uriExtract = (uri) => {
       const idArray = uri.split(regexYouTubeID);
       srcUri[1] = `https://www.youtube.com/embed/${idArray[1]}`;
       widthVideo = 410;
-      heightVideo = widthVideo * 0.8;
+      heightVideo = widthVideo * 0.85;
       heightPage = heightVideo + 10;
+      isAllowsFullscreen = false;
     } else if (regexFacebookFWacth.test(uri) || regexFacebookLink.test(uri)) {
       const mapObj = {
         ":": "%3A",
@@ -77,6 +93,7 @@ const uriExtract = (uri) => {
     videoHeight: heightVideo,
     videoWidth: widthVideo,
     pageHeight: heightPage,
+    allowFullscreen: isAllowsFullscreen,
   };
 
   return videoInfo;
@@ -108,7 +125,7 @@ const EventPostCard = ({
   let heightVideo = 400;
   let heightPage = 410;
   let typeBadge = "";
-
+  let isAllowsFullscreen;
   switch (lakePost.badge) {
     case "STOCKING":
       typeBadge = "Bồi cá";
@@ -129,13 +146,14 @@ const EventPostCard = ({
     heightVideo = videoInfo.videoHeight;
     heightPage = videoInfo.pageHeight;
     srcUri = videoInfo.uri;
+    isAllowsFullscreen = videoInfo.allowFullscreen;
   }
   return (
     <Box mt="1" px="1.4">
       {postStyle === "LAKE_POST" && (
         <>
           <HStack px="2" space={2} mt={4} pb={3} justifyContent="space-between">
-            <HStack alignItems="baseline" space={1}>
+            <HStack alignItems="center" space={1}>
               <Badge
                 badgeStyle={{
                   borderRadius: 7,
@@ -151,9 +169,27 @@ const EventPostCard = ({
                 status="primary"
                 value={typeBadge}
               />
-              {postTime !== undefined && (
-                <Text style={styles.ml1}>{postTime}</Text>
-              )}
+              <VStack>
+                {postTime !== undefined && (
+                  <Text style={styles.ml1} bold position="relative" top={1}>
+                    {postTime}
+                  </Text>
+                )}
+                {lakePost.posterName !== undefined &&
+                lakePost.posterName.length > 0 ? (
+                  <Text
+                    style={{
+                      fontSize: 11,
+                      textAlign: "left",
+                      marginLeft: 6,
+                    }}
+                    position="relative"
+                    top={-1}
+                  >
+                    {lakePost.posterName}
+                  </Text>
+                ) : null}
+              </VStack>
             </HStack>
 
             <Menu
@@ -279,7 +315,7 @@ const EventPostCard = ({
               showsHorizontalScrollIndicator={false}
             >
               <WebView
-                allowsFullscreenVideo
+                allowsFullscreenVideo={isAllowsFullscreen}
                 overScrollMode="content"
                 originWhitelist={["https://*"]}
                 scalesPageToFit={false}
