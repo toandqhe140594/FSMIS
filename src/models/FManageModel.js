@@ -924,75 +924,55 @@ const model = {
   // END UNRESOLVED CATCH REPORT RELATED SECTION
 
   // LOCATION CATCH REPORT HISTORY
+  /**
+   * Set catch report history list
+   * @param {String} payload.mode setting mode
+   * @param {Array} payload.items data to set the list
+   */
   setCatchReportHistory: action((state, payload) => {
-    state.catchReportHistory = state.catchReportHistory.concat(payload);
-  }),
-  setCatchHistoryCurrentPage: action((state, payload) => {
-    state.catchHistoryCurrentPage = payload;
-  }),
-  setCatchHistoryTotalPage: action((state, payload) => {
-    state.catchHistoryTotalPage = payload < 1 ? 1 : payload;
+    const { mode, items } = payload;
+    if (mode === "NEW") {
+      state.catchReportHistory = items;
+    } else state.catchReportHistory = state.catchReportHistory.concat(payload);
   }),
 
-  rewriteCatchReportHistoryList: action((state, payload) => {
-    state.catchReportHistory = payload;
+  /**
+   * Set total catch report history pages
+   * @param {Number} payload.totalPage total page of the list
+   */
+  setCatchHistoryTotalPage: action((state, payload) => {
+    state.catchHistoryTotalPage = payload.totalPage;
   }),
+
   /**
    * Get resolved catch report list data
-   * @param {string} startDate start date with format "YYYY-MM-DDT17:00:00.000Z" - hours = 17
-   * @param {string} endDate end date with format "YYYY-MM-DDT17:00:00.000Z" - hours = 17
-   * @param {string} status APPEND or OVERWRITE - indicate load list from start or load more data
+   * @param {String} payload.startDate start date with format "YYYY-MM-DDT17:00:00.000Z" - hours = 17
+   * @param {String} payload.endDate end date with format "YYYY-MM-DDT17:00:00.000Z" - hours = 17
+   * @param {Number} payload.pageNo next page to get
    */
-  getCatchReportHistoryOverwrite: thunk(
-    async (actions, payload, { getState }) => {
-      const { startDate, endDate, status } = payload;
-      let sDate = startDate;
-      let eDate = endDate;
-      // Convert start date and end date to format "YYYY-MM-DDT00:00:00.000Z"
-      if (startDate !== null) {
-        sDate = convertDateFormat(startDate);
-      }
-      if (endDate !== null) {
-        eDate = convertDateFormat(endDate);
-      }
-      const { catchHistoryCurrentPage, catchHistoryTotalPage, currentId } =
-        getState();
-      if (status === "APPEND") {
-        // If current page is smaller than 0 or larger than maximum page then return
-        if (
-          catchHistoryCurrentPage <= 0 ||
-          catchHistoryCurrentPage > catchHistoryTotalPage
-        )
-          return;
+  getCatchReportHistoryList: thunk(async (actions, payload, { getState }) => {
+    const { currentId } = getState();
+    const { pageNo } = payload;
+    let { startDate, endDate } = payload;
+    startDate = startDate ? convertDateFormat(startDate) : null;
+    endDate = endDate ? convertDateFormat(endDate) : null;
+    const { data } = await http.get(
+      `location/${currentId}/${API_URL.LOCATION_CATCH_REPORT_RESOLVED}`,
+      {
+        params: { pageNo, startDate, endDate },
+      },
+    );
+    const { totalPage, items } = data;
+    actions.setCatchHistoryTotalPage({ totalPage });
+    if (pageNo === 1) {
+      actions.setCatchReportHistory({ mode: "NEW", items });
+    } else actions.setCatchReportHistory({ mode: "APPEND", items });
+  }),
 
-        const { data } = await http.get(
-          `location/${currentId}/${API_URL.LOCATION_CATCH_REPORT_RESOLVED}`,
-          {
-            params: {
-              pageNo: catchHistoryCurrentPage,
-              startDate: sDate,
-              endDate: eDate,
-            },
-          },
-        );
-        const { totalPage, items } = data;
-        actions.setCatchHistoryCurrentPage(catchHistoryCurrentPage + 1);
-        actions.setCatchHistoryTotalPage(totalPage);
-        actions.setCatchReportHistory(items);
-      } else {
-        const { data } = await http.get(
-          `location/${currentId}/${API_URL.LOCATION_CATCH_REPORT_RESOLVED}`,
-          {
-            params: { pageNo: 1, startDate: sDate, endDate: eDate },
-          },
-        );
-        const { totalPage, items } = data;
-        actions.setCatchHistoryCurrentPage(2);
-        actions.setCatchHistoryTotalPage(totalPage);
-        actions.rewriteCatchReportHistoryList(items);
-      }
-    },
-  ),
+  resetCatchReportHistory: action((state) => {
+    state.setCatchHistoryTotalPage = 0;
+    state.catchReportHistory = [];
+  }),
   // END LOCATION CATCH REPORT HISTORY
 
   // START OF CHECKIN RELATED SECTION
