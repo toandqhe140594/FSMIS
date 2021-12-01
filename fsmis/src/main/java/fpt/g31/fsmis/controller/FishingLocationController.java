@@ -47,7 +47,7 @@ public class FishingLocationController {
     }
 
     @DeleteMapping("/close/{locationId}")
-    public ResponseEntity<Object> closeFishingLocation(HttpServletRequest request, @PathVariable Long locationId) {
+    public ResponseEntity<Object> disableFishingLocation(HttpServletRequest request, @PathVariable Long locationId) {
         return new ResponseEntity<>(fishingLocationService.disableFishingLocation(request, locationId), HttpStatus.OK);
     }
 

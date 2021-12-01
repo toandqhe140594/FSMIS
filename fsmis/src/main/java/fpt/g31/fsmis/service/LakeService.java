@@ -32,9 +32,9 @@ public class LakeService {
     private JwtFilter jwtFilter;
 
     public ResponseTextDtoOut createLake(LakeDtoIn lakeDtoIn, Long fishingLocationId, HttpServletRequest request) {
+        User owner = jwtFilter.getUserFromToken(request);
         FishingLocation fishingLocation = fishingLocationRepos.findById(fishingLocationId)
                 .orElseThrow(() -> new NotFoundException(LOCATION_NOT_FOUND));
-        User owner = jwtFilter.getUserFromToken(request);
         if (!fishingLocation.getOwner().equals(owner)) {
             throw new ValidationException("Không phải chủ hồ, không có quyền tạo hồ con!");
         }
@@ -63,6 +63,7 @@ public class LakeService {
         }
         lake.setFishInLakeList(fishInLakeList);
         setMethodSet(lake, lakeDtoIn.getMethods());
+        lakeRepos.save(lake);
         return new ResponseTextDtoOut("Tạo hồ câu thành công!");
     }
 
@@ -74,7 +75,6 @@ public class LakeService {
             fishingMethodSet.add(fishingMethod);
         }
         lake.setFishingMethodSet(fishingMethodSet);
-        lakeRepos.save(lake);
     }
 
     private void setWeightAndQuantity(FishInLakeDtoIn fishInLakeDtoIn, FishInLake fishInLake) {
@@ -179,6 +179,7 @@ public class LakeService {
         lake.setPrice(lakeEditDtoIn.getPrice());
         lake.setImageUrl(lakeEditDtoIn.getImageUrl());
         setMethodSet(lake, lakeEditDtoIn.getMethods());
+        lakeRepos.save(lake);
         return new ResponseTextDtoOut("Chỉnh sửa thông tin hồ câu thành công!");
     }
 

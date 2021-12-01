@@ -25,12 +25,9 @@ public class RegistrationDtoIn {
     @NotNull
     private LocalDateTime dob;
 
-    @NotNull
     private Boolean gender;
 
-    @NotEmpty
     private String address;
 
-    @NotNull
     private Long wardId;
 }
