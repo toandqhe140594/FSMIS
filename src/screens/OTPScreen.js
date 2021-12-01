@@ -100,7 +100,7 @@ const OTPScreen = () => {
   return (
     <Center flex={1}>
       <Heading size="lg">Xác nhận OTP</Heading>
-      <Text fontSize="lg" noOfLines={2} textAlign="center" w="70%">
+      <Text fontSize="md" noOfLines={2} textAlign="center" w="70%">
         Vui lòng nhập mã xác nhận đã được gửi tới số điện thoại của bạn
       </Text>
       {/* Placeholder for phonenumber | Phonenumber will need to get from store state */}
