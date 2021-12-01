@@ -71,7 +71,6 @@ const model = {
   unresolvedCatchReportTotalPage: 1,
   unresolvedCatchReportCurrentPage: 1,
   catchReportHistory: [],
-  catchHistoryCurrentPage: 1,
   catchHistoryTotalPage: 1,
 
   checkinHistoryList: [],
@@ -93,7 +92,6 @@ const model = {
   currentPost: {},
   postDetail: {},
 
-  checkinHistoryCurrentPage: 1,
   checkinHistoryTotalPage: 1,
 
   lakePostPageNo: 1,
