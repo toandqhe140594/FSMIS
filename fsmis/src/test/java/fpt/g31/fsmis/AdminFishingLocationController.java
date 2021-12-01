@@ -525,7 +525,4 @@ public class AdminFishingLocationController {
         System.out.println(result.getResponse().getContentAsString());
         assertNotNull(result.getResponse().getContentAsString());
     }
-
-    // adminGetSuggestedLocationList
-    private final String adminGetSuggestedLocationList = "/api/admin/location/suggested";
 }
