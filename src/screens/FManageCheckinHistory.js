@@ -9,6 +9,32 @@ import SmallScreenLoadingIndicator from "../components/common/SmallScreenLoading
 import HeaderTab from "../components/HeaderTab";
 import PressableCustomCard from "../components/PressableCustomCard";
 import { DICTIONARY } from "../constants";
+import { convertDateFormat } from "../utilities";
+
+const DEFAULT_STATE = { pageNo: 1, startDate: null, endDate: null };
+const DATE_RANGE_PLACEHOLDER = "Chọn ngày";
+
+const shouldListUpdate = (prevState, currentState) => {
+  if (JSON.stringify(prevState) !== JSON.stringify(currentState)) {
+    Object.assign(prevState, currentState);
+    return true;
+  }
+  return false;
+};
+
+const getDateRangeDisplay = (startDate, endDate) => {
+  if (!startDate && !endDate) {
+    return DATE_RANGE_PLACEHOLDER;
+  }
+  // Cái nào ko trống thì hiện thị ra (ko null)
+  const fromDisplay = startDate
+    ? `Từ ${convertDateFormat(startDate).split("T")[0]}`
+    : "";
+  const toDisplay = endDate
+    ? `đến ${convertDateFormat(endDate).split("T")[0]}`
+    : "";
+  return `${fromDisplay} ${toDisplay}`;
+};
 
 const renderItem = ({ item }) => (
   <Box
@@ -29,9 +55,10 @@ const renderItem = ({ item }) => (
 );
 
 const FManageCheckinHistoryScreen = () => {
-  const pageNo = useRef(1);
   const needRefresh = useRef(true);
-  const dateRange = useRef({ startDate: null, endDate: null });
+  const prevQueryData = useRef({});
+  const queryData = useRef({ ...DEFAULT_STATE });
+  const [dateRange, setDateRange] = useState(DATE_RANGE_PLACEHOLDER);
   const [isLoading, setIsLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
   const { checkinHistoryList, checkinHistoryTotalPage } = useStoreState(
@@ -47,10 +74,8 @@ const FManageCheckinHistoryScreen = () => {
     if (value === "BY_DATE") {
       setModalVisible(true);
     } else {
-      // Reset lại mọi thứ khi bấm tất cả
-      // Và cho loading chạy
-      pageNo.current = 1;
-      dateRange.current = { startDate: null, endDate: null };
+      queryData.current = { ...DEFAULT_STATE };
+      setDateRange(DATE_RANGE_PLACEHOLDER);
       setIsLoading(true);
     }
   };
@@ -69,34 +94,34 @@ const FManageCheckinHistoryScreen = () => {
   };
 
   const handleLoadMore = () => {
-    // So sánh pageNo với totalPage, nếu còn bé hơn thì tăng lên
-    // Lúc này chỉ tăng thêm pageNo,
-    // Sử dụng nguyên data startDate và endDate đã có
-    // Và cho loading chạy
-    if (pageNo.current < checkinHistoryTotalPage) {
-      pageNo.current += 1;
+    const currentPage = queryData.current.pageNo;
+    if (currentPage < checkinHistoryTotalPage) {
+      queryData.current.pageNo = currentPage + 1;
       setIsLoading(true);
     }
   };
 
   const handleDateChange = (date, type) => {
     if (type === "END_DATE") {
-      dateRange.current = { ...dateRange.current, endDate: date };
+      queryData.current.endDate = date;
     } else {
-      dateRange.current = { startDate: date, endDate: null };
+      queryData.current.startDate = date;
+      queryData.current.endDate = null;
     }
   };
 
   const handleSubmitDate = () => {
-    // Đóng modal lại và đặt loading để chạy api
-    // Đặt lại ngày bằng 1
-    pageNo.current = 1;
+    const { startDate, endDate } = queryData.current;
+    setDateRange(getDateRangeDisplay(startDate, endDate));
+    queryData.current.pageNo = 1;
     needRefresh.current = true;
     setModalVisible(false);
     setIsLoading(true);
   };
 
   const keyExtractor = (item, index) => index.toString();
+
+  const memoizedRender = useMemo(() => renderItem, [checkinHistoryList]);
 
   const renderHeader = () =>
     isLoading && needRefresh.current ? (
@@ -117,17 +142,15 @@ const FManageCheckinHistoryScreen = () => {
 
   useEffect(() => {
     return () => {
-      // cleanup xóa sạch list khi thoát ra
       resetCheckinHistory();
     };
   }, []);
 
   useEffect(() => {
     if (isLoading) {
-      getCheckinHistoryList({
-        pageNo: pageNo.current,
-        ...dateRange.current,
-      }).finally(stopLoading);
+      if (shouldListUpdate(prevQueryData.current, queryData.current)) {
+        getCheckinHistoryList({ ...queryData.current }).finally(stopLoading);
+      } else stopLoading();
     }
   }, [isLoading]);
 
@@ -138,7 +161,7 @@ const FManageCheckinHistoryScreen = () => {
         <Modal isOpen={modalVisible} onClose={closeModal} size="full">
           <Modal.Content>
             <Modal.CloseButton />
-            <Modal.Header>Chọn ngày</Modal.Header>
+            <Modal.Header>{dateRange}</Modal.Header>
             <Modal.Body>
               <CalendarPicker
                 allowRangeSelection
@@ -167,7 +190,7 @@ const FManageCheckinHistoryScreen = () => {
         <FlatList
           h="87%"
           data={checkinHistoryList}
-          renderItem={renderItem}
+          renderItem={memoizedRender}
           keyExtractor={keyExtractor}
           onEndReached={handleLoadMore}
           onEndReachedThreshold={0.1}
