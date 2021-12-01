@@ -52,4 +52,10 @@ public interface FishingLocationRepos extends JpaRepository<FishingLocation, Lon
     List<FishingLocation> findOwnedLocation(Long id);
 
     List<FishingLocation> findByPhoneAndPendingIsTrue(String phone);
+
+    @Query(value = "select * from tbl_fishing_location tfl \n" +
+            "inner join tbl_user_saved_fishing_locations tusfl on tfl.id = tusfl.fishing_location_id \n" +
+            "where tusfl.user_id = ?1\n" +
+            "and tfl.active = true;", nativeQuery = true)
+    List<FishingLocation> getSavedLocation(Long userId);
 }

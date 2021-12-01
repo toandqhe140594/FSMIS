@@ -259,7 +259,7 @@ public class FishingLocationController {
     @ApiOperation(value = "Get location's post list")
     public ResponseEntity<Object> getPostListByLocationId(@PathVariable Long locationId,
                                                           @RequestParam(defaultValue = "1") Integer pageNo) {
-        return new ResponseEntity<>(postService.getPostByLocationId(locationId, pageNo), HttpStatus.OK);
+        return new ResponseEntity<>(postService.getPostListByLocationId(locationId, pageNo), HttpStatus.OK);
     }
 
     @GetMapping("/{locationId}/post/pinned")
@@ -272,14 +272,13 @@ public class FishingLocationController {
     public ResponseEntity<Object> createPost(@PathVariable Long locationId,
                                              @RequestBody @Valid PostDtoIn postDtoIn,
                                              HttpServletRequest request) {
-        return new ResponseEntity<>(postService.savePost(locationId, postDtoIn, request, true), HttpStatus.OK);
+        return new ResponseEntity<>(postService.createPost(locationId, postDtoIn, request), HttpStatus.OK);
     }
 
     @PutMapping("/{locationId}/post/edit")
-    public ResponseEntity<Object> editPost(@PathVariable Long locationId,
-                                           HttpServletRequest request,
+    public ResponseEntity<Object> editPost(HttpServletRequest request,
                                            @RequestBody PostDtoIn postDtoIn) {
-        return new ResponseEntity<>(postService.savePost(locationId, postDtoIn, request, false), HttpStatus.OK);
+        return new ResponseEntity<>(postService.editPost(postDtoIn, request), HttpStatus.OK);
     }
 
     @DeleteMapping("/{locationId}/post/delete/{postId}")

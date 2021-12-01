@@ -31,15 +31,15 @@ import java.util.Optional;
 @Service
 @AllArgsConstructor
 public class PostService {
+    private static final String POST_NOT_FOUND = "Không tìm thấy bài viết!";
     private final PostRepos postRepos;
     private final JwtFilter jwtFilter;
     private final ModelMapper modelMapper;
     private final FishingLocationRepos locationRepos;
     private final NotificationRepos notificationRepos;
     private final UserRepos userRepos;
-    private static final String POST_NOT_FOUND = "Không tìm thấy bài viết!";
 
-    public PaginationDtoOut getPostByLocationId(Long locationId, int pageNo) {
+    public PaginationDtoOut getPostListByLocationId(Long locationId, int pageNo) {
         if (pageNo <= 0) {
             throw new ValidationException("Số trang không hợp lệ");
         }
@@ -59,43 +59,49 @@ public class PostService {
                 .build();
     }
 
-    public ResponseTextDtoOut savePost(Long locationId, PostDtoIn postDtoIn, HttpServletRequest request, Boolean isCreate) {
+    public ResponseTextDtoOut createPost(Long locationId, PostDtoIn postDtoIn, HttpServletRequest request) {
         User user = jwtFilter.getUserFromToken(request);
         FishingLocation location = locationRepos.findById(locationId)
                 .orElseThrow(() -> new ValidationException("Không tìm thấy hồ câu!"));
         if (!location.getOwner().equals(user)
                 && !location.getEmployeeList().contains(user)) {
+            throw new ValidationException("Không có quyền tạo bài viết!");
+        }
+        Post post = Post.builder()
+                .content(postDtoIn.getContent())
+                .postTime(LocalDateTime.now())
+                .postType(postDtoIn.getPostType())
+                .edited(false)
+                .active(true)
+                .pinned(false)
+                .attachmentType(postDtoIn.getAttachmentType())
+                .url(postDtoIn.getUrl())
+                .posterId(user.getId())
+                .fishingLocation(location)
+                .build();
+        postRepos.save(post);
+        String notificationText = location.getName() + " đã đăng bài viết mới";
+        NotificationService.createNotification(notificationRepos, notificationText, location.getSavedUser());
+        return new ResponseTextDtoOut("Tạo bài viết thành công!");
+    }
+
+    public ResponseTextDtoOut editPost(PostDtoIn postDtoIn, HttpServletRequest request) {
+        User user = jwtFilter.getUserFromToken(request);
+        Post post = postRepos.findById(postDtoIn.getId())
+                .orElseThrow(() -> new ValidationException("Không tìm thấy bài viết"));
+        if (!post.getFishingLocation().getOwner().equals(user)
+                && !post.getFishingLocation().getEmployeeList().contains(user)) {
             throw new ValidationException("Không có quyền tạo/chỉnh sửa bài viết!");
         }
-        if (Boolean.TRUE.equals(isCreate)) {
-            Post post = Post.builder()
-                    .content(postDtoIn.getContent())
-                    .postTime(LocalDateTime.now())
-                    .postType(postDtoIn.getPostType())
-                    .edited(false)
-                    .active(true)
-                    .pinned(false)
-                    .attachmentType(postDtoIn.getAttachmentType())
-                    .url(postDtoIn.getUrl())
-                    .posterId(user.getId())
-                    .fishingLocation(location)
-                    .build();
-            postRepos.save(post);
-            String notificationText = location.getName() + " đã đăng bài viết mới";
-            NotificationService.createNotification(notificationRepos, notificationText, location.getSavedUser());
-            return new ResponseTextDtoOut("Tạo bài viết thành công!");
-        } else {
-            Post post = postRepos.findById(postDtoIn.getId())
-                    .orElseThrow(() -> new ValidationException("Không tìm thấy bài viết"));
-            post.setContent(postDtoIn.getContent());
-            post.setPostType(postDtoIn.getPostType());
-            post.setAttachmentType(postDtoIn.getAttachmentType());
-            post.setUrl(postDtoIn.getUrl());
-            post.setEdited(true);
-            postRepos.save(post);
-            return new ResponseTextDtoOut("Chỉnh sửa bài viết thành công!");
-        }
+        post.setContent(postDtoIn.getContent());
+        post.setPostType(postDtoIn.getPostType());
+        post.setAttachmentType(postDtoIn.getAttachmentType());
+        post.setUrl(postDtoIn.getUrl());
+        post.setEdited(true);
+        postRepos.save(post);
+        return new ResponseTextDtoOut("Chỉnh sửa bài viết thành công!");
     }
+
 
     public ResponseTextDtoOut deletePost(Long postId, HttpServletRequest request) {
         User user = jwtFilter.getUserFromToken(request);
@@ -164,7 +170,7 @@ public class PostService {
         post.setPinned(false);
         postRepos.save(post);
         String notificationText = "Bài viết trên trang " + post.getFishingLocation().getName() + " với nội dung \""
-                + (post.getContent().length() >= 30 ? (post.getContent().substring(0, 30)+"...") : post.getContent())
+                + (post.getContent().length() >= 30 ? (post.getContent().substring(0, 30) + "...") : post.getContent())
                 + "\" đã bị xóa do vi phạm điều khoản ứng dụng";
         List<User> notificationReceiver = new ArrayList<>();
         notificationReceiver.add(post.getFishingLocation().getOwner());

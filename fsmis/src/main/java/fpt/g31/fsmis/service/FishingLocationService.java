@@ -201,12 +201,12 @@ public class FishingLocationService {
 
     public PaginationDtoOut getSavedFishingLocationList(HttpServletRequest request, int pageNo) {
         if (pageNo <= 0) {
-            throw new ValidationException("Địa chỉ không tồn tại");
+            throw new ValidationException("Số trang không hợp lệ");
         }
         User user = jwtFilter.getUserFromToken(request);
 
         // CUSTOM PAGINATION
-        List<FishingLocation> saved = user.getSavedFishingLocations();
+        List<FishingLocation> saved = fishingLocationRepos.getSavedLocation(user.getId());
         PageRequest pageRequest = PageRequest.of(pageNo - 1, 10);
         int total = saved.size();
         int start = (int) pageRequest.getOffset();
