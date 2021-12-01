@@ -10,6 +10,7 @@ export const TOAST_CHANGE_PHONE_NUMBER_SUCCESS_MSG =
   "Thay đổi số điện thoại thành công";
 export const TOAST_FISH_DELETE_SUCCESS_MSG = "Cá đã được xóa khỏi hồ";
 export const TOAST_DELETE_LAKE_SUCCESS_MSG = "Xóa hồ bé thành công";
+export const TOAST_WRITE_REVIEW_SUCCESS_MSG = "Đánh giá đăng thành công";
 // END OF RELATED TOAST MESSAGE SECTION
 
 /**
@@ -57,6 +58,8 @@ export const ANGLER_ADVANCED_SEARCH_HEADER = "Tìm kiếm nâng cao";
 export const ANGLER_CATCH_REPORT_HEADER = "Báo cá";
 export const ANGLER_RESET_PASSWORD_HEADER = "Thay đổi mật khẩu";
 export const FMANAGE_POST_HEADER = "Bài đăng";
+export const ANGLER_WRITE_REVIEW_HEADER = "Đánh giá của bạn";
+export const FMANAGE_CHECK_IN_HISTORY_HEADER = "Lịch sử Check-in";
 // END OF RELATED SCREEN HEADER SECTION
 
 /**
@@ -147,6 +150,8 @@ export const FORM_FIELD_POST_ATTACHMENT_TYPE = "attachmentType";
 export const FORM_FIELD_POST_MEDIA_URL = "mediaUrl";
 export const FORM_FIELD_POST_TYPE = "postType";
 export const FORM_FIELD_POST_CONTENT = "content";
+export const FORM_FIELD_RATING = "score";
+export const FORM_FIELD_REVIEW_CONTENT = "description";
 // END OF RELATED FORM FIELD NAME TO REGISTER HOOK FORM SECTION
 
 /**
@@ -162,6 +167,7 @@ export const LAKE_INFORMATION_BUTTON_LABEL = "Thông tin hồ câu";
 export const ADD_FISH_BUTTON_LABEL = "Thêm loại cá";
 export const CREATING_BUTTON_LABEL = "Đang tạo bài viết";
 export const EDITING_BUTTON_LABEL = "Đang chỉnh sửa bài viết";
+export const POST_BUTTON_LABEL = "Đăng";
 // END OF RELATED BUTTON LABELS SECTION
 
 /**
@@ -210,6 +216,7 @@ export const POST_TYPE_LABEL = "Sự kiện";
 export const POST_CONTENT_LABEL = "Nội dung";
 export const POST_ATTACHMENT_TYPE_LABEL = "Đính kèm";
 export const POST_ATTACHMENT_MEDIA_LABEL = "Đường dẫn";
+export const RATING_LABEL = "Điểm số:";
 // END OF RELATED LABEL SECTIONS
 
 /**
@@ -273,4 +280,5 @@ export const INPUT_POST_CONTENT_PLACEHOLDER = "Nội dung của bài đăng";
 export const SELECT_ATTACHMENT_TYPE_PLACEHOLDER = "Chọn loại đính kèm";
 export const INPUT_ATTACHMENT_MEDIA_PLACEHOLDER =
   "Gắn sao chép liên kết hoặc mã nhúng video";
+export const INPUT_REVIEW_CONTENT_PLACEHOLDER = "Đánh giá của bạn về hồ câu";
 // END OF RELATED PLACEHOLDER TITLES SECTION

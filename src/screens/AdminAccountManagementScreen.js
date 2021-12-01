@@ -96,24 +96,6 @@ const AdminAccountManagementScreen = () => {
   });
   const viewConfigRef = React.useRef({ viewAreaCoveragePercentThreshold: 50 });
 
-  const ListView = () => {
-    return (
-      <FlatList
-        style={{ width: "90%" }}
-        data={userList}
-        renderItem={renderItem}
-        keyExtractor={KEY_EXTRACTOR}
-        ItemSeparatorComponent={Divider}
-        onEndReached={loadMoreUserData}
-        initialNumToRender={10}
-        maxToRenderPerBatch={10}
-        onViewableItemsChanged={onViewRef.current}
-        viewabilityConfig={viewConfigRef.current}
-        onEndReachedThreshold={0.1}
-      />
-    );
-  };
-
   useEffect(() => {
     getUserList({ pageNo: 1, setIsLoading });
     const loadingTimeout = setTimeout(() => {
@@ -154,7 +136,23 @@ const AdminAccountManagementScreen = () => {
             onClear={onClear}
           />
 
-          {isLoading ? <SmallScreenLoadingIndicator /> : <ListView />}
+          {isLoading ? (
+            <SmallScreenLoadingIndicator />
+          ) : (
+            <FlatList
+              style={{ width: "90%" }}
+              data={userList}
+              renderItem={renderItem}
+              keyExtractor={KEY_EXTRACTOR}
+              ItemSeparatorComponent={Divider}
+              onEndReached={loadMoreUserData}
+              initialNumToRender={10}
+              maxToRenderPerBatch={10}
+              onViewableItemsChanged={onViewRef.current}
+              viewabilityConfig={viewConfigRef.current}
+              onEndReachedThreshold={0.1}
+            />
+          )}
         </View>
       </View>
     </>

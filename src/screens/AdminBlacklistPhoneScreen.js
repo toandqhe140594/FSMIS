@@ -20,12 +20,6 @@ const renderItem = ({ item }) => (
   />
 );
 
-const renderEmtpy = () => (
-  <Text style={{ color: "gray", alignSelf: "center" }}>
-    Danh sách đang trống
-  </Text>
-);
-
 const keyExtractor = (item) => item.phone.toString();
 
 const AdminBlacklistManagementScreen = () => {
@@ -79,6 +73,12 @@ const AdminBlacklistManagementScreen = () => {
         size="large"
         color="#2089DC"
       />
+    );
+  const renderEmtpy = () =>
+    !isLoading && (
+      <Text style={{ color: "gray", alignSelf: "center" }}>
+        Danh sách đang trống
+      </Text>
     );
 
   useEffect(() => {
