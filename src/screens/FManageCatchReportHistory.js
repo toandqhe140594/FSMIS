@@ -12,13 +12,13 @@ import { KEY_EXTRACTOR } from "../constants";
 import { goToCatchReportDetailScreen } from "../navigations";
 import { convertDateFormat } from "../utilities";
 
-const shouldListUpdate = (prevState, currentState) => {
-  if (JSON.stringify(prevState) !== JSON.stringify(currentState)) {
-    Object.assign(prevState, currentState);
-    return true;
-  }
-  return false;
-};
+// const shouldListUpdate = (prevState, currentState) => {
+//   if (JSON.stringify(prevState) !== JSON.stringify(currentState)) {
+//     Object.assign(prevState, currentState);
+//     return true;
+//   }
+//   return false;
+// };
 
 const DEFAULT_STATE = { pageNo: 1, startDate: null, endDate: null };
 const DATE_RANGE_PLACEHOLDER = "Chọn ngày";
@@ -40,7 +40,7 @@ const getDateRangeDisplay = (startDate, endDate) => {
 const FManageCatchReportHistory = () => {
   const navigation = useNavigation();
   const needRefresh = useRef(true);
-  const prevQueryData = useRef({});
+  // const prevQueryData = useRef({});
   const queryData = useRef({ ...DEFAULT_STATE });
   const [modalVisible, setModalVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -171,11 +171,9 @@ const FManageCatchReportHistory = () => {
 
   useEffect(() => {
     if (isLoading) {
-      if (shouldListUpdate(prevQueryData.current, queryData.current)) {
-        getCatchReportHistoryList({ ...queryData.current }).finally(
-          stopLoading,
-        );
-      } else stopLoading();
+      // if (shouldListUpdate(prevQueryData.current, queryData.current)) {
+      getCatchReportHistoryList({ ...queryData.current }).finally(stopLoading);
+      // } else stopLoading();
     }
   }, [isLoading]);
 

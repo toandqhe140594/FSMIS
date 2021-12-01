@@ -14,13 +14,13 @@ import { convertDateFormat } from "../utilities";
 const DEFAULT_STATE = { pageNo: 1, startDate: null, endDate: null };
 const DATE_RANGE_PLACEHOLDER = "Chọn ngày";
 
-const shouldListUpdate = (prevState, currentState) => {
-  if (JSON.stringify(prevState) !== JSON.stringify(currentState)) {
-    Object.assign(prevState, currentState);
-    return true;
-  }
-  return false;
-};
+// const shouldListUpdate = (prevState, currentState) => {
+//   if (JSON.stringify(prevState) !== JSON.stringify(currentState)) {
+//     Object.assign(prevState, currentState);
+//     return true;
+//   }
+//   return false;
+// };
 
 const getDateRangeDisplay = (startDate, endDate) => {
   if (!startDate && !endDate) {
@@ -56,7 +56,7 @@ const renderItem = ({ item }) => (
 
 const FManageCheckinHistoryScreen = () => {
   const needRefresh = useRef(true);
-  const prevQueryData = useRef({});
+  // const prevQueryData = useRef({});
   const queryData = useRef({ ...DEFAULT_STATE });
   const [dateRange, setDateRange] = useState(DATE_RANGE_PLACEHOLDER);
   const [isLoading, setIsLoading] = useState(true);
@@ -148,9 +148,9 @@ const FManageCheckinHistoryScreen = () => {
 
   useEffect(() => {
     if (isLoading) {
-      if (shouldListUpdate(prevQueryData.current, queryData.current)) {
-        getCheckinHistoryList({ ...queryData.current }).finally(stopLoading);
-      } else stopLoading();
+      // if (shouldListUpdate(prevQueryData.current, queryData.current)) {
+      getCheckinHistoryList({ ...queryData.current }).finally(stopLoading);
+      // } else stopLoading();
     }
   }, [isLoading]);
 
