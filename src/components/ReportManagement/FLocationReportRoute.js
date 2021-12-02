@@ -20,10 +20,10 @@ const FLocationReportRoute = () => {
   const navigation = useNavigation();
   const isFocused = useIsFocused();
   const isFocusedRef = useRef(true);
+  const needRefresh = useRef(true);
+  const mode = useRef("DEFAULT");
   const [isLoading, setIsLoading] = useState(true);
-  const [bigLoading, setBigLoading] = useState(false);
   const [getStatus, setGetStatus] = useState(null);
-  const [mode, setMode] = useState("DEFAULT");
   const [query, setQuery] = useState({ pageNo: 1, active: true });
   const [filter, setFilter] = useState(FILTER_UNTOUCHED_VALUE);
   const { listLocationReport, totalLocationReportPage } = useStoreState(
@@ -32,6 +32,16 @@ const FLocationReportRoute = () => {
   const { getListLocationReportLocation, resetReportList } = useStoreActions(
     (actions) => actions.ReportModel,
   );
+
+  const startLoading = (shouldRefresh = true) => {
+    if (shouldRefresh) needRefresh.current = true;
+    setIsLoading(true);
+  };
+
+  const stopLoading = () => {
+    if (needRefresh.current) needRefresh.current = false;
+    setIsLoading(false);
+  };
 
   const memoizedStyle = useMemo(
     () =>
@@ -54,7 +64,7 @@ const FLocationReportRoute = () => {
     );
 
   const renderHeader = () =>
-    bigLoading && isLoading ? (
+    needRefresh.current && isLoading ? (
       <SmallScreenLoadingIndicator containerStyle={{ marginBottom: 12 }} />
     ) : null;
 
@@ -69,7 +79,7 @@ const FLocationReportRoute = () => {
   };
 
   const renderFooter = () =>
-    isLoading && !bigLoading ? (
+    isLoading && !needRefresh.current ? (
       <SmallScreenLoadingIndicator containerStyle={{ marginVertical: 12 }} />
     ) : null;
   /**
@@ -80,9 +90,8 @@ const FLocationReportRoute = () => {
     if (value !== filter) {
       setFilter(value);
       setQuery({ pageNo: 1, active: value === FILTER_UNTOUCHED_VALUE });
-      setMode("NEW");
-      setIsLoading(true);
-      setBigLoading(true);
+      mode.current = "NEW";
+      startLoading();
     }
   };
   /**
@@ -92,8 +101,8 @@ const FLocationReportRoute = () => {
   const handleLoadMore = () => {
     if (query.pageNo < totalLocationReportPage) {
       setQuery((prev) => ({ ...prev, pageNo: prev.pageNo + 1 }));
-      setMode("DEFAULT");
-      setIsLoading(true);
+      mode.current = "DEFAULT";
+      startLoading(false);
     }
   };
   /**
@@ -109,7 +118,11 @@ const FLocationReportRoute = () => {
    */
   useEffect(() => {
     if (isLoading) {
-      getListLocationReportLocation({ mode, query, setGetStatus });
+      getListLocationReportLocation({
+        mode: mode.current,
+        setGetStatus,
+        query,
+      });
     }
   }, [isLoading]);
 
@@ -118,9 +131,9 @@ const FLocationReportRoute = () => {
    */
   useEffect(() => {
     if (!isFocusedRef.current) {
-      setMode("NEW");
       setQuery((prev) => ({ ...prev, pageNo: 1 }));
-      setIsLoading(true);
+      mode.current = "NEW";
+      startLoading(false);
     }
     isFocusedRef.current = isFocused;
   }, [isFocused]);
@@ -130,12 +143,10 @@ const FLocationReportRoute = () => {
    */
   useEffect(() => {
     if (getStatus === "SUCCESS") {
-      setIsLoading(false);
-      if (bigLoading) setBigLoading(false);
+      stopLoading();
       setGetStatus(null);
     } else if (getStatus === "FAILED") {
-      setIsLoading(false);
-      if (bigLoading) setBigLoading(false);
+      stopLoading();
       setGetStatus(null);
     }
   }, [getStatus]);
@@ -143,7 +154,6 @@ const FLocationReportRoute = () => {
   return (
     <>
       <HeaderTab name="Quản lý báo cáo" />
-      {/* <OverlayLoading loading={isLoading && bigLoading} /> */}
       <View marginBottom={OFF_SET}>
         <Select
           w="90%"

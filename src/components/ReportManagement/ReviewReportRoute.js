@@ -20,9 +20,9 @@ const ReviewReportRoute = () => {
   const navigation = useNavigation();
   const isFocused = useIsFocused();
   const isFocusedRef = useRef(true);
+  const needRefresh = useRef(true);
+  const mode = useRef("DEFAULT");
   const [isLoading, setIsLoading] = useState(true);
-  const [bigLoading, setBigLoading] = useState(false);
-  const [mode, setMode] = useState("DEFAULT");
   const [query, setQuery] = useState({ pageNo: 1, active: true });
   const [filter, setFilter] = useState(FILTER_UNTOUCHED_VALUE);
   const [getStatus, setGetStatus] = useState(null);
@@ -32,6 +32,16 @@ const ReviewReportRoute = () => {
   const { getListReviewReport, resetReportList } = useStoreActions(
     (actions) => actions.ReportModel,
   );
+
+  const startLoading = (shouldRefresh = true) => {
+    if (shouldRefresh) needRefresh.current = true;
+    setIsLoading(true);
+  };
+
+  const stopLoading = () => {
+    if (needRefresh.current) needRefresh.current = false;
+    setIsLoading(false);
+  };
 
   const memoizedStyle = useMemo(
     () =>
@@ -54,7 +64,7 @@ const ReviewReportRoute = () => {
     );
 
   const renderHeader = () =>
-    bigLoading && isLoading ? (
+    needRefresh.current && isLoading ? (
       <SmallScreenLoadingIndicator containerStyle={{ marginBottom: 12 }} />
     ) : null;
 
@@ -67,7 +77,7 @@ const ReviewReportRoute = () => {
   );
 
   const renderFooter = () =>
-    isLoading && !bigLoading ? (
+    isLoading && !needRefresh.current ? (
       <SmallScreenLoadingIndicator containerStyle={{ marginVertical: 12 }} />
     ) : null;
   /**
@@ -77,17 +87,16 @@ const ReviewReportRoute = () => {
   const handleValueChange = (value) => {
     if (value !== filter) {
       setQuery({ pageNo: 1, active: value === FILTER_UNTOUCHED_VALUE });
-      setMode("NEW");
       setFilter(value);
-      setIsLoading(true);
-      setBigLoading(true); // When change between each list type, use bigLoading
+      mode.current = "NEW";
+      startLoading();
     }
   };
   const handleLoadMore = () => {
     if (query.pageNo < totalReviewReportPage) {
-      setMode("DEFAULT");
       setQuery((prev) => ({ ...prev, pageNo: prev.pageNo + 1 }));
-      setIsLoading(true);
+      mode.current = "DEFAULT";
+      startLoading(false);
     }
   };
   /**
@@ -102,7 +111,9 @@ const ReviewReportRoute = () => {
    * When pageNo or active changed, get next location report page
    */
   useEffect(() => {
-    if (isLoading) getListReviewReport({ mode, query, setGetStatus });
+    if (isLoading) {
+      getListReviewReport({ mode: mode.current, query, setGetStatus });
+    }
   }, [isLoading]);
 
   /**
@@ -110,9 +121,9 @@ const ReviewReportRoute = () => {
    */
   useEffect(() => {
     if (!isFocusedRef.current) {
-      setIsLoading(true);
-      setMode("NEW");
       setQuery((prev) => ({ ...prev, pageNo: 1 }));
+      mode.current = "NEW";
+      startLoading(false);
     }
     isFocusedRef.current = isFocused;
   }, [isFocused]);
@@ -122,12 +133,10 @@ const ReviewReportRoute = () => {
    */
   useEffect(() => {
     if (getStatus === "SUCCESS") {
-      setIsLoading(false);
-      if (bigLoading) setBigLoading(false);
+      stopLoading();
       setGetStatus(null);
     } else if (getStatus === "FAILED") {
-      setIsLoading(false);
-      if (bigLoading) setBigLoading(false);
+      stopLoading();
       setGetStatus(null);
     }
   }, [getStatus]);
