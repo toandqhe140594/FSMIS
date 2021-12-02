@@ -23,7 +23,6 @@ import {
   goToOTPScreen,
   goToRegisterInformationScreen,
 } from "../navigations";
-import { showToastMessage } from "../utilities";
 
 const PhoneIcon = () => (
   <Icon
@@ -65,7 +64,6 @@ const RegisterScreen = () => {
       })
       .catch(() => {
         setLoading(false);
-        showToastMessage(DICTIONARY.TOAST_NON_EXISTED_INVALID_PHONE_MSG);
       });
   };
 
@@ -133,7 +131,7 @@ const RegisterScreen = () => {
                 isLoading={loading}
                 isDisabled={loading}
               >
-                Đăng ký
+                {DICTIONARY.CONTINUE_BUTTON_LABEL}
               </Button>
             </VStack>
 
