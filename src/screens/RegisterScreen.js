@@ -136,7 +136,7 @@ const RegisterScreen = () => {
             </VStack>
 
             <Text mb={6}>
-              Bạn chưa có tài khoản?{" "}
+              Bạn đã có tài khoản?{" "}
               <Text underline onPress={navigateToLoginScreenAction}>
                 Đăng nhập
               </Text>
