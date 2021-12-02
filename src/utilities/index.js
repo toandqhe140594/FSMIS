@@ -106,7 +106,17 @@ const convertDateFormat = (date) => {
   return `${moment(date).utcOffset(-300).format("YYYY-MM-DDTHH:mm:ss.000")}Z`;
 };
 
+/**
+ * Convert date to format DD/MM/YYYY
+ * @param {string} date date with format "YYYY-MM-DDT17:00:00.000Z" - hours = 17
+ * @returns date with format "DD/MM/YYYY" - hours = 0
+ */
+const convertDateDisplayFormat = (date) => {
+  return `${moment(date).utcOffset(-300).format("DD/MM/YYYY")}`;
+};
+
 export {
+  convertDateDisplayFormat,
   convertDateFormat,
   showAlertAbsoluteBox,
   showAlertBox,
