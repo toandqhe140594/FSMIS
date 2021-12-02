@@ -52,19 +52,24 @@ const OTPScreen = () => {
   });
   const ref = useBlurOnFulfill({ value, cellCount: CELL_COUNT });
 
+  /**
+   * Reset countdown value and Run the countdown timer
+   */
+  const handleCountdownReset = () => {
+    setCountdown(initialCountdown);
+    countdownInterval = setInterval(() => {
+      setCountdown((prev) => prev - 1);
+    }, 1000);
+  };
+
   // Reset the countdown timer
   const resetCountdown = () => {
     setWaitNewOTP(true);
     sendOtp({ phone: route.params.phone })
       .then(() => {
-        setWaitNewOTP(false);
-        setCountdown(initialCountdown); // Reset countdown value
-        // Run the countdown timer
-        countdownInterval = setInterval(() => {
-          setCountdown((prev) => prev - 1);
-        }, 1000);
+        handleCountdownReset();
       })
-      .catch(() => {
+      .finally(() => {
         setWaitNewOTP(false);
       });
   };
@@ -86,7 +91,7 @@ const OTPScreen = () => {
 
   // Start the countdown timer when component mount
   useEffect(() => {
-    resetCountdown();
+    handleCountdownReset();
     return () => {
       clearInterval(countdownInterval); // Clear the countdown timer when component unmount
     };
