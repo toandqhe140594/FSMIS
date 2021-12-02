@@ -61,7 +61,7 @@ public class GlobalAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     ResponseTextDtoOut apiExceptionHandler(ApiException ex) {
         ex.printStackTrace();
-        return new ResponseTextDtoOut(ex.getMessage());
+        return new ResponseTextDtoOut("Không thể gửi OTP vào số điện thoại này");
     }
 
     @ResponseBody
