@@ -73,7 +73,7 @@ const EditProfileScreen = () => {
     delete data.districtId;
     const updateData = {
       ...data,
-      dob: data.dob.toJSON(),
+      dob: moment(data.dob).add(1, "days").toDate().toJSON(),
     };
     editPersonalInformation({ updateData })
       .then(() => {
