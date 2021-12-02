@@ -117,7 +117,7 @@ const BanNoticeScreen = ({ bannedInformation }) => {
           <Text style={styles.text}>
             Tài khoản:{" "}
             <Text bold style={styles.text}>
-              091123431
+              {bannedInformation.phone}
             </Text>
           </Text>
           <Text>

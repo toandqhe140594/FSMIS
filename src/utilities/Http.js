@@ -1,13 +1,13 @@
 import axios from "axios";
-// import * as SecureStore from "expo-secure-store";
+
+import envs from "../config/env";
 
 // Create axios client, pre-configured with baseURL
 const http = axios.create({
-  baseURL: "http://103.170.123.80/api/",
+  baseURL: envs.API_URL,
   timeout: 5000,
   headers: {
     "Content-Type": "application/json",
-    // Authorization: `Bearer ${SecureStore.getItemAsync("userToken")}`,
   },
 });
 

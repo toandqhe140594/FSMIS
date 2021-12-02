@@ -11,6 +11,7 @@ import {
 import { Button, Icon } from "react-native-elements";
 
 import styles from "../../config/styles";
+import { KEY_EXTRACTOR } from "../../constants";
 import { goToAdvanceSearchScreen } from "../../navigations";
 import { showToastMessage } from "../../utilities";
 import FLocationCard from "../FLocationCard";
@@ -76,11 +77,10 @@ const ListViewRoute = () => {
     ) : null;
   };
 
-  const renderEmtpy = () => (
-    <Text style={{ color: "gray" }}>Kết quả tìm kiếm đang trống</Text>
-  );
-
-  const keyExtractor = (item) => item.id.toString();
+  const renderEmtpy = () =>
+    !isLoading && (
+      <Text style={{ color: "gray" }}>Kết quả tìm kiếm đang trống</Text>
+    );
 
   /**
    * Listen to when pageNo increases
@@ -117,7 +117,7 @@ const ListViewRoute = () => {
           style={{ height: "100%" }}
           data={listLocationResult}
           renderItem={memoizedValue}
-          keyExtractor={keyExtractor}
+          keyExtractor={KEY_EXTRACTOR}
           ItemSeparatorComponent={ItemSeparatorComponent}
           initialNumToRender={3}
           maxToRenderPerBatch={5}

@@ -1,14 +1,15 @@
 import { useNavigation } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, FlatList, View } from "react-native";
+import { FlatList, View } from "react-native";
 import { Badge, Divider, SearchBar } from "react-native-elements";
 
 import AvatarCard from "../components/AvatarCard";
+import SmallScreenLoadingIndicator from "../components/common/SmallScreenLoadingIndicator";
 import HeaderTab from "../components/HeaderTab";
 import PressableCustomCard from "../components/PressableCustomCard";
 import styles from "../config/styles";
-import { DEFAULT_TIMEOUT } from "../constants";
+import { DEFAULT_TIMEOUT, KEY_EXTRACTOR } from "../constants";
 import { goToAdminAccountManagementDetailScreen } from "../navigations";
 
 const AdminAccountManagementScreen = () => {
@@ -51,30 +52,6 @@ const AdminAccountManagementScreen = () => {
     setPage(2);
   };
 
-  useEffect(() => {
-    getUserList({ pageNo: 1, setIsLoading });
-    const loadingTimeout = setTimeout(() => {
-      setIsLoading(false);
-    }, DEFAULT_TIMEOUT);
-    return () => {
-      clearTimeout(loadingTimeout);
-      clearAccountList();
-    };
-  }, []);
-
-  useEffect(() => {
-    if (userList) setIsLoading(false);
-  }, [userList]);
-
-  useEffect(() => {
-    if (firstPageLastItemView === null) return;
-    if (firstPageLastItemView !== -1 && page === 2) {
-      getUserList({ pageNo: 2, keyword: search, setIsLoading });
-      setPage(3);
-      setFirstPageLastItemView(null);
-    }
-  }, [firstPageLastItemView]);
-
   const goToAccountDetailScreen = (id) => () => {
     goToAdminAccountManagementDetailScreen(navigation, {
       id,
@@ -109,7 +86,6 @@ const AdminAccountManagementScreen = () => {
     );
   };
 
-  const keyExtractor = (item) => item.id.toString();
   const onViewRef = React.useRef((viewableItems) => {
     const foundIndex = viewableItems.changed.findIndex(
       (item) => item.index === 9,
@@ -119,6 +95,30 @@ const AdminAccountManagementScreen = () => {
     }
   });
   const viewConfigRef = React.useRef({ viewAreaCoveragePercentThreshold: 50 });
+
+  useEffect(() => {
+    getUserList({ pageNo: 1, setIsLoading });
+    const loadingTimeout = setTimeout(() => {
+      setIsLoading(false);
+    }, DEFAULT_TIMEOUT);
+    return () => {
+      clearTimeout(loadingTimeout);
+      clearAccountList();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (userList) setIsLoading(false);
+  }, [userList]);
+
+  useEffect(() => {
+    if (firstPageLastItemView === null) return;
+    if (firstPageLastItemView !== -1 && page === 2) {
+      getUserList({ pageNo: 2, keyword: search, setIsLoading });
+      setPage(3);
+      setFirstPageLastItemView(null);
+    }
+  }, [firstPageLastItemView]);
 
   return (
     <>
@@ -137,24 +137,21 @@ const AdminAccountManagementScreen = () => {
           />
 
           {isLoading ? (
-            <View style={styles.centerBox}>
-              <ActivityIndicator size="large" color="blue" />
-            </View>
+            <SmallScreenLoadingIndicator />
           ) : (
-            <View style={[styles.flexBox, { width: "90%" }]}>
-              <FlatList
-                data={userList}
-                renderItem={renderItem}
-                keyExtractor={keyExtractor}
-                ItemSeparatorComponent={Divider}
-                onEndReached={loadMoreUserData}
-                initialNumToRender={10}
-                maxToRenderPerBatch={10}
-                onViewableItemsChanged={onViewRef.current}
-                viewabilityConfig={viewConfigRef.current}
-                onEndReachedThreshold={0.1}
-              />
-            </View>
+            <FlatList
+              style={{ width: "90%" }}
+              data={userList}
+              renderItem={renderItem}
+              keyExtractor={KEY_EXTRACTOR}
+              ItemSeparatorComponent={Divider}
+              onEndReached={loadMoreUserData}
+              initialNumToRender={10}
+              maxToRenderPerBatch={10}
+              onViewableItemsChanged={onViewRef.current}
+              viewabilityConfig={viewConfigRef.current}
+              onEndReachedThreshold={0.1}
+            />
           )}
         </View>
       </View>

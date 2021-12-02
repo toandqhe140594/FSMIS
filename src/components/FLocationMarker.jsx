@@ -47,10 +47,10 @@ const SpotMarker = ({ coordinate, fishingSpot, onPress }) => {
                 startingValue={fishingSpot.rate || 0}
               />
             </View>
-            <Text>
+            {/* <Text>
               Ước tính:{" "}
               {fishingSpot.distance ? `${fishingSpot.distance}km` : "Không rõ"}
-            </Text>
+            </Text> */}
           </View>
           {fishingSpot.isVerified && (
             <View style={verificationIconContainer}>

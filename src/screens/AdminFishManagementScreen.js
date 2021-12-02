@@ -1,19 +1,45 @@
 import { useNavigation } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, Button, Center } from "native-base";
+import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, FlatList } from "react-native";
+import { FlatList } from "react-native";
 import { Divider, SearchBar } from "react-native-elements";
 
 import FishManagementCard from "../components/AdminFishManagement/FishManagementCard";
+import SmallScreenLoadingIndicator from "../components/common/SmallScreenLoadingIndicator";
 import HeaderTab from "../components/HeaderTab";
 import styles from "../config/styles";
-import { DEFAULT_TIMEOUT } from "../constants";
+import { DEFAULT_TIMEOUT, KEY_EXTRACTOR } from "../constants";
 import FishModel from "../models/FishModel";
 import { goToAdminFishEditScreen } from "../navigations";
 import store from "../utilities/Store";
 
 store.addModel("FishModel", FishModel);
+
+const ListView = React.memo(({ data }) => {
+  const renderRow = ({ item }) => (
+    <FishManagementCard
+      id={item.id}
+      name={item.name}
+      image={item.image}
+      active={item.active}
+    />
+  );
+  return (
+    <FlatList
+      style={{ width: "100%" }}
+      data={data}
+      renderItem={renderRow}
+      keyExtractor={KEY_EXTRACTOR}
+      ItemSeparatorComponent={Divider}
+    />
+  );
+});
+
+ListView.propTypes = {
+  data: PropTypes.arrayOf(PropTypes.object).isRequired,
+};
 
 const AdminFishManagementScreen = () => {
   const navigation = useNavigation();
@@ -28,17 +54,6 @@ const AdminFishManagementScreen = () => {
   const [search, setSearch] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [displayedList, setDisplayedList] = useState(adminFishList);
-
-  // DucHM ADD_START 18/11/2021
-  const renderRow = ({ item }) => (
-    <FishManagementCard
-      id={item.id}
-      name={item.name}
-      image={item.image}
-      active={item.active}
-    />
-  );
-  // DucHM ADD_END 18/11/2021
 
   const updateSearch = (searchKey) => {
     setSearch(searchKey);
@@ -79,28 +94,6 @@ const AdminFishManagementScreen = () => {
     goToAdminFishEditScreen(navigation, { id: null });
   };
 
-  const ListView = () => {
-    const keyExtractor = (item) => item.id.toString();
-
-    if (isLoading)
-      return (
-        <Center flex={1}>
-          <ActivityIndicator size="large" color="blue" />
-        </Center>
-      );
-
-    return (
-      <Box flex={1} w="100%">
-        <FlatList
-          data={displayedList}
-          renderItem={renderRow}
-          keyExtractor={keyExtractor}
-          ItemSeparatorComponent={Divider}
-        />
-      </Box>
-    );
-  };
-
   return (
     <>
       <HeaderTab name="Quản lý loại cá" />
@@ -120,7 +113,11 @@ const AdminFishManagementScreen = () => {
             Thêm loại cá
           </Button>
 
-          <ListView />
+          {isLoading ? (
+            <SmallScreenLoadingIndicator />
+          ) : (
+            <ListView data={displayedList} />
+          )}
         </Box>
       </Center>
     </>

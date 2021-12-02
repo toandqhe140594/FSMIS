@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 
 import EventPostCard from "../components/EventPostCard";
 import HeaderTab from "../components/HeaderTab";
+import { KEY_EXTRACTOR } from "../constants";
 import { goToPostCreateScreen, goToPostEditScreen } from "../navigations";
 import { showAlertConfirmBox, showToastMessage } from "../utilities";
 
@@ -92,6 +93,7 @@ const PostListContainerComponent = () => {
           lakePost={{
             badge: typeBadge,
             content: item.content,
+            posterName: item.posterName,
           }}
           postTime={item.postTime}
         />
@@ -133,6 +135,7 @@ const PostListContainerComponent = () => {
             lakePost={{
               badge: currentPinPost.postType,
               content: currentPinPost.content,
+              posterName: currentPinPost.posterName,
             }}
             postTime={currentPinPost.postTime}
           />
@@ -165,8 +168,6 @@ const PostListContainerComponent = () => {
     getPinPost();
   }, []);
 
-  const keyExtractor = (item) => item.id.toString();
-
   return (
     <Box>
       <FlatList
@@ -179,7 +180,7 @@ const PostListContainerComponent = () => {
         data={locationPostList}
         renderItem={renderItem}
         onEndReached={loadMoreLakeCatchData}
-        keyExtractor={keyExtractor}
+        keyExtractor={KEY_EXTRACTOR}
         nestedScrollEnabled
       />
     </Box>

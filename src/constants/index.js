@@ -13,6 +13,8 @@ export { DICTIONARY };
 
 export const DEFAULT_TIMEOUT = 10000;
 
+export const KEY_EXTRACTOR = (item) => item.id.toString();
+
 export const phoneRegExp =
   /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
 export const DEFAULT_LATLNG = {

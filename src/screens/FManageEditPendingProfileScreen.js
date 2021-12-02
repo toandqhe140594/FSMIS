@@ -22,7 +22,7 @@ import MapOverviewBox from "../components/FLocationEditProfile/MapOverviewBox";
 import HeaderTab from "../components/HeaderTab";
 import { DEFAULT_TIMEOUT, DICTIONARY, ROUTE_NAMES, SCHEMA } from "../constants";
 import { goBack, goToOTPScreen } from "../navigations";
-import { showAlertBox } from "../utilities";
+import { showAlertAbsoluteBox, showAlertBox } from "../utilities";
 
 const styles = StyleSheet.create({
   sectionWrapper: {
@@ -103,10 +103,11 @@ const FManageEditPendingProfileScreen = () => {
   };
 
   const handleEditSuccess = () => {
-    setIsLoading(false);
-    showAlertBox(
+    const handleGoBack = () => goBack(navigation);
+    showAlertAbsoluteBox(
       DICTIONARY.ALERT_TITLE,
-      DICTIONARY.ALERT_EDIT_LOCATION_SUCCESS_MSG,
+      DICTIONARY.ALERT_EDIT_PROFILE_SUCCESS_MSG,
+      handleGoBack,
     );
   };
 
@@ -147,7 +148,6 @@ const FManageEditPendingProfileScreen = () => {
   useEffect(() => {
     if (route.params?.id) {
       getLocationDetailsById({ id: route.params.id }).catch(() => {
-        handleError();
         goBack(navigation);
       });
     }

@@ -1,16 +1,12 @@
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import { Select } from "native-base";
-import React, { useEffect, useRef, useState } from "react";
-import {
-  ActivityIndicator,
-  FlatList,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { FlatList, Text, TouchableOpacity, View } from "react-native";
 
+import { KEY_EXTRACTOR } from "../../constants";
 import { goToAdminPostReportDetailScreen } from "../../navigations";
-import OverlayLoading from "../common/OverlayLoading";
+import SmallScreenLoadingIndicator from "../common/SmallScreenLoadingIndicator";
 import HeaderTab from "../HeaderTab";
 import ReportCard from "./ReportCard";
 
@@ -36,6 +32,11 @@ const PostReportRoute = () => {
   const { getListPostReport, resetReportList } = useStoreActions(
     (actions) => actions.ReportModel,
   );
+  const memoizedStyle = useMemo(
+    () =>
+      !listPostReport.length ? { flex: 1, justifyContent: "center" } : null,
+    [listPostReport.length > 0],
+  );
 
   const handleReportPostDetailNavigate = (id, active) => () => {
     goToAdminPostReportDetailScreen(navigation, {
@@ -44,7 +45,12 @@ const PostReportRoute = () => {
     });
   };
 
-  const keyExtractor = (item) => item.id.toString();
+  const renderEmpty = () =>
+    !isLoading && (
+      <Text style={{ color: "gray", alignSelf: "center" }}>
+        Chưa có báo cáo nào
+      </Text>
+    );
 
   const renderItem = ({ item }) => (
     <TouchableOpacity
@@ -53,10 +59,17 @@ const PostReportRoute = () => {
       <ReportCard {...item} isPostReport />
     </TouchableOpacity>
   );
+
+  const renderHeader = () =>
+    bigLoading && isLoading ? (
+      <SmallScreenLoadingIndicator containerStyle={{ marginBottom: 12 }} />
+    ) : null;
+
   const renderFooter = () =>
     isLoading && !bigLoading ? (
-      <ActivityIndicator size="large" color="#2089DC" />
+      <SmallScreenLoadingIndicator containerStyle={{ marginVertical: 12 }} />
     ) : null;
+
   /**
    * Change to new list
    * @param {String} value selected value
@@ -126,7 +139,6 @@ const PostReportRoute = () => {
   return (
     <>
       <HeaderTab name="Quản lý báo cáo" />
-      <OverlayLoading loading={isLoading && bigLoading} />
       <View marginBottom={OFF_SET}>
         <Select
           w="90%"
@@ -149,9 +161,12 @@ const PostReportRoute = () => {
 
         <FlatList
           height="100%"
-          keyExtractor={keyExtractor}
+          contentContainerStyle={memoizedStyle}
+          keyExtractor={KEY_EXTRACTOR}
           data={listPostReport}
           renderItem={renderItem}
+          ListHeaderComponent={renderHeader}
+          ListEmptyComponent={renderEmpty}
           ListFooterComponent={renderFooter}
           bounces={false}
           onEndReached={handleLoadMore}

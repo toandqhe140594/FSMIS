@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import { useEffect } from "react";
 import { useFormContext, useWatch } from "react-hook-form";
 
-const FishCardFieldWatcher = ({ name }) => {
+const FieldWatcherResetter = ({ name }) => {
   const { control, setValue } = useFormContext();
   const watchField = useWatch({ control, name });
   /**
@@ -17,11 +17,11 @@ const FishCardFieldWatcher = ({ name }) => {
   return null;
 };
 
-FishCardFieldWatcher.propTypes = {
+FieldWatcherResetter.propTypes = {
   name: PropTypes.string,
 };
-FishCardFieldWatcher.defaultProps = {
+FieldWatcherResetter.defaultProps = {
   name: "",
 };
 
-export default FishCardFieldWatcher;
+export default FieldWatcherResetter;

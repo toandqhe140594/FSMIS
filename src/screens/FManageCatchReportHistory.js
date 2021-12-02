@@ -1,74 +1,106 @@
 import { useNavigation } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, Button, FlatList, Modal, Select, Text } from "native-base";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import CalendarPicker from "react-native-calendar-picker";
 
 import AvatarCard from "../components/AvatarCard";
+import SmallScreenLoadingIndicator from "../components/common/SmallScreenLoadingIndicator";
 import HeaderTab from "../components/HeaderTab";
 import PressableCustomCard from "../components/PressableCustomCard";
+import { KEY_EXTRACTOR } from "../constants";
 import { goToCatchReportDetailScreen } from "../navigations";
+import { convertDateFormat } from "../utilities";
+
+const shouldListUpdate = (prevState, currentState) => {
+  if (JSON.stringify(prevState) !== JSON.stringify(currentState)) {
+    Object.assign(prevState, currentState);
+    return true;
+  }
+  return false;
+};
+
+const DEFAULT_STATE = { pageNo: 1, startDate: null, endDate: null };
+const DATE_RANGE_PLACEHOLDER = "Chọn ngày";
+
+const getDateRangeDisplay = (startDate, endDate) => {
+  if (!startDate && !endDate) {
+    return DATE_RANGE_PLACEHOLDER;
+  }
+  // Cái nào ko trống thì hiện thị ra (ko null)
+  const fromDisplay = startDate
+    ? `Từ ${convertDateFormat(startDate).split("T")[0]}`
+    : "";
+  const toDisplay = endDate
+    ? `đến ${convertDateFormat(endDate).split("T")[0]}`
+    : "";
+  return `${fromDisplay} ${toDisplay}`;
+};
 
 const FManageCatchReportHistory = () => {
   const navigation = useNavigation();
-
-  const catchReportHistory = useStoreState(
-    (states) => states.FManageModel.catchReportHistory,
-  );
-
-  const { getCatchReportHistoryOverwrite } = useStoreActions(
-    (actions) => actions.FManageModel,
-  );
-
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
-  const [shouldReload, setShouldReload] = useState(false);
+  const needRefresh = useRef(true);
+  const prevQueryData = useRef({});
+  const queryData = useRef({ ...DEFAULT_STATE });
   const [modalVisible, setModalVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [dateRange, setDateRange] = useState(DATE_RANGE_PLACEHOLDER);
+  const { catchReportHistory, catchHistoryTotalPage } = useStoreState(
+    (states) => states.FManageModel,
+  );
+  const { getCatchReportHistoryList, resetCatchReportHistory } =
+    useStoreActions((actions) => actions.FManageModel);
 
-  const dateChangeHandler = (date, type) => {
-    if (type === "END_DATE") {
-      setEndDate(date);
-    } else {
-      setStartDate(date);
-      setEndDate(null);
-    }
-    setShouldReload(true);
-  };
+  const closeModal = () => setModalVisible(false);
 
-  const selectedFilterHandler = (type) => {
-    if (type === "BY_DATE") {
+  const handleValueChange = (value) => {
+    if (value === "BY_DATE") {
       setModalVisible(true);
     } else {
-      getCatchReportHistoryOverwrite({
-        startDate: null,
-        endDate: null,
-        status: "OVERWRITE",
-      });
+      queryData.current = { ...DEFAULT_STATE };
+      setDateRange(DATE_RANGE_PLACEHOLDER);
+      setIsLoading(true);
     }
   };
 
-  const submitDateFilterHandler = () => {
-    dateChangeHandler();
-    if (shouldReload === true) {
-      getCatchReportHistoryOverwrite({
-        startDate: startDate ? startDate.toJSON() : null,
-        endDate: endDate ? endDate.toJSON() : null,
-        status: "OVERWRITE",
-      });
-      setShouldReload(false);
+  const memoizedStyle = useMemo(
+    () =>
+      catchReportHistory && catchReportHistory.length > 0
+        ? null
+        : { flex: 1, justifyContent: "center" },
+    [catchReportHistory && catchReportHistory.length > 0],
+  );
+
+  const stopLoading = () => {
+    if (needRefresh.current) needRefresh.current = false;
+    setIsLoading(false);
+  };
+
+  const handleLoadMore = () => {
+    const currentPage = queryData.current.pageNo;
+    if (currentPage < catchHistoryTotalPage) {
+      queryData.current.pageNo = currentPage + 1;
+      setIsLoading(true);
     }
+  };
+
+  const handleDateChange = (date, type) => {
+    if (type === "END_DATE") {
+      queryData.current.endDate = date;
+    } else {
+      queryData.current.startDate = date;
+      queryData.current.endDate = null;
+    }
+  };
+
+  const handleSubmitDate = () => {
+    const { startDate, endDate } = queryData.current;
+    setDateRange(getDateRangeDisplay(startDate, endDate));
+    queryData.current.pageNo = 1;
+    needRefresh.current = true;
     setModalVisible(false);
+    setIsLoading(true);
   };
-
-  useEffect(() => {
-    getCatchReportHistoryOverwrite({
-      startDate: null,
-      endDate: null,
-      status: "OVERWRITE",
-    });
-  }, []);
-
-  const closeModel = () => setModalVisible(false);
 
   const navigateToDetailScreen = (id) => () => {
     goToCatchReportDetailScreen(navigation, { id });
@@ -112,41 +144,59 @@ const FManageCatchReportHistory = () => {
     );
   };
 
-  const keyExtractor = (item) => item.id.toString();
+  const memoizedRender = useMemo(() => renderItem, [catchReportHistory]);
 
-  const onEndReached = () => {
-    getCatchReportHistoryOverwrite({
-      startDate: startDate ? startDate.toJSON() : null,
-      endDate: endDate ? endDate.toJSON() : null,
-      status: "APPEND",
-    });
-  };
+  const renderHeader = () =>
+    isLoading && needRefresh.current ? (
+      <SmallScreenLoadingIndicator containerStyle={{ marginVertical: 12 }} />
+    ) : null;
+
+  const renderEmpty = () =>
+    !isLoading && (
+      <Text color="gray.400" alignSelf="center">
+        Lịch sử báo cá đang trống
+      </Text>
+    );
+
+  const renderFooter = () =>
+    isLoading && !needRefresh.current ? (
+      <SmallScreenLoadingIndicator containerStyle={{ marginVertical: 12 }} />
+    ) : null;
+
+  useEffect(() => {
+    return () => {
+      resetCatchReportHistory();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (isLoading) {
+      if (shouldListUpdate(prevQueryData.current, queryData.current)) {
+        getCatchReportHistoryList({ ...queryData.current }).finally(
+          stopLoading,
+        );
+      } else stopLoading();
+    }
+  }, [isLoading]);
 
   return (
     <Box flex={1}>
       <HeaderTab name="Lịch sử báo cá" />
-      <Box
-        w={{
-          base: "100%",
-          md: "25%",
-        }}
-        flex={1}
-      >
-        <Modal isOpen={modalVisible} onClose={closeModel} size="full">
+      <Box w={{ base: "100%", md: "25%" }} flex={1}>
+        <Modal isOpen={modalVisible} onClose={closeModal} size="full">
           <Modal.Content>
             <Modal.CloseButton />
-            <Modal.Header>Chọn ngày</Modal.Header>
+            <Modal.Header>{dateRange}</Modal.Header>
             <Modal.Body>
               <CalendarPicker
                 allowRangeSelection
                 scrollable
-                todayBackgroundColor="#00e673"
+                todayBackgroundColor="#fafafa"
                 selectedDayColor="#00ccff"
                 selectedDayTextColor="#000000"
-                scaleFactor={375}
-                onDateChange={dateChangeHandler}
+                onDateChange={handleDateChange}
               />
-              <Button size="lg" onPress={submitDateFilterHandler}>
+              <Button size="lg" onPress={handleSubmitDate}>
                 OK
               </Button>
             </Modal.Body>
@@ -154,27 +204,26 @@ const FManageCatchReportHistory = () => {
         </Modal>
 
         <Select
-          //   selectedValue={dateFilter}
-          minWidth="200"
-          accessibilityLabel="Chọn kiểu lọc"
-          placeholder="Chọn kiểu lọc"
-          _selectedItem={{
-            bg: "primary.200",
-          }}
-          onValueChange={(itemValue) => selectedFilterHandler(itemValue)}
-          backgroundColor="#ffffff"
+          fontSize="md"
+          accessibilityLabel="Chọn chế độ lọc"
+          placeholder="Chọn chế độ lọc"
+          onValueChange={handleValueChange}
         >
           <Select.Item label="Tất cả" value="All" />
-          <Select.Item label="Theo Ngày" value="BY_DATE" />
+          <Select.Item label="Theo ngày" value="BY_DATE" />
         </Select>
-        <Box flex={1}>
-          <FlatList
-            data={catchReportHistory}
-            renderItem={renderItem}
-            keyExtractor={keyExtractor}
-            onEndReached={onEndReached}
-          />
-        </Box>
+        <FlatList
+          h="87%"
+          data={catchReportHistory}
+          renderItem={memoizedRender}
+          keyExtractor={KEY_EXTRACTOR}
+          onEndReached={handleLoadMore}
+          onEndReachedThreshold={0.1}
+          ListHeaderComponent={renderHeader}
+          ListEmptyComponent={renderEmpty}
+          ListFooterComponent={renderFooter}
+          contentContainerStyle={memoizedStyle}
+        />
       </Box>
     </Box>
   );

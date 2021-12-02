@@ -1,15 +1,103 @@
 /* eslint-disable react/prop-types */
 import { Ionicons } from "@expo/vector-icons";
-import { Box, HStack, Menu, Pressable, ScrollView, VStack } from "native-base";
+import {
+  Box,
+  HStack,
+  Menu,
+  Pressable,
+  ScrollView,
+  Text,
+  VStack,
+} from "native-base";
 import PropTypes from "prop-types";
 import React from "react";
-import { Badge, Divider, Text } from "react-native-elements";
+import { Badge, Divider } from "react-native-elements";
 import { WebView } from "react-native-webview";
 
 import styles from "../config/styles";
 import AvatarCard from "./AvatarCard";
 import ImageResizeMode from "./ImageResizeMode";
 
+const uriExtract = (uri) => {
+  let srcUri = [];
+  let widthUri;
+  let heightUri;
+  let widthVideo = 400;
+  let heightVideo = 320;
+  let heightPage = 340;
+  let isAllowsFullscreen = true;
+
+  uri = uri.replace("fb.gg/v/", "fb.watch/"); // Convert fb.gg link to fb.watch link
+
+  try {
+    const regexIframe = new RegExp("<iframe", "g");
+    const regexYouTubeIframe = new RegExp(
+      '<iframe[^>]*srcs*=s*"?https?://[^s"/]*youtube.com(?:/[^s"]*)?"?[^>]*>.*?</iframe>',
+      "",
+    );
+    const regexYouTubeLink =
+      /^(https?:\/\/)?(www\.youtube\.com|youtu\.?be)\/.+$/g;
+    const regexYouTubeID =
+      /(?:https?:\/{2})?(?:w{3}\.)?youtu(?:be)?\.(?:com|be)(?:\/watch\?v=|\/)([^\s&]+)/;
+    const regexFacebookFWacth = /https:\/\/fb\.(?:watch|gg)\//;
+    const regexFacebookLink =
+      /^https:\/\/www\.facebook\.com\/([^\/?].+\/)?video(s|\.php)[\/?].*$/;
+    if (regexYouTubeIframe.test(uri)) {
+      isAllowsFullscreen = false;
+    }
+    if (regexIframe.test(uri)) {
+      const regExGetSrc = /<iframe ?.* src="([^"]+)" ?.*>/i;
+      const regExGetWidth = /<iframe ?.* width="([^"]+)" ?.*>/i;
+      const regExGetHeight = /<iframe ?.* height="([^"]+)" ?.*>/i;
+
+      srcUri = uri.match(regExGetSrc);
+      widthUri = uri.match(regExGetWidth);
+      heightUri = uri.match(regExGetHeight);
+
+      if (widthUri[1] + 50 < heightUri[1]) {
+        heightVideo = 500;
+        widthVideo = 0.56 * heightVideo;
+        heightPage = heightVideo + 10;
+      }
+      if (widthUri[1] >= heightUri[1]) {
+        widthVideo = 400;
+        heightVideo = Number(heightUri[1] / widthUri[1]) * widthVideo;
+        heightPage = heightVideo + 10;
+      }
+    } else if (regexYouTubeLink.test(uri)) {
+      const idArray = uri.split(regexYouTubeID);
+      srcUri[1] = `https://www.youtube.com/embed/${idArray[1]}`;
+      widthVideo = 410;
+      heightVideo = widthVideo * 0.85;
+      heightPage = heightVideo + 10;
+      isAllowsFullscreen = false;
+    } else if (regexFacebookFWacth.test(uri) || regexFacebookLink.test(uri)) {
+      const mapObj = {
+        ":": "%3A",
+        "/": "%2F",
+      };
+      uri = uri.replace(/(?:\:|\/|\/\/)/gi, (matched) => mapObj[matched]);
+      srcUri[1] = `https://www.facebook.com/plugins/video.php?href=${uri}&width=${widthVideo}&show_text=false&height=${heightVideo}`;
+      widthVideo = 400;
+      heightVideo = widthVideo * 0.8;
+      heightPage = heightVideo + 10;
+    } else {
+      srcUri[1] = uri;
+      heightVideo = 700;
+    }
+  } catch (err) {
+    srcUri[1] = uri;
+  }
+  const videoInfo = {
+    uri: srcUri[1],
+    videoHeight: heightVideo,
+    videoWidth: widthVideo,
+    pageHeight: heightPage,
+    allowFullscreen: isAllowsFullscreen,
+  };
+
+  return videoInfo;
+};
 const EventPostCard = ({
   postStyle,
   anglerName,
@@ -32,14 +120,12 @@ const EventPostCard = ({
   const onlyUnique = (value, index, self) => {
     return self.indexOf(value) === index;
   };
-  let srcUri = [];
-  let widthUri;
-  let heightUri;
+  let srcUri;
   let widthVideo = 400;
   let heightVideo = 400;
   let heightPage = 410;
   let typeBadge = "";
-
+  let isAllowsFullscreen;
   switch (lakePost.badge) {
     case "STOCKING":
       typeBadge = "Bồi cá";
@@ -55,50 +141,19 @@ const EventPostCard = ({
   }
 
   if (typeUri === "VIDEO") {
-    try {
-      const regexIframe = new RegExp("<iframe", "g");
-      const regexYouTubeLink =
-        /^(https?:\/\/)?(www\.youtube\.com|youtu\.?be)\/.+$/g;
-      const regexYouTubeID =
-        /(?:https?:\/{2})?(?:w{3}\.)?youtu(?:be)?\.(?:com|be)(?:\/watch\?v=|\/)([^\s&]+)/;
-
-      if (regexIframe.test(uri)) {
-        const regExGetSrc = /<iframe ?.* src="([^"]+)" ?.*>/i;
-        const regExGetWidth = /<iframe ?.* width="([^"]+)" ?.*>/i;
-        const regExGetHeight = /<iframe ?.* height="([^"]+)" ?.*>/i;
-
-        srcUri = uri.match(regExGetSrc);
-        widthUri = uri.match(regExGetWidth);
-        heightUri = uri.match(regExGetHeight);
-
-        if (widthUri + 50 < heightUri) {
-          widthVideo = 300;
-          heightVideo = 510;
-          heightPage = 520;
-        }
-        if (widthUri >= heightUri) {
-          widthVideo = 400;
-          heightPage = 410;
-        }
-      } else if (regexYouTubeLink.test(uri)) {
-        const idArray = uri.split(regexYouTubeID);
-        srcUri[1] = `https://www.youtube.com/embed/${idArray[1]}`;
-        widthVideo = 400;
-        heightPage = 410;
-      } else {
-        srcUri[1] = uri;
-        heightVideo = 700;
-      }
-    } catch (err) {
-      srcUri[1] = uri;
-    }
+    const videoInfo = uriExtract(uri);
+    widthVideo = videoInfo.videoWidth;
+    heightVideo = videoInfo.videoHeight;
+    heightPage = videoInfo.pageHeight;
+    srcUri = videoInfo.uri;
+    isAllowsFullscreen = videoInfo.allowFullscreen;
   }
   return (
     <Box mt="1" px="1.4">
       {postStyle === "LAKE_POST" && (
         <>
           <HStack px="2" space={2} mt={4} pb={3} justifyContent="space-between">
-            <HStack alignItems="baseline" space={1}>
+            <HStack alignItems="center" space={1}>
               <Badge
                 badgeStyle={{
                   borderRadius: 7,
@@ -114,9 +169,27 @@ const EventPostCard = ({
                 status="primary"
                 value={typeBadge}
               />
-              {postTime !== undefined && (
-                <Text style={styles.ml1}>{postTime}</Text>
-              )}
+              <VStack>
+                {postTime !== undefined && (
+                  <Text style={styles.ml1} bold position="relative" top={1}>
+                    {postTime}
+                  </Text>
+                )}
+                {lakePost.posterName !== undefined &&
+                lakePost.posterName.length > 0 ? (
+                  <Text
+                    style={{
+                      fontSize: 11,
+                      textAlign: "left",
+                      marginLeft: 6,
+                    }}
+                    position="relative"
+                    top={-1}
+                  >
+                    {lakePost.posterName}
+                  </Text>
+                ) : null}
+              </VStack>
             </HStack>
 
             <Menu
@@ -229,8 +302,6 @@ const EventPostCard = ({
               height: heightPage,
               width: widthVideo,
               flex: 0,
-              position: "relative",
-              right: 5,
               alignSelf: "center",
             }}
           >
@@ -244,10 +315,12 @@ const EventPostCard = ({
               showsHorizontalScrollIndicator={false}
             >
               <WebView
-                allowsFullscreenVideo={false}
+                allowsFullscreenVideo={isAllowsFullscreen}
                 overScrollMode="content"
                 originWhitelist={["https://*"]}
                 scalesPageToFit={false}
+                domStorageEnabled
+                // injectedJavaScript={`const meta = document.createElement('meta'); meta.setAttribute('content', 'width=width, initial-scale=0.5, maximum-scale=0.5, user-scalable=2.0'); meta.setAttribute('name', 'viewport'); document.getElementsByTagName('head')[0].appendChild(meta); `}
                 style={{
                   flex: 1,
                   alignSelf: "center",
@@ -257,7 +330,8 @@ const EventPostCard = ({
                   opacity: 0.99,
                 }}
                 source={{
-                  uri: srcUri[1],
+                  // uri: `https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Ffb.watch%2F9Ai9dhzAct%2F&width=${widthVideo}&show_text=false&height=${heightVideo}`,
+                  uri: srcUri,
                 }}
               />
             </ScrollView>

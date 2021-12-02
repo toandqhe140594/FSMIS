@@ -10,13 +10,29 @@ export const TOAST_CHANGE_PHONE_NUMBER_SUCCESS_MSG =
   "Thay đổi số điện thoại thành công";
 export const TOAST_FISH_DELETE_SUCCESS_MSG = "Cá đã được xóa khỏi hồ";
 export const TOAST_DELETE_LAKE_SUCCESS_MSG = "Xóa hồ bé thành công";
+export const TOAST_WRITE_REVIEW_SUCCESS_MSG = "Đánh giá đăng thành công";
 // END OF RELATED TOAST MESSAGE SECTION
 
 /**
  * RANDOM STRING SECTION
  * Random string that not belong to any categories here
  */
+export const EMPTY_STRING = "";
+export const EMPTY_ARRAY = [];
+export const ZERO_NUMBER = 0;
 export const INVALID_OTP_CODE_MSG = "Mã OTP không chính xác";
+export const POST_TYPE_ANNOUNCING_ID = "ANNOUNCING";
+export const POST_TYPE_ANNOUNCING_DISPLAY_LABEL = "Thông báo";
+export const POST_TYPE_STOCKING_ID = "STOCKING";
+export const POST_TYPE_STOCKING_DISPLAY_LABEL = "Bồi cá";
+export const POST_TYPE_REPORTING_ID = "REPORTING";
+export const POST_TYPE_REPORTING_DISPLAY_LABEL = "Báo cá";
+export const ATTACHMENT_TYPE_VIDEO_ID = "VIDEO";
+export const ATTACHMENT_TYPE_VIDEO_DISPLAY_LABEL = "Video";
+export const ATTACHMENT_TYPE_IMAGE_ID = "IMAGE";
+export const ATTACHMENT_TYPE_IMAGE_DISPLAY_LABEL = "Ảnh";
+export const ATTACHMENT_TYPE_NONE_ID = "NONE";
+export const ATTACHMENT_TYPE_NONE_DISPLAY_LABEL = "Không đính kèm";
 // END OF RANDOM STRING SECTION
 
 /**
@@ -41,6 +57,9 @@ export const FMANAGE_SELECT_SCREEN_HEADER = "Chọn điểm câu làm việc";
 export const ANGLER_ADVANCED_SEARCH_HEADER = "Tìm kiếm nâng cao";
 export const ANGLER_CATCH_REPORT_HEADER = "Báo cá";
 export const ANGLER_RESET_PASSWORD_HEADER = "Thay đổi mật khẩu";
+export const FMANAGE_POST_HEADER = "Bài đăng";
+export const ANGLER_WRITE_REVIEW_HEADER = "Đánh giá của bạn";
+export const FMANAGE_CHECK_IN_HISTORY_HEADER = "Lịch sử Check-in";
 // END OF RELATED SCREEN HEADER SECTION
 
 /**
@@ -71,6 +90,10 @@ export const ALERT_CHANGE_PHONE_PROMPT_MSG =
   "Bạn muốn thay đổi số điện thoại liên kết với tài khoản này?";
 export const ALERT_DELTE_FISH_PROMPT_MSG =
   "Bạn chắc chắn muốn xóa loài cá này khỏi hồ?";
+export const ALERT_EDIT_POST_SUCCESS_MSG = "Chỉnh sửa bài viết thành công";
+export const ALERT_CREATE_POST_SUCCESS_MSG =
+  "Gửi thông tin thành công! Bài viết đang được tạo";
+// END OF RELATED ALERT SECTION
 
 /**
  * RELATED FORM FIELD NAME TO REGISTER HOOK FORM SECTION
@@ -123,6 +146,12 @@ export const FORM_FIELD_CATCH_REPORT_FISH_IN_LAKE = "fishInLakeId";
 export const FORM_FIELD_CATCH_REPORT_FISH_QUANTITY = "quantity";
 export const FORM_FIELD_CATCH_REPORT_FISH_WEIGHT = "weight";
 export const FORM_FIELD_CATCH_REPORT_FISH_RETURN_TO_OWNER = "returnToOwner";
+export const FORM_FIELD_POST_ATTACHMENT_TYPE = "attachmentType";
+export const FORM_FIELD_POST_MEDIA_URL = "mediaUrl";
+export const FORM_FIELD_POST_TYPE = "postType";
+export const FORM_FIELD_POST_CONTENT = "content";
+export const FORM_FIELD_RATING = "score";
+export const FORM_FIELD_REVIEW_CONTENT = "description";
 // END OF RELATED FORM FIELD NAME TO REGISTER HOOK FORM SECTION
 
 /**
@@ -136,6 +165,9 @@ export const PROCESSING_BUTTON_LABEL = "Đang xử lý";
 export const SENDING_BUTTON_LABEL = "Đang gửi";
 export const LAKE_INFORMATION_BUTTON_LABEL = "Thông tin hồ câu";
 export const ADD_FISH_BUTTON_LABEL = "Thêm loại cá";
+export const CREATING_BUTTON_LABEL = "Đang tạo bài viết";
+export const EDITING_BUTTON_LABEL = "Đang chỉnh sửa bài viết";
+export const POST_BUTTON_LABEL = "Đăng";
 // END OF RELATED BUTTON LABELS SECTION
 
 /**
@@ -180,6 +212,11 @@ export const SEARCH_METHODS_LABEL = "Loại hình câu";
 export const SEARCH_SPECIES_LABEL = "Loại cá";
 export const SEARCH_SCORE_LABEL = "Đánh giá";
 export const CATCH_REPORT_LAKE_LABEL = "Vị trí hồ câu";
+export const POST_TYPE_LABEL = "Sự kiện";
+export const POST_CONTENT_LABEL = "Nội dung";
+export const POST_ATTACHMENT_TYPE_LABEL = "Đính kèm";
+export const POST_ATTACHMENT_MEDIA_LABEL = "Đường dẫn";
+export const RATING_LABEL = "Điểm số:";
 // END OF RELATED LABEL SECTIONS
 
 /**
@@ -238,4 +275,10 @@ export const SELECT_CATCH_REPORT_SPECIES_PLACEHOLDER = "Chọn loại cá bắt 
 export const INPUT_CATCH_REPORT_QUANTITY_PLACEHOLDER = "Nhập số con bắt được";
 export const INPUT_CATCH_REPORT_WEIGHT_PLACEHOLDER =
   "Nhập cân nặng bắt được (kg)";
+export const SELECT_POST_TYPE_PLACEHOLDER = "Chọn loại sự kiện";
+export const INPUT_POST_CONTENT_PLACEHOLDER = "Nội dung của bài đăng";
+export const SELECT_ATTACHMENT_TYPE_PLACEHOLDER = "Chọn loại đính kèm";
+export const INPUT_ATTACHMENT_MEDIA_PLACEHOLDER =
+  "Gắn sao chép liên kết hoặc mã nhúng video";
+export const INPUT_REVIEW_CONTENT_PLACEHOLDER = "Đánh giá của bạn về hồ câu";
 // END OF RELATED PLACEHOLDER TITLES SECTION

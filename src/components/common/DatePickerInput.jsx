@@ -9,7 +9,7 @@ import { TouchableOpacity } from "react-native";
 import moment from "../../config/moment";
 
 const CalendarIcon = () => (
-  <Icon as={<Entypo name="calendar" />} size={5} mr={1} color="muted.500" />
+  <Icon as={<Entypo name="calendar" />} size={5} mx={2} color="muted.500" />
 );
 
 const DatePickerInput = ({ label, placeholder, controllerName }) => {
@@ -70,6 +70,7 @@ const DatePickerInput = ({ label, placeholder, controllerName }) => {
           size="lg"
           value={displayedDate ? displayedDate.toString() : ""}
           isDisabled
+          backgroundColor="white"
         />
       </TouchableOpacity>
       {errors[controllerName]?.message && (

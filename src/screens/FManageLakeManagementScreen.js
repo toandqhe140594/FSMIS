@@ -1,15 +1,25 @@
 import { useNavigation } from "@react-navigation/native";
 import { useStoreState } from "easy-peasy";
 import { Box, Button, Center, FlatList } from "native-base";
-import React from "react";
+import React, { useMemo } from "react";
+import { Text } from "react-native";
 
 import HeaderTab from "../components/HeaderTab";
 import LakeCard from "../components/LakeCard";
+import { KEY_EXTRACTOR } from "../constants";
 import { goToFManageLakeAddNewScreen } from "../navigations";
 
 const LakeListManagementScreen = () => {
   const navigation = useNavigation();
   const listOfLake = useStoreState((states) => states.FManageModel.listOfLake);
+
+  const memoizedStyle = useMemo(
+    () =>
+      listOfLake && listOfLake.length > 0
+        ? null
+        : { flex: 1, justifyContent: "center" },
+    [listOfLake && listOfLake.length > 0],
+  );
 
   const Separator = () => {
     return <Box h={3} />;
@@ -19,7 +29,11 @@ const LakeListManagementScreen = () => {
     <LakeCard name={item.name} image={item.image} isManaged id={item.id} />
   );
 
-  const keyExtractor = (item) => item.id.toString();
+  const renderEmpty = () => (
+    <Text style={{ color: "gray", alignSelf: "center" }}>
+      Điểm câu chưa có hồ nào
+    </Text>
+  );
 
   const addNewLakeAction = () => {
     goToFManageLakeAddNewScreen(navigation);
@@ -34,11 +48,13 @@ const LakeListManagementScreen = () => {
         </Center>
         <Center w="80%" h="80%">
           <FlatList
+            w="100%"
             data={listOfLake}
             renderItem={renderItem}
+            keyExtractor={KEY_EXTRACTOR}
+            ListEmptyComponent={renderEmpty}
             ItemSeparatorComponent={Separator}
-            keyExtractor={keyExtractor}
-            w="100%"
+            contentContainerStyle={memoizedStyle}
           />
         </Center>
       </Box>
