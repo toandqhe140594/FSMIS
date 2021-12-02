@@ -23,7 +23,6 @@ import {
   goToOTPScreen,
   goToRegisterInformationScreen,
 } from "../navigations";
-// import { showToastMessage } from "../utilities";
 
 const PhoneIcon = () => (
   <Icon
