@@ -55,7 +55,6 @@ const RegisterInformationScreen = () => {
     const registerData = {
       ...accountData.current,
       ...data,
-      dob: data.dob.toJSON(),
     };
     register({ registerData })
       .then(() => {
