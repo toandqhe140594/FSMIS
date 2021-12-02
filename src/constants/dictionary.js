@@ -33,6 +33,9 @@ export const ATTACHMENT_TYPE_IMAGE_ID = "IMAGE";
 export const ATTACHMENT_TYPE_IMAGE_DISPLAY_LABEL = "Ảnh";
 export const ATTACHMENT_TYPE_NONE_ID = "NONE";
 export const ATTACHMENT_TYPE_NONE_DISPLAY_LABEL = "Không đính kèm";
+export const TODAY_BACKGROUND_COLOR = "#d4d4d4";
+export const SELECTED_DAY_COLOR = "#00ccff";
+export const SELECTED_DAY_TEXT_COLOR = "#000000";
 // END OF RANDOM STRING SECTION
 
 /**
@@ -168,6 +171,8 @@ export const ADD_FISH_BUTTON_LABEL = "Thêm loại cá";
 export const CREATING_BUTTON_LABEL = "Đang tạo bài viết";
 export const EDITING_BUTTON_LABEL = "Đang chỉnh sửa bài viết";
 export const POST_BUTTON_LABEL = "Đăng";
+export const PREVIOUS_BUTTON_LABEL = "Trước";
+export const NEXT_BUTTON_LABEL = "Sau";
 // END OF RELATED BUTTON LABELS SECTION
 
 /**
@@ -281,4 +286,5 @@ export const SELECT_ATTACHMENT_TYPE_PLACEHOLDER = "Chọn loại đính kèm";
 export const INPUT_ATTACHMENT_MEDIA_PLACEHOLDER =
   "Gắn sao chép liên kết hoặc mã nhúng video";
 export const INPUT_REVIEW_CONTENT_PLACEHOLDER = "Đánh giá của bạn về hồ câu";
+export const SELECT_DATE_RANGE_PLACEHOLDER = "Theo ngày";
 // END OF RELATED PLACEHOLDER TITLES SECTION
