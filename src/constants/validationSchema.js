@@ -45,50 +45,27 @@ export const ANGLER_CATCH_REPORT_FORM = yup.object().shape({
     .min(1, "Phải có ít nhất một thẻ cá")
     .max(10, "Chỉ được tạo tối đa 10 thẻ cá")
     .of(
-      yup.object().shape(
-        {
-          fishInLakeId: yup
-            .number()
-            .notOneOf([0], "Loại cá không được để trống")
-            .typeError("Trường này chỉ được nhập số")
-            .required("Loại cá không được để trống"),
-          quantity: yup
-            .number()
-            .typeError("Trường này chỉ được nhập số")
-            .min(0, "Số lượng phải lớn hơn 0")
-            .max(9999, "Số lượng tối đa là 9999")
-            .test("integer", "Số lượng phải là số nguyên", (value) =>
-              Number.isInteger(value),
-            )
-            .when("weight", {
-              is: 0,
-              then: yup
-                .number()
-                .typeError("Trường này chỉ được nhập số")
-                .notOneOf(
-                  [0],
-                  "Một trong hai trường không được để trống hay bằng 0",
-                ),
-            }),
-          weight: yup
-            .number()
-            .typeError("Trường này chỉ được nhập số")
-            .min(0, "Cân nặng phải lớn hơn 0")
-            .max(9999, "Cân nặng tối đa là 9999kg")
-            .when("quantity", {
-              is: 0,
-              then: yup
-                .number()
-                .typeError("Trường này chỉ được nhập số")
-                .notOneOf(
-                  [0],
-                  "Một trong hai trường không được để trống hay bằng 0",
-                ),
-            }),
-          returnToOwner: yup.bool().default(false),
-        },
-        ["quantity", "weight"],
-      ),
+      yup.object().shape({
+        fishInLakeId: yup
+          .number()
+          .notOneOf([0], "Loại cá không được để trống")
+          .typeError("Trường này chỉ được nhập số")
+          .required("Loại cá không được để trống"),
+        quantity: yup
+          .number()
+          .typeError("Trường này chỉ được nhập số")
+          .required("Số lượng không được để trống")
+          .moreThan(0, "Số lượng phải lớn hơn 0")
+          .max(9999, "Số lượng tối đa là 9999")
+          .integer("Số lượng phải là số nguyên"),
+        weight: yup
+          .number()
+          .typeError("Trường này chỉ được nhập số")
+          .required("Cân nặng không được để trống")
+          .moreThan(0, "Cân nặng phải lớn hơn 0")
+          .max(9999, "Cân nặng tối đa là 9999kg"),
+        returnToOwner: yup.bool().default(false),
+      }),
     ),
 });
 
@@ -141,9 +118,7 @@ export const FMANAGE_LAKE_FORM = yup.object().shape({
             .typeError("Trường này chỉ được nhập số")
             .min(0, "Số lượng phải lớn hơn 0")
             .max(9999, "Số lượng tối đa là 9999")
-            .test("integer", "Phải là số nguyên", (value) =>
-              Number.isInteger(value),
-            )
+            .integer("Số lượng phải là số nguyên")
             .when("totalWeight", {
               is: 0,
               then: yup
@@ -182,7 +157,7 @@ export const FMANAGE_LAKE_FISH_EDIT_FORM = yup.object().shape(
       .typeError("Trường này chỉ được nhập số")
       .min(0, "Số lượng phải lớn hơn 0")
       .max(9999, "Phải nhập số bé hoặc bằng 9999")
-      .test("integer", "Phải là số nguyên", (value) => Number.isInteger(value))
+      .integer("Số lượng phải là số nguyên")
       .when("weight", {
         is: 0,
         then: yup
@@ -226,7 +201,7 @@ export const FMANAGE_LAKE_FISH_ADD_FORM = yup.object().shape(
       .typeError("Trường này chỉ được nhập số")
       .min(0, "Số lượng phải lớn hơn 0")
       .max(9999, "Phải nhập số bé hoặc bằng 9999")
-      .test("integer", "Phải là số nguyên", (value) => Number.isInteger(value))
+      .integer("Số lượng phải là số nguyên")
       .when("totalWeight", {
         is: 0,
         then: yup

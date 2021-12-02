@@ -6,7 +6,6 @@ import { Controller, useFieldArray, useFormContext } from "react-hook-form";
 import { StyleSheet, Text, View } from "react-native";
 
 import { DICTIONARY } from "../../constants";
-import FieldWatcherResetter from "../common/FieldWatcherResetter";
 import InputComponent from "../common/InputComponent";
 import SelectComponent from "../common/SelectComponent";
 import DependentFieldWatcher from "./DependentFieldWatcher";
@@ -47,13 +46,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginVertical: 8,
   },
-  error: { color: "#f43f5e", fontSize: 12, fontStyle: "italic" },
-  hint: {
-    fontSize: 12,
-    fontStyle: "italic",
-    marginBottom: 12,
-    alignSelf: "center",
-  },
 });
 
 const CatchReportSection = ({ fishList }) => {
@@ -67,11 +59,7 @@ const CatchReportSection = ({ fishList }) => {
     shouldUnregister: true,
   });
   const handleAppend = () => {
-    append({
-      [DICTIONARY.FORM_FIELD_FISH_SPECIES]: 0,
-      [DICTIONARY.FORM_FIELD_CATCH_REPORT_FISH_WEIGHT]: 0,
-      [DICTIONARY.FORM_FIELD_CATCH_REPORT_FISH_QUANTITY]: 0,
-    });
+    append({ [DICTIONARY.FORM_FIELD_FISH_SPECIES]: 0 });
   };
   const handleRemove = (index) => () => {
     remove(index);
@@ -106,9 +94,6 @@ const CatchReportSection = ({ fishList }) => {
             dependentField={`${DICTIONARY.FORM_FIELD_CATCH_REPORT_CARD}[${index}].${DICTIONARY.FORM_FIELD_FISH_SPECIES}`}
             data={fishList}
           />
-          <Text style={styles.hint}>
-            Lưu ý: Chỉ cần nhập một trong hai trường dưới đây
-          </Text>
           <InputComponent
             useNumPad
             myStyles={{ marginBottom: 8 }}
@@ -122,9 +107,6 @@ const CatchReportSection = ({ fishList }) => {
               ]
             }
           />
-          <FieldWatcherResetter
-            name={`${DICTIONARY.FORM_FIELD_CATCH_REPORT_CARD}[${index}].${DICTIONARY.FORM_FIELD_CATCH_REPORT_FISH_QUANTITY}`}
-          />
           <InputComponent
             useNumPad
             placeholder={DICTIONARY.INPUT_CATCH_REPORT_WEIGHT_PLACEHOLDER}
@@ -136,9 +118,6 @@ const CatchReportSection = ({ fishList }) => {
                 DICTIONARY.FORM_FIELD_CATCH_REPORT_FISH_WEIGHT
               ]
             }
-          />
-          <FieldWatcherResetter
-            name={`${DICTIONARY.FORM_FIELD_CATCH_REPORT_CARD}[${index}].${DICTIONARY.FORM_FIELD_CATCH_REPORT_FISH_WEIGHT}`}
           />
           <View style={styles.rowWrapper}>
             <Controller
