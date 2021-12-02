@@ -361,6 +361,7 @@ export const FORGOT_PASSWORD_FORM = yup.object().shape({
     .min(8, "Mật khẩu phải chứa ít nhất 8 ký tự"),
   passwordConfirmation: yup
     .string()
+    .required("Mật khẩu không thể bỏ trống")
     .oneOf([yup.ref("password"), null], "Mật khẩu không khớp"),
 });
 
