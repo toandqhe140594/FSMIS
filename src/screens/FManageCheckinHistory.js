@@ -8,31 +8,28 @@ import CheckInCard from "../components/CheckInCard";
 import SmallScreenLoadingIndicator from "../components/common/SmallScreenLoadingIndicator";
 import HeaderTab from "../components/HeaderTab";
 import PressableCustomCard from "../components/PressableCustomCard";
-import { DICTIONARY } from "../constants";
-import { convertDateFormat } from "../utilities";
+import { DICTIONARY, MONTHS, WEEKDAYS } from "../constants";
+import { convertDateDisplayFormat } from "../utilities";
 
 const DEFAULT_STATE = { pageNo: 1, startDate: null, endDate: null };
-const DATE_RANGE_PLACEHOLDER = "Chọn ngày";
 
-const shouldListUpdate = (prevState, currentState) => {
-  if (JSON.stringify(prevState) !== JSON.stringify(currentState)) {
-    Object.assign(prevState, currentState);
-    return true;
-  }
-  return false;
-};
-
+/**
+ * Concate start date and end date to display format
+ * @param {Date} startDate
+ * @param {Date} endDate
+ * @returns string concate start and end date in DD/MM/YYYY format
+ */
 const getDateRangeDisplay = (startDate, endDate) => {
   if (!startDate && !endDate) {
-    return DATE_RANGE_PLACEHOLDER;
+    return DICTIONARY.SELECT_DATE_RANGE_PLACEHOLDER;
   }
-  // Cái nào ko trống thì hiện thị ra (ko null)
-  const fromDisplay = startDate
-    ? `Từ ${convertDateFormat(startDate).split("T")[0]}`
-    : "";
+  if (startDate && endDate && startDate.toString() === endDate.toString()) {
+    return `Trong ngày ${convertDateDisplayFormat(startDate).split("T")[0]}`;
+  }
+  const fromDisplay = `Từ ${convertDateDisplayFormat(startDate).split("T")[0]}`;
   const toDisplay = endDate
-    ? `đến ${convertDateFormat(endDate).split("T")[0]}`
-    : "";
+    ? `đến ${convertDateDisplayFormat(endDate).split("T")[0]}`
+    : "trở đi";
   return `${fromDisplay} ${toDisplay}`;
 };
 
@@ -56,9 +53,10 @@ const renderItem = ({ item }) => (
 
 const FManageCheckinHistoryScreen = () => {
   const needRefresh = useRef(true);
-  const prevQueryData = useRef({});
   const queryData = useRef({ ...DEFAULT_STATE });
-  const [dateRange, setDateRange] = useState(DATE_RANGE_PLACEHOLDER);
+  const [dateRange, setDateRange] = useState(
+    DICTIONARY.SELECT_DATE_RANGE_PLACEHOLDER,
+  );
   const [isLoading, setIsLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
   const { checkinHistoryList, checkinHistoryTotalPage } = useStoreState(
@@ -70,13 +68,26 @@ const FManageCheckinHistoryScreen = () => {
 
   const closeModal = () => setModalVisible(false);
 
+  /**
+   * Invoke loading state to start loading
+   * @param {Boolean} shouldRefresh should the func update needRefresh to true
+   */
+  const startLoading = (shouldRefresh = true) => {
+    if (shouldRefresh) needRefresh.current = true;
+    setIsLoading(true);
+  };
+
+  /**
+   * Handle side tasks accordings to selected value
+   * @param {String} value value from select dropdown
+   */
   const handleValueChange = (value) => {
     if (value === "BY_DATE") {
       setModalVisible(true);
     } else {
       queryData.current = { ...DEFAULT_STATE };
-      setDateRange(DATE_RANGE_PLACEHOLDER);
-      setIsLoading(true);
+      setDateRange(DICTIONARY.SELECT_DATE_RANGE_PLACEHOLDER);
+      startLoading();
     }
   };
 
@@ -93,14 +104,22 @@ const FManageCheckinHistoryScreen = () => {
     setIsLoading(false);
   };
 
+  /**
+   * Handle when list need to load more on end reached
+   */
   const handleLoadMore = () => {
     const currentPage = queryData.current.pageNo;
     if (currentPage < checkinHistoryTotalPage) {
       queryData.current.pageNo = currentPage + 1;
-      setIsLoading(true);
+      startLoading(false);
     }
   };
 
+  /**
+   * Store user's selected date
+   * @param {Date} date date object from selected date
+   * @param {String} type type of selected date
+   */
   const handleDateChange = (date, type) => {
     if (type === "END_DATE") {
       queryData.current.endDate = date;
@@ -110,13 +129,17 @@ const FManageCheckinHistoryScreen = () => {
     }
   };
 
+  /**
+   * Hanlde display date range selected
+   * and close date range selector
+   * and start loading
+   */
   const handleSubmitDate = () => {
+    setModalVisible(false);
     const { startDate, endDate } = queryData.current;
     setDateRange(getDateRangeDisplay(startDate, endDate));
     queryData.current.pageNo = 1;
-    needRefresh.current = true;
-    setModalVisible(false);
-    setIsLoading(true);
+    startLoading();
   };
 
   const keyExtractor = (item, index) => index.toString();
@@ -148,9 +171,7 @@ const FManageCheckinHistoryScreen = () => {
 
   useEffect(() => {
     if (isLoading) {
-      if (shouldListUpdate(prevQueryData.current, queryData.current)) {
-        getCheckinHistoryList({ ...queryData.current }).finally(stopLoading);
-      } else stopLoading();
+      getCheckinHistoryList({ ...queryData.current }).finally(stopLoading);
     }
   }, [isLoading]);
 
@@ -161,15 +182,20 @@ const FManageCheckinHistoryScreen = () => {
         <Modal isOpen={modalVisible} onClose={closeModal} size="full">
           <Modal.Content>
             <Modal.CloseButton />
-            <Modal.Header>{dateRange}</Modal.Header>
+            <Modal.Header>Chọn ngày</Modal.Header>
             <Modal.Body>
               <CalendarPicker
-                allowRangeSelection
                 scrollable
-                todayBackgroundColor="#fafafa"
-                selectedDayColor="#00ccff"
-                selectedDayTextColor="#000000"
+                startFromMonday
+                months={MONTHS}
+                weekdays={WEEKDAYS}
+                allowRangeSelection
                 onDateChange={handleDateChange}
+                nextTitle={DICTIONARY.PREVIOUS_BUTTON_LABEL}
+                previousTitle={DICTIONARY.NEXT_BUTTON_LABEL}
+                todayBackgroundColor={DICTIONARY.TODAY_BACKGROUND_COLOR}
+                selectedDayColor={DICTIONARY.SELECTED_DAY_COLOR}
+                selectedDayTextColor={DICTIONARY.SELECTED_DAY_TEXT_COLOR}
               />
               <Button size="lg" onPress={handleSubmitDate}>
                 OK
@@ -185,7 +211,7 @@ const FManageCheckinHistoryScreen = () => {
           onValueChange={handleValueChange}
         >
           <Select.Item label="Tất cả" value="All" />
-          <Select.Item label="Theo ngày" value="BY_DATE" />
+          <Select.Item label={dateRange} value="BY_DATE" />
         </Select>
         <FlatList
           h="87%"
