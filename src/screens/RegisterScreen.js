@@ -131,7 +131,7 @@ const RegisterScreen = () => {
                 isLoading={loading}
                 isDisabled={loading}
               >
-                Tiếp tục
+                {DICTIONARY.CONTINUE_BUTTON_LABEL}
               </Button>
             </VStack>
 
