@@ -62,7 +62,7 @@ const RegisterScreen = () => {
           accountData.current.phoneNumber,
         );
       })
-      .catch(() => {
+      .finally(() => {
         setLoading(false);
       });
   };
