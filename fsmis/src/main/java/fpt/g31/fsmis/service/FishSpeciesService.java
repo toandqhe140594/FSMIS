@@ -66,11 +66,9 @@ public class FishSpeciesService {
     public ResponseTextDtoOut editSpecies(SpeciesDtoIn speciesDtoIn, Long speciesId) {
         FishSpecies species = fishSpeciesRepos.findById(speciesId)
                 .orElseThrow(() -> new NotFoundException("Không tìm thấy loài cá theo id này"));
-        if (fishSpeciesRepos.existsByNameIgnoreCase(speciesDtoIn.getName())) {
-            FishSpecies existedSpecies = fishSpeciesRepos.findByNameIgnoreCase(speciesDtoIn.getName());
-            if (!existedSpecies.getId().equals(speciesId)) {
-                throw new ValidationException("Đã tồn tại loài cá với tên này");
-            }
+        FishSpecies existedSpecies = fishSpeciesRepos.findByNameIgnoreCase(speciesDtoIn.getName());
+        if (existedSpecies != null && !existedSpecies.getId().equals(speciesId)) {
+            throw new ValidationException("Đã tồn tại loài cá với tên này");
         }
         species.setName(speciesDtoIn.getName());
         species.setImageUrl(speciesDtoIn.getImage());

@@ -82,6 +82,9 @@ public class UserService {
         if (bannedPhoneRepos.existsById(changePhoneDtoIn.getNewPhone())){
             throw new ValidationException("Số điện thoại bị cấm khỏi hệ thống");
         }
+        if (Boolean.TRUE.equals(userRepos.existsByPhone(changePhoneDtoIn.getNewPhone()))) {
+            throw new ValidationException("Số điện thoại đã được sử dụng, vui lòng đăng nhập hoặc dùng số điện thoại khác");
+        }
         user.setPhone(changePhoneDtoIn.getNewPhone());
         userRepos.save(user);
         return new ResponseTextDtoOut("Thay đổi số điện thoại thành công");
