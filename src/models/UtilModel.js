@@ -19,11 +19,11 @@ const model = {
     else if (existedStatus === "NONEXISTED")
       requestUrl = API_URL.OTP_SEND_NONEXISTED;
     try {
-      // await http.post(`${requestUrl}`, null, {
-      //   params: {
-      //     phone,
-      //   },
-      // });
+      await http.post(`${requestUrl}`, null, {
+        params: {
+          phone,
+        },
+      });
     } catch (error) {
       throw new Error();
     }
@@ -37,10 +37,10 @@ const model = {
   validateOtp: thunk(async (actions, payload) => {
     const { phone, otp } = payload;
     try {
-      // await http.post(`${API_URL.OTP_VALIDATE}`, {
-      //   phone,
-      //   otp,
-      // });
+      await http.post(`${API_URL.OTP_VALIDATE}`, {
+        phone,
+        otp,
+      });
     } catch (error) {
       throw new Error();
     }
