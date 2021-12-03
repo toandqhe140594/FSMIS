@@ -22,7 +22,7 @@ public class BanService {
     private final BannedPhoneRepos bannedPhoneRepos;
     private final UserRepos userRepos;
 
-    public List<BannedPhoneDtoOut> getBannedPhone() {
+    public List<BannedPhoneDtoOut> getBannedPhoneList() {
         List<BannedPhoneDtoOut> output = new ArrayList<>();
         List<BannedPhone> bannedPhoneList = bannedPhoneRepos.findAllByOrderByBannedDateDesc();
         for (BannedPhone bannedPhone : bannedPhoneList) {

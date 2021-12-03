@@ -18,7 +18,7 @@ public class AdminBanController {
 
     @GetMapping()
     public ResponseEntity<Object> getBannedPhoneList() {
-        return new ResponseEntity<>(banService.getBannedPhone(), HttpStatus.OK);
+        return new ResponseEntity<>(banService.getBannedPhoneList(), HttpStatus.OK);
     }
 
     @PostMapping("/add")

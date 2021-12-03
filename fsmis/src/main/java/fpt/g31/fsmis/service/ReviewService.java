@@ -97,6 +97,9 @@ public class ReviewService {
         }
         FishingLocation fishingLocation = fishingLocationRepos.findById(locationId)
                 .orElseThrow(() -> new NotFoundException("Không tìm thấy điểm câu"));
+        if (fishingLocation.getOwner().equals(user) || fishingLocation.getEmployeeList().contains(user)) {
+            throw new ValidationException("Bạn không có quyền đăng đánh giá ở địa điểm này");
+        }
         Review review = modelMapper.map(reviewDtoIn, Review.class);
         review.setTime(LocalDateTime.now());
         review.setActive(true);

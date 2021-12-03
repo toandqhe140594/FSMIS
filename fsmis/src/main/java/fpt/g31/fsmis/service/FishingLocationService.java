@@ -357,7 +357,7 @@ public class FishingLocationService {
                 .build();
     }
 
-    public ResponseTextDtoOut switchLocationState(HttpServletRequest request, Long locationId) {
+    public ResponseTextDtoOut switchLocationClose(HttpServletRequest request, Long locationId) {
         User user = jwtFilter.getUserFromToken(request);
         FishingLocation location = fishingLocationRepos.findById(locationId)
                 .orElseThrow(() -> new NotFoundException(LOCATION_NOT_FOUND));
