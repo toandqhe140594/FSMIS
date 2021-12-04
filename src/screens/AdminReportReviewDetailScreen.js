@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 
 import AdminReport from "../components/AdminReport";
 import AvatarCard from "../components/AvatarCard";
+import OverlayLoading from "../components/common/OverlayLoading";
 import ReviewFromAnglerSection from "../components/ReviewFromAnglerSection";
 import styles from "../config/styles";
 import { goToAdminFLocationOverviewScreen } from "../navigations";
@@ -142,13 +143,20 @@ const AdminReportReviewDetailScreen = () => {
       </Box>
     </Box>
   );
+  if (isLoading) {
+    return <OverlayLoading coverScreen />;
+  }
   useEffect(() => {
     reset();
+    const timeout = setTimeout(() => {
+      setIsLoading(true);
+    }, 300);
     if (route.params.id) {
       getReviewReportDetail({ id: route.params.id, setIsSuccess });
       setReportId(route.params.id);
     }
     setActive(route.params.isActive);
+    return () => clearTimeout(timeout);
   }, []);
 
   useEffect(() => {
@@ -162,6 +170,7 @@ const AdminReportReviewDetailScreen = () => {
         "Xác nhận",
       );
     }
+    setIsLoading(false);
     setIsSuccess(null);
   }, [isSuccess]);
   useEffect(() => {

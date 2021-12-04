@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 
 import AdminReport from "../components/AdminReport";
 import AvatarCard from "../components/AvatarCard";
+import OverlayLoading from "../components/common/OverlayLoading";
 import EventPostCard from "../components/EventPostCard";
 import styles from "../config/styles";
 import { goToAdminFLocationOverviewScreen } from "../navigations";
@@ -137,12 +138,16 @@ const AdminReportCatchDetailScreen = () => {
 
   useEffect(() => {
     reset();
+    const timeout = setTimeout(() => {
+      setIsLoading(true);
+    }, 300);
     if (route.params.id) {
       getCatchReportDetail({ id: route.params.id, setIsSuccess });
       setReportId(route.params.id);
     }
     setIsLoading(true);
     setActive(route.params.isActive);
+    return () => clearTimeout(timeout);
   }, []);
   useEffect(() => {
     if (isSuccess === false) {
@@ -192,6 +197,9 @@ const AdminReportCatchDetailScreen = () => {
     setIsLoading(false);
     setIsDeleteSuccess(null);
   }, [isDeleteSuccess]);
+  if (isLoading) {
+    return <OverlayLoading coverScreen />;
+  }
   return (
     <AdminReport
       isActive={isActive}

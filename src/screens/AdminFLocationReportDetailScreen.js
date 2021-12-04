@@ -30,8 +30,8 @@ const AdminFLocationReportDetailScreen = () => {
     (actions) => actions.ReportModel.solvedReport,
   );
   const solvedReportHandler = () => {
-    solvedReport({ id: reportId, setIsSuccess: setIsSolvedSuccess });
     setIsLoading(true);
+    solvedReport({ id: reportId, setIsSuccess: setIsSolvedSuccess });
   };
 
   const goToFLocationDetailHandler = () => {
@@ -95,12 +95,15 @@ const AdminFLocationReportDetailScreen = () => {
   );
   useEffect(() => {
     reset();
-    setIsLoading(true);
+    const timeout = setTimeout(() => {
+      setIsLoading(true);
+    }, 300);
     if (route.params.id) {
       getLocationReportDetail({ id: route.params.id, setIsSuccess });
       setReportId(route.params.id);
     }
     setActive(route.params.isActive);
+    return () => clearTimeout(timeout);
   }, []);
 
   useEffect(() => {
@@ -140,7 +143,6 @@ const AdminFLocationReportDetailScreen = () => {
     setIsLoading(false);
     setIsSolvedSuccess(null);
   }, [isSolvedSuccess]);
-
   if (isLoading) {
     return <OverlayLoading coverScreen />;
   }
@@ -150,18 +152,14 @@ const AdminFLocationReportDetailScreen = () => {
       eventPress={solvedReportHandler}
       onBackEvent={reset}
     >
-      {isLoading ? (
-        <OverlayLoading coverScreen />
-      ) : (
-        <FlatList
-          pt="0.5"
-          data={reportDetailList}
-          ListHeaderComponent={headerListComponent}
-          ListFooterComponent={footerComponent}
-          renderItem={renderItem}
-          keyExtractor={(item, index) => index.toString()}
-        />
-      )}
+      <FlatList
+        pt="0.5"
+        data={reportDetailList}
+        ListHeaderComponent={headerListComponent}
+        ListFooterComponent={footerComponent}
+        renderItem={renderItem}
+        keyExtractor={(item, index) => index.toString()}
+      />
     </AdminReport>
   );
 };

@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 
 import AdminReport from "../components/AdminReport";
 import AvatarCard from "../components/AvatarCard";
+import OverlayLoading from "../components/common/OverlayLoading";
 import EventPostCard from "../components/EventPostCard";
 import styles from "../config/styles";
 import { goToAdminFLocationOverviewScreen } from "../navigations";
@@ -147,11 +148,15 @@ const AdminReportPostDetailScreen = () => {
 
   useEffect(() => {
     reset();
+    const timeout = setTimeout(() => {
+      setIsLoading(true);
+    }, 300);
     if (route.params.id) {
       getPostReportDetail({ id: route.params.id, setIsSuccess });
       setReportId(route.params.id);
     }
     setActive(route.params.isActive);
+    return () => clearTimeout(timeout);
   }, []);
 
   useEffect(() => {
@@ -165,6 +170,7 @@ const AdminReportPostDetailScreen = () => {
         "Xác nhận",
       );
     }
+    setIsLoading(false);
     setIsSuccess(null);
   }, [isSuccess]);
   useEffect(() => {
@@ -203,7 +209,9 @@ const AdminReportPostDetailScreen = () => {
     setIsLoading(false);
     setIsDeleteSuccess(null);
   }, [isDeleteSuccess]);
-
+  if (isLoading) {
+    return <OverlayLoading coverScreen />;
+  }
   return (
     <AdminReport
       isActive={isActive}
