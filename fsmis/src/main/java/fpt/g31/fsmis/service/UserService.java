@@ -151,7 +151,7 @@ public class UserService {
             if (input.matches("^[0-9]+$")){
                 accountList = userRepos.findAllByPhoneLikeAndIdNot("%" + input + "%", PageRequest.of(pageNo - 1, 10), 1L);
             } else {
-                accountList = userRepos.findAllByFullNameLikeAndIdNot("%" + input + "%", PageRequest.of(pageNo - 1, 10), 1L);
+                accountList = userRepos.findAllByFullNameContainsIgnoreCaseAndIdNot(input, PageRequest.of(pageNo - 1, 10), 1L);
             }
         } else {
             accountList = userRepos.findAllByIdNot(PageRequest.of(pageNo - 1, 10), 1L);
