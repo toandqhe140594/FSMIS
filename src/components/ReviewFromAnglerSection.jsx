@@ -173,7 +173,7 @@ const ReviewFromAnglerSection = ({
                 !isNeutral && !isPositive && styles.selectedButtonText,
               ]}
             >
-              Không hữu ích
+              Không hữu ích{" "}
               {negativeCount ? negativeCount > 0 && `(${negativeCount})` : ""}
             </Text>
           </Button>
