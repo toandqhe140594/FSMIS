@@ -142,7 +142,13 @@ const PostEditScreen = () => {
     const datetime = getEditDate();
     delete data.imageArray;
     delete data.mediaUrl;
-    const updateData = { ...data, id: currentPost.id, url, postTime: datetime };
+    const updateData = {
+      ...data,
+      id: currentPost.id,
+      url,
+      postTime: datetime,
+      posterName: currentPost.posterName,
+    };
     editPost({ updateData })
       .then(() => {
         showAlertAbsoluteBox(
