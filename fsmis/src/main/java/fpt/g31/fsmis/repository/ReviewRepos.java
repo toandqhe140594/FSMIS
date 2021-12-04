@@ -21,9 +21,9 @@ public interface ReviewRepos extends JpaRepository<Review, Long> {
 
     Page<Review> findByFishingLocationIdAndActiveIsTrueOrderByTimeDesc(Long id, Pageable pageable);
 
-    Page<Review> findByFishingLocationIdAndActiveIsTrueOrderByScoreDesc(Long id, Pageable pageable);
+    Page<Review> findByFishingLocationIdAndActiveIsTrueOrderByScoreDescTimeDesc(Long id, Pageable pageable);
 
-    Page<Review> findByFishingLocationIdAndActiveIsTrueOrderByScoreAsc(Long id, Pageable pageable);
+    Page<Review> findByFishingLocationIdAndActiveIsTrueOrderByScoreAscTimeDesc(Long id, Pageable pageable);
 
     boolean existsByFishingLocationIdAndUserIdAndActiveIsTrue(Long locationId, Long userId);
 }

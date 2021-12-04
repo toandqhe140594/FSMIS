@@ -150,9 +150,9 @@ public class ReviewService {
         if (filter.equals("newest")) {
             reviews = reviewRepos.findByFishingLocationIdAndActiveIsTrueOrderByTimeDesc(locationId, pageable);
         } else if (filter.equals("highest")) {
-            reviews = reviewRepos.findByFishingLocationIdAndActiveIsTrueOrderByScoreDesc(locationId, pageable);
+            reviews = reviewRepos.findByFishingLocationIdAndActiveIsTrueOrderByScoreDescTimeDesc(locationId, pageable);
         } else {
-            reviews = reviewRepos.findByFishingLocationIdAndActiveIsTrueOrderByScoreAsc(locationId, pageable);
+            reviews = reviewRepos.findByFishingLocationIdAndActiveIsTrueOrderByScoreAscTimeDesc(locationId, pageable);
         }
         List<ReviewDtoOut> output = new ArrayList<>();
         for (Review review : reviews) {
