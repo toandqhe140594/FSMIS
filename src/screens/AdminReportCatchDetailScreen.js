@@ -28,9 +28,8 @@ const AdminReportCatchDetailScreen = () => {
     (states) => states.ReportModel.catchReportDetail,
   );
 
-  const { solvedReport, getCatchReportDetail, deleteCatch } = useStoreActions(
-    (actions) => actions.ReportModel,
-  );
+  const { solvedReport, getCatchReportDetail, deleteCatch, reset } =
+    useStoreActions((actions) => actions.ReportModel);
   const {
     locationId,
     locationName,
@@ -137,6 +136,7 @@ const AdminReportCatchDetailScreen = () => {
   const footerComponent = () => <Divider mt={20} />;
 
   useEffect(() => {
+    reset();
     if (route.params.id) {
       getCatchReportDetail({ id: route.params.id, setIsSuccess });
       setReportId(route.params.id);

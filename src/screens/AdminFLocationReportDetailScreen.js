@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 
 import AdminReport from "../components/AdminReport";
 import AvatarCard from "../components/AvatarCard";
+import OverlayLoading from "../components/common/OverlayLoading";
 import styles from "../config/styles";
 import { goToAdminFLocationOverviewScreen } from "../navigations";
 import { showAlertAbsoluteBox } from "../utilities";
@@ -15,27 +16,28 @@ const AdminFLocationReportDetailScreen = () => {
   const [isSuccess, setIsSuccess] = useState(null); // get data success
   const [isActive, setActive] = useState(true);
   const [isSolvedSuccess, setIsSolvedSuccess] = useState(null); // post solved report handler success
-  const [isLoading, setIsLoading] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [reportId, setReportId] = useState();
   const locationReportDetail = useStoreState(
     (states) => states.ReportModel.locationReportDetail,
   );
   const { locationId, locationName, time, reportDetailList } =
     locationReportDetail;
-  const getLocationReportDetail = useStoreActions(
-    (actions) => actions.ReportModel.getLocationReportDetail,
+  const { getLocationReportDetail, reset } = useStoreActions(
+    (actions) => actions.ReportModel,
   );
   const solvedReport = useStoreActions(
     (actions) => actions.ReportModel.solvedReport,
   );
-
   const solvedReportHandler = () => {
     solvedReport({ id: reportId, setIsSuccess: setIsSolvedSuccess });
     setIsLoading(true);
   };
 
   const goToFLocationDetailHandler = () => {
-    goToAdminFLocationOverviewScreen(navigation, { id: locationId });
+    goToAdminFLocationOverviewScreen(navigation, {
+      id: locationId,
+    });
   };
 
   const headerListComponent = () => (
@@ -92,11 +94,12 @@ const AdminFLocationReportDetailScreen = () => {
     </Box>
   );
   useEffect(() => {
+    reset();
+    setIsLoading(true);
     if (route.params.id) {
       getLocationReportDetail({ id: route.params.id, setIsSuccess });
       setReportId(route.params.id);
     }
-    setIsLoading(true);
     setActive(route.params.isActive);
   }, []);
 
@@ -138,20 +141,27 @@ const AdminFLocationReportDetailScreen = () => {
     setIsSolvedSuccess(null);
   }, [isSolvedSuccess]);
 
+  if (isLoading) {
+    return <OverlayLoading coverScreen />;
+  }
   return (
     <AdminReport
       isActive={isActive}
       eventPress={solvedReportHandler}
-      isLoading={isLoading}
+      onBackEvent={reset}
     >
-      <FlatList
-        pt="0.5"
-        data={reportDetailList}
-        ListHeaderComponent={headerListComponent}
-        ListFooterComponent={footerComponent}
-        renderItem={renderItem}
-        keyExtractor={(item, index) => index.toString()}
-      />
+      {isLoading ? (
+        <OverlayLoading coverScreen />
+      ) : (
+        <FlatList
+          pt="0.5"
+          data={reportDetailList}
+          ListHeaderComponent={headerListComponent}
+          ListFooterComponent={footerComponent}
+          renderItem={renderItem}
+          keyExtractor={(item, index) => index.toString()}
+        />
+      )}
     </AdminReport>
   );
 };

@@ -12,6 +12,10 @@ const initialState = {
   totalPostReportPage: 0,
   totalReviewReportPage: 0,
   totalCatchReportPage: 0,
+  locationReportDetail: {},
+  reviewReportDetail: {},
+  postReportDetail: {},
+  catchReportDetail: {},
 };
 const model = {
   listLocationReport: [],

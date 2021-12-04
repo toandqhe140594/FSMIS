@@ -28,9 +28,8 @@ const AdminReportPostDetailScreen = () => {
     (states) => states.ReportModel.postReportDetail,
   );
 
-  const { solvedReport, deletePost, getPostReportDetail } = useStoreActions(
-    (actions) => actions.ReportModel,
-  );
+  const { solvedReport, deletePost, getPostReportDetail, reset } =
+    useStoreActions((actions) => actions.ReportModel);
 
   const { locationId, locationName, reportTime, postDtoOut, reportDetailList } =
     postReportDetail;
@@ -147,6 +146,7 @@ const AdminReportPostDetailScreen = () => {
   );
 
   useEffect(() => {
+    reset();
     if (route.params.id) {
       getPostReportDetail({ id: route.params.id, setIsSuccess });
       setReportId(route.params.id);

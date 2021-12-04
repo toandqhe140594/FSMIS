@@ -33,9 +33,8 @@ const AdminReportReviewDetailScreen = () => {
     reviewDtoOut,
     reportDetailList,
   } = reviewReportDetail;
-  const { getReviewReportDetail, solvedReport, deleteReview } = useStoreActions(
-    (actions) => actions.ReportModel,
-  );
+  const { getReviewReportDetail, solvedReport, deleteReview, reset } =
+    useStoreActions((actions) => actions.ReportModel);
 
   const deleteReviewHandler = () => {
     deleteReview({ id: reviewDtoOut.id, setIsSuccess: setIsDeleteSuccess });
@@ -144,6 +143,7 @@ const AdminReportReviewDetailScreen = () => {
     </Box>
   );
   useEffect(() => {
+    reset();
     if (route.params.id) {
       getReviewReportDetail({ id: route.params.id, setIsSuccess });
       setReportId(route.params.id);

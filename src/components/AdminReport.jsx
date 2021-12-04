@@ -2,13 +2,19 @@ import { Button, Text } from "native-base";
 import PropTypes from "prop-types";
 import React from "react";
 
+// import { BackHandler } from "react-native";
 import colors from "../config/colors";
 import styles from "../config/styles";
 import { showAlertConfirmBox } from "../utilities";
-import OverLayLoading from "./common/OverlayLoading";
 import HeaderTab from "./HeaderTab";
 
-const AdminReport = ({ isLoading, isActive, eventPress, ...props }) => {
+const AdminReport = ({
+  isLoading,
+  isActive,
+  eventPress,
+  onBackEvent,
+  ...props
+}) => {
   const onPressHandler = () => {
     showAlertConfirmBox(
       "Xác nhận xử lý báo cáo.",
@@ -16,10 +22,21 @@ const AdminReport = ({ isLoading, isActive, eventPress, ...props }) => {
       eventPress,
     );
   };
+  // useEffect(() => {
+  //   const backAction = () => {
+  //     onBackEvent();
+  //     return false;
+  //   };
+  //   const backHandler = BackHandler.addEventListener(
+  //     "hardwareBackPress",
+  //     backAction,
+  //   );
+  //   return () => backHandler.remove();
+  // }, []);
+
   return (
     <>
       <HeaderTab name="Chi tiết báo cáo" />
-      <OverLayLoading loading={isLoading} />
       {props.children}
 
       <Button
@@ -42,6 +59,7 @@ const AdminReport = ({ isLoading, isActive, eventPress, ...props }) => {
 AdminReport.propTypes = {
   children: PropTypes.element,
   eventPress: PropTypes.func,
+  onBackEvent: PropTypes.func,
   isActive: PropTypes.bool,
   isLoading: PropTypes.bool,
 };
@@ -49,7 +67,8 @@ AdminReport.propTypes = {
 AdminReport.defaultProps = {
   children: null,
   eventPress: () => {},
-  isActive: true,
-  isLoading: false,
+  isActive: null,
+  isLoading: true,
+  onBackEvent: () => {},
 };
 export default AdminReport;
