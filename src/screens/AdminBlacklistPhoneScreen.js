@@ -112,6 +112,7 @@ const AdminBlacklistManagementScreen = () => {
             blurOnSubmit
             onEndEditing={onEndEditing}
             onClear={onClear}
+            keyboardType="numeric"
           />
           <Button size="lg" my={3} onPress={goToAddPhoneToBlacklistScreen}>
             Chặn số điện thoại
