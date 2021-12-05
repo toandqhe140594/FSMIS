@@ -40,6 +40,7 @@ const AdminReportReviewDetailScreen = () => {
 
   const deleteReviewHandler = () => {
     deleteReview({ id: reviewDtoOut.id, setIsSuccess: setIsDeleteSuccess });
+    // solvedReport({ id: reportId, setIsSuccess: setIsSolvedSuccess });
     setIsLoading(true);
   };
 
@@ -52,7 +53,7 @@ const AdminReportReviewDetailScreen = () => {
   };
   const onPressHandler = () => {
     showAlertConfirmBox(
-      "Xác nhận xóa review.",
+      "Xác nhận xử lý báo cáo.",
       `Review của ${reviewDtoOut.userFullName} tại hồ ${locationName} sẽ bị xóa.`,
       deleteReviewHandler,
     );
@@ -144,14 +145,12 @@ const AdminReportReviewDetailScreen = () => {
       </Box>
     </Box>
   );
-  if (isLoading) {
-    return <OverlayLoading coverScreen />;
-  }
+
   useEffect(() => {
     reset();
     const timeout = setTimeout(() => {
       setIsLoading(true);
-    }, 300);
+    }, 200);
     if (route.params.id) {
       getReviewReportDetail({ id: route.params.id, setIsSuccess });
       setReportId(route.params.id);
@@ -170,10 +169,11 @@ const AdminReportReviewDetailScreen = () => {
         },
         "Xác nhận",
       );
+      setIsSuccess(null);
     }
     setIsLoading(false);
-    setIsSuccess(null);
   }, [isSuccess]);
+
   useEffect(() => {
     if (isSolvedSuccess === true) {
       navigation.goBack();
@@ -190,11 +190,14 @@ const AdminReportReviewDetailScreen = () => {
     setIsLoading(false);
     setIsSolvedSuccess(null);
   }, [isSolvedSuccess]);
+
   useEffect(() => {
     if (isDeleteSuccess === true) {
-      showAlertBox(
+      showAlertAbsoluteBox(
         "Thành công",
         `Review của ${reviewDtoOut.userFullName} đã được xóa`,
+        solvedReportHandler,
+        "Đánh dấu xử lý",
       );
     }
     if (isDeleteSuccess === false) {
@@ -203,6 +206,9 @@ const AdminReportReviewDetailScreen = () => {
     setIsLoading(false);
     setIsDeleteSuccess(null);
   }, [isDeleteSuccess]);
+  if (isLoading) {
+    return <OverlayLoading coverScreen />;
+  }
   return (
     <AdminReport
       isActive={isActive}

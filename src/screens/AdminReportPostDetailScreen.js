@@ -193,9 +193,11 @@ const AdminReportPostDetailScreen = () => {
 
   useEffect(() => {
     if (isDeleteSuccess === true) {
-      showAlertBox(
+      showAlertAbsoluteBox(
         "Thành công",
         `Bài viết đã được gỡ khỏi trang sự kiện của hồ ${locationName}.`,
+        solvedReportHandler,
+        "Đánh dấu xử lý",
       );
     }
     if (isDeleteSuccess === false) {

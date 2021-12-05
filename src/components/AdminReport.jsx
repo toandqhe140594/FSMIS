@@ -22,18 +22,6 @@ const AdminReport = ({
       eventPress,
     );
   };
-  // useEffect(() => {
-  //   const backAction = () => {
-  //     onBackEvent();
-  //     return false;
-  //   };
-  //   const backHandler = BackHandler.addEventListener(
-  //     "hardwareBackPress",
-  //     backAction,
-  //   );
-  //   return () => backHandler.remove();
-  // }, []);
-
   return (
     <>
       <HeaderTab name="Chi tiết báo cáo" />
@@ -50,7 +38,7 @@ const AdminReport = ({
         {isActive === false ? (
           <Text color="white">Đã xử lý </Text>
         ) : (
-          <Text color="white">Đánh dấu xử lý </Text>
+          <Text color="white">Đánh dấu đã xử lý </Text>
         )}
       </Button>
     </>

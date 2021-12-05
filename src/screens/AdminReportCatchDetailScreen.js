@@ -52,7 +52,7 @@ const AdminReportCatchDetailScreen = () => {
   };
   const onPressHandler = () => {
     showAlertConfirmBox(
-      "Xác nhận xóa báo cá.",
+      "Xác nhận xử lý báo cáo.",
       `Báo cá đăng tại hồ ${locationName} của ${catchesOverviewDtoOut.userFullName} sẽ bị xóa.`,
       deleteCatchHandler,
     );
@@ -116,7 +116,7 @@ const AdminReportCatchDetailScreen = () => {
           <EventPostCard
             id={catchesOverviewDtoOut.id}
             iconEvent={listEvent}
-            iconName="ellipsis-vertical"
+            iconName={isActive ? "ellipsis-vertical" : ""}
             postStyle="ANGLER_POST"
             fishList={catchesOverviewDtoOut.fishes}
             anglerName={catchesOverviewDtoOut.userFullName}
@@ -146,7 +146,7 @@ const AdminReportCatchDetailScreen = () => {
       getCatchReportDetail({ id: route.params.id, setIsSuccess });
       setReportId(route.params.id);
     }
-    setIsLoading(true);
+    setIsLoading(false);
     setActive(route.params.isActive);
     return () => clearTimeout(timeout);
   }, []);
@@ -161,6 +161,7 @@ const AdminReportCatchDetailScreen = () => {
         "Xác nhận",
       );
     }
+    setIsLoading(false);
     setIsSuccess(null);
   }, [isSuccess]);
   useEffect(() => {
@@ -181,9 +182,11 @@ const AdminReportCatchDetailScreen = () => {
   }, [isSolvedSuccess]);
   useEffect(() => {
     if (isDeleteSuccess === true) {
-      showAlertBox(
+      showAlertAbsoluteBox(
         "Thành công",
         `Bài viết đã được gỡ khỏi trang báo cá của hồ ${locationName}.`,
+        solvedReportHandler,
+        "Đánh dấu xử lý",
       );
     }
     if (isDeleteSuccess === false) {
