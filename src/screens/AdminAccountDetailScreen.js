@@ -40,6 +40,7 @@ const AdminAccountDetailScreen = () => {
     whitelistPhoneNumber({ phone: accountInformation.phone })
       .then(() => {
         showToastMessage("Kích hoạt tài khoản thành công");
+        setIsLoading(false);
       })
       .catch(() => {
         setIsLoading(false);
