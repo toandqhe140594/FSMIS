@@ -8,7 +8,7 @@ import AvatarCard from "../components/AvatarCard";
 import OverlayLoading from "../components/common/OverlayLoading";
 import styles from "../config/styles";
 import { goToAdminFLocationOverviewScreen } from "../navigations";
-import { showAlertAbsoluteBox } from "../utilities";
+import { showAlertAbsoluteBox, showToastMessage } from "../utilities";
 
 const AdminFLocationReportDetailScreen = () => {
   const route = useRoute();
@@ -123,14 +123,8 @@ const AdminFLocationReportDetailScreen = () => {
 
   useEffect(() => {
     if (isSolvedSuccess === true) {
-      showAlertAbsoluteBox(
-        "Xử lý thành công",
-        ``,
-        () => {
-          navigation.goBack();
-        },
-        "Xác nhận",
-      );
+      showToastMessage("Xử lý thành công");
+      navigation.goBack();
     }
     if (isSolvedSuccess === false) {
       showAlertAbsoluteBox(

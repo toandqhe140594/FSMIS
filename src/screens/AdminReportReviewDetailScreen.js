@@ -13,6 +13,7 @@ import {
   showAlertAbsoluteBox,
   showAlertBox,
   showAlertConfirmBox,
+  showToastMessage,
 } from "../utilities";
 
 const AdminReportReviewDetailScreen = () => {
@@ -175,14 +176,8 @@ const AdminReportReviewDetailScreen = () => {
   }, [isSuccess]);
   useEffect(() => {
     if (isSolvedSuccess === true) {
-      showAlertAbsoluteBox(
-        "Xử lý thành công",
-        ``,
-        () => {
-          navigation.goBack();
-        },
-        "Xác nhận",
-      );
+      navigation.goBack();
+      showToastMessage("Xử lý thành công");
     }
     if (isSolvedSuccess === false) {
       showAlertAbsoluteBox(
