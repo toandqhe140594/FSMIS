@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ValidationException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -109,7 +111,7 @@ public class LakeService {
                     .maxWeight(fishInLake.getMaxWeight())
                     .minWeight(fishInLake.getMinWeight())
                     .quantity(fishInLake.getQuantity())
-                    .totalWeight(fishInLake.getTotalWeight())
+                    .totalWeight(BigDecimal.valueOf(fishInLake.getTotalWeight()).setScale(1, RoundingMode.HALF_UP).floatValue())
                     .build();
             fishes.add(fish);
         }

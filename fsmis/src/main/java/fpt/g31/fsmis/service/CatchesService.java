@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ValidationException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -196,7 +198,7 @@ public class CatchesService {
                     .name(catchesDetail.getFishSpecies().getName())
                     .image(catchesDetail.getFishSpecies().getImageUrl())
                     .quantity(catchesDetail.getQuantity())
-                    .weight(catchesDetail.getWeight())
+                    .weight(BigDecimal.valueOf(catchesDetail.getWeight()).setScale(1, RoundingMode.HALF_UP).floatValue())
                     .returnToOwner(catchesDetail.getReturnToOwner())
                     .build();
             fishes.add(item);
