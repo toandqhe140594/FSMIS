@@ -8,13 +8,7 @@ import styles from "../config/styles";
 import { showAlertConfirmBox } from "../utilities";
 import HeaderTab from "./HeaderTab";
 
-const AdminReport = ({
-  isLoading,
-  isActive,
-  eventPress,
-  onBackEvent,
-  ...props
-}) => {
+const AdminReport = ({ isLoading, isActive, eventPress, ...props }) => {
   const onPressHandler = () => {
     showAlertConfirmBox(
       "Xác nhận xử lý báo cáo.",
