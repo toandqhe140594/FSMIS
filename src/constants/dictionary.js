@@ -222,6 +222,7 @@ export const POST_CONTENT_LABEL = "Nội dung";
 export const POST_ATTACHMENT_TYPE_LABEL = "Đính kèm";
 export const POST_ATTACHMENT_MEDIA_LABEL = "Đường dẫn";
 export const RATING_LABEL = "Điểm số:";
+export const NEW_PHONE_NUMBER_LABEL = "Số điện thoại mới";
 // END OF RELATED LABEL SECTIONS
 
 /**
@@ -287,4 +288,5 @@ export const INPUT_ATTACHMENT_MEDIA_PLACEHOLDER =
   "Gắn sao chép liên kết hoặc mã nhúng video";
 export const INPUT_REVIEW_CONTENT_PLACEHOLDER = "Đánh giá của bạn về hồ câu";
 export const SELECT_DATE_RANGE_PLACEHOLDER = "Theo ngày";
+export const INPUT_NEW_PHONE_NUMBER_PLACEHOLDER = "Nhập số điện thoại mới";
 // END OF RELATED PLACEHOLDER TITLES SECTION
