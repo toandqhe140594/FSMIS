@@ -343,6 +343,17 @@ const model = {
       setIsSuccess(false);
     }
   }),
+
+  /**
+   * Reset all location detail state
+   */
+  resetReportDetail: action((state) => {
+    state.locationReportDetail = {};
+    state.reviewReportDetail = {};
+    state.postReportDetail = {};
+    state.catchReportDetail = {};
+  }),
+
   /**
    * Reset all state of model to default value
    */
