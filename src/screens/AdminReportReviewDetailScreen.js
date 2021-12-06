@@ -54,7 +54,7 @@ const AdminReportReviewDetailScreen = () => {
   const onPressHandler = () => {
     showAlertConfirmBox(
       "Xác nhận xử lý báo cáo.",
-      `Review của ${reviewDtoOut.userFullName} tại hồ ${locationName} sẽ bị xóa.`,
+      `Đánh giá của ${reviewDtoOut.userFullName} tại hồ ${locationName} sẽ bị xóa.`,
       deleteReviewHandler,
     );
   };
