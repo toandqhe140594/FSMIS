@@ -7,11 +7,13 @@ import AdminReport from "../components/AdminReport";
 import AvatarCard from "../components/AvatarCard";
 import EventPostCard from "../components/EventPostCard";
 import styles from "../config/styles";
-import { goToAdminFLocationOverviewScreen } from "../navigations";
+import { DEFAULT_TIMEOUT } from "../constants";
+import { goBack, goToAdminFLocationOverviewScreen } from "../navigations";
 import {
   showAlertAbsoluteBox,
   showAlertBox,
   showAlertConfirmBox,
+  showToastMessage,
 } from "../utilities";
 
 const AdminReportPostDetailScreen = () => {
@@ -23,7 +25,8 @@ const AdminReportPostDetailScreen = () => {
   const [isSolvedSuccess, setIsSolvedSuccess] = useState(null);
   const [isDeleteSuccess, setIsDeleteSuccess] = useState(null);
   const [reportId, setReportId] = useState(null);
-  // const [postId, setPostId] = useState(null);
+  const [screenLoading, setScreenLoading] = useState(true);
+
   const postReportDetail = useStoreState(
     (states) => states.ReportModel.postReportDetail,
   );
@@ -70,6 +73,7 @@ const AdminReportPostDetailScreen = () => {
         typeBadge = "Thông báo";
     }
   }
+
   const headerListComponent = () => (
     <>
       {postDtoOut !== undefined ? (
@@ -146,45 +150,41 @@ const AdminReportPostDetailScreen = () => {
     </Box>
   );
 
+  const clearScreenLoadingIndicator = () => setScreenLoading(false);
+
   useEffect(() => {
     if (route.params.id) {
-      getPostReportDetail({ id: route.params.id, setIsSuccess });
+      getPostReportDetail({ id: route.params.id, setIsSuccess }).finally(
+        clearScreenLoadingIndicator,
+      );
       setReportId(route.params.id);
     }
     setActive(route.params.isActive);
+    const screenTimeout = setTimeout(
+      clearScreenLoadingIndicator,
+      DEFAULT_TIMEOUT,
+    );
+    return () => clearTimeout(screenTimeout);
   }, []);
 
   useEffect(() => {
     if (isSuccess === false) {
       showAlertAbsoluteBox(
         "Thông báo",
-        "Xảy ra lỗi, vui lòng quay lại.",
-        () => {
-          navigation.goBack();
-        },
-        "Xác nhận",
+        "Đã xảy ra lỗi, vui lòng quay lại.",
+        goBack(navigation),
       );
     }
     setIsSuccess(null);
   }, [isSuccess]);
+
   useEffect(() => {
     if (isSolvedSuccess === true) {
-      showAlertAbsoluteBox(
-        "Xử lý thành công",
-        `Báo cáo đã được chuyển sang mục "Đã sử lý".`,
-        () => {
-          navigation.goBack();
-        },
-        "Xác nhận",
-      );
+      showToastMessage("Xử lý thành công");
+      setActive(false);
     }
     if (isSolvedSuccess === false) {
-      showAlertAbsoluteBox(
-        "Lỗi",
-        `Đã xảy ra lỗi, vui lòng thử lại.`,
-        () => {},
-        "Xác nhận",
-      );
+      showToastMessage("Đã xảy ra lỗi, vui lòng thử lại");
     }
     setIsLoading(false);
     setIsSolvedSuccess(null);
@@ -193,12 +193,12 @@ const AdminReportPostDetailScreen = () => {
   useEffect(() => {
     if (isDeleteSuccess === true) {
       showAlertBox(
-        "Thành công",
+        "Thao tác thành công",
         `Bài viết đã được gỡ khỏi trang sự kiện của hồ ${locationName}.`,
       );
     }
     if (isDeleteSuccess === false) {
-      showAlertBox("Lỗi", `Đã xảy ra lỗi, vui lòng thử lại.`);
+      showToastMessage("Đã xảy ra lỗi, vui lòng thử lại");
     }
     setIsLoading(false);
     setIsDeleteSuccess(null);
@@ -209,6 +209,7 @@ const AdminReportPostDetailScreen = () => {
       isActive={isActive}
       eventPress={solvedReportHandler}
       isLoading={isLoading}
+      screenLoading={screenLoading}
     >
       <FlatList
         ListHeaderComponent={headerListComponent}
