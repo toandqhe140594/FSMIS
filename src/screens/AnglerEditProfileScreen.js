@@ -71,10 +71,7 @@ const EditProfileScreen = () => {
     setIsLoading(true);
     delete data.provinceId;
     delete data.districtId;
-    const updateData = {
-      ...data,
-      dob: moment(data.dob).add(1, "days").toDate().toJSON(),
-    };
+    const updateData = { ...data };
     editPersonalInformation({ updateData })
       .then(() => {
         setIsLoading(false);
