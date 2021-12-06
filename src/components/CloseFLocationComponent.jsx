@@ -69,10 +69,9 @@ const CloseFLocationComponent = ({ name, phone }) => {
     if (deleteSuccess) {
       showToastMessage("Đóng cửa khu hồ thành công");
       goToFManageSelectScreen(navigation);
-    } else {
-      setLoading(false);
-      setDeleteSuccess(false);
     }
+    setLoading(false);
+    setDeleteSuccess(null);
   }, [deleteSuccess]);
 
   return (
