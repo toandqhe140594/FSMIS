@@ -1,7 +1,7 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useNavigation } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
-import React from "react";
+import React, { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { StyleSheet, Text, View } from "react-native";
 import { Avatar, Button, Divider } from "react-native-elements";
@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
 
 const WriteReviewScreen = () => {
   const navigation = useNavigation();
-
+  const [isLoading, setIsLoading] = useState(false);
   const methods = useForm({
     mode: "onSubmit",
     reValidateMode: "onChange",
@@ -47,15 +47,18 @@ const WriteReviewScreen = () => {
   const userInfo = useStoreState((states) => states.ProfileModel.userInfo);
 
   const onSubmit = (data) => {
-    postReview(data).then((result) => {
-      // If api return status of success
-      if (result === 200) {
-        showToastMessage(DICTIONARY.TOAST_WRITE_REVIEW_SUCCESS_MSG);
-        goBack(navigation);
-      } else {
-        showToastMessage(DICTIONARY.ALERT_ERROR_MSG);
-      }
-    });
+    setIsLoading(true);
+    postReview(data)
+      .then((result) => {
+        // If api return status of success
+        if (result === 200) {
+          showToastMessage(DICTIONARY.TOAST_WRITE_REVIEW_SUCCESS_MSG);
+          goBack(navigation);
+        }
+      })
+      .catch(() => {
+        setIsLoading(false);
+      });
   };
 
   return (
@@ -88,6 +91,7 @@ const WriteReviewScreen = () => {
           containerStyle={styles.buttonContainer}
           onPress={handleSubmit(onSubmit)}
           title={DICTIONARY.POST_BUTTON_LABEL}
+          loading={isLoading}
         />
       </FormProvider>
     </View>
