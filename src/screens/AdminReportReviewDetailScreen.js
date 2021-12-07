@@ -7,11 +7,13 @@ import AdminReport from "../components/AdminReport";
 import AvatarCard from "../components/AvatarCard";
 import ReviewFromAnglerSection from "../components/ReviewFromAnglerSection";
 import styles from "../config/styles";
+import { DEFAULT_TIMEOUT } from "../constants";
 import { goToAdminFLocationOverviewScreen } from "../navigations";
 import {
   showAlertAbsoluteBox,
   showAlertBox,
   showAlertConfirmBox,
+  showToastMessage,
 } from "../utilities";
 
 const AdminReportReviewDetailScreen = () => {
@@ -21,8 +23,10 @@ const AdminReportReviewDetailScreen = () => {
   const [isSuccess, setIsSuccess] = useState(null);
   const [isSolvedSuccess, setIsSolvedSuccess] = useState(null); // post solved report handler success
   const [isLoading, setIsLoading] = useState(null);
+  const [screenLoading, setScreenLoading] = useState(true);
   const [isDeleteSuccess, setIsDeleteSuccess] = useState(null);
   const [reportId, setReportId] = useState();
+
   const reviewReportDetail = useStoreState(
     (states) => states.ReportModel.reviewReportDetail,
   );
@@ -56,6 +60,7 @@ const AdminReportReviewDetailScreen = () => {
       deleteReviewHandler,
     );
   };
+
   const headerListComponent = () => (
     <>
       {reviewDtoOut !== undefined ? (
@@ -143,12 +148,22 @@ const AdminReportReviewDetailScreen = () => {
       </Box>
     </Box>
   );
+
+  const clearScreenLoadingIndicator = () => setScreenLoading(false);
+
   useEffect(() => {
     if (route.params.id) {
-      getReviewReportDetail({ id: route.params.id, setIsSuccess });
+      getReviewReportDetail({ id: route.params.id, setIsSuccess }).finally(
+        clearScreenLoadingIndicator,
+      );
       setReportId(route.params.id);
     }
     setActive(route.params.isActive);
+    const screenTimeout = setTimeout(
+      clearScreenLoadingIndicator,
+      DEFAULT_TIMEOUT,
+    );
+    return () => clearTimeout(screenTimeout);
   }, []);
 
   useEffect(() => {
@@ -164,46 +179,39 @@ const AdminReportReviewDetailScreen = () => {
     }
     setIsSuccess(null);
   }, [isSuccess]);
+
   useEffect(() => {
     if (isSolvedSuccess === true) {
-      showAlertAbsoluteBox(
-        "Xử lý thành công",
-        ``,
-        () => {
-          navigation.goBack();
-        },
-        "Xác nhận",
-      );
+      showToastMessage("Xử lý thành công");
+      setActive(false);
     }
     if (isSolvedSuccess === false) {
-      showAlertAbsoluteBox(
-        "Lỗi",
-        `Đã xảy ra lỗi, vui lòng thử lại.`,
-        () => {},
-        "Xác nhận",
-      );
+      showToastMessage("Đã xảy ra lỗi, vui lòng thử lại");
     }
     setIsLoading(false);
     setIsSolvedSuccess(null);
   }, [isSolvedSuccess]);
+
   useEffect(() => {
     if (isDeleteSuccess === true) {
       showAlertBox(
-        "Thành công",
+        "Thao tác thành công",
         `Review của ${reviewDtoOut.userFullName} đã được xóa`,
       );
     }
     if (isDeleteSuccess === false) {
-      showAlertBox("Lỗi", `Đã xảy ra lỗi, vui lòng thử lại.`);
+      showToastMessage("Đã xảy ra lỗi, vui lòng thử lại");
     }
     setIsLoading(false);
     setIsDeleteSuccess(null);
   }, [isDeleteSuccess]);
+
   return (
     <AdminReport
       isActive={isActive}
       eventPress={solvedReportHandler}
       isLoading={isLoading}
+      screenLoading={screenLoading}
     >
       <FlatList
         pt="0.5"

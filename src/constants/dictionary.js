@@ -173,6 +173,7 @@ export const EDITING_BUTTON_LABEL = "Đang chỉnh sửa bài viết";
 export const POST_BUTTON_LABEL = "Đăng";
 export const PREVIOUS_BUTTON_LABEL = "Trước";
 export const NEXT_BUTTON_LABEL = "Sau";
+export const CHANGE_PASSWORD_LABEL = "Đổi mật khẩu";
 // END OF RELATED BUTTON LABELS SECTION
 
 /**

@@ -7,11 +7,13 @@ import AdminReport from "../components/AdminReport";
 import AvatarCard from "../components/AvatarCard";
 import EventPostCard from "../components/EventPostCard";
 import styles from "../config/styles";
+import { DEFAULT_TIMEOUT } from "../constants";
 import { goToAdminFLocationOverviewScreen } from "../navigations";
 import {
   showAlertAbsoluteBox,
   showAlertBox,
   showAlertConfirmBox,
+  showToastMessage,
 } from "../utilities";
 
 // View report about angler catch.
@@ -22,6 +24,7 @@ const AdminReportCatchDetailScreen = () => {
   const [isActive, setActive] = useState(true);
   const [isSolvedSuccess, setIsSolvedSuccess] = useState(null); // post solved report handler success
   const [isLoading, setIsLoading] = useState(null);
+  const [screenLoading, setScreenLoading] = useState(true);
   const [reportId, setReportId] = useState();
   const [isDeleteSuccess, setIsDeleteSuccess] = useState(null);
   const catchReportDetail = useStoreState(
@@ -136,14 +139,25 @@ const AdminReportCatchDetailScreen = () => {
   );
   const footerComponent = () => <Divider mt={20} />;
 
+  const clearScreenLoadingIndicator = () => setScreenLoading(false);
   useEffect(() => {
     if (route.params.id) {
-      getCatchReportDetail({ id: route.params.id, setIsSuccess });
+      getCatchReportDetail({ id: route.params.id, setIsSuccess }).finally(
+        clearScreenLoadingIndicator,
+      );
       setReportId(route.params.id);
     }
+    const screenTimeout = setTimeout(
+      clearScreenLoadingIndicator,
+      DEFAULT_TIMEOUT,
+    );
     setIsLoading(true);
     setActive(route.params.isActive);
+    return () => {
+      clearTimeout(screenTimeout);
+    };
   }, []);
+
   useEffect(() => {
     if (isSuccess === false) {
       showAlertAbsoluteBox(
@@ -157,46 +171,39 @@ const AdminReportCatchDetailScreen = () => {
     }
     setIsSuccess(null);
   }, [isSuccess]);
+
   useEffect(() => {
     if (isSolvedSuccess === true) {
-      showAlertAbsoluteBox(
-        "Xử lý thành công",
-        `Báo cáo đã được chuyển sang mục "Đã sử lý".`,
-        () => {
-          navigation.goBack();
-        },
-        "Xác nhận",
-      );
+      showToastMessage("Xử lý thành công");
+      setActive(false);
     }
     if (isSolvedSuccess === false) {
-      showAlertAbsoluteBox(
-        "Lỗi",
-        `Đã xảy ra lỗi, vui lòng thử lại.`,
-        () => {},
-        "Xác nhận",
-      );
+      showToastMessage("Đã xảy ra lỗi, vui lòng thử lại");
     }
     setIsLoading(false);
     setIsSolvedSuccess(null);
   }, [isSolvedSuccess]);
+
   useEffect(() => {
     if (isDeleteSuccess === true) {
       showAlertBox(
-        "Thành công",
+        "Thao tác thành công",
         `Bài viết đã được gỡ khỏi trang báo cá của hồ ${locationName}.`,
       );
     }
     if (isDeleteSuccess === false) {
-      showAlertBox("Lỗi", `Đã xảy ra lỗi, vui lòng thử lại.`);
+      showToastMessage("Đã xảy ra lỗi, vui lòng thử lại");
     }
     setIsLoading(false);
     setIsDeleteSuccess(null);
   }, [isDeleteSuccess]);
+
   return (
     <AdminReport
       isActive={isActive}
       eventPress={solvedReportHandler}
       isLoading={isLoading}
+      screenLoading={screenLoading}
     >
       <FlatList
         ListHeaderComponent={headerListComponent}
