@@ -616,13 +616,9 @@ const model = {
     const { currentId } = getState();
     const { setDeleteSuccess } = payload;
     try {
-      const { status } = await http.delete(
-        `${API_URL.LOCATION_CLOSE}/${currentId}`,
-      );
-      if (status === 200) {
-        actions.getListOfFishingLocations();
-        setDeleteSuccess(true);
-      }
+      await http.delete(`${API_URL.LOCATION_CLOSE}/${currentId}`);
+      actions.getListOfFishingLocations();
+      setDeleteSuccess(true);
     } catch (error) {
       setDeleteSuccess(false);
     }
