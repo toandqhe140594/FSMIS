@@ -340,6 +340,7 @@ export const LOGIN_FORM = yup.object().shape({
   password: yup
     .string()
     .required("Mật khẩu không được bỏ trống")
+    .min(8, "Mật khẩu phải chứa ít nhất 8 ký tự")
     .label("Password"),
 });
 
