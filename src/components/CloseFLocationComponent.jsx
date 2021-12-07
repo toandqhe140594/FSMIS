@@ -10,7 +10,7 @@ import { View } from "react-native";
 import { Icon, ListItem } from "react-native-elements";
 
 import styles from "../config/styles";
-import { DEFAULT_TIMEOUT, ROUTE_NAMES } from "../constants";
+import { ROUTE_NAMES } from "../constants";
 import { goToFManageSelectScreen, goToOTPScreen } from "../navigations";
 import { showAlertConfirmBox, showToastMessage } from "../utilities";
 import OverlayLoading from "./common/OverlayLoading";
@@ -24,15 +24,19 @@ const CloseFLocationComponent = ({ name, phone }) => {
   );
   const sendOtp = useStoreActions((actions) => actions.UtilModel.sendOtp);
 
-  const [deleteSuccess, setDeleteSuccess] = useState(false);
-  const [otpSendSuccess, setOtpSendSuccess] = useState(null);
+  const [deleteSuccess, setDeleteSuccess] = useState(null);
   const [loading, setLoading] = useState(false);
+
+  const clearLoading = () => setLoading(false);
 
   const sendOtpAction = () => {
     setLoading(true);
-    setTimeout(() => {
-      sendOtp({ phone, setSuccess: setOtpSendSuccess });
-    }, DEFAULT_TIMEOUT);
+    sendOtp({ phone })
+      .then(() => {
+        goToOTPScreen(navigation, ROUTE_NAMES.FMANAGE_MAIN, phone);
+      })
+      .catch(clearLoading)
+      .finally(clearLoading);
   };
 
   const closeConfirmationAction = () => {
@@ -56,14 +60,6 @@ const CloseFLocationComponent = ({ name, phone }) => {
       }
     }, [route.params]),
   );
-
-  useEffect(() => {
-    if (otpSendSuccess) {
-      goToOTPScreen(navigation, ROUTE_NAMES.FMANAGE_MAIN, phone);
-    }
-    setLoading(false);
-    setOtpSendSuccess(null);
-  }, [otpSendSuccess]);
 
   useEffect(() => {
     if (deleteSuccess) {
