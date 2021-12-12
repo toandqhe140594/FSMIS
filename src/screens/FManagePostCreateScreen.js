@@ -8,7 +8,7 @@ import { useStoreActions, useStoreState } from "easy-peasy";
 import { Button, VStack } from "native-base";
 import React, { useCallback, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { Dimensions, ScrollView, StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 
 import InputWithClipboard from "../components/common/InputWithClipboard";
 import MultiImageSection from "../components/common/MultiImageSection";
@@ -52,16 +52,13 @@ const attachmentData = [
 const styles = StyleSheet.create({
   sectionWrapper: {
     width: "90%",
+    marginTop: 10,
   },
   center: {
     justifyContent: "center",
     alignItems: "center",
   },
 });
-
-const OFFSET_BOTTOM = 85;
-// Get window height without status bar height
-const CUSTOM_SCREEN_HEIGHT = Dimensions.get("window").height - OFFSET_BOTTOM;
 
 const PostCreateScreen = () => {
   const route = useRoute();
@@ -137,8 +134,6 @@ const PostCreateScreen = () => {
           contentContainerStyle={{
             justifyContent: "center",
             alignItems: "center",
-            height: CUSTOM_SCREEN_HEIGHT,
-            marginTop: 8,
           }}
         >
           <View style={StyleSheet.compose(styles.sectionWrapper, { flex: 1 })}>
