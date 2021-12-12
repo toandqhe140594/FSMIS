@@ -13,7 +13,7 @@ import { Dimensions } from "react-native";
 import InputComponent from "../components/common/InputComponent";
 import MultiImageSection from "../components/common/MultiImageSection";
 import HeaderTab from "../components/HeaderTab";
-import { ROUTE_NAMES, SCHEMA } from "../constants";
+import { DICTIONARY, ROUTE_NAMES, SCHEMA } from "../constants";
 import { showToastMessage } from "../utilities";
 
 const OFFSET_BOTTOM = 85;
@@ -49,11 +49,11 @@ const AdminFishEditScreen = () => {
       .then(() => {
         if (!fishId) {
           getAdminFishList();
-          showToastMessage("Thêm cá thành công");
+          showToastMessage(DICTIONARY.TOAST_ADD_FISH_SPECIES_SUCCESS_MSG);
           navigation.pop(1);
         } else {
           setIsLoading(false);
-          showToastMessage("Cập nhật cá thành công");
+          showToastMessage(DICTIONARY.TOAST_EDIT_FISH_SPECIES_SUCCESS_MSG);
         }
       })
       .catch(handleError);
@@ -65,7 +65,9 @@ const AdminFishEditScreen = () => {
       .then(() => {
         setIsLoading(false);
         setIsActive(!isActive);
-        showToastMessage("Trạng thái của cá đã được thay đổi");
+        showToastMessage(
+          DICTIONARY.TOAST_UPDATE_FISH_SPECIES_STATUS_SUCCESS_MSG,
+        );
       })
       .catch(handleError);
   };
@@ -75,8 +77,8 @@ const AdminFishEditScreen = () => {
     if (id) {
       const { name, image, active } = route.params;
       setFishId(id);
-      setValue("name", name);
-      setValue("imageArray", [{ id: 1, base64: image }]);
+      setValue(DICTIONARY.FORM_FIELD_ADMIN_FISH_SPECIES_NAME, name);
+      setValue(DICTIONARY.FORM_FIELD_IMAGE_ARRAY, [{ id: 1, base64: image }]);
       setIsActive(active);
     }
   }, []);
@@ -85,7 +87,7 @@ const AdminFishEditScreen = () => {
     // useCallback will listen to route.param
     useCallback(() => {
       if (route.params?.base64Array && route.params.base64Array.length) {
-        setValue("imageArray", route.params?.base64Array);
+        setValue(DICTIONARY.FORM_FIELD_IMAGE_ARRAY, route.params?.base64Array);
         navigation.setParams({ base64Array: [] });
       }
     }, [route.params]),
@@ -93,7 +95,7 @@ const AdminFishEditScreen = () => {
 
   return (
     <>
-      <HeaderTab name="Quản lý loại cá" />
+      <HeaderTab name={DICTIONARY.ADMIN_FISH_MANAGEMENT_HEADER} />
       <Box height={CUSTOM_SCREEN_HEIGHT}>
         <FormProvider {...methods}>
           <VStack
@@ -108,15 +110,15 @@ const AdminFishEditScreen = () => {
             <MultiImageSection
               containerStyle={{ width: "90%" }}
               formRoute={ROUTE_NAMES.ADMIN_FISH_MANAGEMENT_EDIT}
-              controllerName="imageArray"
+              controllerName={DICTIONARY.FORM_FIELD_IMAGE_ARRAY}
             />
             <InputComponent
               myStyles={{ width: "90%" }}
-              label="Tên cá"
+              label={DICTIONARY.ADMIN_FISH_LABEL}
               isTitle
               hasAsterisk
-              placeholder="Nhập tên cá"
-              controllerName="name"
+              placeholder={DICTIONARY.INPUT_ADMIN_FISH_SPECIES_PLACEHOLDER}
+              controllerName={DICTIONARY.FORM_FIELD_ADMIN_FISH_SPECIES_NAME}
             />
 
             {fishId && (
@@ -128,7 +130,9 @@ const AdminFishEditScreen = () => {
                   fontSize="md"
                   color={isActive ? "success.500" : "danger.500"}
                 >
-                  {isActive ? "Đang hoạt động" : "Đang ẩn"}
+                  {isActive
+                    ? DICTIONARY.IS_ACTIVATE_TEXT
+                    : DICTIONARY.IS_DEACTIVATE_TEXT}
                 </Text>
               </Box>
             )}
@@ -141,19 +145,27 @@ const AdminFishEditScreen = () => {
             isLoadingText="Đang xử lý"
             onPress={handleSubmit(onSubmit)}
           >
-            {fishId ? "Lưu thay đổi" : "Thêm loại cá"}
+            {fishId
+              ? DICTIONARY.SAVE_CHANGES_BUTTON_LABEL
+              : DICTIONARY.ADD_FISH_BUTTON_LABEL}
           </Button>
           {fishId && (
             <Button
               w="80%"
-              colorScheme={isActive ? "red" : "green"}
+              colorScheme={
+                isActive
+                  ? DICTIONARY.RED_COLOR_SCHEME
+                  : DICTIONARY.GREEN_COLOR_SCHEME
+              }
               alignSelf="center"
               marginTop={2}
               isLoading={isLoading}
-              isLoadingText="Đang xử lý"
+              isLoadingText={DICTIONARY.PROCESSING_BUTTON_LABEL}
               onPress={handleUpdateStatus}
             >
-              {isActive ? "Ẩn loại cá này" : "Bỏ ẩn loại cá này"}
+              {isActive
+                ? DICTIONARY.HIDE_THIS_FISH_BUTTON_LABEL
+                : DICTIONARY.REVEAL_THIS_FISH_BUTTON_LABEL}
             </Button>
           )}
         </FormProvider>
