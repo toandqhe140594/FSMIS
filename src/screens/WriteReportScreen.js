@@ -22,6 +22,7 @@ const CUSTOM_SCREEN_HEIGHT = Dimensions.get("window").height - OFF_SET;
 const ReportScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
+  const [isLoading, setIsLoading] = useState(false);
   const reportParam = useRef({});
   const methods = useForm({
     mode: "onSubmit",
@@ -39,7 +40,12 @@ const ReportScreen = () => {
   };
 
   const onSubmit = (data) => {
-    sendReport({ reportDtoIn: data.content, ...reportParam, setSendStatus });
+    setIsLoading(true);
+    sendReport({
+      reportDtoIn: data.content,
+      ...reportParam.current,
+      setSendStatus,
+    });
   };
 
   useEffect(() => {
@@ -52,6 +58,7 @@ const ReportScreen = () => {
 
   useEffect(() => {
     if (sendStatus === true) {
+      setIsLoading(false);
       showAlertAbsoluteBox(
         DICTIONARY.ALERT_TITLE,
         DICTIONARY.ALERT_CREATE_REPORT_SUCCESS,
@@ -59,6 +66,7 @@ const ReportScreen = () => {
       );
     }
     if (sendStatus === false) {
+      setIsLoading(false);
       showToastMessage(DICTIONARY.TOAST_CREATE_REPORT_FAIL_MSG);
     }
     setSendStatus(null);
@@ -86,6 +94,7 @@ const ReportScreen = () => {
             controllerName={DICTIONARY.FORM_FIELE_REPORT_CONTENT}
           />
           <Button
+            loading={isLoading}
             title={DICTIONARY.REPORT_BUTTON_LABEL}
             containerStyle={{ width: "90%" }}
             onPress={handleSubmit(onSubmit)}
