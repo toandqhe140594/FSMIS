@@ -380,3 +380,7 @@ export const WRITE_REVIEW_FORM = yup.object().shape({
   score: yup.number().moreThan(0, "Số sao không được bỏ trống"),
   description: yup.string().required("Đánh giá không được bỏ trống"),
 });
+
+export const WRITE_REPORT_FORM = yup.object().shape({
+  content: yup.string().required("Nội dung báo cáo không thể bỏ trống"),
+});

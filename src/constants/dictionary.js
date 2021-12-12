@@ -11,6 +11,7 @@ export const TOAST_CHANGE_PHONE_NUMBER_SUCCESS_MSG =
 export const TOAST_FISH_DELETE_SUCCESS_MSG = "Cá đã được xóa khỏi hồ";
 export const TOAST_DELETE_LAKE_SUCCESS_MSG = "Xóa hồ bé thành công";
 export const TOAST_WRITE_REVIEW_SUCCESS_MSG = "Đánh giá đăng thành công";
+export const TOAST_CREATE_REPORT_FAIL_MSG = "Gửi thất bại";
 // END OF RELATED TOAST MESSAGE SECTION
 
 /**
@@ -63,6 +64,7 @@ export const ANGLER_RESET_PASSWORD_HEADER = "Thay đổi mật khẩu";
 export const FMANAGE_POST_HEADER = "Bài đăng";
 export const ANGLER_WRITE_REVIEW_HEADER = "Đánh giá của bạn";
 export const FMANAGE_CHECK_IN_HISTORY_HEADER = "Lịch sử Check-in";
+export const ANGLER_WRITE_REPORT_HEADER = "Báo cáo vi phạm";
 // END OF RELATED SCREEN HEADER SECTION
 
 /**
@@ -96,6 +98,7 @@ export const ALERT_DELTE_FISH_PROMPT_MSG =
 export const ALERT_EDIT_POST_SUCCESS_MSG = "Chỉnh sửa bài viết thành công";
 export const ALERT_CREATE_POST_SUCCESS_MSG =
   "Gửi thông tin thành công! Bài viết đang được tạo";
+export const ALERT_CREATE_REPORT_SUCCESS = "Gửi Thành công";
 // END OF RELATED ALERT SECTION
 
 /**
@@ -155,6 +158,7 @@ export const FORM_FIELD_POST_TYPE = "postType";
 export const FORM_FIELD_POST_CONTENT = "content";
 export const FORM_FIELD_RATING = "score";
 export const FORM_FIELD_REVIEW_CONTENT = "description";
+export const FORM_FIELE_REPORT_CONTENT = "content";
 // END OF RELATED FORM FIELD NAME TO REGISTER HOOK FORM SECTION
 
 /**
@@ -174,6 +178,7 @@ export const POST_BUTTON_LABEL = "Đăng";
 export const PREVIOUS_BUTTON_LABEL = "Trước";
 export const NEXT_BUTTON_LABEL = "Sau";
 export const CHANGE_PASSWORD_LABEL = "Đổi mật khẩu";
+export const REPORT_BUTTON_LABEL = "Báo cáo";
 // END OF RELATED BUTTON LABELS SECTION
 
 /**
@@ -224,6 +229,7 @@ export const POST_ATTACHMENT_TYPE_LABEL = "Đính kèm";
 export const POST_ATTACHMENT_MEDIA_LABEL = "Đường dẫn";
 export const RATING_LABEL = "Điểm số:";
 export const NEW_PHONE_NUMBER_LABEL = "Số điện thoại mới";
+export const REPORT_LABEL = "Hãy miêu tả rõ vi phạm";
 // END OF RELATED LABEL SECTIONS
 
 /**
@@ -290,4 +296,5 @@ export const INPUT_ATTACHMENT_MEDIA_PLACEHOLDER =
 export const INPUT_REVIEW_CONTENT_PLACEHOLDER = "Đánh giá của bạn về hồ câu";
 export const SELECT_DATE_RANGE_PLACEHOLDER = "Theo ngày";
 export const INPUT_NEW_PHONE_NUMBER_PLACEHOLDER = "Nhập số điện thoại mới";
+export const INPUT_REPORT_PLACEHOLDER = "Nhập nội dung vi phạm";
 // END OF RELATED PLACEHOLDER TITLES SECTION
