@@ -70,8 +70,8 @@ const FManageEditProfileScreen = () => {
       districtId: locationDetails.addressFromWard.districtId,
       wardId: locationDetails.addressFromWard.wardId,
       description: locationDetails.description,
-      service: locationDetails.timetable,
-      timetable: locationDetails.service,
+      service: locationDetails.service,
+      timetable: locationDetails.timetable,
       rule: locationDetails.rule,
       imageArray: locationDetails.image.map((image, index) => ({
         id: index,
