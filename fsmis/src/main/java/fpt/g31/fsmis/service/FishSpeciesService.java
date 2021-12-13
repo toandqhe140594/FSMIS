@@ -58,6 +58,7 @@ public class FishSpeciesService {
                 .name(speciesDtoIn.getName())
                 .imageUrl(speciesDtoIn.getImage())
                 .active(true)
+                .appearanceCount(0)
                 .build();
         fishSpeciesRepos.save(fishSpecies);
         return new ResponseTextDtoOut("Thêm thông tin loài cá thành công");
