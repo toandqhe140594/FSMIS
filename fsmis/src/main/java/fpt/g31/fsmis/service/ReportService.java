@@ -146,8 +146,8 @@ public class ReportService {
             throw new ValidationException(INVALID_PAGE_NUMBER);
         }
         List<ReportDtoOut> output = new ArrayList<>();
-        Page<Report> locationReportList = reportRepos.findAllByFishingLocationIdNotNullAndActiveOrderByTimeDesc(active, PageRequest.of(pageNo - 1, 10));
-        for (Report report : locationReportList) {
+        Page<Report> reportList = reportRepos.findAllByFishingLocationIdNotNullAndActiveOrderByTimeDesc(active, PageRequest.of(pageNo - 1, 10));
+        for (Report report : reportList) {
             ReportDtoOut dtoOut = ReportDtoOut.builder()
                     .id(report.getId())
                     .name(report.getFishingLocation().getName())
@@ -157,9 +157,9 @@ public class ReportService {
             output.add(dtoOut);
         }
         return PaginationDtoOut.builder()
-                .totalPage(locationReportList.getTotalPages())
+                .totalPage(reportList.getTotalPages())
                 .pageNo(pageNo)
-                .totalItem(locationReportList.getTotalElements())
+                .totalItem(reportList.getTotalElements())
                 .items(output)
                 .build();
     }
@@ -169,8 +169,8 @@ public class ReportService {
             throw new ValidationException(INVALID_PAGE_NUMBER);
         }
         List<ReportDtoOut> output = new ArrayList<>();
-        Page<Report> locationReportList = reportRepos.findAllByReviewIdNotNullAndActiveOrderByTimeDesc(active, PageRequest.of(pageNo - 1, 10));
-        for (Report report : locationReportList) {
+        Page<Report> reportList = reportRepos.findAllByReviewIdNotNullAndActiveOrderByTimeDesc(active, PageRequest.of(pageNo - 1, 10));
+        for (Report report : reportList) {
             ReportDtoOut dtoOut = ReportDtoOut.builder()
                     .id(report.getId())
                     .name(report.getReview().getUser().getFullName())
@@ -181,9 +181,9 @@ public class ReportService {
             output.add(dtoOut);
         }
         return PaginationDtoOut.builder()
-                .totalPage(locationReportList.getTotalPages())
+                .totalPage(reportList.getTotalPages())
                 .pageNo(pageNo)
-                .totalItem(locationReportList.getTotalElements())
+                .totalItem(reportList.getTotalElements())
                 .items(output)
                 .build();
     }
@@ -193,8 +193,8 @@ public class ReportService {
             throw new ValidationException(INVALID_PAGE_NUMBER);
         }
         List<ReportDtoOut> output = new ArrayList<>();
-        Page<Report> postReportList = reportRepos.findAllByPostIdNotNullAndActiveOrderByTimeDesc(active, PageRequest.of(pageNo - 1, 10));
-        for (Report report : postReportList) {
+        Page<Report> reportList = reportRepos.findAllByPostIdNotNullAndActiveOrderByTimeDesc(active, PageRequest.of(pageNo - 1, 10));
+        for (Report report : reportList) {
             ReportDtoOut dtoOut = ReportDtoOut.builder()
                     .id(report.getId())
                     .name(report.getPost().getFishingLocation().getName())
@@ -205,9 +205,9 @@ public class ReportService {
             output.add(dtoOut);
         }
         return PaginationDtoOut.builder()
-                .totalPage(postReportList.getTotalPages())
+                .totalPage(reportList.getTotalPages())
                 .pageNo(pageNo)
-                .totalItem(postReportList.getTotalElements())
+                .totalItem(reportList.getTotalElements())
                 .items(output)
                 .build();
     }
@@ -217,8 +217,8 @@ public class ReportService {
             throw new ValidationException(INVALID_PAGE_NUMBER);
         }
         List<ReportDtoOut> output = new ArrayList<>();
-        Page<Report> locationReportList = reportRepos.findAllByCatchesIdNotNullAndActiveOrderByTimeDesc(active, PageRequest.of(pageNo - 1, 10));
-        for (Report report : locationReportList) {
+        Page<Report> reportList = reportRepos.findAllByCatchesIdNotNullAndActiveOrderByTimeDesc(active, PageRequest.of(pageNo - 1, 10));
+        for (Report report : reportList) {
             ReportDtoOut dtoOut = ReportDtoOut.builder()
                     .id(report.getId())
                     .name(report.getCatches().getUser().getFullName())
@@ -229,9 +229,9 @@ public class ReportService {
             output.add(dtoOut);
         }
         return PaginationDtoOut.builder()
-                .totalPage(locationReportList.getTotalPages())
+                .totalPage(reportList.getTotalPages())
                 .pageNo(pageNo)
-                .totalItem(locationReportList.getTotalElements())
+                .totalItem(reportList.getTotalElements())
                 .items(output)
                 .build();
     }
