@@ -23,51 +23,63 @@ public class FishingLocation {
     private Long id;
 
     @NotNull
+    @Column(columnDefinition = "varchar(255) default ''")
     private String name;
 
+    @Column(columnDefinition = "varchar(255) default ''")
     private String unsignedName;
 
+    @Column(columnDefinition = "float4 default 0")
     private Float longitude;
 
+    @Column(columnDefinition = "float4 default 0")
     private Float latitude;
 
+    @Column(columnDefinition = "varchar(255) default ''")
     private String address;
 
     @ManyToOne
-    @JoinColumn
+    @JoinColumn(columnDefinition = "int8 default 1")
     private Ward ward;
 
+    @NotNull
+    @Column(columnDefinition = "varchar(11) default ''")
     private String phone;
 
     @Column(columnDefinition = "TEXT default ''")
     private String description;
 
-    @Column(columnDefinition = "default ''")
+    @Column(columnDefinition = "varchar(255) default ''")
     private String website;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT default ''")
     private String service;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT default ''")
     private String timetable;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT default ''")
     private String rule;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT default ''")
     private String imageUrl;
 
+    @Column(columnDefinition = "timestamp default now()")
     private LocalDateTime createdDate;
 
+    @Column(columnDefinition = "timestamp default now()")
     private LocalDateTime lastEditedDate;
 
+    @Column(columnDefinition = "bool default true")
     private Boolean active;
 
+    @Column(columnDefinition = "bool default false")
     private Boolean verify;
 
+    @Column(columnDefinition = "bool default false")
     private Boolean closed;
 
-    @Column(columnDefinition = "boolean default false")
+    @Column(columnDefinition = "bool default false")
     private Boolean pending;
 
     @JsonIgnore
@@ -80,7 +92,7 @@ public class FishingLocation {
 
     @JsonIgnore
     @ManyToOne
-    @JoinColumn
+    @JoinColumn(columnDefinition = "int4 default 1")
     private User owner;
 
     @JsonIgnore
@@ -105,5 +117,6 @@ public class FishingLocation {
     @ManyToMany(mappedBy = "savedFishingLocations")
     private List<User> savedUser;
 
+    @Column(columnDefinition = "float4 default 0")
     private Float score;
 }

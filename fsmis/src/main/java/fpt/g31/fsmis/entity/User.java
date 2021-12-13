@@ -22,29 +22,38 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(columnDefinition = "varchar(255) default ''")
     private String fullName;
 
+    @Column(columnDefinition = "varchar(255) default ''")
     private String password;
 
+    @Column(columnDefinition = "varchar(255) default ''")
     private String phone;
 
+    @Column(columnDefinition = "timestamp default now()")
     private LocalDateTime dob;
 
+    @Column(columnDefinition = "varchar(255) default ''")
     private String address;
 
     @ManyToOne
     @JoinColumn(name = "ward_id")
     private Ward ward;
 
+    @Column(columnDefinition = "varchar(255) default ''")
     private String qrString;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT default 'https://picsum.photos/200'")
     private String avatarUrl;
 
+    @Column(columnDefinition = "bool default true")
     private Boolean gender;
 
+    @Column(columnDefinition = "bool default true")
     private Boolean available;
 
+    @Column(columnDefinition = "bool default true")
     private Boolean active;
 
     @JsonIgnore
