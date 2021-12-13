@@ -16,6 +16,12 @@ export const TOAST_ADD_FISH_SPECIES_SUCCESS_MSG = "Thêm cá thành công";
 export const TOAST_EDIT_FISH_SPECIES_SUCCESS_MSG = "Cập nhật cá thành công";
 export const TOAST_UPDATE_FISH_SPECIES_STATUS_SUCCESS_MSG =
   "Trạng thái của cá đã được thay đổi";
+export const TOAST_ADD_FISHING_METHOD_SUCCESS_MSG =
+  "Thêm loại hình câu thành công";
+export const TOAST_EDIT_FISHING_METHOD_SUCCESS_MSG =
+  "Cập nhật loại hình câu thành công";
+export const TOAST_UPDATE_FISHING_METHOD_STATUS_SUCCESS_MSG =
+  "Trạng thái của loại hình câu được thay đổi";
 // END OF RELATED TOAST MESSAGE SECTION
 
 /**
@@ -169,6 +175,7 @@ export const FORM_FIELD_RATING = "score";
 export const FORM_FIELD_REVIEW_CONTENT = "description";
 export const FORM_FIELE_REPORT_CONTENT = "content";
 export const FORM_FIELD_ADMIN_FISH_SPECIES_NAME = "name";
+export const FORM_FIELD_ADMIN_FISHING_METHOD_NAME = "name";
 // END OF RELATED FORM FIELD NAME TO REGISTER HOOK FORM SECTION
 
 /**
@@ -192,6 +199,9 @@ export const REPORT_BUTTON_LABEL = "Báo cáo";
 export const SAVE_CHANGES_BUTTON_LABEL = "Lưu thay đổi";
 export const HIDE_THIS_FISH_BUTTON_LABEL = "Ẩn loại cá này";
 export const REVEAL_THIS_FISH_BUTTON_LABEL = "Bỏ ẩn loại cá này";
+export const HIDE_THIS_METHOD_BUTTON_LABEL = "Ẩn loại cá này";
+export const REVEAL_THIS_METHOD_BUTTON_LABEL = "Bỏ ẩn loại cá này";
+export const ADD_FISHING_METHOD_BUTTON_LABEL = "Thêm loại hình câu";
 // END OF RELATED BUTTON LABELS SECTION
 
 /**
@@ -244,6 +254,7 @@ export const RATING_LABEL = "Điểm số:";
 export const NEW_PHONE_NUMBER_LABEL = "Số điện thoại mới";
 export const REPORT_LABEL = "Hãy miêu tả rõ vi phạm";
 export const ADMIN_FISH_LABEL = "Tên cá";
+export const ADMIN_FISHING_METHOD_LABEL = "Tên loại hình câu";
 // END OF RELATED LABEL SECTIONS
 
 /**

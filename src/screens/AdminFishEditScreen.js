@@ -142,7 +142,7 @@ const AdminFishEditScreen = () => {
             w="80%"
             alignSelf="center"
             isLoading={isLoading}
-            isLoadingText="Đang xử lý"
+            isLoadingText={DICTIONARY.PROCESSING_BUTTON_LABEL}
             onPress={handleSubmit(onSubmit)}
           >
             {fishId
