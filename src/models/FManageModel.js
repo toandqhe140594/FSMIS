@@ -816,9 +816,16 @@ const model = {
   // START UNRESOLVED CATCH REPORT RELATED SECTION
   /**
    * Set list data of unresolved catch eport
+   * @param {String} payload.mode setting mode for unresolvedCatchReport
+   * @param {Array} payload.items set data for unresolvedCatchReport
    */
   setUnresolvedCatchReportList: action((state, payload) => {
-    state.unresolvedCatchReportList = payload;
+    const { mode, items } = payload;
+    if (mode === "NEW") {
+      state.unresolvedCatchReportList = items;
+    } else
+      state.unresolvedCatchReportList =
+        state.unresolvedCatchReportList.concat(items);
   }),
   /**
    * Set current page for list data of unresolved catch eport
@@ -828,60 +835,56 @@ const model = {
   }),
   /**
    * Set total page number for list data of unresolved catch eport
-   * Total page cannot be less than 1
+   * @param {Number} payload.totalPage total page of unresolvedCatchReportList
    */
   setUnresolvedCatchReportTotalPage: action((state, payload) => {
-    state.unresolvedCatchReportTotalPage = payload < 1 ? 1 : payload;
+    state.unresolvedCatchReportTotalPage = payload.totalPage;
   }),
   /**
    * Remove a catch report from the unresolved catch report list by id
-   * @param {Object} [payload] params pass to function
-   * @param {number} [payload.id] id of the catch report that need to be remove
+   * @param {Object} payload params pass to function
+   * @param {number} payload.id id of the catch report that need to be remove
    */
   removeAnUnresolvedCatchReportById: action((state, payload) => {
     state.unresolvedCatchReportList = state.unresolvedCatchReportList.filter(
       (report) => report.id !== payload.id,
     );
   }),
+
+  /**
+   * Clear unresolvedCatchReport data back to default state
+   */
+  clearUnresolvedCatchReportList: action((state) => {
+    state.unresolvedCatchReportList = [];
+    state.unresolvedCatchReportTotalPage = 1;
+  }),
+
   /**
    * Get list data of unresolved catch eport
-   * @param {Object} [payload] the payload pass to function
+   * @param {Number} payload.pageNo page number fetch
    */
   getUnresolvedCatchReportList: thunk(
     async (actions, payload, { getState }) => {
-      const { status } = payload;
-      const {
-        currentId,
-        unresolvedCatchReportCurrentPage: currentPage,
-        unresolvedCatchReportTotalPage: totalPage,
-      } = getState();
-      let pageNo = 1;
-      // If this function is called to load more data to list
-      if (status === "APPEND") {
-        // If current page greater than total page or smaller than 1 then return
-        if (currentPage > totalPage || currentPage < 1) return;
-        pageNo = currentPage;
-        actions.setUnresolvedCatchReportCurrentPage(currentPage + 1);
-      } else {
-        // If this function is called to load data from page 1
-        actions.setUnresolvedCatchReportCurrentPage(1);
-        actions.setUnresolvedCatchReportTotalPage(1);
-      }
+      const { pageNo } = payload;
+      const { currentId } = getState();
       try {
-        const { data, status: httpResponseStatus } = await http.get(
+        const { data, status } = await http.get(
           `location/${currentId}/${API_URL.LOCATION_CATCH_REPORT_UNRESOLVED}`,
           {
             params: { pageNo },
           },
         );
-        if (httpResponseStatus === 200) {
-          actions.setUnresolvedCatchReportList(data.items);
-          actions.setUnresolvedCatchReportTotalPage(data.totalPage);
+        if (status === 200) {
+          const { totalPage, items } = data;
+          actions.setUnresolvedCatchReportTotalPage({ totalPage });
+          if (pageNo === 1) {
+            actions.setUnresolvedCatchReportList({ mode: "NEW", items });
+          } else {
+            actions.setUnresolvedCatchReportList({ mode: "DEFAULT", items });
+          }
         }
       } catch (error) {
-        actions.setUnresolvedCatchReportList([]);
-        actions.setUnresolvedCatchReportTotalPage(1);
-        actions.setUnresolvedCatchReportCurrentPage(1);
+        actions.clearUnresolvedCatchReportList();
       }
     },
   ),
