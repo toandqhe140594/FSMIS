@@ -44,7 +44,6 @@ public class FishingLocationService {
     private final FishingLocationRepos fishingLocationRepos;
     private final UserRepos userRepos;
     private final WardRepos wardRepos;
-    private final ReviewRepos reviewRepos;
     private final ModelMapper modelMapper;
     private final SuggestedLocationRepos suggestedLocationRepos;
     private final NotificationRepos notificationRepos;
@@ -80,7 +79,7 @@ public class FishingLocationService {
                 .active(true)
                 .verify(false)
                 .closed(false)
-                .pending(true)
+                .pending(false)
                 .score(0F)
                 .owner(owner)
                 .build();
@@ -574,6 +573,7 @@ public class FishingLocationService {
                 .longitude(suggestedLocationDtoIn.getLongitude())
                 .latitude(suggestedLocationDtoIn.getLatitude())
                 .additionalInformation(suggestedLocationDtoIn.getAdditionalInformation())
+                .helpful(false)
                 .build();
         suggestedLocationRepos.save(suggestedLocation);
         return new ResponseTextDtoOut("Gợi ý khu hồ thành công");
