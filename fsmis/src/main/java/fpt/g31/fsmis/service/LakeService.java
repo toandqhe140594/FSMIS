@@ -187,8 +187,16 @@ public class LakeService {
 
     private void checkValidFishInLakeList(LakeDtoIn lakeDtoIn) {
         int row = 0;
+        List<FishInLakeDtoIn> checkedDtoInList = new ArrayList<>();
         for (FishInLakeDtoIn fishInLakeDtoIn : lakeDtoIn.getFishInLakeList()) {
             row++;
+            for (FishInLakeDtoIn checkedDtoIn : checkedDtoInList) {
+                if (Objects.equals(checkedDtoIn.getFishSpeciesId(), fishInLakeDtoIn.getFishSpeciesId())
+                        && Objects.equals(checkedDtoIn.getMinWeight(), fishInLakeDtoIn.getMinWeight())
+                && Objects.equals(checkedDtoIn.getMaxWeight(), fishInLakeDtoIn.getMaxWeight())) {
+                    throw new ValidationException("Có nhiều hơn 1 thẻ trùng thông tin về loài cá và biểu");
+                }
+            }
             if (!fishSpeciesRepos.existsById(fishInLakeDtoIn.getFishSpeciesId())) {
                 throw new NotFoundException("Không tìm thấy loài cá này!, dòng " + row);
             }
@@ -205,6 +213,7 @@ public class LakeService {
                     || fishInLakeDtoIn.getTotalWeight() > fishInLakeDtoIn.getMaxWeight() * fishInLakeDtoIn.getQuantity())) {
                 throw new ValidationException("Tương quan khối lượng và số lượng không hợp lệ, dòng " + row);
             }
+            checkedDtoInList.add(fishInLakeDtoIn);
         }
     }
 
