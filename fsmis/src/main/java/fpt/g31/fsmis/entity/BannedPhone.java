@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 @Table(name = "tbl_banned_phone")
 public class BannedPhone {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private String phone;
 
     private String description;
