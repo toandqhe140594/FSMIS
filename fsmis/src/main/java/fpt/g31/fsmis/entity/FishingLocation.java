@@ -43,7 +43,7 @@ public class FishingLocation {
     private Ward ward;
 
     @NotNull
-    @Column(columnDefinition = "varchar(11) default ''")
+    @Column(columnDefinition = "varchar(255) default ''")
     private String phone;
 
     @Column(columnDefinition = "TEXT default ''")

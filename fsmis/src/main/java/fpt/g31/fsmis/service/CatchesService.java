@@ -297,7 +297,7 @@ public class CatchesService {
         catchesRepos.save(catches);
         String notificationText = "Báo cá của bạn tại " + catches.getFishingLocation().getName() + " đã " + (Boolean.TRUE.equals(catches.getApproved()) ? "được duyệt" : "bị từ chối");
         List<User> notificationReceiver = new ArrayList<>();
-        notificationReceiver.add(user);
+        notificationReceiver.add(catches.getUser());
         NotificationService.createNotification(notificationRepos, notificationText, notificationReceiver);
         return new ResponseTextDtoOut("Phê duyệt thành công");
     }
