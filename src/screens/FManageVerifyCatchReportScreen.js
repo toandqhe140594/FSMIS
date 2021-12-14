@@ -111,7 +111,7 @@ UnresolvedCatchReportComponent.propTypes = {
 
 const VerifyCatchReportScreen = () => {
   const pageNo = useRef(1);
-  const needRefresh = useRef(true);
+  const needRefresh = useRef(false);
   const [isLoading, setIsLoading] = useState(true);
   const { unresolvedCatchReportList, unresolvedCatchReportTotalPage } =
     useStoreState((states) => states.FManageModel);
