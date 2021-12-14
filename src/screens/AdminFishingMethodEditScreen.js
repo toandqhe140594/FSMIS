@@ -8,11 +8,10 @@ import { Dimensions } from "react-native";
 
 import InputComponent from "../components/common/InputComponent";
 import HeaderTab from "../components/HeaderTab";
-import { SCHEMA } from "../constants";
+import { DICTIONARY, SCHEMA } from "../constants";
 import { showToastMessage } from "../utilities";
 
 const OFFSET_BOTTOM = 85;
-// Get window height without status bar height
 const CUSTOM_SCREEN_HEIGHT = Dimensions.get("window").height - OFFSET_BOTTOM;
 
 const AdminFishingMethodEditScreen = () => {
@@ -43,11 +42,11 @@ const AdminFishingMethodEditScreen = () => {
       .then(() => {
         if (!methodId) {
           getAdminFishingMethodList();
-          showToastMessage("Thêm loại hình câu thành công");
+          showToastMessage(DICTIONARY.TOAST_ADD_FISHING_METHOD_SUCCESS_MSG);
           navigation.pop(1);
         } else {
           setIsLoading(false);
-          showToastMessage("Cập nhật loại hình câu thành công");
+          showToastMessage(DICTIONARY.TOAST_EDIT_FISHING_METHOD_SUCCESS_MSG);
         }
       })
       .catch(handleError);
@@ -59,7 +58,9 @@ const AdminFishingMethodEditScreen = () => {
       .then(() => {
         setIsLoading(false);
         setIsActive(!isActive);
-        showToastMessage("Trạng thái của loại hình câu đã được thay đổi");
+        showToastMessage(
+          DICTIONARY.TOAST_UPDATE_FISHING_METHOD_STATUS_SUCCESS_MSG,
+        );
       })
       .catch(handleError);
   };
@@ -68,7 +69,7 @@ const AdminFishingMethodEditScreen = () => {
     const { id, name, active } = route.params;
     if (id) {
       setMethodId(id);
-      setValue("name", name);
+      setValue(DICTIONARY.FORM_FIELD_ADMIN_FISHING_METHOD_NAME, name);
       setIsActive(active);
     }
   }, []);
@@ -79,13 +80,12 @@ const AdminFishingMethodEditScreen = () => {
       <Box height={CUSTOM_SCREEN_HEIGHT}>
         <FormProvider {...methods}>
           <Center flex={1} w="100%" mt={10} justifyContent="flex-start">
-            {/* Fishing method name input field */}
             <InputComponent
               myStyles={{ width: "90%" }}
-              label="Tên loại hình câu"
+              label={DICTIONARY.ADMIN_FISHING_METHOD_LABEL}
               isTitle
               hasAsterisk
-              controllerName="name"
+              controllerName={DICTIONARY.FORM_FIELD_ADMIN_FISHING_METHOD_NAME}
             />
             {methodId && (
               <Box
@@ -101,7 +101,9 @@ const AdminFishingMethodEditScreen = () => {
                   fontSize="md"
                   color={isActive ? "success.500" : "danger.500"}
                 >
-                  {isActive ? "Đang hoạt động" : "Đang ẩn"}
+                  {isActive
+                    ? DICTIONARY.IS_ACTIVATE_TEXT
+                    : DICTIONARY.IS_DEACTIVATE_TEXT}
                 </Text>
               </Box>
             )}
@@ -111,21 +113,29 @@ const AdminFishingMethodEditScreen = () => {
             alignSelf="center"
             onPress={handleSubmit(onSubmit)}
             isLoading={isLoading}
-            isLoadingText="Đang xử lý"
+            isLoadingText={DICTIONARY.PROCESSING_BUTTON_LABEL}
           >
-            {methodId ? "Lưu thay đổi" : "Thêm loại hình câu"}
+            {methodId
+              ? DICTIONARY.SAVE_CHANGES_BUTTON_LABEL
+              : DICTIONARY.ADD_FISHING_METHOD_BUTTON_LABEL}
           </Button>
           {methodId && (
             <Button
               w="80%"
-              colorScheme={isActive ? "red" : "green"}
+              colorScheme={
+                isActive
+                  ? DICTIONARY.RED_COLOR_SCHEME
+                  : DICTIONARY.GREEN_COLOR_SCHEME
+              }
               alignSelf="center"
               marginTop={2}
               onPress={handleUpdateStatus}
               isLoading={isLoading}
-              isLoadingText="Đang xử lý"
+              isLoadingText={DICTIONARY.PROCESSING_BUTTON_LABEL}
             >
-              {isActive ? "Ẩn loại hình câu này" : "Bỏ ẩn loại hình câu này"}
+              {isActive
+                ? DICTIONARY.HIDE_THIS_METHOD_BUTTON_LABEL
+                : DICTIONARY.REVEAL_THIS_METHOD_BUTTON_LABEL}
             </Button>
           )}
         </FormProvider>

@@ -99,11 +99,11 @@ const ChangePhoneNumberScreen = () => {
           w={{ base: "70%", md: "50%", lg: "30%" }}
         >
           <InputComponent
-            label={DICTIONARY.PHONE_NUMBER_LABEL}
+            label={DICTIONARY.NEW_PHONE_NUMBER_LABEL}
             useNumPad
             isTitle
             hasAsterisk
-            placeholder={DICTIONARY.INPUT_PHONE_NUMBER_PLACEHOLDER}
+            placeholder={DICTIONARY.INPUT_NEW_PHONE_NUMBER_PLACEHOLDER}
             controllerName={DICTIONARY.FORM_FIELD_ANGLER_PHONE}
           />
           <PasswordInput

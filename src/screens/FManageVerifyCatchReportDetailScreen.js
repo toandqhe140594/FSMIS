@@ -12,10 +12,10 @@ import {
   VStack,
 } from "native-base";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator } from "react-native";
 import Swiper from "react-native-swiper";
 
 import AvatarCard from "../components/AvatarCard";
+import OverlayLoading from "../components/common/OverlayLoading";
 import FishInformationCard from "../components/FishInformationCard";
 import HeaderTab from "../components/HeaderTab";
 import ImageResizeMode from "../components/ImageResizeMode";
@@ -89,12 +89,7 @@ const AnglerCatchReportDetailScreen = () => {
 
   const { avatar } = catchDetails;
 
-  if (isLoading)
-    return (
-      <Box flex={1} justifyContent="center" alignItems="center">
-        <ActivityIndicator size="large" color="blue" />
-      </Box>
-    );
+  if (isLoading) return <OverlayLoading coverScreen />;
 
   if (!catchDetails.id) {
     return (
