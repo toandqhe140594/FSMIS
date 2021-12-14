@@ -121,7 +121,7 @@ const LakeEditProfileScreen = () => {
     closeLakeByLakeId({ id })
       .then(() => {
         showToastMessage(DICTIONARY.TOAST_DELETE_LAKE_SUCCESS_MSG);
-        goBack(navigation);
+        navigation.pop(2);
       })
       .catch(handleError);
   };
