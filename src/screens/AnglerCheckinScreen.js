@@ -1,4 +1,4 @@
-import { useNavigation } from "@react-navigation/native";
+import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, Button, Center, Text } from "native-base";
 import React, { useEffect, useState } from "react";
@@ -147,7 +147,7 @@ const CheckinScreen = () => {
   const resetCheckInModel = useStoreActions(
     (actions) => actions.CheckInModel.reset,
   );
-
+  const isFocused = useIsFocused();
   const [isCheckin, setCheckin] = useState(false);
 
   useEffect(() => {
@@ -158,8 +158,8 @@ const CheckinScreen = () => {
 
   useEffect(() => {
     if (stateCheckIn === false) {
-      showToastMessage("Bạn chưa checkin ở hồ câu");
       setCheckin(false);
+      if (isFocused) showToastMessage("Bạn chưa checkin ở hồ câu");
     }
     if (stateCheckIn === true) setCheckin(true);
     setCheckInState(null);
