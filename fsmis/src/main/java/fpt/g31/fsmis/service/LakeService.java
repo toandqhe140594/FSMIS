@@ -108,10 +108,10 @@ public class LakeService {
                     .speciesId(fishInLake.getFishSpecies().getId())
                     .name(fishInLake.getFishSpecies().getName())
                     .imageUrl(fishInLake.getFishSpecies().getImageUrl())
-                    .maxWeight(fishInLake.getMaxWeight())
-                    .minWeight(fishInLake.getMinWeight())
+                    .maxWeight(BigDecimal.valueOf(fishInLake.getMaxWeight()).setScale(2, RoundingMode.HALF_UP).floatValue())
+                    .minWeight(BigDecimal.valueOf(fishInLake.getMinWeight()).setScale(2, RoundingMode.HALF_UP).floatValue())
                     .quantity(fishInLake.getQuantity())
-                    .totalWeight(BigDecimal.valueOf(fishInLake.getTotalWeight()).setScale(1, RoundingMode.HALF_UP).floatValue())
+                    .totalWeight(BigDecimal.valueOf(fishInLake.getTotalWeight()).setScale(2, RoundingMode.HALF_UP).floatValue())
                     .build();
             fishes.add(fish);
         }
@@ -251,7 +251,9 @@ public class LakeService {
                 }
                 FishDtoOut fishDtoOut = FishDtoOut.builder()
                         .id(fishInLake.getId())
-                        .name(fishInLake.getFishSpecies().getName() + " biểu " + fishInLake.getMinWeight() + "-" + fishInLake.getMaxWeight())
+                        .name(fishInLake.getFishSpecies().getName() + " biểu "
+                                + BigDecimal.valueOf(fishInLake.getMinWeight()).setScale(2, RoundingMode.HALF_UP).floatValue()
+                                + "-" + BigDecimal.valueOf(fishInLake.getMaxWeight()).setScale(2, RoundingMode.HALF_UP).floatValue())
                         .speciesId(fishInLake.getFishSpecies().getId())
                         .build();
                 fishDtoOutList.add(fishDtoOut);

@@ -198,7 +198,7 @@ public class CatchesService {
                     .name(catchesDetail.getFishSpecies().getName())
                     .image(catchesDetail.getFishSpecies().getImageUrl())
                     .quantity(catchesDetail.getQuantity())
-                    .weight(BigDecimal.valueOf(catchesDetail.getWeight()).setScale(1, RoundingMode.HALF_UP).floatValue())
+                    .weight(BigDecimal.valueOf(catchesDetail.getWeight()).setScale(2, RoundingMode.HALF_UP).floatValue())
                     .returnToOwner(catchesDetail.getReturnToOwner())
                     .build();
             fishes.add(item);
