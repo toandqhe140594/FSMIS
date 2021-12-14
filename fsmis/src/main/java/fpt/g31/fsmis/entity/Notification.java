@@ -15,7 +15,7 @@ import java.util.List;
 @Table(name = "tbl_notification")
 public class Notification {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Column(columnDefinition = "TEXT")

@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 public class ReportUser {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Column(columnDefinition = "TEXT")

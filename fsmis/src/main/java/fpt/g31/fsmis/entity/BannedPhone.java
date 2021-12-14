@@ -2,10 +2,7 @@ package fpt.g31.fsmis.entity;
 
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
@@ -17,6 +14,7 @@ import java.time.LocalDateTime;
 @Table(name = "tbl_banned_phone")
 public class BannedPhone {
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private String phone;
 
     private String description;

@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 public class CheckIn {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @ManyToOne

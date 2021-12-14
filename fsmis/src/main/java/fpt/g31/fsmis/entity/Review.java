@@ -16,7 +16,7 @@ import java.util.List;
 @Table(name = "tbl_review")
 public class Review {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     private Integer score;
