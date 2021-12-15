@@ -1,6 +1,6 @@
 import * as yup from "yup";
 
-const VN_PHONE_REGEX = /((09|03|07|08|05)+([0-9]{8})\b)/;
+const VN_PHONE_REGEX = /^0(3[2-9]|5[689]|7[06-9]|8[0-689]|9[0-46-9])[0-9]{7}$/;
 
 export const ANGLER_PROFILE_FORM = yup.object().shape({
   avatarUrl: yup.string(),
