@@ -8,7 +8,7 @@ import { useStoreActions, useStoreState } from "easy-peasy";
 import { Button, VStack } from "native-base";
 import React, { useCallback, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { Dimensions, ScrollView, StyleSheet, View } from "react-native";
 
 import InputWithClipboard from "../components/common/InputWithClipboard";
 import MultiImageSection from "../components/common/MultiImageSection";
@@ -49,10 +49,24 @@ const attachmentData = [
   },
 ];
 
+const OFFSET_BOTTOM = 80;
+// Get window height without status bar height
+const CUSTOM_SCREEN_HEIGHT = Dimensions.get("window").height - OFFSET_BOTTOM;
+
 const styles = StyleSheet.create({
+  container: {
+    justifyContent: "space-between",
+    alignItems: "center",
+    height: CUSTOM_SCREEN_HEIGHT,
+  },
   sectionWrapper: {
     width: "90%",
     marginTop: 10,
+    flex: 1,
+  },
+  buttonWrapper: {
+    width: "90%",
+    marginBottom: 12,
   },
   center: {
     justifyContent: "center",
@@ -130,13 +144,8 @@ const PostCreateScreen = () => {
     <>
       <HeaderTab name={DICTIONARY.FMANAGE_POST_HEADER} />
       <FormProvider {...methods}>
-        <ScrollView
-          contentContainerStyle={{
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <View style={StyleSheet.compose(styles.sectionWrapper, { flex: 1 })}>
+        <ScrollView contentContainerStyle={styles.container}>
+          <View style={styles.sectionWrapper}>
             <VStack space={3} mb={2}>
               <SelectComponent
                 data={postTypeData}
@@ -163,16 +172,17 @@ const PostCreateScreen = () => {
                   controllerName={DICTIONARY.FORM_FIELD_POST_MEDIA_URL}
                 />
               )}
+
+              {watchAttachmentType === DICTIONARY.ATTACHMENT_TYPE_IMAGE_ID && (
+                <MultiImageSection
+                  containerStyle={{ width: "100%" }}
+                  formRoute={ROUTE_NAMES.FMANAGE_POST_CREATE}
+                  controllerName={DICTIONARY.FORM_FIELD_IMAGE_ARRAY}
+                />
+              )}
             </VStack>
-            {watchAttachmentType === DICTIONARY.ATTACHMENT_TYPE_IMAGE_ID && (
-              <MultiImageSection
-                containerStyle={{ width: "100%" }}
-                formRoute={ROUTE_NAMES.FMANAGE_POST_CREATE}
-                controllerName={DICTIONARY.FORM_FIELD_IMAGE_ARRAY}
-              />
-            )}
           </View>
-          <View style={styles.sectionWrapper}>
+          <View style={styles.buttonWrapper}>
             <Button
               onPress={handleSubmit(onSubmit)}
               isLoading={loadingButton}

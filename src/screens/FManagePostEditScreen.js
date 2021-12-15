@@ -1,4 +1,3 @@
-/* eslint-disable prefer-template */
 import { yupResolver } from "@hookform/resolvers/yup";
 import {
   useFocusEffect,
@@ -9,7 +8,7 @@ import { useStoreActions, useStoreState } from "easy-peasy";
 import { Button, VStack } from "native-base";
 import React, { useCallback, useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { Dimensions, ScrollView, StyleSheet, View } from "react-native";
 
 import InputWithClipboard from "../components/common/InputWithClipboard";
 import MultiImageSection from "../components/common/MultiImageSection";
@@ -18,7 +17,11 @@ import TextAreaComponent from "../components/common/TextAreaComponent";
 import HeaderTab from "../components/HeaderTab";
 import { DICTIONARY, ROUTE_NAMES, SCHEMA } from "../constants";
 import { goToFManagePostScreen } from "../navigations";
-import { showAlertAbsoluteBox, showAlertBox } from "../utilities";
+import {
+  getPostTimeStamp,
+  showAlertAbsoluteBox,
+  showAlertBox,
+} from "../utilities";
 
 const postTypeData = [
   {
@@ -50,10 +53,22 @@ const attachmentData = [
   },
 ];
 
+const OFFSET_BOTTOM = 80;
+// Get window height without status bar height
+const CUSTOM_SCREEN_HEIGHT = Dimensions.get("window").height - OFFSET_BOTTOM;
+
 const styles = StyleSheet.create({
+  container: {
+    justifyContent: "space-between",
+    alignItems: "center",
+    height: CUSTOM_SCREEN_HEIGHT,
+  },
   sectionWrapper: {
     width: "90%",
     marginTop: 10,
+  },
+  buttonWrapper: {
+    width: "90%",
   },
   center: {
     justifyContent: "center",
@@ -61,22 +76,6 @@ const styles = StyleSheet.create({
   },
 });
 
-const getEditDate = () => {
-  const currentdate = new Date();
-  const datetime =
-    ("0" + currentdate.getDate()).slice(-2) +
-    "/" +
-    ("0" + (currentdate.getMonth() + 1)).slice(-2) +
-    "/" +
-    currentdate.getFullYear() +
-    " " +
-    ("0" + currentdate.getHours()).slice(-2) +
-    ":" +
-    ("0" + currentdate.getMinutes()).slice(-2) +
-    ":" +
-    ("0" + currentdate.getSeconds()).slice(-2);
-  return datetime;
-};
 const PostEditScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
@@ -136,7 +135,7 @@ const PostEditScreen = () => {
   const onSubmit = (data) => {
     setLoadingButton(true);
     const url = setAttachmentUrl(watchAttachmentType);
-    const datetime = getEditDate();
+    const datetime = getPostTimeStamp();
     delete data.imageArray;
     delete data.mediaUrl;
     const updateData = {
@@ -175,13 +174,8 @@ const PostEditScreen = () => {
     <>
       <HeaderTab name={DICTIONARY.FMANAGE_POST_HEADER} />
       <FormProvider {...methods}>
-        <ScrollView
-          contentContainerStyle={{
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <View style={StyleSheet.compose(styles.sectionWrapper, { flex: 1 })}>
+        <ScrollView contentContainerStyle={styles.container}>
+          <View style={styles.sectionWrapper}>
             <VStack space={2} mb={2}>
               <SelectComponent
                 data={postTypeData}
@@ -209,16 +203,16 @@ const PostEditScreen = () => {
                   controllerName={DICTIONARY.FORM_FIELD_POST_MEDIA_URL}
                 />
               )}
+              {watchAttachmentType === DICTIONARY.ATTACHMENT_TYPE_IMAGE_ID && (
+                <MultiImageSection
+                  containerStyle={{ width: "100%" }}
+                  formRoute={ROUTE_NAMES.FMANAGE_POST_EDIT}
+                  controllerName={DICTIONARY.FORM_FIELD_IMAGE_ARRAY}
+                />
+              )}
             </VStack>
-            {watchAttachmentType === DICTIONARY.ATTACHMENT_TYPE_IMAGE_ID && (
-              <MultiImageSection
-                containerStyle={{ width: "100%" }}
-                formRoute={ROUTE_NAMES.FMANAGE_POST_EDIT}
-                controllerName={DICTIONARY.FORM_FIELD_IMAGE_ARRAY}
-              />
-            )}
           </View>
-          <View style={styles.sectionWrapper}>
+          <View style={styles.buttonWrapper}>
             <Button
               onPress={handleSubmit(onSubmit)}
               isLoading={loadingButton}
