@@ -22,16 +22,14 @@ const AnglerCatchReportsHistoryScreen = () => {
 
   const [loading, setLoading] = useState(true);
 
+  const stopLoading = () => {
+    setLoading(false);
+  };
+
   useEffect(() => {
     // If the current page = 1 aka the list is empty then call api to init the list
     if (catchHistoryCurrentPage === 1)
-      getCatchReportHistory()
-        .then(() => {
-          setLoading(false);
-        })
-        .catch(() => {
-          setLoading(false);
-        });
+      getCatchReportHistory().finally(stopLoading);
     return () => {
       resetCatchReportHistory(); // Clear list data when screen unmount
     };
