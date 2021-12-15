@@ -3,7 +3,7 @@ import { useStoreActions, useStoreState } from "easy-peasy";
 import { Button, VStack } from "native-base";
 import React, { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { Dimensions, StyleSheet, View } from "react-native";
+import { Dimensions, ScrollView, StyleSheet, View } from "react-native";
 
 import FishCheckboxSelector from "../components/AdvanceSearch/FishCheckboxSelector";
 import MethodCheckboxSelector from "../components/AdvanceSearch/MethodCheckboxSelector";
@@ -32,9 +32,9 @@ const styles = StyleSheet.create({
     height: CUSTOM_SCREEN_HEIGHT,
   },
   sectionWrapper: {
-    flexGrow: 1,
+    flex: 1,
     alignItems: "center",
-    marginTop: 8,
+    marginTop: 10,
   },
   buttonWrapper: {
     flexDirection: "row",
@@ -144,7 +144,7 @@ const AnglerAdvanceSearchScreen = () => {
           onPress: navigateToSuggestionScreen,
         }}
       />
-      <View style={styles.appContainer}>
+      <ScrollView contentContainerStyle={styles.appContainer}>
         <FormProvider {...methods}>
           <VStack flex={1} space={2} style={styles.sectionWrapper}>
             <InputComponent
@@ -200,7 +200,7 @@ const AnglerAdvanceSearchScreen = () => {
             </Button>
           </View>
         </FormProvider>
-      </View>
+      </ScrollView>
     </>
   );
 };
