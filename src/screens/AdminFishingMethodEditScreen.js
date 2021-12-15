@@ -9,6 +9,7 @@ import { Dimensions } from "react-native";
 import InputComponent from "../components/common/InputComponent";
 import HeaderTab from "../components/HeaderTab";
 import { DICTIONARY, SCHEMA } from "../constants";
+import { goBack } from "../navigations";
 import { showToastMessage } from "../utilities";
 
 const OFFSET_BOTTOM = 85;
@@ -43,7 +44,7 @@ const AdminFishingMethodEditScreen = () => {
         if (!methodId) {
           getAdminFishingMethodList();
           showToastMessage(DICTIONARY.TOAST_ADD_FISHING_METHOD_SUCCESS_MSG);
-          navigation.pop(1);
+          goBack(navigation);
         } else {
           setIsLoading(false);
           showToastMessage(DICTIONARY.TOAST_EDIT_FISHING_METHOD_SUCCESS_MSG);
