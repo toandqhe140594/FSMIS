@@ -4,7 +4,7 @@ import { useStoreActions, useStoreState } from "easy-peasy";
 import { Button, VStack } from "native-base";
 import React, { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { Dimensions, StyleSheet, Text, View } from "react-native";
+import { Dimensions, ScrollView, StyleSheet, Text, View } from "react-native";
 
 import FieldWatcherResetter from "../components/common/FieldWatcherResetter";
 import InputComponent from "../components/common/InputComponent";
@@ -15,7 +15,7 @@ import { DEFAULT_TIMEOUT, DICTIONARY, SCHEMA } from "../constants";
 import { goBack } from "../navigations";
 import { showAlertAbsoluteBox, showAlertBox } from "../utilities";
 
-const OFFSET_BOTTOM = 85;
+const OFFSET_BOTTOM = 80;
 // Get window height without status bar height
 const CUSTOM_SCREEN_HEIGHT = Dimensions.get("window").height - OFFSET_BOTTOM;
 
@@ -26,16 +26,11 @@ const styles = StyleSheet.create({
   },
   sectionWrapper: {
     width: "90%",
-    flexGrow: 1,
-    flexShrink: 1,
-    flexBasis: "auto",
-    justifyContent: "center",
+    flex: 1,
+    marginTop: 10,
   },
   button: {
     width: "80%",
-    flexGrow: 0,
-    flexShrink: 1,
-    flexBasis: "auto",
   },
   hint: {
     fontSize: 12,
@@ -43,6 +38,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     marginTop: 8,
   },
+  rowInputWrapper: { flexDirection: "row", justifyContent: "space-between" },
 });
 
 const FManageFishAddScreen = () => {
@@ -106,7 +102,7 @@ const FManageFishAddScreen = () => {
     <>
       <HeaderTab name={DICTIONARY.FMANAGE_ADD_FISH_HEADER} />
       <OverlayLoading loading={isLoading} />
-      <View style={styles.appContainer}>
+      <ScrollView contentContainerStyle={styles.appContainer}>
         <FormProvider {...methods}>
           <VStack space={2} style={styles.sectionWrapper}>
             <SelectComponent
@@ -115,9 +111,7 @@ const FManageFishAddScreen = () => {
               data={fishList}
               controllerName={DICTIONARY.FORM_FIELD_FISH_SPECIES}
             />
-            <View
-              style={{ flexDirection: "row", justifyContent: "space-between" }}
-            >
+            <View style={styles.rowInputWrapper}>
               <InputComponent
                 myStyles={{ width: "48%", marginRight: 12 }}
                 label={DICTIONARY.FISH_MIN_WEIGHT_LABEL}
@@ -157,7 +151,7 @@ const FManageFishAddScreen = () => {
             Thêm cá
           </Button>
         </FormProvider>
-      </View>
+      </ScrollView>
     </>
   );
 };
