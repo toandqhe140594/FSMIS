@@ -53,7 +53,7 @@ const attachmentData = [
   },
 ];
 
-const OFFSET_BOTTOM = 80;
+const OFFSET_BOTTOM = 85;
 // Get window height without status bar height
 const CUSTOM_SCREEN_HEIGHT = Dimensions.get("window").height - OFFSET_BOTTOM;
 
@@ -184,6 +184,7 @@ const PostEditScreen = () => {
                 controllerName={DICTIONARY.FORM_FIELD_POST_TYPE}
               />
               <TextAreaComponent
+                hasFixedHeight
                 numberOfLines={6}
                 label={DICTIONARY.POST_CONTENT_LABEL}
                 placeholder={DICTIONARY.INPUT_POST_CONTENT_PLACEHOLDER}

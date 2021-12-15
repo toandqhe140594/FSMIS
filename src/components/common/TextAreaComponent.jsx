@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
 });
 
 const MAX_LENGTH = 1000;
-
+const TEXT_AREA_HEIGHT = 140;
 const TextAreaComponent = ({
   label,
   placeholder,
@@ -38,6 +38,7 @@ const TextAreaComponent = ({
   myStyles,
   controllerName,
   hasAsterisk,
+  hasFixedHeight,
 }) => {
   const {
     control,
@@ -62,7 +63,10 @@ const TextAreaComponent = ({
               numberOfLines={numberOfLines}
               maxLength={MAX_LENGTH}
               placeholder={placeholder}
-              style={styles.textArea}
+              style={StyleSheet.compose(
+                styles.textArea,
+                hasFixedHeight ? { height: TEXT_AREA_HEIGHT } : null,
+              )}
               onChangeText={onChange}
               onBlur={onBlur}
               value={value}
@@ -90,6 +94,7 @@ TextAreaComponent.propTypes = {
   isTitle: PropTypes.bool,
   controllerName: PropTypes.string.isRequired,
   hasAsterisk: PropTypes.bool,
+  hasFixedHeight: PropTypes.bool,
 };
 
 TextAreaComponent.defaultProps = {
@@ -97,6 +102,7 @@ TextAreaComponent.defaultProps = {
   myStyles: {},
   isTitle: false,
   hasAsterisk: false,
+  hasFixedHeight: false,
 };
 
 export default TextAreaComponent;
