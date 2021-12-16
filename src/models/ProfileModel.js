@@ -56,8 +56,16 @@ const model = {
   }),
 
   // Start of catch report history
+  /**
+   * Set personal catch report history
+   * @param {Boolean} payload.nextPage whether items from payload is the next page
+   * @param {Array} payload.items items of catch report history for setting
+   */
   setCatchReportHistory: action((state, payload) => {
-    state.catchReportHistory = state.catchReportHistory.concat(payload);
+    const { nextPage, items } = payload;
+    if (nextPage) {
+      state.catchReportHistory = state.catchReportHistory.concat(items);
+    } else state.catchReportHistory = items;
   }),
   rewriteCatchReportHistory: action((state, payload) => {
     state.catchReportHistory = payload;
@@ -74,23 +82,31 @@ const model = {
   increaseCatchesCount: action((state) => {
     state.userInfo.catchesCount += 1;
   }),
+  /**
+   * Get personal catch report history list by pagination
+   * @param {Boolean} payload.nextPage should function get next page or get the first page, default is false
+   */
   getCatchReportHistory: thunk(async (actions, payload, { getState }) => {
+    const { nextPage } = payload;
     const { catchHistoryCurrentPage, catchHistoryTotalPage } = getState();
-    // If current page is smaller than 0 or larger than maximum page then return
-    if (
-      catchHistoryCurrentPage <= 0 ||
-      catchHistoryCurrentPage > catchHistoryTotalPage
-    )
-      return;
-
+    let index = 1;
+    if (nextPage) {
+      if (
+        catchHistoryCurrentPage <= 0 ||
+        catchHistoryCurrentPage > catchHistoryTotalPage
+      ) {
+        return;
+      }
+      index = catchHistoryCurrentPage;
+    }
     const { data } = await http.get(`${API_URL.PERSONAL_CATCH_REPORT}`, {
-      params: { pageNo: catchHistoryCurrentPage },
+      params: { pageNo: index },
     });
     const { totalPage, items, totalItem } = data;
-    actions.setCatchHistoryCurrentPage(catchHistoryCurrentPage + 1);
-    actions.setCatchHistoryTotalPage(totalPage);
-    actions.setCatchReportHistory(items);
     actions.setTotalCatchesCount(totalItem);
+    actions.setCatchHistoryTotalPage(totalPage);
+    actions.setCatchHistoryCurrentPage(index + 1);
+    actions.setCatchReportHistory({ items, nextPage });
   }),
   /**
    * Remove catch report history data
