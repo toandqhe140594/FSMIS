@@ -14,6 +14,7 @@ import InputComponent from "../components/common/InputComponent";
 import MultiImageSection from "../components/common/MultiImageSection";
 import HeaderTab from "../components/HeaderTab";
 import { DICTIONARY, ROUTE_NAMES, SCHEMA } from "../constants";
+import { goBack } from "../navigations";
 import { showToastMessage } from "../utilities";
 
 const OFFSET_BOTTOM = 85;
@@ -50,7 +51,7 @@ const AdminFishEditScreen = () => {
         if (!fishId) {
           getAdminFishList();
           showToastMessage(DICTIONARY.TOAST_ADD_FISH_SPECIES_SUCCESS_MSG);
-          navigation.pop(1);
+          goBack(navigation);
         } else {
           setIsLoading(false);
           showToastMessage(DICTIONARY.TOAST_EDIT_FISH_SPECIES_SUCCESS_MSG);

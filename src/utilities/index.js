@@ -115,9 +115,28 @@ const convertDateDisplayFormat = (date) => {
   return `${moment(date).utcOffset(-300).format("DD/MM/YYYY")}`;
 };
 
+/**
+ * Return formatted current date
+ * @returns current date in "DD/MM/YYYY HH:mm:ss" format
+ */
+const getPostTimeStamp = () => {
+  const currentdate = new Date();
+  const datetime = `${`0${currentdate.getDate()}`.slice(-2)}/${`0${
+    currentdate.getMonth() + 1
+  }`.slice(
+    -2,
+  )}/${currentdate.getFullYear()} ${`0${currentdate.getHours()}`.slice(
+    -2,
+  )}:${`0${currentdate.getMinutes()}`.slice(
+    -2,
+  )}:${`0${currentdate.getSeconds()}`.slice(-2)}`;
+  return datetime;
+};
+
 export {
   convertDateDisplayFormat,
   convertDateFormat,
+  getPostTimeStamp,
   showAlertAbsoluteBox,
   showAlertBox,
   showAlertConfirmBox,

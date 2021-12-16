@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
   },
   input: { width: "65%" },
   text: { fontSize: 16, width: "35%" },
-  hint: { fontStyle: "italic", marginBottom: 6, alignSelf: "center" },
+  hint: { fontStyle: "italic", marginVertical: 6, alignSelf: "center" },
 });
 
 const RESET_VALUE = 0;
@@ -104,12 +104,12 @@ const OverlayInputSection = ({ id, name, visible, toggleOverlay }) => {
   return (
     <Overlay overlayStyle={styles.overlayContainer} isVisible={visible}>
       <Text style={styles.title}>Bồi cá</Text>
-      <Text style={styles.hint}>Lưu ý: Chỉ cần một trong hai trường</Text>
       <FormProvider {...methods}>
         <View style={styles.inputWrapper}>
           <Text style={styles.text}>Loại cá</Text>
           <Input flexGrow={1} fontSize="md" placeholder={name} isDisabled />
         </View>
+        <Text style={styles.hint}>Lưu ý: Chỉ cần một trong hai trường</Text>
         <View style={styles.inputWrapper}>
           <Text style={styles.text}>Số cá bồi</Text>
           <InputComponent
