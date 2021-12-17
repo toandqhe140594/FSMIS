@@ -204,14 +204,13 @@ const FManageCatchReportHistory = () => {
             <Modal.Header>Chọn ngày</Modal.Header>
             <Modal.Body>
               <CalendarPicker
-                scrollable
-                startFromMonday
                 months={MONTHS}
                 weekdays={WEEKDAYS}
                 allowRangeSelection
                 onDateChange={handleDateChange}
-                nextTitle={DICTIONARY.PREVIOUS_BUTTON_LABEL}
-                previousTitle={DICTIONARY.NEXT_BUTTON_LABEL}
+                allowBackwardRangeSelect
+                previousTitle={DICTIONARY.PREVIOUS_BUTTON_LABEL}
+                nextTitle={DICTIONARY.NEXT_BUTTON_LABEL}
                 todayBackgroundColor={DICTIONARY.TODAY_BACKGROUND_COLOR}
                 selectedDayColor={DICTIONARY.SELECTED_DAY_COLOR}
                 selectedDayTextColor={DICTIONARY.SELECTED_DAY_TEXT_COLOR}
