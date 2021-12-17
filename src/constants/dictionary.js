@@ -202,6 +202,8 @@ export const REVEAL_THIS_FISH_BUTTON_LABEL = "Bỏ ẩn loại cá này";
 export const HIDE_THIS_METHOD_BUTTON_LABEL = "Ẩn loại cá này";
 export const REVEAL_THIS_METHOD_BUTTON_LABEL = "Bỏ ẩn loại cá này";
 export const ADD_FISHING_METHOD_BUTTON_LABEL = "Thêm loại hình câu";
+export const SELECT_MONTH_BUTTON_LABEL = "Chọn tháng trong năm";
+export const SELECT_YEAR_BUTTON_LABEL = "Chọn năm";
 // END OF RELATED BUTTON LABELS SECTION
 
 /**

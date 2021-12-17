@@ -131,7 +131,7 @@ const BanNoticeScreen = ({ bannedInformation }) => {
         <Box marginTop={3} alignItems="baseline" flexDirection="row">
           <Text>Liên hệ hỗ trợ: </Text>
           <Text underline onPress={onPressCallHandler}>
-            0985043311
+            0921485233
           </Text>
         </Box>
       </Box>

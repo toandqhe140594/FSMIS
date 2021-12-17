@@ -209,11 +209,14 @@ const FManageCatchReportHistory = () => {
                 weekdays={WEEKDAYS}
                 allowRangeSelection
                 onDateChange={handleDateChange}
-                nextTitle={DICTIONARY.NEXT_BUTTON_LABEL}
+                allowBackwardRangeSelect
                 previousTitle={DICTIONARY.PREVIOUS_BUTTON_LABEL}
+                nextTitle={DICTIONARY.NEXT_BUTTON_LABEL}
                 todayBackgroundColor={DICTIONARY.TODAY_BACKGROUND_COLOR}
                 selectedDayColor={DICTIONARY.SELECTED_DAY_COLOR}
                 selectedDayTextColor={DICTIONARY.SELECTED_DAY_TEXT_COLOR}
+                selectMonthTitle={DICTIONARY.SELECT_MONTH_BUTTON_LABEL}
+                selectYearTitle={DICTIONARY.SELECT_YEAR_BUTTON_LABEL}
               />
               <Button size="lg" onPress={handleSubmitDate}>
                 OK
