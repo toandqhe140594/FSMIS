@@ -736,6 +736,7 @@ const model = {
     state.locationDetails = {
       ...state.locationDetails,
       ...payload,
+      verify: false,
     };
   }),
   /**
