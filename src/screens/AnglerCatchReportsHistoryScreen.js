@@ -1,7 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
-import { Box, Center, FlatList, Text } from "native-base";
-import React, { useEffect, useState } from "react";
+import { Box, FlatList, Text } from "native-base";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 
 import AvatarCard from "../components/AvatarCard";
 import SmallScreenLoadingIndicator from "../components/common/SmallScreenLoadingIndicator";
@@ -13,27 +13,32 @@ import { goToCatchReportDetailScreen } from "../navigations";
 const AnglerCatchReportsHistoryScreen = () => {
   const navigation = useNavigation();
   // Destructure catchHistoryCurrentPage and catchReportHistory list from ProfileModel
-  const { catchHistoryCurrentPage, catchReportHistory } = useStoreState(
-    (states) => states.ProfileModel,
-  );
+  const { catchReportHistory } = useStoreState((states) => states.ProfileModel);
   const { getCatchReportHistory, resetCatchReportHistory } = useStoreActions(
     (actions) => actions.ProfileModel,
   );
-
   const [loading, setLoading] = useState(true);
+  const needRefresh = useRef(false);
+  const nextPage = useRef(true);
 
-  const stopLoading = () => {
-    setLoading(false);
+  const memoizedStyle = useMemo(
+    () =>
+      catchReportHistory.length > 0
+        ? null
+        : { flex: 1, alignItems: "center", justifyContent: "center" },
+    [catchReportHistory.length > 0],
+  );
+
+  const startLoading = (shouldRefresh = true) => {
+    if (shouldRefresh) needRefresh.current = true;
+    setLoading(true);
   };
 
-  useEffect(() => {
-    // If the current page = 1 aka the list is empty then call api to init the list
-    if (catchHistoryCurrentPage === 1)
-      getCatchReportHistory().finally(stopLoading);
-    return () => {
-      resetCatchReportHistory(); // Clear list data when screen unmount
-    };
-  }, []);
+  const stopLoading = () => {
+    if (needRefresh.current) needRefresh.current = false;
+    nextPage.current = true;
+    setLoading(false);
+  };
 
   const viewCatchReportDetail = (id) => () => {
     goToCatchReportDetailScreen(navigation, {
@@ -77,41 +82,54 @@ const AnglerCatchReportsHistoryScreen = () => {
     </Box>
   );
 
+  const renderFooter = () =>
+    loading &&
+    !needRefresh.current && (
+      <SmallScreenLoadingIndicator containerStyle={{ marginVertical: 12 }} />
+    );
+
+  const renderEmpty = () =>
+    !loading && <Text color="gray.400">Không có dữ liệu</Text>;
+
   const onEndReached = () => {
-    getCatchReportHistory();
+    startLoading(false);
   };
 
-  if (loading)
-    return (
-      <Box flex={1}>
-        <HeaderTab name="Lịch sử báo cá" />
-        <SmallScreenLoadingIndicator />
-      </Box>
-    );
+  const handleOnRefresh = () => {
+    nextPage.current = false;
+    startLoading();
+  };
+
+  useEffect(() => {
+    return () => {
+      resetCatchReportHistory(); // Clear list data when screen unmount
+    };
+  }, []);
+
+  useEffect(() => {
+    if (loading)
+      getCatchReportHistory({ nextPage: nextPage.current }).finally(
+        stopLoading,
+      );
+  }, [loading]);
 
   return (
     <Box flex={1}>
       <HeaderTab name="Lịch sử báo cá" />
-      <Box
-        w={{
-          base: "100%",
-          md: "25%",
-        }}
-        flex={1}
-      >
-        {catchReportHistory.length > 0 ? (
-          <FlatList
-            pt="0.5"
-            data={catchReportHistory}
-            renderItem={renderItem}
-            keyExtractor={KEY_EXTRACTOR}
-            onEndReached={onEndReached}
-          />
-        ) : (
-          <Center flex={1}>
-            <Text>Không có dữ liệu</Text>
-          </Center>
-        )}
+      <Box w={{ base: "100%", md: "25%" }} flex={1}>
+        <FlatList
+          pt="0.5"
+          data={catchReportHistory}
+          renderItem={renderItem}
+          keyExtractor={KEY_EXTRACTOR}
+          onEndReached={onEndReached}
+          onRefresh={handleOnRefresh}
+          onEndReachedThreshold={0.2}
+          refreshing={loading && needRefresh.current}
+          ListFooterComponent={renderFooter}
+          ListEmptyComponent={renderEmpty}
+          contentContainerStyle={memoizedStyle}
+        />
       </Box>
     </Box>
   );
