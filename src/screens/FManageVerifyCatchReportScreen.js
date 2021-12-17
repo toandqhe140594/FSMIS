@@ -198,7 +198,7 @@ const VerifyCatchReportScreen = () => {
       <Box w={{ base: "100%", md: "25%" }}>
         <FlatList
           pt="0.5"
-          height="90%"
+          height="92%"
           contentContainerStyle={memoizedStyle}
           data={unresolvedCatchReportList}
           renderItem={memoizedRender}
