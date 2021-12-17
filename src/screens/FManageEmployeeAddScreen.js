@@ -63,7 +63,7 @@ const FManageEmployeeAddScreen = () => {
       <Center flex={1} alignItems="center">
         <Center w="100%">
           <SearchBar
-            placeholder="Type Here..."
+            placeholder="Nhập số điện thoại nhân viên"
             onChangeText={updateSearch}
             value={search}
             containerStyle={{

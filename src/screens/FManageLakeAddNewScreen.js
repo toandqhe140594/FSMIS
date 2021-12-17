@@ -205,7 +205,10 @@ const LakeAddNewScreen = () => {
             <Center>
               <Stack space={2} style={styles.sectionWrapper}>
                 <Text fontSize="md" bold>
-                  Các loại cá
+                  Thông tin cá trong hồ
+                  <Text bold color="danger.500">
+                    *
+                  </Text>
                 </Text>
                 {errors[DICTIONARY.FORM_FIELD_FISH_CARD]?.message && (
                   <Text style={styles.error}>
