@@ -1,8 +1,8 @@
 package fpt.g31.fsmis.service;
 
-import fpt.g31.fsmis.entity.address.District;
-import fpt.g31.fsmis.entity.address.Province;
-import fpt.g31.fsmis.entity.address.Ward;
+import fpt.g31.fsmis.entity.District;
+import fpt.g31.fsmis.entity.Province;
+import fpt.g31.fsmis.entity.Ward;
 import fpt.g31.fsmis.repository.DistrictRepos;
 import fpt.g31.fsmis.repository.ProvinceRepos;
 import fpt.g31.fsmis.repository.WardRepos;

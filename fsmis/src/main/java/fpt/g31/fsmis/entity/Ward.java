@@ -1,8 +1,8 @@
-package fpt.g31.fsmis.entity.address;
+package fpt.g31.fsmis.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.springframework.lang.Nullable;
 import lombok.*;
+import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
 

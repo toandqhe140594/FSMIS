@@ -1,7 +1,7 @@
 package fpt.g31.fsmis.service;
 
 import fpt.g31.fsmis.dto.output.AddressFromWardDtoOut;
-import fpt.g31.fsmis.entity.address.Ward;
+import fpt.g31.fsmis.entity.Ward;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

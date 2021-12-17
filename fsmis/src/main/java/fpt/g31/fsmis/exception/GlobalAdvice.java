@@ -1,11 +1,8 @@
-package fpt.g31.fsmis.exception.advice;
+package fpt.g31.fsmis.exception;
 
 import com.twilio.exception.ApiException;
 import fpt.g31.fsmis.dto.output.BanDetailDtoOut;
 import fpt.g31.fsmis.dto.output.ResponseTextDtoOut;
-import fpt.g31.fsmis.exception.BannedException;
-import fpt.g31.fsmis.exception.NotFoundException;
-import fpt.g31.fsmis.exception.UnauthorizedException;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import org.springframework.http.HttpStatus;

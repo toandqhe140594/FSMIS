@@ -6,9 +6,9 @@ import fpt.g31.fsmis.dto.input.FishingLocationDtoIn;
 import fpt.g31.fsmis.dto.input.SuggestedLocationDtoIn;
 import fpt.g31.fsmis.dto.output.*;
 import fpt.g31.fsmis.entity.*;
-import fpt.g31.fsmis.entity.address.District;
-import fpt.g31.fsmis.entity.address.Province;
-import fpt.g31.fsmis.entity.address.Ward;
+import fpt.g31.fsmis.entity.District;
+import fpt.g31.fsmis.entity.Province;
+import fpt.g31.fsmis.entity.Ward;
 import fpt.g31.fsmis.exception.NotFoundException;
 import fpt.g31.fsmis.exception.UnauthorizedException;
 import fpt.g31.fsmis.repository.*;
@@ -497,6 +497,7 @@ public class FishingLocationService {
     private Specification<FishingLocation> activeIs(Boolean active) {
         return (root, criteriaQuery, criteriaBuilder) -> {
             if (active == null) return null;
+            criteriaQuery.orderBy(criteriaBuilder.desc(root.get("score")));
             return criteriaBuilder.equal(root.get("active"), active);
         };
     }

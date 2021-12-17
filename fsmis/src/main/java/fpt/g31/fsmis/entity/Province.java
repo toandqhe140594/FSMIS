@@ -1,8 +1,8 @@
-package fpt.g31.fsmis.entity.address;
+package fpt.g31.fsmis.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.springframework.lang.Nullable;
 import lombok.*;
+import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
 import java.util.List;
@@ -13,8 +13,8 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "tbl_district")
-public class District {
+@Table(name = "tbl_province")
+public class Province {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -26,13 +26,8 @@ public class District {
     @Nullable
     private String type;
 
-    @ManyToOne
     @JsonIgnore
-    @JoinColumn(name = "province_id", nullable = false)
-    private Province province;
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "district", cascade = CascadeType.ALL)
-    private List<Ward> wardList;
+    @OneToMany(mappedBy = "province", cascade = CascadeType.ALL)
+    private List<District> districtList;
 
 }

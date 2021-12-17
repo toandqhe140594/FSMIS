@@ -1,7 +1,6 @@
 package fpt.g31.fsmis.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import fpt.g31.fsmis.entity.address.Ward;
 import lombok.*;
 
 import javax.persistence.*;

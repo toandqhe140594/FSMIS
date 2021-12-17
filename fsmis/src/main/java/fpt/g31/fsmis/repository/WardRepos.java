@@ -1,6 +1,6 @@
 package fpt.g31.fsmis.repository;
 
-import fpt.g31.fsmis.entity.address.Ward;
+import fpt.g31.fsmis.entity.Ward;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

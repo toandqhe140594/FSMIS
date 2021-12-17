@@ -1,9 +1,8 @@
 package fpt.g31.fsmis.controller;
 
-import fpt.g31.fsmis.dto.output.ProvinceDtoOut;
-import fpt.g31.fsmis.entity.address.District;
-import fpt.g31.fsmis.entity.address.Province;
-import fpt.g31.fsmis.entity.address.Ward;
+import fpt.g31.fsmis.entity.District;
+import fpt.g31.fsmis.entity.Province;
+import fpt.g31.fsmis.entity.Ward;
 import fpt.g31.fsmis.service.AddressService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
