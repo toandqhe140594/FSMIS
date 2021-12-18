@@ -30,7 +30,7 @@ jobs:
           port: ${{ secrets.FSMIS_PORT }}
           # file want to copy
           source: "fsmis/target/fsmis-0.0.1-SNAPSHOT.jar"
-          # the destination of the file
+          # the destination of file
           target: "/home/ubuntu"
       - name: Start service
         uses: appleboy/ssh-action@master
