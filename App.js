@@ -6,7 +6,7 @@ import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 import colors from "./src/config/colors";
 import components from "./src/config/components";
-import AuthenticationContainer from "./src/utilities/AuthenticationContainer";
+import AuthenticationContainer from "./src/navigations/AuthenticationContainer";
 import store from "./src/utilities/Store";
 
 export default function App() {
