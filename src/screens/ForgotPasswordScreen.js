@@ -60,7 +60,7 @@ const ForgotPasswordScreen = () => {
     // useCallback will listen to route.param
     useCallback(() => {
       if (route.params?.otpSuccess === true) {
-        goToChangePasswordScreen(navigation, { ...phoneNumber.current });
+        goToChangePasswordScreen(navigation, { phone: phoneNumber.current });
       }
     }, [route.params]),
   );

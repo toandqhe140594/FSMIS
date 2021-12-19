@@ -126,18 +126,35 @@ const EventPostCard = ({
   let heightPage = 410;
   let typeBadge = "";
   let isAllowsFullscreen;
+  let badgeColor = "primary";
   switch (lakePost.badge) {
     case "STOCKING":
       typeBadge = "Bồi cá";
+      badgeColor = "success";
       break;
     case "REPORTING":
       typeBadge = "Báo cá";
+      badgeColor = "warning";
       break;
     case "ANNOUNCING":
       typeBadge = "Thông báo";
+      badgeColor = "primary";
       break;
     default:
       typeBadge = lakePost.badge;
+  }
+  switch (typeBadge) {
+    case "Bồi cá":
+      badgeColor = "success";
+      break;
+    case "Báo cá":
+      badgeColor = "warning";
+      break;
+    case "Thông báo":
+      badgeColor = "primary";
+      break;
+    default:
+      badgeColor = "primary";
   }
 
   if (typeUri === "VIDEO") {
@@ -166,7 +183,7 @@ const EventPostCard = ({
                   paddingBottom: 18,
                 }}
                 textStyle={{ fontSize: 16, fontWeight: "bold" }}
-                status="primary"
+                status={badgeColor}
                 value={typeBadge}
               />
               <VStack>

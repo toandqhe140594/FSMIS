@@ -6,8 +6,9 @@ import React, { useEffect, useState } from "react";
 import AdminReport from "../components/AdminReport";
 import AvatarCard from "../components/AvatarCard";
 import styles from "../config/styles";
-import { goToAdminFLocationOverviewScreen } from "../navigations";
-import { showAlertAbsoluteBox } from "../utilities";
+import { DEFAULT_TIMEOUT } from "../constants";
+import { goBack, goToAdminFLocationOverviewScreen } from "../navigations";
+import { showAlertAbsoluteBox, showToastMessage } from "../utilities";
 
 const AdminFLocationReportDetailScreen = () => {
   const route = useRoute();
@@ -16,6 +17,7 @@ const AdminFLocationReportDetailScreen = () => {
   const [isActive, setActive] = useState(true);
   const [isSolvedSuccess, setIsSolvedSuccess] = useState(null); // post solved report handler success
   const [isLoading, setIsLoading] = useState(null);
+  const [screenLoading, setScreenLoading] = useState(true);
   const [reportId, setReportId] = useState();
   const locationReportDetail = useStoreState(
     (states) => states.ReportModel.locationReportDetail,
@@ -30,12 +32,14 @@ const AdminFLocationReportDetailScreen = () => {
   );
 
   const solvedReportHandler = () => {
-    solvedReport({ id: reportId, setIsSuccess: setIsSolvedSuccess });
     setIsLoading(true);
+    solvedReport({ id: reportId, setIsSuccess: setIsSolvedSuccess });
   };
 
   const goToFLocationDetailHandler = () => {
-    goToAdminFLocationOverviewScreen(navigation, { id: locationId });
+    goToAdminFLocationOverviewScreen(navigation, {
+      id: locationId,
+    });
   };
 
   const headerListComponent = () => (
@@ -91,13 +95,25 @@ const AdminFLocationReportDetailScreen = () => {
       </Box>
     </Box>
   );
+
+  const clearScreenLoadingIndicator = () => setScreenLoading(false);
+
   useEffect(() => {
     if (route.params.id) {
-      getLocationReportDetail({ id: route.params.id, setIsSuccess });
+      getLocationReportDetail({ id: route.params.id, setIsSuccess }).finally(
+        clearScreenLoadingIndicator,
+      );
       setReportId(route.params.id);
     }
+    const screenTimeout = setTimeout(
+      clearScreenLoadingIndicator,
+      DEFAULT_TIMEOUT,
+    );
     setIsLoading(true);
     setActive(route.params.isActive);
+    return () => {
+      clearTimeout(screenTimeout);
+    };
   }, []);
 
   useEffect(() => {
@@ -105,10 +121,7 @@ const AdminFLocationReportDetailScreen = () => {
       showAlertAbsoluteBox(
         "Thông báo",
         "Xảy ra lỗi, vui lòng quay lại.",
-        () => {
-          navigation.goBack();
-        },
-        "Xác nhận",
+        goBack(navigation),
       );
     }
     setIsLoading(false);
@@ -117,22 +130,11 @@ const AdminFLocationReportDetailScreen = () => {
 
   useEffect(() => {
     if (isSolvedSuccess === true) {
-      showAlertAbsoluteBox(
-        "Xử lý thành công",
-        ``,
-        () => {
-          navigation.goBack();
-        },
-        "Xác nhận",
-      );
+      showToastMessage("Xử lý thành công");
+      setActive(false);
     }
     if (isSolvedSuccess === false) {
-      showAlertAbsoluteBox(
-        "Lỗi",
-        `Đã xảy ra lỗi, vui lòng thử lại.`,
-        () => {},
-        "Xác nhận",
-      );
+      showToastMessage("Đã xảy ra lỗi, vui lòng thử lại");
     }
     setIsLoading(false);
     setIsSolvedSuccess(null);
@@ -143,6 +145,7 @@ const AdminFLocationReportDetailScreen = () => {
       isActive={isActive}
       eventPress={solvedReportHandler}
       isLoading={isLoading}
+      screenLoading={screenLoading}
     >
       <FlatList
         pt="0.5"

@@ -12,7 +12,7 @@ const iconSize = 19;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "rgba(255,255,255,0.8)",
+    backgroundColor: "rgba(255,255,255,1)",
     width: containerSize,
     height: containerSize,
     position: "absolute",
@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
   secondFromRight: {
     right: 51,
     borderRightWidth: 1,
-    borderRightColor: "rgba(200,200,200,0.8)",
+    borderRightColor: "rgba(200,200,200,1)",
   },
 });
 

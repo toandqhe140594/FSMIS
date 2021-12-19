@@ -1,10 +1,14 @@
+import { yupResolver } from "@hookform/resolvers/yup";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useStoreActions } from "easy-peasy";
-import React, { useEffect, useState } from "react";
-import { Text, TextInput, View } from "react-native";
-import { Button, Divider } from "react-native-elements";
+import React, { useEffect, useRef, useState } from "react";
+import { FormProvider, useForm } from "react-hook-form";
+import { Dimensions, View } from "react-native";
+import { Button } from "react-native-elements";
 
+import TextAreaComponent from "../components/common/TextAreaComponent";
 import HeaderTab from "../components/HeaderTab";
+import { DICTIONARY, SCHEMA } from "../constants";
 import ReportModel from "../models/ReportModel";
 import { goBack } from "../navigations";
 import { showAlertAbsoluteBox, showToastMessage } from "../utilities";
@@ -12,28 +16,34 @@ import store from "../utilities/Store";
 
 store.addModel("ReportModel", ReportModel);
 
+const OFF_SET = 38;
+const CUSTOM_SCREEN_HEIGHT = Dimensions.get("window").height - OFF_SET;
+
 const ReportScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
-  const [reportParams, setReportParams] = useState({});
-  const [content, setContent] = useState("");
-
+  const [isLoading, setIsLoading] = useState(false);
+  const reportParam = useRef({});
+  const methods = useForm({
+    mode: "onSubmit",
+    reValidateMode: "onSubmit",
+    resolver: yupResolver(SCHEMA.WRITE_REPORT_FORM),
+  });
+  const { handleSubmit } = methods;
   const [sendStatus, setSendStatus] = useState(null);
   const sendReport = useStoreActions(
     (actions) => actions.ReportModel.sendReport,
   );
 
-  const onSubmit = () => {
-    const trimmedContent = content.trim();
-    // If the content is empty or only contains blank characters
-    if (!trimmedContent) {
-      showToastMessage("Nội đung báo cáo không thể bỏ trống");
-      return;
-    }
+  const handleGoBack = () => {
+    goBack(navigation);
+  };
+
+  const onSubmit = (data) => {
+    setIsLoading(true);
     sendReport({
-      id: reportParams.id,
-      reportDtoIn: trimmedContent,
-      type: reportParams.type,
+      reportDtoIn: data.content,
+      ...reportParam.current,
       setSendStatus,
     });
   };
@@ -42,62 +52,55 @@ const ReportScreen = () => {
     // If there are params pass through
     if (route.params.id) {
       const { id, type } = route.params;
-      setReportParams({ id, type });
+      reportParam.current = { id, type };
     }
   }, []);
 
   useEffect(() => {
     if (sendStatus === true) {
-      showAlertAbsoluteBox("Trạng thái", "Gửi Thành công", () => {
-        goBack(navigation);
-      });
+      setIsLoading(false);
+      showAlertAbsoluteBox(
+        DICTIONARY.ALERT_TITLE,
+        DICTIONARY.ALERT_CREATE_REPORT_SUCCESS,
+        handleGoBack,
+      );
     }
     if (sendStatus === false) {
-      showToastMessage("Gửi thất bại");
+      setIsLoading(false);
+      showToastMessage(DICTIONARY.TOAST_CREATE_REPORT_FAIL_MSG);
     }
     setSendStatus(null);
   }, [sendStatus]);
 
   return (
-    <View style={{ flex: 1 }}>
-      <HeaderTab name="Báo cáo vi phạm" />
-      <Divider />
-      <View
-        style={{
-          justifyContent: "space-between",
-          flex: 1,
-        }}
-      >
-        <View style={{ marginHorizontal: "10%", marginTop: "5%" }}>
-          <Text
-            style={{
-              fontWeight: "bold",
-              fontSize: 16,
-              marginBottom: 5,
-            }}
-          >
-            Bạn có thể miêu tả rõ được không?
-          </Text>
-          <TextInput
-            multiline
+    <View style={{ height: CUSTOM_SCREEN_HEIGHT }}>
+      <HeaderTab name={DICTIONARY.ANGLER_WRITE_REPORT_HEADER} />
+      <FormProvider {...methods}>
+        <View
+          style={{
+            flex: 1,
+            marginTop: 12,
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <TextAreaComponent
+            isTitle
+            hasAsterisk
             numberOfLines={6}
-            maxLength={1000}
-            placeholder="Nội dung vi phạm"
-            style={{
-              borderWidth: 0.5,
-              textAlignVertical: "top",
-              padding: 9,
-              backgroundColor: "white",
-            }}
-            onChangeText={setContent}
+            myStyles={{ width: "90%" }}
+            label={DICTIONARY.REPORT_LABEL}
+            placeholder={DICTIONARY.INPUT_REPORT_PLACEHOLDER}
+            controllerName={DICTIONARY.FORM_FIELE_REPORT_CONTENT}
+          />
+          <Button
+            loading={isLoading}
+            title={DICTIONARY.REPORT_BUTTON_LABEL}
+            containerStyle={{ width: "90%" }}
+            onPress={handleSubmit(onSubmit)}
           />
         </View>
-        <Button
-          containerStyle={{ margin: "10%" }}
-          title="Báo cáo"
-          onPress={onSubmit}
-        />
-      </View>
+      </FormProvider>
     </View>
   );
 };

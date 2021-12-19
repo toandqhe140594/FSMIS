@@ -55,7 +55,6 @@ const RegisterInformationScreen = () => {
     const registerData = {
       ...accountData.current,
       ...data,
-      dob: data.dob.toJSON(),
     };
     register({ registerData })
       .then(() => {
@@ -136,7 +135,7 @@ const RegisterInformationScreen = () => {
               </Button>
             </VStack>
             <Text mb={6} onPress={navigateToLoginScreenAction}>
-              Bạn chưa có tài khoản? <Text underline>Đăng nhập</Text>
+              Bạn đã có tài khoản? <Text underline>Đăng nhập</Text>
             </Text>
           </Center>
         </FormProvider>

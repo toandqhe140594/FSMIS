@@ -20,10 +20,10 @@ const ReportCatchRoute = () => {
   const navigation = useNavigation();
   const isFocused = useIsFocused();
   const isFocusedRef = useRef(true);
+  const needRefresh = useRef(true);
+  const mode = useRef("DEFAULT");
   const [isLoading, setIsLoading] = useState(true);
-  const [bigLoading, setBigLoading] = useState(false);
   const [getStatus, setGetStatus] = useState(null);
-  const [mode, setMode] = useState("DEFAULT");
   const [query, setQuery] = useState({ pageNo: 1, active: true });
   const [filter, setFilter] = useState(FILTER_UNTOUCHED_VALUE);
   const { listCatchReport, totalCatchReportPage } = useStoreState(
@@ -32,6 +32,16 @@ const ReportCatchRoute = () => {
   const { getListReportCatch, resetReportList } = useStoreActions(
     (actions) => actions.ReportModel,
   );
+
+  const startLoading = (shouldRefresh = true) => {
+    if (shouldRefresh) needRefresh.current = true;
+    setIsLoading(true);
+  };
+
+  const stopLoading = () => {
+    if (needRefresh.current) needRefresh.current = false;
+    setIsLoading(false);
+  };
 
   const memoizedStyle = useMemo(
     () =>
@@ -54,7 +64,7 @@ const ReportCatchRoute = () => {
     );
 
   const renderHeader = () =>
-    bigLoading && isLoading ? (
+    needRefresh.current && isLoading ? (
       <SmallScreenLoadingIndicator containerStyle={{ marginBottom: 12 }} />
     ) : null;
 
@@ -67,7 +77,7 @@ const ReportCatchRoute = () => {
   );
 
   const renderFooter = () =>
-    isLoading && !bigLoading ? (
+    isLoading && !needRefresh.current ? (
       <SmallScreenLoadingIndicator containerStyle={{ marginVertical: 12 }} />
     ) : null;
 
@@ -79,9 +89,8 @@ const ReportCatchRoute = () => {
     if (value !== filter) {
       setFilter(value);
       setQuery({ pageNo: 1, active: value === FILTER_UNTOUCHED_VALUE });
-      setMode("NEW");
-      setBigLoading(true); // When change between each list type, use bigLoading
-      setIsLoading(true);
+      mode.current = "NEW";
+      startLoading();
     }
   };
 
@@ -91,9 +100,9 @@ const ReportCatchRoute = () => {
    */
   const handleLoadMore = () => {
     if (query.pageNo < totalCatchReportPage) {
-      setMode("DEFAULT");
       setQuery((prev) => ({ ...prev, pageNo: prev.pageNo + 1 }));
-      setIsLoading(true);
+      mode.current = "DEFAULT";
+      startLoading(false);
     }
   };
   /**
@@ -105,19 +114,19 @@ const ReportCatchRoute = () => {
     };
   }, []);
   useEffect(() => {
-    if (isLoading) getListReportCatch({ mode, query, setGetStatus });
+    if (isLoading) {
+      getListReportCatch({ mode: mode.current, query, setGetStatus });
+    }
   }, [isLoading]);
   /**
    * Trigger on getStatus return
    */
   useEffect(() => {
     if (getStatus === "SUCCESS") {
-      setIsLoading(false);
-      if (bigLoading) setBigLoading(false);
+      stopLoading();
       setGetStatus(null);
     } else if (getStatus === "FAILED") {
-      setIsLoading(false);
-      if (bigLoading) setBigLoading(false);
+      stopLoading();
       setGetStatus(null);
     }
   }, [getStatus]);
@@ -127,9 +136,9 @@ const ReportCatchRoute = () => {
    */
   useEffect(() => {
     if (!isFocusedRef.current) {
-      setIsLoading(true);
-      setMode("NEW");
       setQuery((prev) => ({ ...prev, pageNo: 1 }));
+      mode.current = "NEW";
+      startLoading();
     }
     isFocusedRef.current = isFocused;
   }, [isFocused]);

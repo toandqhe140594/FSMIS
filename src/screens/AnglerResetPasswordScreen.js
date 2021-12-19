@@ -73,7 +73,7 @@ const ResetPasswordScreen = () => {
             />
 
             <Button
-              title={DICTIONARY.SEND_BUTTON_LABEL}
+              title={DICTIONARY.CHANGE_PASSWORD_LABEL}
               onPress={handleSubmit(onSubmit)}
               containerStyle={{ marginTop: 30 }}
               loading={loading}

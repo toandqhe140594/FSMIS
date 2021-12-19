@@ -2,9 +2,10 @@ import { useNavigation } from "@react-navigation/native";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import { Box, Button, FlatList, HStack, Text, VStack } from "native-base";
 import PropTypes from "prop-types";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 
 import AvatarCard from "../components/AvatarCard";
+import SmallScreenLoadingIndicator from "../components/common/SmallScreenLoadingIndicator";
 import HeaderTab from "../components/HeaderTab";
 import { DEFAULT_TIMEOUT, KEY_EXTRACTOR } from "../constants";
 import { goToCatchReportVerifyDetailScreen } from "../navigations";
@@ -109,9 +110,30 @@ UnresolvedCatchReportComponent.propTypes = {
 };
 
 const VerifyCatchReportScreen = () => {
-  const unresolvedCatchReportList = useStoreState(
-    (states) => states.FManageModel.unresolvedCatchReportList,
-  );
+  const pageNo = useRef(1);
+  const needRefresh = useRef(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const { unresolvedCatchReportList, unresolvedCatchReportTotalPage } =
+    useStoreState((states) => states.FManageModel);
+  const { getUnresolvedCatchReportList, clearUnresolvedCatchReportList } =
+    useStoreActions((actions) => actions.FManageModel);
+
+  /**
+   * Start loading to run getCatchReport function
+   * @param {Boolean} shouldRefresh flag to set needRefresh variable to true
+   */
+  const startLoading = (shouldRefresh = true) => {
+    if (shouldRefresh) needRefresh.current = true;
+    setIsLoading(true);
+  };
+
+  /**
+   * Stop loading when get is finished
+   */
+  const stopLoading = () => {
+    if (needRefresh.current) needRefresh.current = false;
+    setIsLoading(false);
+  };
 
   const memoizedStyle = useMemo(
     () =>
@@ -121,25 +143,54 @@ const VerifyCatchReportScreen = () => {
     [unresolvedCatchReportList && unresolvedCatchReportList.length > 0],
   );
 
-  const getUnresolvedCatchReportList = useStoreActions(
-    (actions) => actions.FManageModel.getUnresolvedCatchReportList,
-  );
-
-  const onEndReached = () => {
-    getUnresolvedCatchReportList({ status: "APPEND" });
+  /**
+   * Handle go to next page to get list item
+   */
+  const handleLoadMore = () => {
+    if (pageNo.current < unresolvedCatchReportTotalPage) {
+      pageNo.current += 1;
+      startLoading(false);
+    }
   };
 
-  useEffect(() => {
-    getUnresolvedCatchReportList({ status: "OVERWRITE" });
-  }, []);
+  /**
+   * Handle get the list starting from page 1
+   */
+  const handleOnRefresh = () => {
+    pageNo.current = 1;
+    startLoading();
+  };
 
-  const renderEmtpy = () => (
-    <Text color="gray.500" alignSelf="center">
-      Chưa có báo cá nào cần duyệt
-    </Text>
-  );
+  const renderEmtpy = () =>
+    !isLoading && (
+      <Text color="gray.500" alignSelf="center">
+        Chưa có báo cá nào cần duyệt
+      </Text>
+    );
+
+  const renderFooter = () =>
+    isLoading &&
+    !needRefresh.current && (
+      <SmallScreenLoadingIndicator containerStyle={{ marginVertical: 12 }} />
+    );
 
   const renderItem = ({ item }) => <UnresolvedCatchReportComponent {...item} />;
+
+  const memoizedRender = useMemo(() => renderItem, [unresolvedCatchReportList]);
+
+  useEffect(() => {
+    return () => {
+      clearUnresolvedCatchReportList();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (isLoading) {
+      getUnresolvedCatchReportList({ pageNo: pageNo.current }).finally(
+        stopLoading,
+      );
+    }
+  }, [isLoading]);
 
   return (
     <Box>
@@ -147,13 +198,17 @@ const VerifyCatchReportScreen = () => {
       <Box w={{ base: "100%", md: "25%" }}>
         <FlatList
           pt="0.5"
-          height="90%"
+          height="92%"
           contentContainerStyle={memoizedStyle}
           data={unresolvedCatchReportList}
-          renderItem={renderItem}
+          renderItem={memoizedRender}
           ListEmptyComponent={renderEmtpy}
+          ListFooterComponent={renderFooter}
           keyExtractor={KEY_EXTRACTOR}
-          onEndReached={onEndReached}
+          onEndReached={handleLoadMore}
+          onEndReachedThreshold={0.2}
+          onRefresh={handleOnRefresh}
+          refreshing={isLoading && needRefresh.current}
         />
       </Box>
     </Box>

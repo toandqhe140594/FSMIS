@@ -152,6 +152,9 @@ const AnglerCatchReportScreen = () => {
               <Stack style={styles.sectionWrapper} space={1}>
                 <Text bold fontSize="md">
                   Thông tin cá
+                  <Text bold color="danger.500">
+                    *
+                  </Text>
                 </Text>
                 {errors[DICTIONARY.FORM_FIELD_CATCH_REPORT_CARD]?.message && (
                   <Text style={styles.error}>

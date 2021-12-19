@@ -106,7 +106,7 @@ const FManageEditPendingProfileScreen = () => {
     const handleGoBack = () => goBack(navigation);
     showAlertAbsoluteBox(
       DICTIONARY.ALERT_TITLE,
-      DICTIONARY.ALERT_EDIT_PROFILE_SUCCESS_MSG,
+      DICTIONARY.ALERT_EDIT_LOCATION_SUCCESS_MSG,
       handleGoBack,
     );
   };

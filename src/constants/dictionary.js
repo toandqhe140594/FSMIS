@@ -11,6 +11,17 @@ export const TOAST_CHANGE_PHONE_NUMBER_SUCCESS_MSG =
 export const TOAST_FISH_DELETE_SUCCESS_MSG = "Cá đã được xóa khỏi hồ";
 export const TOAST_DELETE_LAKE_SUCCESS_MSG = "Xóa hồ bé thành công";
 export const TOAST_WRITE_REVIEW_SUCCESS_MSG = "Đánh giá đăng thành công";
+export const TOAST_CREATE_REPORT_FAIL_MSG = "Gửi báo cáo thất bại";
+export const TOAST_ADD_FISH_SPECIES_SUCCESS_MSG = "Thêm cá thành công";
+export const TOAST_EDIT_FISH_SPECIES_SUCCESS_MSG = "Cập nhật cá thành công";
+export const TOAST_UPDATE_FISH_SPECIES_STATUS_SUCCESS_MSG =
+  "Trạng thái của cá đã được thay đổi";
+export const TOAST_ADD_FISHING_METHOD_SUCCESS_MSG =
+  "Thêm loại hình câu thành công";
+export const TOAST_EDIT_FISHING_METHOD_SUCCESS_MSG =
+  "Cập nhật loại hình câu thành công";
+export const TOAST_UPDATE_FISHING_METHOD_STATUS_SUCCESS_MSG =
+  "Trạng thái của loại hình câu được thay đổi";
 // END OF RELATED TOAST MESSAGE SECTION
 
 /**
@@ -33,6 +44,13 @@ export const ATTACHMENT_TYPE_IMAGE_ID = "IMAGE";
 export const ATTACHMENT_TYPE_IMAGE_DISPLAY_LABEL = "Ảnh";
 export const ATTACHMENT_TYPE_NONE_ID = "NONE";
 export const ATTACHMENT_TYPE_NONE_DISPLAY_LABEL = "Không đính kèm";
+export const TODAY_BACKGROUND_COLOR = "#d4d4d4";
+export const SELECTED_DAY_COLOR = "#00ccff";
+export const SELECTED_DAY_TEXT_COLOR = "#000000";
+export const RED_COLOR_SCHEME = "red";
+export const GREEN_COLOR_SCHEME = "red";
+export const IS_ACTIVATE_TEXT = "Đang hoạt động";
+export const IS_DEACTIVATE_TEXT = "Đang ẩn";
 // END OF RANDOM STRING SECTION
 
 /**
@@ -60,6 +78,8 @@ export const ANGLER_RESET_PASSWORD_HEADER = "Thay đổi mật khẩu";
 export const FMANAGE_POST_HEADER = "Bài đăng";
 export const ANGLER_WRITE_REVIEW_HEADER = "Đánh giá của bạn";
 export const FMANAGE_CHECK_IN_HISTORY_HEADER = "Lịch sử Check-in";
+export const ANGLER_WRITE_REPORT_HEADER = "Báo cáo vi phạm";
+export const ADMIN_FISH_MANAGEMENT_HEADER = "Quản lý loại cá";
 // END OF RELATED SCREEN HEADER SECTION
 
 /**
@@ -93,6 +113,7 @@ export const ALERT_DELTE_FISH_PROMPT_MSG =
 export const ALERT_EDIT_POST_SUCCESS_MSG = "Chỉnh sửa bài viết thành công";
 export const ALERT_CREATE_POST_SUCCESS_MSG =
   "Gửi thông tin thành công! Bài viết đang được tạo";
+export const ALERT_CREATE_REPORT_SUCCESS = "Gửi báo cáo Thành công";
 // END OF RELATED ALERT SECTION
 
 /**
@@ -152,6 +173,9 @@ export const FORM_FIELD_POST_TYPE = "postType";
 export const FORM_FIELD_POST_CONTENT = "content";
 export const FORM_FIELD_RATING = "score";
 export const FORM_FIELD_REVIEW_CONTENT = "description";
+export const FORM_FIELE_REPORT_CONTENT = "content";
+export const FORM_FIELD_ADMIN_FISH_SPECIES_NAME = "name";
+export const FORM_FIELD_ADMIN_FISHING_METHOD_NAME = "name";
 // END OF RELATED FORM FIELD NAME TO REGISTER HOOK FORM SECTION
 
 /**
@@ -168,6 +192,18 @@ export const ADD_FISH_BUTTON_LABEL = "Thêm loại cá";
 export const CREATING_BUTTON_LABEL = "Đang tạo bài viết";
 export const EDITING_BUTTON_LABEL = "Đang chỉnh sửa bài viết";
 export const POST_BUTTON_LABEL = "Đăng";
+export const PREVIOUS_BUTTON_LABEL = "Trước";
+export const NEXT_BUTTON_LABEL = "Sau";
+export const CHANGE_PASSWORD_LABEL = "Đổi mật khẩu";
+export const REPORT_BUTTON_LABEL = "Báo cáo";
+export const SAVE_CHANGES_BUTTON_LABEL = "Lưu thay đổi";
+export const HIDE_THIS_FISH_BUTTON_LABEL = "Ẩn loại cá này";
+export const REVEAL_THIS_FISH_BUTTON_LABEL = "Bỏ ẩn loại cá này";
+export const HIDE_THIS_METHOD_BUTTON_LABEL = "Ẩn loại cá này";
+export const REVEAL_THIS_METHOD_BUTTON_LABEL = "Bỏ ẩn loại cá này";
+export const ADD_FISHING_METHOD_BUTTON_LABEL = "Thêm loại hình câu";
+export const SELECT_MONTH_BUTTON_LABEL = "Chọn tháng trong năm ";
+export const SELECT_YEAR_BUTTON_LABEL = "Chọn năm";
 // END OF RELATED BUTTON LABELS SECTION
 
 /**
@@ -181,7 +217,7 @@ export const NEW_PASSWORD_LABEL = "Mật khẩu mới";
 export const NEW_PASSWORD_CONFIRMATION_LABEL = "Xác nhận mật khẩu mới";
 export const DOB_LABEL = "Ngày sinh";
 export const REQUIRED_FULL_NAME_LABEL = "Họ và tên*";
-export const REQUIRED_DOB_LABEL = "Họ và tên*";
+export const REQUIRED_DOB_LABEL = "Ngày sinh*";
 export const FULL_NAME_LABEL = "Họ và tên";
 export const GENDER_LABEL = "Giới tính";
 export const ADDRESS_LABEL = "Địa chỉ";
@@ -217,6 +253,10 @@ export const POST_CONTENT_LABEL = "Nội dung";
 export const POST_ATTACHMENT_TYPE_LABEL = "Đính kèm";
 export const POST_ATTACHMENT_MEDIA_LABEL = "Đường dẫn";
 export const RATING_LABEL = "Điểm số:";
+export const NEW_PHONE_NUMBER_LABEL = "Số điện thoại mới";
+export const REPORT_LABEL = "Hãy miêu tả rõ vi phạm";
+export const ADMIN_FISH_LABEL = "Tên cá";
+export const ADMIN_FISHING_METHOD_LABEL = "Tên loại hình câu";
 // END OF RELATED LABEL SECTIONS
 
 /**
@@ -281,4 +321,8 @@ export const SELECT_ATTACHMENT_TYPE_PLACEHOLDER = "Chọn loại đính kèm";
 export const INPUT_ATTACHMENT_MEDIA_PLACEHOLDER =
   "Gắn sao chép liên kết hoặc mã nhúng video";
 export const INPUT_REVIEW_CONTENT_PLACEHOLDER = "Đánh giá của bạn về hồ câu";
+export const SELECT_DATE_RANGE_PLACEHOLDER = "Theo ngày";
+export const INPUT_NEW_PHONE_NUMBER_PLACEHOLDER = "Nhập số điện thoại mới";
+export const INPUT_REPORT_PLACEHOLDER = "Nhập nội dung vi phạm";
+export const INPUT_ADMIN_FISH_SPECIES_PLACEHOLDER = "Nhập tên cá";
 // END OF RELATED PLACEHOLDER TITLES SECTION

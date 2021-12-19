@@ -266,3 +266,19 @@ export const MENU_LOGOUT = [
     route: ROUTE_NAMES.PROFILE_LOGOUT,
   },
 ];
+
+export const WEEKDAYS = ["T2", "T3", "T4", "T5", "T6", "T7", "CN"];
+export const MONTHS = [
+  "Tháng Một",
+  "Tháng Hai",
+  "Tháng Ba",
+  "Tháng Tư",
+  "Tháng Năm",
+  "Tháng Sáu",
+  "Tháng Bảy",
+  "Tháng Tám",
+  "Tháng Chín",
+  "Tháng Mười",
+  "Tháng Mười Một",
+  "Tháng Mười Hai",
+];

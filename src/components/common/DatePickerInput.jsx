@@ -2,7 +2,7 @@ import { Entypo } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Icon, Input, Text } from "native-base";
 import PropTypes from "prop-types";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { TouchableOpacity } from "react-native";
 
@@ -18,10 +18,10 @@ const DatePickerInput = ({ label, placeholder, controllerName }) => {
   const {
     watch,
     setValue,
-    getValues,
     formState: { errors },
   } = useFormContext();
   const watchDob = watch(controllerName);
+  const rawDate = useRef(watchDob);
   /**
    * Toggle DateTimePicker visibility
    */
@@ -34,9 +34,13 @@ const DatePickerInput = ({ label, placeholder, controllerName }) => {
    * @param {Date} selectedDate
    */
   const onDateChange = (event, selectedDate) => {
-    const currentDate = selectedDate || getValues(controllerName);
+    const currentDate = selectedDate || rawDate.current;
     setVisible(false);
-    setValue(controllerName, currentDate);
+    rawDate.current = currentDate;
+    setValue(
+      controllerName,
+      moment(currentDate).add(1, "days").toDate().toJSON(),
+    );
   };
   /**
    * Trigger when dob value changed, set
@@ -44,7 +48,7 @@ const DatePickerInput = ({ label, placeholder, controllerName }) => {
    */
   useEffect(() => {
     if (watchDob) {
-      setDisplayedDate(moment(watchDob).format("DD/MM/YYYY").toString());
+      setDisplayedDate(moment(rawDate.current).format("DD/MM/YYYY").toString());
     }
   }, [watchDob]);
   return (
@@ -54,7 +58,7 @@ const DatePickerInput = ({ label, placeholder, controllerName }) => {
           display="default"
           is24Hour
           mode="date"
-          value={getValues(controllerName) || new Date()}
+          value={rawDate.current || new Date()}
           onChange={onDateChange}
         />
       )}

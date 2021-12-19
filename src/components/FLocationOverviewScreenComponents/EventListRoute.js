@@ -31,9 +31,7 @@ const CatchReportRoute = () => {
   const locationCatchList = useStoreState(
     (states) => states.LocationModel.locationCatchList,
   );
-  const { role } = useStoreState(
-    (states) => states.LocationModel.locationOverview,
-  );
+
   const getLocationCatchListByPage = useStoreActions(
     (actions) => actions.LocationModel.getLocationCatchListByPage,
   );
@@ -84,7 +82,7 @@ const CatchReportRoute = () => {
           typeUri="IMAGE"
           uri={item.images[0]}
           numberOfImages={item.images.length}
-          iconName={role === VIEW_ROLE_ANGLER ? "flag" : ""}
+          iconName="flag"
           iconEvent={listEvent}
         />
       </PressableCustomCard>

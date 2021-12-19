@@ -23,7 +23,6 @@ import {
   goToOTPScreen,
   goToRegisterInformationScreen,
 } from "../navigations";
-import { showToastMessage } from "../utilities";
 
 const PhoneIcon = () => (
   <Icon
@@ -63,9 +62,8 @@ const RegisterScreen = () => {
           accountData.current.phoneNumber,
         );
       })
-      .catch(() => {
+      .finally(() => {
         setLoading(false);
-        showToastMessage(DICTIONARY.TOAST_NON_EXISTED_INVALID_PHONE_MSG);
       });
   };
 
@@ -133,12 +131,12 @@ const RegisterScreen = () => {
                 isLoading={loading}
                 isDisabled={loading}
               >
-                Đăng ký
+                {DICTIONARY.CONTINUE_BUTTON_LABEL}
               </Button>
             </VStack>
 
             <Text mb={6}>
-              Bạn chưa có tài khoản?{" "}
+              Bạn đã có tài khoản?{" "}
               <Text underline onPress={navigateToLoginScreenAction}>
                 Đăng nhập
               </Text>

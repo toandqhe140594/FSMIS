@@ -3,17 +3,17 @@ import React, { useEffect } from "react";
 
 import { ROLE_USER } from "../constants";
 import AddressModel from "../models/AddressModel";
-import AdminStackNavigator from "../navigations/AdminStackNavigator";
-import AuthenticationStackNavigator from "../navigations/AuthenticationStackNavigator";
-import RootStackNavigator from "../navigations/RootStackNavigator";
 import BanNoticeScreen from "../screens/BanNoticeScreen";
 import LogoScreen from "../screens/LogoScreen";
 import {
   setBeforeRequestFunction,
   setRequestErrorMessageHandling,
-} from "./Http";
-import { showToastMessage } from "./index";
-import store from "./Store";
+} from "../utilities/Http";
+import { showToastMessage } from "../utilities/index";
+import store from "../utilities/Store";
+import AdminStackNavigator from "./AdminStackNavigator";
+import AuthenticationStackNavigator from "./AuthenticationStackNavigator";
+import RootStackNavigator from "./RootStackNavigator";
 
 store.addModel("AddressModel", AddressModel);
 

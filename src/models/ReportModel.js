@@ -12,6 +12,10 @@ const initialState = {
   totalPostReportPage: 0,
   totalReviewReportPage: 0,
   totalCatchReportPage: 0,
+  locationReportDetail: {},
+  reviewReportDetail: {},
+  postReportDetail: {},
+  catchReportDetail: {},
 };
 const model = {
   listLocationReport: [],
@@ -23,6 +27,11 @@ const model = {
   totalReviewReportPage: 0,
   totalCatchReportPage: 0,
 
+  // GET REPORT DETAIL
+  locationReportDetail: {},
+  reviewReportDetail: {},
+  postReportDetail: {},
+  catchReportDetail: {},
   /**
    * Append new location report list to current list
    * @param {String} [payload.type] type of the report
@@ -216,12 +225,6 @@ const model = {
     }
   }),
 
-  // GET REPORT DETAIL
-  locationReportDetail: {},
-  reviewReportDetail: {},
-  postReportDetail: {},
-  catchReportDetail: {},
-
   setLocationReportDetail: action((state, payload) => {
     state.locationReportDetail = payload;
   }),
@@ -340,6 +343,17 @@ const model = {
       setIsSuccess(false);
     }
   }),
+
+  /**
+   * Reset all location detail state
+   */
+  resetReportDetail: action((state) => {
+    state.locationReportDetail = {};
+    state.reviewReportDetail = {};
+    state.postReportDetail = {};
+    state.catchReportDetail = {};
+  }),
+
   /**
    * Reset all state of model to default value
    */
