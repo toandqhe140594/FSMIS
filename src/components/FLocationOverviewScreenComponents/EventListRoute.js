@@ -225,6 +225,7 @@ const FLocationEventRoute = () => {
                 posterName: currentPinPost.posterName,
               }}
               postTime={currentPinPost.postTime}
+              edited={currentPinPost.edited}
             />
           </Box>
           <Divider />
