@@ -12,6 +12,6 @@ public class TwilioInitializerConfig {
     @Autowired
     public TwilioInitializerConfig(TwilioConfig twilioConfig) {
         this.twilioConfig = twilioConfig;
-        Twilio.init(System.getenv("TWILIO_ACCOUNT_SID"), System.getenv("TWILIO_AUTH_TOKEN"));
+        Twilio.init("AC102fa5b6a688f7af0cf147d8b5cabe81", "6399060736da0b045492455238473c9c");
     }
 }
