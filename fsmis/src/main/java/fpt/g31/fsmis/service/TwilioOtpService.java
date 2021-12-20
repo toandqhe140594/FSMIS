@@ -44,7 +44,7 @@ public class TwilioOtpService {
         }
         phone = "+84" + phone.substring(1);
         PhoneNumber to = new PhoneNumber(phone);
-        PhoneNumber from = new PhoneNumber(twilioConfig.getTrialNumber());
+        PhoneNumber from = new PhoneNumber(System.getenv("TWILIO_TRIAL_NUMBER"));
         String otp = generateOtp();
         String otpMessage = "(FSMIS) Ma xac nhan cua ban la " + otp;
         Message.creator(to, from, otpMessage).create();
