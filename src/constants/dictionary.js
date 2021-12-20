@@ -113,7 +113,7 @@ export const ALERT_DELTE_FISH_PROMPT_MSG =
 export const ALERT_EDIT_POST_SUCCESS_MSG = "Chỉnh sửa bài viết thành công";
 export const ALERT_CREATE_POST_SUCCESS_MSG =
   "Gửi thông tin thành công! Bài viết đang được tạo";
-export const ALERT_CREATE_REPORT_SUCCESS = "Gửi báo cáo Thành công";
+export const ALERT_CREATE_REPORT_SUCCESS = "Gửi báo cáo thành công";
 // END OF RELATED ALERT SECTION
 
 /**

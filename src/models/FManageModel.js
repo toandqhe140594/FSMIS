@@ -395,9 +395,6 @@ const model = {
   }),
 
   editPostInList: action((state, payload) => {
-    state.locationPostList = state.locationPostList.filter(
-      (post) => post.id !== payload,
-    );
     const foundIndex = state.locationPostList.findIndex(
       (item) => item.id === payload.id,
     );

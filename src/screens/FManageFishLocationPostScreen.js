@@ -96,6 +96,7 @@ const PostListContainerComponent = () => {
             posterName: item.posterName,
           }}
           postTime={item.postTime}
+          edited={item.edited}
         />
       </Box>
     );
@@ -138,6 +139,7 @@ const PostListContainerComponent = () => {
               posterName: currentPinPost.posterName,
             }}
             postTime={currentPinPost.postTime}
+            edited={currentPinPost.edited}
           />
         </Box>
       )}
