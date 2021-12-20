@@ -1,13 +1,15 @@
 package fpt.g31.fsmis.service;
 
+import com.twilio.Twilio;
 import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.type.PhoneNumber;
-import fpt.g31.fsmis.config.TwilioConfig;
+// import fpt.g31.fsmis.config.TwilioConfig;
 import fpt.g31.fsmis.dto.input.ValidateOtpDtoIn;
 import fpt.g31.fsmis.dto.output.ResponseTextDtoOut;
 import fpt.g31.fsmis.repository.BannedPhoneRepos;
 import fpt.g31.fsmis.repository.UserRepos;
 import lombok.AllArgsConstructor;
+import org.apache.http.auth.AUTH;
 import org.springframework.stereotype.Service;
 
 import javax.validation.ValidationException;
@@ -22,7 +24,9 @@ public class TwilioOtpService {
     private final BannedPhoneRepos bannedPhoneRepos;
     Map<String, String> otpMap;
     private UserRepos userRepos;
-    private TwilioConfig twilioConfig;
+    // private TwilioConfig twilioConfig;
+    public static final String ACCOUNT_SID = System.getenv("TWILIO_ACCOUNT_SID");
+    public static final String AUTH_TOKEN = System.getenv("TWILIO_AUTH_TOKEN");
 
     public ResponseTextDtoOut sendOtpForExistedUser(String phone) {
         if (Boolean.FALSE.equals(userRepos.existsByPhone(phone))) {
@@ -39,6 +43,9 @@ public class TwilioOtpService {
     }
 
     public ResponseTextDtoOut sendOtp(String phone) {
+        System.out.println(ACCOUNT_SID);
+        System.out.println(AUTH_TOKEN);
+        Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
         if (bannedPhoneRepos.existsById(phone)) {
             throw new ValidationException("Số điện thoại bị cấm khỏi hệ thống");
         }
