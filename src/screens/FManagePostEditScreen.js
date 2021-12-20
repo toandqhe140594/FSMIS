@@ -17,11 +17,7 @@ import TextAreaComponent from "../components/common/TextAreaComponent";
 import HeaderTab from "../components/HeaderTab";
 import { DICTIONARY, ROUTE_NAMES, SCHEMA } from "../constants";
 import { goToFManagePostScreen } from "../navigations";
-import {
-  getPostTimeStamp,
-  showAlertAbsoluteBox,
-  showAlertBox,
-} from "../utilities";
+import { showAlertAbsoluteBox, showAlertBox } from "../utilities";
 
 const postTypeData = [
   {
@@ -135,15 +131,15 @@ const PostEditScreen = () => {
   const onSubmit = (data) => {
     setLoadingButton(true);
     const url = setAttachmentUrl(watchAttachmentType);
-    const datetime = getPostTimeStamp();
     delete data.imageArray;
     delete data.mediaUrl;
     const updateData = {
       ...data,
       id: currentPost.id,
       url,
-      postTime: datetime,
+      postTime: currentPost.postTime,
       posterName: currentPost.posterName,
+      edited: true,
     };
     editPost({ updateData })
       .then(() => {
