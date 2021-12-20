@@ -181,6 +181,7 @@ const FLocationEventRoute = () => {
             posterName: item.posterName,
           }}
           postTime={item.postTime}
+          edited={item.edited}
         />
       </Box>
     );
