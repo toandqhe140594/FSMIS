@@ -57,13 +57,13 @@ const FManageAddNewScreen = () => {
   const setDefaultValues = () => {
     if (route.params?.suggestData) {
       Object.entries(route.params?.suggestData).forEach(([field, value]) => {
-        if (value) setValue(field, value);
-        else if ((field === "longitude" || field === "latitude") && value)
+        if ((field === "longitude" || field === "latitude") && value)
           setLocationLatLng(
             locationLatLng
               ? { ...locationLatLng, field: value }
               : { field: value },
           );
+        else if (value) setValue(field, value);
       });
     }
   };
