@@ -113,7 +113,7 @@ export const ALERT_DELTE_FISH_PROMPT_MSG =
 export const ALERT_EDIT_POST_SUCCESS_MSG = "Chỉnh sửa bài viết thành công";
 export const ALERT_CREATE_POST_SUCCESS_MSG =
   "Gửi thông tin thành công! Bài viết đang được tạo";
-export const ALERT_CREATE_REPORT_SUCCESS = "Gửi báo cáo Thành công";
+export const ALERT_CREATE_REPORT_SUCCESS = "Gửi báo cáo thành công";
 // END OF RELATED ALERT SECTION
 
 /**
@@ -202,7 +202,7 @@ export const REVEAL_THIS_FISH_BUTTON_LABEL = "Bỏ ẩn loại cá này";
 export const HIDE_THIS_METHOD_BUTTON_LABEL = "Ẩn loại cá này";
 export const REVEAL_THIS_METHOD_BUTTON_LABEL = "Bỏ ẩn loại cá này";
 export const ADD_FISHING_METHOD_BUTTON_LABEL = "Thêm loại hình câu";
-export const SELECT_MONTH_BUTTON_LABEL = "Chọn tháng trong năm";
+export const SELECT_MONTH_BUTTON_LABEL = "Chọn tháng trong năm ";
 export const SELECT_YEAR_BUTTON_LABEL = "Chọn năm";
 // END OF RELATED BUTTON LABELS SECTION
 
