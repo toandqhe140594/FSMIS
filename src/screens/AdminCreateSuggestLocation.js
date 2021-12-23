@@ -42,7 +42,7 @@ const FManageAddNewScreen = () => {
   const { resetDataList, getAllProvince } = useStoreActions(
     (actions) => actions.AddressModel,
   );
-  const { createSuggestedLocation } = useStoreActions(
+  const { createSuggestedLocation, setLocationLatLng } = useStoreActions(
     (actions) => actions.AdminFLocationModel,
   );
 
@@ -58,6 +58,12 @@ const FManageAddNewScreen = () => {
     if (route.params?.suggestData) {
       Object.entries(route.params?.suggestData).forEach(([field, value]) => {
         if (value) setValue(field, value);
+        else if ((field === "longitude" || field === "latitude") && value)
+          setLocationLatLng(
+            locationLatLng
+              ? { ...locationLatLng, field: value }
+              : { field: value },
+          );
       });
     }
   };
