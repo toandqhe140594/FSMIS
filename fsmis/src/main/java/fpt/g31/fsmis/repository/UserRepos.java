@@ -18,7 +18,7 @@ public interface UserRepos extends JpaRepository<User, Long> {
     Optional<User> findByQrString(String qrString);
 
     @Query(value = "select distinct owner_id \n" +
-            "from tbl_fishing_location tfl", nativeQuery = true)
+            "from tbl_fishing_location tfl where tfl.active = true", nativeQuery = true)
     List<Long> getAllOwnerId();
 
     @Query(value = "select distinct employee_id \n" +
