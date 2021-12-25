@@ -29,7 +29,7 @@ public class VoteService {
             throw new ValidationException("Vote không hợp lệ");
         }
         User user = jwtFilter.getUserFromToken(request);
-        Vote vote = voteRepos.findByReviewIdAndUserId(reviewId, user.getId());
+        Vote vote = voteRepos.findFirstByReviewIdAndUserId(reviewId, user.getId());
         if (vote == null) {
             vote = Vote.builder()
                     .user(user)

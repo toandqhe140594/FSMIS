@@ -45,7 +45,7 @@ public class ReviewService {
         item.setTime(ServiceUtils.convertDateToString(review.getTime()));
         item.setUpvote(voteRepos.getVoteCountByReviewId(review.getId(), 1));
         item.setDownvote(voteRepos.getVoteCountByReviewId(review.getId(), 0));
-        Vote vote = voteRepos.findByReviewIdAndUserId(review.getId(), user.getId());
+        Vote vote = voteRepos.findFirstByReviewIdAndUserId(review.getId(), user.getId());
         if (vote != null) {
             if (vote.getVoteType() == VoteType.UPVOTE) {
                 item.setUserVoteType(true);
