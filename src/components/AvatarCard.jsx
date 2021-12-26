@@ -91,7 +91,7 @@ AvatarCard.propTypes = {
 };
 AvatarCard.defaultProps = {
   avatarSize: "md",
-  nameUser: "Thanh",
+  nameUser: "Người dùng",
   nameFontSize: "md",
   subText: null,
   subTextFontSize: "sm",
