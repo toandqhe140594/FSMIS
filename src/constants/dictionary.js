@@ -51,6 +51,11 @@ export const RED_COLOR_SCHEME = "red";
 export const GREEN_COLOR_SCHEME = "red";
 export const IS_ACTIVATE_TEXT = "Đang hoạt động";
 export const IS_DEACTIVATE_TEXT = "Đang ẩn";
+export const MEDIA_SELECT_ERROR_RESIZE_IMG = "Đã xảy ra lỗi khi tải ảnh";
+export const MEDIA_SELECT_ERROR_LOADING_IMG = "Đã xảy ra lỗi khi tải ảnh";
+export const MEDIA_SELECT_IMAGE_EMPTY = "Thư viện đang trống";
+export const MEDIA_SELECT_PERMISSION_DENIED =
+  "Quyền truy cập thư viện bị từ chối";
 // END OF RANDOM STRING SECTION
 
 /**
