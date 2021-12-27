@@ -22,7 +22,7 @@ import MapOverviewBox from "../components/FLocationEditProfile/MapOverviewBox";
 import HeaderTab from "../components/HeaderTab";
 import { DEFAULT_TIMEOUT, DICTIONARY, ROUTE_NAMES, SCHEMA } from "../constants";
 import { goBack } from "../navigations";
-import { showAlertAbsoluteBox, showAlertBox } from "../utilities";
+import { showAlertAbsoluteBox } from "../utilities";
 
 const styles = StyleSheet.create({
   sectionWrapper: {
@@ -33,6 +33,13 @@ const styles = StyleSheet.create({
   },
 });
 
+const inputFields = [
+  DICTIONARY.FORM_FIELD_LOCATION_NAME,
+  DICTIONARY.FORM_FIELD_LOCATION_PHONE,
+  DICTIONARY.FORM_FIELD_LOCATION_WEBSITE,
+  DICTIONARY.FORM_FIELD_ADDRESS,
+];
+
 const FManageAddNewScreen = () => {
   const route = useRoute();
   const navigation = useNavigation();
@@ -42,7 +49,10 @@ const FManageAddNewScreen = () => {
   const { resetDataList, getAllProvince } = useStoreActions(
     (actions) => actions.AddressModel,
   );
-  const { createSuggestedLocation, setLocationLatLng } = useStoreActions(
+  const { setLocationLatLng } = useStoreActions(
+    (actions) => actions.FManageModel,
+  );
+  const { createSuggestedLocation } = useStoreActions(
     (actions) => actions.AdminFLocationModel,
   );
 
@@ -56,15 +66,16 @@ const FManageAddNewScreen = () => {
 
   const setDefaultValues = () => {
     if (route.params?.suggestData) {
-      Object.entries(route.params?.suggestData).forEach(([field, value]) => {
-        if ((field === "longitude" || field === "latitude") && value)
-          setLocationLatLng(
-            locationLatLng
-              ? { ...locationLatLng, field: value }
-              : { field: value },
-          );
-        else if (value) setValue(field, value);
+      const coordinate = {};
+      Object.entries(route.params.suggestData).forEach(([field, value]) => {
+        if (
+          (field === DICTIONARY.LONGTITUDE || field === DICTIONARY.LATITUDE) &&
+          value
+        ) {
+          coordinate[field] = value;
+        } else if (inputFields.includes(field) && value) setValue(field, value);
       });
+      setLocationLatLng(coordinate);
     }
   };
 
@@ -74,7 +85,6 @@ const FManageAddNewScreen = () => {
 
   const handleError = () => {
     setIsLoading(false);
-    showAlertBox(DICTIONARY.ALERT_TITLE, DICTIONARY.ALERT_ERROR_MSG);
   };
 
   const onSubmit = (data) => {

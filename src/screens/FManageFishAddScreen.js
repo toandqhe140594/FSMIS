@@ -13,7 +13,7 @@ import SelectComponent from "../components/common/SelectComponent";
 import HeaderTab from "../components/HeaderTab";
 import { DEFAULT_TIMEOUT, DICTIONARY, SCHEMA } from "../constants";
 import { goBack } from "../navigations";
-import { showAlertAbsoluteBox, showAlertBox } from "../utilities";
+import { showAlertAbsoluteBox } from "../utilities";
 
 const OFFSET_BOTTOM = 80;
 // Get window height without status bar height
@@ -76,8 +76,8 @@ const FManageFishAddScreen = () => {
         );
       })
       .catch(() => {
+        showAlertAbsoluteBox(DICTIONARY.ALERT_ERROR_MSG);
         setIsLoading(false);
-        showAlertBox(DICTIONARY.ALERT_TITLE, DICTIONARY.ALERT_ERROR_MSG);
       });
   };
 

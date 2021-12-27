@@ -51,6 +51,11 @@ export const RED_COLOR_SCHEME = "red";
 export const GREEN_COLOR_SCHEME = "red";
 export const IS_ACTIVATE_TEXT = "Đang hoạt động";
 export const IS_DEACTIVATE_TEXT = "Đang ẩn";
+export const MEDIA_SELECT_ERROR_RESIZE_IMG = "Đã xảy ra lỗi khi tải ảnh";
+export const MEDIA_SELECT_ERROR_LOADING_IMG = "Đã xảy ra lỗi khi tải ảnh";
+export const MEDIA_SELECT_IMAGE_EMPTY = "Thư viện đang trống";
+export const MEDIA_SELECT_PERMISSION_DENIED =
+  "Quyền truy cập thư viện bị từ chối";
 // END OF RANDOM STRING SECTION
 
 /**
@@ -176,6 +181,8 @@ export const FORM_FIELD_REVIEW_CONTENT = "description";
 export const FORM_FIELE_REPORT_CONTENT = "content";
 export const FORM_FIELD_ADMIN_FISH_SPECIES_NAME = "name";
 export const FORM_FIELD_ADMIN_FISHING_METHOD_NAME = "name";
+export const LATITUDE = "latitude";
+export const LONGTITUDE = "longitude";
 // END OF RELATED FORM FIELD NAME TO REGISTER HOOK FORM SECTION
 
 /**
@@ -199,8 +206,8 @@ export const REPORT_BUTTON_LABEL = "Báo cáo";
 export const SAVE_CHANGES_BUTTON_LABEL = "Lưu thay đổi";
 export const HIDE_THIS_FISH_BUTTON_LABEL = "Ẩn loại cá này";
 export const REVEAL_THIS_FISH_BUTTON_LABEL = "Bỏ ẩn loại cá này";
-export const HIDE_THIS_METHOD_BUTTON_LABEL = "Ẩn loại cá này";
-export const REVEAL_THIS_METHOD_BUTTON_LABEL = "Bỏ ẩn loại cá này";
+export const HIDE_THIS_METHOD_BUTTON_LABEL = "Ẩn loại hình câu này";
+export const REVEAL_THIS_METHOD_BUTTON_LABEL = "Bỏ ẩn loại hình câu này";
 export const ADD_FISHING_METHOD_BUTTON_LABEL = "Thêm loại hình câu";
 export const SELECT_MONTH_BUTTON_LABEL = "Chọn tháng trong năm ";
 export const SELECT_YEAR_BUTTON_LABEL = "Chọn năm";
