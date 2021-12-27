@@ -204,7 +204,6 @@ const FManageCatchReportHistory = () => {
             <Modal.Header>Chọn ngày</Modal.Header>
             <Modal.Body>
               <CalendarPicker
-                startFromMonday
                 months={MONTHS}
                 weekdays={WEEKDAYS}
                 allowRangeSelection
