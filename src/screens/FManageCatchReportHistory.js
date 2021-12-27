@@ -152,8 +152,8 @@ const FManageCatchReportHistory = () => {
               <Text italic>{description}</Text>
               <Text>
                 <Text bold>Đã câu được: </Text>
-                {fishes.map((fish) => (
-                  <Text key={fish}>{fish}. </Text>
+                {fishes.map((fish, index) => (
+                  <Text key={`${`${index}${fish}`}`}>{fish}. </Text>
                 ))}
               </Text>
             </Box>
