@@ -926,7 +926,7 @@ const model = {
     const { mode, items } = payload;
     if (mode === "NEW") {
       state.catchReportHistory = items;
-    } else state.catchReportHistory = state.catchReportHistory.concat(payload);
+    } else state.catchReportHistory = state.catchReportHistory.concat(items);
   }),
 
   /**
