@@ -176,6 +176,8 @@ export const FORM_FIELD_REVIEW_CONTENT = "description";
 export const FORM_FIELE_REPORT_CONTENT = "content";
 export const FORM_FIELD_ADMIN_FISH_SPECIES_NAME = "name";
 export const FORM_FIELD_ADMIN_FISHING_METHOD_NAME = "name";
+export const LATITUDE = "latitude";
+export const LONGTITUDE = "longitude";
 // END OF RELATED FORM FIELD NAME TO REGISTER HOOK FORM SECTION
 
 /**
