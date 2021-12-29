@@ -6,6 +6,7 @@ import React, { useMemo } from "react";
 import { StyleSheet, View } from "react-native";
 
 import HeaderWithButton from "../components/HeaderWithButton";
+import { DICTIONARY } from "../constants";
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
@@ -43,10 +44,10 @@ const MediaSelectScreen = () => {
     () => ({
       errorTextColor: "black",
       errorMessages: {
-        hasErrorWithPermissions: "Please Allow media gallery permissions.",
-        hasErrorWithLoading: "There was error while loading images.",
-        hasErrorWithResizing: "There was error while loading images.",
-        hasNoAssets: "No images found.",
+        hasErrorWithPermissions: DICTIONARY.MEDIA_SELECT_PERMISSION_DENIED,
+        hasErrorWithLoading: DICTIONARY.MEDIA_SELECT_ERROR_LOADING_IMG,
+        hasErrorWithResizing: DICTIONARY.MEDIA_SELECT_ERROR_RESIZE_IMG,
+        hasNoAssets: DICTIONARY.MEDIA_SELECT_IMAGE_EMPTY,
       },
     }),
     [],
@@ -58,7 +59,7 @@ const MediaSelectScreen = () => {
       getImageMetaData: false, // true might perform slower results
       initialLoad: 100, // number of images load on screen
       assetsType: [MediaType.photo, MediaType.video],
-      minSelection: maxSelectable, // max images can be select at a time
+      minSelection: maxSelectable, // min images can be select at a time
       maxSelection: maxSelectable, // max images receive after the selection
       portraitCols: 4,
       landscapeCols: 4,

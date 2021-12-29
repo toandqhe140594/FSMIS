@@ -19,6 +19,7 @@ const AnglerCatchReportsHistoryScreen = () => {
   );
   const [loading, setLoading] = useState(true);
   const needRefresh = useRef(false);
+  const onScreenStart = useRef(true);
   const nextPage = useRef(true);
 
   const memoizedStyle = useMemo(
@@ -36,6 +37,7 @@ const AnglerCatchReportsHistoryScreen = () => {
 
   const stopLoading = () => {
     if (needRefresh.current) needRefresh.current = false;
+    if (onScreenStart.current) onScreenStart.current = false;
     nextPage.current = true;
     setLoading(false);
   };
@@ -84,7 +86,7 @@ const AnglerCatchReportsHistoryScreen = () => {
 
   const renderFooter = () =>
     loading &&
-    !needRefresh.current && (
+    onScreenStart.current && (
       <SmallScreenLoadingIndicator containerStyle={{ marginVertical: 12 }} />
     );
 
