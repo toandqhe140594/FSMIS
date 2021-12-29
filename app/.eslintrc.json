@@ -1,0 +1,32 @@
+{
+  "env": {
+    "browser": true,
+    "es2021": true,
+    "react-native/react-native": true
+  },
+  "extends": [
+    "plugin:react/recommended",
+    "airbnb",
+    "plugin:prettier/recommended"
+  ],
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "ecmaVersion": 12,
+    "sourceType": "module"
+  },
+  "plugins": ["react", "react-native", "simple-import-sort"],
+  "rules": {
+    "react/jsx-filename-extension": [
+      "warn",
+      { "extensions": [".tsx", ".ts", ".js", ".jsx"] }
+    ],
+    "react/jsx-props-no-spreading": "off",
+    "no-param-reassign": "off",
+    "prettier/prettier": ["error", { "endOfLine": "auto" }],
+    "global-require": ["off", { "extensions": [".js", ".jsx", ".tsx", ".ts"] }],
+    "simple-import-sort/imports": "error",
+    "simple-import-sort/exports": "error"
+  }
+}

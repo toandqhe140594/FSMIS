@@ -1,0 +1,33 @@
+{
+  "expo": {
+    "name": "FSMIS",
+    "slug": "FSMIS",
+    "version": "1.3",
+    "orientation": "portrait",
+    "icon": "./src/assets/icons/icon.png",
+    "splash": {
+      "image": "./src/assets/images/splash.png",
+      "resizeMode": "cover",
+      "backgroundColor": "#79B8EA"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./src/assets/images/admin-image.png",
+        "backgroundColor": "#FFFFFF"
+      },
+      "package": "com.g31.fsmis"
+    },
+    "web": {
+      "favicon": "./src/assets/images/favicon.png"
+    },
+    "description": "The Fishing Spot Management Information System project - v1.3",
+    "githubUrl": "https://github.com/toandqhe140594/FSMIS"
+  }
+}
