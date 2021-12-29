@@ -76,7 +76,10 @@ const FManageFishAddScreen = () => {
         );
       })
       .catch(() => {
-        showAlertAbsoluteBox(DICTIONARY.ALERT_ERROR_MSG);
+        showAlertAbsoluteBox(
+          DICTIONARY.ALERT_TITLE,
+          DICTIONARY.ALERT_ERROR_MSG,
+        );
         setIsLoading(false);
       });
   };
